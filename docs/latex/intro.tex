@@ -3,12 +3,21 @@
 
 \chapter{Introduction}
 
-The program relax is designed for the study of the dynamics of proteins or other macromolecules though the analysis of NMR relaxation data.  It is a community driven project created by NMR spectroscopists for NMR spectroscopists.  It supports exponential curve fitting for the calculation of the $\Rone$ and $\Rtwo$ relaxation rates, calculation of the NOE, reduced spectral density mapping, and the Lipari and Szabo model-free analysis.
+The program relax is designed for the study of molecular dynamics through the analysis of experimental NMR data. Organic molecules, proteins, RNA, DNA, sugars, and other biomolecules are all supported. It was originally written for the model-free analysis of protein dynamics, though its scope has been significantly expanded.  It is a community driven project created by NMR spectroscopists for NMR spectroscopists.  It supports many analysis types including:
 
+\begin{description}
+\item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data.
+\item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the Rx NMR relaxation rates.
+\item[NOE] - the calculation of the steady-state NOE NMR relaxation data.
+\item[Data consistency] - the consistency testing of multiple field NMR relaxation data.
+\item[RSDM] - Reduced Spectral Density Mapping.
+\item[Frame order and N-state model] - study of domain motions via the N-state model and frame order dynamics theories using anisotropic NMR parameters such as RDCs and PCSs.
+\item[Stereochemistry] - investigations of absolute stereochemistry of flexible molecules.
+\end{description}
 
 The aim of relax is to provide a seamless and extremely flexible environment able to accept input in any format produced by other NMR software, able to faultlessly create input files, control, and read output from various programs including Modelfree and Dasha, output results in many formats, and visualise the data by controlling programs such as Grace\index{software!Grace|textbf}, OpenDX\index{software!OpenDX|textbf}, MOLMOL\index{software!MOLMOL|textbf}, and PyMOL\index{software!PyMOL|textbf}.  All data analysis tools from optimisation to model selection to Monte Carlo simulations are inbuilt into relax. Therefore the use of additional programs is optional.
 
-The flexibility of relax arises from the choice of either relax's scripting capabilities or its Python\index{Python|textbf} prompt interface. Extremely complex scripts can be created from simple building blocks to fully automate data analysis. A number of sample scripts have been provided to help understand script construction. In addition, any of Python's powerful features or functions can be incorporated as the script is executed as an arbitrary Python source file within relax's environment.  The modules of relax can also used as a vast library of dynamics related functions by your own software.
+The flexibility of relax arises from the choice of relax's scripting capabilities, its Python\index{Python|textbf} prompt interface, or its graphical user interface (GUI)\index{GUI|textbf}.  Extremely complex scripts can be created from simple building blocks to fully automate data analysis.  A number of sample scripts have been provided to help understand script construction. In addition, any of Python's powerful features or functions can be incorporated as the script is executed as an arbitrary Python source file within relax's environment.  The modules of relax can also used as a vast library of dynamics related functions by your own software.
 
 relax is free software (free as in freedom) which is licenced under the GNU General Public Licence (GPL)\index{GPL|textbf}. You are free to copy, modify, or redistribute relax under the terms of the GPL. 
 
@@ -24,9 +33,9 @@ relax is free software (free as in freedom) which is licenced under the GNU Gene
 
 \subsection{Literature}
 
-The primary references for the program relax are \citet{dAuvergneGooley08a} and \citet{dAuvergneGooley08b}.
+The primary references for the program relax are \citet{dAuvergneGooley08a} and \citet{dAuvergneGooley08b}.  The graphical user interface reference is \citet{Bieri11}.
 
-Other literature related to the improved model-free analysis used within relax, which can nevertheless be applied to other techniques such as SRLS\index{SRLS}, include model-free model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}, model-free model elimination \citep{dAuvergneGooley06}\index{model elimination}, the theory \citep{dAuvergneGooley07} behind the new model-free optimisation protocol \citep{dAuvergneGooley08b}, and the hybridisation of different models \citep{Horne07, dAuvergneGooley08b}. Most of these details can be found in the PhD thesis of \citet{dAuvergne06}.
+Other literature related to the improved model-free analysis used within relax include model-free model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}, model-free model elimination \citep{dAuvergneGooley06}\index{model elimination}, the theory \citep{dAuvergneGooley07} behind the new model-free optimisation protocol \citep{dAuvergneGooley08b}, and the hybridisation of different models \citep{Horne07, dAuvergneGooley08b}. Most of these details can be found in the PhD thesis of \citet{dAuvergne06}.
 
 
 % Supported NMR theories.
@@ -41,6 +50,11 @@ The following relaxation data analysis techniques are currently supported by rel
 \item Reduced spectral density mapping \citep{Farrow95, Lefevre96}\index{reduced spectral density mapping}.
 \item Exponential curve fitting (to find the $\Rone$ and $\Rtwo$ relaxation rates)\index{exponential curve fitting}.
 \item Steady-state NOE calculation\index{NOE}.
+\item Determination of absolute stereochemistry of flexible molecules using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD (see \citet{Sun11}).
+\item The N-state model for investigating domain motions.
+\item The frame order theory.
+\item Conformational analysis of paramagnetically tagged molecules (see \citet{Erdelyi11}).
+\item Analysis of RDCs and PCSs using ensemble of structures (the N-state model of dynamics).
 \end{itemize}
 
 
@@ -51,7 +65,7 @@ At some time in the future the following techniques are planned to be implemente
 
 \begin{itemize}
 \item Relaxation dispersion\index{relaxation dispersion}.
-\item SRLS -- Slowly relaxing local structure \citep{Tugarinov01}\index{SRLS}.
+\item All other dynamics analyses.
 \end{itemize}
 
 Because relax is free software, if you would like to contribute addition features, functions, or modules which you have written for your own publications for the benefit of the field, almost anything relating to molecular dynamics may be accepted.  Please see the Open Source chapter for more details.
@@ -119,7 +133,7 @@ relax can be used through the following UIs:
 \begin{description}
 \item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.  See Figure~\ref{fig: relax prompt} for a screenshot.
 \item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.  See Figure~\ref{fig: relax script} for a screenshot.
-\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the dauvergne\_protocol module \citep{dAuvergneGooley08b}.  See Figure~\ref{fig: relax GUI} for a screenshot.
+\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the \texttt{dauvergne\_protocol} module \citep{dAuvergneGooley08b}.  See Figure~\ref{fig: GUI screenshot - start} for a screenshot.
 \end{description}
 
 
@@ -162,7 +176,7 @@ relax>
 
 % Prompt screenshot
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 861 561]{graphics/screenshots/relax_prompt_1_3_8.eps.gz}}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 861 561]{graphics/screenshots/relax_prompt_1_3_8.eps.gz}}
 \caption[Prompt screenshot]{A screenshot of relax being run in the primary prompt mode.}\label{fig: relax prompt}
 \end{figure}
 
@@ -195,6 +209,12 @@ The arguments to a function are simply a comma separated list within the bracket
 Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{keyword argument}\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \texttt{file} and the value you would like to supply is \texttt{`R1.out'}.  Various methods exist for supplying this argument.  Firstly you could simply type \texttt{`R1.out'} into the correct position in the argument list.  Secondly you can type \texttt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
 
 
+% Script screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/relax_script_mode.eps.gz}}
+\caption[Scripting screenshot]{A screenshot of relax being run in scripting mode.}\label{fig: relax script}
+\end{figure}
+
 
 % User functions.
 %~~~~~~~~~~~~~~~~
@@ -210,7 +230,7 @@ A few special objects which are available within the prompt are not actually fun
 
 Another special object is that of the function class\index{function class}.  This object is simply a container which holds a number of user functions.  You can access the user function within the class by typing the name of the class, then a dot \texttt{`.'}, followed by the name of the user function.  An example is the user function for reading relaxation data out of a file and loading the data into relax.  The function is called \texttt{`read'} and the class is called \texttt{`relax\_data'}.  To execute the function, type something like
 
-\example{relax> relax\_data.read(`R1', `600', 600.0 * 1e6, `r1.600.out')}
+\example{relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4)}
 
 On first usage the relax prompt can be quite daunting.  Two features exist to increase the usability of the prompt -- the help system and tab completion.
 
@@ -294,18 +314,37 @@ Data pipe type          & Description \\
 
 \midrule
 
+\texttt{`ct'}           & Consistency testing of relaxation data \\
+\texttt{`frame order'}  & The Frame Order analyses of domain motions \\
 \texttt{`jw'}           & Reduced spectral density mapping \\
+\texttt{`hybrid'}       & A special hybridised data pipe \\
 \texttt{`mf'}           & Model-free data analysis \\
 \texttt{`N-state'}      & N-state model of domain motions \\
 \texttt{`noe'}          & Steady state NOE calculation \\
 \texttt{`relax\_fit'}   & Relaxation curve-fitting \\
-\texttt{`srls'}         & SRLS analysis \\
 
 \bottomrule
 \end{tabular}
 \end{center}
 
-Currently the NOE calculation, relaxation curve-fitting, model-free analysis, and reduced spectral density mapping features of relax are implemented (if this documentation is out of date then you may be able to do a lot more).
+
+% GUI screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/start.eps.gz}}
+\caption[GUI screenshot]{Screenshot of the relax GUI interface -- the starting interface.  To start one of the automated analyses, either the menu \texttt{`File->New analysis'} or the new analysis button in the toolbar should be selected.}\label{fig: GUI screenshot - start}
+\end{figure}
+
+% Analysis wizard screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.7\textwidth, bb=14 14 657 560]{graphics/screenshots/analysis_wizard.eps.gz}}
+\caption[GUI screenshot -- Analysis wizard screenshot]{Screenshot of the relax GUI interface -- the analysis selection wizard.  From here, the steady-state NOE analysis, the $\Rone$ and $\Rtwo$ relaxation rates via exponential curve-fitting, and the automated model-free analysis can be selected.}\label{fig: screenshot: analysis wizard}
+\end{figure}
+
+% NOE analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_noe.eps.gz}}
+\caption[GUI screenshot -- NOE analysis]{Screenshot of the relax GUI interface -- the steady-state NOE analysis.}\label{fig: screenshot: NOE analysis}
+\end{figure}
 
 
 
@@ -315,9 +354,9 @@ Currently the NOE calculation, relaxation curve-fitting, model-free analysis, an
 \subsection{Scripting}
 \index{scripting|textbf}
 
-What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file and then at the terminal type
+What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file ending in \texttt{`*.py'} and then at the terminal type
 
-\example{\$ relax your\_script}
+\example{\$ relax your\_script.py}
 
 An example of a simple script which will minimise the model-free model `m4' after loading six relaxation data sets is
 
@@ -330,22 +369,22 @@ pipe.create(name, `mf') \\
 nuclei(`N') \\
  \\
 \# Load the sequence. \\
-sequence.read(`noe.500.out') \\
+sequence.read(`noe.500.out', res\_num\_col=1) \\
  \\
 \# Load the relaxation data. \\
-relax\_data.read(`R1', `600', 600.0 * 1e6, `r1.600.out') \\
-relax\_data.read(`R2', `600', 600.0 * 1e6, `r2.600.out') \\
-relax\_data.read(`NOE', `600', 600.0 * 1e6, `noe.600.out') \\
-relax\_data.read(`R1', `500', 500.0 * 1e6, `r1.500.out') \\
-relax\_data.read(`R2', `500', 500.0 * 1e6, `r2.500.out') \\
-relax\_data.read(`NOE', `500', 500.0 * 1e6, `noe.500.out') \\
+relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='R2\_600',  ri\_type='R2',  frq=600.0*1e6, file='r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='NOE\_600', ri\_type='NOE', frq=600.0*1e6, file='noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='R1\_500',  ri\_type='R1',  frq=500.0*1e6, file='r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='R2\_500',  ri\_type='R2',  frq=500.0*1e6, file='r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='NOE\_500', ri\_type='NOE', frq=500.0*1e6, file='noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
  \\
 \# Setup other values. \\
 diffusion\_tensor.init((2e-8, 1.3, 60, 290), param\_types=1, axial\_type=`prolate', fixed=True) \\
 value.set(1.02 * 1e-10, `bond\_length') \\
-value.set(-160 * 1e-6, `csa') \\
-value.set(`15N', `heteronucleus') \\
-value.set(`1H', `proton') \\
+value.set(-172 * 1e-6, `csa') \\
+value.set(`15N', `heteronuc\_type') \\
+value.set(`1H', `proton\_type') \\
  \\
 \# Select a preset model-free model. \\
 model\_free.select\_model(model=name) \\
@@ -361,12 +400,25 @@ results.write(file=`results', force=True) \\
 state.save(`save', force=True)
 \end{exampleenv}
 
-Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file `full\_analysis.py' in the `sample\_scripts' directory for an example).
+Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file `relax\_curve\_diff.py' in the `sample\_scripts' directory for an example).
 
-% Script screenshot
+
+% R1 analysis screenshot
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 861 561]{graphics/screenshots/relax_script_1_3_8.eps.gz}}
-\caption[Scripting screenshot]{A screenshot of relax being run in scripting mode.}\label{fig: relax script}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r1.eps.gz}}
+\caption[GUI screenshot -- $\Rone$ analysis]{Screenshot of the relax GUI interface -- the $\Rone$ analysis.}\label{fig: screenshot: R1 analysis}
+\end{figure}
+
+% R2 analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r2.eps.gz}}
+\caption[GUI screenshot -- $\Rtwo$ analysis]{Screenshot of the relax GUI interface -- the $\Rtwo$ analysis.}\label{fig: screenshot: R2 analysis}
+\end{figure}
+
+% Model-free analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_mf.eps.gz}}
+\caption[GUI screenshot -- Model-free analysis]{Screenshot of the relax GUI interface -- the automated model-free analysis.  The analysis is fully automated via a new model-free protocol as described in detail in Chapter~\ref{ch: model-free}.  Clicking on the `About' button in the bottom left hand corner will give a full description of the protocol.  For using this interface or any of the modern-day model-free protocols, data from at least two magnetic field strengths must be without question collected.}\label{fig: screenshot: model-free analysis}
 \end{figure}
 
 
@@ -405,13 +457,54 @@ or
 
 \example{\$ relax --gui}
 
-% GUI screenshot
+The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses.  This provides an easy way for the user to perform quick analyses.  The interface consists of a tab for each analysis.  By clicking on the \texttt{`File->New analysis'} menu entry, the analysis wizard will appear (see Figure~\ref{fig: screenshot: analysis wizard}).  The following analyses can be set up using this wizard:
+
+\begin{description}
+\item[Steady-state NOE:]  this provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).  See Figure~\ref{fig: screenshot: NOE analysis}.
+\item[$\Rone$ and $\Rtwo$]:  these provide easy access to optimisations and error analysis for the $\Rone$ and $\Rtwo$ relaxation rates via exponential curve-fitting (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis}).
+\item[Model-free analysis]:  A fully automatic model-free protocol is provided in another tab.  This operates via the \texttt{dauvergne\_protocol} module which implements the protocol of \cite{dAuvergneGooley08b} (see Figure~\ref{fig: screenshot: model-free analysis}).
+\end{description}
+
+A number of windows in the GUI provide user feedback or allow for the viewing and editing of data.  These include:
+
+% relax controller screenshot
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 769 485]{graphics/screenshots/relax_gui_model_free_tab.eps.gz}}
-\caption[GUI screenshot]{A screenshot of relax being run in GUI mode.}\label{fig: relax GUI}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/relax_controller.eps.gz}}
+\caption[relax controller screenshot]{Screenshot of the relax GUI interface -- the relax controller window.  The purpose of the controller is for feedback.  It shows the current analysis and current data pipe, a number of progress gauges, and the relax text output.}\label{fig: screenshot: relax controller}
 \end{figure}
 
-The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses which some of the sample scripts utilise.  This provides an easy way for the user to perform quick analyses.  The interface is broken into a number of sections via tabs.  One tab provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).  Another two tabs provide easy access to optimisations and error analysis for the R$_1$ and R$_2$ relaxation rates.  A fully automatic model-free protocol is provided in another tab.  This operates via the dauvergne\_protocol module which implements the protocol of \cite{dAuvergneGooley08b}.  A final tab provides visual access to the results including Grace visualisations, PyMOL macros, and a table of the model-free results.
+% Spin viewer screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/spin_viewer.eps.gz}}
+\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.}\label{fig: screenshot: spin viewer}
+\end{figure}
+
+% Results viewer screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/results_viewer.eps.gz}}
+\caption[Results viewer window screenshot]{Screenshot of the relax GUI interface -- the results viewer window.  At the end of one of the automated analyses, a number of results files will be created.  This can include text files containing the results, 2D Grace plots of the results, PyMOL and MOLMOL macros plotting the results onto the structure, diffusion tensor objects for viewing in PyMOL, etc.  This window allows for easy opening of these results files.}\label{fig: screenshot: results viewer}
+\end{figure}
+
+% Pipe editor screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 619 410]{graphics/screenshots/pipe_editor.eps.gz}}
+\caption[Pipe editor window screenshot]{Screenshot of the relax GUI interface -- the pipe editor window.  One analysis may consist of one or more data pipes.  And each analysis has its own unique set of data pipes.  This editor allows for the easy manipulation of data pipes for advanced users.}\label{fig: screenshot: pipe editor}
+\end{figure}
+
+% Prompt window screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 769 499]{graphics/screenshots/relax_prompt.eps.gz}}
+\caption[Prompt window screenshot]{Screenshot of the relax GUI interface -- the prompt window.  This window mimics relax in the prompt user interface mode, and provides the full power of the prompt/script UI modes within the GUI.}\label{fig: screenshot: prompt window}
+\end{figure}
+
+
+\begin{description}
+\item[The relax controller]:  This window shows the progress of relax's execution and displays relax's text output for checking if the analysis has been performed correctly and has completed successfully (see Figure~\ref{fig: screenshot: relax controller}).
+\item[Spin viewer window]:  This is used to load spins system information into the relax data store and to see the contents of the spin containers (see Figure~\ref{fig: screenshot: spin viewer}).
+\item[Results viewer window]:  This presents a list of the results files which can be opened by double clicking for visualisation using a text editor, Grace, PyMOL, MOLMOL, etc (see Figure~\ref{fig: screenshot: results viewer}).
+\item[Data pipe editor]:  This window allows for easy manipulation of the data pipes of the relax data store (see Figure~\ref{fig: screenshot: pipe editor}).
+\item[The relax prompt]:  This window gives access to the relax prompt (see Figure~\ref{fig: screenshot: prompt window}).
+\end{description}
 
 
 
@@ -422,9 +515,9 @@ The GUI is still in development, so many of the features of the prompt/scripting
 
 To enable advanced Python\index{Python} scripting and control many parts of relax have been designed in an object oriented fashion.  If you would like to play with internals of the program the entirety of relax is accessible by importation.  For example all data is contained within the object called the relax data store which, to be able to access it, needs be imported by typing:
 
-\example{relax> from data import Data as relax\_data\_store}
+\example{relax> from data import Relax\_data\_store; ds = Relax\_data\_store()}
 
-This is a dictionary type object which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
+The \texttt{`ds'} object is a dictionary type which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
 
 \begin{exampleenv}
 relax> alpha = 0.1342 \\
