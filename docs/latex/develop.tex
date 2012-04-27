@@ -37,7 +37,7 @@ Modifications can be made to these sources.
 
 \section{Coding conventions}
 
-The following conventions should be followed at all times for any code to be accepted into the relax repository.  A Python script which tests if code meets relax's coding conventions can be downloaded from \href{http://www.nmr-relax.com/scripts/code\_validator}{http://www.nmr-relax.com/scripts/code\_validator}.  The main reason for these conventions is for readability.  By using a consistent coding style and a high comment ratio, the code becomes much easier to read for non-coders and those new to Python.  It significantly decreases the barrier of entry into the relax source code for NMR spectroscopists.
+The following conventions should be followed at all times for any code to be accepted into the relax repository.  A Python script which tests if code meets relax's coding conventions is distributed with relax and is located at \texttt{`scripts/code\_validator'}.  The main reason for these conventions is for readability.  By using a consistent coding style and a high comment ratio, the code becomes much easier to read for non-coders and those new to Python.  It significantly decreases the barrier of entry into the relax source code for NMR spectroscopists.
 
 
 
@@ -71,7 +71,6 @@ If these lines are deleted the bug will be removed.  Another way to fix the prob
 The following are relax's conventions for docstrings.  Many of these are Python conventions.
 
 \begin{itemize}
-\item Each line of the should be set to no more than 100 characters long (this includes all leading white space).  For one line docstrings, the trailing double quotes are ignored.
 \item The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.  This line must start with a capital letter and end in a period.  This convention is required for certain docstring parsers (see the Python docs).
 \item All functions should have a docstring describing in detail the function, structure, and organisation of the code.
 \item A docstring should be followed by an empty line.
@@ -112,6 +111,8 @@ def aic(chi2, k, n):
     return chi2 + 2.0*k
 \end{verbatim}
 \end{footnotesize}
+
+In addition to the text descriptions, the docstrings use the \href{http://epydoc.sourceforge.net/}{Epydoc}\index{epydoc} markup language to describe arguments, return values, and other information about the code.  See \href{http://epydoc.sourceforge.net/fields.html}{http://epydoc.sourceforge.net/fields.html} for a listing of all the epydoc fields allowed.  This mark up language is important for the creation of the \href{http://www.nmr-relax.com/api/}{API documentation}\index{API documentation} and to help developers understand the purpose and operation of the code.
 
 
 % Variable, function, and class names.
@@ -168,7 +169,7 @@ For both variables and functions lower case with underscores between words is al
 % Classes.
 \subsubsection{Classes}
 
-For classes relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the \texttt{self.relax.data} code.  All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.  An example is:
+For classes relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the relax data store code.  All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.  An example is:
 
 \begin{footnotesize}
 \begin{verbatim}
@@ -254,7 +255,7 @@ class Scientific_data(Base_struct_API):
 % Comments.
 \subsection{Comments}
 
-Comments are a very important component within relax.  In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.  The average comment density would be close to 25\%.  The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.  It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.  It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.  If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.  The comment should be descriptive of what the code below it is supposed to do.  Most importantly the comment explains why that code exists.  The script \href{http://www.nmr-relax.com/scripts/code\_validator}{http://www.nmr-relax.com/scripts/code\_validator} can be used to check the comment density.
+Comments are a very important component within relax.  In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.  The average comment density would be close to 25\%.  The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.  It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.  It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.  If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.  The comment should be descriptive of what the code below it is supposed to do.  Most importantly the comment explains why that code exists.  The script \texttt{`scripts/code\_validator'} can be used to check the comment density.
 
 
 
@@ -312,7 +313,7 @@ in the base relax directory.
 
 Anyone can become a relax developer and obtain commit access\index{commit access} to the relax repository.  The main criteria for selection by the relax developers is to show good judgement, competence in producing good patches, compliance with the coding and commit log conventions, comportment on the mailing lists, not producing too many bugs, only taking on challenges which can be handled, and the skill in judging your own abilities.  You will also need to have an understanding of the concepts of version control specifically those relating to Subversion\index{Subversion}.  The SVN book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} contains all the version control information you will need.  After a number of patches have been submitted and accepted any of the relax developers can propose that you receive commit access.  If a number of developers agree while no one says no then commit access will be offered.
 
-One area where coding ability can be demonstrated is within the relax test suite\index{test suite}.  The addition of tests, especially those where the relax internal data structures of \texttt{self.relax.data} are scrutinised, can be a good starting point for learning the structure of relax.  This is because the introduction of bugs has no effect on normal program execution.  The relax test suite is an ideal proving ground.
+One area where coding ability can be demonstrated is within the relax test suite\index{test suite}.  The addition of tests, especially those where the relax internal data structures of the relax data store are scrutinised, can be a good starting point for learning the structure of relax.  This is because the introduction of bugs has no effect on normal program execution.  The relax test suite is an ideal proving ground.
 
 If skills in only certain areas of relax development, for example in creation of the documentation, an understanding of C but not python, an understanding of solely the code of the user interface, or an understanding of the code specific to a certain type of data analysis methodology, then partial commit access may be granted.  Although you will have the ability to make modifications to any part of the repository please make modifications only those areas for which you have permission.
 
@@ -508,7 +509,7 @@ and your private branch deleted
 \section{The SCons build system}
 \index{SCons|textbf}
 
-The SCons build system was chosen over other build systems including \texttt{`make'}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
+The \href{http://www.scons.org/}{SCons} build system was chosen over other build systems including \texttt{`make'}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
 
 
 
@@ -605,7 +606,13 @@ If the command
 \example{\$ scons clean}
 \index{SCons!clean up|textbf}
 
-is run in the base directory all Python byte compiled files \texttt{`*.pyc'}, all C object files \texttt{`*.o'} and \texttt{`*.os'}, all C shared object files \texttt{`*.so'}, and any backup files with the extension \texttt{`*.bak'} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
+is run in the base directory all Python byte compiled files \texttt{`*.pyc'}, all C object files \texttt{`*.o'} and \texttt{`*.os'}, and any backup files with the extension \texttt{`*.bak'} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
+
+The more powerful command
+
+\example{\$ scons clean\_all}
+
+will, in addition to all the files removed by the \texttt{`clean'} target, remove all compiled C shared object files (\texttt{`*.so'}, \texttt{`*.dylib'}, \texttt{`*.pyd'}) and the \texttt{`build'} and \texttt{`dist'} directories created when building the Mac OS X application.
 
 
 
@@ -626,18 +633,18 @@ relax's source code can be divided into five major areas:  the initialisation co
 \begin{description}
 \item[Initialisation:]  The code belonging to this section initialises the program, processes the command-line arguments, and determines what mode the program will be run in including the choice of the UI.
 
-\item[UI:]  The user interface\index{UI|textbf}.  Currently the prompt and the script are the only user interfaces into relax.  There are other program modes which are not part of a user interface.  These include the test mode in which the program instantly exits and threading mode which is spawned by a parent process and waits for commands.  In the future a graphical user interface (GUI), a web based interface, or any other type of interface may be added.
+\item[UI:]  The current UI modes in relax include the prompt, the script and the GUI modes.  These consist of separate code paths, all sitting on top of the underlying functional code.  In the future, a web-based interface may be added.
 
 \item[Functional code:]  This code is the main part of the program.  It includes anything which does not fit into the other sections and comprises the generic code, the specific code, and the specific setup code used as an interface between the two.
 
 \item[Number crunching:]  The computationally expensive code belongs in this section.
 
-\item[Program state:]  The state of the program is contained within the data structure \texttt{self.relax.data} which is accessible from all parts of the program.  It should only be read by the generic, specific, and number crunching code.  Only the generic and specific code should change its contents.
+\item[Program state:]  The state of the program is contained within the relax data store which is accessible from all parts of the program as a singleton object.
 \end{description}
 
 % Core relax design figure.
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=57 274 447 750]{images/core_design.eps.gz}}
+\centerline{\includegraphics[width=\textwidth, bb=0 -1 389 476]{images/core_design.eps.gz}}
 \caption{The core design of relax.} \label{fig: core design}
 \end{figure}
 
@@ -648,7 +655,7 @@ relax's source code can be divided into five major areas:  the initialisation co
 
 Each of the boxes in Figure~\ref{fig: core design} represents a different grouping of code.
 \begin{description}
-\item[relax:]  The top level module.  This initialises the entire program, tests the dependencies, places the custom errors into the module \texttt{\_\_builtin\_\_}, and prints the program's introduction message.
+\item[relax:]  The top level module.  This initialises the entire program, tests the dependencies, sets up the multi-processor framework and specific processor fabric, and prints the program's introduction message.
 
 \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
 
@@ -656,19 +663,19 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Script:]  If a script\index{script|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.  Hence the script has access to all the user functions available at the relax prompt.  This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
 
-\item[GUI:]  The graphical user interface\index{GUI|textbf}.  Although not coded the most mature and least destabilising widget set to use would be QT\index{QT}.  The GUI should be relatively easy to tie into relax.  The design is such that the GUI can be dropped straight into relax without effecting the normal prompt and script based operation of the program.
+\item[GUI:]  The graphical user interface\index{GUI|textbf} code base is located in the \texttt{gui} directory.
 
-\item[Other interfaces:]  Any number of interfaces for example other GUIs, an ncurses interface, a web based interface, or an MPI interface could be added to relax without modification of the current sources.
+\item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.  This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
 
 \item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \texttt{generic\_fns/}.
 
-\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the function \texttt{self.rel\-ax.spec\-if\-ic.mod\-el\_free.min\-im\-ise()} is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \texttt{specific\_fns/specific\_setup.py}.
+\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \texttt{minimise()} method is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \texttt{specific\_fns/specific\_setup.py}.
 
 \item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \texttt{specific\_fns/}.
 
 \item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \texttt{maths\_fns/}.
 
-\item[Data:]  The program state stored in the class \texttt{self.relax.data}.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \texttt{data.py} and the data is modified solely by the generic and specific code.
+\item[Data:]  The program state stored in the relax data store singleton object.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \texttt{data/\_\_init\_\_.py}.
 \end{description}
 
 
@@ -693,7 +700,7 @@ For thread consistency, if you send a message which accidentally misses the mail
 To simplify the process of checking if the message was supposed to be private, you could cut and paste the following message (modifying it as you see fit):
 
 \begin{exampleenv}
-The following is the standard pre-composed response to a post not sent to the relax mailing lists and not labelled as private.  If you would like to start a private conversation about relax, please label your message as such.  If you really must start a private exchange, please respond to this message saying so.  If your message was meant to be sent to the relax mailing list, please resend the message hitting `reply-to-all' or making sure that the mailing list is in the CC field.  Please do not forward your message, for thread consistency in the mailing list archives sending a new message in response to the original post with the text of the old is best.
+Sorry in advance, but the following is the standard pre-composed response to a post not sent to the relax mailing lists and not labelled as private.  If you would like to start a private conversation about relax, please label your message as such.  If you really must start a private exchange, please respond to this message saying so.  If your message was meant to be sent to the relax mailing list, please send the message again.  For this, please copy-and-paste your message, replying to the original (i.e. no forwarding), and making sure that the mailing list is in the CC field by clicking on `reply-to-all'.
 \end{exampleenv}
 
 
@@ -763,5 +770,15 @@ If you send a message referring to an old post which was sent the relax mailing 
 % Search engine indexing.
 \subsection{Search engine indexing}
 
-Having a large web of links across relax's infrastructure aids in the search engine indexing of the mailing list archives and the \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} web site.  The web of links is useful for catching those Google bots.  That way the Google searching of the mailing list archives located on the \href{http://www.nmr-relax.com/communication.html}{communication web page} will be more up to date.  However to increase the search engine ranking of the web site, links to \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} from external sites is required.  This is one reason why relax is a registered \href{http://freshmeat.net/projects/nmr-relax}{freshmeat} project.
+Having a large web of links across relax's infrastructure aids in the search engine indexing of the mailing list archives and the \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} web site.  The web of links is useful for catching those Google bots.  That way the Google searching of the mailing list archives located on the \href{http://www.nmr-relax.com/\-communication.html}{communication web page} will be more up to date.  However to increase the search engine ranking of the web site, links to \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} from external sites is required.  This is one reason why relax can be found at a number of sites across the web:
+
+\begin{description}
+\item[Freecode:]  New relax releases are announced not only on the \href{https://mail.gna.org/public/relax-announce/}{relax-announce} mailing list and on the relax \href{https://gna.org/news/?group=relax}{news} pages, but also on \href{http://freecode.com/projects/nmr-relax}{Freecode}.  This used to be called Freshmeat.
+\item[The mail archive:]  This site archives all of the relax mailing lists, including \href{http://mail-archive.com/relax-announce@gna.org/"}{relax-announce}, \href{http://mail-archive.com/relax-users@gna.org/"}{relax-users}, \href{http://mail-archive.com/relax-devel@gna.org/"}{relax-devel}, and \href{http://mail-archive.com/relax-commits@gna.org/"}{relax-commits}.
+\item[Gmane:]  Pronounced as `main', the relax mailing lists are also archived at Gmane in numerous formats.  The archived relax mailing lists include relax-announce (\href{http://news.gmane.org/gmane.science.nmr.relax.announce"}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.announce"}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.announce"}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.announce"}{RSS}), relax-users (\href{http://news.gmane.org/gmane.science.nmr.relax.user"}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.user"}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.user"}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.user"}{RSS}), relax-devel (\href{http://news.gmane.org/gmane.science.nmr.relax.devel"}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.devel"}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.devel"}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.devel"}{RSS}), and relax-commits (\href{http://news.gmane.org/gmane.science.nmr.relax.scm"}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.scm"}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.scm"}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.scm"}{RSS}).
+\item[CIA.vc:]  This is the open source version control informant.  CIA tracks open source projects in real-time.  The relax real-time open source activity stats page is \href{http://cia.vc/stats/project/relax"}{http://cia.vc/stats/project/relax}.  This website also has pages for each of the relax developers (in alphabetical order):  \href{http://cia.vc/stats/author/bugman"}{Edward d'Auvergne}, \href{http://cia.vc/stats/author/michaelbieri"}{Michael Bieri}, \href{http://cia.vc/stats/author/macraild"}{Chris MacRaild}, \href{http://cia.vc/stats/author/semor"}{S\'ebastien Morin}, \href{http://cia.vc/stats/author/pansapiens"}{Andrew Perry}, \href{http://cia.vc/stats/author/han87"}{Han Sun}, \href{http://cia.vc/stats/author/varioustoxins"}{Gary Thompson}.
+\item[LinuxLinks.com:]  LinuxLinks.com, the Linux portal, is a website listing many Linux software projects.  relax can be found on the \href{http://linuxlinks.com/Software/Scientific/Biology/Proteins/"}{Software:\-Scientific:\-Biology:\-Proteins} page.
+\item[Softpedia:]  This is the encyclopedia of free software downloads.  The relax page on Softpedia is \href{http://linux.softpedia.com/get/Science/relax-22351.shtml"}{http://linux.softpedia.com/get/Science/relax-22351.shtml}.  The relax developers pages are:  \href{http://linux.softpedia.com/developer/Edward-d-039-Auvergne-5136.html"}{Edward d'Auvergne}.
+\item[Pro-Linux:]  Diese ist eine der gr\"o{\ss}ten deutschsprachigen Seiten zum Thema Linux.  The relax page is \href{http://www.pro-linux.de/cgi-bin/DBApp/check.cgi?ShowApp..17723.100"}{http://\-www.\-pro\--linux.\-de/\-cgi\--bin/\-DB\-App/\-check\-.cgi\-?ShowApp..17723.100}.
+\end{description}
 
