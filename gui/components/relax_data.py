@@ -139,7 +139,7 @@ class Relax_data_list:
 
         # Bruker button.
         self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_bruker.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.bruker, wx.BITMAP_TYPE_ANY))
+        self.button_bruker.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.bruker_add, wx.BITMAP_TYPE_ANY))
         self.button_bruker.SetFont(font.normal)
         self.button_bruker.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_bruker, 0, 0, 0)

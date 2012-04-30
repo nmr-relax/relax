@@ -181,6 +181,7 @@ class I22x22:
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
         self.bruker =                   path + 'bruker.png'
+        self.bruker_add =               path + 'bruker_add.png'
         self.molecule =                 path + 'molecule.png'
         self.molecule_grey =            path + 'molecule_grey.png'
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
