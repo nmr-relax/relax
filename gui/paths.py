@@ -54,6 +54,7 @@ class I16x16:
         path = ICON_RELAX_PATH + '16x16' + sep
         self.about_relax =              IMAGE_PATH + 'relax_16x16.png'
         self.about_relaxgui =           IMAGE_PATH + 'relax_16x16.png'
+        self.bmrb =                     path + 'bmrb.png'
         self.bruker =                   path + 'bruker.png'
         self.gnu_head =                 path + 'gnu-head-mini.png'
         self.grace =                    path + 'grace_icon.png'
@@ -180,6 +181,7 @@ class I22x22:
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
+        self.bmrb =                     path + 'bmrb.png'
         self.bruker =                   path + 'bruker.png'
         self.bruker_add =               path + 'bruker_add.png'
         self.molecule =                 path + 'molecule.png'
@@ -247,6 +249,7 @@ class I32x32:
 
         # relax icons.
         path = ICON_RELAX_PATH + '32x32' + sep
+        self.bmrb =                     path + 'bmrb.png'
         self.bruker =                   path + 'bruker.png'
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.spin =                     path + 'spin.png'
@@ -305,13 +308,14 @@ class I48x48:
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
-        self.bruker =               path + 'bruker.png'
-        self.pipe =                 path + 'pipe.png'
-        self.pipe_hybrid =          path + 'pipe_hybrid.png'
-        self.relax_data =           path + 'fid.png'
-        self.sequence =             path + 'sequence.png'
-        self.structure =            path + 'structure.png'
-        self.value =                path + 'value.png'
+        self.bmrb =                     path + 'bmrb.png'
+        self.bruker =                   path + 'bruker.png'
+        self.pipe =                     path + 'pipe.png'
+        self.pipe_hybrid =              path + 'pipe_hybrid.png'
+        self.relax_data =               path + 'fid.png'
+        self.sequence =                 path + 'sequence.png'
+        self.structure =                path + 'structure.png'
+        self.value =                    path + 'value.png'
 
 
 # Set up all icon classes.
