@@ -21,38 +21,19 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Bruker Dynamics Centre user function class."""
+"""Module containing the Bruker Dynamics Center user function class."""
 __docformat__ = 'plaintext'
 
 # relax module imports.
 import arg_check
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 from generic_fns import bruker
 
 
 class Bruker(User_fn_class):
-    """Class containing the function for reading the Bruker Dynamics Centre (DC) files."""
+    """Class containing the function for reading the Bruker Dynamics Center (DC) files."""
 
     def read(self, ri_id=None, file=None, dir=None):
-        """Read the Bruker Dynamics Centre (DC) file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        ri_id:  The relaxation data ID string.
-
-        file:  The name of the DC file.
-
-        dir:  The directory where the file is located.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function is used to load all of the data out of a Bruker DC file for subsequent
-        analysis within relax.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bruker.read("
@@ -68,3 +49,18 @@ class Bruker(User_fn_class):
 
         # Execute the functional code.
         bruker.read(ri_id=ri_id, file=file, dir=dir)
+
+    # The function doc info.
+    read._doc_title = "Read a Bruker Dynamics Center (DC) file."
+    read._doc_title_short = "Reading a Bruker Dynamics Center file."
+    read._doc_args = [
+        ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
+        ["file", "The name of the Bruker Dynamics Center file containing the relaxation data."],
+        ["dir", "The directory where the file is located."],
+    ]
+    read._doc_desc = """
+        This user function is used to load all of the data out of a Bruker Dynamics Center (DC) file for subsequent analysis within relax.
+        """
+    _build_doc(read)
+
+
