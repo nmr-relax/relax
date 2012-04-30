@@ -51,15 +51,15 @@ class Bruker(User_fn_class):
         bruker.read(ri_id=ri_id, file=file, dir=dir)
 
     # The function doc info.
-    read._doc_title = "Read a Bruker Dynamics Center (DC) file."
-    read._doc_title_short = "Reading a Bruker Dynamics Center file."
+    read._doc_title = "Read a Bruker Dynamics Center (DC) relaxation data file."
+    read._doc_title_short = "Read a Bruker Dynamics Center file."
     read._doc_args = [
         ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
         ["file", "The name of the Bruker Dynamics Center file containing the relaxation data."],
         ["dir", "The directory where the file is located."],
     ]
     read._doc_desc = """
-        This user function is used to load all of the data out of a Bruker Dynamics Center (DC) file for subsequent analysis within relax.
+        This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.
         """
     _build_doc(read)
 
