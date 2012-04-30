@@ -68,6 +68,7 @@ from temperature import Temp
 # User classes.
 from align_tensor import Align_tensor
 from bmrb import BMRB
+from bruker import Bruker
 from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
@@ -86,7 +87,6 @@ from residue import Residue
 from structure import Structure
 from paramag import Paramag
 from pcs import PCS
-from pdc import Pdc
 from pymol_control import Pymol
 from rdc import RDC
 from relax_data import Relax_data
@@ -194,6 +194,7 @@ class Interpreter:
         # Place the user classes in the local namespace.
         objects['align_tensor'] = Align_tensor(self._exec_info)
         objects['bmrb'] = BMRB(self._exec_info)
+        objects['bruker'] = Bruker(self._exec_info)
         objects['consistency_tests'] = Consistency_tests(self._exec_info)
         objects['dasha'] = Dasha(self._exec_info)
         objects['deselect'] = Deselect(self._exec_info)
@@ -212,7 +213,6 @@ class Interpreter:
         objects['palmer'] = Palmer(self._exec_info)
         objects['paramag'] = Paramag(self._exec_info)
         objects['pcs'] = PCS(self._exec_info)
-        objects['pdc'] = Pdc(self._exec_info)
         objects['pymol'] = Pymol(self._exec_info)
         objects['rdc'] = RDC(self._exec_info)
         objects['relax_data'] = Relax_data(self._exec_info)
