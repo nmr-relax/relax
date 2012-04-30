@@ -137,6 +137,15 @@ class Relax_data_list:
         self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_add)
         self.button_add.SetToolTipString("Read relaxation data from file.")
 
+        # Bruker button.
+        self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
+        self.button_bruker.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.bruker, wx.BITMAP_TYPE_ANY))
+        self.button_bruker.SetFont(font.normal)
+        self.button_bruker.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_bruker, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_bruker)
+        self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
+
         # Delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
         self.button_delete.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
