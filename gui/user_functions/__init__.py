@@ -27,6 +27,7 @@
 from relax_errors import RelaxError
 
 # GUI module imports.
+from bmrb import Bmrb
 from bruker import Bruker
 from deselect import Deselect
 from gpl import Gpl
@@ -52,6 +53,7 @@ from value import Value
 
 # The package __all__ list.
 __all__ = ['base',
+           'bmrb',
            'bruker',
            'deselect',
            'gpl',
@@ -89,6 +91,7 @@ class User_functions:
         """
 
         # The user functions.
+        self.bmrb = Bmrb(parent)
         self.bruker = Bruker(parent)
         self.deselect = Deselect(parent)
         self.gpl = Gpl(parent)

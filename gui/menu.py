@@ -314,6 +314,9 @@ class Uf_menus:
         self.uf = {}
 
         # Build the user function menus.
+        id = self.add_class(name="bmrb", text="&bmrb", icon=paths.icon_16x16.bmrb)
+        self.add_uf(parent_id=id, name="bmrb.citation", text="&citation", fn=user_functions.bmrb.citation)
+
         id = self.add_class(name="bruker", text="&bruker", icon=paths.icon_16x16.bruker)
         self.add_uf(parent_id=id, name="bruker.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.bruker.read)
 
