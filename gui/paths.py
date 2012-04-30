@@ -54,6 +54,7 @@ class I16x16:
         path = ICON_RELAX_PATH + '16x16' + sep
         self.about_relax =              IMAGE_PATH + 'relax_16x16.png'
         self.about_relaxgui =           IMAGE_PATH + 'relax_16x16.png'
+        self.bruker =                   path + 'bruker.png'
         self.gnu_head =                 path + 'gnu-head-mini.png'
         self.grace =                    path + 'grace_icon.png'
         self.molecule =                 path + 'molecule.png'
@@ -179,6 +180,7 @@ class I22x22:
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
+        self.bruker =                   path + 'bruker.png'
         self.molecule =                 path + 'molecule.png'
         self.molecule_grey =            path + 'molecule_grey.png'
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
@@ -244,6 +246,7 @@ class I32x32:
 
         # relax icons.
         path = ICON_RELAX_PATH + '32x32' + sep
+        self.bruker =                   path + 'bruker.png'
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.spin =                     path + 'spin.png'
         self.spin_grey =                path + 'spin_grey.png'
@@ -301,6 +304,7 @@ class I48x48:
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
+        self.bruker =               path + 'bruker.png'
         self.pipe =                 path + 'pipe.png'
         self.pipe_hybrid =          path + 'pipe_hybrid.png'
         self.relax_data =           path + 'fid.png'
