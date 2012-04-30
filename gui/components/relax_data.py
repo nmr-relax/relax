@@ -143,7 +143,7 @@ class Relax_data_list:
         self.button_bruker.SetFont(font.normal)
         self.button_bruker.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_bruker, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_bruker)
+        self.gui.Bind(wx.EVT_BUTTON, self.bruker_read, self.button_bruker)
         self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
 
         # Delete button.
@@ -154,6 +154,17 @@ class Relax_data_list:
         button_sizer.Add(self.button_delete, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.relax_data_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
+
+
+    def bruker_read(self, event):
+        """Launch the bruker.read user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        user_functions.bruker.read()
 
 
     def build_element(self):
