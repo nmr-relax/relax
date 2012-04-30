@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,6 +27,7 @@
 from relax_errors import RelaxError
 
 # GUI module imports.
+from bruker import Bruker
 from deselect import Deselect
 from gpl import Gpl
 from grace import Grace
@@ -51,6 +52,7 @@ from value import Value
 
 # The package __all__ list.
 __all__ = ['base',
+           'bruker',
            'deselect',
            'gpl',
            'grace',
@@ -87,6 +89,7 @@ class User_functions:
         """
 
         # The user functions.
+        self.bruker = Bruker(parent)
         self.deselect = Deselect(parent)
         self.gpl = Gpl(parent)
         self.grace = Grace(parent)
