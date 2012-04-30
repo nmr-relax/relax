@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,8 +30,8 @@ from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 
-class Pdc(SystemTestCase):
-    """TestCase class for the functional tests for the support of different peak intensity files."""
+class Bruker(SystemTestCase):
+    """TestCase class for the Bruker Dynamics Center files."""
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -40,17 +40,17 @@ class Pdc(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
-    def test_pdc_read_noe(self):
-        """Test the reading of a PDC NOE file."""
+    def test_bruker_read_noe(self):
+        """Test the reading of a DC NOE file."""
 
         # Read the sequence data.
-        self.interpreter.sequence.read(file="seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files', res_num_col=2, res_name_col=1)
+        self.interpreter.sequence.read(file="seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bruker_files', res_num_col=2, res_name_col=1)
 
         # The ID string.
         ri_id = 'NOE_600'
 
-        # Read the PDC file.
-        self.interpreter.pdc.read(ri_id=ri_id, file="testNOE.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files')
+        # Read the DC file.
+        self.interpreter.bruker.read(ri_id=ri_id, file="testNOE.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bruker_files')
 
         # Check the data pipe structures.
         self.assertEqual(cdp.ri_ids, [ri_id])
@@ -73,17 +73,17 @@ class Pdc(SystemTestCase):
             i += 1
 
 
-    def test_pdc_read_r1(self):
-        """Test the reading of a PDC R1 file."""
+    def test_bruker_read_r1(self):
+        """Test the reading of a DC R1 file."""
 
         # Read the sequence data.
-        self.interpreter.sequence.read(file="seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files', res_num_col=2, res_name_col=1)
+        self.interpreter.sequence.read(file="seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bruker_files', res_num_col=2, res_name_col=1)
 
         # The ID string.
         ri_id = 'NOE_600'
 
-        # Read the PDC file.
-        self.interpreter.pdc.read(ri_id=ri_id, file="testT1.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files')
+        # Read the DC file.
+        self.interpreter.bruker.read(ri_id=ri_id, file="testT1.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bruker_files')
 
         # Check the data pipe structures.
         self.assertEqual(cdp.ri_ids, [ri_id])
