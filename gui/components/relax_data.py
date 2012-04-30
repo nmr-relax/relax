@@ -135,7 +135,7 @@ class Relax_data_list:
         self.button_add.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_add, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_add)
-        self.button_add.SetToolTipString("Read relaxation data from file.")
+        self.button_add.SetToolTipString("Read relaxation data from a file.")
 
         # Bruker button.
         self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
