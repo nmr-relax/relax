@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2011 Edward d'Auvergne                         #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import bmrb, exp_info
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
@@ -35,92 +35,6 @@ class BMRB(User_fn_class):
     """Class for interfacing with the BMRB (http://www.bmrb.wisc.edu/)."""
 
     def citation(self, cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status='published', type='journal', journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
-        """Specify a citation to be added the BMRB data file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        cite_id:  The citation ID string.
-
-        authors:  The list of authors.  Each author element is a list of four elements (the first 
-            name, last name, first initial, and middle initials).
-
-        doi:  The DOI number, e.g. "10.1000/182".
-
-        pubmed_id:  The identification code assigned to the publication by PubMed.
-
-        full_citation:  The full citation as given in a reference list.
-
-        title:  The title of the publication.
-
-        status:  The publication status.
-
-        journal_abbrev:  The standard journal abbreviation.
-        
-        journal_full:  The full journal name.
-
-        volume:  The volume number.
-
-        issue:  The issue number.
-
-        page_first:  The first page number.
-
-        page_last:  The last page number.
-
-        year:  The publication year.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The full_citation should be in a format similar to that used in a journal article by either
-        cutting and pasting from another document or by typing. Please include author names, title,
-        journal, page numbers, and year or equivalent information for the type of publication given.
-
-        The journal status can only be one of:
-
-            "preparation",
-            "in press",
-            "published",
-            "retracted",
-            "submitted".
-
-        The citation type can only be one of:
-
-            "abstract",
-            "BMRB only",
-            "book",
-            "book chapter",
-            "internet",
-            "journal",
-            "personal communication",
-            "thesis".
-
-        The standard journal abbreviation is that defined by the Chemical Abstract Services for the
-        journal where the data are or will be published.  If the data in the deposition are related
-        to a J. Biomol. NMR paper, the value must be 'J. Biomol. NMR' to alert the BMRB annotators
-        so that the deposition is properly processed.  If the depositor truly does not know the
-        journal, a value of 'not known' or 'na' is acceptable.
-
-
-        Examples
-        ~~~~~~~~
-
-        To add the citation "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the
-        model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7),
-        483-494.", type:
-
-        relax> bmrb.citation(authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.",
-                             "R."]], doi="10.1039/b702202f", pubmed_id="17579774",
-                             full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory
-                             formulation of the model-free problem and the diffusion seeded
-                             model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory
-                             formulation of the model-free problem and the diffusion seeded
-                             model-free paradigm.", status="published", type="journal",
-                             journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems",
-                             volume=3, issue=7, page_first=483, page_last=498, year=2007)
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.citation("
@@ -161,10 +75,68 @@ class BMRB(User_fn_class):
         # Execute the functional code.
         exp_info.citation(cite_id=cite_id, authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
 
+    # The function doc info.
+    citation._doc_title = "Specify a citation to be added the BMRB data file."
+    citation._doc_title_short = "Add a citation."
+    citation._doc_args = [
+        ["cite_id", "The citation ID string."],
+        ["authors", "The list of authors.  Each author element is a list of four elements (the first name, last name, first initial, and middle initials)."],
+        ["doi", "The DOI number, e.g. '10.1000/182'."],
+        ["pubmed_id", "The identification code assigned to the publication by PubMed."],
+        ["full_citation", "The full citation as given in a reference list."],
+        ["title", "The title of the publication."],
+        ["status", "The publication status."],
+        ["journal_abbrev", "The standard journal abbreviation."],
+        ["journal_full", "The full journal name."],
+        ["volume", "The volume number."],
+        ["issue", "The issue number."],
+        ["page_first", "The first page number."],
+        ["page_last", "The last page number."],
+        ["year", "The publication year."]
+    ]
+    citation._doc_desc = """
+        The full_citation should be in a format similar to that used in a journal article by either cutting and pasting from another document or by typing. Please include author names, title, journal, page numbers, and year or equivalent information for the type of publication given.
+
+        The journal status can only be one of:
+
+            "preparation",
+            "in press",
+            "published",
+            "retracted",
+            "submitted".
+
+        The citation type can only be one of:
+
+            "abstract",
+            "BMRB only",
+            "book",
+            "book chapter",
+            "internet",
+            "journal",
+            "personal communication",
+            "thesis".
+
+        The standard journal abbreviation is that defined by the Chemical Abstract Services for the journal where the data are or will be published.  If the data in the deposition are related to a J. Biomol. NMR paper, the value must be 'J. Biomol. NMR' to alert the BMRB annotators so that the deposition is properly processed.  If the depositor truly does not know the journal, a value of 'not known' or 'na' is acceptable.
+        """
+    citation._doc_examples = """
+        To add the citation "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the
+        model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7),
+        483-494.", type:
+
+        relax> bmrb.citation(authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.",
+                             "R."]], doi="10.1039/b702202f", pubmed_id="17579774",
+                             full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory
+                             formulation of the model-free problem and the diffusion seeded
+                             model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory
+                             formulation of the model-free problem and the diffusion seeded
+                             model-free paradigm.", status="published", type="journal",
+                             journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems",
+                             volume=3, issue=7, page_first=483, page_last=498, year=2007)
+        """
+    _build_doc(citation)
+
 
     def display(self, version=None):
-        """Display the BMRB data in NMR-STAR format."""
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.display("
@@ -174,31 +146,13 @@ class BMRB(User_fn_class):
         # Execute the functional code.
         bmrb.display(version=version)
 
+    # The function doc info.
+    display._doc_title = "Display the BMRB data in NMR-STAR format."
+    display._doc_title_short = "Display the BMRB data."
+    _build_doc(display)
+
 
     def read(self, file=None, dir=None, version=None, sample_conditions=None):
-        """Read BMRB files in the NMR-STAR format.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the BMRB STAR formatted file.
-
-        dir:  The directory where the file is located.
-
-        version:  For the reading to use the given NMR-STAR version.
-
-        sample_conditions:  The sample conditions label in the NMR-STAR file to restrict loading to.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        To search for the results file in the current working directory, set dir to None.  Note that
-        only one sample condition can be read per relax data pipe.  Therefore if sample_conditions
-        is not given and multiple conditions exist in the NMR-STAR file, a RelaxError will be
-        raised.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.read("
@@ -217,92 +171,22 @@ class BMRB(User_fn_class):
         # Execute the functional code.
         bmrb.read(file=file, directory=dir, version=version, sample_conditions=sample_conditions)
 
+    # The function doc info.
+    read._doc_title = "Read BMRB files in the NMR-STAR format."
+    read._doc_title_short = "Reading of BMRB files."
+    read._doc_args = [
+        ["file", "The name of the BMRB STAR formatted file."],
+        ["dir", "The directory where the file is located."],
+        ["version", "For the reading to use the given NMR-STAR version."],
+        ["sample_conditions", "The sample conditions label in the NMR-STAR file to restrict loading to."]
+    ]
+    read._doc_desc = """
+        To search for the results file in the current working directory, set dir to None.  Note that only one sample condition can be read per relax data pipe.  Therefore if sample_conditions is not given and multiple conditions exist in the NMR-STAR file, a RelaxError will be raised.
+        """
+    _build_doc(read)
+
 
     def script(self, file='reduced', dir=None, analysis_type=None, model_selection=None, engine='relax', model_elim=False, universal_solution=False):
-        """Specify the scripts used in the analysis.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The script file name.
-
-        dir:  The directory name.
-
-        analysis_type:  The type of analysis performed.
-
-        model_selection:  The model selection technique used, if relevant.
-
-        engine:  The software engine used in the analysis.
-
-        model_elim:  A model-free specific flag specifying if model elimination was performed.
-
-        universal_solution:  A model-free specific flag specifying if the universal solution was
-            sought after.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function allows scripts used in the analysis to be included in the BMRB
-        deposition.  The following addition information may need to be specified with the script.
-
-        The analysis_type must be set.  Allowable values include all the data pipe types used in
-        relax, ie:
-
-            'frame order':  The Frame Order theories,
-            'jw':  Reduced spectral density mapping,
-            'mf':  Model-free analysis,
-            'N-state':  N-state model of domain motions,
-            'noe':  Steady state NOE calculation,
-            'relax_fit':  Relaxation curve fitting,
-
-        The model_selection argument only needs to be set if the script selects between different
-        mathematical models.  This can be anything, but the following are recommended:
-
-            'AIC':  Akaike's Information Criteria.
-            'AICc':  Small sample size corrected AIC.
-            'BIC':  Bayesian or Schwarz Information Criteria.
-            'Bootstrap':  Bootstrap model selection.
-            'CV':  Single-item-out cross-validation.
-            'Expect':  The expected overall discrepancy (the true values of the parameters are
-                      required).
-            'Farrow':  Old model-free method by Farrow et al., 1994.
-            'Palmer':  Old model-free method by Mandel et al., 1995.
-            'Overall':  The realised overall discrepancy (the true values of the parameters are
-                      required).
-
-        The engine is the software used in the calculation, optimisation, etc.  This can be
-        anything, but those recognised by relax (automatic program info, citations, etc. added)
-        include:
-
-            'relax':  hence relax was used for the full analysis.
-            'modelfree4':  Art Palmer's Modelfree4 program was used for optimising the model-free
-                parameter values.
-            'dasha':  The Dasha program was used for optimising the model-free parameter values.
-            'curvefit':  Art Palmer's curvefit program was used to determine the R1 or R2 values.
-
-        The model_elim flag is model-free specific and should be set if the methods from
-        "d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the
-        model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135." were
-        used.  This should be set to True for the full_analysis.py script.
-
-        The universal_solution flag is model-free specific and should be set if the methods from
-        "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and
-        the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494." were used.  This
-        should be set to True for the full_analysis.py script.
-
-
-        Examples
-        ~~~~~~~~
-
-        For BMRB deposition, to specify that the full_analysis.py script was used, type one of:
-
-        relax> bmrb.script('full_analysis.py', 'model-free', 'AIC', 'relax', True, True)
-        relax> bmrb.script(file='full_analysis.py', dir=None, analysis_type='model-free',
-                           model_selection='AIC', engine='relax', model_elim=True,
-                           universal_solution=True)
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.script("
@@ -327,57 +211,65 @@ class BMRB(User_fn_class):
         # Execute the functional code.
         exp_info.script(file=file, dir=dir, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
 
+    # The function doc info.
+    script._doc_title = "Specify the scripts used in the analysis."
+    script._doc_title_short = "Analysis scripts used."
+    script._doc_args = [
+        ["file", "The script file name."],
+        ["dir", "The directory name."],
+        ["analysis_type", "The type of analysis performed."],
+        ["model_selection", "The model selection technique used, if relevant."],
+        ["engine", "The software engine used in the analysis."],
+        ["model_elim", "A model-free specific flag specifying if model elimination was performed."],
+        ["universal_solution", "A model-free specific flag specifying if the universal solution was sought after."]
+    ]
+    script._doc_desc = """
+        This user function allows scripts used in the analysis to be included in the BMRB deposition.  The following addition information may need to be specified with the script.
+
+        The analysis_type must be set.  Allowable values include all the data pipe types used in relax, ie:
+
+            'frame order':  The Frame Order theories,
+            'jw':  Reduced spectral density mapping,
+            'mf':  Model-free analysis,
+            'N-state':  N-state model of domain motions,
+            'noe':  Steady state NOE calculation,
+            'relax_fit':  Relaxation curve fitting,
+
+        The model_selection argument only needs to be set if the script selects between different mathematical models.  This can be anything, but the following are recommended:
+
+            'AIC':  Akaike's Information Criteria.
+            'AICc':  Small sample size corrected AIC.
+            'BIC':  Bayesian or Schwarz Information Criteria.
+            'Bootstrap':  Bootstrap model selection.
+            'CV':  Single-item-out cross-validation.
+            'Expect':  The expected overall discrepancy (the true values of the parameters are required).
+            'Farrow':  Old model-free method by Farrow et al., 1994.
+            'Palmer':  Old model-free method by Mandel et al., 1995.
+            'Overall':  The realised overall discrepancy (the true values of the parameters are required).
+
+        The engine is the software used in the calculation, optimisation, etc.  This can be anything, but those recognised by relax (automatic program info, citations, etc. added) include:
+
+            'relax':  hence relax was used for the full analysis.
+            'modelfree4':  Art Palmer's Modelfree4 program was used for optimising the model-free parameter values.
+            'dasha':  The Dasha program was used for optimising the model-free parameter values.
+            'curvefit':  Art Palmer's curvefit program was used to determine the R1 or R2 values.
+
+        The model_elim flag is model-free specific and should be set if the methods from "d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135." were used.  This should be set to True for the full_analysis.py script.
+
+        The universal_solution flag is model-free specific and should be set if the methods from "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494." were used.  This should be set to True for the full_analysis.py script.
+        """
+    script._doc_examples = """
+        For BMRB deposition, to specify that the full_analysis.py script was used, type one of:
+
+        relax> bmrb.script('full_analysis.py', 'model-free', 'AIC', 'relax', True, True)
+        relax> bmrb.script(file='full_analysis.py', dir=None, analysis_type='model-free',
+                           model_selection='AIC', engine='relax', model_elim=True,
+                           universal_solution=True)
+        """
+    _build_doc(script)
+
 
     def software(self, name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
-        """Specify the software used in the analysis.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        name:  The name of the software program utilised.
-
-        version:  The version of the software, if applicable.
-
-        url:  The web address of the software.
-
-        vendor_name:  The name of the company or person behind the program.
-
-        cite_ids:  A list of the citation ID numbers.
-
-        tasks:  A list of all the tasks performed by the software.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function allows the software used in the analysis to be specified in full detail.
-
-        For the tasks list, this should be a python list of strings (eg. ['spectral processing']).
-        Although not restricted to these, the values suggested by the BMRB are:
-
-            'chemical shift assignment',
-            'chemical shift calculation',
-            'collection',
-            'data analysis',
-            'geometry optimization',
-            'peak picking',
-            'processing',
-            'refinement',
-            'structure solution'
-
-
-        Examples
-        ~~~~~~~~
-
-        For BMRB deposition, to say that Sparky was used in the analysis, type:
-
-        relax> cite_id = bmrb.citation(authors=[['Tom', 'Goddard', 'T.', 'D.'], ['D', 'Kneller',
-                    'D.', 'G.']], title=""Goddard, T. D. and Kneller, D. G., SPARKY 3, University of
-                    California, San Francisco."
-        relax> bmrb.software('Sparky', version='3.110', url="http://www.cgl.ucsf.edu/home/sparky/",
-                    vendor_name="Goddard, T. D.", cite_ids=[cite_id], tasks=["spectral analysis"])
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.software("
@@ -400,42 +292,45 @@ class BMRB(User_fn_class):
         # Execute the functional code.
         exp_info.software(name=name, version=version, url=url, vendor_name=vendor_name, cite_ids=cite_ids, tasks=tasks)
 
+    # The function doc info.
+    software._doc_title = "Specify the software used in the analysis."
+    software._doc_title_short = "Analysis software used."
+    software._doc_args = [
+        ["name", "The name of the software program utilised."],
+        ["version", "The version of the software, if applicable."],
+        ["url", "The web address of the software."],
+        ["vendor_name", "The name of the company or person behind the program."],
+        ["cite_ids", "A list of the citation ID numbers."],
+        ["tasks", "A list of all the tasks performed by the software."]
+    ]
+    software._doc_desc = """
+        This user function allows the software used in the analysis to be specified in full detail.
+
+        For the tasks list, this should be a python list of strings (eg. ['spectral processing']).  Although not restricted to these, the values suggested by the BMRB are:
+
+            'chemical shift assignment',
+            'chemical shift calculation',
+            'collection',
+            'data analysis',
+            'geometry optimization',
+            'peak picking',
+            'processing',
+            'refinement',
+            'structure solution'
+        """
+    software._doc_examples = """
+        For BMRB deposition, to say that Sparky was used in the analysis, type:
+
+        relax> cite_id = bmrb.citation(authors=[['Tom', 'Goddard', 'T.', 'D.'], ['D', 'Kneller',
+                    'D.', 'G.']], title=""Goddard, T. D. and Kneller, D. G., SPARKY 3, University of
+                    California, San Francisco."
+        relax> bmrb.software('Sparky', version='3.110', url="http://www.cgl.ucsf.edu/home/sparky/",
+                    vendor_name="Goddard, T. D.", cite_ids=[cite_id], tasks=["spectral analysis"])
+        """
+    _build_doc(software)
+
 
     def software_select(self, name=None, version=None):
-        """Select the software used in the analysis.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        name:  The name of the software program utilised.
-
-        version:  The version of the software, if applicable.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Rather than specifying all the information directly, this user function allows the software
-        packaged used in the analysis to be selected by name.  The programs currently supported are:
-
-            'NMRPipe' - http://spin.niddk.nih.gov/NMRPipe/
-            'Sparky' - http://www.cgl.ucsf.edu/home/sparky/
-
-        More can be added if all relevant information (program name, description, website, original
-        citation, purpose, etc.) is emailed to relax-users@gna.org.
-
-        Note that relax is automatically added to the BMRB file.
-
-
-        Examples
-        ~~~~~~~~
-
-        For BMRB deposition, to say that both NMRPipe and Sparky were used prior to relax, type:
-
-        relax> bmrb.software_select('NMRPipe')
-        relax> bmrb.software_select('Sparky', version='3.113')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.software_select("
@@ -450,19 +345,52 @@ class BMRB(User_fn_class):
         # Execute the functional code.
         exp_info.software_select(name=name, version=version)
 
+    # The function doc info.
+    software_select._doc_title = "Select the software used in the analysis."
+    software_select._doc_title_short = "Utilised software selection."
+    software_select._doc_args = [
+        ["name", "The name of the software program utilised."],
+        ["version", "The version of the software, if applicable."]
+    ]
+    software_select._doc_desc = """
+        Rather than specifying all the information directly, this user function allows the software packaged used in the analysis to be selected by name.  The programs currently supported are:
+
+            'NMRPipe' - http://spin.niddk.nih.gov/NMRPipe/
+            'Sparky' - http://www.cgl.ucsf.edu/home/sparky/
+
+        More can be added if all relevant information (program name, description, website, original citation, purpose, etc.) is emailed to relax-users@gna.org.
+
+        Note that relax is automatically added to the BMRB file.
+        """
+    software_select._doc_examples = """
+        For BMRB deposition, to say that both NMRPipe and Sparky were used prior to relax, type:
+
+        relax> bmrb.software_select('NMRPipe')
+        relax> bmrb.software_select('Sparky', version='3.113')
+        """
+    _build_doc(software_select)
+
 
     def thiol_state(self, state='reduced'):
-        """Select the thiol state of the system.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "bmrb.thiol_state("
+            text = text + "state=" + repr(state) + ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str(state, 'thiol state')
 
-        state:  The thiol state.
+        # Execute the functional code.
+        exp_info.thiol_state(state=state)
 
-
-        Description
-        ~~~~~~~~~~~
-
+    # The function doc info.
+    thiol_state._doc_title = "Select the thiol state of the system."
+    thiol_state._doc_title_short = "Thiol state selection."
+    thiol_state._doc_args = [
+        ["state", "The thiol state."]
+    ]
+    thiol_state._doc_desc = """
         The thiol state can be any text, thought the BMRB suggests the following:
 
             'all disulfide bound',
@@ -478,54 +406,17 @@ class BMRB(User_fn_class):
             'unknown'.
 
         Alternatively the pure states 'reduced' or 'oxidised' could be specified.
-
-
-        Examples
-        ~~~~~~~~
-
+        """
+    thiol_state._doc_examples = """
         For BMRB deposition, to say that the protein studied is in the oxidised state, tyype one of:
 
         relax> bmrb.thiol_state('oxidised')
         relax> bmrb.thiol_state(state='oxidised')
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.thiol_state("
-            text = text + "state=" + repr(state) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(state, 'thiol state')
-
-        # Execute the functional code.
-        exp_info.thiol_state(state=state)
+    _build_doc(thiol_state)
 
 
     def write(self, file=None, dir='pipe_name', version=None, force=False):
-        """Write the results to a BMRB NMR-STAR formatted file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the BMRB file to output results to.  Optionally this can be a file
-        object, or any object with a write() method.
-
-        dir:  The directory name.
-
-        version:  The NMR-STAR dictionary format version to use.
-.sconsign.dblite
-        force:  A flag which if True will cause the any pre-existing file to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        To place the BMRB file in the current working directory, set dir to None.  If dir is set
-        to the special name 'pipe_name', then the results file will be placed into a directory with
-        the same name as the current data pipe.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "bmrb.write("
@@ -543,3 +434,17 @@ class BMRB(User_fn_class):
 
         # Execute the functional code.
         bmrb.write(file=file, directory=dir, version=version, force=force)
+
+    # The function doc info.
+    write._doc_title = "Write the results to a BMRB NMR-STAR formatted file."
+    write._doc_title = "BMRB file writing."
+    write._doc_args = [
+        ["file", "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method."],
+        ["dir", "The directory name."],
+        ["version", "The NMR-STAR dictionary format version to use."],
+        ["force", "A flag which if True will cause the any pre-existing file to be overwritten."]
+    ]
+    write._doc_desc = """
+        To place the BMRB file in the current working directory, set dir to None.  If dir is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.
+        """
+    _build_doc(write)
