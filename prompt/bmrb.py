@@ -86,6 +86,7 @@ class BMRB(User_fn_class):
         ["full_citation", "The full citation as given in a reference list."],
         ["title", "The title of the publication."],
         ["status", "The publication status."],
+        ["type", "The type of publication."],
         ["journal_abbrev", "The standard journal abbreviation."],
         ["journal_full", "The full journal name."],
         ["volume", "The volume number."],
