@@ -271,7 +271,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Call the element's method.
-        return self._element[key].GetValue()
+        return self._elements[key].GetValue()
 
 
     def SetValue(self, key, value):
@@ -284,7 +284,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Call the element's method.
-        self._element[key].SetValue(value)
+        self._elements[key].SetValue(value)
 
 
     def add_artwork(self, sizer):
