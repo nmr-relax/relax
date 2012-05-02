@@ -32,6 +32,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns import pipes
 from generic_fns.mol_res_spin import spin_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -2502,7 +2503,7 @@ class Mf(SystemTestCase):
 
         # Read the 1.3 results file, extract the data, then close it again.
         a, b, c = platform.python_version_tuple()
-        if int(a) >= 2 and int(b) >= 7 and int(c) >= 3:
+        if dep_check.xml_type == 'internal' and int(a) >= 2 and int(b) >= 7 and int(c) >= 3:
             file = open_read_file(file_name='final_results_trunc_1.3_new', dir=path)
         else:
             file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
