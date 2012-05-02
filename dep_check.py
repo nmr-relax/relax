@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -172,6 +172,25 @@ try:
     pymol_module = True
 except ImportError, message:
     pymol_module = False
+
+# XML.
+try:
+    import xml
+    xml_module = True
+except ImportError, message:
+    xml_module = False
+if xml_module:
+    # The XML version mess!
+    if hasattr(xml, '_MINIMUM_XMLPLUS_VERSION'):
+        xml_version = "%s.%s.%s" % xml._MINIMUM_XMLPLUS_VERSION
+        xml_type = 'internal'
+    elif hasattr(xml, '__version__'):
+        xml_version = xml.__version__
+        xml_type = 'PyXML'
+    else:
+        xml_version = ''
+        xml_type = ''
+
 
 
 # Compiled C modules.
