@@ -37,8 +37,10 @@ import dep_check
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from generic_fns.reset import reset
-from prompt.interpreter import Interpreter
 from status import Status; status = Status()
+
+# relax GUI module imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 
 
 class GuiTestCase(TestCase):
@@ -49,11 +51,6 @@ class GuiTestCase(TestCase):
 
         # Execute the TestCase __init__ method.
         super(GuiTestCase, self).__init__(methodName)
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
 
         # Get the wx app, if the test suite is launched from the gui.
         self.app = wx.GetApp()
@@ -78,6 +75,31 @@ class GuiTestCase(TestCase):
         # No exception.
         except Queue.Empty:
             pass
+
+
+    def execute_uf(self, page=None, **kargs):
+        """Execute the given user function.
+
+        @keyword page:  The user function page.
+        @type page:     Wizard page
+        """
+
+        # Create and store a wizard instance to be used in all user function pages (if needed).
+        if not hasattr(self, '_wizard'):
+            self._wizard = Wiz_window(self.app.gui)
+
+        # Initialise the page (adding it to the wizard).
+        uf_page = page(self._wizard)
+
+        # Set all the values.
+        for key in kargs:
+            uf_page.SetValue(key=key, value=kargs[key])
+
+        # Execute the user function.
+        uf_page.on_execute()
+
+        # Flush the interpreter to force synchronous user functions operation.
+        interpreter.flush()
 
 
     def setUp(self):
@@ -161,6 +183,10 @@ class GuiTestCase(TestCase):
 
         # Recreate the GUI data object.
         ds.relax_gui = Gui()
+
+        # Delete any wizard objects.
+        if hasattr(self, '_wizard'):
+            del self._wizard
 
         # Flush all wx events to make sure the GUI is ready for the next test.
         wx.Yield()
