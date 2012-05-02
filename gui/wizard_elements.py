@@ -37,8 +37,8 @@ from gui.misc import add_border, gui_to_list, gui_to_str, list_to_gui, str_to_gu
 from gui import paths
 
 
-class String_list:
-    """Wizard GUI element for the input of lists of strings."""
+class List:
+    """Base wizard GUI element for the input of all types of lists."""
 
     def __init__(self, name=None, parent=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
         """Set up the element.
@@ -141,6 +141,10 @@ class String_list:
         self._field.SetValue(list_to_gui(value))
 
 
+    def init_window(self):
+        """Dummy method which must be overridden."""
+
+
     def open_dialog(self, event):
         """Open a special dialog for inputting a list of text values.
 
@@ -148,9 +152,8 @@ class String_list:
         @type event:    wx event
         """
 
-
         # Initialise the model selection window.
-        win = String_list_window(name=self.name)
+        win = self.init_window()
 
         # Set the model selector window selections.
         win.SetValue(self.GetValue())
@@ -165,6 +168,42 @@ class String_list:
 
         # Destroy the window.
         del win
+
+
+
+class String_list(List):
+    """Wizard GUI element for the input of lists of strings."""
+
+    def __init__(self, name=None, parent=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
+        """Set up the element.
+
+        @keyword name:      The name of the element to use in titles, etc.
+        @type name:         str
+        @keyword parent:    The wizard GUI element.
+        @type parent:       wx.Panel instance
+        @keyword sizer:     The sizer to put the input field widget into.
+        @type sizer:        wx.Sizer instance
+        @keyword desc:      The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        """
+
+        # Initialise the base class.
+        List.__init__(self, name=name, parent=parent, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+
+
+    def init_window(self):
+        """Set up the specific window type."""
+
+        # Specify the window type to open.
+        return String_list_window(name=self.name)
 
 
 
