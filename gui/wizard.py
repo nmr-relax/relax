@@ -41,6 +41,7 @@ from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
+from gui.wizard_elements import String_list
 
 
 class Wiz_page(wx.Panel):
@@ -550,6 +551,30 @@ class Wiz_page(wx.Panel):
         return combo
 
 
+    def element_string_list(self, key, sizer, desc, tooltip=None, divider=None, padding=0, spacer=None):
+        """Set up the element and store it.
+
+        @param sizer:       The sizer to put the input field widget into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        """
+
+        # Create the element.
+        element = String_list(self, sizer, desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+
+        # Store it.
+        self._elements[key] = element
+
+
     def file_selection(self, sizer, desc, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=True):
         """Build the file selection element.
 
@@ -852,7 +877,7 @@ class Wiz_page(wx.Panel):
     def on_execute(self):
         """To be over-ridden if an action is to be performed just before exiting the page.
 
-        This method is called when terminating the wizard or hitting the apply button. 
+        This method is called when terminating the wizard or hitting the apply button.
         """
 
 
@@ -1446,7 +1471,7 @@ class Wiz_window(wx.Dialog):
         # Return the next page.
         return self._current_page + 1
 
-        
+
     def _ok(self, event):
         """Accept the operation.
 
