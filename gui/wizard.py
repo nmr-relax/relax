@@ -41,7 +41,7 @@ from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
-from gui.wizard_elements import String_list, String_list_of_lists
+from gui.wizard_elements import String, String_list, String_list_of_lists
 
 
 class Wiz_page(wx.Panel):
@@ -549,6 +549,32 @@ class Wiz_page(wx.Panel):
 
         # Return the combo box element.
         return combo
+
+
+    def element_string(self, key=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
+        """Set up the element and store it.
+
+        @keyword key:       The dictionary key to store the element with.
+        @type key:          str
+        @keyword sizer:     The sizer to put the input field widget into.
+        @type sizer:        wx.Sizer instance
+        @keyword desc:      The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        """
+
+        # Create the element.
+        element = String(name=key, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+
+        # Store it.
+        self._elements[key] = element
 
 
     def element_string_list(self, key=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
