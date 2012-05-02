@@ -34,7 +34,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.fonts import font
-from gui.misc import add_border, gui_to_list, gui_to_str, list_to_gui, str_to_gui
+from gui.misc import add_border, gui_to_int, gui_to_list, gui_to_str, int_to_gui, list_to_gui, str_to_gui
 from gui import paths
 
 
@@ -139,6 +139,16 @@ class Base_value:
         # Convert and set the value.
         self._field.SetValue(self.convert_to_gui(value))
 
+
+
+class Integer(Base_value):
+    """Wizard GUI element for the input of integers."""
+
+    def conversion_fns(self):
+        """Set up the conversion functions."""
+
+        self.convert_from_gui = gui_to_int
+        self.convert_to_gui =   int_to_gui
 
 
 class List:
