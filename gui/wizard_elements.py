@@ -549,7 +549,6 @@ class String_list_of_lists_window(wx.Dialog):
         """
 
         # Loop over the entries.
-        print `values`
         for i in range(len(values)):
             # The first value.
             self.list.InsertStringItem(sys.maxint, str_to_gui(values[i][0]))
