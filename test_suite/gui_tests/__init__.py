@@ -29,6 +29,7 @@ from string import split
 from unittest import TestSuite
 
 # relax GUI test module imports.
+from bmrb import Bmrb
 from model_free import Mf
 from noe import Noe
 from rx import Rx
@@ -36,7 +37,8 @@ from state import State
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
-__all__ = ['model_free',
+__all__ = ['bmrb',
+           'model_free',
            'noe',
            'rx',
            'state']
@@ -80,6 +82,7 @@ class GUI_test_runner:
 
         # All tests.
         if not tests:
+            suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
