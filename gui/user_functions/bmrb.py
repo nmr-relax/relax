@@ -62,7 +62,7 @@ class Citation_page(UF_page):
 
         # The fields.
         self.cite_id = self.input_field(sizer, "The citation ID:", tooltip=self.uf._doc_args_dict['cite_id'])
-        self.authors = self.element_string_list('authors', sizer, "The author list:", tooltip=self.uf._doc_args_dict['authors'])
+        self.authors = self.element_string_list(key='authors', sizer=sizer, desc="The author list:", tooltip=self.uf._doc_args_dict['authors'])
 
 
     def on_execute(self):
