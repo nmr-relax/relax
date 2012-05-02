@@ -443,11 +443,13 @@ class Info_box(object):
             status.append(True)
         except:
             status.append(False)
-        try:
+        if status[-1] and hasattr(xml, '__version__'):
             version.append(xml.__version__)
-            path.append(xml.__file__)
-        except:
+        else:
             version.append('')
+        if status[-1] and hasattr(xml, '__file__'):
+            path.append(xml.__file__)
+        else:
             path.append('')
 
         # XML minidom.
