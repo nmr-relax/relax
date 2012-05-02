@@ -436,6 +436,33 @@ class Info_box(object):
         except:
             path.append('')
 
+        # XML.
+        package.append('xml')
+        try:
+            import xml
+            status.append(True)
+        except:
+            status.append(False)
+        try:
+            version.append(xml.__version__)
+            path.append(xml.__file__)
+        except:
+            version.append('')
+            path.append('')
+
+        # XML minidom.
+        package.append('xml.dom.minidom')
+        version.append('')
+        try:
+            import xml.dom.minidom
+            status.append(True)
+        except:
+            status.append(False)
+        try:
+            path.append(xml.dom.minidom.__file__)
+        except:
+            path.append('')
+
         # Format the data.
         fmt_package = "%%-%ss" % (self.format_max_width(package) + 2)
         fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
