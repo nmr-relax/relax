@@ -30,6 +30,7 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+from relax_errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -41,25 +42,32 @@ from gui import paths
 class Base_value:
     """Base wizard GUI element for the input of all types of lists."""
 
-    def __init__(self, name=None, parent=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
+    def __init__(self, name=None, parent=None, element_type='text', sizer=None, desc=None, choices=None, default=None, tooltip=None, divider=None, padding=0, spacer=None):
         """Set up the base value element.
 
 
-        @keyword name:      The name of the element to use in titles, etc.
-        @type name:         str
-        @keyword parent:    The wizard GUI element.
-        @param sizer:       The sizer to put the input field widget into.
-        @type sizer:        wx.Sizer instance
-        @param desc:        The text description.
-        @type desc:         str
-        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
-        @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:      None or int
-        @keyword padding:   Spacing to the left and right of the widgets.
-        @type padding:      int
-        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:       None or int
+        @keyword name:          The name of the element to use in titles, etc.
+        @type name:             str
+        @keyword parent:        The wizard GUI element.
+        @type parent:           wx.Panel instance
+        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
+        @type element_type:     str
+        @param sizer:           The sizer to put the input field widget into.
+        @type sizer:            wx.Sizer instance
+        @param desc:            The text description.
+        @type desc:             str
+        @keyword choices:       The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type choices:          list of str
+        @keyword default:       The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type default:          str or None
+        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
+        @type tooltip:          str
+        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:          None or int
+        @keyword padding:       Spacing to the left and right of the widgets.
+        @type padding:          int
+        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:           None or int
         """
 
         # Store the args.
@@ -84,8 +92,16 @@ class Base_value:
         x, y = text.GetSize()
         sub_sizer.AddSpacer((divider - x, 0))
 
-        # The input field.
-        self._field = wx.TextCtrl(parent, -1, '')
+        # Initialise the input field.
+        if element_type == 'text':
+            self._field = wx.TextCtrl(parent, -1, '')
+        elif element_type == 'combo':
+            self._field = wx.ComboBox(self, -1, '', choices=choices)
+            self._field.SetValue(str_to_gui(default))
+        else:
+            raise RelaxError("Unknown element type '%s'." % element_type)
+
+        # Set up the input field.
         self._field.SetMinSize((50, parent.height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
