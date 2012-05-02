@@ -62,7 +62,7 @@ class Citation_page(UF_page):
 
         # The fields.
         self.cite_id = self.input_field(sizer, "The citation ID:", tooltip=self.uf._doc_args_dict['cite_id'])
-        self.authors = self.input_field(sizer, "The citation ID:", tooltip=self.uf._doc_args_dict['cite_id'])
+        self.authors = self.element_string_list('authors', sizer, "The author list:", tooltip=self.uf._doc_args_dict['authors'])
 
 
     def on_execute(self):
@@ -70,7 +70,7 @@ class Citation_page(UF_page):
 
         # The data.
         cite_id = gui_to_str(self.cite_id.GetValue())
-        authors = gui_to_str(self.authors.GetValue())
+        authors = self.GetValue('authors')
 
         # Read the relaxation data.
         self.execute('bmrb.citation', cite_id=cite_id, authors=authors)
