@@ -569,7 +569,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = String_list(self, sizer, desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+        element = String_list(name=key, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
 
         # Store it.
         self._elements[key] = element
