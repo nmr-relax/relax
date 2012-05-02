@@ -95,6 +95,9 @@ class Wiz_page(wx.Panel):
         # Initilise some variables.
         self.exec_status = False
 
+        # The wizard GUI element storage.
+        self._elements = {}
+
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(box_main)
@@ -255,6 +258,32 @@ class Wiz_page(wx.Panel):
             self.sep.SetValue(str_to_gui("white space"))
         else:
             self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
+
+
+    def GetValue(self, key):
+        """Special wizard method for getting the value of the GUI element corresponding to the key.
+
+        @param key:     The key value of the desired GUI element.
+        @type key:      str
+        @return:        The value that the specific GUI element's GetValue() method returns.
+        @rtype:         unknown
+        """
+
+        # Call the element's method.
+        return self._element[key].GetValue()
+
+
+    def SetValue(self, key, value):
+        """Special wizard method for setting the value of the GUI element corresponding to the key.
+
+        @param key:     The key value of the desired GUI element.
+        @type key:      str
+        @param value:   The value that the specific GUI element's SetValue() method expects.
+        @type value:    unknown
+        """
+
+        # Call the element's method.
+        self._element[key].SetValue(value)
 
 
     def add_artwork(self, sizer):
