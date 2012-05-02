@@ -438,18 +438,12 @@ class Info_box(object):
 
         # XML.
         package.append('xml')
-        try:
-            import xml
-            status.append(True)
-        except:
-            status.append(False)
-        if status[-1] and hasattr(xml, '__version__'):
-            version.append(xml.__version__)
+        status.append(dep_check.xml_module)
+        if dep_check.xml_module:
+            version.append("%s (%s)" % (dep_check.xml_version, dep_check.xml_type))
+            path.append(dep_check.xml.__file__)
         else:
             version.append('')
-        if status[-1] and hasattr(xml, '__file__'):
-            path.append(xml.__file__)
-        else:
             path.append('')
 
         # XML minidom.
