@@ -24,13 +24,7 @@
 """Module containing the 'pipe' user function data."""
 
 # relax module imports.
-from base_class import User_fn_class, _build_doc
-import arg_check
-from generic_fns import pipes
-from relax_errors import RelaxError
-from specific_fns.setup import hybrid_obj
-from user_functions.objects import Container
-from user_functions import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 # The user function class.
@@ -139,7 +133,7 @@ relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
 uf = uf_info.add_uf('pipe.switch')
 uf.title = "Switch between the data pipes of the relax data store."
 uf.title_short = "Data pipe switching."
-uf.add_keyarg(name="pipe_name", default=None, py_type="str", desc_short="data pipe name", desc="The name of the data pipe."]
+uf.add_keyarg(name="pipe_name", default=None, py_type="str", desc_short="data pipe name", desc="The name of the data pipe.")
 uf.backend = 'generic_fns.pipes.switch'
 uf.desc = """
 This will switch between the various data pipes within the relax data store.
