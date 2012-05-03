@@ -36,6 +36,7 @@ if dep_check.readline_module:
     import readline
 if dep_check.runpy_module:
     import runpy
+from string import split
 import sys
 
 # Python modules accessible on the command prompt.
@@ -105,7 +106,7 @@ from vmd import Vmd
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # Auto-generation objects.
-from prompt.objects import Class_container
+from prompt.objects import Class_container, Uf_object
 
 
 class Interpreter:
@@ -162,6 +163,21 @@ class Interpreter:
 
             # Add the object to the local namespace.
             self._locals[name] = obj
+
+        # Then generate the user functions.
+        for name, data in uf_info.uf_loop():
+            # Split up the name.
+            class_name, uf_name = split(name, '.')
+
+            # Generate a new container.
+            obj = Uf_object(name)
+
+            # Get the class object.
+            class_obj = self._locals[class_name]
+
+            # Add the object to the user function class.
+            setattr(class_obj, uf_name, obj)
+
 
 
     def _setup(self):

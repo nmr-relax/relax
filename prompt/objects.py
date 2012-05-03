@@ -57,3 +57,18 @@ class Class_container(object):
 
         # Return a description.
         return "<The %s user function class object>" % self._name
+
+
+
+class Uf_object(object):
+    """The object for auto-generating the user functions."""
+
+    def __init__(self, name):
+        """Set up the object.
+
+        @param name:    The name of the user function.
+        @type name:     str
+        """
+
+        # Store the args.
+        self._name = name
