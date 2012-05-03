@@ -55,7 +55,7 @@ class Uf_container(object):
     """
 
     # The list of modifiable objects (anything else will be rejected to prevent coding errors).
-    self.__mod_attr__ = [
+    __mod_attr__ = [
             'title',
             'title_short',
             'backend',
