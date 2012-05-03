@@ -191,8 +191,17 @@ class Base_value:
         @type value:    list of str
         """
 
-        # Convert and set the value.
-        self._field.SetValue(self.convert_to_gui(value))
+        # Convert and set the value for a TextCtrl.
+        if self.element_type == 'text':
+            self._field.SetValue(self.convert_to_gui(value))
+
+        # Convert and set the value for a ComboBox.
+        if self.element_type == 'combo':
+            # Loop until the proper client data is found.
+            for i in range(self._field.GetCount()):
+                if self._field.GetClientData(i) == value:
+                    self._field.SetSelection(i)
+                    break
 
 
 
