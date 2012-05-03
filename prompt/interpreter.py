@@ -101,6 +101,9 @@ from deselect import Deselect
 from value import Value
 from vmd import Vmd
 
+# User function data structure.
+from user_functions.data import Uf_info; uf_info = Uf_info()
+
 
 class Interpreter:
     def __init__(self, show_script=True, quit=True, raise_relax_error=False):
