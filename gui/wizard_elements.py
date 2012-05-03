@@ -207,7 +207,7 @@ class Base_value:
 
             # Loop over the choices and data, adding both to the end.
             for i in range(len(combo_choices)):
-                self._field.Insert(str_to_gui(combo_choices[i]), sys.maxint, combo_data[i])
+                self._field.Insert(str_to_gui(combo_choices[i]), i, combo_data[i])
 
             # Set the default selection.
             if combo_default:

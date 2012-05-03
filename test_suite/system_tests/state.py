@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 import sys
 from tempfile import mktemp
 
@@ -89,7 +90,7 @@ class State(SystemTestCase):
         reset()
 
         # The data pipe list.
-        pipe_types = VALID_TYPES
+        pipe_types = deepcopy(VALID_TYPES)
         pipe_types.pop(pipe_types.index("frame order"))
 
         # Create a few data pipes.
