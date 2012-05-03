@@ -104,6 +104,9 @@ from vmd import Vmd
 # User function data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
+# Auto-generation objects.
+from prompt.objects import Class_container
+
 
 class Interpreter:
     def __init__(self, show_script=True, quit=True, raise_relax_error=False):
@@ -144,6 +147,24 @@ class Interpreter:
 
         # Set up the interpreter objects.
         self._locals = self._setup()
+
+        # Auto-generate the user functions and classes.
+        self._auto_generate()
+
+
+    def _auto_generate(self):
+        """Build the user function objects from the user function data object information."""
+
+        # First generate the classes.
+        for name, data in uf_info.class_loop():
+            # Generate a new container.
+            obj = Class_container(name)
+
+            # Replace the docstring.
+            obj.__doc__ = data.title
+
+            # Add the object to the local namespace.
+            self._locals[name] = obj
 
 
     def _setup(self):
