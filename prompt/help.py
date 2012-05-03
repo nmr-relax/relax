@@ -66,12 +66,19 @@ For assistance in using a function, simply type 'help(function)'.  All functions
 
 
     def __call__(self, *args, **kwds):
+        """Make the object executable."""
+
+        # Catch strange callings of the object.
         if len(args) != 1 or isinstance(args[0], str):
             print((self.text))
             return
+
+        # The relax help system.
         if hasattr(args[0], '__relax_help__'):
             sys.stdout.write(args[0].__relax_help__ + "\n")
             return
+
+        # Default to the normal Python help system.
         return pydoc.help(*args, **kwds)
 
 
