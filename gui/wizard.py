@@ -264,7 +264,7 @@ class Wiz_page(wx.Panel):
     def Clear(self, key):
         """Special wizard method for clearing the value of the GUI element corresponding to the key.
 
-        @param key:     The key value of the desired GUI element.
+        @param key:     The key corresponding to the desired GUI element.
         @type key:      str
         """
 
@@ -275,7 +275,7 @@ class Wiz_page(wx.Panel):
     def GetValue(self, key):
         """Special wizard method for getting the value of the GUI element corresponding to the key.
 
-        @param key:     The key value of the desired GUI element.
+        @param key:     The key corresponding to the desired GUI element.
         @type key:      str
         @return:        The value that the specific GUI element's GetValue() method returns.
         @rtype:         unknown
@@ -285,10 +285,27 @@ class Wiz_page(wx.Panel):
         return self._elements[key].GetValue()
 
 
+    def ResetChoices(self, key, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # Call the element's method.
+        self._elements[key].ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
+
+
     def SetValue(self, key, value):
         """Special wizard method for setting the value of the GUI element corresponding to the key.
 
-        @param key:     The key value of the desired GUI element.
+        @param key:     The key corresponding to the desired GUI element.
         @type key:      str
         @param value:   The value that the specific GUI element's SetValue() method expects.
         @type value:    unknown
