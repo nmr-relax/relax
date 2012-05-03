@@ -28,13 +28,38 @@ from relax_errors import RelaxError
 
 
 class Class_container:
-    """This class is used to process and store all of the user function class information."""
+    """This class is used to process and store all of the user function class information.
+
+    @ivar title:            The user function class description.
+    """
+
+    # The list of modifiable objects (anything else will be rejected to prevent coding errors).
+    __mod_attr__ = [
+            'title'
+    ]
 
     def __init__(self):
         """Initialise all the data."""
 
         # Initialise the variables for all user function classes.
         self.title = None
+
+
+    def __setattr__(self, name, value):
+        """Override the class __setattr__ method.
+
+        @param name:    The name of the attribute to modify.
+        @type name:     str
+        @param value:   The new value of the attribute.
+        @type value:    anything
+        """
+
+        # Test if the attribute that is trying to be set is modifiable.
+        if not name in self.__mod_attr__:
+            raise RelaxError("The object '%s' is not a modifiable attribute." % name)
+
+        # Set the attribute normally.
+        self.__dict__[name] = value
 
 
 
