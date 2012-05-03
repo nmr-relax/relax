@@ -72,3 +72,10 @@ class Uf_object(object):
 
         # Store the args.
         self._name = name
+
+
+    def __repr__(self):
+        """Replacement function for displaying an instance of this user function class."""
+
+        # Return a description.
+        return "<The %s user function>" % self._name
