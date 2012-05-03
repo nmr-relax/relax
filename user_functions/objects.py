@@ -93,7 +93,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type='str', desc=None, desc_short=None, can_be_none=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, desc_short=None, can_be_none=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:          The name of the argument.
@@ -102,6 +102,8 @@ class Uf_container(object):
         @type default:          anything
         @keyword py_type:       The Python object type that the argument must match (taking the can_be_none flag into account).
         @type py_type:          str
+        @keyword desc_short:    The short human-readable description of the argument.  This is used, for example, in the RelaxError messages to refer to the argument.
+        @type desc_short:       str
         @keyword desc:          The long human-readable description of the argument.
         @type desc:             str
         @keyword desc_short:    The optional short human-readable description of the argument.
@@ -109,6 +111,16 @@ class Uf_container(object):
         @keyword can_be_none:   A flag which specifies if the argument is allowed to have the None value.
         @type can_be_none:      bool
         """
+
+        # Check that the args have been properly supplied.
+        if name == None:
+            raise RelaxError("The 'name' argument must be supplied.")
+        if py_type == None:
+            raise RelaxError("The 'py_type' argument must be supplied.")
+        if desc_short == None:
+            raise RelaxError("The 'desc_short' argument must be supplied.")
+        if desc == None:
+            raise RelaxError("The 'desc' argument must be supplied.")
 
         # Append a new argument dictionary to the list, and alias it.
         self.args.append({})
