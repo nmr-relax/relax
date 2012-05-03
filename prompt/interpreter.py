@@ -92,7 +92,6 @@ from rdc import RDC
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
-from pipe import Pipe
 from select import Select
 from sequence import Sequence
 from spectrum import Spectrum
@@ -219,7 +218,6 @@ class Interpreter:
         objects['relax_fit'] = Relax_fit(self._exec_info)
         objects['residue'] = Residue(self._exec_info)
         objects['results'] = Results(self._exec_info)
-        objects['pipe'] = Pipe(self._exec_info)
         objects['select'] = Select(self._exec_info)
         objects['sequence'] = Sequence(self._exec_info)
         objects['spectrum'] = Spectrum(self._exec_info)
