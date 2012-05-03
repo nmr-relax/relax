@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -47,6 +47,9 @@ PIPE_DESC = {
     'noe':  'Steady state NOE calculation',
     'relax_fit':  'Relaxation curve fitting'
 }
+PIPE_DESC_LIST = []
+for name in VALID_TYPES:
+    PIPE_DESC_LIST.append(PIPE_DESC[name])
 
 
 def copy(pipe_from=None, pipe_to=None):
