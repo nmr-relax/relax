@@ -201,16 +201,13 @@ class Base_value:
             # First clear all data.
             self.Clear()
 
-            # Loop over the choices and data, adding both to the element.
-            for i in range(len(combo_choices)):
-                # Set the string value.
-                self._field.Append(str_to_gui(combo_choices[i]))
+            # The data.
+            if combo_data == None:
+                combo_data = combo_choices
 
-                # Set the data.
-                if combo_data != None:
-                    self._field.SetClientData(i, combo_data[i])
-                else:
-                    self._field.SetClientData(i, combo_choices[i])
+            # Loop over the choices and data, adding both to the end.
+            for i in range(len(combo_choices)):
+                self._field.Insert(str_to_gui(combo_choices[i]), sys.maxint, combo_data[i])
 
             # Set the default selection.
             if combo_default:
