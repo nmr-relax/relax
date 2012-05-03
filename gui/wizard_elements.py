@@ -167,11 +167,12 @@ class Base_value:
         self.conversion_fns()
 
 
-    def conversion_fns(self):
-        """Dummy method for setting up the conversion functions.
+    def Clear(self):
+        """Special method for clearing or resetting the GUI element."""
 
-        This should define the self.convert_to_gui() and self.convert_from_gui() function aliases.
-        """
+        # Clear the value from a TextCtrl or ComboBox.
+        if self.element_type in ['text', 'combo']:
+            self._field.Clear()
 
 
     def GetValue(self):
@@ -208,6 +209,13 @@ class Base_value:
                 if self._field.GetClientData(i) == value:
                     self._field.SetSelection(i)
                     break
+
+
+    def conversion_fns(self):
+        """Dummy method for setting up the conversion functions.
+
+        This should define the self.convert_to_gui() and self.convert_from_gui() function aliases.
+        """
 
 
 

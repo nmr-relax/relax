@@ -261,6 +261,17 @@ class Wiz_page(wx.Panel):
             self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
 
 
+    def Clear(self, key):
+        """Special wizard method for clearing the value of the GUI element corresponding to the key.
+
+        @param key:     The key value of the desired GUI element.
+        @type key:      str
+        """
+
+        # Call the element's method.
+        self._elements[key].Clear()
+
+
     def GetValue(self, key):
         """Special wizard method for getting the value of the GUI element corresponding to the key.
 
