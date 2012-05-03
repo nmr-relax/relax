@@ -24,6 +24,7 @@
 """Module containing the special objects for auto-generating the user functions and classes."""
 
 # relax module imports.
+from prompt.base_class import _strip_lead
 from prompt.help import relax_class_help
 
 
@@ -45,6 +46,10 @@ class Class_container(object):
         # Build the relax help system string.
         self.__relax_help__ = desc
         self.__relax_help__ += "\n%s" % relax_class_help
+
+        # Add a description to the help string.
+        if hasattr(self, '__description__'):
+            self.__relax_help__ += "\n\n%s" % _strip_lead(self.__description__)
 
 
     def __repr__(self):
