@@ -48,7 +48,7 @@ class Uf_container(object):
 
     @ivar title:            The long title of the user function.
     @ivar title_short:      The optional short title.
-    @ivar args:             The list of argument details.
+    @ivar _args:            The list of argument details.
     @ivar backend:          The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'generic_fns.pipes.create'.  Note, this should be importable as __import__(backend)!
     @ivar desc:             The full, multi-paragraph description.
     @ivar prompt_examples:  The examples of how to use the prompt front end.
@@ -58,6 +58,7 @@ class Uf_container(object):
     __mod_attr__ = [
             'title',
             'title_short',
+            '_args',
             'backend',
             'desc',
             'prompt_examples'
@@ -70,7 +71,7 @@ class Uf_container(object):
         # Initialise the variables for all user functions.
         self.title = None
         self.title_short = None
-        self.args = []
+        self._args = []
         self.backend = None
         self.desc = None
         self.prompt_examples = None
@@ -121,8 +122,8 @@ class Uf_container(object):
             raise RelaxError("The 'desc' argument must be supplied.")
 
         # Append a new argument dictionary to the list, and alias it.
-        self.args.append({})
-        arg = self.args[-1]
+        self._args.append({})
+        arg = self._args[-1]
 
         # Add the data.
         arg['name'] = name
