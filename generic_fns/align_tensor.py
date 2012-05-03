@@ -486,8 +486,6 @@ def fix(id=None, fixed=True):
     pipes.test()
 
     # Test if alignment tensor data exists.
-    if tensor and not align_data_exists(tensor):
-        raise RelaxNoTensorError('alignment')
     if not hasattr(cdp, 'align_tensors') or not hasattr(cdp, 'align_ids'):
         raise RelaxNoTensorError('alignment')
 
