@@ -577,7 +577,7 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_string(self, key=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
+    def element_string(self, key=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the string element and store it.
 
         @keyword key:           The dictionary key to store the element with.
