@@ -24,8 +24,9 @@
 """Module containing the special objects for auto-generating the user functions and classes."""
 
 # relax module imports.
-from prompt.base_class import _strip_lead
+from prompt.base_class import _build_subtitle, _format_text, _strip_lead
 from prompt.help import relax_class_help
+from relax_errors import RelaxError
 
 
 class Class_container(object):
@@ -63,7 +64,7 @@ class Class_container(object):
 class Uf_object(object):
     """The object for auto-generating the user functions."""
 
-    def __init__(self, name):
+    def __init__(self, name, title=None, kargs=None, desc=None, examples=None, additional=None):
         """Set up the object.
 
         @param name:    The name of the user function.
@@ -72,6 +73,18 @@ class Uf_object(object):
 
         # Store the args.
         self._name = name
+        self._title = title
+        self._kargs = kargs
+        self._desc = desc
+        self._examples = examples
+        self._additional = additional
+
+        # Check the args.
+        if title == None:
+            raise RelaxError("The title must be given.")
+
+        # Build the user function documentation.
+        self._build_doc()
 
 
     def __repr__(self):
@@ -79,3 +92,43 @@ class Uf_object(object):
 
         # Return a description.
         return "<The %s user function>" % self._name
+
+
+    def _build_doc(self):
+        """Create the user function documentation."""
+
+        # Initialise.
+        self.__relax_help__ = ""
+
+        # Add the title.
+        self.__relax_help__ = "%s%s\n" % (self.__relax_help__, self._title)
+
+        # Add the keyword args.
+        if self._kargs != None:
+            self.__relax_help__ += _build_subtitle("Keyword Arguments")
+            for i in range(len(self._kargs)):
+                # The text.
+                text = "%s:  %s" % (self._kargs[i]['name'], self._kargs[i]['desc'])
+
+                # Format.
+                text = _format_text(text)
+
+                # Add to the docstring.
+                self.__relax_help__ = "%s%s\n" % (self.__relax_help__, text)
+
+        # Add the description.
+        if self._desc != None:
+            self.__relax_help__ += _build_subtitle("Description")
+            self.__relax_help__ += _format_text(self._desc)
+
+        # Add the examples.
+        if self._examples != None:
+            self.__relax_help__ += '\n%s' % _build_subtitle("Examples")
+            self.__relax_help__ += _format_text(self._examples)
+
+        # Add the additional sections.
+        if self._additional != None:
+            # Loop over each section.
+            for i in range(len(self._additional)):
+                self.__relax_help__ += '\n%s' % _build_subtitle(self._additional[i][0])
+                self.__relax_help__ += _format_text(self._additional[i][1])
