@@ -93,7 +93,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, desc_short=None, can_be_none=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, can_be_none=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:          The name of the argument.
@@ -106,8 +106,6 @@ class Uf_container(object):
         @type desc_short:       str
         @keyword desc:          The long human-readable description of the argument.
         @type desc:             str
-        @keyword desc_short:    The optional short human-readable description of the argument.
-        @type desc_short:       str or None
         @keyword can_be_none:   A flag which specifies if the argument is allowed to have the None value.
         @type can_be_none:      bool
         """
