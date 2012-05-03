@@ -23,6 +23,9 @@
 # Module docstring.
 """Module containing the special objects for auto-generating the user functions and classes."""
 
+# relax module imports.
+from prompt.help import relax_class_help
+
 
 class Class_container(object):
     """The container for created the user function class objects."""
@@ -38,7 +41,10 @@ class Class_container(object):
 
         # Store the args.
         self._name = name
-        self._desc = desc
+
+        # Build the relax help system string.
+        self.__relax_help__ = desc
+        self.__relax_help__ += "\n%s" % relax_class_help
 
 
     def __repr__(self):
