@@ -29,7 +29,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # The user function class.
 uf_class = uf_info.add_class('pipe')
-uf_class.title = "Class for holding the user functions for manipulating data pipes."
+uf_class.title = "Class holding the user functions for manipulating data pipes."
 
 # The pipe.copy user function.
 uf = uf_info.add_uf('pipe.copy')
