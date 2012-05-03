@@ -51,10 +51,7 @@ class Bmrb(GuiTestCase):
         self._wizard = Wiz_window(self.app.gui)
 
         # Create the data pipe.
-        pipe_create = user_functions.pipe.Create_page(self._wizard)
-        pipe_create.pipe_name.SetValue(str_to_gui('results'))
-        pipe_create.pipe_type.SetSelection(VALID_TYPES.index('mf'))
-        pipe_create.on_execute()
+        self.execute_uf(page=user_functions.pipe.Create_page, pipe_name='results', pipe_type='mf')
 
         # Read the results.
         results_read = user_functions.results.Read_page(self._wizard)
