@@ -114,7 +114,7 @@ def install(target, source, env):
     # Run relax to create the *.pyc files.
     print("\nCreating the byte-compiled *.pyc files.")
     python_path = sys.prefix + path.sep + 'bin' + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
-    cmd = "cd %s; %s -m compileall ." % (env['RELAX_PATH'], python_path)
+    cmd = "cd %s; %s -m compileall . ; %s -O -m compileall ." % (env['RELAX_PATH'], python_path, python_path)
     print(cmd)
     system(cmd)
 
