@@ -27,15 +27,18 @@
 class Class_container(object):
     """The container for created the user function class objects."""
 
-    def __init__(self, name):
+    def __init__(self, name, desc):
         """Set up the container.
 
         @param name:    The name of the user function class.
         @type name:     str
+        @param desc:    The description to be presented by the help system.
+        @type desc:     str
         """
 
         # Store the args.
         self._name = name
+        self._desc = desc
 
 
     def __repr__(self):

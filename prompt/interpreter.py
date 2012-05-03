@@ -158,10 +158,7 @@ class Interpreter:
         # First generate the classes.
         for name, data in uf_info.class_loop():
             # Generate a new container.
-            obj = Class_container(name)
-
-            # Replace the docstring.
-            obj.__doc__ = data.title
+            obj = Class_container(name, data.title)
 
             # Add the object to the local namespace.
             self._locals[name] = obj
