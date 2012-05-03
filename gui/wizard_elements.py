@@ -102,8 +102,14 @@ class Base_value:
             # Set up the text control.
             self._field = wx.TextCtrl(parent, -1, '')
 
-            # Text control specific functions.
-            self._field.SetEditable(not read_only)
+            # Read only field.
+            if read_only:
+                # Cannot edit.
+                self._field.SetEditable(False)
+
+                # Change the colour to the background.
+                colour = parent.GetBackgroundColour()
+                self._field.SetOwnBackgroundColour(colour)
 
         # Initialise the combo box input field.
         elif element_type == 'combo':
