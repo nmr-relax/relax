@@ -97,3 +97,27 @@ class Uf_info(object):
 
         # Return the object.
         return self._uf[-1]
+
+
+    def class_loop(self):
+        """Iterator method for looping over the user function classes.
+
+        @return:    The class name and data container.
+        @rtype:     tuple of str and Class_container instance
+        """
+
+        # Loop over the classes.
+        for i in range(len(self._class_names)):
+            yield self._class_names[i], self._classes[i]
+
+
+    def uf_loop(self):
+        """Iterator method for looping over the user functions.
+
+        @return:    The user function name and data container.
+        @rtype:     tuple of str and Uf_container instance
+        """
+
+        # Loop over the user functions.
+        for i in range(len(self._uf_names)):
+            yield self._uf_names[i], self._uf[i]
