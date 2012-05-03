@@ -42,7 +42,7 @@ from gui import paths
 class Base_value:
     """Base wizard GUI element for the input of all types of lists."""
 
-    def __init__(self, name=None, parent=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None):
+    def __init__(self, name=None, parent=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the base value element.
 
 
@@ -70,6 +70,8 @@ class Base_value:
         @type padding:          int
         @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:           None or int
+        @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
+        @type read_only:        bool
         """
 
         # Store the args.
@@ -97,12 +99,21 @@ class Base_value:
 
         # Initialise the text input field.
         if element_type == 'text':
+            # Set up the text control.
             self._field = wx.TextCtrl(parent, -1, '')
+
+            # Text control specific functions.
+            self._field.SetEditable(not read_only)
 
         # Initialise the combo box input field.
         elif element_type == 'combo':
+            # The style.
+            style = wx.CB_DROPDOWN
+            if read_only:
+                style = style | wx.CB_READONLY
+
             # Set up the combo box.
-            self._field = wx.ComboBox(self, -1, '')
+            self._field = wx.ComboBox(parent, -1, '', style=style)
 
             # Loop over the choices and data, adding both to the element.
             if combo_choices != None:
