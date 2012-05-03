@@ -28,3 +28,6 @@ This package contains all information and details about user functions, from doc
 
 # The __all__ package list.
 __all__ = ['']
+
+# Import all the modules to set up the data.
+import user_functions.pipe
