@@ -75,7 +75,7 @@ For assistance in using a function, simply type 'help(function)'.  All functions
 
         # The relax help system.
         if hasattr(args[0], '__relax_help__'):
-            sys.stdout.write(args[0].__relax_help__ + "\n")
+            pydoc.pager(args[0].__relax_help__)
             return
 
         # Default to the normal Python help system.
