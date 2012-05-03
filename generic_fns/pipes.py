@@ -68,6 +68,10 @@ def copy(pipe_from=None, pipe_to=None):
     if pipe_to in list(ds.keys()):
         raise RelaxPipeError(pipe_to)
 
+    # Both pipe arguments cannot be None.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
+
     # Acquire the pipe lock (data modifying function), and make sure it is finally released.
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
