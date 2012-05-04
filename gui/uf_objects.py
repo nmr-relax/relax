@@ -179,7 +179,7 @@ class Uf_page(Wiz_page):
             arg = self.uf_data.kargs[i]
 
             # The arg description.
-            desc = "%s:" % arg['wiz_desc']
+            desc = "The %s:" % arg['desc_short']
 
             # String type.
             if arg['py_type'] == 'str':
