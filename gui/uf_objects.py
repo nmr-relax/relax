@@ -31,6 +31,7 @@ from wx.lib import scrolledpanel
 
 # relax module imports.
 from prompt.base_class import _strip_lead
+from relax_errors import RelaxError
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI imports.
