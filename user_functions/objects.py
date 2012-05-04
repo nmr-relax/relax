@@ -92,6 +92,10 @@ class Uf_container(object):
     @type desc:             str
     @ivar prompt_examples:  The examples of how to use the prompt front end.
     @type prompt_examples:  str or None
+    @ivar menu_text:        The text to use for the GUI menu entry.
+    @type menu_text:        str
+    @ivar gui_icon:         The code for the icon to use in the GUI.
+    @type gui_icon:         str or None
     """
 
     # The list of modifiable objects (anything else will be rejected to prevent coding errors).
@@ -101,7 +105,9 @@ class Uf_container(object):
             'kargs',
             'backend',
             'desc',
-            'prompt_examples'
+            'prompt_examples',
+            'menu_text',
+            'gui_icon'
     ]
 
 
@@ -115,6 +121,8 @@ class Uf_container(object):
         self.backend = None
         self.desc = None
         self.prompt_examples = None
+        self.menu_text = None
+        self.gui_icon = None
 
 
     def __setattr__(self, name, value):

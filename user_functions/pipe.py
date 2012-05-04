@@ -35,6 +35,7 @@ uf_class.title = "Class holding the user functions for manipulating data pipes."
 uf_class.menu_text = "&pipe"
 uf_class.gui_icon = "relax.pipe"
 
+
 # The pipe.copy user function.
 uf = uf_info.add_uf('pipe.copy')
 uf.title = "Copy a data pipe."
@@ -55,6 +56,9 @@ If the current data pipe is 'm1', then the following command can be used:
 
 relax> pipe.copy(pipe_to='m2')
 """
+uf.menu_text = "&copy"
+uf.gui_icon = "oxygen.actions.list-add"
+
 
 # The pipe.create user function.
 uf = uf_info.add_uf('pipe.create')
@@ -80,6 +84,9 @@ To set up a model-free analysis data pipe with the name 'm5', type:
 
 relax> pipe.create('m5', 'mf')
 """
+uf.menu_text = "crea&te"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+
 
 # The pipe.current user function.
 uf = uf_info.add_uf('pipe.current')
@@ -91,6 +98,8 @@ To run the user function, type:
 
 relax> pipe.current()
 """
+uf.menu_text = "c&urrent"
+
 
 # The pipe.delete user function.
 uf = uf_info.add_uf('pipe.delete')
@@ -101,6 +110,9 @@ uf.backend = pipes.delete
 uf.desc = """
 This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.
 """
+uf.menu_text = "&delete"
+uf.gui_icon = "oxygen.actions.list-remove"
+
 
 # The pipe.display user function.
 uf = uf_info.add_uf('pipe.display')
@@ -112,6 +124,8 @@ To run the user function, type:
 
 relax> pipe.display()
 """
+uf.menu_text = "di&splay"
+
 
 # The pipe.hybridise user function.
 uf = uf_info.add_uf('pipe.hybridise')
@@ -132,6 +146,9 @@ called 'mixed model' by typing:
 relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
 relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
 """
+uf.menu_text = "&hybridise"
+uf.gui_icon = "relax.pipe_hybrid"
+
 
 # The pipe.switch user function.
 uf = uf_info.add_uf('pipe.switch')
@@ -148,3 +165,5 @@ To switch to the 'ellipsoid' data pipe, type:
 relax> pipe.switch('ellipsoid')
 relax> pipe.switch(pipe_name='ellipsoid')
 """
+uf.menu_text = "&switch"
+uf.gui_icon = "oxygen.actions.system-switch-user"
