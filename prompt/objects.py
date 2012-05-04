@@ -94,16 +94,62 @@ class Uf_object(object):
         for i in range(self._karg_num):
             # The user supplied value.
             if self._kargs[i]['name'] in keys:
-                # The value.
+                # Aliases.
                 value = uf_kargs[self._kargs[i]['name']]
+                arg = self._kargs[i]
+                py_type = arg['py_type']
+                desc_short = arg['desc_short']
+                can_be_none = arg['can_be_none']
+                size = arg['size']
+                dim = arg['dim']
+                none_elements = arg['none_elements']
+                list_of_lists = arg['list_of_lists']
 
                 # Check if the correct Python object type has been supplied.
-                if self._kargs[i]['py_type'] == 'str':
-                    arg_check.is_str(value, self._kargs[i]['desc_short'], can_be_none=self._kargs[i]['can_be_none'])
-                elif self._kargs[i]['py_type'] == 'str_list':
-                    arg_check.is_str_list(value, self._kargs[i]['desc_short'], can_be_none=self._kargs[i]['can_be_none'])
+                if py_type == 'bool':
+                    arg_check.is_bool(value, desc_short)
+                elif py_type == 'float':
+                    arg_check.is_float(value, desc_short, can_be_none=can_be_none)
+                elif py_type == 'float_array':
+                    arg_check.is_float_array(value, desc_short, size=size, can_be_none=can_be_none)
+                elif py_type == 'float_matrix':
+                    arg_check.is_float_matrix(value, desc_short, dim=dim, can_be_none=can_be_none)
+                elif py_type == 'func':
+                    arg_check.is_func(value, desc_short, can_be_none=can_be_none)
+                elif py_type == 'int':
+                    arg_check.is_int(value, desc_short, can_be_none=can_be_none)
+                elif py_type == 'int_list':
+                    arg_check.is_int(value, desc_short, size=size, can_be_none=can_be_none)
+                elif py_type == 'int_or_int_list':
+                    arg_check.is_int_or_int_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
+                elif py_type == 'list':
+                    arg_check.is_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=list_of_lists)
+                elif py_type == 'none':
+                    arg_check.is_none(value, desc_short)
+                elif py_type == 'num':
+                    arg_check.is_num(value, desc_short, can_be_none=can_be_none)
+                elif py_type == 'num_list':
+                    arg_check.is_num_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                elif py_type == 'num_or_num_tuple':
+                    arg_check.is_num_or_num_tuple(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                elif py_type == 'num_tuple':
+                    arg_check.is_num_tuple(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                elif py_type == 'str':
+                    arg_check.is_str(value, desc_short, can_be_none=can_be_none)
+                elif py_type == 'str_list':
+                    arg_check.is_str_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=list_of_lists)
+                elif py_type == 'str_or_inst':
+                    arg_check.is_str_or_inst(value, desc_short, can_be_none=can_be_none)
+                elif py_type == 'str_or_num_or_str_num_list':
+                    arg_check.is_str_or_num_or_str_num_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                elif py_type == 'str_or_num_list':
+                    arg_check.is_str_or_num_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                elif py_type == 'str_or_str_list':
+                    arg_check.is_str_or_str_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                elif py_type == 'tuple':
+                    arg_check.is_tuple(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
                 else:
-                    raise RelaxError("The Python object type '%s' is unknown." % self._kargs[i]['py_type'])
+                    raise RelaxError("The Python object type '%s' is unknown." % py_type)
 
                 # Store the value.
                 values.append(value)
