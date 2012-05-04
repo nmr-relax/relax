@@ -41,7 +41,7 @@ from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
-from gui.wizard_elements import Integer, Selector_file, Selector_dir, String, String_list, String_list_of_lists
+from gui.wizard_elements import Integer, Selector_file, String, String_list, String_list_of_lists
 
 
 class Wiz_page(wx.Panel):
@@ -607,7 +607,7 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_file_sel(self, key=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_file_sel(self, key=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the integer element and store it.
 
         @keyword key:           The dictionary key to store the element with.
@@ -616,6 +616,12 @@ class Wiz_page(wx.Panel):
         @type sizer:            wx.Sizer instance
         @keyword desc:          The text description.
         @type desc:             str
+        @keyword message:       The file selector prompt string.
+        @type message:          String
+        @keyword wildcard:      The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
+        @type wildcard:         String
+        @keyword style:         The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
+        @type style:            long
         @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
         @type tooltip:          str
         @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -629,7 +635,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Selector_file(name=key, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Selector_file(name=key, parent=self, sizer=sizer, desc=desc, message=message, wildcard=wildcard, style=style, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element
