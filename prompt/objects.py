@@ -79,12 +79,20 @@ class Uf_object(object):
         values = []
         for i in range(self._karg_num):
             # The user supplied value.
-            if self._karg_names[i] in keys:
-                values.append(kwds[self._karg_names[i]])
+            if self._kargs[i]['name'] in keys:
+                # The value.
+                value = kwds[self._kargs[i]['name']]
+
+                # Check if the correct Python object type has been supplied.
+                if self._kargs[i]['py_type'] == 'str':
+                    arg_check.is_str(value, self._kargs[i]['desc_short'])
+
+                # Store the value.
+                values.append(value)
 
             # The default.
             else:
-                values.append(self._karg_default[i])
+                values.append(self._kargs[i]['default'])
 
         # Function intro text.
         if status.prompt_intro:
@@ -129,10 +137,8 @@ class Uf_object(object):
         # Generate fixed keyword argument data structures (for faster execution).
         self._karg_num = len(self._kargs)
         self._karg_names = []
-        self._karg_default = []
         for i in range(self._karg_num):
             self._karg_names.append(self._kargs[i]['name'])
-            self._karg_default.append(self._kargs[i]['default'])
 
         # Build the user function documentation.
         self._build_doc()
