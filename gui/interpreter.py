@@ -66,7 +66,7 @@ class Interpreter(object):
             self._instance._interpreter_thread.start()
 
             # Hack to turn off ANSI escape characters in GUI mode.
-            self._instance._interpreter._exec_info.prompt_colour_off()
+            self._instance._interpreter.prompt_colour_off()
 
         # Already instantiated, so return the instance.
         return self._instance
