@@ -288,9 +288,10 @@ class List:
 
         # Store the args.
         self.name = name
+        self.element_type = element_type
 
         # Initialise the default element.
-        if element_type == 'default':
+        if self.element_type == 'default':
             # Init.
             sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -346,12 +347,12 @@ class List:
                 self._field.SetToolTipString(tooltip)
 
         # Initialise the combo list input field.
-        elif element_type == 'combo_list':
+        elif self.element_type == 'combo_list':
             self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, tooltip=tooltip)
 
         # Unknown field.
         else:
-            raise RelaxError("Unknown element type '%s'." % element_type)
+            raise RelaxError("Unknown element type '%s'." % self.element_type)
 
 
     def GetValue(self):
@@ -363,6 +364,24 @@ class List:
 
         # Convert and return the value.
         return gui_to_list(self._field.GetValue())
+
+
+    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo_list'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo_list'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo_list'.
+        @type combo_default:    str or None
+        """
+
+        # The ComboBox list.
+        if self.element_type == 'combo_list':
+            self._field.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
 
 
     def SetValue(self, value):

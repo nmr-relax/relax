@@ -27,6 +27,7 @@
 import wx
 
 # relax GUI module imports.
+from gui.misc import str_to_gui
 from gui.paths import icon_16x16
 
 
@@ -232,3 +233,30 @@ class Combo_list:
 
         # Return the list.
         return text
+
+
+    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # Loop over the combo boxes.
+        for i in range(len(self._combo_boxes)):
+            # First clear all data.
+            self._combo_boxes[i].Clear()
+
+            # Loop over the choices and data, adding both to the end.
+            for j in range(len(combo_choices)):
+                self._combo_boxes[i].Insert(str_to_gui(combo_choices[j]), j, combo_data[j])
+
+            # Set the default selection.
+            if combo_default:
+                self._combo_boxes[i].SetStringSelection(combo_default)
