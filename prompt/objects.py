@@ -27,6 +27,7 @@
 from prompt.base_class import _bold_text, _build_subtitle, _format_text, _strip_lead
 from prompt.help import relax_class_help
 from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class Class_container(object):
