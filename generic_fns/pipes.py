@@ -146,6 +146,12 @@ def cdp_name():
     return ds.current_pipe
 
 
+def current():
+    """Print the name of the current data pipe."""
+
+    print(cdp_name())
+
+
 def delete(pipe_name=None):
     """Delete a data pipe.
 
