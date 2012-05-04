@@ -28,7 +28,7 @@ from os import sep
 from string import split
 
 
-def fetch_icon(icon, size='16x16'):
+def fetch_icon(icon=None, size='16x16'):
     """Return the path to the specified icon.
 
     The icon code consists of two parts separated by the '.' character.  These are:
@@ -38,13 +38,17 @@ def fetch_icon(icon, size='16x16'):
 
     To specify the 'graphics/oxygen_icons/16x16/actions/document-open.png' icon, the icon code string would therefore be 'oxygen.actions.document-open'.
 
-    @param icon:    The special icon code.
+    @keyword icon:  The special icon code.
     @type icon:     str
     @keyword size:  The icon size to fetch.
     @type size:     str
     @return:        The icon path, for example 'oxygen_icons/16x16/actions/document-open.png'.
     @rtype:         str
     """
+
+    # No icon.
+    if icon == None:
+        return None
 
     # Initialise the path.
     path = 'graphics' + sep
