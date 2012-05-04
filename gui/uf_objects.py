@@ -182,8 +182,20 @@ class Uf_page(Wiz_page):
             # The arg description formatting.
             desc = "The %s:" % arg['desc_short']
 
+            # Special arg type:  file selection dialog.
+            if arg['arg_type'] == 'file sel':
+                self.element_file_sel(key=arg['name'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
+            # Special arg type:  dir arg.
+            elif arg['arg_type'] == 'dir':
+                pass
+
+            # Special arg type:  directory selection dialog.
+            elif arg['arg_type'] == 'dir sel':
+                self.element_dir_sel(key=arg['name'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
             # Int type.
-            if arg['py_type'] == 'int':
+            elif arg['py_type'] == 'int':
                 self.element_int(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # String type.
