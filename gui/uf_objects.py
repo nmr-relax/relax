@@ -39,25 +39,6 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_page, Wiz_window
 
 
-class Page_storage(dict):
-    """A singleton container for holding all the user function pages."""
-
-    # Class variable for storing the class instance (for the singleton).
-    _instance = None
-
-    def __new__(self, *args, **kargs):
-        """Replacement method for implementing the singleton design pattern."""
-
-        # First instantiation.
-        if self._instance is None:
-            # Instantiate.
-            self._instance = dict.__new__(self, *args, **kargs)
-
-        # Already instantiated, so return the instance.
-        return self._instance
-
-
-
 class Uf_object(object):
     """The object for auto-generating the GUI user functions."""
 
@@ -71,17 +52,8 @@ class Uf_object(object):
         # Create the wizard dialog.
         wizard = Wiz_window(parent=self._parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
-        # Create the user function page, if needed.
-        if self._name not in self._uf_pages.keys():
-            # Create the page.
-            page = Uf_page(self._name, parent=wizard)
-
-            # Store the page for later reuse.
-            self._uf_pages[self._name] = page
-
-        # Fetch a pre-created page.
-        else:
-            page = self._uf_pages[self._name]
+        # Create the page.
+        page = Uf_page(self._name, parent=wizard)
 
         # Add the page to the wizard.
         wizard.add_page(page, apply_button=self._apply_button)
@@ -111,9 +83,6 @@ class Uf_object(object):
         self._title = title
         self._size = size
         self._apply_button = apply_button
-
-        # The user function page singleton object.
-        self._uf_pages = Page_storage()
 
 
 
