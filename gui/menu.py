@@ -29,6 +29,7 @@ import wx
 
 # relax module imports.
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui import paths
@@ -114,6 +115,9 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor, id=self.MENU_VIEW_PIPE_EDIT)
 
         # The 'User functions' menu entries.
+        self._user_functions_old()
+
+        # The auto generated 'User functions' menu entries.
         self._user_functions()
 
         # The 'Tools' menu entries.
@@ -236,6 +240,43 @@ class Menu:
 
 
     def _user_functions(self):
+        """Auto-generate the user function sub-menu."""
+
+        # The menu.
+        menu = wx.Menu()
+
+        # Initialise some variables.
+        class_list = []
+
+        # The user functions.
+        user_functions = User_functions(self.gui)
+
+        # Loop over the user functions.
+        for name, data in uf_info.uf_loop():
+            # Split up the name.
+            class_name, uf_name = split(name, '.')
+
+            # Generate a submenu.
+            if class_name not in class_list:
+                # Get the user function class data object.
+                data = uf_info.get_class(class_name)
+
+                # Create a unique ID.
+                class_id = wx.NewId()
+
+                # Create the submenu.
+                menu.AppendItem(build_menu_item(menu, id=class_id, text=data.menu_text, icon=fetch_icon(data.gui_icon)))
+
+        # Add the menu.
+        uf_menus = Uf_menus(parent=self.gui, menu=menu)
+
+        # Add the sub-menu.
+        title = "&User functions"
+        self.menubar.Append(menu, title)
+        self.menu_uf_id = self.menubar.FindMenu(title)
+
+
+    def _user_functions_old(self):
         """Build the user function sub-menu."""
 
         # The menu.
@@ -245,7 +286,7 @@ class Menu:
         uf_menus = Uf_menus(parent=self.gui, menu=menu)
 
         # Add the sub-menu.
-        title = "&User functions"
+        title = "&User functions old"
         self.menubar.Append(menu, title)
         self.menu_uf_id = self.menubar.FindMenu(title)
 

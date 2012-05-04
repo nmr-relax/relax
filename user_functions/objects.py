@@ -31,11 +31,18 @@ class Class_container:
     """This class is used to process and store all of the user function class information.
 
     @ivar title:            The user function class description.
+    @type title:            str
+    @ivar menu_text:        The text to use for the GUI menu entry.
+    @type menu_text:        str
+    @ivar gui_icon:         The code for the icon to use in the GUI.
+    @type gui_icon:         str or None
     """
 
     # The list of modifiable objects (anything else will be rejected to prevent coding errors).
     __mod_attr__ = [
-            'title'
+            'title',
+            'menu_text',
+            'gui_icon'
     ]
 
     def __init__(self):
@@ -43,6 +50,8 @@ class Class_container:
 
         # Initialise the variables for all user function classes.
         self.title = None
+        self.menu_text = None
+        self.gui_icon = None
 
 
     def __setattr__(self, name, value):
