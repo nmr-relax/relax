@@ -32,7 +32,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from graphics import IMAGE_PATH
+from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, WIZARD_IMAGE_PATH
 from status import Status; status = Status()
 
 
