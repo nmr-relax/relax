@@ -176,7 +176,6 @@ class Interpreter:
             setattr(class_obj, uf_name, obj)
 
 
-
     def _setup(self):
         """Set up all the interpreter objects.
 
