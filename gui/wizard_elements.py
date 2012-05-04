@@ -35,6 +35,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.components.combo_list import Combo_list
+from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.misc import add_border, gui_to_int, gui_to_list, gui_to_str, int_to_gui, list_to_gui, str_to_gui
 from gui import paths
@@ -45,7 +46,6 @@ class Base_value:
 
     def __init__(self, name=None, parent=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the base value element.
-
 
         @keyword name:          The name of the element to use in titles, etc.
         @type name:             str
@@ -422,6 +422,149 @@ class List:
 
         # Destroy the window.
         del win
+
+
+class Selector_file:
+    """Wizard GUI element for selecting files."""
+
+    def __init__(self, name=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=True, read_only=False):
+        """Build the file selection element.
+
+        @keyword name:      The name of the element to use in titles, etc.
+        @type name:         str
+        @keyword parent:    The wizard GUI element.
+        @type parent:       wx.Panel instance
+        @keyword sizer:     The sizer to put the input field into.
+        @type sizer:        wx.Sizer instance
+        @keyword desc:      The text description.
+        @type desc:         str
+        @keyword message:   The file selector prompt string.
+        @type message:      String
+        @keyword wildcard:  The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
+        @type wildcard:     String
+        @keyword style:     The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
+        @type style:        long
+        @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        @keyword preview:   A flag which if true will allow the file to be previewed.
+        @type preview:      bool
+        @keyword read_only: A flag which if True means that the text of the element cannot be edited.
+        @type read_only:    bool
+        """
+
+        # Store the args.
+        self.name = name
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
+        # The description.
+        text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The divider.
+        if not divider:
+            divider = parent._div_left
+
+        # Spacing.
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((divider - x, 0))
+
+        # The input field.
+        if not hasattr(parent, 'file_selection_field'):
+            parent.file_selection_field = []
+        parent.file_selection_field.append(wx.TextCtrl(parent, -1, ''))
+        self._field = parent.file_selection_field[-1]
+        self._field.SetMinSize((-1, parent.height_element))
+        self._field.SetFont(font.normal)
+        sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The file selection object.
+        obj = RelaxFileDialog(parent, field=self._field, message=message, wildcard=wildcard, style=style)
+
+        # A little spacing.
+        sub_sizer.AddSpacer(5)
+
+        # The file selection button.
+        button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
+        button.SetMinSize((parent.height_element, parent.height_element))
+        sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
+
+        # File preview.
+        if not hasattr(parent, 'file_selection_preview_button'):
+            parent.file_selection_preview_button = []
+        if not preview:
+            parent.file_selection_preview_button.append(None)
+        else:
+            # A little spacing.
+            sub_sizer.AddSpacer(5)
+
+            # The preview button.
+            parent.file_selection_preview_button.append(wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY)))
+            button = parent.file_selection_preview_button[-1]
+            button.SetMinSize((parent.height_element, parent.height_element))
+            sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+            parent.Bind(wx.EVT_BUTTON, parent.preview_file, button)
+
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
+        # Add to the main sizer (followed by stretchable spacing).
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            self._field.SetToolTipString(tooltip)
+            button.SetToolTipString(tooltip)
+        else:
+            button.SetToolTipString("Select the file.")
+
+
+    def Clear(self):
+        """Special method for clearing or resetting the GUI element."""
+
+        # Clear the value from the TextCtrl.
+        self._field.Clear()
+
+
+    def GetValue(self):
+        """Special method for returning the value of the GUI element.
+
+        @return:    The string value.
+        @rtype:     list of str
+        """
+
+        # Convert and return the value from a TextCtrl.
+        return gui_to_str(self._field.GetValue())
+
+
+    def SetValue(self, value):
+        """Special method for setting the value of the GUI element.
+
+        @param value:   The value to set.
+        @type value:    str
+        """
+
+        # Convert and set the value for a TextCtrl.
+        self._field.SetValue(str_to_gui(value))
 
 
 
