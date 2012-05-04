@@ -24,6 +24,7 @@
 """Module containing the special objects for auto-generating the user functions and classes."""
 
 # relax module imports.
+import arg_check
 from prompt.base_class import _bold_text, _build_subtitle, _format_text, _strip_lead
 from prompt.help import relax_class_help
 from relax_errors import RelaxError
@@ -98,6 +99,10 @@ class Uf_object(object):
                 # Check if the correct Python object type has been supplied.
                 if self._kargs[i]['py_type'] == 'str':
                     arg_check.is_str(value, self._kargs[i]['desc_short'])
+                elif self._kargs[i]['py_type'] == 'str_list':
+                    arg_check.is_str_list(value, self._kargs[i]['desc_short'])
+                else:
+                    raise RelaxError("The Python object type '%s' is unknown." % self._kargs[i]['py_type'])
 
                 # Store the value.
                 values.append(value)
