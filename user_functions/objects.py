@@ -159,7 +159,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, wiz_desc=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -168,12 +168,10 @@ class Uf_container(object):
         @type default:                  anything
         @keyword py_type:               The Python object type that the argument must match (taking the can_be_none flag into account).
         @type py_type:                  str
-        @keyword desc_short:            The short human-readable description of the argument.  This is used, for example, in the RelaxError messages to refer to the argument.
+        @keyword desc_short:            The short human-readable description of the argument.  This is used in the RelaxError messages to refer to the argument, as well as in the GUI user function page elements.
         @type desc_short:               str
         @keyword desc:                  The long human-readable description of the argument.
         @type desc:                     str
-        @keyword wiz_desc:              The description used in the wizard GUI pages.
-        @type wiz_desc:                 str
         @keyword wiz_element_type:      The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
         @type wiz_element_type:         str
         @keyword wiz_combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
@@ -212,7 +210,6 @@ class Uf_container(object):
         arg['py_type'] = py_type
         arg['desc'] = desc
         arg['desc_short'] = desc_short
-        arg['wiz_desc'] = wiz_desc
         arg['wiz_element_type'] = wiz_element_type
         arg['wiz_combo_choices'] = wiz_combo_choices
         arg['wiz_combo_data'] = wiz_combo_data
