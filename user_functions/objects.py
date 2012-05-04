@@ -159,7 +159,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -168,6 +168,11 @@ class Uf_container(object):
         @type default:                  anything
         @keyword py_type:               The Python object type that the argument must match (taking the can_be_none flag into account).
         @type py_type:                  str
+        @keyword arg_type:              The type of argument.  This is reserved for special UI elements:
+                                            - 'file sel' will indicate to certain UIs that a file selection dialog is required.
+                                            - 'dir' will cause the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
+                                            - 'dir sel' will indicate to certain UIs that a dir selection dialog is required.
+        @type arg_type:                 str
         @keyword desc_short:            The short human-readable description of the argument.  This is used in the RelaxError messages to refer to the argument, as well as in the GUI user function page elements.
         @type desc_short:               str
         @keyword desc:                  The long human-readable description of the argument.
@@ -210,6 +215,7 @@ class Uf_container(object):
         arg['name'] = name
         arg['default'] = default
         arg['py_type'] = py_type
+        arg['arg_type'] = arg_type
         arg['desc'] = desc
         arg['desc_short'] = desc_short
         arg['list_titles'] = list_titles
