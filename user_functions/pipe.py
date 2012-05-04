@@ -24,6 +24,7 @@
 """Module containing the 'pipe' user function data."""
 
 # relax module imports.
+from graphics import WIZARD_IMAGE_PATH
 from generic_fns import pipes
 from specific_fns.setup import hybrid_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -40,8 +41,24 @@ uf_class.gui_icon = "relax.pipe"
 uf = uf_info.add_uf('pipe.copy')
 uf.title = "Copy a data pipe."
 uf.title_short = "Data pipe copying."
-uf.add_keyarg(name="pipe_from", default=None, py_type="str", desc_short="pipe from", desc="The name of the source data pipe to copy the data from.", can_be_none=True)
-uf.add_keyarg(name="pipe_to", default=None, py_type="str", desc_short="pipe to", desc="The name of the target data pipe to copy the data to.", can_be_none=True)
+uf.add_keyarg(
+        name = "pipe_from",
+        default = None,
+        py_type = "str",
+        desc_short = "pipe from",
+        desc = "The name of the source data pipe to copy the data from.",
+        wiz_desc = "Source pipe",
+        can_be_none = True
+)
+uf.add_keyarg(
+        name = "pipe_to",
+        default = None,
+        py_type = "str",
+        desc_short = "pipe to",
+        desc = "The name of the target data pipe to copy the data to.",
+        wiz_desc = "Destination pipe name",
+        can_be_none = True
+)
 uf.backend = pipes.copy
 uf.desc = """
 This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.
@@ -58,14 +75,32 @@ relax> pipe.copy(pipe_to='m2')
 """
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
 # The pipe.create user function.
 uf = uf_info.add_uf('pipe.create')
 uf.title = "Add a new data pipe to the relax data store."
 uf.title_short = "Data pipe creation."
-uf.add_keyarg(name="pipe_name", default=None, py_type="str", desc_short="data pipe name", desc="The name of the data pipe.")
-uf.add_keyarg(name="pipe_type", default=None, py_type="str", desc_short="data pipe type", desc="The type of data pipe.")
+uf.add_keyarg(
+        name = "pipe_name",
+        default = None,
+        py_type = "str",
+        desc_short = "data pipe name",
+        desc = "The name of the data pipe.",
+        wiz_desc = "The data pipe name"
+)
+uf.add_keyarg(
+        name = "pipe_type",
+        default = None,
+        py_type = "str",
+        desc_short = "data pipe type",
+        desc = "The type of data pipe.",
+        wiz_desc = "The type of data pipe",
+        wiz_element_type = 'combo',
+        wiz_combo_choices = pipes.PIPE_DESC_LIST,
+        wiz_combo_data = pipes.VALID_TYPES
+)
 uf.backend = pipes.create
 uf.desc = """
 The data pipe name can be any string however the data pipe type can only be one of the following:
@@ -86,6 +121,8 @@ relax> pipe.create('m5', 'mf')
 """
 uf.menu_text = "crea&te"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
 # The pipe.current user function.
@@ -99,19 +136,29 @@ To run the user function, type:
 relax> pipe.current()
 """
 uf.menu_text = "c&urrent"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
 # The pipe.delete user function.
 uf = uf_info.add_uf('pipe.delete')
 uf.title = "Delete a data pipe from the relax data store."
 uf.title_short = "Data pipe deletion."
-uf.add_keyarg(name="pipe_name", default=None, py_type="str", desc_short="data pipe name", desc="The name of the data pipe to delete.", can_be_none=True)
+uf.add_keyarg(
+        name = "pipe_name",
+        default = None,
+        py_type = "str",
+        desc_short = "data pipe name",
+        desc = "The name of the data pipe to delete.",
+        wiz_desc = "The pipe",
+        can_be_none = True
+)
 uf.backend = pipes.delete
 uf.desc = """
 This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.
 """
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
 # The pipe.display user function.
@@ -125,14 +172,29 @@ To run the user function, type:
 relax> pipe.display()
 """
 uf.menu_text = "di&splay"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
 # The pipe.hybridise user function.
 uf = uf_info.add_uf('pipe.hybridise')
 uf.title = "Create a hybrid data pipe by fusing a number of other data pipes."
 uf.title_short = "Hybrid data pipe creation."
-uf.add_keyarg(name="hybrid", default=None, py_type="str", desc_short="hybrid pipe name", desc="The name of the hybrid data pipe to create.")
-uf.add_keyarg(name="pipes", default=None, py_type="str_list", desc_short="data pipes", desc="An array containing the names of all data pipes to hybridise.")
+uf.add_keyarg(
+        name = "hybrid",
+        default = None,
+        py_type = "str",
+        desc_short = "hybrid pipe name",
+        desc = "The name of the hybrid data pipe to create.",
+        wiz_desc = "The hybrid pipe name"
+)
+uf.add_keyarg(
+        name = "pipes",
+        default = None,
+        py_type = "str_list",
+        desc_short = "data pipes",
+        desc = "An array containing the names of all data pipes to hybridise.",
+        wiz_desc = "The pipes to hybridise"
+)
 uf.backend = hybrid_obj._hybridise
 uf.desc = """
 This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised diffusion tensors.  The N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe.  This hybrid data pipe can then be compared via model selection to a data pipe whereby the entire protein is assumed to have a single diffusion tensor.
@@ -148,13 +210,22 @@ relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
 """
 uf.menu_text = "&hybridise"
 uf.gui_icon = "relax.pipe_hybrid"
+uf.wizard_size = (800, 800)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe_hybrid.png'
 
 
 # The pipe.switch user function.
 uf = uf_info.add_uf('pipe.switch')
 uf.title = "Switch between the data pipes of the relax data store."
 uf.title_short = "Data pipe switching."
-uf.add_keyarg(name="pipe_name", default=None, py_type="str", desc_short="data pipe name", desc="The name of the data pipe.")
+uf.add_keyarg(
+        name = "pipe_name",
+        default = None,
+        py_type = "str",
+        desc_short = "data pipe name",
+        desc = "The name of the data pipe.",
+        wiz_desc = "The pipe"
+)
 uf.backend = pipes.switch
 uf.desc = """
 This will switch between the various data pipes within the relax data store.
@@ -167,3 +238,6 @@ relax> pipe.switch(pipe_name='ellipsoid')
 """
 uf.menu_text = "&switch"
 uf.gui_icon = "oxygen.actions.system-switch-user"
+uf.wizard_size = (650, 450)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'

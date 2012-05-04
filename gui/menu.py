@@ -36,6 +36,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 # relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
+from gui.uf_objects import Uf_storage
 from gui.uf_pages import User_functions
 
 
@@ -249,6 +250,7 @@ class Menu:
 
         # Initialise some variables.
         class_list = []
+        store = Uf_storage()
 
         # The user functions.
         user_functions = User_functions(self.gui)
@@ -284,6 +286,9 @@ class Menu:
             # Create the user function menu entry.
             uf_id = wx.NewId()
             sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+
+            # Bind the menu item.
+            self.gui.Bind(wx.EVT_MENU, store[name], id=uf_id)
 
         # Add the very last sub menu.
         if class_item != None:
