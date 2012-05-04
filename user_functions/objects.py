@@ -201,8 +201,6 @@ class Uf_container(object):
             raise RelaxError("The 'desc_short' argument must be supplied.")
         if desc == None:
             raise RelaxError("The 'desc' argument must be supplied.")
-        if wiz_desc == None:
-            raise RelaxError("The 'wiz_desc' argument must be supplied.")
 
         # Append a new argument dictionary to the list, and alias it.
         self.kargs.append({})
