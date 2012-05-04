@@ -23,4 +23,52 @@
 # Package docstring.
 """The relax graphics package."""
 
+# Python module imports.
+from os import sep
+from string import split
 
+
+def fetch_icon(icon, size='16x16'):
+    """Return the path to the specified icon.
+
+    The icon code consists of two parts separated by the '.' character.  These are:
+
+        - The first part corresponds to the icon type, and can either be 'relax' or 'oxygen'.
+        - The second part is the icon name, as a path.  The directories and files are separated by '.' characters.  So for the 'actions/dialog-close.png' icon, the second part would be 'actions.dialog-close'.
+
+    To specify the 'graphics/oxygen_icons/16x16/actions/document-open.png' icon, the icon code string would therefore be 'oxygen.actions.document-open'.
+
+    @param icon:    The special icon code.
+    @type icon:     str
+    @keyword size:  The icon size to fetch.
+    @type size:     str
+    @return:        The icon path, for example 'oxygen_icons/16x16/actions/document-open.png'.
+    @rtype:         str
+    """
+
+    # Initialise the path.
+    path = 'graphics' + sep
+
+    # Split up the icon code.
+    elements = split(icon, '.')
+
+    # The icon type.
+    if elements[0] == 'relax':
+        path += 'relax_icons' + sep
+    elif elements[0] == 'oxygen':
+        path += 'oxygen_icons' + sep
+    else:
+        raise RelaxError("The icon type '%s' is unknown." % elements[0])
+
+    # The icon size.
+    path += size + sep
+
+    # The subdirectory.
+    if len(elements) == 3:
+        path += elements[1] + sep
+
+    # The file.
+    path += "%s.png" % elements[-1]
+
+    # Return the path.
+    return path
