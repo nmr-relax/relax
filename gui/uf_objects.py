@@ -189,6 +189,10 @@ class Uf_page(Wiz_page):
             elif arg['py_type'] == 'str_list':
                 self.element_string_list(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'])
 
+            # Unknown type.
+            else:
+                raise RelaxError("The Python object type '%s' cannot be handled." % arg['py_type'])
+
 
     def add_desc(self, sizer, max_y=220):
         """Add the description to the dialog.
