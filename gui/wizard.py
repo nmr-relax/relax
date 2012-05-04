@@ -281,6 +281,10 @@ class Wiz_page(wx.Panel):
         @rtype:         unknown
         """
 
+        # The key is not set, so assume this is a hidden argument.
+        if key not in self._elements.keys():
+            return None
+
         # Call the element's method.
         return self._elements[key].GetValue()
 
