@@ -75,8 +75,20 @@ class Uf_object(object):
             if name not in self._karg_names:
                 raise RelaxError("The keyword argument '%s' is unknown." % name)
 
+        # Convert the args to keyword args if needed.
+        num_args = len(args)
+        if num_args:
+            for i in range(num_args):
+                # Check if the keyword is already assigned.
+                if self._kargs[i]['name'] in keys:
+                    raise RelaxError("The argument '%s' and the keyword argument '%s' cannot both be supplied." % (args[i], self._kargs[i]['name']))
+
+                # Add the arg as a keyword arg.
+                kwds[self._kargs[i]['name']] = args[i]
+
         # Set the argument defaults.
         values = []
+        keys = kwds.keys()
         for i in range(self._karg_num):
             # The user supplied value.
             if self._kargs[i]['name'] in keys:
