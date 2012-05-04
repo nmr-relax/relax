@@ -40,7 +40,7 @@ from gui.icons import relax_icons
 from gui.menu import Uf_menus
 from gui.misc import gui_raise, gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
-from gui.user_functions import User_functions, sequence, structure; user_functions = User_functions()
+from gui.uf_pages import User_functions, sequence, structure; user_functions = User_functions()
 from gui.wizard import Wiz_page, Wiz_window
 
 

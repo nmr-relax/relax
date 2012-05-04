@@ -37,7 +37,7 @@ from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.uf_pages import User_functions; user_functions = User_functions()
 
 
 class Spectra_list:

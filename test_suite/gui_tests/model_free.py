@@ -35,7 +35,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 # relax GUI imports.
 from gui.analyses import auto_model_free
 from gui.misc import float_to_gui, str_to_gui
-from gui.user_functions import relax_data, sequence, value
+from gui.uf_pages import relax_data, sequence, value
 from gui.wizard import Wiz_window
 
 

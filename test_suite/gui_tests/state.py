@@ -33,7 +33,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.misc import int_to_gui, str_to_gui
-from gui.user_functions import deselect, sequence, spin
+from gui.uf_pages import deselect, sequence, spin
 from gui.wizard import Wiz_window
 
 

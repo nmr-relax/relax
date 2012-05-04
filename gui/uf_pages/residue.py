@@ -34,7 +34,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 from base import UF_base, UF_page
 from gui.misc import gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.user_functions.mol_res_spin import Mol_res_spin
+from gui.uf_pages.mol_res_spin import Mol_res_spin
 
 
 # The container class.

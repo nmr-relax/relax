@@ -40,7 +40,7 @@ from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
 from gui.paths import icon_22x22
-from gui.user_functions import User_functions
+from gui.uf_pages import User_functions
 
 
 class Results_viewer(wx.Frame):

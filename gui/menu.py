@@ -34,7 +34,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 # relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
-from gui.user_functions import User_functions
+from gui.uf_pages import User_functions
 
 
 class Menu:

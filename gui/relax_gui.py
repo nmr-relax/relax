@@ -70,7 +70,7 @@ from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.uf_pages import User_functions; user_functions = User_functions()
 
 
 class Main(wx.Frame):

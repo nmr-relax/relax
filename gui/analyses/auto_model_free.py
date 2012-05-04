@@ -51,8 +51,8 @@ from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
-from gui.user_functions.structure import Read_pdb_page, Vectors_page
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.uf_pages.structure import Read_pdb_page, Vectors_page
+from gui.uf_pages import User_functions; user_functions = User_functions()
 from gui.wizard import Wiz_window
 
 

@@ -38,7 +38,7 @@ from gui import paths
 from gui.analyses.elements import Text_ctrl
 from gui.fonts import font
 from gui.misc import add_border, int_to_gui, str_to_gui
-from gui.user_functions.base import UF_page
+from gui.uf_pages.base import UF_page
 
 
 class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):

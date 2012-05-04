@@ -38,7 +38,7 @@ from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.misc import gui_to_str
-from gui.user_functions import User_functions
+from gui.uf_pages import User_functions
 
 
 class Mol_res_spin_tree(wx.Window):

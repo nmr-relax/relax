@@ -47,9 +47,9 @@ from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data, Question
 from gui.misc import gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
 from gui import paths
-from gui.user_functions.relax_fit import Relax_time_page
-from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
-from gui.user_functions.spin import Name_page
+from gui.uf_pages.relax_fit import Relax_time_page
+from gui.uf_pages.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
+from gui.uf_pages.spin import Name_page
 from gui.wizard import Wiz_window
 
 

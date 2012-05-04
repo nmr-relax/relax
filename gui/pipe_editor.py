@@ -38,7 +38,7 @@ from gui.icons import relax_icons
 from gui.message import Question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
-from gui.user_functions import User_functions
+from gui.uf_pages import User_functions
 
 
 class Pipe_editor(wx.Frame):
