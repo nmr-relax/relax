@@ -45,9 +45,8 @@ uf.add_keyarg(
         name = "pipe_from",
         default = None,
         py_type = "str",
-        desc_short = "pipe from",
+        desc_short = "source data pipe",
         desc = "The name of the source data pipe to copy the data from.",
-        wiz_desc = "Source pipe",
         wiz_element_type = 'combo',
         wiz_combo_iter = pipes.pipe_names,
         can_be_none = True
@@ -56,9 +55,8 @@ uf.add_keyarg(
         name = "pipe_to",
         default = None,
         py_type = "str",
-        desc_short = "pipe to",
+        desc_short = "destination data pipe",
         desc = "The name of the target data pipe to copy the data to.",
-        wiz_desc = "Destination pipe name",
         can_be_none = True
 )
 uf.backend = pipes.copy
@@ -90,15 +88,13 @@ uf.add_keyarg(
         py_type = "str",
         desc_short = "data pipe name",
         desc = "The name of the data pipe.",
-        wiz_desc = "The data pipe name"
 )
 uf.add_keyarg(
         name = "pipe_type",
         default = None,
         py_type = "str",
-        desc_short = "data pipe type",
+        desc_short = "type of data pipe",
         desc = "The type of data pipe.",
-        wiz_desc = "The type of data pipe",
         wiz_element_type = 'combo',
         wiz_combo_choices = pipes.PIPE_DESC_LIST,
         wiz_combo_data = pipes.VALID_TYPES,
@@ -150,9 +146,8 @@ uf.add_keyarg(
         name = "pipe_name",
         default = None,
         py_type = "str",
-        desc_short = "data pipe name",
+        desc_short = "data pipe",
         desc = "The name of the data pipe to delete.",
-        wiz_desc = "The pipe",
         wiz_element_type = 'combo',
         wiz_combo_iter = pipes.pipe_names,
         can_be_none = True
@@ -189,16 +184,14 @@ uf.add_keyarg(
         default = None,
         py_type = "str",
         desc_short = "hybrid pipe name",
-        desc = "The name of the hybrid data pipe to create.",
-        wiz_desc = "The hybrid pipe name"
+        desc = "The name of the hybrid data pipe to create."
 )
 uf.add_keyarg(
         name = "pipes",
         default = None,
         py_type = "str_list",
-        desc_short = "data pipes",
+        desc_short = "data pipes to hybridise",
         desc = "An array containing the names of all data pipes to hybridise.",
-        wiz_desc = "The pipes to hybridise",
         wiz_element_type = 'combo_list',
         wiz_combo_iter = pipes.pipe_names,
         wiz_combo_list_size = 2
@@ -230,9 +223,8 @@ uf.add_keyarg(
         name = "pipe_name",
         default = None,
         py_type = "str",
-        desc_short = "data pipe name",
+        desc_short = "data pipe",
         desc = "The name of the data pipe.",
-        wiz_desc = "The pipe",
         wiz_element_type = 'combo',
         wiz_combo_iter = pipes.pipe_names
 )
