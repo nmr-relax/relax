@@ -24,7 +24,7 @@
 """Module containing the special objects for auto-generating the user functions and classes."""
 
 # relax module imports.
-from prompt.base_class import _build_subtitle, _format_text, _strip_lead
+from prompt.base_class import _bold_text, _build_subtitle, _format_text, _strip_lead
 from prompt.help import relax_class_help
 from relax_errors import RelaxError
 
@@ -101,7 +101,7 @@ class Uf_object(object):
         self.__relax_help__ = ""
 
         # Add the title.
-        self.__relax_help__ = "%s%s\n" % (self.__relax_help__, self._title)
+        self.__relax_help__ = "%s%s\n" % (self.__relax_help__, _bold_text(self._title))
 
         # Add the keyword args.
         if self._kargs != None:

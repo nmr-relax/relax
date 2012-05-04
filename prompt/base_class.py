@@ -42,6 +42,28 @@ else:
     width = 100
 
 
+def _bold_text(text):
+    """Convert the text to bold.
+
+    This is for use in the help system.
+
+    @param text:    The text to make bold.
+    @type text:     str
+    @return:        The bold text.
+    @rtype:         str
+    """
+
+    # Init.
+    new_text = ''
+
+    # Add the bold character to all characters.
+    for i in range(len(text)):
+        new_text += "%s\b%s" % (text[i], text[i])
+
+    # Return the text.
+    return new_text
+
+
 def _build_doc(fn):
     """Build the fn.__doc__ docstring.
 
@@ -96,17 +118,27 @@ def _build_doc(fn):
 
 
 
-def _build_subtitle(text):
+def _build_subtitle(text, bold=True):
     """Create the formatted subtitle string.
 
-    @param text:    The name of the subtitle.
-    @type text:     str
-    @return:        The formatted subtitle.
-    @rtype:         str
+    @param text:        The name of the subtitle.
+    @type text:         str
+    @keyword colour:    A flag which if true will return bold text.  Otherwise an underlined title will be returned.
+    @type colour:       bool
+    @return:            The formatted subtitle.
+    @rtype:             str
     """
 
-    # Format and return.
-    return "\n%s\n%s\n\n" % (text, "~"*len(text))
+    # Bold.
+    if bold:
+        new = "\n%s\n\n" % _bold_text(text)
+
+    # Underline.
+    else:
+        new = "\n%s\n%s\n\n" % (text, "~"*len(text))
+
+    # Return the subtitle.
+    return new
 
 
 def _format_text(text):
