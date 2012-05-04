@@ -26,6 +26,7 @@
 # Python module imports.
 from re import search
 from string import split
+from time import sleep
 import wx
 from wx.lib import scrolledpanel
 
@@ -388,8 +389,26 @@ class Uf_page(Wiz_page):
             # Store the value.
             kargs[name] = self.GetValue(name)
 
-        # Set the name.
+        # Display the relax controller, if asked.
+        if self.uf_data.display:
+            # Get the App.
+            app = wx.GetApp()
+
+            # First show the controller.
+            app.gui.show_controller(None)
+
+            # Go to the last line.
+            app.gui.controller.log_panel.on_goto_end(None)
+
+            # Wait a little while.
+            sleep(0.5)
+
+        # Execute the user function.
         self.execute(self.name, **kargs)
+
+        # Bring the controller to the front.
+        if self.uf_data.display:
+            wx.CallAfter(app.gui.controller.Raise)
 
 
     def process_doc(self, doc):
