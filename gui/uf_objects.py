@@ -179,16 +179,24 @@ class Uf_page(Wiz_page):
             # Alias.
             arg = self.uf_data.kargs[i]
 
-            # The arg description.
+            # The arg description formatting.
             desc = "The %s:" % arg['desc_short']
 
+            # Int type.
+            if arg['py_type'] == 'int':
+                self.element_int(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
             # String type.
-            if arg['py_type'] == 'str':
+            elif arg['py_type'] == 'str':
                 self.element_string(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # String list.
             elif arg['py_type'] == 'str_list':
                 self.element_string_list(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'])
+
+            # String list of lists.
+            elif arg['py_type'] == 'str_list_of_lists':
+                self.element_string_list_of_lists(key=arg['name'], titles=arg['list_titles'], sizer=sizer, desc=desc, tooltip=arg['desc'])
 
             # Unknown type.
             else:
