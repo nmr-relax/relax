@@ -99,9 +99,10 @@ class Uf_object(object):
                 arg = self._kargs[i]
                 py_type = arg['py_type']
                 desc_short = arg['desc_short']
-                can_be_none = arg['can_be_none']
                 size = arg['size']
                 dim = arg['dim']
+                can_be_none = arg['can_be_none']
+                can_be_empty = arg['can_be_empty']
                 none_elements = arg['none_elements']
                 list_of_lists = arg['list_of_lists']
 
