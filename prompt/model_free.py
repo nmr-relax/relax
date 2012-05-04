@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from specific_fns.setup import model_free_obj
+from status import Status; status = Status()
 
 
 class Model_free(User_fn_class):
@@ -113,8 +114,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "model_free.create_model("
+        if status.prompt_intro:
+            text = status.ps3 + "model_free.create_model("
             text = text + "model=" + repr(model)
             text = text + ", equation=" + repr(equation)
             text = text + ", params=" + repr(params)
@@ -143,8 +144,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "model_free.delete()"
+        if status.prompt_intro:
+            text = status.ps3 + "model_free.delete()"
             print(text)
 
         # Execute the functional code.
@@ -178,8 +179,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "model_free.remove_tm("
+        if status.prompt_intro:
+            text = status.ps3 + "model_free.remove_tm("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -325,8 +326,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "model_free.select_model("
+        if status.prompt_intro:
+            text = status.ps3 + "model_free.select_model("
             text = text + "model=" + repr(model)
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)

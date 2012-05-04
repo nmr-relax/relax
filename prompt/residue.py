@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, id_string_doc, name_residue, number_residue
+from status import Status; status = Status()
 
 
 class Residue(User_fn_class):
@@ -35,8 +36,8 @@ class Residue(User_fn_class):
 
     def copy(self, pipe_from=None, res_from=None, pipe_to=None, res_to=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "residue.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "residue.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", res_from=" + repr(res_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -85,8 +86,8 @@ class Residue(User_fn_class):
 
     def create(self, res_num=None, res_name=None, mol_name=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "residue.create("
+        if status.prompt_intro:
+            text = status.ps3 + "residue.create("
             text = text + "res_num=" + repr(res_num)
             text = text + ", res_name=" + repr(res_name)
             text = text + ", mol_name=" + repr(mol_name) + ")"
@@ -122,8 +123,8 @@ class Residue(User_fn_class):
 
     def delete(self, res_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "residue.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "residue.delete("
             text = text + "res_id=" + repr(res_id) + ")"
             print(text)
 
@@ -147,8 +148,8 @@ class Residue(User_fn_class):
 
     def display(self, res_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "residue.display("
+        if status.prompt_intro:
+            text = status.ps3 + "residue.display("
             text = text + "res_id=" + repr(res_id) + ")"
             print(text)
 
@@ -168,8 +169,8 @@ class Residue(User_fn_class):
 
     def name(self, res_id=None, name=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "residue.name("
+        if status.prompt_intro:
+            text = status.ps3 + "residue.name("
             text = text + "res_id=" + repr(res_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
@@ -211,8 +212,8 @@ class Residue(User_fn_class):
 
     def number(self, res_id=None, number=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "residue.number("
+        if status.prompt_intro:
+            text = status.ps3 + "residue.number("
             text = text + "res_id=" + repr(res_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"

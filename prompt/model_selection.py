@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008-2010 Edward d'Auvergne                       #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,12 +25,12 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class
 import arg_check
 from generic_fns import model_selection
+from status import Status; status = Status()
 
 
-class Modsel(Basic_class):
+class Modsel:
     """Class containing the function for selecting which model selection method should be used."""
 
     def model_selection(self, method=None, modsel_pipe=None, pipes=None):
@@ -93,8 +93,8 @@ class Modsel(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "model_selection("
+        if status.prompt_intro:
+            text = status.ps3 + "model_selection("
             text = text + "method=" + repr(method)
             text = text + ", modsel_pipe=" + repr(modsel_pipe)
             text = text + ", pipes=" + repr(pipes) + ")"

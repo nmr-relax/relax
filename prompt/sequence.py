@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2007-2010 Edward d'Auvergne                       #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import sequence
 from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class Sequence(User_fn_class):
@@ -36,8 +37,8 @@ class Sequence(User_fn_class):
 
     def copy(self, pipe_from=None, pipe_to=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "sequence.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "sequence.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -85,8 +86,8 @@ class Sequence(User_fn_class):
 
     def display(self, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "sequence.display("
+        if status.prompt_intro:
+            text = status.ps3 + "sequence.display("
             text = text + "sep=" + repr(sep)
             text = text + ", mol_name_flag=" + repr(mol_name_flag)
             text = text + ", res_num_flag=" + repr(res_num_flag)
@@ -122,8 +123,8 @@ class Sequence(User_fn_class):
 
     def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "sequence.read("
+        if status.prompt_intro:
+            text = status.ps3 + "sequence.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -208,8 +209,8 @@ class Sequence(User_fn_class):
 
     def write(self, file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "sequence.write("
+        if status.prompt_intro:
+            text = status.ps3 + "sequence.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", sep=" + repr(sep)

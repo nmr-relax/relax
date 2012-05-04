@@ -33,6 +33,7 @@ from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
+from status import Status; status = Status()
 
 
 class Grace(User_fn_class):
@@ -40,8 +41,8 @@ class Grace(User_fn_class):
 
     def view(self, file=None, dir='grace', grace_exe='xmgrace'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "grace.view("
+        if status.prompt_intro:
+            text = status.ps3 + "grace.view("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", grace_exe=" + repr(grace_exe) + ")"
@@ -77,8 +78,8 @@ class Grace(User_fn_class):
 
     def write(self, x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir='grace', force=False, norm=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "grace.write("
+        if status.prompt_intro:
+            text = status.ps3 + "grace.write("
             text = text + "x_data_type=" + repr(x_data_type)
             text = text + ", y_data_type=" + repr(y_data_type)
             text = text + ", spin_id=" + repr(spin_id)

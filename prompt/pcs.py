@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from base_class import User_fn_class
 import arg_check
 from generic_fns import pcs
 from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class PCS(User_fn_class):
@@ -44,8 +45,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.back_calc("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -82,8 +83,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.calc_q_factors("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.calc_q_factors("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -131,8 +132,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -189,8 +190,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.corr_plot("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.corr_plot("
             text = text + "format=" + repr(format)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -225,8 +226,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -257,8 +258,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.display("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.display("
             text = text + "align_id=" + repr(align_id)
             text = text + ", bc=" + repr(bc) + ")"
             print(text)
@@ -334,8 +335,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.read("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -391,8 +392,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.weight("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.weight("
             text = text + "align_id=" + repr(align_id)
             text = text + ", spin_id=" + repr(spin_id)
             text = text + ", weight=" + repr(weight) + ")"
@@ -432,8 +433,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.write("
+        if status.prompt_intro:
+            text = status.ps3 + "pcs.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

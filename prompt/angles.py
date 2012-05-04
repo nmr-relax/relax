@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,14 +24,12 @@
 """Module containing the 'angles' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-
 # relax module imports.
-from base_class import Basic_class
 from generic_fns import angles
+from status import Status; status = Status()
 
 
-class Angles(Basic_class):
+class Angles:
     """Class containing the function for calculating XH bond angles."""
 
     def angle_diff_frame(self):
@@ -49,8 +47,8 @@ class Angles(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "angle_diff_frame()"
+        if status.prompt_intro:
+            text = status.ps3 + "angle_diff_frame()"
             print(text)
 
         # Execute the functional code.

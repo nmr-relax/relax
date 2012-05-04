@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 import generic_fns.frq
+from status import Status; status = Status()
 
 
 class Frq(User_fn_class):
@@ -51,8 +52,8 @@ class Frq(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "frq("
+        if status.prompt_intro:
+            text = status.ps3 + "frq("
             text = text + "id=" + repr(id)
             text = text + ", frq=" + repr(frq) + ")"
             print(text)

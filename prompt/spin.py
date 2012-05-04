@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin, set_spin_element
+from status import Status; status = Status()
 
 
 class Spin(User_fn_class):
@@ -35,8 +36,8 @@ class Spin(User_fn_class):
 
     def copy(self, pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", spin_from=" + repr(spin_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -85,8 +86,8 @@ class Spin(User_fn_class):
 
     def create(self, spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.create("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.create("
             text = text + "spin_num=" + repr(spin_num)
             text = text + ", spin_name=" + repr(spin_name)
             text = text + ", res_num=" + repr(res_num)
@@ -128,8 +129,8 @@ class Spin(User_fn_class):
 
     def create_pseudo(self, spin_name=None, spin_num=None, res_id=None, members=None, averaging='linear'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.create_pseudo("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.create_pseudo("
             text = text + "spin_name=" + repr(spin_name)
             text = text + ", spin_num=" + repr(spin_num)
             text = text + ", res_id=" + repr(res_id)
@@ -171,8 +172,8 @@ class Spin(User_fn_class):
 
     def delete(self, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.delete("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -196,8 +197,8 @@ class Spin(User_fn_class):
 
     def display(self, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.display("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.display("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -218,8 +219,8 @@ class Spin(User_fn_class):
 
     def element(self, spin_id=None, element=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.element("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.element("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", element=" + repr(element)
             text = text + ", force=" + repr(force) + ")"
@@ -255,8 +256,8 @@ class Spin(User_fn_class):
 
     def name(self, spin_id=None, name=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.name("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.name("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
@@ -294,8 +295,8 @@ class Spin(User_fn_class):
 
     def number(self, spin_id=None, number=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spin.number("
+        if status.prompt_intro:
+            text = status.ps3 + "spin.number("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"

@@ -29,6 +29,7 @@ from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import bmrb, exp_info
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
+from status import Status; status = Status()
 
 
 class BMRB(User_fn_class):
@@ -36,8 +37,8 @@ class BMRB(User_fn_class):
 
     def citation(self, cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status='published', type='journal', journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.citation("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.citation("
             text = text + "cite_id=" + repr(cite_id)
             text = text + ", authors=" + repr(authors)
             text = text + ", doi=" + repr(doi)
@@ -139,8 +140,8 @@ class BMRB(User_fn_class):
 
     def display(self, version=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.display("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.display("
             text = text + "version=" + repr(version) + ")"
             print(text)
 
@@ -155,8 +156,8 @@ class BMRB(User_fn_class):
 
     def read(self, file=None, dir=None, version=None, sample_conditions=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.read("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", version=" + repr(version)
@@ -189,8 +190,8 @@ class BMRB(User_fn_class):
 
     def script(self, file='reduced', dir=None, analysis_type=None, model_selection=None, engine='relax', model_elim=False, universal_solution=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.script("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.script("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", analysis_type=" + repr(analysis_type)
@@ -272,8 +273,8 @@ class BMRB(User_fn_class):
 
     def software(self, name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.software("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.software("
             text = text + "name=" + repr(name)
             text = text + ", version=" + repr(version)
             text = text + ", url=" + repr(url)
@@ -333,8 +334,8 @@ class BMRB(User_fn_class):
 
     def software_select(self, name=None, version=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.software_select("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.software_select("
             text = text + "name=" + repr(name)
             text = text + ", version=" + repr(version) + ")"
             print(text)
@@ -374,8 +375,8 @@ class BMRB(User_fn_class):
 
     def thiol_state(self, state='reduced'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.thiol_state("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.thiol_state("
             text = text + "state=" + repr(state) + ")"
             print(text)
 
@@ -419,8 +420,8 @@ class BMRB(User_fn_class):
 
     def write(self, file=None, dir='pipe_name', version=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bmrb.write("
+        if status.prompt_intro:
+            text = status.ps3 + "bmrb.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", version=" + repr(version)

@@ -32,6 +32,7 @@ from generic_fns import diffusion_tensor
 import opendx.main
 from relax_errors import RelaxError
 from specific_fns.model_free import Model_free
+from status import Status; status = Status()
 
 
 class OpenDX(User_fn_class):
@@ -39,8 +40,8 @@ class OpenDX(User_fn_class):
 
     def execute(self, file="map", dir="dx", dx_exe="dx", vp_exec=True):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "dx("
+        if status.prompt_intro:
+            text = status.ps3 + "dx("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", dx_exe=" + repr(dx_exe)
@@ -70,8 +71,8 @@ class OpenDX(User_fn_class):
 
     def map(self, params=None, map_type="Iso3D", spin_id=None, inc=20, lower=None, upper=None, axis_incs=5, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "map("
+        if status.prompt_intro:
+            text = status.ps3 + "map("
             text = text + "params=" + repr(params)
             text = text + ", map_type=" + repr(map_type)
             text = text + ", spin_id=" + repr(spin_id)

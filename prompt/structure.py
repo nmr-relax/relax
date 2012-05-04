@@ -29,6 +29,7 @@ from base_class import User_fn_class, _build_doc
 import arg_check
 import generic_fns.structure.geometric
 import generic_fns.structure.main
+from status import Status; status = Status()
 
 
 class Structure(User_fn_class):
@@ -36,8 +37,8 @@ class Structure(User_fn_class):
 
     def add_atom(self, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.add_atom("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.add_atom("
             text = text + "atom_name=" + repr(atom_name)
             text = text + ", res_name=" + repr(res_name)
             text = text + ", res_num=" + repr(res_num)
@@ -85,8 +86,8 @@ class Structure(User_fn_class):
 
     def connect_atom(self, index1=None, index2=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.connect_atom("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.connect_atom("
             text = text + "index1=" + repr(index1)
             text = text + ", index2=" + repr(index2) + ")"
             print(text)
@@ -113,8 +114,8 @@ class Structure(User_fn_class):
 
     def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.create_diff_tensor_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.create_diff_tensor_pdb("
             text = text + "scale=" + repr(scale)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -174,8 +175,8 @@ class Structure(User_fn_class):
 
     def create_vector_dist(self, length=2e-9, file='XH_dist.pdb', dir=None, symmetry=True, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.create_vector_dist("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.create_vector_dist("
             text = text + "length=" + repr(length)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -213,8 +214,8 @@ class Structure(User_fn_class):
 
     def get_pos(self, spin_id=None, ave_pos=True):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.get_pos("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.get_pos("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
@@ -251,8 +252,8 @@ class Structure(User_fn_class):
 
     def delete(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.delete()"
+        if status.prompt_intro:
+            text = status.ps3 + "structure.delete()"
             print(text)
 
         # Execute the functional code.
@@ -274,8 +275,8 @@ class Structure(User_fn_class):
 
     def displacement(self, model_from=None, model_to=None, atom_id=None, centroid=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.displacement("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.displacement("
             text = text + "model_from=" + repr(model_from)
             text = text + ", model_to=" + repr(model_to)
             text = text + ", atom_id=" + repr(atom_id)
@@ -334,8 +335,8 @@ class Structure(User_fn_class):
 
     def find_pivot(self, models=None, atom_id=None, init_pos=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.find_pivot("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.find_pivot("
             text = text + "models=" + repr(models)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", init_pos=" + repr(init_pos) + ")"
@@ -369,8 +370,8 @@ class Structure(User_fn_class):
 
     def load_spins(self, spin_id=None, ave_pos=True):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.load_spins("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.load_spins("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
@@ -425,8 +426,8 @@ class Structure(User_fn_class):
 
     def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.read_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.read_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", read_mol=" + repr(read_mol)
@@ -517,8 +518,8 @@ class Structure(User_fn_class):
 
     def read_xyz(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.read_xyz("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.read_xyz("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", read_mol=" + repr(read_mol)
@@ -596,8 +597,8 @@ class Structure(User_fn_class):
 
     def rotate(self, R=None, origin=None, model=None, atom_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.rotate("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.rotate("
             text = text + "R=" + repr(R)
             text = text + ", origin=" + repr(origin)
             text = text + ", model=" + repr(model)
@@ -629,8 +630,8 @@ class Structure(User_fn_class):
 
     def superimpose(self, models=None, method='fit to mean', atom_id=None, centroid=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.superimpose("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.superimpose("
             text = text + "models=" + repr(models)
             text = text + ", method=" + repr(method)
             text = text + ", atom_id=" + repr(atom_id)
@@ -696,8 +697,8 @@ class Structure(User_fn_class):
 
     def translate(self, T=None, model=None, atom_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.translate("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.translate("
             text = text + "T=" + repr(T)
             text = text + ", model=" + repr(model)
             text = text + ", atom_id=" + repr(atom_id) + ")"
@@ -727,8 +728,8 @@ class Structure(User_fn_class):
 
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.vectors("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.vectors("
             text = text + "attached=" + repr(attached)
             text = text + ", spin_id=" + repr(spin_id)
             text = text + ", model=" + repr(model)
@@ -805,8 +806,8 @@ class Structure(User_fn_class):
 
     def write_pdb(self, file=None, dir=None, model_num=None, compress_type=0, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.write_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "structure.write_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", model_num=" + repr(model_num)

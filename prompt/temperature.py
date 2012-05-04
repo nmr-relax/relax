@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,12 +25,12 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class
 import arg_check
 from generic_fns import temperature
+from status import Status; status = Status()
 
 
-class Temp(Basic_class):
+class Temp:
     """Class containing the function for setting the experimental temperature."""
 
     def set(self, id=None, temp=None):
@@ -52,8 +52,8 @@ class Temp(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "temperature("
+        if status.prompt_intro:
+            text = status.ps3 + "temperature("
             text = text + "id=" + repr(id)
             text = text + ", temp=" + repr(temp) + ")"
             print(text)

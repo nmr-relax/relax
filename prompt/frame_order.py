@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from specific_fns.setup import frame_order_obj
+from status import Status; status = Status()
 
 
 class Frame_order(User_fn_class):
@@ -75,8 +76,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "frame_order.cone_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + repr(size)
             text = text + ", inc=" + repr(inc)
             text = text + ", file=" + repr(file)
@@ -124,8 +125,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "frame_order.domain_to_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "frame_order.domain_to_pdb("
             text = text + "domain=" + repr(domain)
             text = text + ", pdb=" + repr(pdb) + ")"
             print(text)
@@ -158,8 +159,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "frame_order.pivot("
+        if status.prompt_intro:
+            text = status.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
             print(text)
 
@@ -197,8 +198,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "frame_order.ref_domain("
+        if status.prompt_intro:
+            text = status.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -289,8 +290,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "frame_order.select_model("
+        if status.prompt_intro:
+            text = status.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

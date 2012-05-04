@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,14 +28,14 @@ __docformat__ = 'plaintext'
 from string import split
 
 # relax module imports.
-from base_class import Basic_class
 import arg_check
 from minfx.generic import generic_minimise
 from generic_fns import minimise
 from relax_errors import RelaxError, RelaxNoneError, RelaxStrError
+from status import Status; status = Status()
 
 
-class Minimisation(Basic_class):
+class Minimisation:
     """Class containing the calc, grid, minimisation, and set functions."""
 
     def calc(self, verbosity=1):
@@ -49,8 +49,8 @@ class Minimisation(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "calc("
+        if status.prompt_intro:
+            text = status.ps3 + "calc("
             text = text + "verbosity=" + repr(verbosity) + ")"
             print(text)
 
@@ -86,8 +86,8 @@ class Minimisation(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "grid_search("
+        if status.prompt_intro:
+            text = status.ps3 + "grid_search("
             text = text + "lower=" + repr(lower)
             text = text + ", upper=" + repr(upper)
             text = text + ", inc=" + repr(inc)
@@ -246,8 +246,8 @@ class Minimisation(Basic_class):
             verbosity = 1
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "minimise("
+        if status.prompt_intro:
+            text = status.ps3 + "minimise("
             text = text + "*args=" + repr(args)
             text = text + ", func_tol=" + repr(func_tol)
             text = text + ", max_iterations=" + repr(max_iterations)

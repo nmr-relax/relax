@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import noesy
 from specific_fns.setup import noe_obj
+from status import Status; status = Status()
 
 
 class Noe(User_fn_class):
@@ -36,8 +37,8 @@ class Noe(User_fn_class):
 
     def read_restraints(self, file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "noe.read_restraints("
+        if status.prompt_intro:
+            text = status.ps3 + "noe.read_restraints("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", proton1_col=" + repr(proton1_col)
@@ -90,8 +91,8 @@ class Noe(User_fn_class):
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "noe.spectrum_type("
+        if status.prompt_intro:
+            text = status.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)

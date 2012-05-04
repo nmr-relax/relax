@@ -64,6 +64,32 @@ class Class_container(object):
 class Uf_object(object):
     """The object for auto-generating the user functions."""
 
+    def __call__(self, *args, **kwds):
+        """Make the user function executable."""
+
+        # Generate a list of allowed kargs.
+        if not hasattr(self, '_karg_names'):
+            self._karg_names = []
+            for i in range(len(self._kargs)):
+                self._karg_names.append(self._kargs[i]['name'])
+
+        # Check the keyword args.
+        for name in kwds.keys():
+            # Unknown keyword.
+            if name not in self._karg_names:
+                raise RelaxError("The keyword argument '%s' is unknown." % name)
+
+        # Function intro text.
+        if status.prompt_intro:
+            text = status.ps3 + "frame_order.cone_pdb("
+            text = text + "size=" + repr(size)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+
     def __init__(self, name, title=None, kargs=None, desc=None, examples=None, additional=None):
         """Set up the object.
 

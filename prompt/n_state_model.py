@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from specific_fns.setup import n_state_model_obj
+from status import Status; status = Status()
 
 
 class N_state_model(User_fn_class):
@@ -78,8 +79,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "n_state_model.CoM("
+        if status.prompt_intro:
+            text = status.ps3 + "n_state_model.CoM("
             text = text + "pivot_point=" + repr(pivot_point)
             text = text + ", centre=" + repr(centre) + ")"
             print(text)
@@ -143,8 +144,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "n_state_model.cone_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "n_state_model.cone_pdb("
             text = text + "cone_type=" + repr(cone_type)
             text = text + ", scale=" + repr(scale)
             text = text + ", file=" + repr(file)
@@ -175,8 +176,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "n_state_model.elim_no_prob()"
+        if status.prompt_intro:
+            text = status.ps3 + "n_state_model.elim_no_prob()"
             print(text)
 
         # Execute the functional code.
@@ -209,8 +210,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "n_state_model.number_of_states("
+        if status.prompt_intro:
+            text = status.ps3 + "n_state_model.number_of_states("
             text = text + "N=" + repr(N) + ")"
             print(text)
 
@@ -249,8 +250,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "n_state_model.ref_domain("
+        if status.prompt_intro:
+            text = status.ps3 + "n_state_model.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -298,8 +299,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "n_state_model.select_model("
+        if status.prompt_intro:
+            text = status.ps3 + "n_state_model.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

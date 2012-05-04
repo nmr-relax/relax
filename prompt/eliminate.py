@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2009-2010 Edward d'Auvergne                       #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,20 +25,21 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class, _build_doc
+from base_class import _build_doc
 import arg_check
 from generic_fns import eliminate
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
 from specific_fns.model_free import Model_free
+from status import Status; status = Status()
 
 
-class Eliminate(Basic_class):
+class Eliminate:
     """Class containing the function for model elimination."""
 
     def eliminate(self, function=None, args=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "eliminate("
+        if status.prompt_intro:
+            text = status.ps3 + "eliminate("
             text = text + "function=" + repr(function)
             text = text + ", args=" + repr(args) + ")"
             print(text)

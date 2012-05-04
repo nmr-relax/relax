@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,10 +25,9 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class
+from status import Status; status = Status()
 
-
-class View(Basic_class):
+class View:
     """Class containing the view function."""
 
     def view(self):
@@ -42,8 +41,8 @@ class View(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "view()"
+        if status.prompt_intro:
+            text = status.ps3 + "view()"
             print(text)
 
         # Execute the functional code.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,6 +31,7 @@ from select import boolean_doc
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import selection
+from status import Status; status = Status()
 
 
 class Deselect(User_fn_class):
@@ -38,8 +39,8 @@ class Deselect(User_fn_class):
 
     def all(self):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "deselect.all()"
+        if status.prompt_intro:
+            text = status.ps3 + "deselect.all()"
             print(text)
 
         # Execute the functional code.
@@ -60,8 +61,8 @@ class Deselect(User_fn_class):
 
     def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "deselect.read("
+        if status.prompt_intro:
+            text = status.ps3 + "deselect.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -138,8 +139,8 @@ class Deselect(User_fn_class):
 
     def reverse(self, spin_id=None):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "deselect.reverse("
+        if status.prompt_intro:
+            text = status.ps3 + "deselect.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -168,8 +169,8 @@ class Deselect(User_fn_class):
 
     def spin(self, spin_id=None, change_all=False):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "deselect.spin("
+        if status.prompt_intro:
+            text = status.ps3 + "deselect.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", change_all=" + repr(change_all) + ")"
             print(text)

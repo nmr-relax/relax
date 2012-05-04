@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from generic_fns import palmer
+from status import Status; status = Status()
 
 
 class Palmer(User_fn_class):
@@ -91,8 +92,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "palmer.create("
+        if status.prompt_intro:
+            text = status.ps3 + "palmer.create("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary)
@@ -157,8 +158,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "palmer.execute("
+        if status.prompt_intro:
+            text = status.ps3 + "palmer.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
@@ -183,8 +184,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "palmer.extract("
+        if status.prompt_intro:
+            text = status.ps3 + "palmer.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import results
+from status import Status; status = Status()
 
 
 class Results(User_fn_class):
@@ -35,8 +36,8 @@ class Results(User_fn_class):
 
     def display(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "results.display()"
+        if status.prompt_intro:
+            text = status.ps3 + "results.display()"
             print(text)
 
         # Execute the functional code.
@@ -53,8 +54,8 @@ class Results(User_fn_class):
 
     def read(self, file='results', dir=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "results.read("
+        if status.prompt_intro:
+            text = status.ps3 + "results.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
             print(text)
@@ -81,8 +82,8 @@ class Results(User_fn_class):
 
     def write(self, file='results', dir='pipe_name', compress_type=1, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "results.write("
+        if status.prompt_intro:
+            text = status.ps3 + "results.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)

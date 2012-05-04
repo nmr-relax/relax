@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,11 @@
 """Module containing the 'dasha' user function class for controlling the Dasha model-free software."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
 from generic_fns import dasha
+from status import Status; status = Status()
 
 
 class Dasha(User_fn_class):
@@ -69,8 +68,8 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "dasha.create("
+        if status.prompt_intro:
+            text = status.ps3 + "dasha.create("
             text = text + "algor=" + repr(algor)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
@@ -113,8 +112,8 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "dasha.execute("
+        if status.prompt_intro:
+            text = status.ps3 + "dasha.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
@@ -139,8 +138,8 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "dasha.extract("
+        if status.prompt_intro:
+            text = status.ps3 + "dasha.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 

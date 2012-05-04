@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from specific_fns.setup import jw_mapping_obj
+from status import Status; status = Status()
 
 
 class Jw_mapping(User_fn_class):
@@ -57,8 +58,8 @@ class Jw_mapping(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "jw_mapping.set_frq("
+        if status.prompt_intro:
+            text = status.ps3 + "jw_mapping.set_frq("
             text = text + "frq=" + repr(frq) + ")"
             print(text)
 

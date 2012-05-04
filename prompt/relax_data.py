@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import relax_data
 from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class Relax_data(User_fn_class):
@@ -36,8 +37,8 @@ class Relax_data(User_fn_class):
 
     def back_calc(self, ri_id=None, ri_type=None, frq=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.back_calc("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.back_calc("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", ri_type=" + repr(ri_type)
             text = text + ", frq=" + repr(frq) + ")"
@@ -67,8 +68,8 @@ class Relax_data(User_fn_class):
 
     def copy(self, pipe_from=None, pipe_to=None, ri_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", ri_id=" + repr(ri_id) + ")"
@@ -116,8 +117,8 @@ class Relax_data(User_fn_class):
 
     def delete(self, ri_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.delete("
             text = text + "ri_id=" + repr(ri_id) + ")"
             print(text)
 
@@ -146,8 +147,8 @@ class Relax_data(User_fn_class):
 
     def display(self, ri_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.display("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.display("
             text = text + "ri_id=" + repr(ri_id) + ")"
             print(text)
 
@@ -173,8 +174,8 @@ class Relax_data(User_fn_class):
 
     def peak_intensity_type(self, ri_id=None, type=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.peak_intensity_type("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.peak_intensity_type("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", type=" + repr(type) + ")"
             print(text)
@@ -201,8 +202,8 @@ class Relax_data(User_fn_class):
 
     def read(self, ri_id=None, ri_type=None, frq=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.read("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.read("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", ri_type=" + repr(ri_type)
             text = text + ", frq=" + repr(frq)
@@ -294,8 +295,8 @@ class Relax_data(User_fn_class):
 
     def temp_calibration(self, ri_id=None, method=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.temp_calibration("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.temp_calibration("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", method=" + repr(method) + ")"
             print(text)
@@ -328,8 +329,8 @@ class Relax_data(User_fn_class):
 
     def temp_control(self, ri_id=None, method=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.temp_control("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.temp_control("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", method=" + repr(method) + ")"
             print(text)
@@ -363,8 +364,8 @@ class Relax_data(User_fn_class):
 
     def write(self, ri_id=None, file=None, dir=None, bc=False, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_data.write("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_data.write("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

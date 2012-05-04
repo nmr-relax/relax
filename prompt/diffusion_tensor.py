@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from base_class import User_fn_class
 import arg_check
 from generic_fns import diffusion_tensor
 from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class Diffusion_tensor(User_fn_class):
@@ -75,8 +76,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "diffusion_tensor.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "diffusion_tensor.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -103,8 +104,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "diffusion_tensor.delete()"
+        if status.prompt_intro:
+            text = status.ps3 + "diffusion_tensor.delete()"
             print(text)
 
         # Execute the functional code.
@@ -115,8 +116,8 @@ class Diffusion_tensor(User_fn_class):
         """Function for displaying the diffusion tensor information."""
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "diffusion_tensor.display()"
+        if status.prompt_intro:
+            text = status.ps3 + "diffusion_tensor.display()"
             print(text)
 
         # Execute the functional code.
@@ -380,8 +381,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "diffusion_tensor.init("
+        if status.prompt_intro:
+            text = status.ps3 + "diffusion_tensor.init("
             text = text + "params=" + repr(params)
             text = text + ", time_scale=" + repr(time_scale)
             text = text + ", d_scale=" + repr(d_scale)

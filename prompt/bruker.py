@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 import arg_check
 from base_class import User_fn_class, _build_doc
 from generic_fns import bruker
+from status import Status; status = Status()
 
 
 class Bruker(User_fn_class):
@@ -35,8 +36,8 @@ class Bruker(User_fn_class):
 
     def read(self, ri_id=None, file=None, dir=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "bruker.read("
+        if status.prompt_intro:
+            text = status.ps3 + "bruker.read("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"

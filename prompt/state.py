@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007, 2009-2010 Edward d'Auvergne                  #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from generic_fns.state import load_state, save_state
+from status import Status; status = Status()
 
 
 class State(User_fn_class):
@@ -80,8 +81,8 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "state.load("
+        if status.prompt_intro:
+            text = status.ps3 + "state.load("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
@@ -159,8 +160,8 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "state.save("
+        if status.prompt_intro:
+            text = status.ps3 + "state.save("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)

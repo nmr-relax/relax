@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 from generic_fns import monte_carlo
+from status import Status; status = Status()
 
 
 class Monte_carlo(User_fn_class):
@@ -65,8 +66,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "monte_carlo.create_data("
+        if status.prompt_intro:
+            text = status.ps3 + "monte_carlo.create_data("
             text = text + "method=" + repr(method) + ")"
             print(text)
 
@@ -111,8 +112,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "monte_carlo.error_analysis("
+        if status.prompt_intro:
+            text = status.ps3 + "monte_carlo.error_analysis("
             text = text + "prune=" + repr(prune) + ")"
             print(text)
 
@@ -142,8 +143,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "monte_carlo.initial_values()"
+        if status.prompt_intro:
+            text = status.ps3 + "monte_carlo.initial_values()"
             print(text)
 
         # Execute the functional code.
@@ -154,8 +155,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations off."""
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "monte_carlo.off()"
+        if status.prompt_intro:
+            text = status.ps3 + "monte_carlo.off()"
             print(text)
 
         # Execute the functional code.
@@ -166,8 +167,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations on."""
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "monte_carlo.on()"
+        if status.prompt_intro:
+            text = status.ps3 + "monte_carlo.on()"
             print(text)
 
         # Execute the functional code.
@@ -191,8 +192,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "monte_carlo.setup("
+        if status.prompt_intro:
+            text = status.ps3 + "monte_carlo.setup("
             text = text + "number=" + repr(number) + ")"
             print(text)
 

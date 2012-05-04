@@ -46,7 +46,7 @@ from math import pi
 from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Auxiliary modules.
-from base_class import Exec_info
+from prompt.base_class import PS1_ORIG, PS2_ORIG, PS3_ORIG, PS1_COLOUR, PS2_COLOUR, PS3_COLOUR
 from command import Ls, Lh, Ll, system
 from help import _Helper, _Helper_python
 from info import Info_box
@@ -134,17 +134,14 @@ class Interpreter:
         info = Info_box()
         self.__intro_string = info.intro_text()
 
-        # Initialise the execution information container (info that can change during execution).
-        self._exec_info = Exec_info()
-
         # The prompts (change the Python prompt, as well as the function print outs).
         if ansi.enable_control_chars(stream=1):
-            self._exec_info.prompt_colour_on()
+            self.prompt_colour_on()
         else:
-            self._exec_info.prompt_colour_off()
+            self.prompt_colour_off()
 
         # The function intro flag (store in the execution information container).
-        self._exec_info.intro = False
+        status.prompt_intro = False
 
         # Set up the interpreter objects.
         self._locals = self._setup()
@@ -205,15 +202,15 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        angles = Angles(self._exec_info)
-        eliminate = Eliminate(self._exec_info)
-        fix = Fix(self._exec_info)
-        reset = Reset(self._exec_info)
-        minimisation = Minimisation(self._exec_info)
-        modsel = Modsel(self._exec_info)
-        opendx = OpenDX(self._exec_info)
-        sys_info = Sys_info(self._exec_info)
-        temp = Temp(self._exec_info)
+        angles = Angles()
+        eliminate = Eliminate()
+        fix = Fix()
+        reset = Reset()
+        minimisation = Minimisation()
+        modsel = Modsel()
+        opendx = OpenDX()
+        sys_info = Sys_info()
+        temp = Temp()
 
         # Place the user functions in the local namespace.
         objects['angle_diff_frame'] = angles.angle_diff_frame
@@ -228,41 +225,41 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['align_tensor'] = Align_tensor(self._exec_info)
-        objects['bmrb'] = BMRB(self._exec_info)
-        objects['bruker'] = Bruker(self._exec_info)
-        objects['consistency_tests'] = Consistency_tests(self._exec_info)
-        objects['dasha'] = Dasha(self._exec_info)
-        objects['deselect'] = Deselect(self._exec_info)
-        objects['diffusion_tensor'] = Diffusion_tensor(self._exec_info)
-        objects['frame_order'] = Frame_order(self._exec_info)
-        objects['dx'] = OpenDX(self._exec_info)
-        objects['frq'] = Frq(self._exec_info)
-        objects['grace'] = Grace(self._exec_info)
-        objects['jw_mapping'] = Jw_mapping(self._exec_info)
-        objects['model_free'] = Model_free(self._exec_info)
-        objects['molmol'] = Molmol(self._exec_info)
-        objects['molecule'] = Molecule(self._exec_info)
-        objects['monte_carlo'] = Monte_carlo(self._exec_info)
-        objects['n_state_model'] = N_state_model(self._exec_info)
-        objects['noe'] = Noe(self._exec_info)
-        objects['palmer'] = Palmer(self._exec_info)
-        objects['paramag'] = Paramag(self._exec_info)
-        objects['pcs'] = PCS(self._exec_info)
-        objects['pymol'] = Pymol(self._exec_info)
-        objects['rdc'] = RDC(self._exec_info)
-        objects['relax_data'] = Relax_data(self._exec_info)
-        objects['relax_fit'] = Relax_fit(self._exec_info)
-        objects['residue'] = Residue(self._exec_info)
-        objects['results'] = Results(self._exec_info)
-        objects['select'] = Select(self._exec_info)
-        objects['sequence'] = Sequence(self._exec_info)
-        objects['spectrum'] = Spectrum(self._exec_info)
-        objects['spin'] = Spin(self._exec_info)
-        objects['state'] = State(self._exec_info)
-        objects['structure'] = Structure(self._exec_info)
-        objects['value'] = Value(self._exec_info)
-        objects['vmd'] = Vmd(self._exec_info)
+        objects['align_tensor'] = Align_tensor()
+        objects['bmrb'] = BMRB()
+        objects['bruker'] = Bruker()
+        objects['consistency_tests'] = Consistency_tests()
+        objects['dasha'] = Dasha()
+        objects['deselect'] = Deselect()
+        objects['diffusion_tensor'] = Diffusion_tensor()
+        objects['frame_order'] = Frame_order()
+        objects['dx'] = OpenDX()
+        objects['frq'] = Frq()
+        objects['grace'] = Grace()
+        objects['jw_mapping'] = Jw_mapping()
+        objects['model_free'] = Model_free()
+        objects['molmol'] = Molmol()
+        objects['molecule'] = Molecule()
+        objects['monte_carlo'] = Monte_carlo()
+        objects['n_state_model'] = N_state_model()
+        objects['noe'] = Noe()
+        objects['palmer'] = Palmer()
+        objects['paramag'] = Paramag()
+        objects['pcs'] = PCS()
+        objects['pymol'] = Pymol()
+        objects['rdc'] = RDC()
+        objects['relax_data'] = Relax_data()
+        objects['relax_fit'] = Relax_fit()
+        objects['residue'] = Residue()
+        objects['results'] = Results()
+        objects['select'] = Select()
+        objects['sequence'] = Sequence()
+        objects['spectrum'] = Spectrum()
+        objects['spin'] = Spin()
+        objects['state'] = State()
+        objects['structure'] = Structure()
+        objects['value'] = Value()
+        objects['vmd'] = Vmd()
 
         # Builtin interpreter functions.
         objects['intro_off'] = self.off
@@ -281,7 +278,7 @@ class Interpreter:
     def off(self, verbose=True):
         """Turn the function introductions off."""
 
-        self._exec_info.intro = False
+        status.prompt_intro = False
 
         # Print out.
         if verbose:
@@ -291,7 +288,7 @@ class Interpreter:
     def on(self, verbose=True):
         """Turn the function introductions on."""
 
-        self._exec_info.intro = True
+        status.prompt_intro = True
 
         # Print out.
         if verbose:
@@ -304,6 +301,22 @@ class Interpreter:
         # Add the interpreter objects to the class namespace.
         for name in self._locals.keys():
             setattr(self, name, self._locals[name])
+
+
+    def prompt_colour_off(self):
+        """Turn the prompt colouring ANSI escape sequences off."""
+
+        sys.ps1 = status.ps1 = PS1_ORIG
+        sys.ps2 = status.ps2 = PS2_ORIG
+        sys.ps3 = status.ps3 = PS3_ORIG
+
+
+    def prompt_colour_on(self):
+        """Turn the prompt colouring ANSI escape sequences off."""
+
+        sys.ps1 = status.ps1 = PS1_COLOUR
+        sys.ps2 = status.ps2 = PS2_COLOUR
+        sys.ps3 = status.ps3 = PS3_COLOUR
 
 
     def run(self, script_file=None):
@@ -331,7 +344,7 @@ class Interpreter:
         # Execute the script file if given.
         if script_file:
             # Turn on the function intro flag.
-            self._exec_info.intro = True
+            status.prompt_intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
@@ -345,8 +358,8 @@ class Interpreter:
         """Function for executing a script file."""
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "script("
+        if status.prompt_intro:
+            text = status.ps3 + "script("
             text = text + "file=" + repr(file)
             text = text + ", quit=" + repr(quit) + ")"
             print(text)
@@ -366,14 +379,14 @@ class Interpreter:
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
-        orig_intro_state = self._exec_info.intro
-        self._exec_info.intro = True
+        orig_intro_state = status.prompt_intro
+        status.prompt_intro = True
 
         # Execute the script.
         run_script(local=self._locals, script_file=file, quit=quit)
 
         # Return the function intro flag to the original value.
-        self._exec_info.intro = orig_intro_state
+        status.prompt_intro = orig_intro_state
 
 
 class _Exit:

@@ -42,6 +42,20 @@ else:
     width = 100
 
 
+# Module variables.
+###################
+
+# The prompts (to change the Python prompt, as well as the function print outs).
+PS1_ORIG = 'relax> '
+PS2_ORIG = 'relax| '
+PS3_ORIG = '\n%s' % PS1_ORIG
+
+# Coloured text.
+PS1_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
+PS2_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS2_ORIG, ansi.end)
+PS3_COLOUR = "\n%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
+
+
 def _bold_text(text):
     """Convert the text to bold.
 
@@ -224,80 +238,9 @@ def _strip_lead(text):
 
 
 
-class Basic_class:
-    def __init__(self, exec_info=None):
-        """All non-user function classes.
-
-        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
-        @type exec_info:    None or class instance
-        """
-
-        # Generate the execution info container.
-        if exec_info == None:
-            exec_info = Exec_info()
-
-        # Store the execution info container privately.
-        self._exec_info = exec_info
-
-
-
-class Exec_info:
-    """Container for execution information."""
-
-    def __init__(self):
-        """Initialise the data of this container.
-
-        This includes the introduction flag as well as the strings to change the Python prompts.
-        """
-
-        # The user function intro flag.
-        self.intro = True
-
-        # The prompts (to change the Python prompt, as well as the function print outs).
-        self.ps1_orig = 'relax> '
-        self.ps2_orig = 'relax| '
-        self.ps3_orig = '\n%s' % self.ps1_orig
-
-        # Coloured text.
-        self.ps1_colour = "%s%s%s" % (ansi.relax_prompt, self.ps1_orig, ansi.end)
-        self.ps2_colour = "%s%s%s" % (ansi.relax_prompt, self.ps2_orig, ansi.end)
-        self.ps3_colour = "\n%s%s%s" % (ansi.relax_prompt, self.ps1_orig, ansi.end)
-
-        # Default to no colours.
-        self.prompt_colour_off()
-
-
-    def prompt_colour_off(self):
-        """Turn the prompt colouring ANSI escape sequences off."""
-
-        sys.ps1 = self.ps1 = self.ps1_orig
-        sys.ps2 = self.ps2 = self.ps2_orig
-        sys.ps3 = self.ps3 = self.ps3_orig
-
-
-    def prompt_colour_on(self):
-        """Turn the prompt colouring ANSI escape sequences off."""
-
-        sys.ps1 = self.ps1 = self.ps1_colour
-        sys.ps2 = self.ps2 = self.ps2_colour
-        sys.ps3 = self.ps3 = self.ps3_colour
-
-
-
 class User_fn_class:
-    def __init__(self, exec_info=None):
-        """Initialise the user function class, compiling the help string.
-
-        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
-        @type exec_info:    None or class instance
-        """
-
-        # Generate the execution info container.
-        if exec_info == None:
-            exec_info = Exec_info()
-
-        # Store the execution info container privately
-        self._exec_info = exec_info
+    def __init__(self):
+        """Initialise the user function class, compiling the help string."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__doc__ + "\n" + help.relax_class_help

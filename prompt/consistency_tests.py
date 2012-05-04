@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -25,12 +25,11 @@
 """Module containing the 'consistency_tests' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
 from specific_fns.setup import consistency_tests_obj
+from status import Status; status = Status()
 
 
 class Consistency_tests(User_fn_class):
@@ -60,8 +59,8 @@ class Consistency_tests(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "consistency_tests.set_frq("
+        if status.prompt_intro:
+            text = status.ps3 + "consistency_tests.set_frq("
             text = text + "frq=" + repr(frq) + ")"
             print(text)
 

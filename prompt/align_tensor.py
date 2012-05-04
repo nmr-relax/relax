@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,11 @@
 """Module containing the 'align_tensor' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
 from generic_fns import align_tensor
+from status import Status; status = Status()
 
 
 class Align_tensor(User_fn_class):
@@ -84,8 +83,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.copy("
             text = text + "tensor_from=" + repr(tensor_from)
             text = text + ", pipe_from=" + repr(pipe_from)
             text = text + ", tensor_to=" + repr(tensor_to)
@@ -119,8 +118,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.delete("
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
@@ -141,8 +140,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.display("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.display("
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
@@ -171,8 +170,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.fix("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.fix("
             text = text + "id=" + repr(id)
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)
@@ -246,8 +245,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.init("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.init("
             text = text + "tensor=" + repr(tensor)
             text = text + ", params=" + repr(params)
             text = text + ", scale=" + repr(scale)
@@ -290,8 +289,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.matrix_angles("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.matrix_angles("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
@@ -332,8 +331,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.reduction("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.reduction("
             text = text + "full_tensor=" + repr(full_tensor)
             text = text + ", red_tensor=" + repr(red_tensor) + ")"
             print(text)
@@ -373,8 +372,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.set_domain("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.set_domain("
             text = text + "tensor=" + repr(tensor)
             text = text + ", domain=" + repr(domain) + ")"
             print(text)
@@ -447,8 +446,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.svd("
+        if status.prompt_intro:
+            text = status.ps3 + "align_tensor.svd("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)

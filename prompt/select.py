@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import selection
+from status import Status; status = Status()
 
 
 boolean_doc = ["Boolean operators", """
@@ -74,8 +75,8 @@ class Select(User_fn_class):
 
     def all(self):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "select.all()"
+        if status.prompt_intro:
+            text = status.ps3 + "select.all()"
             print(text)
 
         # Execute the functional code.
@@ -96,8 +97,8 @@ class Select(User_fn_class):
 
     def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='OR', change_all=False):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "select.read("
+        if status.prompt_intro:
+            text = status.ps3 + "select.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -174,8 +175,8 @@ class Select(User_fn_class):
 
     def reverse(self, spin_id=None):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "select.reverse("
+        if status.prompt_intro:
+            text = status.ps3 + "select.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -204,8 +205,8 @@ class Select(User_fn_class):
 
     def spin(self, spin_id=None, boolean='OR', change_all=False):
         # Function intro test.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "select.spin("
+        if status.prompt_intro:
+            text = status.ps3 + "select.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", boolean=" + repr(boolean)
             text = text + ", change_all=" + repr(change_all) + ")"

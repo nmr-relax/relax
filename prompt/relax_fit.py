@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from specific_fns.setup import relax_fit_obj
+from status import Status; status = Status()
 
 
 class Relax_fit(User_fn_class):
@@ -35,8 +36,8 @@ class Relax_fit(User_fn_class):
 
     def relax_time(self, time=0.0, spectrum_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_fit.relax_time("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_fit.relax_time("
             text = text + "time=" + repr(time)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
@@ -63,8 +64,8 @@ class Relax_fit(User_fn_class):
 
     def select_model(self, model='exp'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "relax_fit.select_model("
+        if status.prompt_intro:
+            text = status.ps3 + "relax_fit.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

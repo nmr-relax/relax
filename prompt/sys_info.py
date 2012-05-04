@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,17 +25,18 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class, _build_doc
+from base_class import _build_doc
 from generic_fns.sys_info import sys_info
+from status import Status; status = Status()
 
 
-class Sys_info(Basic_class):
+class Sys_info:
     """Class containing the sys_info function."""
 
     def sys_info(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "sys_info()"
+        if status.prompt_intro:
+            text = status.ps3 + "sys_info()"
             print(text)
 
         # Execute the functional code.

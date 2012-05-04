@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008-2010 Edward d'Auvergne                       #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,12 +25,12 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class
 import arg_check
 from generic_fns import fix
+from status import Status; status = Status()
 
 
-class Fix(Basic_class):
+class Fix:
     """Class containing the function for fixing or allowing parameter values to change."""
 
     def fix(self, element=None, fixed=True):
@@ -63,8 +63,8 @@ class Fix(Basic_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "fix("
+        if status.prompt_intro:
+            text = status.ps3 + "fix("
             text = text + "element=" + repr(element)
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)

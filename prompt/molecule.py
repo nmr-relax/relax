@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule, type_molecule
+from status import Status; status = Status()
 
 
 class Molecule(User_fn_class):
@@ -35,8 +36,8 @@ class Molecule(User_fn_class):
 
     def copy(self, pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molecule.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "molecule.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", mol_from=" + repr(mol_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -81,8 +82,8 @@ class Molecule(User_fn_class):
 
     def create(self, mol_name=None, mol_type=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molecule.create("
+        if status.prompt_intro:
+            text = status.ps3 + "molecule.create("
             text = text + "mol_name=" + repr(mol_name)
             text = text + ", mol_type=" + repr(mol_type) + ")"
             print(text)
@@ -117,8 +118,8 @@ class Molecule(User_fn_class):
 
     def delete(self, mol_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molecule.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "molecule.delete("
             text = text + "mol_id=" + repr(mol_id) + ")"
             print(text)
 
@@ -142,8 +143,8 @@ class Molecule(User_fn_class):
 
     def display(self, mol_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molecule.display("
+        if status.prompt_intro:
+            text = status.ps3 + "molecule.display("
             text = text + "mol_id=" + repr(mol_id) + ")"
             print(text)
 
@@ -164,8 +165,8 @@ class Molecule(User_fn_class):
 
     def name(self, mol_id=None, name=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molecule.name("
+        if status.prompt_intro:
+            text = status.ps3 + "molecule.name("
             text = text + "mol_id=" + repr(mol_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
@@ -202,8 +203,8 @@ class Molecule(User_fn_class):
 
     def type(self, mol_id=None, type=None, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molecule.type("
+        if status.prompt_intro:
+            text = status.ps3 + "molecule.type("
             text = text + "mol_id=" + repr(mol_id)
             text = text + ", type=" + repr(type)
             text = text + ", force=" + repr(force) + ")"

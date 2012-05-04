@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,11 +21,11 @@
 ###############################################################################
 
 # relax module imports.
-from base_class import Basic_class
 import generic_fns.reset
+from status import Status; status = Status()
 
 
-class Reset(Basic_class):
+class Reset:
     """Class containing the function for reinitialising the relax data storage object."""
 
     def reset(self):

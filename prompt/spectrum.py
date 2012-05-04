@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import spectrum
+from status import Status; status = Status()
 
 
 class Spectrum(User_fn_class):
@@ -35,8 +36,8 @@ class Spectrum(User_fn_class):
 
     def baseplane_rmsd(self, error=0.0, spectrum_id=None, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spectrum.baseplane_rmsd("
+        if status.prompt_intro:
+            text = status.ps3 + "spectrum.baseplane_rmsd("
             text = text + "error=" + repr(error)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -66,8 +67,8 @@ class Spectrum(User_fn_class):
 
     def delete(self, spectrum_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spectrum.delete("
+        if status.prompt_intro:
+            text = status.ps3 + "spectrum.delete("
             text = text + "spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
 
@@ -96,8 +97,8 @@ class Spectrum(User_fn_class):
 
     def error_analysis(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spectrum.error_analysis()"
+        if status.prompt_intro:
+            text = status.ps3 + "spectrum.error_analysis()"
             print(text)
 
         # Execute the functional code.
@@ -179,8 +180,8 @@ class Spectrum(User_fn_class):
 
     def integration_points(self, N=None, spectrum_id=None, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spectrum.integration_points("
+        if status.prompt_intro:
+            text = status.ps3 + "spectrum.integration_points("
             text = text + "N=" + repr(N)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -212,8 +213,8 @@ class Spectrum(User_fn_class):
 
     def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spectrum.read_intensities("
+        if status.prompt_intro:
+            text = status.ps3 + "spectrum.read_intensities("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spectrum_id=" + repr(spectrum_id)
@@ -316,8 +317,8 @@ class Spectrum(User_fn_class):
 
     def replicated(self, spectrum_ids=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "spectrum.replicated("
+        if status.prompt_intro:
+            text = status.ps3 + "spectrum.replicated("
             text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
             print(text)
 

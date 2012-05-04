@@ -36,6 +36,7 @@ from specific_fns.model_free import Model_free
 from specific_fns.relax_fit import Relax_fit
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
+from status import Status; status = Status()
 
 
 class Value(User_fn_class):
@@ -43,8 +44,8 @@ class Value(User_fn_class):
 
     def copy(self, pipe_from=None, pipe_to=None, param=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.copy("
+        if status.prompt_intro:
+            text = status.ps3 + "value.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", param=" + repr(param) + ")"
@@ -90,8 +91,8 @@ class Value(User_fn_class):
 
     def display(self, param=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.display("
+        if status.prompt_intro:
+            text = status.ps3 + "value.display("
             text = text + "param=" + repr(param) + ")"
             print(text)
 
@@ -125,8 +126,8 @@ class Value(User_fn_class):
 
     def read(self, param=None, scaling=1.0, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.read("
+        if status.prompt_intro:
+            text = status.ps3 + "value.read("
             text = text + "param=" + repr(param)
             text = text + ", scaling=" + repr(scaling)
             text = text + ", file=" + repr(file)
@@ -211,8 +212,8 @@ class Value(User_fn_class):
 
     def set(self, val=None, param=None, spin_id=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.set("
+        if status.prompt_intro:
+            text = status.ps3 + "value.set("
             text = text + "val=" + repr(val)
             text = text + ", param=" + repr(param)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -357,8 +358,8 @@ class Value(User_fn_class):
 
     def write(self, param=None, file=None, dir=None, bc=False, force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.write("
+        if status.prompt_intro:
+            text = status.ps3 + "value.write("
             text = text + "param=" + repr(param)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

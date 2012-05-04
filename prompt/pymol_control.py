@@ -30,6 +30,7 @@ import arg_check
 import colour
 from generic_fns import pymol_control
 from specific_fns.model_free.pymol import Pymol
+from status import Status; status = Status()
 
 
 class Pymol(User_fn_class):
@@ -37,8 +38,8 @@ class Pymol(User_fn_class):
 
     def cartoon(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.cartoon()"
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.cartoon()"
             print(text)
 
         # Execute the functional code.
@@ -66,8 +67,8 @@ class Pymol(User_fn_class):
 
     def clear_history(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.clear_history()"
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.clear_history()"
             print(text)
 
         # Execute the functional code.
@@ -84,8 +85,8 @@ class Pymol(User_fn_class):
 
     def command(self, command=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.command("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
 
@@ -114,8 +115,8 @@ class Pymol(User_fn_class):
 
     def cone_pdb(self, file=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.cone_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.cone_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -156,8 +157,8 @@ class Pymol(User_fn_class):
 
     def macro_apply(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.macro_apply("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.macro_apply("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -206,8 +207,8 @@ class Pymol(User_fn_class):
 
     def macro_run(self, file=None, dir='pymol'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.macro_run("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.macro_run("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
             print(text)
@@ -240,8 +241,8 @@ class Pymol(User_fn_class):
 
     def macro_write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=False):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.macro_write("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.macro_write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -300,8 +301,8 @@ class Pymol(User_fn_class):
 
     def tensor_pdb(self, file=None):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.tensor_pdb("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -348,8 +349,8 @@ class Pymol(User_fn_class):
 
     def vector_dist(self, file='XH_dist.pdb'):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.vector_dist("
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.vector_dist("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -377,8 +378,8 @@ class Pymol(User_fn_class):
 
     def view(self):
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.view()"
+        if status.prompt_intro:
+            text = status.ps3 + "pymol.view()"
             print(text)
 
         # Execute the functional code.

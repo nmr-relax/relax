@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from base_class import User_fn_class
 import arg_check
 from generic_fns import paramag
 from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class Paramag(User_fn_class):
@@ -98,8 +99,8 @@ class Paramag(User_fn_class):
         """
 
         # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "paramag.centre("
+        if status.prompt_intro:
+            text = status.ps3 + "paramag.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
