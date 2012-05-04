@@ -135,7 +135,7 @@ class Uf_container(object):
         self.desc = None
         self.additional = None
         self.prompt_examples = None
-        self.menu_text = None
+        self.menu_text = ''
         self.gui_icon = None
         self.wizard_size = (600, 400)
         self.wizard_image = IMAGE_PATH + "relax.gif"
