@@ -27,6 +27,14 @@
 from os import sep
 from string import split
 
+# relax module imports.
+from status import Status; status = Status()
+
+# GUI image and icon paths.
+ANALYSIS_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'analyses' + sep
+IMAGE_PATH = status.install_path + sep + 'gui' + sep + 'images' + sep
+WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
+
 
 def fetch_icon(icon=None, size='16x16'):
     """Return the path to the specified icon.
