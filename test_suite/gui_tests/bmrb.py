@@ -51,7 +51,7 @@ class Bmrb(GuiTestCase):
         self._wizard = Wiz_window(self.app.gui)
 
         # Create the data pipe.
-        self.execute_uf(page=uf_pages.pipe.Create_page, pipe_name='results', pipe_type='mf')
+        self.execute_uf(name='pipe.create', pipe_name='results', pipe_type='mf')
 
         # Read the results.
         results_read = uf_pages.results.Read_page(self._wizard)

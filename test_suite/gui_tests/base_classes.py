@@ -41,6 +41,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui.uf_objects import Uf_page
 
 
 class GuiTestCase(TestCase):
@@ -77,19 +78,19 @@ class GuiTestCase(TestCase):
             pass
 
 
-    def execute_uf(self, page=None, **kargs):
+    def execute_uf(self, name=None, **kargs):
         """Execute the given user function.
 
-        @keyword page:  The user function page.
-        @type page:     Wizard page
+        @keyword name:  The name of the user function.
+        @type name:     str
         """
 
         # Create and store a wizard instance to be used in all user function pages (if needed).
         if not hasattr(self, '_wizard'):
             self._wizard = Wiz_window(self.app.gui)
 
-        # Initialise the page (adding it to the wizard).
-        uf_page = page(self._wizard)
+        # Create the page.
+        uf_page = Uf_page(name, parent=self._wizard)
 
         # Set all the values.
         for key in kargs:
