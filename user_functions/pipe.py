@@ -48,6 +48,8 @@ uf.add_keyarg(
         desc_short = "pipe from",
         desc = "The name of the source data pipe to copy the data from.",
         wiz_desc = "Source pipe",
+        wiz_element_type = 'combo',
+        wiz_combo_iter = pipes.pipe_names,
         can_be_none = True
 )
 uf.add_keyarg(
@@ -99,7 +101,8 @@ uf.add_keyarg(
         wiz_desc = "The type of data pipe",
         wiz_element_type = 'combo',
         wiz_combo_choices = pipes.PIPE_DESC_LIST,
-        wiz_combo_data = pipes.VALID_TYPES
+        wiz_combo_data = pipes.VALID_TYPES,
+        wiz_read_only = True
 )
 uf.backend = pipes.create
 uf.desc = """
@@ -150,6 +153,8 @@ uf.add_keyarg(
         desc_short = "data pipe name",
         desc = "The name of the data pipe to delete.",
         wiz_desc = "The pipe",
+        wiz_element_type = 'combo',
+        wiz_combo_iter = pipes.pipe_names,
         can_be_none = True
 )
 uf.backend = pipes.delete
@@ -193,7 +198,10 @@ uf.add_keyarg(
         py_type = "str_list",
         desc_short = "data pipes",
         desc = "An array containing the names of all data pipes to hybridise.",
-        wiz_desc = "The pipes to hybridise"
+        wiz_desc = "The pipes to hybridise",
+        wiz_element_type = 'combo_list',
+        wiz_combo_iter = pipes.pipe_names,
+        wiz_combo_list_size = 2
 )
 uf.backend = hybrid_obj._hybridise
 uf.desc = """
@@ -224,7 +232,9 @@ uf.add_keyarg(
         py_type = "str",
         desc_short = "data pipe name",
         desc = "The name of the data pipe.",
-        wiz_desc = "The pipe"
+        wiz_desc = "The pipe",
+        wiz_element_type = 'combo',
+        wiz_combo_iter = pipes.pipe_names
 )
 uf.backend = pipes.switch
 uf.desc = """
@@ -240,4 +250,4 @@ uf.menu_text = "&switch"
 uf.gui_icon = "oxygen.actions.system-switch-user"
 uf.wizard_size = (650, 450)
 uf.wizard_apply_button = False
-uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe_switch.png'

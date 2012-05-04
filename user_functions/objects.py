@@ -159,31 +159,37 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, wiz_desc=None, wiz_element_type='text', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_default=None, can_be_none=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, desc_short=None, desc=None, wiz_desc=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False):
         """Wrapper method for adding keyword argument information to the container.
 
-        @keyword name:              The name of the argument.
-        @type name:                 str
-        @keyword default:           The default value of the argument.
-        @type default:              anything
-        @keyword py_type:           The Python object type that the argument must match (taking the can_be_none flag into account).
-        @type py_type:              str
-        @keyword desc_short:        The short human-readable description of the argument.  This is used, for example, in the RelaxError messages to refer to the argument.
-        @type desc_short:           str
-        @keyword desc:              The long human-readable description of the argument.
-        @type desc:                 str
-        @keyword wiz_desc:          The description used in the wizard GUI pages.
-        @type wiz_desc:             str
-        @keyword wiz_element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
-        @type wiz_element_type:     str
-        @keyword wiz_combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type wiz_combo_choices:    list of str
-        @keyword wiz_combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type wiz_combo_data:       list
-        @keyword wiz_combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type wiz_combo_default:    str or None
-        @keyword can_be_none:       A flag which specifies if the argument is allowed to have the None value.
-        @type can_be_none:          bool
+        @keyword name:                  The name of the argument.
+        @type name:                     str
+        @keyword default:               The default value of the argument.
+        @type default:                  anything
+        @keyword py_type:               The Python object type that the argument must match (taking the can_be_none flag into account).
+        @type py_type:                  str
+        @keyword desc_short:            The short human-readable description of the argument.  This is used, for example, in the RelaxError messages to refer to the argument.
+        @type desc_short:               str
+        @keyword desc:                  The long human-readable description of the argument.
+        @type desc:                     str
+        @keyword wiz_desc:              The description used in the wizard GUI pages.
+        @type wiz_desc:                 str
+        @keyword wiz_element_type:      The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
+        @type wiz_element_type:         str
+        @keyword wiz_combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type wiz_combo_choices:        list of str
+        @keyword wiz_combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type wiz_combo_data:           list
+        @keyword wiz_combo_default:     The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type wiz_combo_default:        str or None
+        @keyword wiz_combo_iter:        An iterator method for regenerating the ComboBox choices.
+        @type wiz_combo_iter:           iterator or None
+        @keyword wiz_combo_list_size:   An iterator method for regenerating the ComboBox choices.
+        @type wiz_combo_list_size:      iterator or None
+        @keyword wiz_read_only:         A flag which if True means that the text of the GUI wizard page element cannot be edited.
+        @type wiz_read_only:            bool
+        @keyword can_be_none:           A flag which specifies if the argument is allowed to have the None value.
+        @type can_be_none:              bool
         """
 
         # Check that the args have been properly supplied.
@@ -213,4 +219,7 @@ class Uf_container(object):
         arg['wiz_combo_choices'] = wiz_combo_choices
         arg['wiz_combo_data'] = wiz_combo_data
         arg['wiz_combo_default'] = wiz_combo_default
+        arg['wiz_combo_iter'] = wiz_combo_iter
+        arg['wiz_combo_list_size'] = wiz_combo_list_size
+        arg['wiz_read_only'] = wiz_read_only
         arg['can_be_none'] = can_be_none

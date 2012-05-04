@@ -214,7 +214,11 @@ class Uf_page(Wiz_page):
 
             # String type.
             if arg['py_type'] == 'str':
-                self.element_string(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'])
+                self.element_string(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
+            # String list.
+            elif arg['py_type'] == 'str_list':
+                self.element_string_list(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'])
 
 
     def add_desc(self, sizer, max_y=220):
@@ -249,7 +253,6 @@ class Uf_page(Wiz_page):
                 text_list.append([element, type])
 
         # Additional documentation.
-        print self.uf_data
         if self.uf_data.additional != None:
             for i in range(len(self.uf_data.additional)):
                 for element, type in self.process_doc(self.uf_data.additional[i]):
@@ -345,6 +348,34 @@ class Uf_page(Wiz_page):
         # Asynchronous execution.
         else:
             interpreter.queue(uf, *args, **kwds)
+
+
+    def on_display(self):
+        """Clear and update the data if needed."""
+
+        # Loop over the arguments.
+        for i in range(len(self.uf_data.kargs)):
+            # The argument name.
+            name = self.uf_data.kargs[i]['name']
+
+            # No iterator method for updating the list.
+            iterator = self.uf_data.kargs[i]['wiz_combo_iter']
+            if iterator == None:
+                continue
+
+            # Get the new choices and data.
+            choices = []
+            data = []
+            for vals in iterator():
+                if len(vals) == 2:
+                    choices.append(vals[0])
+                    data.append(vals[1])
+                else:
+                    choices.append(vals)
+                    data.append(vals)
+
+            # Reset.
+            self.ResetChoices(name, combo_choices=choices, combo_data=data)
 
 
     def on_execute(self):
