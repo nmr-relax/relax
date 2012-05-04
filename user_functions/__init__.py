@@ -26,8 +26,17 @@
 This package contains all information and details about user functions, from documentation to icons to be used in the GUI.  This package contains a special data structure which will be used by the different UIs to automatically generate their interfaces to the user functions.
 """
 
-# The __all__ package list.
-__all__ = ['']
+# The __all__ package list (main modules).
+__all__ = [
+    'data',
+    'functions',
+    'objects'
+]
+
+# The __all__ package list (user function modules).
+__all__ += [
+    'pipe'
+]
 
 # Import all the modules to set up the data.
 import user_functions.pipe
