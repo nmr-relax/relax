@@ -68,26 +68,42 @@ class Uf_object(object):
     def __call__(self, *args, **kwds):
         """Make the user function executable."""
 
-        # Generate a list of allowed kargs.
-        if not hasattr(self, '_karg_names'):
-            self._karg_names = []
-            for i in range(len(self._kargs)):
-                self._karg_names.append(self._kargs[i]['name'])
-
         # Check the keyword args.
-        for name in kwds.keys():
+        keys = kwds.keys()
+        for name in keys:
             # Unknown keyword.
             if name not in self._karg_names:
                 raise RelaxError("The keyword argument '%s' is unknown." % name)
 
+        # Set the argument defaults.
+        values = []
+        for i in range(self._karg_num):
+            # The user supplied value.
+            if self._karg_names[i] in keys:
+                values.append(kwds[self._karg_names[i]])
+
+            # The default.
+            else:
+                values.append(self._karg_default[i])
+
         # Function intro text.
         if status.prompt_intro:
-            text = status.ps3 + "frame_order.cone_pdb("
-            text = text + "size=" + repr(size)
-            text = text + ", inc=" + repr(inc)
-            text = text + ", file=" + repr(file)
-            text = text + ", dir=" + repr(dir)
-            text = text + ", force=" + repr(force) + ")"
+            # The prompt and user function name.
+            text = "%s%s(" % (status.ps3, self._name)
+
+            # The keyword args.
+            for i in range(len(self._kargs)):
+                # Comma separation.
+                if i >= 1:
+                    text += ", "
+
+                # Add the arg.
+                text += "%s=%s" % (self._kargs[i]['name'], repr(values[i]))
+
+            # The end.
+            text += ")"
+
+            # Print out.
             print(text)
 
 
@@ -109,6 +125,14 @@ class Uf_object(object):
         # Check the args.
         if title == None:
             raise RelaxError("The title must be given.")
+
+        # Generate fixed keyword argument data structures (for faster execution).
+        self._karg_num = len(self._kargs)
+        self._karg_names = []
+        self._karg_default = []
+        for i in range(self._karg_num):
+            self._karg_names.append(self._kargs[i]['name'])
+            self._karg_default.append(self._kargs[i]['default'])
 
         # Build the user function documentation.
         self._build_doc()
