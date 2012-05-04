@@ -111,6 +111,32 @@ class Uf_info(object):
             yield self._class_names[i], self._classes[i]
 
 
+    def get_class(self, name):
+        """Return the user function class data object corresponding to the given name.
+
+        @param name:    The name of the user function class.
+        @type name:     str
+        @return:        The class data container.
+        @rtype:         Class_container instance
+        """
+
+        # Return the object.
+        return self._classes[self._class_names.index(name)]
+
+
+    def get_uf(self, name):
+        """Return the user function data object corresponding to the given name.
+
+        @param name:    The name of the user function.
+        @type name:     str
+        @return:        The user function data container.
+        @rtype:         Uf_container instance
+        """
+
+        # Return the object.
+        return self._uf[self._uf_names.index(name)]
+
+
     def uf_loop(self):
         """Iterator method for looping over the user functions.
 
