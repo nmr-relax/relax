@@ -167,7 +167,7 @@ class Interpreter:
             class_name, uf_name = split(name, '.')
 
             # Generate a new container.
-            obj = Uf_object(name, title=data.title, kargs=data.kargs, desc=data.desc, examples=data.prompt_examples)
+            obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc, examples=data.prompt_examples)
 
             # Get the class object.
             class_obj = self._locals[class_name]

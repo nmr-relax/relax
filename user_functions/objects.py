@@ -72,11 +72,17 @@ class Uf_container(object):
     """This class is used to process and store all of the user function specific information.
 
     @ivar title:            The long title of the user function.
+    @type title:            str
     @ivar title_short:      The optional short title.
+    @type title_short:      str or None
     @ivar kargs:            The list of keyword argument details.
+    @type kargs:            list of dict
     @ivar backend:          The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'generic_fns.pipes.create'.  Note, this should be importable as __import__(backend)!
+    @type backend:          executable object
     @ivar desc:             The full, multi-paragraph description.
+    @type desc:             str
     @ivar prompt_examples:  The examples of how to use the prompt front end.
+    @type prompt_examples:  str or None
     """
 
     # The list of modifiable objects (anything else will be rejected to prevent coding errors).

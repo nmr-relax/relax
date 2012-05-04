@@ -66,35 +66,36 @@ class Class_container(object):
 class Uf_object(object):
     """The object for auto-generating the user functions."""
 
-    def __call__(self, *args, **kwds):
+    def __call__(self, *uf_args, **uf_kargs):
         """Make the user function executable."""
 
         # Check the keyword args.
-        keys = kwds.keys()
+        keys = uf_kargs.keys()
         for name in keys:
             # Unknown keyword.
             if name not in self._karg_names:
                 raise RelaxError("The keyword argument '%s' is unknown." % name)
 
         # Convert the args to keyword args if needed.
-        num_args = len(args)
+        num_args = len(uf_args)
+        new_args = []
         if num_args:
             for i in range(num_args):
                 # Check if the keyword is already assigned.
                 if self._kargs[i]['name'] in keys:
-                    raise RelaxError("The argument '%s' and the keyword argument '%s' cannot both be supplied." % (args[i], self._kargs[i]['name']))
+                    raise RelaxError("The argument '%s' and the keyword argument '%s' cannot both be supplied." % (uf_args[i], self._kargs[i]['name']))
 
                 # Add the arg as a keyword arg.
-                kwds[self._kargs[i]['name']] = args[i]
+                uf_kargs[self._kargs[i]['name']] = uf_args[i]
 
         # Set the argument defaults.
         values = []
-        keys = kwds.keys()
+        keys = uf_kargs.keys()
         for i in range(self._karg_num):
             # The user supplied value.
             if self._kargs[i]['name'] in keys:
                 # The value.
-                value = kwds[self._kargs[i]['name']]
+                value = uf_kargs[self._kargs[i]['name']]
 
                 # Check if the correct Python object type has been supplied.
                 if self._kargs[i]['py_type'] == 'str':
@@ -131,18 +132,34 @@ class Uf_object(object):
             # Print out.
             print(text)
 
+        # Execute the functional code.
+        self._backend(*new_args, **uf_kargs)
 
-    def __init__(self, name, title=None, kargs=None, desc=None, examples=None, additional=None):
+
+    def __init__(self, name, title=None, kargs=None, backend=None, desc=None, examples=None, additional=None):
         """Set up the object.
 
-        @param name:    The name of the user function.
-        @type name:     str
-        """
+        @param name:            The name of the user function.
+        @type name:             str
+        @keyword title:         The long title of the user function.
+        @type title:            str
+        @keyword kargs:         The list of keyword argument details.
+        @type kargs:            list of dict
+        @keyword backend:       The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'generic_fns.pipes.create'.  Note, this should be importable as __import__(backend)!
+        @type backend:          executable object
+        @keyword desc:          The full, multi-paragraph description.
+        @type desc:             str
+        @keyword examples:      The examples of how to use the prompt front end.
+        @type examples:         str or None
+        @keyword additional:    The examples of how to use the prompt front end.
+        @type additional:       list of str or None
+         """
 
         # Store the args.
         self._name = name
         self._title = title
         self._kargs = kargs
+        self._backend = backend
         self._desc = desc
         self._examples = examples
         self._additional = additional
