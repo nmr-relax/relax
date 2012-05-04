@@ -99,9 +99,9 @@ class Uf_object(object):
 
                 # Check if the correct Python object type has been supplied.
                 if self._kargs[i]['py_type'] == 'str':
-                    arg_check.is_str(value, self._kargs[i]['desc_short'])
+                    arg_check.is_str(value, self._kargs[i]['desc_short'], can_be_none=self._kargs[i]['can_be_none'])
                 elif self._kargs[i]['py_type'] == 'str_list':
-                    arg_check.is_str_list(value, self._kargs[i]['desc_short'])
+                    arg_check.is_str_list(value, self._kargs[i]['desc_short'], can_be_none=self._kargs[i]['can_be_none'])
                 else:
                     raise RelaxError("The Python object type '%s' is unknown." % self._kargs[i]['py_type'])
 
