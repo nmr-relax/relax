@@ -159,7 +159,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='text', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False, can_be_empty=False, none_elements=False, list_of_lists=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -173,6 +173,10 @@ class Uf_container(object):
                                             - 'dir' will cause the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
                                             - 'dir sel' will indicate to certain UIs that a dir selection dialog is required.
         @type arg_type:                 str
+        @keyword size:                  The length that a list or tuple must conform to.
+        @type size:                     int or None
+        @keyword dim:                   The dimension that a matrix or list of lists must conform to.
+        @type dim:                      tuple of int or None
         @keyword desc_short:            The short human-readable description of the argument.  This is used in the RelaxError messages to refer to the argument, as well as in the GUI user function page elements.
         @type desc_short:               str
         @keyword desc:                  The long human-readable description of the argument.
@@ -195,6 +199,12 @@ class Uf_container(object):
         @type wiz_read_only:            bool
         @keyword can_be_none:           A flag which specifies if the argument is allowed to have the None value.
         @type can_be_none:              bool
+        @keyword can_be_empty:          A flag which if True allows the sequence type object to be empty.
+        @type can_be_empty:             bool
+        @keyword none_elements:         A flag which if True allows the sequence type object to contain None elements.
+        @type none_elements:            bool
+        @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists.
+        @type list_of_lists:            bool
         """
 
         # Check that the args have been properly supplied.
@@ -216,8 +226,10 @@ class Uf_container(object):
         arg['default'] = default
         arg['py_type'] = py_type
         arg['arg_type'] = arg_type
-        arg['desc'] = desc
+        arg['size'] = size
+        arg['dim'] = dim
         arg['desc_short'] = desc_short
+        arg['desc'] = desc
         arg['list_titles'] = list_titles
         arg['wiz_element_type'] = wiz_element_type
         arg['wiz_combo_choices'] = wiz_combo_choices
@@ -227,3 +239,6 @@ class Uf_container(object):
         arg['wiz_combo_list_size'] = wiz_combo_list_size
         arg['wiz_read_only'] = wiz_read_only
         arg['can_be_none'] = can_be_none
+        arg['can_be_empty'] = can_be_empty
+        arg['none_elements'] = none_elements
+        arg['list_of_lists'] = list_of_lists
