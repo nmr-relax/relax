@@ -608,6 +608,7 @@ This will create a NMR-STAR formatted file of the data in the current data pipe 
 
 In the prompt/script UI modes, to place the BMRB file in the current working directory, set dir to None.  If dir is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.
 """
+uf.backend = bmrb.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (700, 500)
