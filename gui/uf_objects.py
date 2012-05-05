@@ -209,7 +209,7 @@ class Uf_page(Wiz_page):
 
             # String list.
             elif arg['py_type'] == 'str_list':
-                self.element_string_list(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'])
+                self.element_string_list(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # String list of lists.
             elif arg['py_type'] == 'str_list_of_lists':

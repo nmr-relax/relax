@@ -747,7 +747,7 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_string_list(self, key=None, element_type='default', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None):
+    def element_string_list(self, key=None, element_type='default', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
@@ -774,10 +774,12 @@ class Wiz_page(wx.Panel):
         @type padding:              int
         @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:               None or int
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
         """
 
         # Create the element.
-        element = String_list(name=key, element_type=element_type, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+        element = String_list(name=key, element_type=element_type, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element

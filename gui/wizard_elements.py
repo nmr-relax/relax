@@ -255,7 +255,7 @@ class Integer(Base_value):
 class List:
     """Base wizard GUI element for the input of all types of lists."""
 
-    def __init__(self, name=None, parent=None, element_type='default', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None):
+    def __init__(self, name=None, parent=None, element_type='default', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -284,6 +284,8 @@ class List:
         @type padding:              int
         @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:               None or int
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
         """
 
         # Store the args.
