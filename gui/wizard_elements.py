@@ -99,7 +99,7 @@ class Base_value:
         sub_sizer.AddSpacer((divider - x, 0))
 
         # Initialise the text input field.
-        if element_type == 'text':
+        if element_type in ['text', 'default']:
             # Set up the text control.
             self._field = wx.TextCtrl(parent, -1, '')
 
