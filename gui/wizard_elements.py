@@ -555,7 +555,7 @@ class Selector_bool:
         """
 
         # Convert and return the value from a ComboBox.
-        return gui_to_bool(self.combo.GetClientData(self.combo.GetSelection()))
+        return gui_to_bool(self.combo.GetValue())
 
 
     def SetValue(self, value):
