@@ -375,8 +375,17 @@ class List:
         @rtype:     list of str
         """
 
-        # Convert and return the value.
-        return gui_to_list(self._field.GetValue())
+        # The value.
+        value = self._field.GetValue()
+
+        # Convert, handling bad user behaviour.
+        try:
+            value = gui_to_list(value)
+        except:
+            value = []
+
+        # Return the value.
+        return value
 
 
     def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
