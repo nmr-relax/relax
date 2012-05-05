@@ -38,7 +38,7 @@ from gui.icons import relax_icons
 from gui.message import Question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
-from gui.uf_pages import User_functions
+from gui.uf_objects import Uf_storage
 
 
 class Pipe_editor(wx.Frame):
@@ -63,9 +63,6 @@ class Pipe_editor(wx.Frame):
 
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
-
-        # Initialise the user functions.
-        self.user_functions = User_functions(self)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -257,17 +254,20 @@ class Pipe_editor(wx.Frame):
         @type event:    wx event
         """
 
+        # The user function storage singleton.
+        store = Uf_storage()
+
         # Launch the respective user functions.
         if event.GetEventObject() == self.button_create:
-            self.user_functions.pipe.create()
+            store['pipe.create'](event)
         elif event.GetEventObject() == self.button_copy:
-            self.user_functions.pipe.copy()
+            store['pipe.copy'](event)
         elif event.GetEventObject() == self.button_delete:
-            self.user_functions.pipe.delete()
+            store['pipe.delete'](event)
         elif event.GetEventObject() == self.button_hybrid:
-            self.user_functions.pipe.hybrid()
+            store['pipe.hybridise'](event)
         elif event.GetEventObject() == self.button_switch:
-            self.user_functions.pipe.switch()
+            store['pipe.switch'](event)
 
 
     def add_logo(self, box):
