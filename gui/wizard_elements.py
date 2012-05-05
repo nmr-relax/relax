@@ -317,10 +317,13 @@ class List:
             self._field = wx.TextCtrl(parent, -1, '')
             self._field.SetMinSize((50, parent.height_element))
             self._field.SetFont(font.normal)
-            self._field.SetEditable(False)
-            colour = parent.GetBackgroundColour()
-            self._field.SetOwnBackgroundColour(colour)
             sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+
+            # Read-only.
+            if read_only:
+                self._field.SetEditable(False)
+                colour = parent.GetBackgroundColour()
+                self._field.SetOwnBackgroundColour(colour)
 
             # A little spacing.
             sub_sizer.AddSpacer(5)
@@ -350,7 +353,7 @@ class List:
 
         # Initialise the combo list input field.
         elif self.element_type == 'combo_list':
-            self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, tooltip=tooltip)
+            self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, tooltip=tooltip, read_only=read_only)
 
         # Unknown field.
         else:
