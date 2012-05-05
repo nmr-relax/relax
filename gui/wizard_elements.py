@@ -75,13 +75,13 @@ class Base_value:
         @type read_only:        bool
         """
 
-        # Store the args.
-        self.name = name
-        self.element_type = element_type
-
         # Set the default to a TextCtrl.
         if element_type == 'default':
             element_type = 'text'
+
+        # Store the args.
+        self.name = name
+        self.element_type = element_type
 
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -103,7 +103,7 @@ class Base_value:
         sub_sizer.AddSpacer((divider - x, 0))
 
         # Initialise the text input field.
-        if element_type == 'text':
+        if self.element_type == 'text':
             # Set up the text control.
             self._field = wx.TextCtrl(parent, -1, '')
 
@@ -117,7 +117,7 @@ class Base_value:
                 self._field.SetOwnBackgroundColour(colour)
 
         # Initialise the combo box input field.
-        elif element_type == 'combo':
+        elif self.element_type == 'combo':
             # The style.
             style = wx.CB_DROPDOWN
             if read_only:
@@ -131,7 +131,7 @@ class Base_value:
 
         # Unknown field.
         else:
-            raise RelaxError("Unknown element type '%s'." % element_type)
+            raise RelaxError("Unknown element type '%s'." % self.element_type)
 
         # Set up the input field.
         self._field.SetMinSize((50, parent.height_element))
