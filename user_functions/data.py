@@ -25,6 +25,7 @@
 
 # Python module imports.
 from re import search
+from relax_errors import RelaxError
 from string import split
 
 # relax module imports.
@@ -147,3 +148,17 @@ class Uf_info(object):
         # Loop over the user functions.
         for i in range(len(self._uf_names)):
             yield self._uf_names[i], self._uf[i]
+
+
+    def validate(self):
+        """Validate that all of the user functions have been correctly set up."""
+
+        # Loop over the user functions.
+        for name, uf in self.uf_loop():
+            # Check the title.
+            if uf.title == None:
+                raise RelaxError("The title of the %s user function has not been specified." % name)
+
+            # Check the backend.
+            if uf.backend == None:
+                raise RelaxError("The back end of the %s user function has not been specified." % name)

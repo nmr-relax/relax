@@ -42,3 +42,9 @@ __all__ += [
 # Import all the modules to set up the data.
 import user_functions.bmrb
 import user_functions.pipe
+
+# Import the data structure.
+from user_functions.data import Uf_info; uf_info = Uf_info()
+
+# Check the validity of the data.
+uf_info.validate()
