@@ -163,7 +163,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=False, can_be_none=False, can_be_empty=False, none_elements=False, list_of_lists=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False, list_of_lists=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -199,8 +199,8 @@ class Uf_container(object):
         @type wiz_combo_iter:           iterator or None
         @keyword wiz_combo_list_size:   An iterator method for regenerating the ComboBox choices.
         @type wiz_combo_list_size:      iterator or None
-        @keyword wiz_read_only:         A flag which if True means that the text of the GUI wizard page element cannot be edited.
-        @type wiz_read_only:            bool
+        @keyword wiz_read_only:         A flag which if True means that the text of the GUI wizard page element cannot be edited.  If the default of None is given, then each UI element will decide for itself what to do.
+        @type wiz_read_only:            bool or None
         @keyword can_be_none:           A flag which specifies if the argument is allowed to have the None value.
         @type can_be_none:              bool
         @keyword can_be_empty:          A flag which if True allows the sequence type object to be empty.
