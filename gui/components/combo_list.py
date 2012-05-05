@@ -76,6 +76,10 @@ class Combo_list:
         self._combo_boxes = []
         self._sub_sizers = []
 
+        # Set the initial size, if needed.
+        if n == None:
+            n = 1
+
         # The divider.
         if not divider:
             self._divider = self._parent._div_left
