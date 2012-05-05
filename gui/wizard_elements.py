@@ -294,6 +294,10 @@ class List:
 
         # Initialise the default element.
         if self.element_type == 'default':
+            # Translate the read_only flag if None.
+            if read_only == None:
+                read_only = True
+
             # Init.
             sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -353,6 +357,11 @@ class List:
 
         # Initialise the combo list input field.
         elif self.element_type == 'combo_list':
+            # Translate the read_only flag if None.
+            if read_only == None:
+                read_only = False
+
+            # Set up the Combo_list object.
             self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, tooltip=tooltip, read_only=read_only)
 
         # Unknown field.
