@@ -89,18 +89,13 @@ class Uf_object(object):
                 uf_kargs[self._kargs[i]['name']] = uf_args[i]
 
         # Set the argument defaults.
-        values = []
         for i in range(self._karg_num):
             # The keyword.
             name = self._kargs[i]['name']
 
-            # The user supplied value.
-            if name in keys:
-                values.append(uf_kargs[name])
-
-            # The default.
-            else:
-                values.append(self._kargs[i]['default'])
+            # Set the default if the user has not supplied a value.
+            if name not in uf_kargs.keys():
+                uf_kargs[name] = self._kargs[i]['default']
 
         # Function intro text.
         if status.prompt_intro:
@@ -114,7 +109,7 @@ class Uf_object(object):
                     text += ", "
 
                 # Add the arg.
-                text += "%s=%s" % (self._kargs[i]['name'], repr(values[i]))
+                text += "%s=%s" % (self._kargs[i]['name'], repr(uf_kargs[self._kargs[i]['name']]))
 
             # The end.
             text += ")"
