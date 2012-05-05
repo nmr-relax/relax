@@ -319,7 +319,6 @@ uf.add_keyarg(
         wiz_combo_choices = ["relax", "modelfree4", "dasha", "curvefit"],
         wiz_read_only = False
 )
-
 uf.add_keyarg(
         name = "model_elim",
         default = False,
@@ -327,7 +326,6 @@ uf.add_keyarg(
         desc_short = "model elimination flag",
         desc = "A model-free specific flag specifying if model elimination was performed."
 )
-
 uf.add_keyarg(
         name = "universal_solution",
         default = False,
