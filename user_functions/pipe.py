@@ -49,6 +49,7 @@ uf.add_keyarg(
         desc = "The name of the source data pipe to copy the data from.",
         wiz_element_type = 'combo',
         wiz_combo_iter = pipes.pipe_names,
+        wiz_read_only = True,
         can_be_none = True
 )
 uf.add_keyarg(
