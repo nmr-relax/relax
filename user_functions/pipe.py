@@ -60,7 +60,6 @@ uf.add_keyarg(
         desc = "The name of the target data pipe to copy the data to.",
         can_be_none = True
 )
-uf.backend = pipes.copy
 uf.desc = """
 This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.
 """
@@ -74,6 +73,7 @@ If the current data pipe is 'm1', then the following command can be used:
 
 relax> pipe.copy(pipe_to='m2')
 """
+uf.backend = pipes.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -154,10 +154,10 @@ uf.add_keyarg(
         wiz_combo_iter = pipes.pipe_names,
         can_be_none = True
 )
-uf.backend = pipes.delete
 uf.desc = """
 This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.
 """
+uf.backend = pipes.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
