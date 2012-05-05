@@ -355,6 +355,14 @@ class List:
             raise RelaxError("Unknown element type '%s'." % self.element_type)
 
 
+    def Clear(self):
+        """Special method for clearing or resetting the GUI element."""
+
+        # Clear the value from a TextCtrl or ComboBox.
+        if self.element_type in ['default', 'combo_list']:
+            self._field.Clear()
+
+
     def GetValue(self):
         """Special method for returning the value of the GUI element.
 
@@ -417,8 +425,16 @@ class List:
             win.ShowModal()
             win.Close()
 
+        # Get the value.
+        value = win.GetValue()
+
+        # Empty list.
+        if not len(value):
+            self.Clear()
+
         # Set the values.
-        self.SetValue(win.GetValue())
+        else:
+            self.SetValue(value)
 
         # Destroy the window.
         del win
