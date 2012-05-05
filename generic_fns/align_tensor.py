@@ -255,10 +255,10 @@ def delete(tensor=None):
             del(cdp.align_tensors)
 
 
-def display(tensor):
+def display(tensor=None):
     """Function for displaying the alignment tensor.
 
-    @param tensor:          The alignment tensor identification string.
+    @keyword tensor:        The alignment tensor identification string.
     @type tensor:           str or None
     """
 
