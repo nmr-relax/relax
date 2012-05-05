@@ -128,6 +128,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 uf = uf_info.add_uf('pipe.current')
 uf.title = "Print the name of the current data pipe."
 uf.title_short = "Current data pipe printing."
+uf.display = True
 uf.backend = pipes.current
 uf.prompt_examples = """
 To run the user function, type:
@@ -165,6 +166,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 uf = uf_info.add_uf('pipe.display')
 uf.title = "Print a list of all the data pipes."
 uf.title_short = "Data pipe listing."
+uf.display = True
 uf.backend = pipes.display
 uf.prompt_examples = """
 To run the user function, type:
