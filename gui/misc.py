@@ -346,6 +346,28 @@ def gui_to_str_or_list(string):
     return val
 
 
+def gui_to_tuple(string):
+    """Convert the GUI obtained string to a tuple.
+
+    @param string:  The list in string form.
+    @type string:   str or unicode
+    @return:        The list.
+    @rtype:         list
+    """
+
+    # No value.
+    if string in ['', u'', None]:
+        return ()
+
+    # Convert.
+    val = eval(string)
+    if not isinstance(val, tuple):
+        val = tuple(val)
+
+    # Return the list.
+    return val
+
+
 def int_to_gui(num):
     """Convert the int into the GUI string.
 
@@ -460,3 +482,20 @@ def str_to_gui(string):
 
     # Convert.
     return unicode(string)
+
+
+def tuple_to_gui(tuple):
+    """Convert the tuple into the GUI string.
+
+    @param tuple:   The Python tuple.
+    @type tuple:    tuple or None
+    @return:        The GUI string.
+    @rtype:         unicode
+    """
+
+    # No input.
+    if tuple == None:
+        tuple = ''
+
+    # Convert.
+    return unicode(tuple)
