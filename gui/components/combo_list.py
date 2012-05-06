@@ -157,7 +157,6 @@ class Combo_list:
 
         # Choices.
         if self._choices != None:
-            print "in"
             # Loop over the choices and data, adding both to the end.
             for j in range(len(self._choices)):
                 self._combo_boxes[-1].Insert(str_to_gui(self._choices[j]), j, self._data[j])
