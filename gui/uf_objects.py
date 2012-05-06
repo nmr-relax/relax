@@ -203,6 +203,14 @@ class Uf_page(Wiz_page):
             elif arg['py_type'] == 'int':
                 self.element_int(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
+            # Float type.
+            elif arg['py_type'] == 'float':
+                self.element_float(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
+            # Tuple of numbers.
+            elif arg['py_type'] == 'num_tuple':
+                self.element_float_seq(key=arg['name'], element_type=arg['wiz_element_type'], seq_type='tuple', sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
             # String type.
             elif arg['py_type'] == 'str':
                 self.element_string(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])

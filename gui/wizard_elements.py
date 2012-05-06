@@ -37,7 +37,7 @@ from status import Status; status = Status()
 from gui.components.combo_list import Combo_list
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
-from gui.misc import add_border, bool_to_gui, gui_to_bool, gui_to_int, gui_to_list, gui_to_str, int_to_gui, list_to_gui, str_to_gui
+from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_list, gui_to_str, int_to_gui, list_to_gui, str_to_gui
 from gui import paths
 
 
@@ -259,7 +259,7 @@ class Integer(Base_value):
 class List:
     """Base wizard GUI element for the input of all types of lists."""
 
-    def __init__(self, name=None, parent=None, element_type='default', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, parent=None, element_type='default', seq_type='list', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -268,6 +268,8 @@ class List:
         @type parent:               wx.Panel instance
         @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
         @type element_type:         str
+        @keyword seq_type:          The type of Python sequence.  This should be one of 'list' or 'tuple'.
+        @type seq_type:             str
         @keyword sizer:             The sizer to put the input field widget into.
         @type sizer:                wx.Sizer instance
         @keyword desc:              The text description.
@@ -295,6 +297,7 @@ class List:
         # Store the args.
         self.name = name
         self.element_type = element_type
+        self.seq_type = seq_type
 
         # Initialise the default element.
         if self.element_type == 'default':
@@ -465,6 +468,18 @@ class List:
 
         # Destroy the window.
         del win
+
+
+
+class List_float(List):
+    """Wizard GUI element for the input of lists of strings."""
+
+    def init_window(self):
+        """Set up the specific window type."""
+
+        # Specify the window type to open.
+        return Sequence_window(name=self.name, seq_type=self.seq_type, base_type='float')
+
 
 
 class Selector_bool:
@@ -736,7 +751,7 @@ class String_list(List):
         """Set up the specific window type."""
 
         # Specify the window type to open.
-        return String_list_window(name=self.name)
+        return Sequence_window(name=self.name, seq_type='list', base_type='str')
 
 
 
@@ -798,7 +813,7 @@ class String_list_ctrl(wx.ListCtrl, wx.lib.mixins.listctrl.TextEditMixin, wx.lib
 
 
 
-class String_list_window(wx.Dialog):
+class Sequence_window(wx.Dialog):
     """The string list editor window."""
 
     # The window size.
@@ -810,15 +825,33 @@ class String_list_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (150, 33)
 
-    def __init__(self, name=''):
+    def __init__(self, name='', seq_type='list', base_type='str'):
         """Set up the string list editor window.
 
-        @keyword name:  The name of the window.
-        @type name:     str
+        @keyword name:      The name of the window.
+        @type name:         str
+        @keyword seq_type:  The type of Python sequence.  This should be one of 'list' or 'tuple'.
+        @type seq_type:     str
+        @keyword base_type: The type of Python data expected in the sequence.  This should be one of 'float', 'int', or 'str'.
+        @type base_type:    str
         """
 
         # Store the args.
         self.name = name
+        self.seq_type = seq_type
+
+        # The base types.
+        if base_type == 'float':
+            self.convert_from_gui = gui_to_float
+            self.convert_to_gui =   float_to_gui
+        elif base_type == 'int':
+            self.convert_from_gui = gui_to_int
+            self.convert_to_gui =   int_to_gui
+        elif base_type == 'str':
+            self.convert_from_gui = gui_to_str
+            self.convert_to_gui =   str_to_gui
+        else:
+            raise RelaxError("Unknown base data type '%s'." % base_type)
 
         # The title of the dialog.
         title = "The list of %s" % name
@@ -856,8 +889,8 @@ class String_list_window(wx.Dialog):
     def GetValue(self):
         """Return the values as a list of strings.
 
-        @return:    The list of values.
-        @rtype:     list of str
+        @return:    The sequence of values.
+        @rtype:     sequence type
         """
 
         # Init.
@@ -865,9 +898,13 @@ class String_list_window(wx.Dialog):
 
         # Loop over the entries.
         for i in range(self.list.GetItemCount()):
-            values.append(gui_to_str(self.list.GetItemText(i)))
+            values.append(self.convert_from_gui(self.list.GetItemText(i)))
 
-        # Return the list.
+        # Sequence conversion.
+        if self.seq_type == 'tuple':
+            values = tuple(values)
+
+        # Return the sequence.
         return values
 
 
@@ -880,7 +917,7 @@ class String_list_window(wx.Dialog):
 
         # Loop over the entries.
         for i in range(len(values)):
-            self.list.InsertStringItem(i, str_to_gui(values[i]))
+            self.list.InsertStringItem(i, self.convert_to_gui(values[i]))
 
 
     def add_buttons(self, sizer):
@@ -1194,3 +1231,18 @@ class String_list_of_lists_window(wx.Dialog):
 
         # Delete.
         self.list.DeleteAllItems()
+
+
+
+class Value_float(Base_value):
+    """Wizard GUI element for the input of floating point numbers."""
+
+    def conversion_fns(self):
+        """Set up the conversion functions."""
+
+        self.convert_from_gui = gui_to_float
+        self.convert_to_gui =   float_to_gui
+
+
+
+
