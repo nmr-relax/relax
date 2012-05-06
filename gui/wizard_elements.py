@@ -177,7 +177,7 @@ class Sequence:
                 read_only = False
 
             # Set up the Combo_list object.
-            self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, tooltip=tooltip, read_only=read_only)
+            self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, data=combo_data, default=combo_default, tooltip=tooltip, read_only=read_only)
 
         # Unknown field.
         else:

@@ -34,7 +34,7 @@ from gui.paths import icon_16x16
 class Combo_list:
     """The combo list GUI element."""
 
-    def __init__(self, parent, sizer, desc, n=1, choices=[], evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
+    def __init__(self, parent, sizer, desc, n=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
         """Build the combo box list widget for a list of list selections.
 
         @param parent:      The parent GUI element.
@@ -47,6 +47,10 @@ class Combo_list:
         @type n:            int
         @keyword choices:   The list of choices (all combo boxes will have the same list).
         @type choices:      list of str
+        @keyword data:      The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the choices list.  If not supplied, the choices list will be used for the returned data.
+        @type data:         list
+        @keyword default:   The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type default:      str or None
         @keyword evt_fn:    The event handling function.
         @type evt_fn:       func
         @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
@@ -66,6 +70,8 @@ class Combo_list:
         self._sizer = sizer
         self._desc = desc
         self._choices = choices
+        self._data = data
+        self._default = default
         self._evt_fn = evt_fn
         self._tooltip = tooltip
         self._padding = padding
@@ -144,10 +150,21 @@ class Combo_list:
         style = wx.CB_DROPDOWN
         if self._read_only:
             style = style | wx.CB_READONLY
-        combo = wx.ComboBox(self._parent, -1, value='', style=style, choices=self._choices)
+        combo = wx.ComboBox(self._parent, -1, value='', style=style)
         combo.SetMinSize((50, 27))
         sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
         self._combo_boxes.append(combo)
+
+        # Choices.
+        if self._choices != None:
+            print "in"
+            # Loop over the choices and data, adding both to the end.
+            for j in range(len(self._choices)):
+                self._combo_boxes[-1].Insert(str_to_gui(self._choices[j]), j, self._data[j])
+
+            # Set the default selection.
+            if self._default:
+                self._combo_boxes[-1].SetStringSelection(self._default)
 
         # The add button.
         if index == 0:
@@ -251,6 +268,11 @@ class Combo_list:
         @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
         @type combo_default:    str or None
         """
+
+        # Store the values.
+        self._choices = combo_choices
+        self._data = combo_data
+        self._default = combo_default
 
         # Loop over the combo boxes.
         for i in range(len(self._combo_boxes)):
