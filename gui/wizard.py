@@ -41,7 +41,7 @@ from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
-from gui.wizard_elements import Integer, List_float, Selector_bool, Selector_file, String, String_list, String_list_of_lists, Value_float
+from gui.wizard_elements import List_float, Selector_bool, Selector_file, String_list, String_list_of_lists, Value
 
 
 class Wiz_page(wx.Panel):
@@ -675,36 +675,6 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_float(self, key=None, element_type='default', sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
-        """Set up the element and store it.
-
-        @keyword key:               The dictionary key to store the element with.
-        @type key:                  str
-        @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.
-        @type element_type:         str
-        @keyword sizer:             The sizer to put the input field widget into.
-        @type sizer:                wx.Sizer instance
-        @keyword desc:              The text description.
-        @type desc:                 str
-        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
-        @type tooltip:              str
-        @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:              None or int
-        @keyword padding:           Spacing to the left and right of the widgets.
-        @type padding:              int
-        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:               None or int
-        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
-        @type read_only:            bool
-        """
-
-        # Create the element.
-        element = Value_float(name=key, element_type=element_type, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
-
-        # Store it.
-        self._elements[key] = element
-
-
     def element_float_seq(self, key=None, element_type='default', seq_type='list', sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element and store it.
 
@@ -737,49 +707,15 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_int(self, key=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
-        """Set up the integer element and store it.
-
-        @keyword key:           The dictionary key to store the element with.
-        @type key:              str
-        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
-        @type element_type:     str
-        @keyword sizer:         The sizer to put the input field widget into.
-        @type sizer:            wx.Sizer instance
-        @keyword desc:          The text description.
-        @type desc:             str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:    str or None
-        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
-        @type tooltip:          str
-        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:          None or int
-        @keyword padding:       Spacing to the left and right of the widgets.
-        @type padding:          int
-        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:           None or int
-        @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
-        @type read_only:        bool
-        """
-
-        # Create the element.
-        element = Integer(name=key, parent=self, element_type=element_type, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
-
-        # Store it.
-        self._elements[key] = element
-
-
-    def element_string(self, key=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_value(self, key=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the string element and store it.
 
         @keyword key:           The dictionary key to store the element with.
         @type key:              str
         @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
         @type element_type:     str
+        @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:       str
         @keyword sizer:         The sizer to put the input field widget into.
         @type sizer:            wx.Sizer instance
         @keyword desc:          The text description.
@@ -803,7 +739,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = String(name=key, parent=self, element_type=element_type, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Value(name=key, parent=self, element_type=element_type, value_type=value_type, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element

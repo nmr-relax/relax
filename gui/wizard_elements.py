@@ -41,221 +41,6 @@ from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_
 from gui import paths
 
 
-class Base_value:
-    """Base wizard GUI element for the input of all types of lists."""
-
-    def __init__(self, name=None, parent=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
-        """Set up the base value element.
-
-        @keyword name:          The name of the element to use in titles, etc.
-        @type name:             str
-        @keyword parent:        The wizard GUI element.
-        @type parent:           wx.Panel instance
-        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
-        @type element_type:     str
-        @param sizer:           The sizer to put the input field widget into.
-        @type sizer:            wx.Sizer instance
-        @param desc:            The text description.
-        @type desc:             str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:    str or None
-        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
-        @type tooltip:          str
-        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:          None or int
-        @keyword padding:       Spacing to the left and right of the widgets.
-        @type padding:          int
-        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:           None or int
-        @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
-        @type read_only:        bool
-        """
-
-        # Set the default to a TextCtrl.
-        if element_type == 'default':
-            element_type = 'text'
-
-        # Store the args.
-        self.name = name
-        self.element_type = element_type
-
-        # Init.
-        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Left padding.
-        sub_sizer.AddSpacer(padding)
-
-        # The description.
-        text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
-        text.SetFont(font.normal)
-        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
-
-        # The divider.
-        if not divider:
-            divider = parent._div_left
-
-        # Spacing.
-        x, y = text.GetSize()
-        sub_sizer.AddSpacer((divider - x, 0))
-
-        # Initialise the text input field.
-        if self.element_type == 'text':
-            # Set up the text control.
-            self._field = wx.TextCtrl(parent, -1, '')
-
-            # Read only field.
-            if read_only:
-                # Cannot edit.
-                self._field.SetEditable(False)
-
-                # Change the colour to the background.
-                colour = parent.GetBackgroundColour()
-                self._field.SetOwnBackgroundColour(colour)
-
-        # Initialise the combo box input field.
-        elif self.element_type == 'combo':
-            # The style.
-            style = wx.CB_DROPDOWN
-            if read_only:
-                style = style | wx.CB_READONLY
-
-            # Set up the combo box.
-            self._field = wx.ComboBox(parent, -1, '', style=style)
-
-            # Update the choices.
-            self.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
-
-        # Unknown field.
-        else:
-            raise RelaxError("Unknown element type '%s'." % self.element_type)
-
-        # Set up the input field.
-        self._field.SetMinSize((50, parent.height_element))
-        self._field.SetFont(font.normal)
-        sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-
-        # Right padding.
-        sub_sizer.AddSpacer(padding)
-
-        # Add to the main sizer.
-        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
-
-        # Spacing below the widget.
-        if spacer == None:
-            sizer.AddStretchSpacer()
-        else:
-            sizer.AddSpacer(spacer)
-
-        # Tooltip.
-        if tooltip:
-            text.SetToolTipString(tooltip)
-            self._field.SetToolTipString(tooltip)
-
-        # Set up the specific conversion functions.
-        self.conversion_fns()
-
-
-    def Clear(self):
-        """Special method for clearing or resetting the GUI element."""
-
-        # Clear the value from a TextCtrl or ComboBox.
-        if self.element_type in ['text', 'combo']:
-            self._field.Clear()
-
-
-    def GetValue(self):
-        """Special method for returning the value of the GUI element.
-
-        @return:    The string list value.
-        @rtype:     list of str
-        """
-
-        # Convert and return the value from a TextCtrl.
-        if self.element_type == 'text':
-            return self.convert_from_gui(self._field.GetValue())
-
-        # Convert and return the value from a ComboBox.
-        if self.element_type == 'combo':
-            return self.convert_from_gui(self._field.GetClientData(self._field.GetSelection()))
-
-
-    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
-        """Special wizard method for resetting the list of choices in a ComboBox type element.
-
-        @param key:             The key corresponding to the desired GUI element.
-        @type key:              str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:    str or None
-        """
-
-        # A TextCtrl?!
-        if self.element_type == 'text':
-            raise RelaxError("Cannot reset the list of ComboBox choices as this is a TextCtrl!")
-
-        # Reset the choices for a ComboBox.
-        if self.element_type == 'combo':
-            # First clear all data.
-            self.Clear()
-
-            # The data.
-            if combo_data == None:
-                combo_data = combo_choices
-
-            # Loop over the choices and data, adding both to the end.
-            for i in range(len(combo_choices)):
-                self._field.Insert(str_to_gui(combo_choices[i]), i, combo_data[i])
-
-            # Set the default selection.
-            if combo_default:
-                self._field.SetStringSelection(combo_default)
-
-
-    def SetValue(self, value):
-        """Special method for setting the value of the GUI element.
-
-        @param value:   The value to set.
-        @type value:    list of str
-        """
-
-        # Convert and set the value for a TextCtrl.
-        if self.element_type == 'text':
-            self._field.SetValue(self.convert_to_gui(value))
-
-        # Convert and set the value for a ComboBox.
-        if self.element_type == 'combo':
-            # Loop until the proper client data is found.
-            for i in range(self._field.GetCount()):
-                if self._field.GetClientData(i) == value:
-                    self._field.SetSelection(i)
-                    break
-
-
-    def conversion_fns(self):
-        """Dummy method for setting up the conversion functions.
-
-        This should define the self.convert_to_gui() and self.convert_from_gui() function aliases.
-        """
-
-
-
-class Integer(Base_value):
-    """Wizard GUI element for the input of integers."""
-
-    def conversion_fns(self):
-        """Set up the conversion functions."""
-
-        self.convert_from_gui = gui_to_int
-        self.convert_to_gui =   int_to_gui
-
-
 class List:
     """Base wizard GUI element for the input of all types of lists."""
 
@@ -730,17 +515,6 @@ class Selector_file:
 
         # Convert and set the value for a TextCtrl.
         self._field.SetValue(str_to_gui(value))
-
-
-
-class String(Base_value):
-    """Wizard GUI element for the input of strings."""
-
-    def conversion_fns(self):
-        """Set up the conversion functions."""
-
-        self.convert_from_gui = gui_to_str
-        self.convert_to_gui =   str_to_gui
 
 
 
@@ -1234,15 +1008,216 @@ class String_list_of_lists_window(wx.Dialog):
 
 
 
-class Value_float(Base_value):
-    """Wizard GUI element for the input of floating point numbers."""
+class Value:
+    """Wizard GUI element for the input of all types of simple Python objects.
+    
+    The supported Python types include:
+        - floats
+        - ints
+        - strings
+    """
 
-    def conversion_fns(self):
-        """Set up the conversion functions."""
+    def __init__(self, name=None, parent=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+        """Set up the base value element.
 
-        self.convert_from_gui = gui_to_float
-        self.convert_to_gui =   float_to_gui
+        @keyword name:          The name of the element to use in titles, etc.
+        @type name:             str
+        @keyword parent:        The wizard GUI element.
+        @type parent:           wx.Panel instance
+        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
+        @type element_type:     str
+        @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:       str
+        @keyword sizer:         The sizer to put the input field widget into.
+        @type sizer:            wx.Sizer instance
+        @keyword desc:          The text description.
+        @type desc:             str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
+        @type tooltip:          str
+        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:          None or int
+        @keyword padding:       Spacing to the left and right of the widgets.
+        @type padding:          int
+        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:           None or int
+        @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
+        @type read_only:        bool
+        """
+
+        # Set the default to a TextCtrl.
+        if element_type == 'default':
+            element_type = 'text'
+
+        # Store the args.
+        self.name = name
+        self.element_type = element_type
+
+        # The value types.
+        if value_type == 'float':
+            self.convert_from_gui = gui_to_float
+            self.convert_to_gui =   float_to_gui
+        elif value_type == 'int':
+            self.convert_from_gui = gui_to_int
+            self.convert_to_gui =   int_to_gui
+        elif value_type == 'str':
+            self.convert_from_gui = gui_to_str
+            self.convert_to_gui =   str_to_gui
+        else:
+            raise RelaxError("Unknown value type '%s'." % value_type)
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
+        # The description.
+        text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The divider.
+        if not divider:
+            divider = parent._div_left
+
+        # Spacing.
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((divider - x, 0))
+
+        # Initialise the text input field.
+        if self.element_type == 'text':
+            # Set up the text control.
+            self._field = wx.TextCtrl(parent, -1, '')
+
+            # Read only field.
+            if read_only:
+                # Cannot edit.
+                self._field.SetEditable(False)
+
+                # Change the colour to the background.
+                colour = parent.GetBackgroundColour()
+                self._field.SetOwnBackgroundColour(colour)
+
+        # Initialise the combo box input field.
+        elif self.element_type == 'combo':
+            # The style.
+            style = wx.CB_DROPDOWN
+            if read_only:
+                style = style | wx.CB_READONLY
+
+            # Set up the combo box.
+            self._field = wx.ComboBox(parent, -1, '', style=style)
+
+            # Update the choices.
+            self.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
+
+        # Unknown field.
+        else:
+            raise RelaxError("Unknown element type '%s'." % self.element_type)
+
+        # Set up the input field.
+        self._field.SetMinSize((50, parent.height_element))
+        self._field.SetFont(font.normal)
+        sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            self._field.SetToolTipString(tooltip)
 
 
+    def Clear(self):
+        """Special method for clearing or resetting the GUI element."""
+
+        # Clear the value from a TextCtrl or ComboBox.
+        if self.element_type in ['text', 'combo']:
+            self._field.Clear()
 
 
+    def GetValue(self):
+        """Special method for returning the value of the GUI element.
+
+        @return:    The string list value.
+        @rtype:     list of str
+        """
+
+        # Convert and return the value from a TextCtrl.
+        if self.element_type == 'text':
+            return self.convert_from_gui(self._field.GetValue())
+
+        # Convert and return the value from a ComboBox.
+        if self.element_type == 'combo':
+            return self.convert_from_gui(self._field.GetClientData(self._field.GetSelection()))
+
+
+    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # A TextCtrl?!
+        if self.element_type == 'text':
+            raise RelaxError("Cannot reset the list of ComboBox choices as this is a TextCtrl!")
+
+        # Reset the choices for a ComboBox.
+        if self.element_type == 'combo':
+            # First clear all data.
+            self.Clear()
+
+            # The data.
+            if combo_data == None:
+                combo_data = combo_choices
+
+            # Loop over the choices and data, adding both to the end.
+            for i in range(len(combo_choices)):
+                self._field.Insert(str_to_gui(combo_choices[i]), i, combo_data[i])
+
+            # Set the default selection.
+            if combo_default:
+                self._field.SetStringSelection(combo_default)
+
+
+    def SetValue(self, value):
+        """Special method for setting the value of the GUI element.
+
+        @param value:   The value to set.
+        @type value:    list of str
+        """
+
+        # Convert and set the value for a TextCtrl.
+        if self.element_type == 'text':
+            self._field.SetValue(self.convert_to_gui(value))
+
+        # Convert and set the value for a ComboBox.
+        if self.element_type == 'combo':
+            # Loop until the proper client data is found.
+            for i in range(self._field.GetCount()):
+                if self._field.GetClientData(i) == value:
+                    self._field.SetSelection(i)
+                    break
