@@ -67,7 +67,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from align_tensor import Align_tensor
 from bruker import Bruker
 from consistency_tests import Consistency_tests
 from dasha import Dasha
@@ -223,7 +222,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['align_tensor'] = Align_tensor()
         objects['bruker'] = Bruker()
         objects['consistency_tests'] = Consistency_tests()
         objects['dasha'] = Dasha()
