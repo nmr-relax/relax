@@ -35,6 +35,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.components.combo_list import Combo_list
+from gui.errors import gui_raise
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_list, gui_to_str, int_to_gui, list_to_gui, str_to_gui
@@ -1062,12 +1063,15 @@ class Value:
         if value_type == 'float':
             self.convert_from_gui = gui_to_float
             self.convert_to_gui =   float_to_gui
+            self.type_string = 'float'
         elif value_type == 'int':
             self.convert_from_gui = gui_to_int
             self.convert_to_gui =   int_to_gui
+            self.type_string = 'integer'
         elif value_type == 'str':
             self.convert_from_gui = gui_to_str
             self.convert_to_gui =   str_to_gui
+            self.type_string = 'string'
         else:
             raise RelaxError("Unknown value type '%s'." % value_type)
 
@@ -1161,7 +1165,19 @@ class Value:
 
         # Convert and return the value from a TextCtrl.
         if self.element_type == 'text':
-            return self.convert_from_gui(self._field.GetValue())
+            # The value.
+            value = self._field.GetValue()
+
+            # Convert.
+            try:
+                value = self.convert_from_gui(value)
+
+            # Raise a clear error for user feedback.
+            except:
+                gui_raise(RelaxError("The value '%s' is not of the Python %s type." % (value, self.type_string)))
+                return None
+
+            return value
 
         # Convert and return the value from a ComboBox.
         if self.element_type == 'combo':
