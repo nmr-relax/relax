@@ -376,7 +376,7 @@ class Uf_page(Wiz_page):
             choices = []
             data = []
             for vals in iterator():
-                if len(vals) == 2:
+                if not isinstance(vals, str) and len(vals) == 2:
                     choices.append(vals[0])
                     data.append(vals[1])
                 else:
