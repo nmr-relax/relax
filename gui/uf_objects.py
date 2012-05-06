@@ -195,25 +195,35 @@ class Uf_page(Wiz_page):
             elif arg['arg_type'] == 'dir sel':
                 self.element_dir_sel(key=arg['name'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
+            # Value types.
+            elif arg['py_type'] in ['float', 'int', 'str']:
+                self.element_value(key=arg['name'], element_type=arg['wiz_element_type'], value_type=arg['py_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
             # Bool type.
             elif arg['py_type'] == 'bool':
                 self.element_bool(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'])
 
-            # Tuple of numbers.
-            elif arg['py_type'] == 'num_tuple':
-                self.element_float_seq(key=arg['name'], element_type=arg['wiz_element_type'], seq_type='tuple', sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+            # Sequence types.
+            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple']:
+                # The sequence type.
+                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list']:
+                    seq_type = 'list'
+                else:
+                    seq_type = 'tuple'
 
-            # String list.
-            elif arg['py_type'] == 'str_list':
-                self.element_string_list(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+                # The value type.
+                if arg['py_type'] in ['float_list', 'float_tuple', 'num_list', 'num_tuple']:
+                    value_type = 'float'
+                elif arg['py_type'] in ['int_list', 'int_tuple']:
+                    value_type = 'int'
+                else:
+                    value_type = 'str'
+
+                self.element_sequence(key=arg['name'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # String list of lists.
             elif arg['py_type'] == 'str_list_of_lists':
                 self.element_string_list_of_lists(key=arg['name'], titles=arg['list_titles'], sizer=sizer, desc=desc, tooltip=arg['desc'])
-
-            # Value types.
-            elif arg['py_type'] in ['float', 'int', 'str']:
-                self.element_value(key=arg['name'], element_type=arg['wiz_element_type'], value_type=arg['py_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # Unknown type.
             else:

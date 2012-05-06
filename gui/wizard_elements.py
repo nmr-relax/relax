@@ -38,14 +38,23 @@ from gui.components.combo_list import Combo_list
 from gui.errors import gui_raise
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
-from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_list, gui_to_str, int_to_gui, list_to_gui, str_to_gui
+from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_list, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, str_to_gui, tuple_to_gui
 from gui import paths
 
 
-class List:
-    """Base wizard GUI element for the input of all types of lists."""
+class Sequence:
+    """Wizard GUI element for the input of all types of Python sequence objects
 
-    def __init__(self, name=None, parent=None, element_type='default', seq_type='list', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    The supported Python types include:
+        - list of floats
+        - list of integers
+        - list of strings
+        - tuple of floats
+        - tuple of integers
+        - tuple of strings
+    """
+
+    def __init__(self, name=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -56,6 +65,8 @@ class List:
         @type element_type:         str
         @keyword seq_type:          The type of Python sequence.  This should be one of 'list' or 'tuple'.
         @type seq_type:             str
+        @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:           str
         @keyword sizer:             The sizer to put the input field widget into.
         @type sizer:                wx.Sizer instance
         @keyword desc:              The text description.
@@ -84,6 +95,17 @@ class List:
         self.name = name
         self.element_type = element_type
         self.seq_type = seq_type
+        self.value_type = value_type
+
+        # The sequence types.
+        if seq_type == 'list':
+            self.convert_from_gui = gui_to_list
+            self.convert_to_gui =   list_to_gui
+        elif seq_type == 'tuple':
+            self.convert_from_gui = gui_to_tuple
+            self.convert_to_gui =   tuple_to_gui
+        else:
+            raise RelaxError("Unknown sequence type '%s'." % seq_type)
 
         # Initialise the default element.
         if self.element_type == 'default':
@@ -171,10 +193,10 @@ class List:
 
 
     def GetValue(self):
-        """Special method for returning the value of the GUI element.
+        """Special method for returning the sequence values of the GUI element.
 
-        @return:    The string list value.
-        @rtype:     list of str
+        @return:    The sequence of values.
+        @rtype:     sequence type
         """
 
         # The value.
@@ -182,9 +204,12 @@ class List:
 
         # Convert, handling bad user behaviour.
         try:
-            value = gui_to_list(value)
+            value = self.convert_from_gui(value)
         except:
-            value = []
+            if self.seq_type == 'list':
+                value = []
+            else:
+                value = ()
 
         # Return the value.
         return value
@@ -219,10 +244,6 @@ class List:
         self._field.SetValue(list_to_gui(value))
 
 
-    def init_window(self):
-        """Dummy method which must be overridden."""
-
-
     def open_dialog(self, event):
         """Open a special dialog for inputting a list of text values.
 
@@ -231,7 +252,7 @@ class List:
         """
 
         # Initialise the model selection window.
-        win = self.init_window()
+        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type)
 
         # Set the model selector window selections.
         win.SetValue(self.GetValue())
@@ -244,7 +265,7 @@ class List:
         # Get the value.
         value = win.GetValue()
 
-        # Empty list.
+        # No sequence data.
         if not len(value):
             self.Clear()
 
@@ -254,17 +275,6 @@ class List:
 
         # Destroy the window.
         del win
-
-
-
-class List_float(List):
-    """Wizard GUI element for the input of lists of strings."""
-
-    def init_window(self):
-        """Set up the specific window type."""
-
-        # Specify the window type to open.
-        return Sequence_window(name=self.name, seq_type=self.seq_type, base_type='float')
 
 
 
@@ -519,18 +529,7 @@ class Selector_file:
 
 
 
-class String_list(List):
-    """Wizard GUI element for the input of lists of strings."""
-
-    def init_window(self):
-        """Set up the specific window type."""
-
-        # Specify the window type to open.
-        return Sequence_window(name=self.name, seq_type='list', base_type='str')
-
-
-
-class String_list_of_lists(List):
+class String_list_of_lists(Sequence):
     """Wizard GUI element for the input of a list of lists of strings."""
 
     def __init__(self, name=None, titles=None, parent=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
@@ -571,7 +570,7 @@ class String_list_of_lists(List):
 
 
 
-class String_list_ctrl(wx.ListCtrl, wx.lib.mixins.listctrl.TextEditMixin, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
+class Sequence_list_ctrl(wx.ListCtrl, wx.lib.mixins.listctrl.TextEditMixin, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
     """The string list ListCtrl object."""
 
     def __init__(self, parent):
@@ -600,15 +599,15 @@ class Sequence_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (150, 33)
 
-    def __init__(self, name='', seq_type='list', base_type='str'):
+    def __init__(self, name='', seq_type='list', value_type='str'):
         """Set up the string list editor window.
 
-        @keyword name:      The name of the window.
-        @type name:         str
-        @keyword seq_type:  The type of Python sequence.  This should be one of 'list' or 'tuple'.
-        @type seq_type:     str
-        @keyword base_type: The type of Python data expected in the sequence.  This should be one of 'float', 'int', or 'str'.
-        @type base_type:    str
+        @keyword name:          The name of the window.
+        @type name:             str
+        @keyword seq_type:      The type of Python sequence.  This should be one of 'list' or 'tuple'.
+        @type seq_type:         str
+        @keyword value_type:    The type of Python data expected in the sequence.  This should be one of 'float', 'int', or 'str'.
+        @type value_type:       str
         """
 
         # Store the args.
@@ -616,17 +615,17 @@ class Sequence_window(wx.Dialog):
         self.seq_type = seq_type
 
         # The base types.
-        if base_type == 'float':
+        if value_type == 'float':
             self.convert_from_gui = gui_to_float
             self.convert_to_gui =   float_to_gui
-        elif base_type == 'int':
+        elif value_type == 'int':
             self.convert_from_gui = gui_to_int
             self.convert_to_gui =   int_to_gui
-        elif base_type == 'str':
+        elif value_type == 'str':
             self.convert_from_gui = gui_to_str
             self.convert_to_gui =   str_to_gui
         else:
-            raise RelaxError("Unknown base data type '%s'." % base_type)
+            raise RelaxError("Unknown base data type '%s'." % value_type)
 
         # The title of the dialog.
         title = "The list of %s" % name
@@ -672,8 +671,8 @@ class Sequence_window(wx.Dialog):
         values = []
 
         # Loop over the entries.
-        for i in range(self.list.GetItemCount()):
-            values.append(self.convert_from_gui(self.list.GetItemText(i)))
+        for i in range(self.sequence.GetItemCount()):
+            values.append(self.convert_from_gui(self.sequence.GetItemText(i)))
 
         # Sequence conversion.
         if self.seq_type == 'tuple':
@@ -692,7 +691,7 @@ class Sequence_window(wx.Dialog):
 
         # Loop over the entries.
         for i in range(len(values)):
-            self.list.InsertStringItem(i, self.convert_to_gui(values[i]))
+            self.sequence.InsertStringItem(i, self.convert_to_gui(values[i]))
 
 
     def add_buttons(self, sizer):
@@ -747,17 +746,17 @@ class Sequence_window(wx.Dialog):
         """
 
         # The control.
-        self.list = String_list_ctrl(self)
+        self.sequence = Sequence_list_ctrl(self)
 
         # Set the column title.
         title = "%s%s" % (upper(self.name[0]), self.name[1:])
 
         # Add a single column, full width.
-        self.list.InsertColumn(0, title)
-        self.list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.sequence.InsertColumn(0, title)
+        self.sequence.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 
         # Add the table to the sizer.
-        sizer.Add(self.list, 1, wx.ALL|wx.EXPAND, 0)
+        sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def append_row(self, event):
@@ -768,10 +767,10 @@ class Sequence_window(wx.Dialog):
         """
 
         # The next index.
-        next = self.list.GetItemCount()
+        next = self.sequence.GetItemCount()
 
         # Add a new empty row.
-        self.list.InsertStringItem(next, '')
+        self.sequence.InsertStringItem(next, '')
 
 
     def close(self, event):
@@ -793,7 +792,7 @@ class Sequence_window(wx.Dialog):
         """
 
         # Delete.
-        self.list.DeleteAllItems()
+        self.sequence.DeleteAllItems()
 
 
 
@@ -869,14 +868,14 @@ class String_list_of_lists_window(wx.Dialog):
         values = []
 
         # Loop over the entries.
-        for i in range(self.list.GetItemCount()):
+        for i in range(self.sequence.GetItemCount()):
             # Append a new list.
             values.append([])
 
             # Loop over the items.
             for j in range(self.num):
                 # The item.
-                item = self.list.GetItem(i, j)
+                item = self.sequence.GetItem(i, j)
 
                 # Append the value.
                 values[-1].append(gui_to_str(item.GetText()))
@@ -895,12 +894,12 @@ class String_list_of_lists_window(wx.Dialog):
         # Loop over the entries.
         for i in range(len(values)):
             # The first value.
-            self.list.InsertStringItem(sys.maxint, str_to_gui(values[i][0]))
+            self.sequence.InsertStringItem(sys.maxint, str_to_gui(values[i][0]))
 
             # Loop over the values.
             for j in range(1, self.num):
                 # Set the value.
-                self.list.SetStringItem(i, j, str_to_gui(values[i][j]))
+                self.sequence.SetStringItem(i, j, str_to_gui(values[i][j]))
 
         # Refresh.
         self.Refresh()
@@ -958,18 +957,18 @@ class String_list_of_lists_window(wx.Dialog):
         """
 
         # The control.
-        self.list = String_list_ctrl(self)
+        self.sequence = Sequence_list_ctrl(self)
 
         # Set the column title.
         title = "%s%s" % (upper(self.name[0]), self.name[1:])
 
         # Add the columns.
         for i in range(self.num):
-            self.list.InsertColumn(i, self.titles[i])
-            self.list.SetColumnWidth(i, self.width/self.num)
+            self.sequence.InsertColumn(i, self.titles[i])
+            self.sequence.SetColumnWidth(i, self.width/self.num)
 
         # Add the table to the sizer.
-        sizer.Add(self.list, 1, wx.ALL|wx.EXPAND, 0)
+        sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def append_row(self, event):
@@ -980,10 +979,10 @@ class String_list_of_lists_window(wx.Dialog):
         """
 
         # The next index.
-        next = self.list.GetItemCount()
+        next = self.sequence.GetItemCount()
 
         # Add a new empty row.
-        self.list.InsertStringItem(next, '')
+        self.sequence.InsertStringItem(next, '')
 
 
     def close(self, event):
@@ -1005,16 +1004,16 @@ class String_list_of_lists_window(wx.Dialog):
         """
 
         # Delete.
-        self.list.DeleteAllItems()
+        self.sequence.DeleteAllItems()
 
 
 
 class Value:
     """Wizard GUI element for the input of all types of simple Python objects.
-    
+
     The supported Python types include:
         - floats
-        - ints
+        - integers
         - strings
     """
 
