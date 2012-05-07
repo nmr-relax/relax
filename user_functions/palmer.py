@@ -129,7 +129,8 @@ uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
-    desc = "The spin identification string."
+    desc = "The spin identification string.",
+    can_be_none = True
 )
 uf.desc = """
 The following files are created
