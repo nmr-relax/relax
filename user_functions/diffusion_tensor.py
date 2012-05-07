@@ -190,7 +190,7 @@ where
 
     1 / tm = 6Diso.
 """],
-[" The spheroid (axially symmetric diffusion)", """
+["The spheroid (axially symmetric diffusion)", """
 When two of the three eigenvalues of the diffusion tensor are equal, the molecule diffuses as a spheroid.  Four pieces of information are required to specify this tensor, the two geometric parameters, Diso and Da, and the two orientational parameters, the polar angle theta and the azimuthal angle phi describing the orientation of the axis of symmetry.  The correlation function of the global diffusion is
 
 -----
@@ -241,7 +241,7 @@ while the angle alpha which is the angle between this axis and the given XH bond
 
 The 'spheroid_type' argument should be 'oblate', 'prolate', or None.  The argument will be ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the constraint Da <= 0 is used while if 'prolate' is given, then the constraint Da >= 0 is used.  If nothing is supplied, then Da will be allowed to have any values.  To prevent minimisation of diffusion tensor parameters in a space with two minima, it is recommended to specify which tensor is to be minimised, thereby partitioning the two minima into the two subspaces along the boundary Da = 0.
 """],
-[" The ellipsoid (rhombic diffusion)", """
+["The ellipsoid (rhombic diffusion)", """
 When all three eigenvalues of the diffusion tensor are different, the molecule diffuses as an ellipsoid.  This diffusion is also known as fully anisotropic, asymmetric, or rhombic. The full tensor is specified by six pieces of information, the three geometric parameters Diso, Da, and Dr representing the isotropic, anisotropic, and rhombic components of the tensor, and the three Euler angles alpha, beta, and gamma orienting the tensor within the PDB frame.  The correlation function is
 
 
@@ -353,4 +353,6 @@ relax> diffusion_tensor.init((1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.56
 uf.backend = diffusion_tensor.init
 uf.menu_text = "&init"
 uf.gui_icon = "relax.diff_tensor"
+uf.wizard_size = (1000, 900)
+uf.wizard_height_desc = 500
 uf.wizard_image = WIZARD_IMAGE_PATH + 'diff_tensor.png'
