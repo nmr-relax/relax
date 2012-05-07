@@ -181,6 +181,10 @@ class Uf_page(Wiz_page):
         @type sizer:    wx.Sizer instance
         """
 
+        # Initialise the free format file settings flag.
+        free_format = False
+        free_format_data = False
+
         # Loop over the arguments.
         for i in range(len(self.uf_data.kargs)):
             # Alias.
@@ -200,6 +204,13 @@ class Uf_page(Wiz_page):
             # Special arg type:  directory selection dialog.
             elif arg['arg_type'] == 'dir sel':
                 self.element_dir_sel(key=arg['name'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+
+            # Special arg type:  free format file settings.
+            elif arg['arg_type'] == 'free format':
+                # Switch the flags.
+                free_format = True
+                if arg['name'] == 'data_col':
+                    free_format_data = True
 
             # Value types.
             elif arg['py_type'] in ['float', 'int', 'num', 'str']:
@@ -248,6 +259,10 @@ class Uf_page(Wiz_page):
             # Unknown type.
             else:
                 raise RelaxError("The Python object type '%s' cannot be handled." % arg['py_type'])
+
+        # Add the free format element.
+        if free_format:
+            self.free_file_format(sizer, data_cols=free_format_data, padding=3, spacer=0)
 
 
     def add_desc(self, sizer, max_y=220):
