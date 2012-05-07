@@ -167,7 +167,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False, list_of_lists=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -211,8 +211,6 @@ class Uf_container(object):
         @type can_be_empty:             bool
         @keyword none_elements:         A flag which if True allows the sequence type object to contain None elements.
         @type none_elements:            bool
-        @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists.
-        @type list_of_lists:            bool
         """
 
         # Check that the args have been properly supplied.
@@ -249,4 +247,3 @@ class Uf_container(object):
         arg['can_be_none'] = can_be_none
         arg['can_be_empty'] = can_be_empty
         arg['none_elements'] = none_elements
-        arg['list_of_lists'] = list_of_lists

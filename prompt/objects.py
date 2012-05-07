@@ -129,7 +129,6 @@ class Uf_object(object):
             can_be_none = arg['can_be_none']
             can_be_empty = arg['can_be_empty']
             none_elements = arg['none_elements']
-            list_of_lists = arg['list_of_lists']
 
             # Check if the correct Python object type has been supplied.
             if py_type == 'bool':
@@ -149,7 +148,7 @@ class Uf_object(object):
             elif py_type == 'int_or_int_list':
                 arg_check.is_int_or_int_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
             elif py_type == 'list':
-                arg_check.is_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=list_of_lists)
+                arg_check.is_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'none':
                 arg_check.is_none(value, desc_short)
             elif py_type == 'num':
@@ -163,7 +162,9 @@ class Uf_object(object):
             elif py_type == 'str':
                 arg_check.is_str(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'str_list':
-                arg_check.is_str_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=list_of_lists)
+                arg_check.is_str_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty)
+            elif py_type == 'str_list_of_lists':
+                arg_check.is_str_list(value, desc_short, size=size, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=True)
             elif py_type == 'str_or_inst':
                 arg_check.is_str_or_inst(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'str_or_num_or_str_num_list':
