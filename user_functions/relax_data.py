@@ -44,7 +44,8 @@ uf.add_keyarg(
     name = "ri_id",
     py_type = "str",
     desc_short = "relaxation ID string",
-    desc = "The relaxation data ID string."
+    desc = "The relaxation data ID string.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "ri_type",
@@ -64,7 +65,7 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.desc = """
-This allows relaxation data of the given type and frequency to be back calculated from the model parameter values.  If the relaxation data type and frequency are not given, then relaxation data matching that currently loaded in the relax data store will be back-calculated.
+This allows relaxation data of the given type and frequency to be back calculated from the model parameter values.  If the relaxation data ID, type and frequency are not given, then relaxation data matching that currently loaded in the relax data store will be back-calculated.
 """
 uf.backend = relax_data.back_calc
 uf.menu_text = "&back_calc"
