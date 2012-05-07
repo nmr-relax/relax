@@ -296,7 +296,8 @@ uf.add_keyarg(
         "Overall - The realised overall discrepancy (the true values of the parameters are required)."
     ],
     wiz_combo_data = ["AIC", "AICc", "BIC", "BIC", "Bootstrap", "CV", "Expect", "Farrow", "Palmer", "Overall"],
-    wiz_read_only = False
+    wiz_read_only = False,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "engine",
