@@ -29,7 +29,6 @@ This package contains all information and details about user functions, from doc
 # The __all__ package list (main modules).
 __all__ = [
     'data',
-    'functions',
     'objects'
 ]
 
@@ -37,13 +36,15 @@ __all__ = [
 __all__ += [
     'align_tensor',
     'bmrb',
-    'pipe'
+    'pipe',
+    'relax_data'
 ]
 
 # Import all the modules to set up the data.
 import user_functions.align_tensor
 import user_functions.bmrb
 import user_functions.pipe
+import user_functions.relax_data
 
 # Import the data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()

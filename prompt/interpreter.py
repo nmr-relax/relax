@@ -88,7 +88,6 @@ from paramag import Paramag
 from pcs import PCS
 from pymol_control import Pymol
 from rdc import RDC
-from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
 from select import Select
@@ -243,7 +242,6 @@ class Interpreter:
         objects['pcs'] = PCS()
         objects['pymol'] = Pymol()
         objects['rdc'] = RDC()
-        objects['relax_data'] = Relax_data()
         objects['relax_fit'] = Relax_fit()
         objects['residue'] = Residue()
         objects['results'] = Results()
