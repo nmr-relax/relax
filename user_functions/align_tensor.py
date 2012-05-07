@@ -34,6 +34,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('align_tensor')
 uf_class.title = "Class for manipulating the alignment tensor."
 uf_class.menu_text = "&align_tensor"
+uf_class.gui_icon = "relax.align_tensor"
 
 
 # The align_tensor.copy user function.
@@ -102,6 +103,7 @@ uf.backend = align_tensor.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.delete user function.
@@ -124,6 +126,7 @@ This will delete the specified alignment tensor data from the current data pipe.
 uf.backend = align_tensor.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.display user function.
@@ -156,6 +159,7 @@ If no tensor is specified, all tensors will be displayed.
 uf.backend = align_tensor.display
 uf.menu_text = "dis&play"
 uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.fix user function.
@@ -184,6 +188,7 @@ If the ID string is left unset, then all alignment tensors will be fixed.
 """
 uf.backend = align_tensor.fix
 uf.menu_text = "&fix"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.init user function.
@@ -266,6 +271,8 @@ relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04,
 uf.backend = align_tensor.init
 uf.menu_text = "&init"
 uf.wizard_size = (800, 600)
+uf.gui_icon = "relax.align_tensor"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.matrix_angles user function.
@@ -299,6 +306,7 @@ This will calculate the angles between all loaded alignment tensors for the curr
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.wizard_size = (800, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.reduction user function.
@@ -333,6 +341,7 @@ relax> align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')
 """
 uf.backend = align_tensor.reduction
 uf.menu_text = "&reduction"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.set_domain user function.
@@ -364,6 +373,7 @@ relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
 """
 uf.backend = align_tensor.set_domain
 uf.menu_text = "&set_domain"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The align_tensor.svd user function.
@@ -434,3 +444,4 @@ The SVD values and condition number are dependent upon the basis set chosen.
 uf.backend = align_tensor.svd
 uf.menu_text = "s&vd"
 uf.wizard_size = (800, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
