@@ -43,7 +43,6 @@ uf.title = "Copy a data pipe."
 uf.title_short = "Data pipe copying."
 uf.add_keyarg(
     name = "pipe_from",
-    default = None,
     py_type = "str",
     desc_short = "source data pipe",
     desc = "The name of the source data pipe to copy the data from.",
@@ -54,7 +53,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    default = None,
     py_type = "str",
     desc_short = "destination data pipe",
     desc = "The name of the target data pipe to copy the data to.",
@@ -85,14 +83,12 @@ uf.title = "Add a new data pipe to the relax data store."
 uf.title_short = "Data pipe creation."
 uf.add_keyarg(
     name = "pipe_name",
-    default = None,
     py_type = "str",
     desc_short = "data pipe name",
     desc = "The name of the data pipe.",
 )
 uf.add_keyarg(
     name = "pipe_type",
-    default = None,
     py_type = "str",
     desc_short = "type of data pipe",
     desc = "The type of data pipe.",
@@ -146,7 +142,6 @@ uf.title = "Delete a data pipe from the relax data store."
 uf.title_short = "Data pipe deletion."
 uf.add_keyarg(
     name = "pipe_name",
-    default = None,
     py_type = "str",
     desc_short = "data pipe",
     desc = "The name of the data pipe to delete.",
@@ -184,14 +179,12 @@ uf.title = "Create a hybrid data pipe by fusing a number of other data pipes."
 uf.title_short = "Hybrid data pipe creation."
 uf.add_keyarg(
     name = "hybrid",
-    default = None,
     py_type = "str",
     desc_short = "hybrid pipe name",
     desc = "The name of the hybrid data pipe to create."
 )
 uf.add_keyarg(
     name = "pipes",
-    default = None,
     py_type = "str_list",
     desc_short = "data pipes to hybridise",
     desc = "An array containing the names of all data pipes to hybridise.",
@@ -224,7 +217,6 @@ uf.title = "Switch between the data pipes of the relax data store."
 uf.title_short = "Data pipe switching."
 uf.add_keyarg(
     name = "pipe_name",
-    default = None,
     py_type = "str",
     desc_short = "data pipe",
     desc = "The name of the data pipe.",
