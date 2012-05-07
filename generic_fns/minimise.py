@@ -139,36 +139,49 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
 
-def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
+def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
     """Minimisation function.
 
-    @param min_algor:       The minimisation algorithm to use.
-    @type min_algor:        str
-    @param min_options:     An array of options to be used by the minimisation algorithm.
-    @type min_options:      array of str
-    @param func_tol:        The function tolerance which, when reached, terminates optimisation.
-                            Setting this to None turns of the check.
-    @type func_tol:         None or float
-    @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
-                            Setting this to None turns of the check.
-    @type grad_tol:         None or float
-    @param max_iterations:  The maximum number of iterations for the algorithm.
-    @type max_iterations:   int
-    @param constraints:     If True, constraints are used during optimisation.
-    @type constraints:      bool
-    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the
-                            problem to be better conditioned.
-    @type scaling:          bool
-    @param verbosity:       The amount of information to print.  The higher the value, the greater
-                            the verbosity.
-    @type verbosity:        int
-    @param sim_index:       The index of the simulation to optimise.  This should be None if normal
-                            optimisation is desired.
-    @type sim_index:        None or int
+    @keyword min_algor:         The minimisation algorithm to use.
+    @type min_algor:            str
+    @keyword line_search:       The line search algorithm which will only be used in combination with the line search and conjugate gradient methods.  This will default to the More and Thuente line search.
+    @type line_search:          str or None
+    @keyword hessian_mod:       The Hessian modification.  This will only be used in the algorithms which use the Hessian, and defaults to Gill, Murray, and Wright modified Cholesky algorithm.
+    @type hessian_mod:          str or None
+    @keyword hessian_type:      The Hessian type.  This will only be used in a few trust region algorithms, and defaults to BFGS.
+    @type hessian_type:         str or None
+    @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+    @type func_tol:             None or float
+    @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+    @type grad_tol:             None or float
+    @keyword max_iterations:    The maximum number of iterations for the algorithm.
+    @type max_iterations:       int
+    @keyword constraints:       If True, constraints are used during optimisation.
+    @type constraints:          bool
+    @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+    @type scaling:              bool
+    @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:            int
+    @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+    @type sim_index:            None or int
     """
 
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Re-package the minimisation algorithm, options, and constraints for the generic_minimise() calls within the specific code.
+    if constraints:
+        min_options = [min_algor]
+        min_algor = 'Method of Multipliers'
+    else:
+        min_options = []
+    if line_search != None:
+        min_options.append(line_search)
+    if hessian_mod != None:
+        min_options.append(hessian_mod)
+    if hessian_type != None:
+        min_options.append(hessian_type)
+    min_options = tuple(min_options)
 
     # Specific minimisation function.
     minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)

@@ -41,6 +41,7 @@ __all__ += [
     'consistency_tests',
     'dasha',
     'diffusion_tensor',
+    'minimisation',
     'palmer',
     'pipe',
     'relax_data',
@@ -55,6 +56,7 @@ import user_functions.bruker
 import user_functions.consistency_tests
 import user_functions.dasha
 import user_functions.diffusion_tensor
+import user_functions.minimisation
 import user_functions.palmer
 import user_functions.pipe
 import user_functions.relax_data
