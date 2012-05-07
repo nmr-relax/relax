@@ -39,6 +39,7 @@ __all__ += [
     'bmrb',
     'bruker',
     'consistency_tests',
+    'dasha',
     'pipe',
     'relax_data',
     'state'
@@ -50,6 +51,7 @@ import user_functions.angles
 import user_functions.bmrb
 import user_functions.bruker
 import user_functions.consistency_tests
+import user_functions.dasha
 import user_functions.pipe
 import user_functions.relax_data
 import user_functions.state

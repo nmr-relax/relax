@@ -66,7 +66,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from frame_order import Frame_order
 from frq import Frq
@@ -215,7 +214,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['dasha'] = Dasha()
         objects['deselect'] = Deselect()
         objects['diffusion_tensor'] = Diffusion_tensor()
         objects['frame_order'] = Frame_order()

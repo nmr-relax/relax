@@ -23,7 +23,6 @@
 
 __all__ = ['base_class',
            'command',
-           'dasha',
            'deselect',
            'diffusion_tensor',
            'doc_string',
