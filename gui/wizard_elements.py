@@ -54,7 +54,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -77,8 +77,6 @@ class Sequence:
         @type combo_choices:        list of str
         @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:           list
-        @keyword combo_default:     The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:        str or None
         @keyword combo_list_size:   The number of initial entries in a Combo_list object.
         @type combo_list_size:      int or None
         @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
@@ -186,7 +184,7 @@ class Sequence:
                 read_only = False
 
             # Set up the Combo_list object.
-            self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, data=combo_data, default=combo_default, tooltip=tooltip, read_only=read_only)
+            self._field = Combo_list(parent, sizer, desc, n=combo_list_size, choices=combo_choices, data=combo_data, default=default, tooltip=tooltip, read_only=read_only)
 
         # Unknown field.
         else:
@@ -682,7 +680,7 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -707,8 +705,6 @@ class Sequence_2D(Sequence):
         @type combo_choices:        list of str
         @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:           list
-        @keyword combo_default:     The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:        str or None
         @keyword combo_list_size:   The number of initial entries in a Combo_list object.
         @type combo_list_size:      int or None
         @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
@@ -727,7 +723,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
 
     def open_dialog(self, event):
@@ -1107,7 +1103,7 @@ class Value:
         - strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the base value element.
 
         @keyword name:          The name of the element to use in titles, etc.
@@ -1128,8 +1124,6 @@ class Value:
         @type combo_choices:    list of str
         @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:    str or None
         @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
         @type tooltip:          str
         @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -1215,7 +1209,7 @@ class Value:
             self._field = wx.ComboBox(parent, -1, '', style=style)
 
             # Update the choices.
-            self.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
+            self.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=default)
 
         # Unknown field.
         else:
