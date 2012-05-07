@@ -94,7 +94,6 @@ from select import Select
 from sequence import Sequence
 from spectrum import Spectrum
 from spin import Spin
-from state import State
 from deselect import Deselect
 from value import Value
 from vmd import Vmd
@@ -249,7 +248,6 @@ class Interpreter:
         objects['sequence'] = Sequence()
         objects['spectrum'] = Spectrum()
         objects['spin'] = Spin()
-        objects['state'] = State()
         objects['structure'] = Structure()
         objects['value'] = Value()
         objects['vmd'] = Vmd()

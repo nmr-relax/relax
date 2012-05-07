@@ -37,7 +37,8 @@ __all__ += [
     'align_tensor',
     'bmrb',
     'pipe',
-    'relax_data'
+    'relax_data',
+    'state'
 ]
 
 # Import all the modules to set up the data.
@@ -45,6 +46,7 @@ import user_functions.align_tensor
 import user_functions.bmrb
 import user_functions.pipe
 import user_functions.relax_data
+import user_functions.state
 
 # Import the data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()
