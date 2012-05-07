@@ -258,14 +258,14 @@ class Uf_object(object):
             self.__relax_help__ += _build_subtitle("Description")
             self.__relax_help__ += _format_text(self._desc)
 
-        # Add the examples.
-        if self._examples != None:
-            self.__relax_help__ += '\n%s' % _build_subtitle("Examples")
-            self.__relax_help__ += _format_text(self._examples)
-
         # Add the additional sections.
         if self._additional != None:
             # Loop over each section.
             for i in range(len(self._additional)):
                 self.__relax_help__ += '\n%s' % _build_subtitle(self._additional[i][0])
                 self.__relax_help__ += _format_text(self._additional[i][1])
+
+        # Add the examples.
+        if self._examples != None:
+            self.__relax_help__ += '\n%s' % _build_subtitle("Examples")
+            self.__relax_help__ += _format_text(self._examples)
