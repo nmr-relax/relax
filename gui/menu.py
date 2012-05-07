@@ -294,6 +294,12 @@ class Menu:
 
             # No sub menu.
             else:
+                # Add the last sub menu.
+                if class_item != None:
+                    menu.AppendItem(class_item)
+                    class_item = None
+
+                # The menu item.
                 uf_id = wx.NewId()
                 menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
