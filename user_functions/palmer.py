@@ -33,6 +33,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('palmer')
 uf_class.title = "Class for interfacing with Art Palmer's Modelfree 4."
 uf_class.menu_text = "&palmer"
+uf_class.gui_icon = "relax.modelfree4"
 
 
 # The palmer.create user function.
@@ -151,6 +152,7 @@ uf.backend = palmer.create
 uf.menu_text = "&create"
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'
 
 
 # The palmer.execute user function.
@@ -195,6 +197,7 @@ uf.gui_icon = "oxygen.categories.applications-education"
 uf.menu_text = "&execute"
 uf.wizard_size = (700, 500)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'
 
 
 # The palmer.extract user function.
@@ -215,3 +218,4 @@ The model-free results will be extracted from the Modelfree4 results file 'mfout
 uf.backend = palmer.extract
 uf.menu_text = "ex&tract"
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'
