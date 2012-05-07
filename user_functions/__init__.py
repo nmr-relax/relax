@@ -35,6 +35,7 @@ __all__ = [
 # The __all__ package list (user function modules).
 __all__ += [
     'align_tensor',
+    'angles',
     'bmrb',
     'bruker',
     'pipe',
@@ -44,6 +45,7 @@ __all__ += [
 
 # Import all the modules to set up the data.
 import user_functions.align_tensor
+import user_functions.angles
 import user_functions.bmrb
 import user_functions.bruker
 import user_functions.pipe

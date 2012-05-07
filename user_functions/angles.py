@@ -21,35 +21,32 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'angles' user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the 'angles' user function data."""
 
 # relax module imports.
 from generic_fns import angles
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Angles:
-    """Class containing the function for calculating XH bond angles."""
+# The user function class.
+uf_class = uf_info.add_class('angles')
+uf_class.title = "Class containing the function for calculating XH bond angles."
+uf_class.menu_text = "&angles"
 
-    def angle_diff_frame(self):
-        """Calculate the angles defining the XH bond vector within the diffusion frame.
+# The angles.diff_frame user function.
+uf = uf_info.add_uf('angles.diff_frame')
+uf.title = "Calculate the angles defining the XH bond vector within the diffusion frame."
+uf.title = "Diffusion frame XH vector angle calculation."
+uf.desc = """
+If the diffusion tensor is isotropic, then nothing will be done.
 
-        Description
-        ~~~~~~~~~~~
+If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for each XH bond vector.
 
-        If the diffusion tensor is isotropic, then nothing will be done.
-
-        If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for
-        each XH bond vector.
-
-        If the diffusion tensor is asymmetric, then the three angles will be calculated.
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "angle_diff_frame()"
-            print(text)
-
-        # Execute the functional code.
-        angles.angle_diff_frame()
+If the diffusion tensor is asymmetric, then the three angles will be calculated.
+"""
+uf.backend = angles.angle_diff_frame
+uf.menu_text = "&diff_frame"
+uf.wizard_size = (800, 400)
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_height_desc = 250

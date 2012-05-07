@@ -55,7 +55,6 @@ if dep_check.readline_module:
 from status import Status; status = Status()
 
 # User functions.
-from angles import Angles
 from dx import OpenDX
 from eliminate import Eliminate
 from fix import Fix
@@ -196,7 +195,6 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        angles = Angles()
         eliminate = Eliminate()
         fix = Fix()
         reset = Reset()
@@ -207,7 +205,6 @@ class Interpreter:
         temp = Temp()
 
         # Place the user functions in the local namespace.
-        objects['angle_diff_frame'] = angles.angle_diff_frame
         objects['calc'] = minimisation.calc
         objects['eliminate'] = eliminate.eliminate
         objects['fix'] = fix.fix
