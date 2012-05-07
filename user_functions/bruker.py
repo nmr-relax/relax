@@ -21,47 +21,52 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Bruker Dynamics Center user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the Bruker Dynamics Center user function data."""
 
 # relax module imports.
-import arg_check
-from base_class import User_fn_class, _build_doc
 from generic_fns import bruker
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Bruker(User_fn_class):
-    """Class containing the function for reading the Bruker Dynamics Center (DC) files."""
-
-    def read(self, ri_id=None, file=None, dir=None):
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "bruker.read("
-            text = text + "ri_id=" + repr(ri_id)
-            text = text + ", file=" + repr(file)
-            text = text + ", dir=" + repr(dir) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(ri_id, 'relaxation data ID string')
-        arg_check.is_str(file, 'file name')
-        arg_check.is_str(dir, 'directory name', can_be_none=True)
-
-        # Execute the functional code.
-        bruker.read(ri_id=ri_id, file=file, dir=dir)
-
-    # The function doc info.
-    read._doc_title = "Read a Bruker Dynamics Center (DC) relaxation data file."
-    read._doc_title_short = "Read a Bruker Dynamics Center file."
-    read._doc_args = [
-        ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
-        ["file", "The name of the Bruker Dynamics Center file containing the relaxation data."],
-        ["dir", "The directory where the file is located."],
-    ]
-    read._doc_desc = """
-        This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.
-        """
-    _build_doc(read)
+# The user function class.
+uf_class = uf_info.add_class('bruker')
+uf_class.title = "Class containing the function for reading the Bruker Dynamics Center (DC) files."
+uf_class.menu_text = "&bruker"
+uf_class.gui_icon = "relax.bruker"
 
 
+# The bruker.read user function.
+uf = uf_info.add_uf('bruker.read')
+uf.title = "Read a Bruker Dynamics Center (DC) relaxation data file."
+uf.title_short = "Read a Bruker Dynamics Center file."
+uf.add_keyarg(
+    name = "ri_id",
+    py_type = "str",
+    desc_short = "relaxation data ID string",
+    desc = "The relaxation data ID string.  This must be a unique identifier."
+)
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the Bruker Dynamics Center file containing the relaxation data."
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
+)
+uf.desc = """
+This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.
+"""
+uf.backend = bruker.read
+uf.menu_text = "&read"
+uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_height_desc = 140
+uf.wizard_size = (800, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'bruker.png'

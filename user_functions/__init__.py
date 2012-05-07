@@ -36,6 +36,7 @@ __all__ = [
 __all__ += [
     'align_tensor',
     'bmrb',
+    'bruker',
     'pipe',
     'relax_data',
     'state'
@@ -44,6 +45,7 @@ __all__ += [
 # Import all the modules to set up the data.
 import user_functions.align_tensor
 import user_functions.bmrb
+import user_functions.bruker
 import user_functions.pipe
 import user_functions.relax_data
 import user_functions.state

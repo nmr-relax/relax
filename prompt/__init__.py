@@ -23,7 +23,6 @@
 
 __all__ = ['angles',
            'base_class',
-           'bruker',
            'command',
            'consistency_tests',
            'dasha',
