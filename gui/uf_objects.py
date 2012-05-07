@@ -112,7 +112,6 @@ class Uf_page(Wiz_page):
 
         # Store the args.
         self.name = name
-        self.height_desc = height_desc
         self.sync = sync
 
         # Default value data structure.
@@ -137,7 +136,7 @@ class Uf_page(Wiz_page):
             self.title = self.uf_data.title
 
         # Execute the base class method.
-        super(Uf_page, self).__init__(parent)
+        super(Uf_page, self).__init__(parent, height_desc=height_desc)
 
         # Reset the cursor.
         if wx.IsBusy():
