@@ -101,6 +101,7 @@ This will perform a grid search across the parameter space.
 """
 uf.backend = minimise.grid_search
 uf.menu_text = "&grid_search"
+uf.gui_icon = "relax.grid_search"
 uf.wizard_size = (800, 500)
 
 
