@@ -54,7 +54,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -87,6 +87,8 @@ class Sequence:
         @type padding:              int
         @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:               None or int
+        @keyword single_value:      A flag which if True will cause single input values to be treated as single values rather than a list or tuple.
+        @type single_value:         bool
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
         """
@@ -96,6 +98,7 @@ class Sequence:
         self.element_type = element_type
         self.seq_type = seq_type
         self.value_type = value_type
+        self.single_value = single_value
 
         # The sequence types.
         if seq_type == 'list':
@@ -205,11 +208,18 @@ class Sequence:
         # Convert, handling bad user behaviour.
         try:
             value = self.convert_from_gui(value)
-        except:
+        except RelaxError:
             if self.seq_type == 'list':
                 value = []
             else:
                 value = ()
+
+        # Handle single values.
+        if self.single_value and len(value) == 1:
+            if self.seq_type == 'list' and not isinstance(value, list):
+                value = [value]
+            elif self.seq_type == 'tuple' and not isinstance(value, tuple):
+                value = (value,)
 
         # Return the value.
         return value
@@ -240,8 +250,12 @@ class Sequence:
         @type value:    list of str
         """
 
+        # Handle single values.
+        if self.single_value and len(value) == 1:
+            value = value[0]
+
         # Convert and set the value.
-        self._field.SetValue(list_to_gui(value))
+        self._field.SetValue(self.convert_to_gui(value))
 
 
     def open_dialog(self, event):
