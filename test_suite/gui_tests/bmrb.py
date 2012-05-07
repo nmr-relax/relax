@@ -79,8 +79,8 @@ class Bmrb(GuiTestCase):
             self.execute_uf(uf_name='relax_data.peak_intensity_type', ri_id=ri_ids[i], type='height')
 
         # Set up some BMRB information.
-        self.execute_uf(uf_name='bmrb.software_select', 'NMRPipe')
-        self.execute_uf(uf_name='bmrb.software_select', 'Sparky', version='3.106')
+        self.execute_uf(uf_name='bmrb.software_select', name='NMRPipe')
+        self.execute_uf(uf_name='bmrb.software_select', name='Sparky', version='3.106')
 
         self.execute_uf(uf_name='bmrb.citation', cite_id='test', authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]], doi="10.1039/b702202f", pubmed_id="17579774", full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm.", status="published", type="journal", journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems", volume=3, issue=7, page_first=483, page_last=498, year=2007)
         self.execute_uf(uf_name='bmrb.software', name='X', url='http://www.nmr-relax.com', vendor_name='me', cite_ids=['test'], tasks=['procrastinating', 'nothing much', 'wasting time'])
@@ -98,4 +98,4 @@ class Bmrb(GuiTestCase):
         self.execute_uf(uf_name='relax_data.display', ri_id='R1_800')
 
         # Save the program state.
-        self.execute_uf(uf_name='state.save', 'devnull', force=True)
+        self.execute_uf(uf_name='state.save', file='devnull', force=True)
