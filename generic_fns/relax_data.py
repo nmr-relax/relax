@@ -578,6 +578,25 @@ def get_data_names(global_flag=False, sim_names=False):
     return names
 
 
+def get_ids():
+    """Return the list of all relaxation data IDs.
+
+    @return:        The list of all relaxation data IDs.
+    @rtype:         list of str
+    """
+
+    # No pipe.
+    if cdp == None:
+        return []
+
+    # No relaxation data.
+    if not hasattr(cdp, 'ri_ids'):
+        return []
+
+    # The relaxation data IDs.
+    return cdp.ri_ids
+
+
 def num_frq():
     """Determine the number of unique frequencies.
 
