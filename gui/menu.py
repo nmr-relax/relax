@@ -25,6 +25,7 @@
 """Module for the main relax menu bar."""
 
 # Python module imports.
+from re import search
 from string import split
 import wx
 
@@ -259,33 +260,42 @@ class Menu:
         class_item = None
         for name, data in uf_info.uf_loop():
             # Split up the name.
-            class_name, uf_name = split(name, '.')
+            if search('\.', name):
+                class_name, uf_name = split(name, '.')
+            else:
+                class_name = None
 
             # Generate a sub menu.
-            if class_name not in class_list:
-                # Add the last sub menu.
-                if class_item != None:
-                    menu.AppendItem(class_item)
+            if class_name:
+                if class_name not in class_list:
+                    # Add the last sub menu.
+                    if class_item != None:
+                        menu.AppendItem(class_item)
 
-                # Get the user function class data object.
-                class_data = uf_info.get_class(class_name)
+                    # Get the user function class data object.
+                    class_data = uf_info.get_class(class_name)
 
-                # Create a unique ID.
-                class_id = wx.NewId()
+                    # Create a unique ID.
+                    class_id = wx.NewId()
 
-                # Create the menu entry.
-                class_item = build_menu_item(menu, id=class_id, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
+                    # Create the menu entry.
+                    class_item = build_menu_item(menu, id=class_id, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
 
-                # Initialise the sub menu.
-                sub_menu = wx.Menu()
-                class_item.SetSubMenu(sub_menu)
+                    # Initialise the sub menu.
+                    sub_menu = wx.Menu()
+                    class_item.SetSubMenu(sub_menu)
 
-                # Add the class name to the list to block further sub menu creation.
-                class_list.append(class_name)
+                    # Add the class name to the list to block further sub menu creation.
+                    class_list.append(class_name)
 
-            # Create the user function menu entry.
-            uf_id = wx.NewId()
-            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+                # Create the user function menu entry.
+                uf_id = wx.NewId()
+                sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+
+            # No sub menu.
+            else:
+                uf_id = wx.NewId()
+                menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
             # Bind the menu item.
             self.gui.Bind(wx.EVT_MENU, store[name], id=uf_id)

@@ -60,7 +60,6 @@ from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
 from reset import Reset
-from minimisation import Minimisation
 from model_selection import Modsel
 from sys_info import Sys_info
 from temperature import Temp
@@ -154,16 +153,23 @@ class Interpreter:
         # Then generate the user functions.
         for name, data in uf_info.uf_loop():
             # Split up the name.
-            class_name, uf_name = split(name, '.')
+            if search('\.', name):
+                class_name, uf_name = split(name, '.')
+            else:
+                class_name = None
 
             # Generate a new container.
             obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc, examples=data.prompt_examples, additional=data.additional)
 
             # Get the class object.
-            class_obj = self._locals[class_name]
+            if class_name:
+                class_obj = self._locals[class_name]
 
-            # Add the object to the user function class.
-            setattr(class_obj, uf_name, obj)
+            # Add the object to the local namespace or user function class.
+            if class_name:
+                setattr(class_obj, uf_name, obj)
+            else:
+                self._locals[name] = obj
 
 
     def _setup(self):
@@ -194,19 +200,15 @@ class Interpreter:
         eliminate = Eliminate()
         fix = Fix()
         reset = Reset()
-        minimisation = Minimisation()
         modsel = Modsel()
         opendx = OpenDX()
         sys_info = Sys_info()
         temp = Temp()
 
         # Place the user functions in the local namespace.
-        objects['calc'] = minimisation.calc
         objects['eliminate'] = eliminate.eliminate
         objects['fix'] = fix.fix
-        objects['grid_search'] = minimisation.grid_search
         objects['reset'] = reset.reset
-        objects['minimise'] = minimisation.minimise
         objects['model_selection'] = modsel.model_selection
         objects['sys_info'] = sys_info.sys_info
         objects['temperature'] = temp.set
