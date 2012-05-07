@@ -41,7 +41,7 @@ from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
-from gui.wizard_elements import Selector_bool, Selector_file, Sequence, Sequence_2D, Value
+from gui.wizard_elements import Selector_dir, Selector_bool, Selector_file, Sequence, Sequence_2D, Value
 
 
 class Wiz_page(wx.Panel):
@@ -615,7 +615,7 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_dir_sel(self, key=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_dir_sel(self, key=None, sizer=None, desc=None, message='Directory selection', tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the integer element and store it.
 
         @keyword key:           The dictionary key to store the element with.
@@ -624,6 +624,8 @@ class Wiz_page(wx.Panel):
         @type sizer:            wx.Sizer instance
         @keyword desc:          The text description.
         @type desc:             str
+        @keyword message:       The directory selector prompt string.
+        @type message:          String
         @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
         @type tooltip:          str
         @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -637,7 +639,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Selector_dir(name=key, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Selector_dir(name=key, parent=self, sizer=sizer, desc=desc, message=message, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element

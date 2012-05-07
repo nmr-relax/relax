@@ -38,11 +38,13 @@ from gui.misc import gui_to_str, str_to_gui
 class RelaxDirDialog(wx.DirDialog):
     """relax specific replacement directory dialog for selecting directories."""
 
-    def __init__(self, parent, message=wx.DirSelectorPromptStr, defaultPath=wx.EmptyString, style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON, pos=wx.DefaultPosition, size=wx.DefaultSize, name=wx.DirDialogNameStr):
+    def __init__(self, parent, field=None, message=wx.DirSelectorPromptStr, defaultPath=wx.EmptyString, style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON, pos=wx.DefaultPosition, size=wx.DefaultSize, name=wx.DirDialogNameStr):
         """Setup the class and store the field.
 
         @param parent:          The parent wx window object.
         @type parent:           Window
+        @keyword field:         The field to update with the file selection.
+        @type field:            wx object or None
         @keyword message:       The path selector prompt string.
         @type message:          String
         @keyword defaultPath:   The default directory to open in.
@@ -56,6 +58,9 @@ class RelaxDirDialog(wx.DirDialog):
         @keyword name:          The title for the dialog.
         @type name:             String
         """
+
+        # Store the args.
+        self.field = field
 
         # No path supplied, so use the current working directory.
         if defaultPath == wx.EmptyString:
@@ -80,6 +85,27 @@ class RelaxDirDialog(wx.DirDialog):
 
         # Return the path.
         return path
+
+
+    def select_event(self, event):
+        """The path selector GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Show the dialog, and return if nothing was selected.
+        if status.show_gui and self.ShowModal() != wx.ID_OK:
+            return
+
+        # Get the selected path.
+        path = self.get_path()
+
+        # Update the field.
+        self.field.SetValue(str_to_gui(path))
+
+        # Scroll the text to the end.
+        self.field.SetInsertionPoint(len(path))
 
 
 
