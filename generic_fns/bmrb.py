@@ -191,13 +191,13 @@ def num_spins(data):
     return N
 
 
-def read(file=None, directory=None, version=None, sample_conditions=None):
+def read(file=None, dir=None, version=None, sample_conditions=None):
     """Read the contents of a BMRB NMR-STAR formatted file.
 
     @keyword file:              The name of the BMRB STAR formatted file.
     @type file:                 str
-    @keyword directory:         The directory where the file is located.
-    @type directory:            None or str
+    @keyword dir:               The directory where the file is located.
+    @type dir:                  None or str
     @keyword version:           The BMRB version to force the reading.
     @type version:              None or str
     @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
@@ -217,7 +217,7 @@ def read(file=None, directory=None, version=None, sample_conditions=None):
         raise RelaxError("The current data pipe is not empty.")
 
     # Get the full file path.
-    file_path = get_file_path(file_name=file, dir=directory)
+    file_path = get_file_path(file_name=file, dir=dir)
 
     # Fail if the file does not exist.
     if not access(file_path, F_OK):
@@ -230,7 +230,7 @@ def read(file=None, directory=None, version=None, sample_conditions=None):
     read_function(file_path, version=version, sample_conditions=sample_conditions)
 
 
-def write(file=None, directory=None, version='3.1', force=False):
+def write(file=None, dir=None, version='3.1', force=False):
     """Create a BMRB NMR-STAR formatted file."""
 
     # Test if bmrblib is installed.
@@ -242,14 +242,14 @@ def write(file=None, directory=None, version='3.1', force=False):
         raise RelaxNoPipeError
 
     # The special data pipe name directory.
-    if directory == 'pipe_name':
-        directory = ds.current_pipe
+    if dir == 'pipe_name':
+        dir = ds.current_pipe
 
     # Specific results writing function.
     write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
 
     # Get the full file path.
-    file_path = get_file_path(file, directory)
+    file_path = get_file_path(file, dir)
 
     # Fail if the file already exists and the force flag is False.
     if access(file_path, F_OK) and not force:
@@ -259,7 +259,7 @@ def write(file=None, directory=None, version='3.1', force=False):
     print("Opening the file '%s' for writing." % file_path)
 
     # Create the directories.
-    mkdir_nofail(directory, verbosity=0)
+    mkdir_nofail(dir, verbosity=0)
 
     # Get the info box.
     info = Info_box()

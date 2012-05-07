@@ -219,7 +219,7 @@ uf.add_keyarg(
     desc = "The name of the BMRB NMR-STAR formatted file to read."
 )
 uf.add_keyarg(
-    name = "directory",
+    name = "dir",
     py_type = "str",
     arg_type = "dir",
     desc_short = "directory name",
