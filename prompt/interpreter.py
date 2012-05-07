@@ -60,7 +60,6 @@ from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
 from reset import Reset
-from model_selection import Modsel
 from sys_info import Sys_info
 from temperature import Temp
 
@@ -200,7 +199,6 @@ class Interpreter:
         eliminate = Eliminate()
         fix = Fix()
         reset = Reset()
-        modsel = Modsel()
         opendx = OpenDX()
         sys_info = Sys_info()
         temp = Temp()
@@ -209,7 +207,6 @@ class Interpreter:
         objects['eliminate'] = eliminate.eliminate
         objects['fix'] = fix.fix
         objects['reset'] = reset.reset
-        objects['model_selection'] = modsel.model_selection
         objects['sys_info'] = sys_info.sys_info
         objects['temperature'] = temp.set
 

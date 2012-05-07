@@ -42,6 +42,7 @@ __all__ += [
     'dasha',
     'diffusion_tensor',
     'minimisation',
+    'model_selection',
     'palmer',
     'pipe',
     'relax_data',
@@ -57,6 +58,7 @@ import user_functions.consistency_tests
 import user_functions.dasha
 import user_functions.diffusion_tensor
 import user_functions.minimisation
+import user_functions.model_selection
 import user_functions.palmer
 import user_functions.pipe
 import user_functions.relax_data
