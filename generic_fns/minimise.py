@@ -139,7 +139,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
 
-def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
+def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iter=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
     """Minimisation function.
 
     @keyword min_algor:         The minimisation algorithm to use.
@@ -154,8 +154,8 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     @type func_tol:             None or float
     @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
     @type grad_tol:             None or float
-    @keyword max_iterations:    The maximum number of iterations for the algorithm.
-    @type max_iterations:       int
+    @keyword max_iter:          The maximum number of iterations for the algorithm.
+    @type max_iter:             int
     @keyword constraints:       If True, constraints are used during optimisation.
     @type constraints:          bool
     @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
@@ -192,7 +192,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Single Monte Carlo simulation.
     if sim_index != None:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
@@ -208,7 +208,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
                 status.mc_number = i
 
             # Optimisation.
-            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
+            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
         if status.current_analysis:
@@ -218,7 +218,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Standard minimisation.
     else:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
 def reset_min_stats(data_pipe=None, spin=None):

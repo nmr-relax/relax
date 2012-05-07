@@ -232,7 +232,7 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "max_iterations",
+    name = "max_iter",
     default = 10000000,
     py_type = "int",
     desc_short = "maximum number of iterations",
