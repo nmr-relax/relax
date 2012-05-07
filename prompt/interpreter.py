@@ -77,7 +77,6 @@ from molecule import Molecule
 from monte_carlo import Monte_carlo
 from n_state_model import N_state_model
 from noe import Noe
-from palmer import Palmer
 from residue import Residue
 from structure import Structure
 from paramag import Paramag
@@ -227,7 +226,6 @@ class Interpreter:
         objects['monte_carlo'] = Monte_carlo()
         objects['n_state_model'] = N_state_model()
         objects['noe'] = Noe()
-        objects['palmer'] = Palmer()
         objects['paramag'] = Paramag()
         objects['pcs'] = PCS()
         objects['pymol'] = Pymol()

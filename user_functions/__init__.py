@@ -40,6 +40,7 @@ __all__ += [
     'bruker',
     'consistency_tests',
     'dasha',
+    'palmer',
     'pipe',
     'relax_data',
     'state'
@@ -52,6 +53,7 @@ import user_functions.bmrb
 import user_functions.bruker
 import user_functions.consistency_tests
 import user_functions.dasha
+import user_functions.palmer
 import user_functions.pipe
 import user_functions.relax_data
 import user_functions.state
