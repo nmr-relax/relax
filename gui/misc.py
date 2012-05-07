@@ -361,8 +361,10 @@ def gui_to_tuple(string):
 
     # Convert.
     val = eval(string)
-    if not isinstance(val, tuple):
+    if isinstance(val, list):
         val = tuple(val)
+    elif not isinstance(val, tuple):
+        val = (val,)
 
     # Return the list.
     return val
