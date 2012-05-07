@@ -71,7 +71,6 @@ class Wiz_page(wx.Panel):
     # Some class variables.
     art_spacing = 20
     divider = None
-    height_desc = 220
     height_element = 27
     image_path = paths.IMAGE_PATH + "relax.gif"
     main_text = ''
@@ -80,15 +79,18 @@ class Wiz_page(wx.Panel):
     size_square_button = (33, 33)
     title = ''
 
-    def __init__(self, parent):
+    def __init__(self, parent, height_desc=220):
         """Set up the window.
 
-        @param parent:  The parent GUI element.
-        @type parent:   wx.object instance
+        @param parent:          The parent GUI element.
+        @type parent:           wx.object instance
+        @keyword height_desc:   The height in pixels of the description part of the wizard.
+        @type height_desc:      int or None
         """
 
         # Store the args.
         self.parent = parent
+        self.height_desc = height_desc
 
         # Execute the base class method.
         wx.Panel.__init__(self, parent, id=-1)

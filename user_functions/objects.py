@@ -105,6 +105,8 @@ class Uf_container(object):
     @type wizard_size:          tuple of int or None
     @ivar wizard_image:         The 200 pixel wide image to use for the user function wizard.  This should be the path to the bitmap image.  This defaults to the relax Ulysses butterfly image.
     @type wizard_image:         str
+    @ivar wizard_height_desc:   The height in pixels of the description part of the wizard.
+    @type wizard_height_desc:   int
     @ivar wizard_apply_button:  A flag specifying if the apply button should be shown or not.  This defaults to True.
     @type wizard_apply_button:  bool
     """
@@ -123,6 +125,7 @@ class Uf_container(object):
             'gui_icon',
             'wizard_size',
             'wizard_image',
+            'wizard_height_desc',
             'wizard_apply_button'
     ]
 
@@ -143,6 +146,7 @@ class Uf_container(object):
         self.gui_icon = None
         self.wizard_size = (600, 400)
         self.wizard_image = IMAGE_PATH + "relax.gif"
+        self.wizard_height_desc = 220
         self.wizard_apply_button = True
 
 

@@ -284,7 +284,7 @@ class Main(wx.Frame):
         # Generate the user functions.
         for name, data in uf_info.uf_loop():
             # Generate a new container.
-            obj = Uf_object(name, self, title=data.title, size=data.wizard_size, apply_button=data.wizard_apply_button)
+            obj = Uf_object(name, self, title=data.title, size=data.wizard_size, height_desc=data.wizard_height_desc, apply_button=data.wizard_apply_button)
 
             # Store it.
             store[name] = obj
