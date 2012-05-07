@@ -97,19 +97,22 @@ class Uf_page(Wiz_page):
     # The path to the user function.
     uf_path = None
 
-    def __init__(self, name, parent=None, sync=False):
+    def __init__(self, name, parent=None, height_desc=220, sync=False):
         """Set up the window.
 
-        @param name:        The name of the user function.
-        @type name:         str
-        @keyword parent:    The parent class containing the GUI.
-        @type parent:       class instance
-        @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
-        @type sync:         bool
+        @param name:            The name of the user function.
+        @type name:             str
+        @keyword parent:        The parent class containing the GUI.
+        @type parent:           class instance
+        @keyword height_desc:   The height in pixels of the description part of the wizard.
+        @type height_desc:      int or None
+        @keyword sync:          A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
+        @type sync:             bool
         """
 
         # Store the args.
         self.name = name
+        self.height_desc = height_desc
         self.sync = sync
 
         # Default value data structure.
