@@ -40,118 +40,105 @@ uf = uf_info.add_uf('bmrb.citation')
 uf.title = "Specify a citation to be added the BMRB data file."
 uf.title_short = "Add a citation."
 uf.add_keyarg(
-        name = "cite_id",
-        py_type = "str",
-        desc_short = "citation ID",
-        desc = "The citation ID string."
+    name = "cite_id",
+    py_type = "str",
+    desc_short = "citation ID",
+    desc = "The citation ID string."
 )
 uf.add_keyarg(
-        name = "authors",
-        py_type = "str_list_of_lists",
-        desc_short = "author list",
-        desc = "The list of authors.  Each author element is a list of four elements (the first name, last name, first initial, and middle initials).",
-        list_titles = ["First name", "Last name", "First initial", "Middle initials"]
+    name = "authors",
+    py_type = "str_list_of_lists",
+    desc_short = "author list",
+    desc = "The list of authors.  Each author element is a list of four elements (the first name, last name, first initial, and middle initials).",
+    list_titles = ["First name", "Last name", "First initial", "Middle initials"]
 )
-
 uf.add_keyarg(
-        name = "doi",
-        py_type = "str",
-        desc_short = "DOI number",
-        desc = "The DOI number, e.g. '10.1000/182'.",
-        can_be_none = True
+    name = "doi",
+    py_type = "str",
+    desc_short = "DOI number",
+    desc = "The DOI number, e.g. '10.1000/182'.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "pubmed_id",
-        py_type = "str",
-        desc_short = "Pubmed ID number",
-        desc = "The identification code assigned to the publication by PubMed.",
-        can_be_none = True
+    name = "pubmed_id",
+    py_type = "str",
+    desc_short = "Pubmed ID number",
+    desc = "The identification code assigned to the publication by PubMed.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "full_citation",
-        py_type = "str",
-        desc_short = "full citation",
-        desc = "The full citation as given in a reference list."
+    name = "full_citation",
+    py_type = "str",
+    desc_short = "full citation",
+    desc = "The full citation as given in a reference list."
 )
-
 uf.add_keyarg(
-        name = "title",
-        py_type = "str",
-        desc_short = "publication title",
-        desc = "The title of the publication."
+    name = "title",
+    py_type = "str",
+    desc_short = "publication title",
+    desc = "The title of the publication."
 )
-
 uf.add_keyarg(
-        name = "status",
-        default = "published",
-        py_type = "str",
-        desc_short = "publication status",
-        desc = "The status of the publication.  This can be a value such as 'published', 'submitted', etc."
+    name = "status",
+    default = "published",
+    py_type = "str",
+    desc_short = "publication status",
+    desc = "The status of the publication.  This can be a value such as 'published', 'submitted', etc."
 )
-
 uf.add_keyarg(
-        name = "type",
-        default = "journal",
-        py_type = "str",
-        desc_short = "publication type",
-        desc = "The type of publication, for example 'journal'."
+    name = "type",
+    default = "journal",
+    py_type = "str",
+    desc_short = "publication type",
+    desc = "The type of publication, for example 'journal'."
 )
-
 uf.add_keyarg(
-        name = "journal_abbrev",
-        py_type = "str",
-        desc_short = "journal abbreviation",
-        desc = "The standard journal abbreviation.",
-        can_be_none = True
+    name = "journal_abbrev",
+    py_type = "str",
+    desc_short = "journal abbreviation",
+    desc = "The standard journal abbreviation.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "journal_full",
-        py_type = "str",
-        desc_short = "full journal name",
-        desc = "The full journal name.",
-        can_be_none = True
+    name = "journal_full",
+    py_type = "str",
+    desc_short = "full journal name",
+    desc = "The full journal name.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "volume",
-        py_type = "int",
-        desc_short = "volume",
-        desc = "The volume number.",
-        can_be_none = True
+    name = "volume",
+    py_type = "int",
+    desc_short = "volume",
+    desc = "The volume number.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "issue",
-        py_type = "int",
-        desc_short = "issue",
-        desc = "The issue number.",
-        can_be_none = True
+    name = "issue",
+    py_type = "int",
+    desc_short = "issue",
+    desc = "The issue number.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "page_first",
-        py_type = "int",
-        desc_short = "first page number",
-        desc = "The first page number.",
-        can_be_none = True
+    name = "page_first",
+    py_type = "int",
+    desc_short = "first page number",
+    desc = "The first page number.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "page_last",
-        py_type = "int",
-        desc_short = "last page number",
-        desc = "The last page number.",
-        can_be_none = True
+    name = "page_last",
+    py_type = "int",
+    desc_short = "last page number",
+    desc = "The last page number.",
+    can_be_none = True
 )
-
 uf.add_keyarg(
-        name = "year",
-        py_type = "int",
-        desc_short = "publication year",
-        desc = "The publication year."
+    name = "year",
+    py_type = "int",
+    desc_short = "publication year",
+    desc = "The publication year."
 )
 uf.desc = """
 The full_citation should be in a format similar to that used in a journal article by either cutting and pasting from another document or by typing. Please include author names, title, journal, page numbers, and year or equivalent information for the type of publication given.
@@ -203,11 +190,11 @@ uf = uf_info.add_uf('bmrb.display')
 uf.title = "Display the BMRB data in NMR-STAR format."
 uf.title_short = "Display the BMRB data."
 uf.add_keyarg(
-        name = "version",
-        py_type = "str",
-        desc_short = "NMR-STAR dictionary version",
-        desc = "The version of the BMRB NMR-STAR format to display.",
-        can_be_none = True
+    name = "version",
+    py_type = "str",
+    desc_short = "NMR-STAR dictionary version",
+    desc = "The version of the BMRB NMR-STAR format to display.",
+    can_be_none = True
 )
 uf.display = True
 uf.desc = """
@@ -223,33 +210,33 @@ uf = uf_info.add_uf('bmrb.read')
 uf.title = "Read BMRB files in the NMR-STAR format."
 uf.title_short = "Reading of BMRB files."
 uf.add_keyarg(
-        name = "file",
-        py_type = "str",
-        arg_type = "file sel",
-        desc_short = "file name",
-        desc = "The name of the BMRB NMR-STAR formatted file to read."
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the BMRB NMR-STAR formatted file to read."
 )
 uf.add_keyarg(
-        name = "directory",
-        py_type = "str",
-        arg_type = "dir",
-        desc_short = "directory name",
-        desc = "The directory where the file is located.",
-        can_be_none = True
+    name = "directory",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "version",
-        py_type = "str",
-        desc_short = "NMR-STAR dictionary version",
-        desc = "The version of the BMRB NMR-STAR format to read.  This is not necessary as the version is normally auto-detected.",
-        can_be_none = True
+    name = "version",
+    py_type = "str",
+    desc_short = "NMR-STAR dictionary version",
+    desc = "The version of the BMRB NMR-STAR format to read.  This is not necessary as the version is normally auto-detected.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "sample_conditions",
-        py_type = "str",
-        desc_short = "sample conditions label",
-        desc = "The sample conditions label in the NMR-STAR file to restrict loading to.",
-        can_be_none = True
+    name = "sample_conditions",
+    py_type = "str",
+    desc_short = "sample conditions label",
+    desc = "The sample conditions label in the NMR-STAR file to restrict loading to.",
+    can_be_none = True
 )
 uf.desc = """
 This will allow most of the data from a BMRB NMR-STAR formatted file to be loaded into the relax data store.  Note that a data pipe should be created for storing the data, and that currently only model-free data pipes can be used.  Also, only one sample condition can be read per relax data pipe.  Therefore if one of the sample conditions is not specified and multiple conditions exist in the NMR-STAR file, an error will be raised.
@@ -266,72 +253,72 @@ uf = uf_info.add_uf('bmrb.script')
 uf.title = "Specify the scripts used in the analysis."
 uf.title_short = "Analysis scripts."
 uf.add_keyarg(
-        name = "file",
-        py_type = "str",
-        arg_type = "file sel",
-        desc_short = "script file",
-        desc = "The name of the script file."
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "script file",
+    desc = "The name of the script file."
 )
 uf.add_keyarg(
-        name = "dir",
-        py_type = "str",
-        arg_type = "dir",
-        desc_short = "directory name",
-        desc = "The directory where the file is located.",
-        can_be_none = True
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "analysis_type",
-        py_type = "str",
-        desc_short = "analysis type",
-        desc = "The type of analysis performed.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = pipes.PIPE_DESC_LIST,
-        wiz_combo_data = pipes.VALID_TYPES
+    name = "analysis_type",
+    py_type = "str",
+    desc_short = "analysis type",
+    desc = "The type of analysis performed.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = pipes.PIPE_DESC_LIST,
+    wiz_combo_data = pipes.VALID_TYPES
 )
 uf.add_keyarg(
-        name = "model_selection",
-        py_type = "str",
-        desc_short = "model selection",
-        desc = "The model selection technique used, if relevant.  For example 'AIC' model selection.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = [
-            "AIC - Akaike's Information Criteria.",
-            "AICc - Small sample size corrected AIC.",
-            "BIC - Bayesian or Schwarz Information Criteria.",
-            "Bootstrap - Bootstrap model selection.",
-            "CV - Single-item-out cross-validation.",
-            "Expect - The expected overall discrepancy (the true values of the parameters are required).",
-            "Farrow - Old model-free method by Farrow et al., 1994.",
-            "Palmer - Old model-free method by Mandel et al., 1995.",
-            "Overall - The realised overall discrepancy (the true values of the parameters are required)."
-        ],
-        wiz_combo_data = ["AIC", "AICc", "BIC", "BIC", "Bootstrap", "CV", "Expect", "Farrow", "Palmer", "Overall"],
-        wiz_read_only = False
+    name = "model_selection",
+    py_type = "str",
+    desc_short = "model selection",
+    desc = "The model selection technique used, if relevant.  For example 'AIC' model selection.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "AIC - Akaike's Information Criteria.",
+        "AICc - Small sample size corrected AIC.",
+        "BIC - Bayesian or Schwarz Information Criteria.",
+        "Bootstrap - Bootstrap model selection.",
+        "CV - Single-item-out cross-validation.",
+        "Expect - The expected overall discrepancy (the true values of the parameters are required).",
+        "Farrow - Old model-free method by Farrow et al., 1994.",
+        "Palmer - Old model-free method by Mandel et al., 1995.",
+        "Overall - The realised overall discrepancy (the true values of the parameters are required)."
+    ],
+    wiz_combo_data = ["AIC", "AICc", "BIC", "BIC", "Bootstrap", "CV", "Expect", "Farrow", "Palmer", "Overall"],
+    wiz_read_only = False
 )
 uf.add_keyarg(
-        name = "engine",
-        default = "relax",
-        py_type = "str",
-        desc_short = "software engine",
-        desc = "The software engine used in the analysis.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = ["relax", "modelfree4", "dasha", "curvefit"],
-        wiz_read_only = False
+    name = "engine",
+    default = "relax",
+    py_type = "str",
+    desc_short = "software engine",
+    desc = "The software engine used in the analysis.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["relax", "modelfree4", "dasha", "curvefit"],
+    wiz_read_only = False
 )
 uf.add_keyarg(
-        name = "model_elim",
-        default = False,
-        py_type = "bool",
-        desc_short = "model elimination flag",
-        desc = "A model-free specific flag specifying if model elimination was performed."
+    name = "model_elim",
+    default = False,
+    py_type = "bool",
+    desc_short = "model elimination flag",
+    desc = "A model-free specific flag specifying if model elimination was performed."
 )
 uf.add_keyarg(
-        name = "universal_solution",
-        default = False,
-        py_type = "bool",
-        desc_short = "universal solution flag",
-        desc = "A model-free specific flag specifying if the universal solution was sought after."
+    name = "universal_solution",
+    default = False,
+    py_type = "bool",
+    desc_short = "universal solution flag",
+    desc = "A model-free specific flag specifying if the universal solution was sought after."
 )
 uf.desc = """
 This user function allows scripts used in the analysis to be included in the BMRB deposition.  The following addition information may need to be specified with the script.
@@ -388,58 +375,58 @@ uf = uf_info.add_uf('bmrb.software')
 uf.title = "Specify the software used in the analysis."
 uf.title_short = "Analysis software."
 uf.add_keyarg(
-        name = "name",
-        py_type = "str",
-        desc_short = "program name",
-        desc = "The name of the software program utilised."
+    name = "name",
+    py_type = "str",
+    desc_short = "program name",
+    desc = "The name of the software program utilised."
 )
 uf.add_keyarg(
-        name = "version",
-        py_type = "str",
-        desc_short = "version",
-        desc = "The version of the software, if applicable.",
-        can_be_none = True
+    name = "version",
+    py_type = "str",
+    desc_short = "version",
+    desc = "The version of the software, if applicable.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "url",
-        py_type = "str",
-        desc_short = "URL",
-        desc = "The web address of the software.",
-        can_be_none = True
+    name = "url",
+    py_type = "str",
+    desc_short = "URL",
+    desc = "The web address of the software.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "vendor_name",
-        py_type = "str",
-        desc_short = "vendor name",
-        desc = "The name of the company or person behind the program.",
-        can_be_none = True
+    name = "vendor_name",
+    py_type = "str",
+    desc_short = "vendor name",
+    desc = "The name of the company or person behind the program.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "cite_ids",
-        py_type = "str_list",
-        desc_short = "citation ID numbers",
-        desc = "A list of the BMRB citation ID numbers.",
-        can_be_none = True
+    name = "cite_ids",
+    py_type = "str_list",
+    desc_short = "citation ID numbers",
+    desc = "A list of the BMRB citation ID numbers.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "tasks",
-        py_type = "str_list",
-        desc_short = "tasks",
-        desc = "A list of all the tasks performed by the software.",
-        wiz_element_type = "combo_list",
-        wiz_combo_choices = [
-            'chemical shift assignment',
-            'chemical shift calculation',
-            'collection',
-            'data analysis',
-            'geometry optimization',
-            'peak picking',
-            'processing',
-            'refinement',
-            'structure solution'
-        ],
-        wiz_read_only = False,
-        can_be_none = True
+    name = "tasks",
+    py_type = "str_list",
+    desc_short = "tasks",
+    desc = "A list of all the tasks performed by the software.",
+    wiz_element_type = "combo_list",
+    wiz_combo_choices = [
+        'chemical shift assignment',
+        'chemical shift calculation',
+        'collection',
+        'data analysis',
+        'geometry optimization',
+        'peak picking',
+        'processing',
+        'refinement',
+        'structure solution'
+    ],
+    wiz_read_only = False,
+    can_be_none = True
 )
 uf.desc = """
 This user function allows the software used in the analysis to be specified in full detail.
@@ -476,20 +463,20 @@ uf = uf_info.add_uf('bmrb.software_select')
 uf.title = "Select the software used in the analysis."
 uf.title_short = "Utilised software selection."
 uf.add_keyarg(
-        name = "name",
-        py_type = "str",
-        desc_short = "program name",
-        desc = "The name of the software program utilised.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = ['NMRPipe', 'Sparky'],
-        wiz_read_only = True
+    name = "name",
+    py_type = "str",
+    desc_short = "program name",
+    desc = "The name of the software program utilised.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ['NMRPipe', 'Sparky'],
+    wiz_read_only = True
 )
 uf.add_keyarg(
-        name = "version",
-        py_type = "str",
-        desc_short = "version",
-        desc = "The version of the software, if applicable.",
-        can_be_none = True
+    name = "version",
+    py_type = "str",
+    desc_short = "version",
+    desc = "The version of the software, if applicable.",
+    can_be_none = True
 )
 uf.desc = """
 Rather than specifying all the information directly, this user function allows the software packaged used in the analysis to be selected by name.  The programs currently supported are:
@@ -518,25 +505,25 @@ uf = uf_info.add_uf('bmrb.thiol_state')
 uf.title = "Select the thiol state of the system."
 uf.title_short = "Thiol state selection."
 uf.add_keyarg(
-        name = "state",
-        py_type = "str",
-        desc_short = "thiol state",
-        desc = "The thiol state.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = [
-            'all disulfide bound',
-            'all free',
-            'all other bound',
-            'disulfide and other bound',
-            'free and disulfide bound',
-            'free and other bound',
-            'free disulfide and other bound',
-            'not available',
-            'not present',
-            'not reported',
-            'unknown'
-        ],
-        wiz_read_only = False
+    name = "state",
+    py_type = "str",
+    desc_short = "thiol state",
+    desc = "The thiol state.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        'all disulfide bound',
+        'all free',
+        'all other bound',
+        'disulfide and other bound',
+        'free and disulfide bound',
+        'free and other bound',
+        'free disulfide and other bound',
+        'not available',
+        'not present',
+        'not reported',
+        'unknown'
+    ],
+    wiz_read_only = False
 )
 uf.desc = """
 The thiol state can be any text, thought the BMRB suggests the following:
@@ -572,34 +559,34 @@ uf = uf_info.add_uf('bmrb.write')
 uf.title = "Write the results to a BMRB NMR-STAR formatted file."
 uf.title = "BMRB file writing."
 uf.add_keyarg(
-        name = "file",
-        py_type = "str",
-        arg_type = "file sel",
-        desc_short = "file name",
-        desc = "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method."
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method."
 )
 uf.add_keyarg(
-        name = "dir",
-        default = "pipe_name",
-        py_type = "str",
-        arg_type = "dir",
-        desc_short = "directory name",
-        desc = "The directory name.",
-        can_be_none = True
+    name = "dir",
+    default = "pipe_name",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory name.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "version",
-        py_type = "str",
-        desc_short = "NMR-STAR dictionary version",
-        desc = "The NMR-STAR dictionary format version to create.",
-        can_be_none = True
+    name = "version",
+    py_type = "str",
+    desc_short = "NMR-STAR dictionary version",
+    desc = "The NMR-STAR dictionary format version to create.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "force",
-        default = False,
-        py_type = "bool",
-        desc_short = "force flag",
-        desc = "A flag which if True will cause the any pre-existing file to be overwritten."
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if True will cause the any pre-existing file to be overwritten."
 )
 uf.desc = """
 This will create a NMR-STAR formatted file of the data in the current data pipe for BMRB deposition.

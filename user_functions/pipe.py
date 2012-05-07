@@ -42,23 +42,23 @@ uf = uf_info.add_uf('pipe.copy')
 uf.title = "Copy a data pipe."
 uf.title_short = "Data pipe copying."
 uf.add_keyarg(
-        name = "pipe_from",
-        default = None,
-        py_type = "str",
-        desc_short = "source data pipe",
-        desc = "The name of the source data pipe to copy the data from.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = pipes.pipe_names,
-        wiz_read_only = True,
-        can_be_none = True
+    name = "pipe_from",
+    default = None,
+    py_type = "str",
+    desc_short = "source data pipe",
+    desc = "The name of the source data pipe to copy the data from.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "pipe_to",
-        default = None,
-        py_type = "str",
-        desc_short = "destination data pipe",
-        desc = "The name of the target data pipe to copy the data to.",
-        can_be_none = True
+    name = "pipe_to",
+    default = None,
+    py_type = "str",
+    desc_short = "destination data pipe",
+    desc = "The name of the target data pipe to copy the data to.",
+    can_be_none = True
 )
 uf.desc = """
 This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.
@@ -84,22 +84,22 @@ uf = uf_info.add_uf('pipe.create')
 uf.title = "Add a new data pipe to the relax data store."
 uf.title_short = "Data pipe creation."
 uf.add_keyarg(
-        name = "pipe_name",
-        default = None,
-        py_type = "str",
-        desc_short = "data pipe name",
-        desc = "The name of the data pipe.",
+    name = "pipe_name",
+    default = None,
+    py_type = "str",
+    desc_short = "data pipe name",
+    desc = "The name of the data pipe.",
 )
 uf.add_keyarg(
-        name = "pipe_type",
-        default = None,
-        py_type = "str",
-        desc_short = "type of data pipe",
-        desc = "The type of data pipe.",
-        wiz_element_type = 'combo',
-        wiz_combo_choices = pipes.PIPE_DESC_LIST,
-        wiz_combo_data = pipes.VALID_TYPES,
-        wiz_read_only = True
+    name = "pipe_type",
+    default = None,
+    py_type = "str",
+    desc_short = "type of data pipe",
+    desc = "The type of data pipe.",
+    wiz_element_type = 'combo',
+    wiz_combo_choices = pipes.PIPE_DESC_LIST,
+    wiz_combo_data = pipes.VALID_TYPES,
+    wiz_read_only = True
 )
 uf.backend = pipes.create
 uf.desc = """
@@ -145,14 +145,14 @@ uf = uf_info.add_uf('pipe.delete')
 uf.title = "Delete a data pipe from the relax data store."
 uf.title_short = "Data pipe deletion."
 uf.add_keyarg(
-        name = "pipe_name",
-        default = None,
-        py_type = "str",
-        desc_short = "data pipe",
-        desc = "The name of the data pipe to delete.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = pipes.pipe_names,
-        can_be_none = True
+    name = "pipe_name",
+    default = None,
+    py_type = "str",
+    desc_short = "data pipe",
+    desc = "The name of the data pipe to delete.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    can_be_none = True
 )
 uf.desc = """
 This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.
@@ -183,21 +183,21 @@ uf = uf_info.add_uf('pipe.hybridise')
 uf.title = "Create a hybrid data pipe by fusing a number of other data pipes."
 uf.title_short = "Hybrid data pipe creation."
 uf.add_keyarg(
-        name = "hybrid",
-        default = None,
-        py_type = "str",
-        desc_short = "hybrid pipe name",
-        desc = "The name of the hybrid data pipe to create."
+    name = "hybrid",
+    default = None,
+    py_type = "str",
+    desc_short = "hybrid pipe name",
+    desc = "The name of the hybrid data pipe to create."
 )
 uf.add_keyarg(
-        name = "pipes",
-        default = None,
-        py_type = "str_list",
-        desc_short = "data pipes to hybridise",
-        desc = "An array containing the names of all data pipes to hybridise.",
-        wiz_element_type = 'combo_list',
-        wiz_combo_iter = pipes.pipe_names,
-        wiz_combo_list_size = 2
+    name = "pipes",
+    default = None,
+    py_type = "str_list",
+    desc_short = "data pipes to hybridise",
+    desc = "An array containing the names of all data pipes to hybridise.",
+    wiz_element_type = 'combo_list',
+    wiz_combo_iter = pipes.pipe_names,
+    wiz_combo_list_size = 2
 )
 uf.backend = hybrid_obj._hybridise
 uf.desc = """
@@ -223,13 +223,13 @@ uf = uf_info.add_uf('pipe.switch')
 uf.title = "Switch between the data pipes of the relax data store."
 uf.title_short = "Data pipe switching."
 uf.add_keyarg(
-        name = "pipe_name",
-        default = None,
-        py_type = "str",
-        desc_short = "data pipe",
-        desc = "The name of the data pipe.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = pipes.pipe_names
+    name = "pipe_name",
+    default = None,
+    py_type = "str",
+    desc_short = "data pipe",
+    desc = "The name of the data pipe.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names
 )
 uf.backend = pipes.switch
 uf.desc = """
