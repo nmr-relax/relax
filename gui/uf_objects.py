@@ -298,8 +298,8 @@ class Uf_page(Wiz_page):
         # Additional documentation.
         if self.uf_data.additional != None:
             for i in range(len(self.uf_data.additional)):
-                for element, type in self.process_doc(self.uf_data.additional[i]):
-                    text_list.append([element, type])
+                text_list.append([self.uf_data.additional[i][0], 'title'])
+                text_list.append([self.uf_data.additional[i][1], 'desc'])
 
         # Loop over the elements.
         tot_x = 0
