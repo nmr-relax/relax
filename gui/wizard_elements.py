@@ -665,7 +665,7 @@ class Sequence_window(wx.Dialog):
         self.seq_type = seq_type
 
         # The base types.
-        if value_type == 'float':
+        if value_type in ['float', 'num']:
             self.convert_from_gui = gui_to_float
             self.convert_to_gui =   float_to_gui
         elif value_type == 'int':
@@ -1005,7 +1005,7 @@ class Value:
         self.element_type = element_type
 
         # The value types.
-        if value_type == 'float':
+        if value_type in ['float', 'num']:
             self.convert_from_gui = gui_to_float
             self.convert_to_gui =   float_to_gui
             self.type_string = 'float'
