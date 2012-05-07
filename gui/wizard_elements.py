@@ -43,7 +43,7 @@ from gui import paths
 
 
 class Sequence:
-    """Wizard GUI element for the input of all types of Python sequence objects
+    """Wizard GUI element for the input of all types of Python sequence objects.
 
     The supported Python types include:
         - list of floats
@@ -529,44 +529,94 @@ class Selector_file:
 
 
 
-class String_list_of_lists(Sequence):
-    """Wizard GUI element for the input of a list of lists of strings."""
+class Sequence_2D(Sequence):
+    """Wizard GUI element for the input of all types of 2D Python sequence objects.
+    The supported Python types include:
+        - list of floats
+        - list of integers
+        - list of strings
+        - tuple of floats
+        - tuple of integers
+        - tuple of strings
+    """
 
-    def __init__(self, name=None, titles=None, parent=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
+    def __init__(self, name=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
-        @keyword name:      The name of the element to use in titles, etc.
-        @type name:         str
-        @keyword titles:    The titles of each of the elements of the fixed width second dimension.
-        @type titles:       list of str
-        @keyword parent:    The wizard GUI element.
-        @type parent:       wx.Panel instance
-        @keyword sizer:     The sizer to put the input field widget into.
-        @type sizer:        wx.Sizer instance
-        @keyword desc:      The text description.
-        @type desc:         str
-        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
-        @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:      None or int
-        @keyword padding:   Spacing to the left and right of the widgets.
-        @type padding:      int
-        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:       None or int
+        @keyword name:              The name of the element to use in titles, etc.
+        @type name:                 str
+        @keyword parent:            The wizard GUI element.
+        @type parent:               wx.Panel instance
+        @keyword sizer:             The sizer to put the input field widget into.
+        @type sizer:                wx.Sizer instance
+        @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
+        @type element_type:         str
+        @keyword seq_type:          The type of Python sequence.  This should be one of 'list' or 'tuple'.
+        @type seq_type:             str
+        @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:           str
+        @keyword titles:            The titles of each of the elements of the fixed width second dimension.
+        @type titles:               list of str
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:        list of str
+        @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:           list
+        @keyword combo_default:     The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:        str or None
+        @keyword combo_list_size:   The number of initial entries in a Combo_list object.
+        @type combo_list_size:      int or None
+        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
+        @type tooltip:              str
+        @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:              None or int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
         """
 
         # Store some of the args.
         self.titles = titles
 
         # Initialise the base class.
-        List.__init__(self, name=name, parent=parent, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+        Sequence.__init__(self, name=name, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
 
-    def init_window(self):
-        """Set up the specific window type."""
+    def open_dialog(self, event):
+        """Open a special dialog for inputting a list of text values.
 
-        # Specify the window type to open.
-        return String_list_of_lists_window(name=self.name, titles=self.titles)
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the model selection window.
+        win = Sequence_window_2D(name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles)
+
+        # Set the model selector window selections.
+        win.SetValue(self.GetValue())
+
+        # Show the model selector window.
+        if status.show_gui:
+            win.ShowModal()
+            win.Close()
+
+        # Get the value.
+        value = win.GetValue()
+
+        # No sequence data.
+        if not len(value):
+            self.Clear()
+
+        # Set the values.
+        else:
+            self.SetValue(value)
+
+        # Destroy the window.
+        del win
 
 
 
@@ -588,7 +638,7 @@ class Sequence_list_ctrl(wx.ListCtrl, wx.lib.mixins.listctrl.TextEditMixin, wx.l
 
 
 class Sequence_window(wx.Dialog):
-    """The string list editor window."""
+    """The Python sequence object editor window."""
 
     # The window size.
     SIZE = (600, 600)
@@ -628,13 +678,13 @@ class Sequence_window(wx.Dialog):
             raise RelaxError("Unknown base data type '%s'." % value_type)
 
         # The title of the dialog.
-        title = "The list of %s" % name
+        title = "The sequence of %s" % name
 
         # Set up the dialog.
         wx.Dialog.__init__(self, None, id=-1, title=title)
 
         # Initialise some values
-        width = self.SIZE[0] - 2*self.BORDER
+        self.width = self.SIZE[0] - 2*self.BORDER
 
         # Set the frame properties.
         self.SetSize(self.SIZE)
@@ -661,7 +711,7 @@ class Sequence_window(wx.Dialog):
 
 
     def GetValue(self):
-        """Return the values as a list of strings.
+        """Return the values as a sequence of values.
 
         @return:    The sequence of values.
         @rtype:     sequence type
@@ -796,69 +846,37 @@ class Sequence_window(wx.Dialog):
 
 
 
-class String_list_of_lists_window(wx.Dialog):
-    """The string list of lists editor window."""
+class Sequence_window_2D(Sequence_window):
+    """The Python 2D sequence object editor window."""
 
-    # The window size.
-    SIZE = (600, 600)
-
-    # A border.
-    BORDER = 10
-
-    # Sizes.
-    SIZE_BUTTON = (150, 33)
-
-    def __init__(self, name='', titles=None):
+    def __init__(self, name='', seq_type='list', value_type='str', titles=None):
         """Set up the string list editor window.
 
-        @keyword name:      The name of the window.
-        @type name:         str
-        @keyword titles:    The titles of each of the elements of the fixed width second dimension.
-        @type titles:       list of str
+        @keyword name:          The name of the window.
+        @type name:             str
+        @keyword seq_type:      The type of Python sequence.  This should be one of 'list' or 'tuple'.
+        @type seq_type:         str
+        @keyword value_type:    The type of Python data expected in the sequence.  This should be one of 'float', 'int', or 'str'.
+        @type value_type:       str
+        @keyword titles:        The titles of each of the elements of the fixed width second dimension.
+        @type titles:           list of str
         """
 
         # Store the args.
         self.name = name
+        self.seq_type = seq_type
+        self.value_type = value_type
         self.titles = titles
 
         # The number of elements.
         self.num = len(self.titles)
 
-        # The title of the dialog.
-        title = "The list of %s" % name
-
-        # Set up the dialog.
-        wx.Dialog.__init__(self, None, id=-1, title=title)
-
-        # Initialise some values
-        self.width = self.SIZE[0] - 2*self.BORDER
-
-        # Set the frame properties.
-        self.SetSize(self.SIZE)
-        self.Centre()
-        self.SetFont(font.normal)
-
-        # The main box sizer.
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Pack the sizer into the frame.
-        self.SetSizer(main_sizer)
-
-        # Build the central sizer, with borders.
-        sizer = add_border(main_sizer, border=self.BORDER, packing=wx.VERTICAL)
-
-        # Add the list control.
-        self.add_list(sizer)
-
-        # Some spacing.
-        sizer.AddSpacer(self.BORDER)
-
-        # Add the bottom buttons.
-        self.add_buttons(sizer)
+        # Initialise the base class.
+        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type)
 
 
     def GetValue(self):
-        """Return the values as a list of lists of strings.
+        """Return the values as a 2D sequence of values.
 
         @return:    The list of lists of values.
         @rtype:     list of lists of str
@@ -878,7 +896,15 @@ class String_list_of_lists_window(wx.Dialog):
                 item = self.sequence.GetItem(i, j)
 
                 # Append the value.
-                values[-1].append(gui_to_str(item.GetText()))
+                values[-1].append(self.convert_from_gui(item.GetText()))
+
+            # Sequence conversion.
+            if self.seq_type == 'tuple':
+                values[-1] = tuple(values[-1])
+
+        # Sequence conversion.
+        if self.seq_type == 'tuple':
+            values = tuple(values)
 
         # Return the list.
         return values
@@ -894,59 +920,15 @@ class String_list_of_lists_window(wx.Dialog):
         # Loop over the entries.
         for i in range(len(values)):
             # The first value.
-            self.sequence.InsertStringItem(sys.maxint, str_to_gui(values[i][0]))
+            self.sequence.InsertStringItem(sys.maxint, self.convert_to_gui(values[i][0]))
 
             # Loop over the values.
             for j in range(1, self.num):
                 # Set the value.
-                self.sequence.SetStringItem(i, j, str_to_gui(values[i][j]))
+                self.sequence.SetStringItem(i, j, self.convert_to_gui(values[i][j]))
 
         # Refresh.
         self.Refresh()
-
-
-    def add_buttons(self, sizer):
-        """Add the buttons to the sizer.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # Create a horizontal layout for the buttons.
-        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(button_sizer, 0, wx.ALIGN_CENTER|wx.ALL, 0)
-
-        # The add button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetToolTipString("Add a row to the list.")
-        button.SetMinSize(self.SIZE_BUTTON)
-        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.append_row, button)
-
-        # Spacer.
-        button_sizer.AddSpacer(20)
-
-        # The delete all button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete all")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetToolTipString("Delete all items.")
-        button.SetMinSize(self.SIZE_BUTTON)
-        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.delete_all, button)
-
-        # Spacer.
-        button_sizer.AddSpacer(20)
-
-        # The Ok button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Ok")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetMinSize(self.SIZE_BUTTON)
-        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.close, button)
 
 
     def add_list(self, sizer):
@@ -969,42 +951,6 @@ class String_list_of_lists_window(wx.Dialog):
 
         # Add the table to the sizer.
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
-
-
-    def append_row(self, event):
-        """Append a new row to the list.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The next index.
-        next = self.sequence.GetItemCount()
-
-        # Add a new empty row.
-        self.sequence.InsertStringItem(next, '')
-
-
-    def close(self, event):
-        """Close the window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Destroy the window.
-        self.Destroy()
-
-
-    def delete_all(self, event):
-        """Remove all items from the list.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Delete.
-        self.sequence.DeleteAllItems()
 
 
 

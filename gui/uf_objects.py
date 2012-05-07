@@ -222,8 +222,22 @@ class Uf_page(Wiz_page):
                 self.element_sequence(key=arg['name'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # String list of lists.
-            elif arg['py_type'] == 'str_list_of_lists':
-                self.element_string_list_of_lists(key=arg['name'], titles=arg['list_titles'], sizer=sizer, desc=desc, tooltip=arg['desc'])
+            elif arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_tuple_of_tuples', 'int_tuple_of_tuples', 'num_tuple_of_tuples', 'str_tuple_of_tuples']:
+                # The sequence type.
+                if arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists']:
+                    seq_type = 'list'
+                else:
+                    seq_type = 'tuple'
+
+                # The value type.
+                if arg['py_type'] in ['float_list_of_lists', 'float_tuple_of_tuples', 'num_list_of_lists', 'num_tuple_of_tuples']:
+                    value_type = 'float'
+                elif arg['py_type'] in ['int_list_of_lists', 'int_tuple_of_tuples']:
+                    value_type = 'int'
+                else:
+                    value_type = 'str'
+
+                self.element_sequence_2D(key=arg['name'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, titles=arg['list_titles'], desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_default=arg['wiz_combo_default'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # Unknown type.
             else:
