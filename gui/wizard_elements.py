@@ -652,6 +652,7 @@ class Selector_file:
 
 class Sequence_2D(Sequence):
     """Wizard GUI element for the input of all types of 2D Python sequence objects.
+
     The supported Python types include:
         - list of floats
         - list of integers
