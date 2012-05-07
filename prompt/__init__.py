@@ -24,7 +24,6 @@
 __all__ = ['base_class',
            'command',
            'deselect',
-           'diffusion_tensor',
            'doc_string',
            'dx',
            'eliminate',

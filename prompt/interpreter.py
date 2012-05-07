@@ -66,7 +66,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from diffusion_tensor import Diffusion_tensor
 from frame_order import Frame_order
 from frq import Frq
 from grace import Grace
@@ -214,7 +213,6 @@ class Interpreter:
 
         # Place the user classes in the local namespace.
         objects['deselect'] = Deselect()
-        objects['diffusion_tensor'] = Diffusion_tensor()
         objects['frame_order'] = Frame_order()
         objects['dx'] = OpenDX()
         objects['frq'] = Frq()
