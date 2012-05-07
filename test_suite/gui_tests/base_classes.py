@@ -78,11 +78,11 @@ class GuiTestCase(TestCase):
             pass
 
 
-    def execute_uf(self, name=None, **kargs):
+    def execute_uf(self, uf_name=None, **kargs):
         """Execute the given user function.
 
-        @keyword name:  The name of the user function.
-        @type name:     str
+        @keyword uf_name:   The name of the user function.
+        @type uf_name:      str
         """
 
         # Create and store a wizard instance to be used in all user function pages (if needed).
@@ -90,7 +90,7 @@ class GuiTestCase(TestCase):
             self._wizard = Wiz_window(self.app.gui)
 
         # Create the page.
-        uf_page = Uf_page(name, parent=self._wizard)
+        uf_page = Uf_page(uf_name, parent=self._wizard)
 
         # Set all the values.
         for key in kargs:
