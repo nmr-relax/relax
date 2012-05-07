@@ -133,6 +133,7 @@ To run the user function, type:
 relax> pipe.current()
 """
 uf.menu_text = "c&urrent"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
@@ -170,6 +171,7 @@ To run the user function, type:
 relax> pipe.display()
 """
 uf.menu_text = "di&splay"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 

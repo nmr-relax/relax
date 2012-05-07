@@ -181,6 +181,7 @@ relax> bmrb.citation(authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Go
 """
 uf.backend = exp_info.citation
 uf.menu_text = "&citation"
+uf.gui_icon = "oxygen.actions.documentation"
 uf.wizard_size = (1000, 800)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
@@ -202,6 +203,7 @@ This will print the BMRB NMR-STAR formatted data to STDOUT.
 """
 uf.backend = bmrb.display
 uf.menu_text = "&display"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
@@ -454,6 +456,7 @@ relax> bmrb.software('Sparky', version='3.110', url="http://www.cgl.ucsf.edu/hom
 """
 uf.backend = exp_info.software
 uf.menu_text = "soft&ware"
+uf.gui_icon = "oxygen.apps.utilities-terminal"
 uf.wizard_size = (900, 800)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
@@ -496,6 +499,7 @@ relax> bmrb.software_select('Sparky', version='3.113')
 """
 uf.backend = exp_info.software_select
 uf.menu_text = "software_se&lect"
+uf.gui_icon = "oxygen.apps.utilities-terminal"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 

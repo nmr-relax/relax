@@ -68,6 +68,7 @@ This allows relaxation data of the given type and frequency to be back calculate
 """
 uf.backend = relax_data.back_calc
 uf.menu_text = "&back_calc"
+uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 
 
@@ -181,6 +182,7 @@ relax> relax_data.display('NOE_600')
 """
 uf.backend = relax_data.display
 uf.menu_text = "dis&play"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_size = (700, 400)
 uf.wizard_height_desc = 140
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
@@ -411,6 +413,7 @@ Other strings will be accepted if supplied.
 """
 uf.backend = relax_data.temp_calibration
 uf.menu_text = "&temp_calibration"
+uf.gui_icon = "oxygen.status.weather-clear"
 uf.wizard_size = (900, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 
@@ -456,6 +459,7 @@ This is essential for BMRB data deposition.  The currently allowed methods are:
 """
 uf.backend = relax_data.temp_control
 uf.menu_text = "temp_contro&l"
+uf.gui_icon = "oxygen.status.weather-clear"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 

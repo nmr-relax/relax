@@ -158,6 +158,7 @@ If no tensor is specified, all tensors will be displayed.
 """
 uf.backend = align_tensor.display
 uf.menu_text = "dis&play"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
@@ -188,6 +189,7 @@ If the ID string is left unset, then all alignment tensors will be fixed.
 """
 uf.backend = align_tensor.fix
 uf.menu_text = "&fix"
+uf.gui_icon = "oxygen.status.object-locked"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
@@ -305,6 +307,7 @@ This will calculate the angles between all loaded alignment tensors for the curr
 """
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
+uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
@@ -373,6 +376,7 @@ relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
 """
 uf.backend = align_tensor.set_domain
 uf.menu_text = "&set_domain"
+uf.gui_icon = "oxygen.actions.edit-select"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
@@ -443,5 +447,6 @@ The SVD values and condition number are dependent upon the basis set chosen.
 """
 uf.backend = align_tensor.svd
 uf.menu_text = "s&vd"
+uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
