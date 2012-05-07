@@ -66,7 +66,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from frame_order import Frame_order
@@ -216,7 +215,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['consistency_tests'] = Consistency_tests()
         objects['dasha'] = Dasha()
         objects['deselect'] = Deselect()
         objects['diffusion_tensor'] = Diffusion_tensor()

@@ -38,6 +38,7 @@ __all__ += [
     'angles',
     'bmrb',
     'bruker',
+    'consistency_tests',
     'pipe',
     'relax_data',
     'state'
@@ -48,6 +49,7 @@ import user_functions.align_tensor
 import user_functions.angles
 import user_functions.bmrb
 import user_functions.bruker
+import user_functions.consistency_tests
 import user_functions.pipe
 import user_functions.relax_data
 import user_functions.state

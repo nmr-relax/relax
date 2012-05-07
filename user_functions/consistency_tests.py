@@ -22,50 +22,39 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'consistency_tests' user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the 'consistency_tests' user function data."""
 
 # relax module imports.
-from base_class import User_fn_class
-import arg_check
 from specific_fns.setup import consistency_tests_obj
-from status import Status; status = Status()
+from graphics import ANALYSIS_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Consistency_tests(User_fn_class):
-    """Class containing functions specific to consistency tests for datasets from different fields."""
-
-    def set_frq(self, frq=None):
-        """Function for selecting which relaxation data to use in the consistency tests.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        frq:  The spectrometer frequency in Hz.
+# The user function class.
+uf_class = uf_info.add_class('consistency_tests')
+uf_class.title = "Class containing functions specific to consistency tests for datasets from different fields."
+uf_class.menu_text = "&consistency_tests"
+uf_class.gui_icon = "relax.consistency_testing"
 
 
-        Description
-        ~~~~~~~~~~~
-
-        This function will select the relaxation data to use in the consistency tests corresponding
-        to the given frequencies.
-
-
-        Examples
-        ~~~~~~~~
-
-        relax> consistency_tests.set_frq(600.0 * 1e6)
-        relax> consistency_tests.set_frq(frq=600.0 * 1e6)
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "consistency_tests.set_frq("
-            text = text + "frq=" + repr(frq) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_num(frq, 'spectrometer frequency')
-
-        # Execute the functional code.
-        consistency_tests_obj._set_frq(frq=frq)
+# The consistency_tests.set_frq user function.
+uf = uf_info.add_uf('consistency_tests.set_frq')
+uf.title = "Select which relaxation data to use in the consistency tests."
+uf.title_short = "Relaxation data selection."
+uf.add_keyarg(
+    name = "frq",
+    py_type = "float",
+    desc_short = "frequency in Hz",
+    desc = "The spectrometer frequency in Hz.  This must match the currently loaded data to the last decimal point."
+)
+uf.desc = """
+This will select the relaxation data to use in the consistency tests corresponding to the given frequencies.
+"""
+uf.prompt_examples = """
+relax> consistency_tests.set_frq(600.0 * 1e6)
+relax> consistency_tests.set_frq(frq=600.0 * 1e6)
+"""
+uf.backend = consistency_tests_obj._set_frq
+uf.menu_text = "&set_frq"
+uf.wizard_size = (700, 400)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'consistency_testing_200x94.png'

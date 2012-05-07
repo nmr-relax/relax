@@ -21,10 +21,8 @@
 ###############################################################################
 
 
-__all__ = ['angles',
-           'base_class',
+__all__ = ['base_class',
            'command',
-           'consistency_tests',
            'dasha',
            'deselect',
            'diffusion_tensor',
