@@ -66,6 +66,10 @@ class Uf_info(object):
         @rtype:         user_functions.objects.Class_container instance
         """
 
+        # Check if the user function already exists.
+        if name in self._class_names:
+            raise RelaxError("The user function class %s has already been set up." % name)
+
         # Store the name and initialise a new object.
         self._class_names.append(name)
         self._classes.append(Class_container())
@@ -82,6 +86,10 @@ class Uf_info(object):
         @return:        The user function data object.
         @rtype:         user_functions.objects.Uf_container instance
         """
+
+        # Check if the user function already exists.
+        if name in self._uf_names:
+            raise RelaxError("The user function %s has already been set up." % name)
 
         # First check if the user function class has been set up.
         if search('.', name):
