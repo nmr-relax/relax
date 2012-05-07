@@ -167,7 +167,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_default=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -197,8 +197,6 @@ class Uf_container(object):
         @type wiz_combo_choices:        list of str
         @keyword wiz_combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type wiz_combo_data:           list
-        @keyword wiz_combo_default:     The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type wiz_combo_default:        str or None
         @keyword wiz_combo_iter:        An iterator method for regenerating the ComboBox choices.
         @type wiz_combo_iter:           iterator or None
         @keyword wiz_combo_list_size:   An iterator method for regenerating the ComboBox choices.
@@ -240,7 +238,6 @@ class Uf_container(object):
         arg['wiz_element_type'] = wiz_element_type
         arg['wiz_combo_choices'] = wiz_combo_choices
         arg['wiz_combo_data'] = wiz_combo_data
-        arg['wiz_combo_default'] = wiz_combo_default
         arg['wiz_combo_iter'] = wiz_combo_iter
         arg['wiz_combo_list_size'] = wiz_combo_list_size
         arg['wiz_read_only'] = wiz_read_only
