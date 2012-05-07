@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@
 
 # relax module imports.
 from data_classes import RelaxListType, Element
+from relax_errors import RelaxError
 
 
 class ExpInfo(Element):
