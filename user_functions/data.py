@@ -92,7 +92,7 @@ class Uf_info(object):
             raise RelaxError("The user function %s has already been set up." % name)
 
         # First check if the user function class has been set up.
-        if search('.', name):
+        if search('\.', name):
             # Split up the name.
             class_name, fn_name = split(name, '.')
 
