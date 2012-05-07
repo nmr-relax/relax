@@ -459,6 +459,7 @@ class Selector_file:
         # The file selection button.
         button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((parent.height_element, parent.height_element))
+        button.SetToolTipString("Select the file.")
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
 
@@ -475,6 +476,7 @@ class Selector_file:
             parent.file_selection_preview_button.append(wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY)))
             button = parent.file_selection_preview_button[-1]
             button.SetMinSize((parent.height_element, parent.height_element))
+            button.SetToolTipString("Preview")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, parent.preview_file, button)
 
@@ -494,9 +496,6 @@ class Selector_file:
         if tooltip:
             text.SetToolTipString(tooltip)
             self._field.SetToolTipString(tooltip)
-            button.SetToolTipString(tooltip)
-        else:
-            button.SetToolTipString("Select the file.")
 
 
     def Clear(self):
