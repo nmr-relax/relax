@@ -54,11 +54,13 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
         @type name:                 str
+        @keyword default:           The default value of the element.
+        @type default:              sequence object
         @keyword parent:            The wizard GUI element.
         @type parent:               wx.Panel instance
         @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
@@ -95,6 +97,7 @@ class Sequence:
 
         # Store the args.
         self.name = name
+        self.default = default
         self.element_type = element_type
         self.seq_type = seq_type
         self.value_type = value_type
@@ -173,6 +176,9 @@ class Sequence:
                 text.SetToolTipString(tooltip)
                 self._field.SetToolTipString(tooltip)
 
+            # Set the default value.
+            if self.default != None:
+                self._field.SetValue(self.convert_to_gui(self.default))
         # Initialise the combo list input field.
         elif self.element_type == 'combo_list':
             # Translate the read_only flag if None.
@@ -676,11 +682,13 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
         @type name:                 str
+        @keyword default:           The default value of the element.
+        @type default:              2D sequence object
         @keyword parent:            The wizard GUI element.
         @type parent:               wx.Panel instance
         @keyword sizer:             The sizer to put the input field widget into.
@@ -719,7 +727,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
 
     def open_dialog(self, event):
@@ -1099,11 +1107,13 @@ class Value:
         - strings
     """
 
-    def __init__(self, name=None, parent=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the base value element.
 
         @keyword name:          The name of the element to use in titles, etc.
         @type name:             str
+        @keyword default:       The default value of the element.
+        @type default:          float or int or str
         @keyword parent:        The wizard GUI element.
         @type parent:           wx.Panel instance
         @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
@@ -1138,6 +1148,7 @@ class Value:
 
         # Store the args.
         self.name = name
+        self.default = default
         self.element_type = element_type
 
         # The value types.
@@ -1188,6 +1199,10 @@ class Value:
                 # Change the colour to the background.
                 colour = parent.GetBackgroundColour()
                 self._field.SetOwnBackgroundColour(colour)
+
+            # Set the default value.
+            if self.default != None:
+                self._field.SetValue(self.convert_to_gui(self.default))
 
         # Initialise the combo box input field.
         elif self.element_type == 'combo':

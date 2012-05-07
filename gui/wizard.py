@@ -679,11 +679,13 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_sequence(self, key=None, sizer=None, element_type='default', seq_type=None, value_type=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
+    def element_sequence(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
         @type key:                  str
+        @keyword default:           The default value of the element.
+        @type default:              sequence
         @keyword sizer:             The sizer to put the input field widget into.
         @type sizer:                wx.Sizer instance
         @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
@@ -717,17 +719,19 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Sequence(name=key, element_type=element_type, seq_type=seq_type, value_type=value_type, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, single_value=single_value, read_only=read_only)
+        element = Sequence(name=key, default=default, element_type=element_type, seq_type=seq_type, value_type=value_type, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, single_value=single_value, read_only=read_only)
 
         # Store it.
         self._elements[key] = element
 
 
-    def element_sequence_2D(self, key=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_sequence_2D(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
         @type key:                  str
+        @keyword default:           The default value of the element.
+        @type default:              2D sequence object
         @keyword sizer:             The sizer to put the input field widget into.
         @type sizer:                wx.Sizer instance
         @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
@@ -761,17 +765,19 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Sequence_2D(name=key, parent=self, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Sequence_2D(name=key, parent=self, default=default, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element
 
 
-    def element_value(self, key=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_value(self, key=None, default=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the string element and store it.
 
         @keyword key:           The dictionary key to store the element with.
         @type key:              str
+        @keyword default:       The default value of the element.
+        @type default:          float or int or str
         @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
         @type element_type:     str
         @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
@@ -799,7 +805,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Value(name=key, parent=self, element_type=element_type, value_type=value_type, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Value(name=key, parent=self, default=default, element_type=element_type, value_type=value_type, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element
