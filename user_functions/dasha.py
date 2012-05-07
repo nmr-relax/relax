@@ -68,16 +68,16 @@ uf.add_keyarg(
 uf.desc = """
 The script file created is called 'dir/dasha_script'.
 """
-uf.additional = ["Optimisation algorithms", """
-The two minimisation algorithms within Dasha are accessible through the algor argument which
-can be set to:
+uf.additional = [
+["Optimisation algorithms", """
+The two minimisation algorithms within Dasha are accessible through the algorithm argument which can be set to:
 
     'LM' - The Levenberg-Marquardt algorithm.
     'NR' - Newton-Raphson algorithm.
 
-For Levenberg-Marquardt minimisation, the function 'lmin' will be called, while for Newton
--Raphson, the function 'min' will be executed.
+For Levenberg-Marquardt minimisation, the function 'lmin' will be called, while for Newton-Raphson, the function 'min' will be executed.
 """]
+]
 uf.backend = dasha.create
 uf.menu_text = "&create"
 uf.wizard_size = (700, 600)
