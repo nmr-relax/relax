@@ -32,7 +32,7 @@ from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-# The relax_data.back_calc user function.
+# The calc user function.
 uf = uf_info.add_uf('calc')
 uf.title = "Calculate the function value."
 uf.title_short = "Function value calculation."
@@ -49,6 +49,8 @@ This will call the target function for the analysis type associated with the cur
 """
 uf.backend = minimise.calc
 uf.menu_text = "&calc"
+uf.gui_icon = "relax.minimise"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
 # The grid_search user function.
@@ -439,5 +441,7 @@ relax> minimise('simplex', constraints=True, max_iter=5000)
 """
 uf.backend = minimise.minimise
 uf.menu_text = "&minimise"
+uf.gui_icon = "relax.minimise"
 uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 900)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
