@@ -226,13 +226,34 @@ uf.add_keyarg(
         desc = "The units for the angle parameters."
 )
 uf.add_keyarg(
-        name = "param_types",
-        default = 0,
-        py_type = "int",
-        desc_short = "parameter types",
-        desc = "A flag to select different parameter combinations."
+    name = "param_types",
+    default = 2,
+    py_type = "int",
+    desc_short = "parameter types",
+    desc = "A flag to select different parameter combinations.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "{Sxx, Syy, Sxy, Sxz, Syz}",
+        "{Szz, Sxx-yy, Sxy, Sxz, Syz}",
+        "{Axx, Ayy, Axy, Axz, Ayz}",
+        "{Azz, Axx-yy, Axy, Axz, Ayz}",
+        "{Axx, Ayy, Axy, Axz, Ayz}",
+        "{Azz, Axx-yy, Axy, Axz, Ayz}",
+        "{Pxx, Pyy, Pxy, Pxz, Pyz}",
+        "{Pzz, Pxx-yy, Pxy, Pxz, Pyz}"
+    ],
+    wiz_combo_data = [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+    ],
+    wiz_read_only = True
 )
-
 uf.add_keyarg(
         name = "errors",
         default = False,
