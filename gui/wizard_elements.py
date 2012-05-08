@@ -1368,6 +1368,8 @@ class Value:
                 # Translate if needed.
                 if combo_default in combo_choices:
                     string = combo_default
+                elif combo_default not in combo_data:
+                    string = combo_default
                 else:
                     string = combo_choices[combo_data.index(combo_default)]
 
