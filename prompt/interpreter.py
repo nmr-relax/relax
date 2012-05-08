@@ -55,7 +55,6 @@ if dep_check.readline_module:
 from status import Status; status = Status()
 
 # User functions.
-from dx import OpenDX
 from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
@@ -195,7 +194,6 @@ class Interpreter:
         eliminate = Eliminate()
         fix = Fix()
         reset = Reset()
-        opendx = OpenDX()
         sys_info = Sys_info()
         temp = Temp()
 
@@ -208,7 +206,6 @@ class Interpreter:
 
         # Place the user classes in the local namespace.
         objects['frame_order'] = Frame_order()
-        objects['dx'] = OpenDX()
         objects['frq'] = Frq()
         objects['grace'] = Grace()
         objects['jw_mapping'] = Jw_mapping()

@@ -24,7 +24,6 @@
 __all__ = ['base_class',
            'command',
            'doc_string',
-           'dx',
            'eliminate',
            'fix',
            'frame_order',
