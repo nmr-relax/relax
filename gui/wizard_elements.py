@@ -178,6 +178,7 @@ class Sequence:
             # Set the default value.
             if self.default != None:
                 self._field.SetValue(self.convert_to_gui(self.default))
+
         # Initialise the combo list input field.
         elif self.element_type == 'combo_list':
             # Translate the read_only flag if None.
@@ -1183,13 +1184,9 @@ class Value:
             self.convert_to_gui =   float_to_gui
             self.type_string = 'float'
         elif value_type == 'int':
+            self.convert_from_gui = gui_to_int
+            self.convert_to_gui =   int_to_gui
             self.type_string = 'integer'
-            if element_type == 'spin':
-                self.convert_from_gui = nothing
-                self.convert_to_gui =   nothing
-            else:
-                self.convert_from_gui = gui_to_int
-                self.convert_to_gui =   int_to_gui
         elif value_type == 'str':
             self.convert_from_gui = gui_to_str
             self.convert_to_gui =   str_to_gui
@@ -1247,7 +1244,7 @@ class Value:
 
             # Set the default value.
             if self.default != None:
-                self._field.SetValue(self.convert_to_gui(self.default))
+                self._field.SetValue(self.default)
 
         # Initialise the combo box input field.
         elif self.element_type == 'combo':
@@ -1320,6 +1317,11 @@ class Value:
 
             return value
 
+        # Return the integer value from a SpinCtrl.
+        if self.element_type == 'spin':
+            # The value.
+            return self._field.GetValue()
+
         # Convert and return the value from a ComboBox.
         if self.element_type == 'combo':
             return self.convert_from_gui(self._field.GetClientData(self._field.GetSelection()))
@@ -1341,6 +1343,10 @@ class Value:
         # A TextCtrl?!
         if self.element_type == 'text':
             raise RelaxError("Cannot reset the list of ComboBox choices as this is a TextCtrl!")
+
+        # A SpinCtrl?!
+        if self.element_type == 'spin':
+            raise RelaxError("Cannot reset the list of ComboBox choices as this is a SpinCtrl!")
 
         # Reset the choices for a ComboBox.
         if self.element_type == 'combo':
@@ -1375,8 +1381,12 @@ class Value:
         if self.element_type == 'text':
             self._field.SetValue(self.convert_to_gui(value))
 
+        # Set the value for a SpinCtrl.
+        elif self.element_type == 'spin':
+            self._field.SetValue(value)
+
         # Convert and set the value for a ComboBox.
-        if self.element_type == 'combo':
+        elif self.element_type == 'combo':
             # Loop until the proper client data is found.
             for i in range(self._field.GetCount()):
                 if self._field.GetClientData(i) == value:
