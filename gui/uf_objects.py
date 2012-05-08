@@ -194,7 +194,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  file selection dialog.
             if arg['arg_type'] == 'file sel':
-                self.element_file_sel(key=arg['name'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+                self.element_file_sel(key=arg['name'], default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  dir arg.
             elif arg['arg_type'] == 'dir':
@@ -210,6 +210,10 @@ class Uf_page(Wiz_page):
                 free_format = True
                 if arg['name'] == 'data_col':
                     free_format_data = True
+
+            # Special arg type:  functions!
+            elif arg['arg_type'] == 'func':
+                pass
 
             # Value types.
             elif arg['py_type'] in ['float', 'int', 'num', 'str']:

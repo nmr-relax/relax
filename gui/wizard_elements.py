@@ -537,11 +537,13 @@ class Selector_dir:
 class Selector_file:
     """Wizard GUI element for selecting files."""
 
-    def __init__(self, name=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=True, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=True, read_only=False):
         """Build the file selection element.
 
         @keyword name:      The name of the element to use in titles, etc.
         @type name:         str
+        @keyword default:   The default value of the element.
+        @type default:      str
         @keyword parent:    The wizard GUI element.
         @type parent:       wx.Panel instance
         @keyword sizer:     The sizer to put the input field into.
@@ -593,14 +595,16 @@ class Selector_file:
         # The input field.
         if not hasattr(parent, 'file_selection_field'):
             parent.file_selection_field = []
-        parent.file_selection_field.append(wx.TextCtrl(parent, -1, ''))
+        parent.file_selection_field.append(wx.TextCtrl(parent, -1, default))
         self._field = parent.file_selection_field[-1]
         self._field.SetMinSize((-1, parent.height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
-        obj = RelaxFileDialog(parent, field=self._field, message=message, wildcard=wildcard, style=style)
+        if default == None:
+            default = wx.EmptyString
+        obj = RelaxFileDialog(parent, field=self._field, message=message, defaultFile=default, wildcard=wildcard, style=style)
 
         # A little spacing.
         sub_sizer.AddSpacer(5)
