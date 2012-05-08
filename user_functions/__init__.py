@@ -45,6 +45,7 @@ __all__ += [
     'dx',
     'eliminate',
     'fix',
+    'frame_order',
     'minimisation',
     'model_selection',
     'molmol',
@@ -68,6 +69,7 @@ import user_functions.diffusion_tensor
 import user_functions.dx
 import user_functions.eliminate
 import user_functions.fix
+import user_functions.frame_order
 import user_functions.minimisation
 import user_functions.model_selection
 import user_functions.molmol

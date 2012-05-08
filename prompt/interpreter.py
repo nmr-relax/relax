@@ -61,7 +61,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from frame_order import Frame_order
 from frq import Frq
 from grace import Grace
 from jw_mapping import Jw_mapping
@@ -199,7 +198,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['frame_order'] = Frame_order()
         objects['frq'] = Frq()
         objects['grace'] = Grace()
         objects['jw_mapping'] = Jw_mapping()
