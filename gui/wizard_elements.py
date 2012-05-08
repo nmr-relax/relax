@@ -444,6 +444,10 @@ class Selector_dir:
         # Store the args.
         self.name = name
 
+        # Argument translation.
+        if default == None:
+            default = wx.EmptyString
+
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -473,8 +477,6 @@ class Selector_dir:
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The directory selection object.
-        if default == None:
-            default = wx.EmptyString
         obj = RelaxDirDialog(parent, field=self._field, message=message, defaultPath=default, style=style)
 
         # A little spacing.
