@@ -87,8 +87,10 @@ To create the diffusion in a cone PDB representation, a uniform distribution of 
 """
 uf.backend = frame_order_obj._cone_pdb
 uf.menu_text = "&cone_pdb"
+uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 800)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
 # The frame_order.domain_to_pdb user function.
@@ -118,6 +120,7 @@ relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')
 """
 uf.backend = frame_order_obj._domain_to_pdb
 uf.menu_text = "&domain_to_pdb"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
 # The frame_order.pivot user function.
@@ -142,6 +145,7 @@ relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])
 """
 uf.backend = frame_order_obj._pivot
 uf.menu_text = "&pivot"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
 # The frame_order.ref_domain user function.
@@ -164,6 +168,7 @@ relax> frame_order.ref_domain(ref='centre')
 """
 uf.backend = frame_order_obj._ref_domain
 uf.menu_text = "&ref_domain"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
 # The frame_order.select_model user function.
@@ -251,3 +256,4 @@ uf.menu_text = "&select_model"
 uf.wizard_height_desc = 600
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
