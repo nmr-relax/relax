@@ -39,7 +39,7 @@ from gui.components.combo_list import Combo_list
 from gui.errors import gui_raise
 from gui.filedialog import RelaxDirDialog, RelaxFileDialog
 from gui.fonts import font
-from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_list, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, str_to_gui, tuple_to_gui
+from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_list, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, nothing, str_to_gui, tuple_to_gui
 from gui import paths
 
 
@@ -1124,7 +1124,7 @@ class Value:
         - strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='text', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, min=0, max=1000, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the base value element.
 
         @keyword name:          The name of the element to use in titles, etc.
@@ -1133,7 +1133,10 @@ class Value:
         @type default:          float or int or str
         @keyword parent:        The wizard GUI element.
         @type parent:           wx.Panel instance
-        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
+        @keyword element_type:  The type of GUI element to create.  This can be set to:
+                                    - 'text', a wx.TextCtrl element will be used.
+                                    - 'combo', a wx.ComboBox element will be used.
+                                    - 'spin', a wx.SpinCtrl element will be used.  This is only valid for integer types!
         @type element_type:     str
         @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:       str
@@ -1145,6 +1148,10 @@ class Value:
         @type combo_choices:    list of str
         @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:       list
+        @keyword min:           For a SpinCtrl, the minimum value allowed.
+        @type min:              int
+        @keyword max:           For a SpinCtrl, the maximum value allowed.
+        @type max:              int
         @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
         @type tooltip:          str
         @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -1161,6 +1168,10 @@ class Value:
         if element_type == 'default':
             element_type = 'text'
 
+        # Check the spinner.
+        if element_type == "spin" and value_type != 'int':
+            raise RelaxError("A wx.SpinCtrl element can only be used together with integers.")
+
         # Store the args.
         self.name = name
         self.default = default
@@ -1172,9 +1183,13 @@ class Value:
             self.convert_to_gui =   float_to_gui
             self.type_string = 'float'
         elif value_type == 'int':
-            self.convert_from_gui = gui_to_int
-            self.convert_to_gui =   int_to_gui
             self.type_string = 'integer'
+            if element_type == 'spin':
+                self.convert_from_gui = nothing
+                self.convert_to_gui =   nothing
+            else:
+                self.convert_from_gui = gui_to_int
+                self.convert_to_gui =   int_to_gui
         elif value_type == 'str':
             self.convert_from_gui = gui_to_str
             self.convert_to_gui =   str_to_gui
@@ -1211,6 +1226,21 @@ class Value:
                 # Cannot edit.
                 self._field.SetEditable(False)
 
+                # Change the colour to the background.
+                colour = parent.GetBackgroundColour()
+                self._field.SetOwnBackgroundColour(colour)
+
+            # Set the default value.
+            if self.default != None:
+                self._field.SetValue(self.convert_to_gui(self.default))
+
+        # Initialise the spinner input field.
+        elif self.element_type == 'spin':
+            # Set up the text control.
+            self._field = wx.SpinCtrl(parent, -1, initial=default, min=min, max=max)
+
+            # Read only field (really no such thing for a spin control).
+            if read_only:
                 # Change the colour to the background.
                 colour = parent.GetBackgroundColour()
                 self._field.SetOwnBackgroundColour(colour)

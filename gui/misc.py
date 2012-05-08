@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -402,6 +402,19 @@ def list_to_gui(list):
 
     # Convert.
     return unicode(list)
+
+
+def nothing(value):
+    """Do not convert the value.
+
+    @param value:   A Python value.
+    @type value:    float or int or str
+    @return:        The unmodified value.
+    @rtype:         float or int or str
+    """
+
+    # Return, unmodified.
+    return value
 
 
 def open_file(file, force_text=False):

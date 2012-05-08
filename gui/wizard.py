@@ -778,7 +778,10 @@ class Wiz_page(wx.Panel):
         @type key:              str
         @keyword default:       The default value of the element.
         @type default:          float or int or str
-        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
+        @keyword element_type:  The type of GUI element to create.  This can be set to:
+                                    - 'text', a wx.TextCtrl element will be used.
+                                    - 'combo', a wx.ComboBox element will be used.
+                                    - 'spin', a wx.SpinCtrl element will be used.  This is only valid for integer types!
         @type element_type:     str
         @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:       str
