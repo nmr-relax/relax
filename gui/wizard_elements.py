@@ -1167,9 +1167,15 @@ class Value:
         @type read_only:        bool
         """
 
-        # Set the default to a TextCtrl.
+        # Set the default.
         if element_type == 'default':
-            element_type = 'text'
+            # Set the default to a SpinCtrl for integers.
+            if value_type == 'int':
+                element_type = 'spin'
+
+            # Set the default to a TextCtrl for all other types.
+            else:
+                element_type = 'text'
 
         # Check the spinner.
         if element_type == "spin" and value_type != 'int':
