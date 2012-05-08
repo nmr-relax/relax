@@ -23,6 +23,9 @@
 # Module docstring.
 """Module containing the 'molmol' user function data for interacting with Molmol."""
 
+# Python module imports.
+from os import sep
+
 # relax module imports.
 import colour
 from generic_fns import molmol
@@ -49,7 +52,7 @@ uf.backend = molmol.molmol_obj.clear_history
 uf.menu_text = "clear_&history"
 uf.wizard_size = (600, 300)
 uf.wizard_apply_button = False
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.command user function.
@@ -73,7 +76,7 @@ relax> molmol.command("InitAll yes")
 uf.backend = molmol.command
 uf.menu_text = "&command"
 uf.wizard_size = (700, 400)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.macro_apply user function.
@@ -158,7 +161,7 @@ uf.menu_text = "&macro_apply"
 uf.gui_icon = "relax.molmol"
 uf.wizard_size = (1000, 750)
 uf.wizard_height_desc = 400
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.macro_run user function.
@@ -195,7 +198,7 @@ uf.backend = molmol.macro_run
 uf.menu_text = "macro_&run"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_size = (700, 400)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.macro_write user function.
@@ -303,7 +306,7 @@ uf.menu_text = "macro_&write"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (1000, 750)
 uf.wizard_height_desc = 350
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.ribbon user function.
@@ -328,7 +331,7 @@ uf.menu_text = "&ribbon"
 uf.wizard_size = (700, 500)
 uf.wizard_height_desc = 450
 uf.wizard_apply_button = False
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.tensor_pdb user function.
@@ -380,7 +383,7 @@ uf.menu_text = "&tensor_pdb"
 uf.wizard_size = (1000, 700)
 uf.wizard_height_desc = 450
 uf.wizard_apply_button = False
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 
 
 # The molmol.view user function.
@@ -397,4 +400,4 @@ uf.backend = molmol.view
 uf.menu_text = "&view"
 uf.wizard_size = (600, 300)
 uf.wizard_apply_button = False
-uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
