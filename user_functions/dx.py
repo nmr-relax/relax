@@ -36,6 +36,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class("dx")
 uf_class.title = "Class for interfacing with OpenDX."
 uf_class.menu_text = "&dx"
+uf_class.gui_icon = "relax.opendx"
 
 
 # The dx.execute user function.
@@ -80,6 +81,7 @@ uf.menu_text = "&execute"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (700, 500)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'opendx.png'
 
 
 # The dx.map user function.
@@ -216,4 +218,6 @@ relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix=
 """
 uf.backend = opendx.main.map
 uf.menu_text = "&map"
+uf.gui_icon = "relax.grid_search"
 uf.wizard_size = (1000, 800)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'opendx.png'
