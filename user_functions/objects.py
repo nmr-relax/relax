@@ -163,6 +163,20 @@ class Uf_container(object):
         if not name in self.__mod_attr__:
             raise RelaxError("The object '%s' is not a modifiable attribute." % name)
 
+        # Check for duplicative modifications (to catch typo coding errors).
+        if name in ['title', 'title_short', 'backend', 'desc', 'additional', 'prompt_examples', 'gui_icon']:
+            # No object set yet.
+            if not hasattr(self, name):
+                obj = None
+
+            # Get the current object.
+            else:
+                obj = getattr(self, name)
+
+            # Not None!
+            if obj != None:
+                raise RelaxError("The variable '%s' is already set to %s." % (name, repr(obj)))
+
         # Set the attribute normally.
         self.__dict__[name] = value
 
