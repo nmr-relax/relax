@@ -1365,7 +1365,14 @@ class Value:
 
             # Set the default selection.
             if combo_default:
-                self._field.SetStringSelection(combo_default)
+                # Translate if needed.
+                if combo_default in combo_choices:
+                    string = combo_default
+                else:
+                    string = combo_choices[combo_data.index(combo_default)]
+
+                # Set the selection.
+                self._field.SetStringSelection(string)
 
 
     def SetValue(self, value):
