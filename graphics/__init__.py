@@ -32,7 +32,7 @@ from status import Status; status = Status()
 
 # GUI image and icon paths.
 ANALYSIS_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'analyses' + sep
-IMAGE_PATH = status.install_path + sep + 'gui' + sep + 'images' + sep
+IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'misc' + sep
 WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
 
 
