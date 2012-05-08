@@ -55,7 +55,6 @@ if dep_check.readline_module:
 from status import Status; status = Status()
 
 # User functions.
-from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
 from reset import Reset
@@ -191,14 +190,12 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        eliminate = Eliminate()
         fix = Fix()
         reset = Reset()
         sys_info = Sys_info()
         temp = Temp()
 
         # Place the user functions in the local namespace.
-        objects['eliminate'] = eliminate.eliminate
         objects['fix'] = fix.fix
         objects['reset'] = reset.reset
         objects['sys_info'] = sys_info.sys_info
