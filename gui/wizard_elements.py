@@ -574,6 +574,10 @@ class Selector_file:
         # Store the args.
         self.name = name
 
+        # Argument translation.
+        if default == None:
+            default = wx.EmptyString
+
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -603,8 +607,6 @@ class Selector_file:
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
-        if default == None:
-            default = wx.EmptyString
         obj = RelaxFileDialog(parent, field=self._field, message=message, defaultFile=default, wildcard=wildcard, style=style)
 
         # A little spacing.
