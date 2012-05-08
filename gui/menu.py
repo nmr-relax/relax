@@ -158,8 +158,8 @@ class Menu:
         menu.AppendSeparator()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_GPL, text="&Licence", icon=paths.icon_16x16.gnu_head))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT_GUI, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT, text="About rela&x", icon=paths.icon_16x16.about_relax))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT_GUI, text="About relaxG&UI", icon=fetch_icon("relax.relax")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT, text="About rela&x", icon=fetch_icon("relax.relax")))
         self.menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
@@ -462,7 +462,7 @@ class Uf_menus:
         self.add_uf(parent_id=id, name="residue.create", text="crea&te", icon=paths.icon_16x16.add, fn=user_functions.residue.create)
         self.add_uf(parent_id=id, name="residue.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.residue.delete)
 
-        id = self.add_class(name="results", text="&results", icon=paths.icon_16x16.about_relax)
+        id = self.add_class(name="results", text="&results", icon=fetch_icon("relax.relax"))
         self.add_uf(parent_id=id, name="results.display", text="&display", icon=None, fn=user_functions.results.display)
         self.add_uf(parent_id=id, name="results.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.results.read)
         self.add_uf(parent_id=id, name="results.write", text="&write", icon=paths.icon_16x16.save, fn=user_functions.results.write)
