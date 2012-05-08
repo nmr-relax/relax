@@ -230,7 +230,8 @@ uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
-    desc = "The spin ID string."
+    desc = "The spin ID string.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "boolean",
