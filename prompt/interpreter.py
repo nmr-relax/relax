@@ -69,7 +69,6 @@ from frq import Frq
 from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
-from molmol import Molmol
 from molecule import Molecule
 from monte_carlo import Monte_carlo
 from n_state_model import N_state_model
@@ -217,7 +216,6 @@ class Interpreter:
         objects['grace'] = Grace()
         objects['jw_mapping'] = Jw_mapping()
         objects['model_free'] = Model_free()
-        objects['molmol'] = Molmol()
         objects['molecule'] = Molecule()
         objects['monte_carlo'] = Monte_carlo()
         objects['n_state_model'] = N_state_model()

@@ -43,6 +43,7 @@ __all__ += [
     'diffusion_tensor',
     'minimisation',
     'model_selection',
+    'molmol',
     'palmer',
     'pipe',
     'pymol_control',
@@ -60,6 +61,7 @@ import user_functions.dasha
 import user_functions.diffusion_tensor
 import user_functions.minimisation
 import user_functions.model_selection
+import user_functions.molmol
 import user_functions.palmer
 import user_functions.pipe
 import user_functions.pymol_control
