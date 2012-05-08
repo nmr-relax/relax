@@ -225,6 +225,10 @@ class Sequence:
             elif self.seq_type == 'tuple' and not isinstance(value, tuple):
                 value = (value,)
 
+        # Handle empty values.
+        if len(value) == 0:
+            return None
+
         # Return the value.
         return value
 
