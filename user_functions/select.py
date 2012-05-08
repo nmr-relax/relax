@@ -33,6 +33,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class("select")
 uf_class.title = "Class for selecting spins."
 uf_class.menu_text = "&select"
+uf_class.gui_icon = "relax.spin"
 
 
 # The select.all user function.
@@ -50,8 +51,9 @@ relax> select.all()
 """
 uf.backend = selection.sel_all
 uf.menu_text = "&all"
-uf.wizard_size = (600, 300)
+uf.wizard_size = (600, 550)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 
 
 # The select.read user function.
@@ -189,6 +191,7 @@ uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 200
 uf.wizard_size = (900, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 
 
 # The select.reverse user function.
@@ -213,8 +216,9 @@ relax> select.reverse()
 """
 uf.backend = selection.reverse
 uf.menu_text = "&reverse"
-uf.wizard_size = (700, 400)
+uf.wizard_size = (700, 550)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 
 
 # The select.spin user function.
@@ -271,4 +275,4 @@ relax> select.spin(spin_id=':5&:CYS')
 uf.backend = selection.sel_spin
 uf.menu_text = "&spin"
 uf.gui_icon = "relax.spin"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (700, 550)
