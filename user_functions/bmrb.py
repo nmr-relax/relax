@@ -562,7 +562,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 # The bmrb.write user function.
 uf = uf_info.add_uf('bmrb.write')
 uf.title = "Write the results to a BMRB NMR-STAR formatted file."
-uf.title = "BMRB file writing."
+uf.title_short = "BMRB file writing."
 uf.add_keyarg(
     name = "file",
     py_type = "str",

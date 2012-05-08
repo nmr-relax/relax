@@ -37,7 +37,7 @@ uf_class.menu_text = "&angles"
 # The angles.diff_frame user function.
 uf = uf_info.add_uf('angles.diff_frame')
 uf.title = "Calculate the angles defining the XH bond vector within the diffusion frame."
-uf.title = "Diffusion frame XH vector angle calculation."
+uf.title_short = "Diffusion frame XH vector angle calculation."
 uf.desc = """
 If the diffusion tensor is isotropic, then nothing will be done.
 
