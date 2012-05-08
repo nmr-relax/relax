@@ -61,7 +61,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from frq import Frq
 from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
@@ -198,7 +197,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['frq'] = Frq()
         objects['grace'] = Grace()
         objects['jw_mapping'] = Jw_mapping()
         objects['model_free'] = Model_free()

@@ -21,46 +21,38 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'frq' user function class for manipulating spectrometer frequencies."""
-__docformat__ = 'plaintext'
+"""Module containing the 'frq' user function data for manipulating spectrometer frequencies."""
 
 # relax module imports.
-from base_class import User_fn_class
-import arg_check
 import generic_fns.frq
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Frq(User_fn_class):
-    """Class for manipulating spectrometer frequencies."""
+# The user function class.
+uf_class = uf_info.add_class('frq')
+uf_class.title = "Class for manipulating spectrometer frequencies."
+uf_class.menu_text = "fr&q"
 
-    def set(self, id=None, frq=None):
-        """Set the spectrometer frequency of the experiment.
-
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
-
-        id:  The experiment identification string.
-
-        frq:  The spectrometer frequency in Hertz.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function allows the spectrometer frequency of a given experiment to be set.
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "frq("
-            text = text + "id=" + repr(id)
-            text = text + ", frq=" + repr(frq) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(id, 'experiment identification string')
-        arg_check.is_num(frq, 'spectrometer frequency')
-
-        # Execute the functional code.
-        generic_fns.frq.set(id=id, frq=frq)
+# The frq.set user function.
+uf = uf_info.add_uf('frq.set')
+uf.title = "Set the spectrometer frequency of the experiment."
+uf.title_short = "Spectrometer frequency setting."
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "experiment ID",
+    desc = "The experiment identification string."
+)
+uf.add_keyarg(
+    name = "frq",
+    py_type = "num",
+    desc_short = "spectrometer frequency",
+    desc = "The spectrometer frequency in Hertz."
+)
+uf.desc = """
+This allows the spectrometer frequency of a given experiment to be set.
+"""
+uf.backend = generic_fns.frq.set
+uf.menu_text = "&set"
+uf.wizard_size = (700, 400)
