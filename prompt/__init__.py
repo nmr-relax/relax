@@ -24,7 +24,6 @@
 __all__ = ['base_class',
            'command',
            'doc_string',
-           'fix',
            'frame_order',
            'frq',
            'gpl',

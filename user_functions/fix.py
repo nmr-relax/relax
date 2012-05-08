@@ -21,57 +21,57 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'fix' user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the 'fix' user function data."""
 
 # relax module imports.
-import arg_check
 from generic_fns import fix
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Fix:
-    """Class containing the function for fixing or allowing parameter values to change."""
+# The fix user function.
+uf = uf_info.add_uf('fix')
+uf.title = "Fix or allow parameter values to change during optimisation."
+uf.title_short = "Fixing of parameters."
+uf.display = True
+uf.add_keyarg(
+    name = "element",
+    py_type = "str",
+    desc_short = "element",
+    desc = "Which element to fix.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "Diffusion tensor parameters",
+        "All parameters from all spins",
+        "All parameters (diffusion and spin)"],
+    wiz_combo_data = [
+        "diff",
+        "all_spins",
+        "all"],
+    wiz_read_only = True,
+)
+uf.add_keyarg(
+    name = "fixed",
+    default = True,
+    py_type = "bool",
+    desc_short = "fixed",
+    desc = "A flag specifying if the parameters should be fixed or allowed to change."
+)
+uf.desc = """
+The keyword argument 'element' can be any of the following:
 
-    def fix(self, element=None, fixed=True):
-        """Function for either fixing or allowing parameter values to change during optimisation.
+    'diff' - the diffusion tensor parameters.  This will allow all diffusion tensor parameters to be toggled.
+    
+    'all_spins' - using this keyword, all parameters from all spins will be toggled.
+    
+    'all' - all parameters will be toggled.  This is equivalent to combining both 'diff' and 'all_spins'.
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        element:  Which element to fix.
-
-        fixed:  A flag specifying if the parameters should be fixed or allowed to change.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The keyword argument 'element' can be any of the following:
-
-        'diff' - the diffusion tensor parameters.  This will allow all diffusion tensor parameters
-        to be toggled.
-
-        'all_spins' - using this keyword, all parameters from all spins will be toggled.
-
-        'all' - all parameter will be toggled.  This is equivalent to combining both 'diff' and
-        'all_spins'.
-
-
-        The flag 'fixed', if set to True, will fix parameters during optimisation whereas a value of
-        False will allow parameters to vary.
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "fix("
-            text = text + "element=" + repr(element)
-            text = text + ", fixed=" + repr(fixed) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(element, 'element')
-        arg_check.is_bool(fixed, 'fixed')
-
-        # Execute the functional code.
-        fix.fix(element=element, fixed=fixed)
+The flag 'fixed', if set to True, will fix parameters during optimisation whereas a value of False will allow parameters to vary.
+"""
+uf.backend = fix.fix
+uf.menu_text = "&fix"
+uf.gui_icon = "oxygen.status.object-locked"
+uf.wizard_height_desc = 400
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'object-locked-unlocked.png'
