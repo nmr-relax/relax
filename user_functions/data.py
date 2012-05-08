@@ -49,9 +49,9 @@ class Uf_info(object):
 
             # Initialise a number of class variables.
             self._uf_names = []
-            self._uf = []
+            self._uf = {}
             self._class_names = []
-            self._classes = []
+            self._classes = {}
 
         # Already instantiated, so return the instance.
         return self._instance
@@ -72,10 +72,13 @@ class Uf_info(object):
 
         # Store the name and initialise a new object.
         self._class_names.append(name)
-        self._classes.append(Class_container())
+        self._classes[name] = Class_container()
+
+        # Alphabetically sort the names.
+        self._class_names.sort()
 
         # Return the object.
-        return self._classes[-1]
+        return self._classes[name]
 
 
     def add_uf(self, name):
@@ -102,10 +105,13 @@ class Uf_info(object):
 
         # Store the name and initialise a new object.
         self._uf_names.append(name)
-        self._uf.append(Uf_container())
+        self._uf[name] = Uf_container()
+
+        # Alphabetically sort the names.
+        self._uf_names.sort()
 
         # Return the object.
-        return self._uf[-1]
+        return self._uf[name]
 
 
     def class_loop(self):
@@ -117,7 +123,7 @@ class Uf_info(object):
 
         # Loop over the classes.
         for i in range(len(self._class_names)):
-            yield self._class_names[i], self._classes[i]
+            yield self._class_names[i], self._classes[self._class_names[i]]
 
 
     def get_class(self, name):
@@ -130,7 +136,7 @@ class Uf_info(object):
         """
 
         # Return the object.
-        return self._classes[self._class_names.index(name)]
+        return self._classes[name]
 
 
     def get_uf(self, name):
@@ -143,7 +149,7 @@ class Uf_info(object):
         """
 
         # Return the object.
-        return self._uf[self._uf_names.index(name)]
+        return self._uf[name]
 
 
     def uf_loop(self):
@@ -155,7 +161,7 @@ class Uf_info(object):
 
         # Loop over the user functions.
         for i in range(len(self._uf_names)):
-            yield self._uf_names[i], self._uf[i]
+            yield self._uf_names[i], self._uf[self._uf_names[i]]
 
 
     def validate(self):
