@@ -315,7 +315,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 # The align_tensor.reduction user function.
 uf = uf_info.add_uf('align_tensor.reduction')
 uf.title = "Specify that one tensor is a reduction of another."
-uf.title = "Specify tensor reductions."
+uf.title_short = "Specify tensor reductions."
 uf.add_keyarg(
         name = "full_tensor",
         py_type = "str",
