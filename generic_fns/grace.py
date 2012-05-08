@@ -306,7 +306,10 @@ def get_data_types():
     # Loop over the parameters.
     for name in (data_names(set='params') + data_names(set='generic')):
         # Get the description.
-        desc = return_data_desc(name)
+        try:
+            desc = return_data_desc(name)
+        except:
+            return []
 
         # No description.
         if not desc:
