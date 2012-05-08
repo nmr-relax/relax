@@ -889,8 +889,12 @@ class Sequence_window(wx.Dialog):
         """Set up the list values.
 
         @param values:  The list of values to add to the list.
-        @type values:   list of str
+        @type values:   list of str or None
         """
+
+        # No value.
+        if values == None:
+            return
 
         # Loop over the entries.
         for i in range(len(values)):
@@ -1067,8 +1071,12 @@ class Sequence_window_2D(Sequence_window):
         """Set up the list of lists values.
 
         @param values:  The list of lists of values to add to the list.
-        @type values:   list of lists of str
+        @type values:   list of lists of str or None
         """
+
+        # No value.
+        if values == None:
+            return
 
         # Loop over the entries.
         for i in range(len(values)):
@@ -1326,8 +1334,12 @@ class Value:
         """Special method for setting the value of the GUI element.
 
         @param value:   The value to set.
-        @type value:    list of str
+        @type value:    list of str or None
         """
+
+        # No value.
+        if values == None:
+            return
 
         # Convert and set the value for a TextCtrl.
         if self.element_type == 'text':
