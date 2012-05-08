@@ -45,6 +45,7 @@ __all__ += [
     'model_selection',
     'palmer',
     'pipe',
+    'pymol_control',
     'relax_data',
     'state'
 ]
@@ -61,6 +62,7 @@ import user_functions.minimisation
 import user_functions.model_selection
 import user_functions.palmer
 import user_functions.pipe
+import user_functions.pymol_control
 import user_functions.relax_data
 import user_functions.state
 

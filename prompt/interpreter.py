@@ -78,7 +78,6 @@ from residue import Residue
 from structure import Structure
 from paramag import Paramag
 from pcs import PCS
-from pymol_control import Pymol
 from rdc import RDC
 from relax_fit import Relax_fit
 from results import Results
@@ -225,7 +224,6 @@ class Interpreter:
         objects['noe'] = Noe()
         objects['paramag'] = Paramag()
         objects['pcs'] = PCS()
-        objects['pymol'] = Pymol()
         objects['rdc'] = RDC()
         objects['relax_fit'] = Relax_fit()
         objects['residue'] = Residue()
