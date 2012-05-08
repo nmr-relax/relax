@@ -211,8 +211,8 @@ class Uf_page(Wiz_page):
                 if arg['name'] == 'data_col':
                     free_format_data = True
 
-            # Special arg type:  functions!
-            elif arg['arg_type'] == 'func':
+            # Special arg type:  functions and their arguments!
+            elif arg['arg_type'] in ['func', 'func args']:
                 pass
 
             # Value types.
