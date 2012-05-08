@@ -42,39 +42,39 @@ uf = uf_info.add_uf('align_tensor.copy')
 uf.title = "Copy alignment tensor data."
 uf.title_short = "Alignment tensor copying."
 uf.add_keyarg(
-        name = "tensor_from",
-        default = None,
-        py_type = "str",
-        desc_short = "tensor from",
-        desc = "The identification string of the alignment tensor to copy the data from."
+    name = "tensor_from",
+    default = None,
+    py_type = "str",
+    desc_short = "tensor from",
+    desc = "The identification string of the alignment tensor to copy the data from."
 )
 uf.add_keyarg(
-        name = "pipe_from",
-        default = None,
-        py_type = "str",
-        desc_short = "pipe from",
-        desc = "The name of the data pipe to copy the alignment tensor data from.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = pipes.pipe_names,
-        can_be_none = True
+    name = "pipe_from",
+    default = None,
+    py_type = "str",
+    desc_short = "pipe from",
+    desc = "The name of the data pipe to copy the alignment tensor data from.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "tensor_to",
-        default = None,
-        py_type = "str",
-        desc_short = "tensor to",
-        desc = "The identification string of the alignment tensor to copy the data to.",
-        can_be_none = True
+    name = "tensor_to",
+    default = None,
+    py_type = "str",
+    desc_short = "tensor to",
+    desc = "The identification string of the alignment tensor to copy the data to.",
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "pipe_to",
-        default = None,
-        py_type = "str",
-        desc_short = "pipe to",
-        desc = "The name of the data pipe to copy the alignment tensor data to.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = pipes.pipe_names,
-        can_be_none = True
+    name = "pipe_to",
+    default = None,
+    py_type = "str",
+    desc_short = "pipe to",
+    desc = "The name of the data pipe to copy the alignment tensor data to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    can_be_none = True
 )
 uf.desc = """
 This will copy the alignment tensor data to a new tensor or a new data pipe.  The destination data pipe must not contain any alignment tensor data corresponding to the tensor_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will default to the current data pipe.  Both the tensor_from and tensor_to arguments must be supplied.
@@ -111,14 +111,14 @@ uf = uf_info.add_uf('align_tensor.delete')
 uf.title = "Delete alignment tensor data from the relax data store."
 uf.title_short = "Alignment tensor pipe deletion."
 uf.add_keyarg(
-        name = "tensor",
-        py_type = "str",
-        desc_short = "tensor",
-        desc = "The alignment tensor identification string.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True,
-        can_be_none = True
+    name = "tensor",
+    py_type = "str",
+    desc_short = "tensor",
+    desc = "The alignment tensor identification string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.desc = """
 This will delete the specified alignment tensor data from the current data pipe.  If no tensor is specified, all tensors will be deleted.
@@ -135,14 +135,14 @@ uf.title = "Display the alignment tensor information in full detail."
 uf.title_short = "Align tensor display."
 uf.display = True
 uf.add_keyarg(
-        name = "tensor",
-        py_type = "str",
-        desc_short = "tensor",
-        desc = "The alignment tensor identification string.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True,
-        can_be_none = True
+    name = "tensor",
+    py_type = "str",
+    desc_short = "tensor",
+    desc = "The alignment tensor identification string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.desc = """
 This will show all information relating to the alignment tensor, including the different tensor forms:
@@ -168,21 +168,21 @@ uf = uf_info.add_uf('align_tensor.fix')
 uf.title = "Fix all alignment tensors so that they do not change during optimisation."
 uf.title_short = "Fix alignment tensors."
 uf.add_keyarg(
-        name = "id",
-        py_type = "str",
-        desc_short = "tensor ID",
-        desc = "The alignment tensor identification string.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True,
-        can_be_none = True
+    name = "id",
+    py_type = "str",
+    desc_short = "tensor ID",
+    desc = "The alignment tensor identification string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.add_keyarg(
-        name = "fixed",
-        default = True,
-        py_type = "bool",
-        desc_short = "fixed flag",
-        desc = "The flag specifying if the tensors should be fixed or variable."
+    name = "fixed",
+    default = True,
+    py_type = "bool",
+    desc_short = "fixed flag",
+    desc = "The flag specifying if the tensors should be fixed or variable."
 )
 uf.desc = """
 If the ID string is left unset, then all alignment tensors will be fixed.
@@ -198,32 +198,32 @@ uf = uf_info.add_uf('align_tensor.init')
 uf.title = "Initialise an alignment tensor."
 uf.title_short = "Alignment tensor initialisation."
 uf.add_keyarg(
-        name = "tensor",
-        py_type = "str",
-        desc_short = "tensor ID",
-        desc = "The alignment tensor identification string."
+    name = "tensor",
+    py_type = "str",
+    desc_short = "tensor ID",
+    desc = "The alignment tensor identification string."
 )
 uf.add_keyarg(
-        name = "params",
-        py_type = "num_tuple",
-        desc_short = "alignment tensor parameters",
-        size = 5,
-        desc = "The alignment tensor data.",
-        wiz_read_only = False
+    name = "params",
+    py_type = "num_tuple",
+    desc_short = "alignment tensor parameters",
+    size = 5,
+    desc = "The alignment tensor data.",
+    wiz_read_only = False
 )
 uf.add_keyarg(
-        name = "scale",
-        default = 1.0,
-        py_type = "float",
-        desc_short = "scale",
-        desc = "The alignment tensor eigenvalue scaling value."
+    name = "scale",
+    default = 1.0,
+    py_type = "float",
+    desc_short = "scale",
+    desc = "The alignment tensor eigenvalue scaling value."
 )
 uf.add_keyarg(
-        name = "angle_units",
-        default = "deg",
-        py_type = "str",
-        desc_short = "angle units",
-        desc = "The units for the angle parameters."
+    name = "angle_units",
+    default = "deg",
+    py_type = "str",
+    desc_short = "angle units",
+    desc = "The units for the angle parameters."
 )
 uf.add_keyarg(
     name = "param_types",
@@ -255,11 +255,11 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.add_keyarg(
-        name = "errors",
-        default = False,
-        py_type = "bool",
-        desc_short = "errors flag",
-        desc = "A flag which determines if the alignment tensor data or its errors are being input."
+    name = "errors",
+    default = False,
+    py_type = "bool",
+    desc_short = "errors flag",
+    desc = "A flag which determines if the alignment tensor data or its errors are being input."
 )
 uf.desc = """
 Using this function, the alignment tensor data can be set up.  The params argument should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor, which can be specified by the param_types argument, where the values correspond to:
@@ -304,24 +304,24 @@ uf.title = "Calculate the 5D angles between all alignment tensors."
 uf.title_short = "Alignment tensor angle calculation."
 uf.display = True
 uf.add_keyarg(
-        name = "basis_set",
-        default = 0,
-        py_type = "int",
-        desc_short = "basis set",
-        desc = "The basis set to operate with.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}"],
-        wiz_combo_data = [0, 1]
+    name = "basis_set",
+    default = 0,
+    py_type = "int",
+    desc_short = "basis set",
+    desc = "The basis set to operate with.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}"],
+    wiz_combo_data = [0, 1]
 )
 uf.add_keyarg(
-        name = "tensors",
-        py_type = "str_list",
-        desc_short = "alignment tensor IDs",
-        desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
-        wiz_element_type = "combo_list",
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True,
-        can_be_none = True
+    name = "tensors",
+    py_type = "str_list",
+    desc_short = "alignment tensor IDs",
+    desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
+    wiz_element_type = "combo_list",
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.desc = """
 This will calculate the angles between all loaded alignment tensors for the current data pipe.  The matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent on the basis set.  If the basis_set argument is set to the default of 0, the vectors {Sxx, Syy, Sxy, Sxz, Syz} are used.  If the basis_set argument is set to 1, the vectors {Szz, Sxxyy, Sxy, Sxz, Syz} are used instead.
@@ -338,22 +338,22 @@ uf = uf_info.add_uf('align_tensor.reduction')
 uf.title = "Specify that one tensor is a reduction of another."
 uf.title_short = "Specify tensor reductions."
 uf.add_keyarg(
-        name = "full_tensor",
-        py_type = "str",
-        desc_short = "full tensor",
-        desc = "The full alignment tensor.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True
+    name = "full_tensor",
+    py_type = "str",
+    desc_short = "full tensor",
+    desc = "The full alignment tensor.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True
 )
 uf.add_keyarg(
-        name = "red_tensor",
-        py_type = "str",
-        desc_short = "reduced tensor",
-        desc = "The reduced alignment tensor.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True
+    name = "red_tensor",
+    py_type = "str",
+    desc_short = "reduced tensor",
+    desc = "The reduced alignment tensor.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True
 )
 uf.desc = """
 Prior to optimisation of the N-state model and Frame Order theories using alignment tensors, which tensor is a reduction of which other tensor must be specified through this user function.
@@ -373,19 +373,19 @@ uf = uf_info.add_uf('align_tensor.set_domain')
 uf.title = "Set the domain label for the alignment tensor."
 uf.title_short = "Tensor domain labelling."
 uf.add_keyarg(
-        name = "tensor",
-        py_type = "str",
-        desc_short = "tensor ID",
-        desc = "The alignment tensor to assign the domain label to.",
-        wiz_element_type = 'combo',
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True,
+    name = "tensor",
+    py_type = "str",
+    desc_short = "tensor ID",
+    desc = "The alignment tensor to assign the domain label to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
 )
 uf.add_keyarg(
-        name = "domain",
-        py_type = "str",
-        desc_short = "domain",
-        desc = "The domain label."
+    name = "domain",
+    py_type = "str",
+    desc_short = "domain",
+    desc = "The domain label."
 )
 uf.desc = """
 Prior to optimisation of the N-state model or Frame Order theories, the domain to which each alignment tensor belongs must be specified.
@@ -407,24 +407,24 @@ uf.title = "Calculate the singular values and condition number for all alignment
 uf.title_short = "Alignment tensor SVD calculation."
 uf.display = True
 uf.add_keyarg(
-        name = "basis_set",
-        default = 0,
-        py_type = "int",
-        desc_short = "basis set",
-        desc = "The basis set to operate with.",
-        wiz_element_type = "combo",
-        wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}"],
-        wiz_combo_data = [0, 1]
+    name = "basis_set",
+    default = 0,
+    py_type = "int",
+    desc_short = "basis set",
+    desc = "The basis set to operate with.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}"],
+    wiz_combo_data = [0, 1]
 )
 uf.add_keyarg(
-        name = "tensors",
-        py_type = "str_list",
-        desc_short = "alignment tensor IDs",
-        desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
-        wiz_element_type = "combo_list",
-        wiz_combo_iter = align_tensor.get_ids,
-        wiz_read_only = True,
-        can_be_none = True
+    name = "tensors",
+    py_type = "str_list",
+    desc_short = "alignment tensor IDs",
+    desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
+    wiz_element_type = "combo_list",
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.desc = """
 This will perform a singular value decomposition of all tensors loaded for the current data pipe.  If the basis_set argument is set to the default of 0, the matrix on which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz} layed out as:
