@@ -224,7 +224,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 # The select.spin user function.
 uf = uf_info.add_uf("select.spin")
 uf.title = "Select specific spins."
-uf.title = "Spin selection."
+uf.title_short = "Spin selection."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",

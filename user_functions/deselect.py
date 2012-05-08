@@ -224,7 +224,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
 # The deselect.spin user function.
 uf = uf_info.add_uf("deselect.spin")
 uf.title = "Deselect specific spins."
-uf.title = "Spin deselection."
+uf.title_short = "Spin deselection."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
