@@ -34,6 +34,45 @@ from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
 
 
+boolean_doc = ["Boolean operators", """
+The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details how the selections will occur for the different boolean operators.
+__________________________________________________________
+|                    |   |   |   |   |   |   |   |   |   |
+| Spin system        | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|____________________|___|___|___|___|___|___|___|___|___|
+|                    |   |   |   |   |   |   |   |   |   |
+| Original selection | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 0 | 1 |
+|                    |   |   |   |   |   |   |   |   |   |
+| New selection      | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 |
+|                    |   |   |   |   |   |   |   |   |   |
+| OR                 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
+|                    |   |   |   |   |   |   |   |   |   |
+| NOR                | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+|                    |   |   |   |   |   |   |   |   |   |
+| AND                | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
+|                    |   |   |   |   |   |   |   |   |   |
+| NAND               | 1 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 |
+|                    |   |   |   |   |   |   |   |   |   |
+| XOR                | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | 1 |
+|                    |   |   |   |   |   |   |   |   |   |
+| XNOR               | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 |
+|____________________|___|___|___|___|___|___|___|___|___|
+""", """
+The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following details how the selections will occur for the different boolean operators:
+
+Spin system:  1 2 3 4 5 6 7 8 9
+Original selection:  0 1 1 1 1 0 1 0 1
+New selection:  0 1 1 1 1 1 0 0 0
+OR:  0 1 1 1 1 1 1 0 1
+NOR:  1 0 0 0 0 0 0 1 0
+AND:  0 1 1 1 1 0 0 0 0
+NAND:  1 0 0 0 0 1 1 1 1
+XOR:  0 0 0 0 0 1 1 0 1
+XNOR:  1 1 1 1 1 0 0 1 0
+"""
+]
+
+
 def desel_all():
     """Deselect all spins.
 

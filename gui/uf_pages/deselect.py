@@ -27,7 +27,7 @@
 import wx
 
 # relax module imports.
-from prompt.select import boolean_doc
+from generic_fns.selection import boolean_doc
 
 # GUI module imports.
 from base import UF_base, UF_page

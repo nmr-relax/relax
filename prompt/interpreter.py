@@ -80,11 +80,9 @@ from pcs import PCS
 from rdc import RDC
 from relax_fit import Relax_fit
 from results import Results
-from select import Select
 from sequence import Sequence
 from spectrum import Spectrum
 from spin import Spin
-from deselect import Deselect
 from value import Value
 from vmd import Vmd
 
@@ -209,7 +207,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['deselect'] = Deselect()
         objects['frame_order'] = Frame_order()
         objects['dx'] = OpenDX()
         objects['frq'] = Frq()
@@ -226,7 +223,6 @@ class Interpreter:
         objects['relax_fit'] = Relax_fit()
         objects['residue'] = Residue()
         objects['results'] = Results()
-        objects['select'] = Select()
         objects['sequence'] = Sequence()
         objects['spectrum'] = Spectrum()
         objects['spin'] = Spin()
