@@ -30,6 +30,7 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+from graphics import fetch_icon
 from relax_errors import RelaxError
 from status import Status; status = Status()
 
@@ -410,11 +411,13 @@ class Selector_bool:
 class Selector_dir:
     """Wizard GUI element for selecting directories."""
 
-    def __init__(self, name=None, parent=None, sizer=None, desc=None, message='File selection', style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Build the file selection element.
 
         @keyword name:      The name of the element to use in titles, etc.
         @type name:         str
+        @keyword default:   The default value of the element.
+        @type default:      str
         @keyword parent:    The wizard GUI element.
         @type parent:       wx.Panel instance
         @keyword sizer:     The sizer to put the input field into.
@@ -462,22 +465,24 @@ class Selector_dir:
         # The input field.
         if not hasattr(parent, 'file_selection_field'):
             parent.file_selection_field = []
-        parent.file_selection_field.append(wx.TextCtrl(parent, -1, ''))
+        parent.file_selection_field.append(wx.TextCtrl(parent, -1, default))
         self._field = parent.file_selection_field[-1]
         self._field.SetMinSize((-1, parent.height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # The file selection object.
-        obj = RelaxDirDialog(parent, field=self._field, message=message, style=style)
+        # The directory selection object.
+        if default == None:
+            default = wx.EmptyString
+        obj = RelaxDirDialog(parent, field=self._field, message=message, defaultPath=default, style=style)
 
         # A little spacing.
         sub_sizer.AddSpacer(5)
 
         # The file selection button.
-        button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open-folder'), wx.BITMAP_TYPE_ANY))
         button.SetMinSize((parent.height_element, parent.height_element))
-        button.SetToolTipString("Select the file.")
+        button.SetToolTipString("Select the directory.")
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
 

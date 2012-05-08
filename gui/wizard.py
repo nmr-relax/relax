@@ -615,11 +615,13 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_dir_sel(self, key=None, sizer=None, desc=None, message='Directory selection', tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_dir_sel(self, key=None, default=None, sizer=None, desc=None, message='Directory selection', tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the integer element and store it.
 
         @keyword key:           The dictionary key to store the element with.
         @type key:              str
+        @keyword default:       The default value of the element.
+        @type default:          str
         @keyword sizer:         The sizer to put the input field widget into.
         @type sizer:            wx.Sizer instance
         @keyword desc:          The text description.
@@ -639,7 +641,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Selector_dir(name=key, parent=self, sizer=sizer, desc=desc, message=message, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Selector_dir(name=key, default=default, parent=self, sizer=sizer, desc=desc, message=message, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
         # Store it.
         self._elements[key] = element

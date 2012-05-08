@@ -202,7 +202,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  directory selection dialog.
             elif arg['arg_type'] == 'dir sel':
-                self.element_dir_sel(key=arg['name'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+                self.element_dir_sel(key=arg['name'], default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  free format file settings.
             elif arg['arg_type'] == 'free format':
