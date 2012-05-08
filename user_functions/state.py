@@ -33,6 +33,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('state')
 uf_class.title = "Class for saving or loading the program state."
 uf_class.menu_text = "&state"
+uf_class.gui_icon = "relax.relax"
 
 
 # The state.load user function.
