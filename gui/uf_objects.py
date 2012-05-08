@@ -474,6 +474,9 @@ class Uf_page(Wiz_page):
         # The title.
         yield doc[0], 'title'
 
+        # Strip the leading whitespace, if needed.
+        doc[1] = _strip_lead(doc[1])
+
         # Split up the description.
         docstring_lines = split(doc[1], "\n")
 
@@ -494,7 +497,7 @@ class Uf_page(Wiz_page):
             text[-1] = "%s%s\n" % (text[-1], line)
 
             # End of the table.
-            if in_table and search('^\\|_', line):
+            if in_table and line == '':
                 in_table = False
                 text.append("")
                 type.append("desc")
