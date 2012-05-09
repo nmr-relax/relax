@@ -164,7 +164,7 @@ class Uf_container(object):
             raise RelaxError("The object '%s' is not a modifiable attribute." % name)
 
         # Check for duplicative modifications (to catch typo coding errors).
-        if name in ['title', 'title_short', 'backend', 'desc', 'prompt_examples', 'gui_icon']:
+        if name in ['title', 'title_short', 'backend', 'prompt_examples', 'gui_icon']:
             # No object set yet.
             if not hasattr(self, name):
                 obj = None
