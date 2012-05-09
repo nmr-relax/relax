@@ -61,7 +61,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from molecule import Molecule
 from monte_carlo import Monte_carlo
 from n_state_model import N_state_model
 from noe import Noe
@@ -194,7 +193,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['molecule'] = Molecule()
         objects['monte_carlo'] = Monte_carlo()
         objects['n_state_model'] = N_state_model()
         objects['noe'] = Noe()

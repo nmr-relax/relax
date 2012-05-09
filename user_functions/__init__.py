@@ -52,6 +52,7 @@ __all__ += [
     'minimisation',
     'model_free',
     'model_selection',
+    'molecule',
     'molmol',
     'palmer',
     'pipe',
@@ -80,6 +81,7 @@ import user_functions.jw_mapping
 import user_functions.minimisation
 import user_functions.model_free
 import user_functions.model_selection
+import user_functions.molecule
 import user_functions.molmol
 import user_functions.palmer
 import user_functions.pipe
