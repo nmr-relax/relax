@@ -33,6 +33,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('frq')
 uf_class.title = "Class for manipulating spectrometer frequencies."
 uf_class.menu_text = "fr&q"
+uf_class.gui_icon = "relax.frq"
 
 # The frq.set user function.
 uf = uf_info.add_uf('frq.set')

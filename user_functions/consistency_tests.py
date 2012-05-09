@@ -60,6 +60,7 @@ relax> consistency_tests.set_frq(frq=600.0 * 1e6)
 """
 uf.backend = consistency_tests_obj._set_frq
 uf.menu_text = "&set_frq"
+uf.gui_icon = "relax.frq"
 uf.wizard_height_desc = 350
 uf.wizard_size = (700, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'consistency_testing_200x94.png'

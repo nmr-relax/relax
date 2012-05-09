@@ -59,5 +59,6 @@ relax> jw_mapping.set_frq(frq=600.0 * 1e6)
 """
 uf.backend = jw_mapping_obj._set_frq
 uf.menu_text = "&set_frq"
+uf.gui_icon = "relax.frq"
 uf.wizard_height_desc = 350
 uf.wizard_size = (700, 500)
