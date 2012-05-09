@@ -647,6 +647,21 @@ def error_analysis():
             __errors_repl()
 
 
+def get_ids():
+    """Return a list of all spectrum IDs.
+
+    @return:    The list of spectrum IDs.
+    @rtype:     list of str
+    """
+
+    # No IDs.
+    if not hasattr(cdp, 'spectrum_ids'):
+        return []
+
+    # Return the IDs.
+    return cdp.spectrum_ids
+
+
 def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, sep=None, spin_id=None):
     """Return the process data from the generic peak intensity file.
 
