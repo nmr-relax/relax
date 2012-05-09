@@ -258,6 +258,11 @@ class RelaxPdbLoadError(BaseError):
     def __init__(self, name):
         self.text = "The PDB file " + repr(name) + " could not be loaded properly, no molecular chains could be extracted."
 
+# Multiple unit vectors.
+class RelaxMultiVectorError(BaseError):
+    def __init__(self):
+        self.text = "The multiple unit XH bond vectors per spin - this is not supported by the current data pipe type."
+
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
     def __init__(self, pipe):
@@ -577,6 +582,30 @@ class RelaxDiffResNumError(BaseError):
 class RelaxDiffSpinNumError(BaseError):
     def __init__(self, pipe1, pipe2):
         self.text = "The number of spins do not match between pipes '%s' and '%s'." % (pipe1, pipe2)
+
+# Multiple spins matching the ID.
+class RelaxMultiMolIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty molecule ID corresponds to more than a single molecule in the current data pipe."
+        else:
+            self.text = "The molecule ID '%s' corresponds to more than a single molecule in the current data pipe." % id
+
+# Multiple spins matching the ID.
+class RelaxMultiResIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty residue ID corresponds to more than a single residue in the current data pipe."
+        else:
+            self.text = "The residue ID '%s' corresponds to more than a single residue in the current data pipe." % id
+
+# Multiple spins matching the ID.
+class RelaxMultiSpinIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty spin ID corresponds to more than a single spin in the current data pipe."
+        else:
+            self.text = "The spin ID '%s' corresponds to more than a single spin in the current data pipe." % id
 
 # Cannot find the residue in the sequence.
 class RelaxNoResError(BaseError):
