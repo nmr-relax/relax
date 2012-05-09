@@ -39,12 +39,12 @@ uf_class.gui_icon = "relax.consistency_testing"
 
 # The consistency_tests.set_frq user function.
 uf = uf_info.add_uf('consistency_tests.set_frq')
-uf.title = "Select which relaxation data to use in the consistency tests."
-uf.title_short = "Relaxation data selection."
+uf.title = "Select which relaxation data to use in the consistency tests by NMR spectrometer frequency."
+uf.title_short = "Spectrometer selection."
 uf.add_keyarg(
     name = "frq",
     py_type = "float",
-    desc_short = "frequency in Hz",
+    desc_short = "spectrometer frequency in Hz",
     desc = "The spectrometer frequency in Hz.  This must match the currently loaded data to the last decimal point."
 )
 uf.desc = """
