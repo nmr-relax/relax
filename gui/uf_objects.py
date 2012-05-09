@@ -33,10 +33,11 @@ from wx.lib import scrolledpanel
 # relax module imports.
 import arg_check
 from prompt.base_class import _strip_lead
-from relax_errors import RelaxError
+from relax_errors import AllRelaxErrors, RelaxError
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI imports.
+from gui.errors import gui_raise
 from gui.fonts import font
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_page, Wiz_window
@@ -416,16 +417,25 @@ class Uf_page(Wiz_page):
             if iterator == None:
                 continue
 
-            # Get the new choices and data.
-            choices = []
-            data = []
-            for vals in iterator():
-                if arg_check.is_tuple(vals, size=2, raise_error=False):
-                    choices.append(vals[0])
-                    data.append(vals[1])
-                else:
-                    choices.append(vals)
-                    data.append(vals)
+            # Get the new choices and data (in a safe way).
+            try:
+                choices = []
+                data = []
+                for vals in iterator():
+                    if arg_check.is_tuple(vals, size=2, raise_error=False):
+                        choices.append(vals[0])
+                        data.append(vals[1])
+                    else:
+                        choices.append(vals)
+                        data.append(vals)
+
+            # Catch all RelaxErrors.
+            except AllRelaxErrors, instance:
+                # Display a dialog with the error.
+                gui_raise(instance)
+
+                # Return as a failure.
+                return False
 
             # Reset.
             self.ResetChoices(name, combo_choices=choices, combo_data=data)
