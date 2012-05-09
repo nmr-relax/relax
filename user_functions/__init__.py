@@ -50,6 +50,7 @@ __all__ += [
     'grace',
     'jw_mapping',
     'minimisation',
+    'model_free',
     'model_selection',
     'molmol',
     'palmer',
@@ -77,6 +78,7 @@ import user_functions.frq
 import user_functions.grace
 import user_functions.jw_mapping
 import user_functions.minimisation
+import user_functions.model_free
 import user_functions.model_selection
 import user_functions.molmol
 import user_functions.palmer
