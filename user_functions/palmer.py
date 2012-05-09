@@ -151,6 +151,7 @@ If you would like to use a different Modelfree executable file, change the keywo
 """
 uf.backend = palmer.create
 uf.menu_text = "&create"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'
@@ -218,5 +219,6 @@ The model-free results will be extracted from the Modelfree4 results file 'mfout
 """
 uf.backend = palmer.extract
 uf.menu_text = "ex&tract"
+uf.gui_icon = "oxygen.actions.archive-extract"
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'

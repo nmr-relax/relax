@@ -80,6 +80,7 @@ For Levenberg-Marquardt minimisation, the function 'lmin' will be called, while 
 ]
 uf.backend = dasha.create
 uf.menu_text = "&create"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_size = (700, 600)
 uf.wizard_apply_button = False
 
@@ -142,4 +143,5 @@ The model-free results will be extracted from the Dasha results file 'dasha_resu
 """
 uf.backend = dasha.extract
 uf.menu_text = "ex&tract"
+uf.gui_icon = "oxygen.actions.archive-extract"
 uf.wizard_apply_button = False

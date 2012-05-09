@@ -106,6 +106,7 @@ The simulation type can be changed by setting the method argument to direct.  Th
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.create_data
 uf.menu_text = "&create_data"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
@@ -122,6 +123,7 @@ Parameter errors are calculated as the standard deviation of the distribution of
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.error_analysis
 uf.menu_text = "&error_analysis"
+uf.gui_icon = "oxygen.actions.roll-relax-blue"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
@@ -140,6 +142,7 @@ The initial values of the parameters for each simulation is set to the minimised
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.initial_values
 uf.menu_text = "&initial_values"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
@@ -156,6 +159,7 @@ This will turn off the Monte Carlo simulations so that subsequent optimisation w
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.off
 uf.menu_text = "o&ff"
+uf.gui_icon = "oxygen.actions.dialog-cancel"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
@@ -172,6 +176,7 @@ This will turn on the Monte Carlo simulations so that subsequent optimisation wi
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.on
 uf.menu_text = "o&n"
+uf.gui_icon = "oxygen.actions.dialog-ok"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
@@ -197,6 +202,7 @@ This must be called prior to any of the other Monte Carlo functions.  The effect
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.setup
 uf.menu_text = "&setup"
+uf.gui_icon = "oxygen.actions.document-edit"
 uf.wizard_height_desc = 600
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False

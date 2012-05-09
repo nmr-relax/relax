@@ -253,6 +253,7 @@ relax> frame_order.select_model(model='iso cone')
 """
 uf.backend = frame_order_obj._select_model
 uf.menu_text = "&select_model"
+uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 600
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
