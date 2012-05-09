@@ -431,6 +431,9 @@ class Uf_page(Wiz_page):
 
             # Catch all RelaxErrors.
             except AllRelaxErrors, instance:
+                # Signal the failure to the wizard.
+                self.setup_fail = True
+
                 # Display a dialog with the error.
                 gui_raise(instance)
 

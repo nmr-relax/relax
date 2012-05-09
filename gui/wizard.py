@@ -1890,6 +1890,10 @@ class Wiz_window(wx.Dialog):
         # Display the first page.
         self._display_page(0)
 
+        # Display failure.
+        if self._pages[0].setup_fail:
+            return
+
         # No GUI.
         if not status.show_gui:
             return
