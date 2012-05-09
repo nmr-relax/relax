@@ -47,7 +47,7 @@ from warnings import warn
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
 from generic_fns import relax_re
-from relax_errors import RelaxError, RelaxNoSpinError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
 
@@ -2205,7 +2205,7 @@ def return_molecule(selection=None, pipe=None):
 
     # No unique identifier.
     if mol_num > 1:
-        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single molecule in the " + repr(pipe) + " data pipe.")
+        raise RelaxMultiMolIDError(selection)
 
     # Return the molecule container.
     return mol_container
@@ -2258,7 +2258,7 @@ def return_residue(selection=None, pipe=None):
 
     # No unique identifier.
     if res_num > 1:
-        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single residue in the " + repr(pipe) + " data pipe.")
+        raise RelaxMultiResIDError(selection)
 
     # Return the residue container.
     return res_container
@@ -2324,7 +2324,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
 
     # No unique identifier.
     if spin_num > 1:
-        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single spin in the " + repr(pipe) + " data pipe.")
+        raise RelaxMultiSpinIDError(selection)
 
     # Return the spin container.
     if full_info:

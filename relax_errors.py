@@ -578,6 +578,30 @@ class RelaxDiffSpinNumError(BaseError):
     def __init__(self, pipe1, pipe2):
         self.text = "The number of spins do not match between pipes '%s' and '%s'." % (pipe1, pipe2)
 
+# Multiple spins matching the ID.
+class RelaxMultiMolIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty molecule ID corresponds to more than a single molecule in the current data pipe."
+        else:
+            self.text = "The molecule ID '%s' corresponds to more than a single molecule in the current data pipe." % id
+
+# Multiple spins matching the ID.
+class RelaxMultiResIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty residue ID corresponds to more than a single residue in the current data pipe."
+        else:
+            self.text = "The residue ID '%s' corresponds to more than a single residue in the current data pipe." % id
+
+# Multiple spins matching the ID.
+class RelaxMultiSpinIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty spin ID corresponds to more than a single spin in the current data pipe."
+        else:
+            self.text = "The spin ID '%s' corresponds to more than a single spin in the current data pipe." % id
+
 # Cannot find the residue in the sequence.
 class RelaxNoResError(BaseError):
     def __init__(self, number, name=None):
