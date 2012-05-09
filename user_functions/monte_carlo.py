@@ -116,17 +116,8 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 uf = uf_info.add_uf('monte_carlo.error_analysis')
 uf.title = "Calculate parameter errors from the Monte Carlo simulations."
 uf.title_short = "Error calculation."
-uf.add_keyarg(
-    name = "prune",
-    default = 0.0,
-    py_type = "num",
-    desc_short = "pruning quantity",
-    desc = "Legacy argument corresponding to 'trim' in Art Palmer's Modelfree program.  The default value of 0.0 corresponds to no pruning of the data."
-)
 uf.desc = """
 Parameter errors are calculated as the standard deviation of the distribution of parameter values.  This function should never be used if parameter values are obtained by minimisation and the simulation data are generated using the method 'direct'.  The reason is because only true Monte Carlo simulations can give the true parameter errors.
-
-The prune argument is legacy code which corresponds to the 'trim' option in Art Palmer's Modelfree program.  To remove failed simulations, the eliminate function should be used prior to this function.  Eliminating the simulations specifically identifies and removes the failed simulations whereas the prune argument will only, in a few cases, positively identify failed simulations but only if severe parameter limits have been imposed.  Most failed models will pass through the pruning process and hence cause a catastrophic increase in the parameter errors.  If the argument must be used, the following must be taken into account. If the values or parameters are calculated rather than minimised, the prune argument must be set to zero.  The value of this argument is proportional to the number of simulations removed prior to error calculation.  If prune is set to 0.0, all simulations are used for calculating errors, whereas a value of 1.0 excludes all data.  In almost all cases prune must be set to zero, any value greater than zero will result in an underestimation of the error values.  If a value is supplied, the lower and upper tails of the distribution of chi-squared values will be excluded from the error calculation.
 """
 uf.additional = [monte_carlo_desc]
 uf.backend = monte_carlo.error_analysis
