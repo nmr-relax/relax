@@ -55,7 +55,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -70,6 +70,10 @@ class Sequence:
         @type seq_type:             str
         @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:           str
+        @keyword min:               For a SpinCtrl, the minimum value allowed.
+        @type min:                  int
+        @keyword max:               For a SpinCtrl, the maximum value allowed.
+        @type max:                  int
         @keyword sizer:             The sizer to put the input field widget into.
         @type sizer:                wx.Sizer instance
         @keyword desc:              The text description.
@@ -698,7 +702,7 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -715,6 +719,10 @@ class Sequence_2D(Sequence):
         @type seq_type:             str
         @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:           str
+        @keyword min:               For a SpinCtrl, the minimum value allowed.
+        @type min:                  int
+        @keyword max:               For a SpinCtrl, the maximum value allowed.
+        @type max:                  int
         @keyword titles:            The titles of each of the elements of the fixed width second dimension.
         @type titles:               list of str
         @keyword desc:              The text description.
