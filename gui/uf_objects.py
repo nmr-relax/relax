@@ -31,6 +31,7 @@ import wx
 from wx.lib import scrolledpanel
 
 # relax module imports.
+import arg_check
 from prompt.base_class import _strip_lead
 from relax_errors import RelaxError
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -419,7 +420,7 @@ class Uf_page(Wiz_page):
             choices = []
             data = []
             for vals in iterator():
-                if not isinstance(vals, str) and len(vals) == 2:
+                if arg_check.is_tuple(vals, size=2, raise_error=False):
                     choices.append(vals[0])
                     data.append(vals[1])
                 else:
