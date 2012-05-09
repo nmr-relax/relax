@@ -48,6 +48,7 @@ __all__ += [
     'frame_order',
     'frq',
     'grace',
+    'jw_mapping',
     'minimisation',
     'model_selection',
     'molmol',
@@ -74,6 +75,7 @@ import user_functions.fix
 import user_functions.frame_order
 import user_functions.frq
 import user_functions.grace
+import user_functions.jw_mapping
 import user_functions.minimisation
 import user_functions.model_selection
 import user_functions.molmol

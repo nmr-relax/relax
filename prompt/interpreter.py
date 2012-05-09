@@ -61,7 +61,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from jw_mapping import Jw_mapping
 from model_free import Model_free
 from molecule import Molecule
 from monte_carlo import Monte_carlo
@@ -196,7 +195,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['jw_mapping'] = Jw_mapping()
         objects['model_free'] = Model_free()
         objects['molecule'] = Molecule()
         objects['monte_carlo'] = Monte_carlo()

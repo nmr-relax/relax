@@ -21,50 +21,37 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Reduced Spectral Density Mapping 'jw_mapping' user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the Reduced Spectral Density Mapping 'jw_mapping' user function data."""
 
 # relax module imports.
-from base_class import User_fn_class
-import arg_check
 from specific_fns.setup import jw_mapping_obj
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Jw_mapping(User_fn_class):
-    """Class containing functions specific to reduced spectral density mapping."""
-
-    def set_frq(self, frq=None):
-        """Function for selecting which relaxation data to use in the J(w) mapping.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        frq:  The spectrometer frequency in Hz.
+# The user function class.
+uf_class = uf_info.add_class('jw_mapping')
+uf_class.title = "Class containing functions specific to reduced spectral density mapping."
+uf_class.menu_text = "&jw_mapping"
 
 
-        Description
-        ~~~~~~~~~~~
-
-        This function will select the relaxation data to use in the reduced spectral density mapping
-        corresponding to the given frequency.
-
-
-        Examples
-        ~~~~~~~~
-
-        relax> jw_mapping.set_frq(600.0 * 1e6)
-        relax> jw_mapping.set_frq(frq=600.0 * 1e6)
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "jw_mapping.set_frq("
-            text = text + "frq=" + repr(frq) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_num(frq, 'spectrometer frequency')
-
-        # Execute the functional code.
-        jw_mapping_obj._set_frq(frq=frq)
+# The jw_mapping.set_frq user function.
+uf = uf_info.add_uf('jw_mapping.set_frq')
+uf.title = "Select which relaxation data to use in the J(w) mapping by NMR spectrometer frequency."
+uf.title_short = "Spectrometer selection."
+uf.add_keyarg(
+    name = "frq",
+    py_type = "float",
+    desc_short = "spectrometer frequency in Hz",
+    desc = "The spectrometer frequency in Hz.  This must match the currently loaded data to the last decimal point."
+)
+uf.desc = """
+This function will select the relaxation data to use in the reduced spectral density mapping corresponding to the given frequency.
+"""
+uf.prompt_examples = """
+relax> jw_mapping.set_frq(600.0 * 1e6)
+relax> jw_mapping.set_frq(frq=600.0 * 1e6)
+"""
+uf.backend = jw_mapping_obj._set_frq
+uf.menu_text = "&set_frq"
+uf.wizard_size = (700, 400)
