@@ -342,6 +342,8 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.desc = """
+This will load the relaxation data into the relax data store.  The data is associated with the spectrometer frequency in Hertz.  For subsequent analysis, this frequency must be set to the exact field strength.  This value is stored in the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
 The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
 """
 uf.prompt_examples = """
