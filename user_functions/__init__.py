@@ -55,6 +55,7 @@ __all__ += [
     'molecule',
     'molmol',
     'monte_carlo',
+    'noe',
     'palmer',
     'pipe',
     'pymol_control',
@@ -85,6 +86,7 @@ import user_functions.model_selection
 import user_functions.molecule
 import user_functions.molmol
 import user_functions.monte_carlo
+import user_functions.noe
 import user_functions.palmer
 import user_functions.pipe
 import user_functions.pymol_control
