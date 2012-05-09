@@ -28,6 +28,7 @@ from os import sep
 from string import split
 
 # relax module imports.
+from relax_errors import RelaxError
 from status import Status; status = Status()
 
 # GUI image and icon paths.
