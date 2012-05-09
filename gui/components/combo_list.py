@@ -27,42 +27,44 @@
 import wx
 
 # relax GUI module imports.
-from gui.misc import str_to_gui
+from gui.misc import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from gui.paths import icon_16x16
 
 
 class Combo_list:
     """The combo list GUI element."""
 
-    def __init__(self, parent, sizer, desc, n=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
+    def __init__(self, parent, sizer, desc, value_type=None, n=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
         """Build the combo box list widget for a list of list selections.
 
-        @param parent:      The parent GUI element.
-        @type parent:       wx object instance
-        @param sizer:       The sizer to put the combo box widget into.
-        @type sizer:        wx.Sizer instance
-        @param desc:        The text description.
-        @type desc:         str
-        @keyword n:         The number of initial entries.
-        @type n:            int
-        @keyword choices:   The list of choices (all combo boxes will have the same list).
-        @type choices:      list of str
-        @keyword data:      The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the choices list.  If not supplied, the choices list will be used for the returned data.
-        @type data:         list
-        @keyword default:   The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type default:      str or None
-        @keyword evt_fn:    The event handling function.
-        @type evt_fn:       func
-        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
-        @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the parent class variable _div_left will be used if present.
-        @type divider:      None or int
-        @keyword padding:   Spacing to the left and right of the widgets.
-        @type padding:      int
-        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:       None or int
-        @keyword read_only: A flag which if True means that text cannot be typed into the combo box widget.
-        @type read_only:    bool
+        @param parent:          The parent GUI element.
+        @type parent:           wx object instance
+        @param sizer:           The sizer to put the combo box widget into.
+        @type sizer:            wx.Sizer instance
+        @param desc:            The text description.
+        @type desc:             str
+        @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:       str
+        @keyword n:             The number of initial entries.
+        @type n:                int
+        @keyword choices:       The list of choices (all combo boxes will have the same list).
+        @type choices:          list of str
+        @keyword data:          The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the choices list.  If not supplied, the choices list will be used for the returned data.
+        @type data:             list
+        @keyword default:       The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type default:          str or None
+        @keyword evt_fn:        The event handling function.
+        @type evt_fn:           func
+        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
+        @type tooltip:          str
+        @keyword divider:       The optional position of the divider.  If None, the parent class variable _div_left will be used if present.
+        @type divider:          None or int
+        @keyword padding:       Spacing to the left and right of the widgets.
+        @type padding:          int
+        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:           None or int
+        @keyword read_only:     A flag which if True means that text cannot be typed into the combo box widget.
+        @type read_only:        bool
         """
 
         # Store some args.
@@ -76,6 +78,22 @@ class Combo_list:
         self._tooltip = tooltip
         self._padding = padding
         self._read_only = read_only
+
+        # The value types.
+        if value_type in ['float', 'num']:
+            self.convert_from_gui = gui_to_float
+            self.convert_to_gui =   float_to_gui
+            self.type_string = 'float'
+        elif value_type == 'int':
+            self.convert_from_gui = gui_to_int
+            self.convert_to_gui =   int_to_gui
+            self.type_string = 'integer'
+        elif value_type == 'str':
+            self.convert_from_gui = gui_to_str
+            self.convert_to_gui =   str_to_gui
+            self.type_string = 'string'
+        else:
+            raise RelaxError("Unknown value type '%s'." % value_type)
 
         # Init.
         self._main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -235,7 +253,7 @@ class Combo_list:
         # Loop over the combo boxes.
         for i in range(len(self._combo_boxes)):
             # Get the value.
-            val = self._combo_boxes[i].GetValue()
+            val = self.convert_from_gui(self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection()))
 
             # Nothing, so skip.
             if not len(val):
@@ -280,8 +298,37 @@ class Combo_list:
 
             # Loop over the choices and data, adding both to the end.
             for j in range(len(combo_choices)):
-                self._combo_boxes[i].Insert(str_to_gui(combo_choices[j]), j, combo_data[j])
+                self._combo_boxes[i].Insert(self.convert_to_gui(combo_choices[j]), j, combo_data[j])
 
             # Set the default selection.
             if combo_default:
-                self._combo_boxes[i].SetStringSelection(combo_default)
+                # Translate if needed.
+                if combo_default in combo_choices:
+                    string = combo_default
+                elif combo_default not in combo_data:
+                    string = combo_default
+                else:
+                    string = combo_choices[combo_data.index(combo_default)]
+
+                # Set the selection.
+                self._combo_boxes[i].SetStringSelection(string)
+
+
+    def SetValue(self, value):
+        """Special method for setting the value of the GUI element.
+
+        @param value:   The value to set.
+        @type value:    list of str or None
+        """
+
+        # No value.
+        if values == None:
+            return
+
+        # Loop over the combo boxes.
+        for i in range(len(self._combo_boxes)):
+            # Loop until the proper client data is found.
+            for j in range(self._combo_boxes[i].GetCount()):
+                if self._combo_boxes[i].GetClientData(j) == value:
+                    self._combo_boxes[i].SetSelection(j)
+                    break
