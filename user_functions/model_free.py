@@ -36,6 +36,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('model_free')
 uf_class.title = "Class for model-free analysis."
 uf_class.menu_text = "&model_free"
+uf_class.gui_icon = "relax.model-free"
 
 
 # The model_free.create_model user function.
