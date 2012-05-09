@@ -258,6 +258,11 @@ class RelaxPdbLoadError(BaseError):
     def __init__(self, name):
         self.text = "The PDB file " + repr(name) + " could not be loaded properly, no molecular chains could be extracted."
 
+# Multiple unit vectors.
+class RelaxMultiVectorError(BaseError):
+    def __init__(self):
+        self.text = "The multiple unit XH bond vectors per spin - this is not supported by the current data pipe type."
+
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
     def __init__(self, pipe):
