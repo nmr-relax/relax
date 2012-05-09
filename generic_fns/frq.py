@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,30 @@
 # relax module imports.
 from generic_fns import pipes
 from relax_errors import RelaxError
+
+
+def get_values():
+    """Return a list of all the current frequencies.
+
+    @return:    The frequency list for the current data pipe.
+    @rtype:     list of float
+    """
+
+    # No frequency data.
+    if not hasattr(cdp, 'frq'):
+        return []
+
+    # The frequency values.
+    values = cdp.frq.values()
+
+    # Build a list of the unique frequencies.
+    frq = []
+    for value in values:
+        if value not in frq:
+            frq.append(value)
+
+    # Return the frqs.
+    return frq
 
 
 def set(id=None, frq=None):
