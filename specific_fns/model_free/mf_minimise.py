@@ -1276,7 +1276,7 @@ class Mf_minimise:
                 raise RelaxNoVectorsError
 
             # Test if multiple unit vectors exist.
-            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(spin, 'xh_vect') and arg_check.is_num_list(spin.xh_vect[0], 'xh_vect'):
+            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(spin, 'xh_vect') and arg_check.is_num_list(spin.xh_vect[0], raise_error=False):
                 raise RelaxMultiVectorError
 
             # Test if the spin type has been set.
