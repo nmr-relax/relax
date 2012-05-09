@@ -181,7 +181,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, min=None, max=None, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -199,6 +199,10 @@ class Uf_container(object):
         @type size:                     int or None
         @keyword dim:                   The dimension that a matrix or list of lists must conform to.
         @type dim:                      tuple of int or None
+        @keyword min:                   The minimum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
+        @type min:                      int
+        @keyword max:                   The maximum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
+        @type max:                      int
         @keyword desc_short:            The short human-readable description of the argument.  This is used in the RelaxError messages to refer to the argument, as well as in the GUI user function page elements.
         @type desc_short:               str
         @keyword desc:                  The long human-readable description of the argument.
@@ -246,6 +250,8 @@ class Uf_container(object):
         arg['arg_type'] = arg_type
         arg['size'] = size
         arg['dim'] = dim
+        arg['min'] = min
+        arg['max'] = max
         arg['desc_short'] = desc_short
         arg['desc'] = desc
         arg['list_titles'] = list_titles

@@ -109,6 +109,7 @@ uf.menu_text = "&create_data"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
 
 # The monte_carlo.error_analysis user function.
@@ -133,6 +134,7 @@ uf.menu_text = "&error_analysis"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
 
 # The monte_carlo.initial_values user function.
@@ -150,6 +152,7 @@ uf.menu_text = "&initial_values"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
 
 # The monte_carlo.off user function.
@@ -165,6 +168,7 @@ uf.menu_text = "o&ff"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
 
 # The monte_carlo.on user function.
@@ -180,6 +184,7 @@ uf.menu_text = "o&n"
 uf.wizard_height_desc = 650
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
 
 # The monte_carlo.setup user function.
@@ -204,3 +209,4 @@ uf.menu_text = "&setup"
 uf.wizard_height_desc = 600
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
