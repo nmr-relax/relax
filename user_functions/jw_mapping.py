@@ -34,6 +34,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('jw_mapping')
 uf_class.title = "Class containing functions specific to reduced spectral density mapping."
 uf_class.menu_text = "&jw_mapping"
+uf_class.gui_icon = "relax.jw_mapping"
 
 
 # The jw_mapping.set_frq user function.
