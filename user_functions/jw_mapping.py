@@ -25,7 +25,7 @@
 
 # relax module imports.
 from generic_fns import frq
-from graphics import WIZARD_IMAGE_PATH
+from graphics import ANALYSIS_IMAGE_PATH
 from specific_fns.setup import jw_mapping_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
