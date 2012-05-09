@@ -56,4 +56,5 @@ This allows the spectrometer frequency of a given experiment to be set.
 """
 uf.backend = generic_fns.frq.set
 uf.menu_text = "&set"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (700, 400)

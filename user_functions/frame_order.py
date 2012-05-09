@@ -168,6 +168,7 @@ relax> frame_order.ref_domain(ref='centre')
 """
 uf.backend = frame_order_obj._ref_domain
 uf.menu_text = "&ref_domain"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 

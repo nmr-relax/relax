@@ -216,6 +216,7 @@ relax> deselect.reverse()
 """
 uf.backend = selection.reverse
 uf.menu_text = "&reverse"
+uf.gui_icon = "oxygen.actions.system-switch-user"
 uf.wizard_size = (700, 550)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'

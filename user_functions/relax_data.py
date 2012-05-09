@@ -217,9 +217,9 @@ This is essential for BMRB data deposition.  It is used to specify whether peak 
 """
 uf.backend = relax_data.peak_intensity_type
 uf.menu_text = "peak_&intensity_type"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
-
 
 
 # The relax_data.read user function.

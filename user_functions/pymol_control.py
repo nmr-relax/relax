@@ -101,6 +101,7 @@ relax> pymol.command("reinitialise")
 """
 uf.backend = pymol_control.command
 uf.menu_text = "&command"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 

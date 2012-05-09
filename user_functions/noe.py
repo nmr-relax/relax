@@ -150,6 +150,7 @@ Peak intensities should be loaded before this user function via the spectrum.rea
 """
 uf.backend = noe_obj._spectrum_type
 uf.menu_text = "&spectrum_type"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_height_desc = 350
 uf.wizard_size = (800, 600)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'noe_200x200.png'
