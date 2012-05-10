@@ -128,7 +128,7 @@ class Uf_container(object):
             'wizard_size',
             'wizard_image',
             'wizard_height_desc',
-            'wizard_apply_button'
+            'wizard_apply_button',
             'gui_sync',
     ]
 
