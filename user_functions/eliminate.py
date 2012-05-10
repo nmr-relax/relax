@@ -22,7 +22,6 @@
 
 # Module docstring.
 """Module containing the 'eliminate' user function for removing failed models."""
-__docformat__ = 'plaintext'
 
 # relax module imports.
 from generic_fns import eliminate
