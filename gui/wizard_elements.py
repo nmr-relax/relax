@@ -1251,8 +1251,14 @@ class Value:
 
         # Initialise the spinner input field.
         elif self.element_type == 'spin':
+            # Catch limits of None, and set to the wxSpinCtrl defaults.
+            if min == None:
+                min = 0
+            if max == None:
+                max = 100
+
             # Set up the text control.
-            self._field = wx.SpinCtrl(parent, -1, initial=default, min=min, max=max)
+            self._field = wx.SpinCtrl(parent, -1, min=min, max=max)
 
             # Read only field (really no such thing for a spin control).
             if read_only:
