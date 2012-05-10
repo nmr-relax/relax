@@ -237,10 +237,6 @@ class Uf_container(object):
         if desc == None:
             raise RelaxError("The 'desc' argument must be supplied.")
 
-        # The combo box.
-        if wiz_element_type == 'combo' and can_be_none and wiz_read_only:
-            raise RelaxError("An argument set as a combo box and which can be None cannot be read only!")
-
         # Append a new argument dictionary to the list, and alias it.
         self.kargs.append({})
         arg = self.kargs[-1]
