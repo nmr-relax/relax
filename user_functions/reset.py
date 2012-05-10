@@ -36,6 +36,7 @@ All of the data of the relax data storage object will be erased and hence relax 
 uf.backend = generic_fns.reset.reset
 uf.menu_text = "&reset"
 uf.gui_icon = "oxygen.actions.dialog-close"
+uf.gui_sync = True    # Force synchronous operation, as asynchronous calls kill the GUI!
 uf.wizard_size = (600, 300)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'reset.png'
