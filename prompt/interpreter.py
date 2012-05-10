@@ -61,7 +61,6 @@ from temperature import Temp
 
 # User classes.
 from structure import Structure
-from results import Results
 from sequence import Sequence
 from spectrum import Spectrum
 from spin import Spin
@@ -182,7 +181,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['results'] = Results()
         objects['sequence'] = Sequence()
         objects['spectrum'] = Spectrum()
         objects['spin'] = Spin()

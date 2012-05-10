@@ -67,6 +67,7 @@ __all__ += [
     'relax_fit',
     'residue',
     'reset',
+    'results',
     'select',
     'state'
 ]
@@ -105,6 +106,7 @@ import user_functions.relax_data
 import user_functions.relax_fit
 import user_functions.residue
 import user_functions.reset
+import user_functions.results
 import user_functions.select
 import user_functions.state
 
