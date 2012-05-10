@@ -1459,7 +1459,7 @@ class Value:
         """
 
         # No value.
-        if values == None:
+        if value == None:
             return
 
         # Convert and set the value for a TextCtrl.
