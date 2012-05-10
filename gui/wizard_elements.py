@@ -43,271 +43,6 @@ from gui.misc import add_border, bool_to_gui, float_to_gui, gui_to_bool, gui_to_
 from gui import paths
 
 
-class Sequence:
-    """Wizard GUI element for the input of all types of Python sequence objects.
-
-    The supported Python types include:
-        - list of floats
-        - list of integers
-        - list of strings
-        - tuple of floats
-        - tuple of integers
-        - tuple of strings
-    """
-
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
-        """Set up the element.
-
-        @keyword name:              The name of the element to use in titles, etc.
-        @type name:                 str
-        @keyword default:           The default value of the element.
-        @type default:              sequence object
-        @keyword parent:            The wizard GUI element.
-        @type parent:               wx.Panel instance
-        @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
-        @type element_type:         str
-        @keyword seq_type:          The type of Python sequence.  This should be one of 'list' or 'tuple'.
-        @type seq_type:             str
-        @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
-        @type value_type:           str
-        @keyword min:               For a SpinCtrl, the minimum value allowed.
-        @type min:                  int
-        @keyword max:               For a SpinCtrl, the maximum value allowed.
-        @type max:                  int
-        @keyword sizer:             The sizer to put the input field widget into.
-        @type sizer:                wx.Sizer instance
-        @keyword desc:              The text description.
-        @type desc:                 str
-        @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:        list of str
-        @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:           list
-        @keyword combo_list_size:   The number of initial entries in a Combo_list object.
-        @type combo_list_size:      int or None
-        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
-        @type tooltip:              str
-        @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:              None or int
-        @keyword padding:           Spacing to the left and right of the widgets.
-        @type padding:              int
-        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:               None or int
-        @keyword single_value:      A flag which if True will cause single input values to be treated as single values rather than a list or tuple.
-        @type single_value:         bool
-        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
-        @type read_only:            bool
-        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
-        @type can_be_none:          bool
-        """
-
-        # Store the args.
-        self.name = name
-        self.default = default
-        self.element_type = element_type
-        self.seq_type = seq_type
-        self.value_type = value_type
-        self.single_value = single_value
-
-        # The sequence types.
-        if seq_type == 'list':
-            self.convert_from_gui = gui_to_list
-            self.convert_to_gui =   list_to_gui
-        elif seq_type == 'tuple':
-            self.convert_from_gui = gui_to_tuple
-            self.convert_to_gui =   tuple_to_gui
-        else:
-            raise RelaxError("Unknown sequence type '%s'." % seq_type)
-
-        # Initialise the default element.
-        if self.element_type == 'default':
-            # Translate the read_only flag if None.
-            if read_only == None:
-                read_only = True
-
-            # Init.
-            sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-            # Left padding.
-            sub_sizer.AddSpacer(padding)
-
-            # The description.
-            text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
-            text.SetFont(font.normal)
-            sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
-
-            # The divider.
-            if not divider:
-                divider = parent._div_left
-
-            # Spacing.
-            x, y = text.GetSize()
-            sub_sizer.AddSpacer((divider - x, 0))
-
-            # The input field.
-            self._field = wx.TextCtrl(parent, -1, '')
-            self._field.SetMinSize((50, parent.height_element))
-            self._field.SetFont(font.normal)
-            sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-
-            # Read-only.
-            if read_only:
-                self._field.SetEditable(False)
-                colour = parent.GetBackgroundColour()
-                self._field.SetOwnBackgroundColour(colour)
-
-            # A little spacing.
-            sub_sizer.AddSpacer(5)
-
-            # The file selection button.
-            button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.edit_rename, wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((parent.height_element, parent.height_element))
-            sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-            parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)
-
-            # Right padding.
-            sub_sizer.AddSpacer(padding)
-
-            # Add to the main sizer.
-            sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
-
-            # Spacing below the widget.
-            if spacer == None:
-                sizer.AddStretchSpacer()
-            else:
-                sizer.AddSpacer(spacer)
-
-            # Tooltip.
-            if tooltip:
-                text.SetToolTipString(tooltip)
-                self._field.SetToolTipString(tooltip)
-
-            # Set the default value.
-            if self.default != None:
-                self._field.SetValue(self.convert_to_gui(self.default))
-
-        # Initialise the combo list input field.
-        elif self.element_type == 'combo_list':
-            # Translate the read_only flag if None.
-            if read_only == None:
-                read_only = False
-
-            # Set up the Combo_list object.
-            self._field = Combo_list(parent, sizer, desc, value_type=value_type, n=combo_list_size, choices=combo_choices, data=combo_data, default=default, tooltip=tooltip, read_only=read_only)
-
-        # Unknown field.
-        else:
-            raise RelaxError("Unknown element type '%s'." % self.element_type)
-
-
-    def Clear(self):
-        """Special method for clearing or resetting the GUI element."""
-
-        # Clear the value from a TextCtrl or ComboBox.
-        if self.element_type in ['default', 'combo_list']:
-            self._field.Clear()
-
-
-    def GetValue(self):
-        """Special method for returning the sequence values of the GUI element.
-
-        @return:    The sequence of values.
-        @rtype:     sequence type
-        """
-
-        # The value.
-        value = self._field.GetValue()
-
-        # Convert, handling bad user behaviour.
-        try:
-            value = self.convert_from_gui(value)
-        except RelaxError:
-            if self.seq_type == 'list':
-                value = []
-            else:
-                value = ()
-
-        # Handle single values.
-        if self.single_value and len(value) == 1:
-            if self.seq_type == 'list' and not isinstance(value, list):
-                value = [value]
-            elif self.seq_type == 'tuple' and not isinstance(value, tuple):
-                value = (value,)
-
-        # Handle empty values.
-        if len(value) == 0:
-            return None
-
-        # Return the value.
-        return value
-
-
-    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
-        """Special wizard method for resetting the list of choices in a ComboBox type element.
-
-        @param key:             The key corresponding to the desired GUI element.
-        @type key:              str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo_list'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo_list'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo_list'.
-        @type combo_default:    str or None
-        """
-
-        # The ComboBox list.
-        if self.element_type == 'combo_list':
-            self._field.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
-
-
-    def SetValue(self, value):
-        """Special method for setting the value of the GUI element.
-
-        @param value:   The value to set.
-        @type value:    list of str
-        """
-
-        # Handle single values.
-        if self.single_value and len(value) == 1:
-            value = value[0]
-
-        # Convert and set the value.
-        self._field.SetValue(self.convert_to_gui(value))
-
-
-    def open_dialog(self, event):
-        """Open a special dialog for inputting a list of text values.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Initialise the model selection window.
-        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type)
-
-        # Set the model selector window selections.
-        win.SetValue(self.GetValue())
-
-        # Show the model selector window.
-        if status.show_gui:
-            win.ShowModal()
-            win.Close()
-
-        # Get the value.
-        value = win.GetValue()
-
-        # No sequence data.
-        if not len(value):
-            self.Clear()
-
-        # Set the values.
-        else:
-            self.SetValue(value)
-
-        # Destroy the window.
-        del win
-
-
-
 class Selector_bool:
     """Wizard GUI element for boolean selection."""
 
@@ -689,6 +424,271 @@ class Selector_file:
 
         # Convert and set the value for a TextCtrl.
         self._field.SetValue(str_to_gui(value))
+
+
+
+class Sequence:
+    """Wizard GUI element for the input of all types of Python sequence objects.
+
+    The supported Python types include:
+        - list of floats
+        - list of integers
+        - list of strings
+        - tuple of floats
+        - tuple of integers
+        - tuple of strings
+    """
+
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
+        """Set up the element.
+
+        @keyword name:              The name of the element to use in titles, etc.
+        @type name:                 str
+        @keyword default:           The default value of the element.
+        @type default:              sequence object
+        @keyword parent:            The wizard GUI element.
+        @type parent:               wx.Panel instance
+        @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
+        @type element_type:         str
+        @keyword seq_type:          The type of Python sequence.  This should be one of 'list' or 'tuple'.
+        @type seq_type:             str
+        @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:           str
+        @keyword min:               For a SpinCtrl, the minimum value allowed.
+        @type min:                  int
+        @keyword max:               For a SpinCtrl, the maximum value allowed.
+        @type max:                  int
+        @keyword sizer:             The sizer to put the input field widget into.
+        @type sizer:                wx.Sizer instance
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:        list of str
+        @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:           list
+        @keyword combo_list_size:   The number of initial entries in a Combo_list object.
+        @type combo_list_size:      int or None
+        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
+        @type tooltip:              str
+        @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:              None or int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        @keyword single_value:      A flag which if True will cause single input values to be treated as single values rather than a list or tuple.
+        @type single_value:         bool
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
+        """
+
+        # Store the args.
+        self.name = name
+        self.default = default
+        self.element_type = element_type
+        self.seq_type = seq_type
+        self.value_type = value_type
+        self.single_value = single_value
+
+        # The sequence types.
+        if seq_type == 'list':
+            self.convert_from_gui = gui_to_list
+            self.convert_to_gui =   list_to_gui
+        elif seq_type == 'tuple':
+            self.convert_from_gui = gui_to_tuple
+            self.convert_to_gui =   tuple_to_gui
+        else:
+            raise RelaxError("Unknown sequence type '%s'." % seq_type)
+
+        # Initialise the default element.
+        if self.element_type == 'default':
+            # Translate the read_only flag if None.
+            if read_only == None:
+                read_only = True
+
+            # Init.
+            sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+            # Left padding.
+            sub_sizer.AddSpacer(padding)
+
+            # The description.
+            text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
+            text.SetFont(font.normal)
+            sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+            # The divider.
+            if not divider:
+                divider = parent._div_left
+
+            # Spacing.
+            x, y = text.GetSize()
+            sub_sizer.AddSpacer((divider - x, 0))
+
+            # The input field.
+            self._field = wx.TextCtrl(parent, -1, '')
+            self._field.SetMinSize((50, parent.height_element))
+            self._field.SetFont(font.normal)
+            sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+
+            # Read-only.
+            if read_only:
+                self._field.SetEditable(False)
+                colour = parent.GetBackgroundColour()
+                self._field.SetOwnBackgroundColour(colour)
+
+            # A little spacing.
+            sub_sizer.AddSpacer(5)
+
+            # The file selection button.
+            button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.edit_rename, wx.BITMAP_TYPE_ANY))
+            button.SetMinSize((parent.height_element, parent.height_element))
+            sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+            parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)
+
+            # Right padding.
+            sub_sizer.AddSpacer(padding)
+
+            # Add to the main sizer.
+            sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+            # Spacing below the widget.
+            if spacer == None:
+                sizer.AddStretchSpacer()
+            else:
+                sizer.AddSpacer(spacer)
+
+            # Tooltip.
+            if tooltip:
+                text.SetToolTipString(tooltip)
+                self._field.SetToolTipString(tooltip)
+
+            # Set the default value.
+            if self.default != None:
+                self._field.SetValue(self.convert_to_gui(self.default))
+
+        # Initialise the combo list input field.
+        elif self.element_type == 'combo_list':
+            # Translate the read_only flag if None.
+            if read_only == None:
+                read_only = False
+
+            # Set up the Combo_list object.
+            self._field = Combo_list(parent, sizer, desc, value_type=value_type, n=combo_list_size, choices=combo_choices, data=combo_data, default=default, tooltip=tooltip, read_only=read_only)
+
+        # Unknown field.
+        else:
+            raise RelaxError("Unknown element type '%s'." % self.element_type)
+
+
+    def Clear(self):
+        """Special method for clearing or resetting the GUI element."""
+
+        # Clear the value from a TextCtrl or ComboBox.
+        if self.element_type in ['default', 'combo_list']:
+            self._field.Clear()
+
+
+    def GetValue(self):
+        """Special method for returning the sequence values of the GUI element.
+
+        @return:    The sequence of values.
+        @rtype:     sequence type
+        """
+
+        # The value.
+        value = self._field.GetValue()
+
+        # Convert, handling bad user behaviour.
+        try:
+            value = self.convert_from_gui(value)
+        except RelaxError:
+            if self.seq_type == 'list':
+                value = []
+            else:
+                value = ()
+
+        # Handle single values.
+        if self.single_value and len(value) == 1:
+            if self.seq_type == 'list' and not isinstance(value, list):
+                value = [value]
+            elif self.seq_type == 'tuple' and not isinstance(value, tuple):
+                value = (value,)
+
+        # Handle empty values.
+        if len(value) == 0:
+            return None
+
+        # Return the value.
+        return value
+
+
+    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo_list'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo_list'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo_list'.
+        @type combo_default:    str or None
+        """
+
+        # The ComboBox list.
+        if self.element_type == 'combo_list':
+            self._field.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
+
+
+    def SetValue(self, value):
+        """Special method for setting the value of the GUI element.
+
+        @param value:   The value to set.
+        @type value:    list of str
+        """
+
+        # Handle single values.
+        if self.single_value and len(value) == 1:
+            value = value[0]
+
+        # Convert and set the value.
+        self._field.SetValue(self.convert_to_gui(value))
+
+
+    def open_dialog(self, event):
+        """Open a special dialog for inputting a list of text values.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the model selection window.
+        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type)
+
+        # Set the model selector window selections.
+        win.SetValue(self.GetValue())
+
+        # Show the model selector window.
+        if status.show_gui:
+            win.ShowModal()
+            win.Close()
+
+        # Get the value.
+        value = win.GetValue()
+
+        # No sequence data.
+        if not len(value):
+            self.Clear()
+
+        # Set the values.
+        else:
+            self.SetValue(value)
+
+        # Destroy the window.
+        del win
 
 
 
