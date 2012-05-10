@@ -33,6 +33,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('n_state_model')
 uf_class.title = "Class for the N-state models."
 uf_class.menu_text = "&n_state_model"
+uf_class.gui_icon = "relax.n_state_model"
 
 
 # The n_state_model.CoM user function.
@@ -81,6 +82,7 @@ uf.menu_text = "&CoM"
 uf.wizard_height_desc = 350
 uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
 
 # The n_state_model.cone_pdb user function.
@@ -151,6 +153,7 @@ uf.backend = n_state_model_obj._cone_pdb
 uf.menu_text = "&cone_pdb"
 uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
 
 # The n_state_model.elim_no_prob user function.
@@ -170,6 +173,7 @@ uf.menu_text = "&elim_no_prob"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_size = (600, 300)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
 
 # The n_state_model.number_of_states user function.
@@ -193,7 +197,9 @@ relax> n_state_model.number_of_states(N=8)
 """
 uf.backend = n_state_model_obj._number_of_states
 uf.menu_text = "&number_of_states"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
 
 # The n_state_model.ref_domain user function.
@@ -216,6 +222,8 @@ relax> n_state_model.ref_domain(ref='C')
 """
 uf.backend = n_state_model_obj._ref_domain
 uf.menu_text = "&ref_domain"
+uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
 
 # The n_state_model.select_model user function.
@@ -248,5 +256,7 @@ relax> n_state_model.select_model(model='populations')
 """
 uf.backend = n_state_model_obj._select_model
 uf.menu_text = "&select_model"
+uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 400
 uf.wizard_size = (800, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
