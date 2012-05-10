@@ -24,6 +24,7 @@
 """Module containing a set of special GUI elements to be used in the relax wizards."""
 
 # Python module imports.
+from copy import deepcopy
 from string import upper
 import sys
 import wx
@@ -1240,6 +1241,7 @@ class Value:
         self.name = name
         self.default = default
         self.element_type = element_type
+        self.can_be_none = can_be_none
 
         # The value types.
         if value_type in ['float', 'num']:
@@ -1422,9 +1424,14 @@ class Value:
             # First clear all data.
             self.Clear()
 
-            # The data.
+            # Set the data if needed.
             if combo_data == None:
-                combo_data = combo_choices
+                combo_data = deepcopy(combo_choices)
+
+            # Handle None in combo boxes by prepending a None element to the lists.
+            if self.can_be_none:
+                combo_choices.insert(0, '')
+                combo_data.insert(0, None)
 
             # Loop over the choices and data, adding both to the end.
             for i in range(len(combo_choices)):
