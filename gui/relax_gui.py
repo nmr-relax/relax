@@ -70,7 +70,7 @@ from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
-from gui.settings import Free_file_format, load_sequence
+from gui.settings import Free_file_format
 from gui.uf_objects import Uf_storage, Uf_object
 from gui.uf_pages import User_functions; user_functions = User_functions()
 

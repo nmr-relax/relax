@@ -40,35 +40,6 @@ from gui import paths
 from gui.wizard import Wiz_page
 
 
-def load_sequence():
-    """GUI element for loading the sequence file."""
-
-    # The dialog.
-    dialog = RelaxFileDialog(parent=self, message='Select a sequence file', style=wx.FD_OPEN)
-
-    # Show the dialog and catch if no file has been selected.
-    if status.show_gui and dialog.ShowModal() != wx.ID_OK:
-        # Don't do anything.
-        return
-
-    # The file.
-    seqfile = dialog.get_file()
-
-    # Does not exist.
-    if not access(seqfile, F_OK):
-        error_message("The file '%s' does not exist." % seqfile)
-        return None
-
-    # Not a file.
-    if path.isdir(seqfile):
-        error_message("The selection '%s' is a directory, not a file." % seqfile)
-        return None
-
-    # Return the file.
-    return seqfile
-
-
-
 class Base_window(wx.Dialog):
     """Base class for the settings windows."""
 
