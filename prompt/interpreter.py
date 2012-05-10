@@ -63,7 +63,6 @@ from temperature import Temp
 # User classes.
 from residue import Residue
 from structure import Structure
-from pcs import PCS
 from rdc import RDC
 from relax_fit import Relax_fit
 from results import Results
@@ -189,7 +188,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['pcs'] = PCS()
         objects['rdc'] = RDC()
         objects['relax_fit'] = Relax_fit()
         objects['residue'] = Residue()
