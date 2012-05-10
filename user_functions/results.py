@@ -64,7 +64,7 @@ uf.add_keyarg(
     desc = "The name of the file to read results from."
 )
 uf.add_keyarg(
-    name = "directory",
+    name = "dir",
     py_type = "str",
     arg_type = "dir",
     desc_short = "directory name",
@@ -94,7 +94,7 @@ uf.add_keyarg(
     desc = "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method."
 )
 uf.add_keyarg(
-    name = "directory",
+    name = "dir",
     default = "pipe_name",
     py_type = "str",
     arg_type = "dir",
