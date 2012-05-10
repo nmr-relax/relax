@@ -34,6 +34,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('relax_fit')
 uf_class.title = "Class for relaxation curve fitting."
 uf_class.menu_text = "&relax_fit"
+uf_class.gui_icon = "relax.relax_fit"
 
 
 # The relax_fit.relax_time user function.
