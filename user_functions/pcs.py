@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'pcs' pseudocontact shift user function data."""
+"""Module containing the pcs pseudocontact shift user function data."""
 
 # relax module imports.
 from generic_fns import align_tensor, pcs, pipes
@@ -48,10 +48,11 @@ uf.add_keyarg(
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
     wiz_combo_iter = align_tensor.get_ids,
-    wiz_read_only = True
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.desc = """
-This will back calculated the pseudo-contact shifts if the paramagnetic centre, temperature and magnetic field strength has been specified, an alignment tensor is present, and atomic positions have been loaded into the relax data store.
+This will back calculate the pseudo-contact shifts if the paramagnetic centre, temperature and magnetic field strength has been specified, an alignment tensor is present, and atomic positions have been loaded into the relax data store.
 """
 uf.backend = pcs.back_calc
 uf.menu_text = "&back_calc"
@@ -474,7 +475,7 @@ uf.add_keyarg(
     desc = "A flag which if True will cause the file to be overwritten."
 )
 uf.desc = """
-If no directory name is given, the file will be placed in the current working directory. The alignment ID is required for selecting which PCS data set will be written to file.
+If no directory name is given, the file will be placed in the current working directory.  The alignment ID is required for selecting which PCS data set will be written to file.
 """
 uf.backend = pcs.write
 uf.menu_text = "&write"
