@@ -542,9 +542,10 @@ class Sequence:
             # A little spacing.
             sub_sizer.AddSpacer(5)
 
-            # The file selection button.
+            # The edit button.
             button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.edit_rename, wx.BITMAP_TYPE_ANY))
             button.SetMinSize((parent.height_element, parent.height_element))
+            button.SetToolTipString("Edit the values.")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)
 
