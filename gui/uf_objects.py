@@ -57,7 +57,7 @@ class Uf_object(object):
         wizard = Wiz_window(parent=self._parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
         # Create the page.
-        page = Uf_page(self._name, parent=wizard, height_desc=self._height_desc)
+        page = Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
 
         # Add the page to the wizard.
         wizard.add_page(page, apply_button=self._apply_button)
@@ -66,7 +66,7 @@ class Uf_object(object):
         wizard.run()
 
 
-    def __init__(self, name, parent, title=None, size=None, height_desc=None, apply_button=True):
+    def __init__(self, name, parent, title=None, size=None, height_desc=None, apply_button=True, sync=False):
         """Set up the object.
 
         @param name:            The name of the user function.
@@ -81,6 +81,8 @@ class Uf_object(object):
         @type height_desc:      int or None
         @keyword apply_button:  A flag specifying if the apply button should be shown or not.  This defaults to True.
         @type apply_button:     bool
+        @keyword sync:          A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
+        @type sync:             bool
         """
 
         # Store the args.
@@ -90,6 +92,7 @@ class Uf_object(object):
         self._size = size
         self._height_desc = height_desc
         self._apply_button = apply_button
+        self._sync = sync
 
 
 
