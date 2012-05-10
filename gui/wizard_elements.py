@@ -55,7 +55,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -96,6 +96,8 @@ class Sequence:
         @type single_value:         bool
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Store the args.
@@ -702,7 +704,7 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -743,6 +745,8 @@ class Sequence_2D(Sequence):
         @type spacer:               None or int
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Store some of the args.
@@ -1137,7 +1141,7 @@ class Value:
         - strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, min=0, max=1000, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, min=0, max=1000, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
         """Set up the base value element.
 
         @keyword name:          The name of the element to use in titles, etc.
@@ -1175,12 +1179,14 @@ class Value:
         @type spacer:           None or int
         @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
         @type read_only:        bool
+        @keyword can_be_none:   A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:      bool
         """
 
         # Set the default.
         if element_type == 'default':
             # Set the default to a SpinCtrl for integers.
-            if value_type == 'int':
+            if value_type == 'int' and not can_be_none:
                 element_type = 'spin'
 
             # Set the default to a TextCtrl for all other types.

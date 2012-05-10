@@ -683,7 +683,7 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_sequence(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=None, max=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False):
+    def element_sequence(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=None, max=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
@@ -722,16 +722,18 @@ class Wiz_page(wx.Panel):
         @type single_value:         bool
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Create the element.
-        element = Sequence(name=key, default=default, element_type=element_type, seq_type=seq_type, value_type=value_type, min=min, max=max, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, single_value=single_value, read_only=read_only)
+        element = Sequence(name=key, default=default, element_type=element_type, seq_type=seq_type, value_type=value_type, min=min, max=max, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, single_value=single_value, read_only=read_only, can_be_none=can_be_none)
 
         # Store it.
         self._elements[key] = element
 
 
-    def element_sequence_2D(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=None, max=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_sequence_2D(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=None, max=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
@@ -770,16 +772,18 @@ class Wiz_page(wx.Panel):
         @type spacer:               None or int
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Create the element.
-        element = Sequence_2D(name=key, parent=self, default=default, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, min=min, max=max, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Sequence_2D(name=key, parent=self, default=default, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, min=min, max=max, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only, can_be_none=can_be_none)
 
         # Store it.
         self._elements[key] = element
 
 
-    def element_value(self, key=None, default=None, element_type='text', value_type=None, min=None, max=None, sizer=None, desc=None, combo_choices=None, combo_data=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def element_value(self, key=None, default=None, element_type='text', value_type=None, min=None, max=None, sizer=None, desc=None, combo_choices=None, combo_data=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
         """Set up the string element and store it.
 
         @keyword key:           The dictionary key to store the element with.
@@ -815,10 +819,12 @@ class Wiz_page(wx.Panel):
         @type spacer:           None or int
         @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
         @type read_only:        bool
+        @keyword can_be_none:   A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:      bool
         """
 
         # Create the element.
-        element = Value(name=key, parent=self, default=default, element_type=element_type, value_type=value_type, min=min, max=max, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        element = Value(name=key, parent=self, default=default, element_type=element_type, value_type=value_type, min=min, max=max, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only, can_be_none=can_be_none)
 
         # Store it.
         self._elements[key] = element
