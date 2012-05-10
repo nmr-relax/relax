@@ -109,6 +109,8 @@ class Uf_container(object):
     @type wizard_height_desc:   int
     @ivar wizard_apply_button:  A flag specifying if the apply button should be shown or not.  This defaults to True.
     @type wizard_apply_button:  bool
+    @ivar gui_sync:             A GUI flag which if left on the default of False will cause user functions to be called in asynchronous mode.  If changed to True, then synchronous operation of the user functions will occur.
+    @type gui_sync:             bool
     """
 
     # The list of modifiable objects (anything else will be rejected to prevent coding errors).
@@ -127,6 +129,7 @@ class Uf_container(object):
             'wizard_image',
             'wizard_height_desc',
             'wizard_apply_button'
+            'gui_sync',
     ]
 
 
@@ -148,6 +151,7 @@ class Uf_container(object):
         self.wizard_image = IMAGE_PATH + "relax.gif"
         self.wizard_height_desc = 220
         self.wizard_apply_button = True
+        self.gui_sync = False
 
 
     def __setattr__(self, name, value):
