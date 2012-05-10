@@ -860,7 +860,7 @@ class Sequence_window(wx.Dialog):
             raise RelaxError("Unknown base data type '%s'." % value_type)
 
         # The title of the dialog.
-        title = "The sequence of %s" % name
+        title = "Edit the %s values." % name
 
         # Set up the dialog.
         wx.Dialog.__init__(self, None, id=-1, title=title)
