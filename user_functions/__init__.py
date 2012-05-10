@@ -58,6 +58,7 @@ __all__ += [
     'n_state_model',
     'noe',
     'palmer',
+    'paramag',
     'pipe',
     'pymol_control',
     'relax_data',
@@ -90,6 +91,7 @@ import user_functions.monte_carlo
 import user_functions.n_state_model
 import user_functions.noe
 import user_functions.palmer
+import user_functions.paramag
 import user_functions.pipe
 import user_functions.pymol_control
 import user_functions.relax_data
