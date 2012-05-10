@@ -56,7 +56,6 @@ from status import Status; status = Status()
 
 # User functions.
 from gpl import GPL
-from reset import Reset
 from sys_info import Sys_info
 from temperature import Temp
 
@@ -175,12 +174,10 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        reset = Reset()
         sys_info = Sys_info()
         temp = Temp()
 
         # Place the user functions in the local namespace.
-        objects['reset'] = reset.reset
         objects['sys_info'] = sys_info.sys_info
         objects['temperature'] = temp.set
 

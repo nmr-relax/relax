@@ -22,18 +22,20 @@
 
 # relax module imports.
 import generic_fns.reset
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Reset:
-    """Class containing the function for reinitialising the relax data storage object."""
-
-    def reset(self):
-        """Reset relax.
-
-        All of the data of the relax data storage object will be erased and hence relax will return
-        to its initial state.
-        """
-
-        # Execute the functional code.
-        generic_fns.reset.reset()
+# The reset user function.
+uf = uf_info.add_uf('reset')
+uf.title = "Reinitialise the relax data storage object."
+uf.title_short = "Reset relax."
+uf.desc = """
+All of the data of the relax data storage object will be erased and hence relax will return to its initial state.
+"""
+uf.backend = generic_fns.reset.reset
+uf.menu_text = "&reset"
+uf.gui_icon = "oxygen.actions.dialog-close"
+uf.wizard_size = (600, 300)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'reset.png'
