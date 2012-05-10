@@ -61,7 +61,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from residue import Residue
 from structure import Structure
 from results import Results
 from sequence import Sequence
@@ -186,7 +185,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['residue'] = Residue()
         objects['results'] = Results()
         objects['sequence'] = Sequence()
         objects['spectrum'] = Spectrum()

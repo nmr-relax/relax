@@ -65,6 +65,7 @@ __all__ += [
     'rdc',
     'relax_data',
     'relax_fit',
+    'residue',
     'select',
     'state'
 ]
@@ -101,6 +102,7 @@ import user_functions.pymol_control
 import user_functions.rdc
 import user_functions.relax_data
 import user_functions.relax_fit
+import user_functions.residue
 import user_functions.select
 import user_functions.state
 

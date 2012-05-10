@@ -107,6 +107,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'molecule.png'
 uf = uf_info.add_uf('molecule.create')
 uf.title = "Create a new molecule."
 uf.title_short = "Molecule creation."
+uf.display = True
 uf.add_keyarg(
     name = "mol_name",
     py_type = "str",
@@ -156,8 +157,8 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.desc = """
-        This can be used to delete a single or sets of molecules from the relax data store.  The molecule will be deleted from the current data pipe.
-        """
+This can be used to delete a single or sets of molecules from the relax data store.  The molecule will be deleted from the current data pipe.
+"""
 uf.additional = [id_string_doc]
 uf.backend = delete_molecule
 uf.menu_text = "&delete"
