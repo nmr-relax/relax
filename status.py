@@ -136,7 +136,7 @@ class Status(object):
         """Set up all the observer objects."""
 
         # A container for all the observers.
-        self.observers = Status_container()
+        self.observers = Observer_container()
 
         # The observer object for status changes in the auto-analyses.
         self.observers.auto_analyses = Observer('auto_analyses')
@@ -482,7 +482,7 @@ class Observer(object):
         # Does not exist, so return (allow multiple code paths to unregister methods).
         if key not in self._keys:
             if self._status.debug:
-                sys.stdout.write("debug> The key '%s' does not exist." % key)
+                sys.stdout.write("debug> The key '%s' does not exist.\n" % key)
             return
 
         # Remove the method from the dictionary of callbacks.
@@ -585,7 +585,23 @@ class Relax_lock:
 
 
 
-class Status_container:
-    """The generic empty container for the status data."""
+class Observer_container:
+    """The container for holding all the observer objects."""
 
+    def info(self):
+        """Print out info about all the status objects."""
 
+        # Blacklisted objects.
+        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+
+        # Loop over all objects in this container.
+        for name in dir(self):
+            # Skip blacklisted objects.
+            if name in blacklist:
+                continue
+
+            # Get the object.
+            obj = getattr(self, name)
+
+            # An observer object.
+            print("Observer '%s' keys: %s" % (obj._name, obj._keys))
