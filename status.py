@@ -482,7 +482,7 @@ class Observer(object):
         # Does not exist, so return (allow multiple code paths to unregister methods).
         if key not in self._keys:
             if self._status.debug:
-                sys.stdout.write("debug> The key '%s' does not exist." % key)
+                sys.stdout.write("debug> The key '%s' does not exist.\n" % key)
             return
 
         # Remove the method from the dictionary of callbacks.
