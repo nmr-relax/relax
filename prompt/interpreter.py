@@ -61,7 +61,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from n_state_model import N_state_model
 from residue import Residue
 from structure import Structure
 from paramag import Paramag
@@ -191,7 +190,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['n_state_model'] = N_state_model()
         objects['paramag'] = Paramag()
         objects['pcs'] = PCS()
         objects['rdc'] = RDC()
