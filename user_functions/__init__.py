@@ -69,6 +69,7 @@ __all__ += [
     'reset',
     'results',
     'select',
+    'sequence',
     'state'
 ]
 
@@ -108,6 +109,7 @@ import user_functions.residue
 import user_functions.reset
 import user_functions.results
 import user_functions.select
+import user_functions.sequence
 import user_functions.state
 
 # Import the data structure.
