@@ -36,6 +36,7 @@ uf.title_short = "Model selection."
 uf.display = True
 uf.add_keyarg(
     name = "method",
+    default = "AIC",
     py_type = "str",
     desc_short = "model selection method",
     desc = "The model selection technique (see below).",
