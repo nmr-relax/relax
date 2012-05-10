@@ -62,6 +62,7 @@ __all__ += [
     'pcs',
     'pipe',
     'pymol_control',
+    'rdc',
     'relax_data',
     'select',
     'state'
@@ -96,6 +97,7 @@ import user_functions.paramag
 import user_functions.pcs
 import user_functions.pipe
 import user_functions.pymol_control
+import user_functions.rdc
 import user_functions.relax_data
 import user_functions.select
 import user_functions.state
