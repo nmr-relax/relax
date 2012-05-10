@@ -267,7 +267,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The optional name of the file."
+    desc = "The optional name of the file.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "dir",
