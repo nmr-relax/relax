@@ -70,7 +70,7 @@ from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
-from gui.settings import Free_file_format
+from gui.components.free_file_format import Free_file_format_window
 from gui.uf_objects import Uf_storage, Uf_object
 from gui.uf_pages import User_functions; user_functions = User_functions()
 
@@ -419,7 +419,7 @@ class Main(wx.Frame):
         """
 
         # Build the window.
-        win = Free_file_format()
+        win = Free_file_format_window()
 
         # Show the window.
         if status.show_gui:

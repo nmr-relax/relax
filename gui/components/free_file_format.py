@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,29 +22,23 @@
 ###############################################################################
 
 # Python module imports.
-from os import F_OK, access, path, sep
-import sys
 import wx
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.message import error_message
-from gui.misc import gui_to_int, int_to_gui
 from gui import paths
 from gui.wizard import Wiz_page
 
 
-class Base_window(wx.Dialog):
-    """Base class for the settings windows."""
+class Free_file_format_window(wx.Dialog, Wiz_page):
+    """The free file format setting window."""
 
     # The window size.
-    SIZE = (600, 600)
+    SIZE = (500, 550)
 
     # A border.
     BORDER = 10
@@ -52,11 +46,15 @@ class Base_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (100, 33)
 
-    def __init__(self, parent=None, id=-1, title='', heading='', style=wx.DEFAULT_FRAME_STYLE):
+    def __init__(self, parent=None):
         """Set up the window."""
 
         # Execute the base __init__() method.
-        wx.Dialog.__init__(self, parent, id=id, title=title, style=style)
+        wx.Dialog.__init__(self, parent, id=-1, title="Free file format", style=wx.DEFAULT_FRAME_STYLE)
+
+        # The sizes.
+        self._main_size = self.SIZE[0] - 2*self.BORDER
+        self._div_left = self._main_size / 2
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -65,7 +63,7 @@ class Base_window(wx.Dialog):
         self.main_sizer = self.build_frame()
 
         # The heading.
-        text = wx.StaticText(self, -1, heading)
+        text = wx.StaticText(self, -1, "Settings for the free file format")
         text.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.main_sizer.Add(text, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
         self.main_sizer.AddStretchSpacer()
@@ -134,11 +132,17 @@ class Base_window(wx.Dialog):
 
 
     def add_centre(self, sizer):
-        """Dummy base class method for adding the centre of the settings window.
+        """Add the centre of the free file format settings window.
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
         """
+
+        # The widget.
+        self.free_file_format(sizer, data_cols=True, save=False, reset=False)
+
+        # Spacing.
+        self.main_sizer.AddStretchSpacer()
 
 
     def build_frame(self):
@@ -166,17 +170,6 @@ class Base_window(wx.Dialog):
         return central_sizer
 
 
-    def save(self, event):
-        """Dummy base class save method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Destroy the window.
-        self.Destroy()
-
-
     def cancel(self, event):
         """Close the window.
 
@@ -186,38 +179,6 @@ class Base_window(wx.Dialog):
 
         # Destroy the window.
         self.Destroy()
-
-
-
-class Free_file_format(Base_window, Wiz_page):
-    """The free file format setting window."""
-
-    # The window size.
-    SIZE = (500, 550)
-
-    def __init__(self, parent=None):
-        """Set up the window."""
-
-        # The sizes.
-        self._main_size = self.SIZE[0] - 2*self.BORDER
-        self._div_left = self._main_size / 2
-
-        # Execute the base __init__() method.
-        super(Free_file_format, self).__init__(parent=parent, id=-1, title="Free file format", heading="Settings for the free file format")
-
-
-    def add_centre(self, sizer):
-        """Add the centre of the free file format settings window.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # The widget.
-        self.free_file_format(sizer, data_cols=True, save=False, reset=False)
-
-        # Spacing.
-        self.main_sizer.AddStretchSpacer()
 
 
     def reset(self, event):
