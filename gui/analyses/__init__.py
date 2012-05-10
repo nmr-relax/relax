@@ -636,6 +636,21 @@ class Analysis_controller:
     def post_reset(self):
         """Post relax data store reset event handler."""
 
+        # Debugging set up.
+        if status.debug:
+            fn_name = sys._getframe().f_code.co_name
+            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
+            class_name = self.__class__.__name__
+            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
+            print("\n\n")
+            print("debug> %s:  Deleting all analyses." % full_name)
+
+        # Unregister all observer objects prior to analysis deletion.  This is to prevent queued wx events being sent to dead or non-existent objects.
+        if status.debug:
+            print("debug> %s:  Unregistering all methods with the observer objects." % full_name)
+        for i in range(self._num_analyses):
+            self._analyses[i].observer_register(remove=True)
+
         # Delete all tabs.
         while self._num_analyses:
             # The index of the tab to remove.
@@ -651,8 +666,8 @@ class Analysis_controller:
             # Decrement the number of analyses.
             self._num_analyses -= 1
 
-            # Set the initial state.
-            self.set_init_state()
+        # Set the initial state.
+        self.set_init_state()
 
 
     def set_init_state(self):
