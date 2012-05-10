@@ -33,6 +33,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 uf_class = uf_info.add_class('paramag')
 uf_class.title = "Class for handling paramagnetic information."
 uf_class.menu_text = "&paramag"
+uf_class.gui_icon = "relax.align_tensor"
 
 
 # The paramag.centre user function.
@@ -124,3 +125,4 @@ uf.menu_text = "&centre"
 uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 800)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
