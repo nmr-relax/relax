@@ -532,7 +532,7 @@ class Analysis_controller:
         self._current = event.GetSelection()
 
         # Handel calls to the reset user function!
-        if not hasattr(ds, 'relax_gui'):
+        if ds.is_empty():
             return
 
         # Switch to the major data pipe of that page if not the current one.
