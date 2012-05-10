@@ -63,7 +63,6 @@ from temperature import Temp
 # User classes.
 from residue import Residue
 from structure import Structure
-from relax_fit import Relax_fit
 from results import Results
 from sequence import Sequence
 from spectrum import Spectrum
@@ -187,7 +186,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['relax_fit'] = Relax_fit()
         objects['residue'] = Residue()
         objects['results'] = Results()
         objects['sequence'] = Sequence()
