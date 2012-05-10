@@ -111,7 +111,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "colour_start_rgb",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "starting colour (RGB colour array)",
     desc = "The starting colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the starting colour name cannot be given.",
     can_be_none = True
@@ -126,7 +126,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "colour_end_rgb",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "ending colour (RGB colour array)",
     desc = "The ending colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the ending colour name cannot be given.",
     can_be_none = True
@@ -232,7 +232,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "colour_start_rgb",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "starting colour (RGB colour array)",
     desc = "The starting colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the starting colour name cannot be given.",
     can_be_none = True
@@ -247,7 +247,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "colour_end_rgb",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "ending colour (RGB colour array)",
     desc = "The ending colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the ending colour name cannot be given.",
     can_be_none = True

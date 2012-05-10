@@ -43,7 +43,7 @@ uf.title_short = "Paramagnetic centre selection."
 uf.add_keyarg(
     name = "pos",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "atomic position",
     desc = "The atomic position of the paramagnetic centre.",
     can_be_none = True

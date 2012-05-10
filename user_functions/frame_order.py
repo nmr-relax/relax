@@ -130,7 +130,7 @@ uf.title_short = "Pivot point setting."
 uf.add_keyarg(
     name = "pivot",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "pivot point",
     desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates)."
 )

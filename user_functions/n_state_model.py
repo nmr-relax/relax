@@ -44,14 +44,14 @@ uf.add_keyarg(
     name = "pivot_point",
     default = [0.0, 0.0, 0.0],
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "pivot point",
     desc = "The pivot point of the motions between the two domains."
 )
 uf.add_keyarg(
     name = "centre",
     py_type = "num_list",
-    size = 3,
+    dim = 3,
     desc_short = "centre of mass",
     desc = "The optional argument for manually specifying the CoM of the initial position prior to the N rotations to the positions of the N states.",
     can_be_none = True

@@ -207,7 +207,7 @@ uf.add_keyarg(
     name = "params",
     py_type = "num_tuple",
     desc_short = "alignment tensor parameters",
-    size = 5,
+    dim = 5,
     desc = "The alignment tensor data.",
     wiz_read_only = False
 )

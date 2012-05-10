@@ -124,7 +124,7 @@ uf.title_short = "Diffusion tensor set up."
 uf.add_keyarg(
     name = "params",
     py_type = "num_or_num_tuple",
-    size = [4, 6],
+    dim = [4, 6],
     desc_short = "diffusion tensor parameters",
     desc = "The diffusion tensor data."
 )
