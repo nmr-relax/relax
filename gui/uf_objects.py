@@ -37,6 +37,7 @@ from relax_errors import AllRelaxErrors, RelaxError
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI imports.
+from gui.components.free_file_format import Free_file_format
 from gui.errors import gui_raise
 from gui.fonts import font
 from gui.interpreter import Interpreter; interpreter = Interpreter()
@@ -280,7 +281,7 @@ class Uf_page(Wiz_page):
 
         # Add the free format element.
         if free_format:
-            self.free_file_format(sizer, data_cols=free_format_data, padding=3, spacer=0)
+            Free_file_format(sizer, parent=self, data_cols=free_format_data, padding=3, spacer=0)
 
 
     def add_desc(self, sizer, max_y=220):
