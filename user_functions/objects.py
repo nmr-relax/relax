@@ -181,7 +181,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, size=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -195,10 +195,8 @@ class Uf_container(object):
                                             - 'dir' will cause the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
                                             - 'dir sel' will indicate to certain UIs that a dir selection dialog is required.
         @type arg_type:                 str
-        @keyword size:                  The length that a list or tuple must conform to.
-        @type size:                     int or None
-        @keyword dim:                   The dimension that a matrix or list of lists must conform to.
-        @type dim:                      tuple of int or None
+        @keyword size:                  The dimensions that a list or tuple must conform to.  For a 1D sequence, this can be a single value or a tuple of possible sizes.  For a 2D sequence (a numpy matrix or list of lists), this must be a tuple of the fixed dimension sizes, e.g. a 3x5 matrix should be specified as (3, 5).
+        @type size:                     int, tuple of int or None
         @keyword min:                   The minimum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
         @type min:                      int
         @keyword max:                   The maximum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
@@ -249,7 +247,6 @@ class Uf_container(object):
         arg['py_type'] = py_type
         arg['arg_type'] = arg_type
         arg['size'] = size
-        arg['dim'] = dim
         arg['min'] = min
         arg['max'] = max
         arg['desc_short'] = desc_short
