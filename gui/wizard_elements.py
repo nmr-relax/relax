@@ -439,7 +439,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -454,6 +454,8 @@ class Sequence:
         @type seq_type:             str
         @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:           str
+        @keyword dim:               The dimensions that a list or tuple must conform to.  For a 1D sequence, this can be a single value or a tuple of possible sizes.  For a 2D sequence (a numpy matrix or list of lists), this must be a tuple of the fixed dimension sizes, e.g. a 3x5 matrix should be specified as (3, 5).
+        @type dim:                  int, tuple of int or None
         @keyword min:               For a SpinCtrl, the minimum value allowed.
         @type min:                  int
         @keyword max:               For a SpinCtrl, the maximum value allowed.
@@ -490,6 +492,9 @@ class Sequence:
         self.element_type = element_type
         self.seq_type = seq_type
         self.value_type = value_type
+        self.dim = dim
+        self.min = min
+        self.max = max
         self.single_value = single_value
 
         # The sequence types.
@@ -667,7 +672,7 @@ class Sequence:
         """
 
         # Initialise the model selection window.
-        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type)
+        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
 
         # Set the model selector window selections.
         win.SetValue(self.GetValue())
@@ -705,7 +710,7 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -722,6 +727,8 @@ class Sequence_2D(Sequence):
         @type seq_type:             str
         @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:           str
+        @keyword dim:               The dimensions that a list or tuple must conform to.  For a 1D sequence, this can be a single value or a tuple of possible sizes.  For a 2D sequence (a numpy matrix or list of lists), this must be a tuple of the fixed dimension sizes, e.g. a 3x5 matrix should be specified as (3, 5).
+        @type dim:                  int, tuple of int or None
         @keyword min:               For a SpinCtrl, the minimum value allowed.
         @type min:                  int
         @keyword max:               For a SpinCtrl, the maximum value allowed.
@@ -754,7 +761,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
 
 
     def open_dialog(self, event):
@@ -765,7 +772,7 @@ class Sequence_2D(Sequence):
         """
 
         # Initialise the model selection window.
-        win = Sequence_window_2D(name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles)
+        win = Sequence_window_2D(name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles, dim=self.dim)
 
         # Set the model selector window selections.
         win.SetValue(self.GetValue())
@@ -820,7 +827,7 @@ class Sequence_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (150, 33)
 
-    def __init__(self, name='', seq_type='list', value_type='str'):
+    def __init__(self, name='', seq_type='list', value_type='str', dim=None):
         """Set up the string list editor window.
 
         @keyword name:          The name of the window.
@@ -829,11 +836,15 @@ class Sequence_window(wx.Dialog):
         @type seq_type:         str
         @keyword value_type:    The type of Python data expected in the sequence.  This should be one of 'float', 'int', or 'str'.
         @type value_type:       str
+        @keyword dim:           The fixed dimension that the sequence must conform to.
+        @type dim:              int or None
         """
 
         # Store the args.
         self.name = name
         self.seq_type = seq_type
+        self.value_type = value_type
+        self.dim = dim
 
         # The base types.
         if value_type in ['float', 'num']:
@@ -916,7 +927,13 @@ class Sequence_window(wx.Dialog):
 
         # Loop over the entries.
         for i in range(len(values)):
-            self.sequence.InsertStringItem(i, self.convert_to_gui(values[i]))
+            # Fixed dimension sequences - set the values of the pre-created list.
+            if self.dim:
+                self.sequence.SetStringItem(index=i, col=0, label=self.convert_to_gui(values[i]))
+
+            # Variable dimension sequences - append the item to the end of the blank list.
+            else:
+                self.sequence.InsertStringItem(i, self.convert_to_gui(values[i]))
 
 
     def add_buttons(self, sizer):
@@ -930,29 +947,31 @@ class Sequence_window(wx.Dialog):
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(button_sizer, 0, wx.ALIGN_CENTER|wx.ALL, 0)
 
-        # The add button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetToolTipString("Add a row to the list.")
-        button.SetMinSize(self.SIZE_BUTTON)
-        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.append_row, button)
+        # The non-fixed sequence buttons.
+        if not self.dim:
+            # The add button.
+            button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+            button.SetFont(font.normal)
+            button.SetToolTipString("Add a row to the list.")
+            button.SetMinSize(self.SIZE_BUTTON)
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.append_row, button)
 
-        # Spacer.
-        button_sizer.AddSpacer(20)
+            # Spacer.
+            button_sizer.AddSpacer(20)
 
-        # The delete all button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete all")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetToolTipString("Delete all items.")
-        button.SetMinSize(self.SIZE_BUTTON)
-        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.delete_all, button)
+            # The delete all button.
+            button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete all")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+            button.SetFont(font.normal)
+            button.SetToolTipString("Delete all items.")
+            button.SetMinSize(self.SIZE_BUTTON)
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.delete_all, button)
 
-        # Spacer.
-        button_sizer.AddSpacer(20)
+            # Spacer.
+            button_sizer.AddSpacer(20)
 
         # The Ok button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Ok")
@@ -982,6 +1001,11 @@ class Sequence_window(wx.Dialog):
 
         # Add the table to the sizer.
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
+
+        # The fixed dimension sequence - add all the rows needed.
+        if self.dim:
+            for i in range(self.dim):
+                self.append_row(None)
 
 
     def append_row(self, event):
@@ -1024,7 +1048,7 @@ class Sequence_window(wx.Dialog):
 class Sequence_window_2D(Sequence_window):
     """The Python 2D sequence object editor window."""
 
-    def __init__(self, name='', seq_type='list', value_type='str', titles=None):
+    def __init__(self, name='', seq_type='list', value_type='str', dim=None, titles=None):
         """Set up the string list editor window.
 
         @keyword name:          The name of the window.
@@ -1033,21 +1057,23 @@ class Sequence_window_2D(Sequence_window):
         @type seq_type:         str
         @keyword value_type:    The type of Python data expected in the sequence.  This should be one of 'float', 'int', or 'str'.
         @type value_type:       str
-        @keyword titles:        The titles of each of the elements of the fixed width second dimension.
+        @keyword dim:           The fixed dimensions that the sequence must conform to.
+        @type dim:              tuple of int or None
+        @keyword titles:        The titles of each of the elements of the fixed width second dimension.  If the dim argument is given, the length of this list must match the second number.
         @type titles:           list of str
         """
 
-        # Store the args.
-        self.name = name
-        self.seq_type = seq_type
-        self.value_type = value_type
+        # Store the titles.
         self.titles = titles
+        if titles == None:
+            self.titles = [wx.EmptyString] * dim[1]
 
-        # The number of elements.
-        self.num = len(self.titles)
+        # Determine the dimensions if not given.
+        if dim == None:
+            dim = (None, len(self.titles))
 
         # Initialise the base class.
-        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type)
+        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim)
 
 
     def GetValue(self):
@@ -1066,7 +1092,7 @@ class Sequence_window_2D(Sequence_window):
             values.append([])
 
             # Loop over the items.
-            for j in range(self.num):
+            for j in range(self.dim[1]):
                 # The item.
                 item = self.sequence.GetItem(i, j)
 
@@ -1098,11 +1124,16 @@ class Sequence_window_2D(Sequence_window):
 
         # Loop over the entries.
         for i in range(len(values)):
-            # The first value.
-            self.sequence.InsertStringItem(sys.maxint, self.convert_to_gui(values[i][0]))
+            # Fixed dimension sequences - set the first value of the pre-created list.
+            if self.dim:
+                self.sequence.SetStringItem(index=i, col=0, label=self.convert_to_gui(values[i][0]))
+
+            # Variable dimension sequences - append the first value to the end of the blank list.
+            else:
+                self.sequence.InsertStringItem(sys.maxint, self.convert_to_gui(values[i][0]))
 
             # Loop over the values.
-            for j in range(1, self.num):
+            for j in range(1, self.dim[1]):
                 # Set the value.
                 self.sequence.SetStringItem(i, j, self.convert_to_gui(values[i][j]))
 
@@ -1124,12 +1155,19 @@ class Sequence_window_2D(Sequence_window):
         title = "%s%s" % (upper(self.name[0]), self.name[1:])
 
         # Add the columns.
-        for i in range(self.num):
+        print `self.dim`
+        for i in range(self.dim[1]):
+            print `i`
             self.sequence.InsertColumn(i, self.titles[i])
-            self.sequence.SetColumnWidth(i, self.width/self.num)
+            self.sequence.SetColumnWidth(i, self.width/self.dim[1])
 
         # Add the table to the sizer.
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
+
+        # The fixed dimension sequence - add all the rows needed.
+        if self.dim:
+            for i in range(self.dim[0]):
+                self.append_row(None)
 
 
 

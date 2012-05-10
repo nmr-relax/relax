@@ -683,7 +683,7 @@ class Wiz_page(wx.Panel):
         self._elements[key] = element
 
 
-    def element_sequence(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=None, max=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
+    def element_sequence(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=None, max=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
@@ -698,6 +698,8 @@ class Wiz_page(wx.Panel):
         @type seq_type:             str
         @keyword value_type:        The type of Python object that the values of the sequence should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:           str
+        @keyword dim:               The dimensions that a list or tuple must conform to.  For a 1D sequence, this can be a single value or a tuple of possible sizes.  For a 2D sequence (a numpy matrix or list of lists), this must be a tuple of the fixed dimension sizes, e.g. a 3x5 matrix should be specified as (3, 5).
+        @type dim:                  int, tuple of int or None
         @keyword min:               The minimum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
         @type min:                  int
         @keyword max:               The maximum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
@@ -727,13 +729,13 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Sequence(name=key, default=default, element_type=element_type, seq_type=seq_type, value_type=value_type, min=min, max=max, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, single_value=single_value, read_only=read_only, can_be_none=can_be_none)
+        element = Sequence(name=key, default=default, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, single_value=single_value, read_only=read_only, can_be_none=can_be_none)
 
         # Store it.
         self._elements[key] = element
 
 
-    def element_sequence_2D(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, min=None, max=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
+    def element_sequence_2D(self, key=None, default=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=None, max=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
         """Set up the element and store it.
 
         @keyword key:               The dictionary key to store the element with.
@@ -748,6 +750,8 @@ class Wiz_page(wx.Panel):
         @type seq_type:             str
         @keyword value_type:        The type of Python object that the values of the sequence should be.  This can be one of 'float', 'int', or 'str'.
         @type value_type:           str
+        @keyword dim:               The dimensions that a list or tuple must conform to.  For a 1D sequence, this can be a single value or a tuple of possible sizes.  For a 2D sequence (a numpy matrix or list of lists), this must be a tuple of the fixed dimension sizes, e.g. a 3x5 matrix should be specified as (3, 5).
+        @type dim:                  int, tuple of int or None
         @keyword min:               The minimum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
         @type min:                  int
         @keyword max:               The maximum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
@@ -777,7 +781,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Create the element.
-        element = Sequence_2D(name=key, parent=self, default=default, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, min=min, max=max, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only, can_be_none=can_be_none)
+        element = Sequence_2D(name=key, parent=self, default=default, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only, can_be_none=can_be_none)
 
         # Store it.
         self._elements[key] = element
