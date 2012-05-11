@@ -185,7 +185,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=[], wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_size=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -257,7 +257,10 @@ class Uf_container(object):
         arg['desc'] = desc
         arg['list_titles'] = list_titles
         arg['wiz_element_type'] = wiz_element_type
-        arg['wiz_combo_choices'] = wiz_combo_choices
+        if wiz_combo_choices == None:
+            arg['wiz_combo_choices'] = []
+        else:
+            arg['wiz_combo_choices'] = wiz_combo_choices
         arg['wiz_combo_data'] = wiz_combo_data
         arg['wiz_combo_iter'] = wiz_combo_iter
         arg['wiz_combo_list_size'] = wiz_combo_list_size
