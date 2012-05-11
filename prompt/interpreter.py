@@ -56,7 +56,6 @@ from status import Status; status = Status()
 
 # User functions.
 from gpl import GPL
-from temperature import Temp
 
 # User classes.
 from value import Value
@@ -166,12 +165,6 @@ class Interpreter:
 
         # Place functions in the local namespace.
         objects['gpl'] = objects['GPL'] = GPL()
-
-        # Initialise the user functions (those not in user function classes)
-        temp = Temp()
-
-        # Place the user functions in the local namespace.
-        objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
         objects['value'] = Value()

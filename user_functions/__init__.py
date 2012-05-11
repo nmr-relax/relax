@@ -74,7 +74,8 @@ __all__ += [
     'spin',
     'state',
     'structure',
-    'sys_info'
+    'sys_info',
+    'temperature'
 ]
 
 # Import all the modules to set up the data.
@@ -119,6 +120,7 @@ import user_functions.spin
 import user_functions.state
 import user_functions.structure
 import user_functions.sys_info
+import user_functions.temperature
 
 # Import the data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()

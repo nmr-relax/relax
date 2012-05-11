@@ -21,46 +21,34 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'temperature' user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the 'temperature' user function data."""
 
 # relax module imports.
-import arg_check
 from generic_fns import temperature
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Temp:
-    """Class containing the function for setting the experimental temperature."""
-
-    def set(self, id=None, temp=None):
-        """Specify the temperature of an experiment.
-
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
-
-        id:  The experiment identification string.
-
-        temp:  The temperature of the experiment.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function allows the temperature of an experiment to be set.  In certain analyses, for
-        example those which use pseudocontact shift data, knowledge of the temperature is essential.
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "temperature("
-            text = text + "id=" + repr(id)
-            text = text + ", temp=" + repr(temp) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(id, 'experiment identification string')
-        arg_check.is_num(temp, 'experiment temparture')
-
-        # Execute the functional code.
-        temperature.set(id=id, temp=temp)
+# The temperature user function.
+uf = uf_info.add_uf('temperature')
+uf.title = "Specify the temperature of an experiment."
+uf.title_short = "Experimental temperature."
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "experiment ID string",
+    desc = "The experiment identification string."
+)
+uf.add_keyarg(
+    name = "temp",
+    py_type = "num",
+    desc_short = "experimental temperature",
+    desc = "The temperature of the experiment in Kalvin."
+)
+uf.desc = """
+This allows the temperature of an experiment to be set.  This value should be in Kalvin.  In certain analyses, for example those which use pseudocontact shift data, knowledge of the temperature is essential.  For the pseudocontact shift, the experiment ID string should match one of the alignment IDs.
+"""
+uf.backend = temperature.set
+uf.menu_text = "&temperature"
+uf.gui_icon = "oxygen.status.weather-clear"
+uf.wizard_size = (700, 500)

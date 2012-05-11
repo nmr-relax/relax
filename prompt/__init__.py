@@ -29,7 +29,6 @@ __all__ = ['base_class',
            'interpreter',
            'objects',
            'tab_completion',
-           'temperature',
            'value',
            'view',
            'vmd']
