@@ -73,7 +73,8 @@ __all__ += [
     'spectrum',
     'spin',
     'state',
-    'structure'
+    'structure',
+    'sys_info'
 ]
 
 # Import all the modules to set up the data.
@@ -117,6 +118,7 @@ import user_functions.spectrum
 import user_functions.spin
 import user_functions.state
 import user_functions.structure
+import user_functions.sys_info
 
 # Import the data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()

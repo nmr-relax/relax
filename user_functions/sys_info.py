@@ -21,31 +21,23 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'sys_info' user function class."""
-__docformat__ = 'plaintext'
+"""Module containing the 'sys_info' user function data."""
 
 # relax module imports.
-from base_class import _build_doc
 from generic_fns.sys_info import sys_info
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Sys_info:
-    """Class containing the sys_info function."""
-
-    def sys_info(self):
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "sys_info()"
-            print(text)
-
-        # Execute the functional code.
-        sys_info()
-
-    sys_info._doc_title = "Display all system information relating to this version of relax."
-    sys_info._doc_title_short = "Display system information."
-    sys_info._doc_desc = """
-        This will display all of the relax, Python, python package and hardware information currently being used by relax.  This is useful for seeing if all packages are up to date and if the correct software versions are being used.  It is also very useful information for reporting relax bugs.
-        """
-    _build_doc(sys_info)
-
+# The sys_info user function.
+uf = uf_info.add_uf('sys_info')
+uf.title = "Display all system information relating to this version of relax."
+uf.title_short = "Display system information."
+uf.display = True
+uf.desc = """
+This will display all of the relax, Python, python package and hardware information currently being used by relax.  This is useful for seeing if all packages are up to date and if the correct software versions are being used.  It is also very useful information for reporting relax bugs.
+"""
+uf.backend = sys_info
+uf.menu_text = "s&ys_info"
+uf.gui_icon = "oxygen.actions.help-about"
+uf.wizard_apply_button = False

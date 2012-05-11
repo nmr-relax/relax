@@ -56,7 +56,6 @@ from status import Status; status = Status()
 
 # User functions.
 from gpl import GPL
-from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
@@ -169,11 +168,9 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        sys_info = Sys_info()
         temp = Temp()
 
         # Place the user functions in the local namespace.
-        objects['sys_info'] = sys_info.sys_info
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
