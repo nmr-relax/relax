@@ -497,6 +497,7 @@ class Sequence:
         self.min = min
         self.max = max
         self.single_value = single_value
+        self.can_be_none = can_be_none
 
         # The sequence types.
         if seq_type == 'list':
@@ -762,7 +763,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only, can_be_none=can_be_none)
 
 
     def open_dialog(self, event):
@@ -1156,9 +1157,7 @@ class Sequence_window_2D(Sequence_window):
         title = "%s%s" % (upper(self.name[0]), self.name[1:])
 
         # Add the columns.
-        print `self.dim`
         for i in range(self.dim[1]):
-            print `i`
             self.sequence.InsertColumn(i, self.titles[i])
             self.sequence.SetColumnWidth(i, self.width/self.dim[1])
 
