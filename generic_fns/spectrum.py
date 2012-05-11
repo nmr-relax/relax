@@ -643,8 +643,11 @@ def error_analysis():
             # Print out.
             print("Replicated spectra:  No.")
 
+            # No implemented.
+            raise RelaxImplementError
+
             # Set the errors.
-            __errors_repl()
+            __errors_vol_no_repl()
 
 
 def get_ids():
@@ -660,6 +663,20 @@ def get_ids():
 
     # Return the IDs.
     return cdp.spectrum_ids
+
+
+def integration_points(N=0, spectrum_id=None, spin_id=None):
+    """Set the number of integration points for the given spectrum.
+
+    @param N:               The number of integration points.
+    @type N:                int
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    @keyword spin_id:       The spin ID string used to restrict the value to.
+    @type spin_id:          None or str
+    """
+
+    raise RelaxImplementError
 
 
 def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, sep=None, spin_id=None):
