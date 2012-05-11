@@ -24,6 +24,7 @@
 """The combo list GUI element."""
 
 # Python module imports.
+from copy import deepcopy
 import wx
 
 # relax GUI module imports.
@@ -177,7 +178,7 @@ class Combo_list:
         if self._choices != None:
             # Loop over the choices and data, adding both to the end.
             for j in range(len(self._choices)):
-                self._combo_boxes[-1].Insert(str_to_gui(self._choices[j]), j, self._data[j])
+                self._combo_boxes[-1].Insert(self.convert_to_gui(self._choices[j]), j, self._data[j])
 
             # Set the default selection.
             if self._default:
@@ -291,24 +292,33 @@ class Combo_list:
         self._data = combo_data
         self._default = combo_default
 
+        # Set the data if needed.
+        if self._data == None:
+            self._data = deepcopy(self._choices)
+
+        # Handle None in combo boxes by prepending a None element to the lists.
+        if self.can_be_none:
+            self._choices.insert(0, '')
+            self._data.insert(0, None)
+
         # Loop over the combo boxes.
         for i in range(len(self._combo_boxes)):
             # First clear all data.
             self._combo_boxes[i].Clear()
 
             # Loop over the choices and data, adding both to the end.
-            for j in range(len(combo_choices)):
-                self._combo_boxes[i].Insert(self.convert_to_gui(combo_choices[j]), j, combo_data[j])
+            for j in range(len(self._choices)):
+                self._combo_boxes[i].Insert(self.convert_to_gui(self._choices[j]), j, self._data[j])
 
             # Set the default selection.
-            if combo_default:
+            if self._default:
                 # Translate if needed.
-                if combo_default in combo_choices:
-                    string = combo_default
-                elif combo_default not in combo_data:
-                    string = combo_default
+                if self._default in self._choices:
+                    string = self._default
+                elif self._default not in self._data:
+                    string = self._default
                 else:
-                    string = combo_choices[combo_data.index(combo_default)]
+                    string = self._choices[self._data.index(self._default)]
 
                 # Set the selection.
                 self._combo_boxes[i].SetStringSelection(string)
