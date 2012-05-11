@@ -1018,13 +1018,23 @@ The simplest form of diffusion occurs when all three eigenvalues are equal and t
 
 
 % The local tm model-free models.
-\subsubsection{The local $\tau_m$ model-free models}
+\begin{latexonly}
+    \subsubsection{The local $\tau_m$ model-free models}
+\end{latexonly}
+\begin{htmlonly}
+    \subsubsection{The local $tau_m$ model-free models}
+\end{htmlonly}
 
 Not only can the diffusion tensor be optimised as a global model affecting all spins of the molecule but a set of model-free models can be constructed in which each spin is assumed to diffuse independently.  In these models a single local $\tau_m$ parameter approximates the true, multiexponential description of the Brownian rotational diffusion of the molecule.  Each spin of the macromolecule is treated independently.  Another set of model-free models which include the local $\tau_m$ parameter can be created and include $tm0$ to $tm9$ (Models~\ref{model: tm0}--\ref{model: tm9} on page \pageref{model: tm0}).  These are simply models $m0$ to $m9$ with the local $\tau_m$ parameter added.  These models are an extension of the ideas introduced in \citet{Barbato92} and \citet{Schurr94} whereby the model $tm2$, the original Lipari and Szabo model-free equation with a local $\tau_m$ parameter, is optimised to avoid issues with inaccurate diffusion tensor approximations.
 
 
 % Determination of the diffusion tensor from the local tm parameter.
-\subsubsection{Determination of the diffusion tensor from the local $\tau_m$ parameter}
+\begin{latexonly}
+    \subsubsection{Determination of the diffusion tensor from the local $\tau_m$ parameter}
+\end{latexonly}
+\begin{htmlonly}
+    \subsubsection{Determination of the diffusion tensor from the local $tau_m$ parameter}
+\end{htmlonly}
 
 In \citet{Bruschweiler95} and further investigated in \citet{Lee97}, a methodology for determining the diffusion tensor from the local $\tau_m$ parameter together with the orientation of the XH bond represented by the unit vector $\mu_i$ was presented.  A local $\tau_m$ value was obtained for each spin $i$ by optimising model $tm2$.  The $\tau_{m,i}$ values were approximated using the quadric model
 \begin{equation} \label{eq: quadric}
@@ -1038,7 +1048,12 @@ In \citet{Bruschweiler95} and further investigated in \citet{Lee97}, a methodolo
 % The universal solution.
 %~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The universal solution $\widehat\Univset$}
+\begin{latexonly}
+    \subsection{The universal solution $\widehat\Univset$}
+\end{latexonly}
+\begin{htmlonly}
+    \subsection{The universal solution U}
+\end{htmlonly}
 
 The complex model-free problem, in which the motions of each spin are both mathematically and statistically dependent on the diffusion tensor and vice versa, was formulated using set theory in \citet{dAuvergneGooley07}.  This paper is important for understanding the entire concept of the new protocol in relax and for truly grasping the complexity of the model-free problem.  The solution $\widehat\Univset$ to the model-free problem was derived as an element of the universal set $\Univset$, the union of the diverse model-free parameter spaces $\Space$.  Each set $\Space$ was constructed from the union of the model-free models $\Mfset$ for all spins and the diffusion parameter set $\Diffset$.  A single parameter loss on a single spin shifts optimisation to a different space $\Space$.  Ever since the seminal work of \citet{Kay89} the model-free problem has been tackled by first finding an initial estimate of the diffusion tensor and then determining the model-free dynamics of the system (see Sections~\ref{sect: Mandel 1995} on page~\pageref{sect: Mandel 1995} and~\ref{sect: diffusion seeded paradigm} on page~\pageref{sect: diffusion seeded paradigm}).  This diffusion seeded paradigm is now highly evolved and much theory has emerged to improve this path to the solution $\widehat\Univset$.  The technique can, at times, suffer from a number of issues including the two minima problem of the spheroid diffusion tensor parameter space, the appearance of artificial chemical exchange \citep{Tjandra96}, the appearance of artificial nanosecond motions \citep{Schurr94}, and the hiding of internal nanosecond motions caused by the violation of the rigidity assumption \citep{Orekhov95b, Orekhov99b, Orekhov99a}.
 
