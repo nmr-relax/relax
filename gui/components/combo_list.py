@@ -256,7 +256,7 @@ class Combo_list:
             val = self.convert_from_gui(self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection()))
 
             # Nothing, so skip.
-            if not len(val):
+            if val == None or not len(val):
                 continue
 
             # Add a comma.
