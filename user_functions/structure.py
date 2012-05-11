@@ -524,7 +524,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "set_mol_name",
-    py_type = "int_or_int_list",
+    py_type = "str_or_str_list",
     desc_short = "set molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
@@ -643,7 +643,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "set_mol_name",
-    py_type = "int_or_int_list",
+    py_type = "str_or_str_list",
     desc_short = "set molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
