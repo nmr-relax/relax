@@ -1,3 +1,91 @@
+Version 1.3.16
+(11 May 2012, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.16
+
+    Features:
+        * The scons 'install' target now creates both *.pyc and *.pyo files during installation - this should result in faster relax startup times.
+        * The test suite now passes on the Fink relax installation on Mac OS X as the ancient and very dead PyXML module is now being detected and worked around.
+        * Renamed the 'pdc' user function class to 'bruker' and removed all references to 'protein' - this is due to the Bruker absorption of the Protein Dynamics Centre into the Bruker Dynamics Centre announced at https://mail.gna.org/public/relax-users/2012-04/msg00011.html (Message-id: <4F7AE13B.6010309@bruker.de>) by Dr. Klaus-Peter Neidig (peter dott neidig att bruker-biospin dott de).
+        * Updates and improvements throughout the relax user manual.
+        * Added a new section to the introduction chapter of the user manual for Gary Thompson's multi-processor framework.
+        * Added screenshots and descriptions of the graphical user interface (GUI) to the introduction and all of the analysis chapters of the relax user manual.
+        * The GUI and logging/teeing modes are now compatible with each other.
+        * Expansion and completion of the model-free chapter of the relax user manual.
+
+
+    Changes:
+        * Improved debugging of the observers in the status singleton object.
+        * Changed the behaviour of the arg_check module so that the functions can return answers.
+        * The Bmrb.test_bmrb_rw GUI test now uses the base execute_uf() method for the pipe.create call - this is part of the simplification of the user function interfaces.
+        * A number of the pipe GUI user function front ends now use the wizard page element_*() methods to simplify the code base.
+        * The wizard page element_string_list() method can now create the special Combo_list objects.
+        * Created the wizard page ResetChoices() method for resetting the list of values in a ComboBox.
+        * Created a Clear() wizard page method for clearing a specific GUI element.
+        * The wizard page element_string() GUI element creator read_only flag now defaults to False.
+        * The read_only=True flag to wizard_elements.Base_value now sets a TextCtrl to the background colour.
+        * The wizard_elements.Base_value.SetValue() method now works properly with the ComboBox.
+        * The wizard_elements.Base_value class now can set the element to be read only.
+        * Created generic_fns.pipes.PIPE_DESC_LIST which is the PIPE_DESC as a list, sorted by VALID_TYPES (to be used in the GUI user functions).
+        * Better ComboBox support in wizard_elements.Base_value class - now strings and data are separate (if the data is supplied), and the GetValue() method now returns the client data rather than the string value.
+        * Modified the wizard_elements.Base_value base GUI element class to handle combo boxes.
+        * The Bmrb.test_bmrb_rw GUI test now uses the new execute_uf() method for the bmrb.citation user function.
+        * Created the GUI test base method execute_uf() for executing a user function.
+        * The bmrb.citation GUI user function now uses the new wizard page element_*() methods for the GUI elements.
+        * Created a new wizard element for inputting integers.
+        * Created a new wizard element for inputting strings.
+        * Created the Bmrb.test_bmrb_rw GUI test.
+        * Completed the GUI interface for the bmrb.citation user function.
+        * Created a new wizard GUI element for lists of lists of strings.
+        * Abstracted out most of the String_list wizard element into the List base class.
+        * The bmrb.citation GUI user function now uses the new wizard page string list GUI element.
+        * Completed the wizard string list GUI element.
+        * Added the edit-rename Oxygen icons.
+        * Created a new String_list wizard GUI element class and associated element_string_list() method.
+        * Created a new infrastructure in the wizards for handling more advanced GUI elements.
+        * The Mf.test_write_results system test now checks for the ancient PyXML.
+        * Added the xml module import tests to the dep_check module.
+        * The relax system information print out now includes information about the XML modules.
+        * Added an initial but far from complete bmrb.citation user function page and menu element.
+        * Added the BMRB icon in various sizes to the graphics directory and icon paths.
+        * Updated all the BMRB user function front ends to the modern docstring design.
+        * Created a special Bruker add icon for use in the relaxation data GUI element.
+        * Added a button to the relaxation data GUI element for calling the bruker.read user function.
+        * Improved the bruker.read user function docstring.
+        * Created the bruker.read GUI user function page and menu entry.
+        * Added the Bruker logo in various formats for use in the relax GUI.
+        * Converted the bruker.read user function prompt interface to the new design.
+        * Renamed the PDC to Bruker DC in the test suite.
+        * Updated the development chapter of the relax user manual to be more current -  this includes removing the text saying that the GUI is yet to be coded!
+        * Added mpi4py to the list of relax dependencies in the manual.
+        * Added GUI sections to the end of the NOE, R1+R2 and model-free chapters of the user manual.
+        * The list of figures in the relax user manual is now on a new page.
+        * Updated the open source infrastructure chapter of the relax user manual.
+        * Added a screenshot of the new relax 1.3.15 version in script mode.
+        * Significant updates to the introduction chapter of the relax user manual:  The text has been updated to match the current relax versions.  All mention of the dead SRLS theory has been eliminated.  Screenshots of all the GUI windows and analyses have been added to prettify the chapter, and the text for the GUI has been rewritten for the new GUI design.
+        * Added a number of GUI screenshots for use in the relax user manual - these were taken from http://www.nmr-relax.com/screenshots.html.
+        * Added colons to all entries of the abbreviation chapter in the relax user manual.
+        * Updated and completed the installation chapter of the relax user manual - a lot of the text was 4-6 years out of date.
+        * Some small edits to the release checklist document.
+        * Removed more maths from the HTML user manual section titles.
+
+
+    Bugfixes:
+        * Improved error reporting for multiple vectors in a model-free analysis (bug #18807, https://gna.org/bugs/?18807).
+        * Updated the deselect.read user function call in the noe.py sample script to match relax_fit.py (bug #19717, http://gna.org/bugs/?19717).
+        * The relax_fit.py sample script deselect.read user function now has all columns specified (bug #19717, http://gna.org/bugs/?19717).
+        * Improved the error message system for the spin ID matching multiple spins (bug #19717, http://gna.org/bugs/?19717).
+        * Fix for the test suite GUI tests - one of the state system tests was removing the frame order analysis from the generic_fns.pipes.VALID_TYPES list with a pop() call.
+        * Simplified the wizard_elements.Base_value ResetChoices() method - this is an attempt to fix some racing conditions under wxGTK, triggered in the test suite.
+        * Fix for the bmrb.citation user function documentation.
+        * The Mf.test_write_results system test now checks for the ancient PyXML - this ancient version from 2004 which should be eliminated, if installed, causes the toprettyxml() changes in Python 2.7.3 to be overridden.
+        * The alignment tensor user functions can now all handle the situation whereby no tensors exist.
+        * Fix for the scons 'install' target for the byte-compilation of the *.pyc files.
+        * Fix for the chi2 references in the maths chapter of the relax user manual.
+        * Fix for the ANSI escape sequences for colouring text for when an isatty() method does not exist.
+        * Fix for the creation of the HTML user manual http://www.nmr-relax.com/manual/index.html file.
+
+
+
 Version 1.3.15
 (25 April 2012, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.15
