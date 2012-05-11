@@ -117,7 +117,8 @@ uf.add_keyarg(
     min = -10000,
     max = 10000,
     desc_short = "residue number",
-    desc = "The residue number."
+    desc = "The residue number.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "res_name",
@@ -192,6 +193,9 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
+uf.desc = """
+This will display the residue data loaded into the current data pipe.
+"""
 uf.additional = [id_string_doc]
 uf.backend = display_residue
 uf.menu_text = "dis&play"
@@ -231,6 +235,7 @@ uf.add_keyarg(
 uf.desc = """
 This simply allows residues to be named (or renamed).
 """
+uf.additional = [id_string_doc]
 uf.prompt_examples = """
 The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX,
 2 XXX, 3 XXX}:
@@ -243,7 +248,6 @@ Alternatively:
 
 relax> residue.name(':1,2,3', 'XXX', force=True)
 """
-uf.additional = [id_string_doc]
 uf.backend = name_residue
 uf.menu_text = "&name"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -283,6 +287,7 @@ uf.add_keyarg(
 uf.desc = """
 This simply allows residues to be numbered.  The new number cannot correspond to an existing residue.
 """
+uf.additional = [id_string_doc]
 uf.prompt_examples = """
 The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
 {101 ALA, 102 GLY, 103 LYS}:
@@ -291,7 +296,6 @@ relax> residue.number(':1', 101, force=True)
 relax> residue.number(':2', 102, force=True)
 relax> residue.number(':3', 103, force=True)
 """
-uf.additional = [id_string_doc]
 uf.backend = number_residue
 uf.menu_text = "&number"
 uf.gui_icon = "oxygen.actions.edit-rename"
