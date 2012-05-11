@@ -314,7 +314,7 @@ class Combo_list:
                 self._combo_boxes[i].Insert(self.convert_to_gui(self._choices[j]), j, self._data[j])
 
             # Set the default selection.
-            if self._default:
+            if self._default != None:
                 # Translate if needed.
                 if self._default in self._choices:
                     string = self._default

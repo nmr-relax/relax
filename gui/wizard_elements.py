@@ -1437,7 +1437,7 @@ class Value:
                 self._field.Insert(self.convert_to_gui(combo_choices[i]), i, combo_data[i])
 
             # Set the default selection.
-            if combo_default:
+            if combo_default != None:
                 # Translate if needed.
                 if combo_default in combo_choices:
                     string = combo_default
