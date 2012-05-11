@@ -35,7 +35,7 @@ from gui.paths import icon_16x16
 class Combo_list:
     """The combo list GUI element."""
 
-    def __init__(self, parent, sizer, desc, value_type=None, n=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
+    def __init__(self, parent, sizer, desc, value_type=None, n=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True, can_be_none=False):
         """Build the combo box list widget for a list of list selections.
 
         @param parent:          The parent GUI element.
@@ -66,6 +66,8 @@ class Combo_list:
         @type spacer:           None or int
         @keyword read_only:     A flag which if True means that text cannot be typed into the combo box widget.
         @type read_only:        bool
+        @keyword can_be_none:   A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:      bool
         """
 
         # Store some args.
@@ -79,6 +81,7 @@ class Combo_list:
         self._tooltip = tooltip
         self._padding = padding
         self._read_only = read_only
+        self._can_be_none = can_be_none
 
         # The value types.
         if value_type in ['float', 'num']:
@@ -297,7 +300,7 @@ class Combo_list:
             self._data = deepcopy(self._choices)
 
         # Handle None in combo boxes by prepending a None element to the lists.
-        if self.can_be_none:
+        if self._can_be_none:
             self._choices.insert(0, '')
             self._data.insert(0, None)
 
