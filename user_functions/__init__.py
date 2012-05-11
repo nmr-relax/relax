@@ -70,6 +70,7 @@ __all__ += [
     'results',
     'select',
     'sequence',
+    'spectrum',
     'state'
 ]
 
@@ -110,6 +111,7 @@ import user_functions.reset
 import user_functions.results
 import user_functions.select
 import user_functions.sequence
+import user_functions.spectrum
 import user_functions.state
 
 # Import the data structure.
