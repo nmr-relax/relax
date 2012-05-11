@@ -143,7 +143,7 @@ class Uf_object(object):
             elif py_type == 'int':
                 arg_check.is_int(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'int_list':
-                arg_check.is_int(value, desc_short, size=dim, can_be_none=can_be_none)
+                arg_check.is_int_list(value, desc_short, size=dim, can_be_none=can_be_none)
             elif py_type == 'int_or_int_list':
                 arg_check.is_int_or_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
             elif py_type == 'list':
