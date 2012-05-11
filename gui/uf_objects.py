@@ -230,17 +230,17 @@ class Uf_page(Wiz_page):
                 self.element_bool(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'])
 
             # Sequence types.
-            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple']:
+            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple']:
                 # The sequence type.
-                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list']:
+                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list']:
                     seq_type = 'list'
                 else:
                     seq_type = 'tuple'
 
                 # The value type.
-                if arg['py_type'] in ['float_list', 'num_list', 'float_tuple', 'num_tuple', 'float_or_float_list', 'num_or_num_list', 'float_or_float_tuple', 'num_or_num_tuple']:
+                if arg['py_type'] in ['float_list', 'num_list', 'float_tuple', 'num_tuple', 'float_array', 'float_or_float_list', 'num_or_num_list', 'float_or_float_tuple', 'num_or_num_tuple']:
                     value_type = 'float'
-                elif arg['py_type'] in ['int_list', 'int_tuple', 'int_or_int_list', 'int_or_int_tuple']:
+                elif arg['py_type'] in ['int_list', 'int_tuple', 'int_array', 'int_or_int_list', 'int_or_int_tuple']:
                     value_type = 'int'
                 else:
                     value_type = 'str'
@@ -258,17 +258,17 @@ class Uf_page(Wiz_page):
                 self.element_sequence(key=arg['name'], default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], single_value=single_value, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # 2D sequence types.
-            elif arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_tuple_of_tuples', 'int_tuple_of_tuples', 'num_tuple_of_tuples', 'str_tuple_of_tuples']:
+            elif arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_tuple_of_tuples', 'int_tuple_of_tuples', 'num_tuple_of_tuples', 'str_tuple_of_tuples', 'float_matrix', 'int_matrix']:
                 # The sequence type.
-                if arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists']:
+                if arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_matrix', 'int_matrix']:
                     seq_type = 'list'
                 else:
                     seq_type = 'tuple'
 
                 # The value type.
-                if arg['py_type'] in ['float_list_of_lists', 'float_tuple_of_tuples', 'num_list_of_lists', 'num_tuple_of_tuples']:
+                if arg['py_type'] in ['float_list_of_lists', 'float_tuple_of_tuples', 'num_list_of_lists', 'num_tuple_of_tuples', 'float_matrix']:
                     value_type = 'float'
-                elif arg['py_type'] in ['int_list_of_lists', 'int_tuple_of_tuples']:
+                elif arg['py_type'] in ['int_list_of_lists', 'int_tuple_of_tuples', 'int_matrix']:
                     value_type = 'int'
                 else:
                     value_type = 'str'
