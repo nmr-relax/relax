@@ -309,7 +309,7 @@ uf.add_keyarg(
     desc_short = "IUPAC element name",
     desc = "The IUPAC element name.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["N", "C", "O", "P"]
+    wiz_combo_choices = ["N", "C", "H", "O", "P"]
 )
 uf.add_keyarg(
     name = "force",

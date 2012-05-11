@@ -60,7 +60,6 @@ from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
-from structure import Structure
 from value import Value
 from vmd import Vmd
 
@@ -178,7 +177,6 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['structure'] = Structure()
         objects['value'] = Value()
         objects['vmd'] = Vmd()
 
