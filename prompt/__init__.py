@@ -20,20 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""Package for the prompt based interface."""
 
-__all__ = ['base_class',
-           'command',
-           'doc_string',
-           'gpl',
-           'help',
-           'interpreter',
-           'objects',
-           'tab_completion'
+__all__ = [
+    'base_class',
+    'command',
+    'doc_string',
+    'gpl',
+    'help',
+    'interpreter',
+    'objects',
+    'tab_completion'
 ]
-
-__doc__ = \
-"""Package for the prompt based interface.
-
-The functions should only contain code for checking the validity of arguments.  If any other code is
-required, this should be placed elsewhere.
-"""
