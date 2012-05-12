@@ -230,9 +230,9 @@ class Uf_page(Wiz_page):
                 self.element_bool(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'])
 
             # Sequence types.
-            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple']:
+            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list']:
                 # The sequence type.
-                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list']:
+                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'val_or_list']:
                     seq_type = 'list'
                 else:
                     seq_type = 'tuple'
@@ -242,12 +242,14 @@ class Uf_page(Wiz_page):
                     value_type = 'float'
                 elif arg['py_type'] in ['int_list', 'int_tuple', 'int_array', 'int_or_int_list', 'int_or_int_tuple']:
                     value_type = 'int'
-                else:
+                elif arg['py_type'] in ['str_list', 'str_tuple', 'str_array', 'str_or_str_list', 'str_or_str_tuple']:
                     value_type = 'str'
+                else:
+                    value_type = None
 
                 # Single values.
                 single_value = False
-                if arg['py_type'] in ['float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple']:
+                if arg['py_type'] in ['float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list']:
                     single_value = True
 
                 # Dimensions.
