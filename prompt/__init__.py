@@ -28,8 +28,8 @@ __all__ = ['base_class',
            'help',
            'interpreter',
            'objects',
-           'tab_completion',
-           'vmd']
+           'tab_completion'
+]
 
 __doc__ = \
 """Package for the prompt based interface.

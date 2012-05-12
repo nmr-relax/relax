@@ -21,32 +21,31 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'vmd' user function class for controlling VMD."""
-__docformat__ = 'plaintext'
+"""Module containing the 'vmd' user function data for controlling VMD."""
 
 # relax module imports.
-from base_class import User_fn_class
-import arg_check
 from generic_fns import vmd
-from status import Status; status = Status()
+from graphics import WIZARD_IMAGE_PATH
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
-class Vmd(User_fn_class):
-    """Class for interfacing with VMD."""
+# The user function class.
+uf_class = uf_info.add_class('vmd')
+uf_class.title = "Class for interfacing with VMD."
+uf_class.menu_text = "&vmd"
 
-    def view(self):
-        """Function for viewing the collection of molecules extracted from the PDB file.
 
-        Example
-        ~~~~~~~
-
-        relax> vmd.view()
-        """
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "vmd.view()"
-            print(text)
-
-        # Execute the functional code.
-        vmd.view()
+# The vmd.view user function.
+uf = uf_info.add_uf('vmd.view')
+uf.title = "View the structures loaded into the relax data store using VMD."
+uf.title_short = "Molecular viewing using VMD."
+uf.desc = """
+This will launch VMD with all of the structures loaded into the relax data store.
+"""
+uf.prompt_examples = """
+relax> vmd.view()
+"""
+uf.backend = vmd.view
+uf.menu_text = "&view"
+uf.wizard_size = (600, 300)
+uf.wizard_apply_button = False

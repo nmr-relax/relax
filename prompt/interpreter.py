@@ -57,9 +57,6 @@ from status import Status; status = Status()
 # User functions.
 from gpl import GPL
 
-# User classes.
-from vmd import Vmd
-
 # User function data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
@@ -164,9 +161,6 @@ class Interpreter:
 
         # Place functions in the local namespace.
         objects['gpl'] = objects['GPL'] = GPL()
-
-        # Place the user classes in the local namespace.
-        objects['vmd'] = Vmd()
 
         # Builtin interpreter functions.
         objects['intro_off'] = self.off
