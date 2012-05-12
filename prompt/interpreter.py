@@ -58,7 +58,6 @@ from status import Status; status = Status()
 from gpl import GPL
 
 # User classes.
-from value import Value
 from vmd import Vmd
 
 # User function data structure.
@@ -167,7 +166,6 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Place the user classes in the local namespace.
-        objects['value'] = Value()
         objects['vmd'] = Vmd()
 
         # Builtin interpreter functions.

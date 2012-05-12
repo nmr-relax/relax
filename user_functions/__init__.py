@@ -75,7 +75,8 @@ __all__ += [
     'state',
     'structure',
     'sys_info',
-    'temperature'
+    'temperature',
+    'value'
 ]
 
 # Import all the modules to set up the data.
@@ -121,6 +122,7 @@ import user_functions.state
 import user_functions.structure
 import user_functions.sys_info
 import user_functions.temperature
+import user_functions.value
 
 # Import the data structure.
 from user_functions.data import Uf_info; uf_info = Uf_info()

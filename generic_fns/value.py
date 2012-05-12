@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -108,6 +108,42 @@ def display(param=None):
 
     # Print the data.
     write_data(param, sys.stdout)
+
+
+def get_parameters():
+    """Return a list of the parameters associated with the current data pipe.
+
+    @return:    The list of parameters.
+    @rtype:     list of str
+    """
+
+    # No data pipes.
+    if cdp == None:
+        return []
+
+    # Get the specific functions.
+    data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+    return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+
+    # Loop over the parameters.
+    params = []
+    for name in (data_names(set='params') + data_names(set='generic')):
+        # Get the description.
+        desc = return_data_desc(name)
+
+        # No description.
+        if not desc:
+            text = name
+
+        # The text.
+        else:
+            text = "'%s':  %s" % (name, desc)
+
+        # Append the data as a list.
+        params.append((text, name))
+
+    # Return the data.
+    return params
 
 
 def partition_params(val, param):
@@ -328,6 +364,10 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
         raise RelaxError("The combination of a single value '%s' without specifying the parameter name is invalid." % val)
     if isinstance(val, list) and isinstance(param, str):
         raise RelaxError("Invalid combination:  When multiple values '%s' are specified, either no parameters or a list of parameters must by supplied rather than the single parameter '%s'." % (val, param))
+
+    # Value array and parameter array of equal length.
+    if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
+        raise RelaxError("Both the value array and parameter array must be of equal length.")
 
     # Get the parameter list if needed.
     if param == None:
