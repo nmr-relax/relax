@@ -56,60 +56,6 @@ def bold_text(text):
     return new_text
 
 
-def build_doc(fn):
-    """Build the fn.__doc__ docstring.
-
-    @param fn:  The user function to build the docstring for.
-    @type fn:   method
-    """
-
-    # Initialise.
-    fn.__doc__ = ""
-
-    # Add the title.
-    fn.__doc__ = "%s%s\n" % (fn.__doc__, fn._doc_title)
-
-    # Add the keyword args.
-    if hasattr(fn, '_doc_args'):
-        fn.__doc__ = fn.__doc__ + build_subtitle("Keyword Arguments")
-        for arg, desc in fn._doc_args:
-            # The text.
-            text = "%s:  %s" % (arg, desc)
-
-            # Format.
-            text = format_text(text)
-
-            # Add to the docstring.
-            fn.__doc__ = "%s%s\n" % (fn.__doc__, text)
-
-    # Add the description.
-    if hasattr(fn, '_doc_desc'):
-        fn.__doc__ = fn.__doc__ + build_subtitle("Description")
-        fn.__doc__ = fn.__doc__ + format_text(fn._doc_desc)
-
-    # Add the examples.
-    if hasattr(fn, '_doc_examples'):
-        fn.__doc__ = fn.__doc__ + '\n' + build_subtitle("Examples")
-        fn.__doc__ = fn.__doc__ + format_text(fn._doc_examples)
-
-    # Add the additional sections.
-    if hasattr(fn, '_doc_additional'):
-        # Loop over each section.
-        for i in range(len(fn._doc_additional)):
-            fn.__doc__ = fn.__doc__ + '\n' + build_subtitle(fn._doc_additional[i][0])
-            fn.__doc__ = fn.__doc__ + format_text(fn._doc_additional[i][1])
-
-    # Convert the _doc_args list into a dictionary for easy argument description retrieval.
-    if hasattr(fn, '_doc_args'):
-        # Init.
-        fn._doc_args_dict = {}
-
-        # Loop over the args.
-        for arg, desc in fn._doc_args:
-            fn._doc_args_dict[arg] = desc
-
-
-
 def build_subtitle(text, bold=True):
     """Create the formatted subtitle string.
 
