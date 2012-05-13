@@ -967,7 +967,7 @@ def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, 
 
         # Check the arguments.
         for i in range(len(arg)):
-            if not (is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+            if not (is_str(arg[i], raise_error=False) or is_num(arg[i], raise_error=False)):
                 fail = True
 
     # Fail.
@@ -1223,7 +1223,7 @@ def is_val_or_list(arg, name=None, size=None, can_be_none=False, can_be_empty=Fa
         # Check the arguments.
         for i in range(len(arg)):
             # Check for all types of value.
-            if not (is_bool(arg, raise_error=False) or is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+            if not (is_bool(arg[i], raise_error=False) or is_str(arg[i], raise_error=False) or is_num(arg[i], raise_error=False)):
                 fail = True
 
     # Fail.
