@@ -29,8 +29,8 @@ import dep_check
 # Python module imports.
 import ansi
 from code import InteractiveConsole, softspace
+from math import pi
 from os import F_OK, access, chdir, getcwd, path
-import platform
 from re import search
 if dep_check.readline_module:
     import readline
@@ -39,29 +39,18 @@ if dep_check.runpy_module:
 from string import split
 import sys
 
-# Python modules accessible on the command prompt.
-from math import pi
-
-# RelaxError system.
-from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
-
-# Auxiliary modules.
-from prompt.base_class import PS1_ORIG, PS2_ORIG, PS3_ORIG, PS1_COLOUR, PS2_COLOUR, PS3_COLOUR
-from command import Ls, Lh, Ll, system
-from help import _Helper, _Helper_python
+# relax module imports.
 from info import Info_box
-if dep_check.readline_module:
-    from tab_completion import Tab_completion
-from status import Status; status = Status()
-
-# User functions.
-from gpl import GPL
-
-# User function data structure.
-from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# Auto-generation objects.
+from prompt.base_class import PS1_ORIG, PS2_ORIG, PS3_ORIG, PS1_COLOUR, PS2_COLOUR, PS3_COLOUR
+from prompt.command import Ls, Lh, Ll, system
+from prompt.gpl import GPL
+from prompt.help import _Helper, _Helper_python
 from prompt.objects import Class_container, Uf_object
+if dep_check.readline_module:
+    from prompt.tab_completion import Tab_completion
+from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
+from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Interpreter:
@@ -101,22 +90,50 @@ class Interpreter:
         # Set up the interpreter objects.
         self._locals = self._setup()
 
-        # Auto-generate the user functions and classes.
-        self._auto_generate()
 
+    def _setup(self):
+        """Set up all the interpreter objects.
 
-    def _auto_generate(self):
-        """Build the user function objects from the user function data object information."""
+        All objects are initialised and placed in a dictionary.  These will be later placed in different namespaces such as the run() method local namespace.  All the user functions and classes will be auto-generated.
 
-        # First generate the classes.
+        @return:    The dictionary of interpreter objects.
+        @rtype:     dict
+        """
+
+        # Initialise the dictionary.
+        objects = {}
+
+        # Python objects.
+        objects['pi'] = pi
+
+        # Import the functions emulating system commands.
+        objects['lh'] = Lh()
+        objects['ll'] = Ll()
+        objects['ls'] = Ls()
+        objects['system'] = system
+
+        # The GPL license.
+        objects['gpl'] = objects['GPL'] = GPL()
+
+        # Builtin interpreter functions.
+        objects['intro_off'] = self.off
+        objects['intro_on'] = self.on
+        objects['exit'] = objects['bye'] = objects['quit'] = objects['q'] = _Exit()
+        objects['script'] = self.script
+
+        # Modify the help system.
+        objects['help_python'] = _Helper_python()
+        objects['help'] = _Helper()
+
+        # Add the user function classes.
         for name, data in uf_info.class_loop():
             # Generate a new container.
             obj = Class_container(name, data.title)
 
             # Add the object to the local namespace.
-            self._locals[name] = obj
+            objects[name] = obj
 
-        # Then generate the user functions.
+        # Add the user functions.
         for name, data in uf_info.uf_loop():
             # Split up the name.
             if search('\.', name):
@@ -129,48 +146,13 @@ class Interpreter:
 
             # Get the class object.
             if class_name:
-                class_obj = self._locals[class_name]
+                class_obj = objects[class_name]
 
             # Add the object to the local namespace or user function class.
             if class_name:
                 setattr(class_obj, uf_name, obj)
             else:
-                self._locals[name] = obj
-
-
-    def _setup(self):
-        """Set up all the interpreter objects.
-
-        All objects are initialised and placed in a dictionary.  These will be later placed in different namespaces such as the run() method local namespace.
-
-        @return:    The dictionary of interpreter objects.
-        @rtype:     dict
-        """
-
-        # Initialise the dictionary.
-        objects = {}
-
-        # Python modules.
-        objects['pi'] = pi
-
-        # Import the functions emulating system commands.
-        objects['lh'] = Lh()
-        objects['ll'] = Ll()
-        objects['ls'] = Ls()
-        objects['system'] = system
-
-        # Place functions in the local namespace.
-        objects['gpl'] = objects['GPL'] = GPL()
-
-        # Builtin interpreter functions.
-        objects['intro_off'] = self.off
-        objects['intro_on'] = self.on
-        objects['exit'] = objects['bye'] = objects['quit'] = objects['q'] = _Exit()
-        objects['script'] = self.script
-
-        # Modify the help system.
-        objects['help_python'] = _Helper_python()
-        objects['help'] = _Helper()
+                objects[name] = obj
 
         # Return the dictionary.
         return objects
@@ -197,7 +179,7 @@ class Interpreter:
 
 
     def populate_self(self):
-        """Place all user functions and other special objects into self."""
+        """Place all special objects into self."""
 
         # Add the interpreter objects to the class namespace.
         for name in self._locals.keys():
