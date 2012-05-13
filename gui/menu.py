@@ -38,7 +38,6 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 from gui import paths
 from gui.components.menu import build_menu_item
 from gui.uf_objects import Uf_storage
-from gui.uf_pages import User_functions
 
 
 class Menu:
@@ -216,11 +215,8 @@ class Menu:
         @type event:    wx event
         """
 
-        # The user functions.
-        user_functions = User_functions(self.gui)
-
         # Launch the user functions.
-        user_functions.gpl.run()
+        uf_storage['gpl']()
 
         # Show the relax controller.
         self.gui.show_controller(event)
@@ -233,11 +229,8 @@ class Menu:
         @type event:    wx event
         """
 
-        # The user functions.
-        user_functions = User_functions(self.gui)
-
         # Launch the user functions.
-        user_functions.sys_info.sys_info()
+        uf_storage['sys_info']()
 
 
     def _user_functions(self):
@@ -249,9 +242,6 @@ class Menu:
         # Initialise some variables.
         class_list = []
         store = Uf_storage()
-
-        # The user functions.
-        user_functions = User_functions(self.gui)
 
         # Loop over the user functions.
         class_item = None

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2010 Michael Bieri                                            #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -40,7 +40,7 @@ from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
 from gui.paths import icon_22x22
-from gui.uf_pages import User_functions
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Results_viewer(wx.Frame):
@@ -59,9 +59,6 @@ class Results_viewer(wx.Frame):
 
         # Initialise the base frame.
         wx.Frame.__init__(self, parent=parent, style=wx.DEFAULT_FRAME_STYLE)
-
-        # Initialise the user functions.
-        self.user_functions = User_functions(self)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -248,15 +245,15 @@ class Results_viewer(wx.Frame):
 
             # Grace files.
             if type == 'grace':
-                self.user_functions.grace.view(file=file)
+                uf_store['grace.view'](file=file)
 
             # PyMOL macro files.
             elif type == 'pymol':
-                self.user_functions.pymol.macro_run(file=file)
+                uf_store['pymol.macro_run'](file=file)
 
             # Molmol macro files.
             elif type == 'molmol':
-                self.user_functions.molmol.macro_run(file=file)
+                uf_store['molmol.macro_run'](file=file)
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':

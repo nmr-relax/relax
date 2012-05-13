@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,6 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.misc import int_to_gui, str_to_gui
-from gui.uf_pages import deselect, sequence, spin
 from gui.wizard import Wiz_window
 
 

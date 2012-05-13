@@ -37,10 +37,8 @@ from relax_errors import RelaxNoPipeError
 from gui.paths import icon_32x32, WIZARD_IMAGE_PATH
 from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
-from gui.menu import Uf_menus
 from gui.misc import gui_raise, gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
-from gui.uf_pages import User_functions, sequence, structure; user_functions = User_functions()
 from gui.wizard import Wiz_page, Wiz_window
 
 
@@ -118,7 +116,6 @@ class Spin_view_window(wx.Frame):
 
         # The user function menu entry.
         menu = wx.Menu()
-        uf_menus = Uf_menus(parent=self, menu=menu)
         title = "&User functions"
         self.menubar.Append(menu, title)
 
@@ -218,22 +215,22 @@ class Spin_view_window(wx.Frame):
         self.wizard.set_seq_next_fn(self.page_indices['method'], self.wizard_page_after_load_method)
 
         # The sequence.read page.
-        page = sequence.Read_page(self.wizard)
+        page = uf_store['sequence.read'].create_page(self.wizard)
         self.page_indices['sequence.read'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['sequence.read'], self.wizard_page_after_sequence_read)
 
         # The structure.read_pdb page.
-        page = structure.Read_pdb_page(self.wizard)
+        page = uf_store['structure.read_pdb'].create_page(self.wizard)
         self.page_indices['structure.read_pdb'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['structure.read_pdb'], self.wizard_page_after_structure_read)
 
         # The structure.read_xyz page.
-        page = structure.Read_xyz_page(self.wizard)
+        page = uf_store['structure.read_xyz'].create_page(self.wizard)
         self.page_indices['structure.read_xyz'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['structure.read_xyz'], self.wizard_page_after_structure_read)
 
         # The structure.load_spins page.
-        page = structure.Load_spins_page(self.wizard)
+        page = uf_store['structure.load_spins'].create_page(self.wizard)
         self.page_indices['structure.load_spins'] = self.wizard.add_page(page)
 
         # The termination page.

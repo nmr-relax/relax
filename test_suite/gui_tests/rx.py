@@ -34,7 +34,6 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 # relax GUI imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
-from gui.uf_pages import deselect, sequence, spin
 from gui.wizard import Wiz_window
 
 
@@ -112,32 +111,14 @@ class Rx(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window(self.app.gui)
-        seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
-        seq_read.file.SetValue(str_to_gui(file))
-        seq_read.mol_name_col.SetValue(int_to_gui(None))
-        seq_read.res_name_col.SetValue(int_to_gui(2))
-        seq_read.res_num_col.SetValue(int_to_gui(1))
-        seq_read.spin_name_col.SetValue(int_to_gui(None))
-        seq_read.spin_num_col.SetValue(int_to_gui(None))
-        seq_read.on_execute()
+        self.execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_name_col=2, res_num_col=1, spin_name_col=None, spin_num_col=None)
 
         # Unresolved spins.
-        deselect_read = deselect.Read_page(wizard)
-        deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
-        deselect_read.mol_name_col.SetValue(int_to_gui(None))
-        deselect_read.res_name_col.SetValue(int_to_gui(None))
-        deselect_read.res_num_col.SetValue(int_to_gui(1))
-        deselect_read.spin_name_col.SetValue(int_to_gui(None))
-        deselect_read.spin_num_col.SetValue(int_to_gui(None))
-        deselect_read.change_all.SetValue(bool_to_gui(True))
-        deselect_read.on_execute()
+        self.execute_uf(uf_name='deselect.read', file=data_path+'unresolved', mol_name_col=None, res_name_col=None, res_num_col=1, spin_name_col=None, spin_num_col=None, change_all=True)
 
         # Name the spins.
-        page = spin.Name_page(wizard)
-        page.name.SetValue(str_to_gui('N'))
-        page.on_execute()
+        self.execute_uf(uf_name='spin.name', name='N')
 
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
         interpreter.flush()

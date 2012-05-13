@@ -38,7 +38,6 @@ from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.misc import gui_to_str
-from gui.uf_pages import User_functions
 
 
 class Mol_res_spin_tree(wx.Window):
@@ -200,11 +199,8 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
-        # Set up the user functions.
-        user_functions = User_functions(self.gui.spin_viewer)
-
         # Call the dialog.
-        user_functions.molecule.create()
+        uf_store['molecule.create'](parent=self.gui.spin_viewer)
 
 
     def create_residue(self, event):
@@ -214,11 +210,8 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
-        # Set up the user functions.
-        user_functions = User_functions(self.gui.spin_viewer)
-
         # Call the dialog.
-        user_functions.residue.create(mol_name=self.info['mol_name'])
+        uf_store['residue.create'](parent=self.gui.spin_viewer, mol_name=self.info['mol_name'])
 
 
     def create_spin(self, event):
@@ -228,11 +221,8 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
-        # Set up the user functions.
-        user_functions = User_functions(self.gui.spin_viewer)
-
         # Call the dialog.
-        user_functions.spin.create(mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
+        uf_store['spin.create'](parent=self.gui.spin_viewer, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
 
 
     def delete_molecule(self, event):

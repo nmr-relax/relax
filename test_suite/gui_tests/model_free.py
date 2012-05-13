@@ -35,7 +35,6 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 # relax GUI imports.
 from gui.analyses import auto_model_free
 from gui.misc import float_to_gui, str_to_gui
-from gui.uf_pages import relax_data, sequence, value
 from gui.wizard import Wiz_window
 
 
@@ -73,9 +72,7 @@ class Mf(GuiTestCase):
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
         # Load the sequence.
-        seq_read = sequence.Read_page(wizard)
-        seq_read.file.SetValue(str_to_gui(data_path + 'noe.500.out'))
-        seq_read.on_execute()
+        self.execute_uf(uf_name='sequence.read', file=data_path+'noe.500.out')
 
         # Load the relaxation data.
         data = [
@@ -87,23 +84,13 @@ class Mf(GuiTestCase):
             ['r2.900.out',  'r2_900',  'R2',  900e6]
         ]
         for i in range(len(data)):
-            relax_data_read = relax_data.Read_page(wizard)
-            relax_data_read.file.SetValue(str_to_gui(data_path + data[i][0]))
-            relax_data_read.ri_id.SetValue(str_to_gui(data[i][1]))
-            relax_data_read.ri_type.SetValue(str_to_gui(data[i][2]))
-            relax_data_read.frq.SetValue(float_to_gui(data[i][3]))
-            relax_data_read.on_execute()
+            self.execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3])
 
         # Set the values.
-        value_set = value.Set_page(wizard)
-        value_set.set_param('csa')
-        value_set.on_execute()
-        value_set.set_param('r')
-        value_set.on_execute()
-        value_set.set_param('heteronuc_type')
-        value_set.on_execute()
-        value_set.set_param('proton_type')
-        value_set.on_execute()
+        self.execute_uf(uf_name='value.set', param='csa')
+        self.execute_uf(uf_name='value.set', param='r')
+        self.execute_uf(uf_name='value.set', param='heteronuc_type')
+        self.execute_uf(uf_name='value.set', param='proton_type')
 
         # The unit vector loading wizard.
         analysis.load_unit_vectors(None)

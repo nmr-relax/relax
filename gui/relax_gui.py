@@ -71,8 +71,7 @@ from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.components.free_file_format import Free_file_format_window
-from gui.uf_objects import Uf_storage, Uf_object
-from gui.uf_pages import User_functions; user_functions = User_functions()
+from gui.uf_objects import Uf_storage, Uf_object; uf_store = Uf_storage()
 
 
 class Main(wx.Frame):
@@ -181,7 +180,7 @@ class Main(wx.Frame):
 
         # Run a script.
         if script:
-            wx.CallAfter(user_functions.script.script_exec, script)
+            wx.CallAfter(uf_store['script'](script))
 
 
     def about_gui(self, event):
@@ -278,16 +277,13 @@ class Main(wx.Frame):
     def auto_generate(self):
         """Build the user function objects from the user function data object information."""
 
-        # The storage object.
-        store = Uf_storage()
-
         # Generate the user functions.
         for name, data in uf_info.uf_loop():
             # Generate a new container.
             obj = Uf_object(name, self, title=data.title, size=data.wizard_size, height_desc=data.wizard_height_desc, apply_button=data.wizard_apply_button, sync=data.gui_sync)
 
             # Store it.
-            store[name] = obj
+            uf_store[name] = obj
 
 
     def close_windows(self):
