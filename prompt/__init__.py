@@ -24,12 +24,13 @@
 """Package for the prompt based interface."""
 
 __all__ = [
-    'base_class',
     'command',
     'doc_string',
     'gpl',
     'help',
     'interpreter',
     'objects',
-    'tab_completion'
+    'tab_completion',
+    'uf_docstring',
+    'uf_objects'
 ]
