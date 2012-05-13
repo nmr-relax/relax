@@ -58,7 +58,7 @@ class Uf_object(object):
         wizard = Wiz_window(parent=self._parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
         # Create the page.
-        page = Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
+        page = self.create_page()
 
         # Add the page to the wizard.
         wizard.add_page(page, apply_button=self._apply_button)
@@ -94,6 +94,17 @@ class Uf_object(object):
         self._height_desc = height_desc
         self._apply_button = apply_button
         self._sync = sync
+
+
+    def create_page(self):
+        """Create the user function page object.
+
+        @return:        The user function page object.
+        @rtype:         Uf_page instance
+        """
+
+        # Initialise and return the page.
+        return Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
 
 
 
