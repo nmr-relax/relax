@@ -25,9 +25,10 @@
 
 # relax module imports.
 import arg_check
-from prompt.base_class import _bold_text, _build_subtitle, _format_text, _strip_lead
+from prompt.base_class import _bold_text, _build_subtitle, _format_text
 from prompt.help import relax_class_help
 from relax_errors import RelaxError
+from relax_string import strip_lead
 from status import Status; status = Status()
 
 
@@ -52,7 +53,7 @@ class Class_container(object):
 
         # Add a description to the help string.
         if hasattr(self, '__description__'):
-            self.__relax_help__ += "\n\n%s" % _strip_lead(self.__description__)
+            self.__relax_help__ += "\n\n%s" % strip_lead(self.__description__)
 
 
     def __repr__(self):

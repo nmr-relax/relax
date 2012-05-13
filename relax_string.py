@@ -32,6 +32,44 @@ PARAGRAPH = 0
 LIST = 10
 
 
+def strip_lead(text):
+    """Strip the leading whitespace from the given text.
+
+    @param text:    The text to strip the leading whitespace from.
+    @type text:     str
+    @return:        The text with leading whitespace removed.
+    @rtype:         str
+    """
+
+    # Split by newline.
+    lines = split(text, '\n')
+
+    # Find the minimum whitespace.
+    min_white = 1000
+    for line in lines:
+        # Empty lines.
+        if strip(line) == '':
+            continue
+
+        # Count the whitespace for the current line.
+        num_white = 0
+        for i in range(len(line)):
+            if line[i] != ' ':
+                break
+            num_white = num_white + 1
+
+        # The min value.
+        min_white = min(min_white, num_white)
+
+    # Strip the whitespace.
+    new_text = ''
+    for line in lines:
+        new_text = new_text + line[min_white:] + '\n'
+
+    # Return the new text.
+    return new_text
+
+
 def to_docstring(data):
     """Convert the text to that of a docstring, dependent on the text level.
 

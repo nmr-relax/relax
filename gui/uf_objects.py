@@ -33,8 +33,8 @@ from wx.lib import scrolledpanel
 # relax module imports.
 import arg_check
 from graphics import fetch_icon
-from prompt.base_class import _strip_lead
 from relax_errors import AllRelaxErrors, RelaxError
+from relax_string import strip_lead
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI imports.
@@ -274,7 +274,7 @@ class Uf_page(Wiz_page):
         """
 
         # First strip whitespace.
-        stripped_text = _strip_lead(text)
+        stripped_text = strip_lead(text)
 
         # Remove the first characters if newlines.
         while True:
@@ -615,7 +615,7 @@ class Uf_page(Wiz_page):
         yield doc[0], 'title'
 
         # Strip the leading whitespace, if needed.
-        doc[1] = _strip_lead(doc[1])
+        doc[1] = strip_lead(doc[1])
 
         # Split up the description.
         docstring_lines = split(doc[1], "\n")
