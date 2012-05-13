@@ -215,7 +215,7 @@ To deselect all currently selected spins and select those which are deselected t
 relax> deselect.reverse()
 """
 uf.backend = selection.reverse
-uf.menu_text = "&reverse"
+uf.menu_text = "re&verse"
 uf.gui_icon = "oxygen.actions.system-switch-user"
 uf.wizard_size = (700, 550)
 uf.wizard_apply_button = False

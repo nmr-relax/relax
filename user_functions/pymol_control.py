@@ -60,7 +60,7 @@ To apply this user function, type:
 relax> pymol.cartoon()
 """
 uf.backend = pymol_control.cartoon
-uf.menu_text = "car&toon"
+uf.menu_text = "cart&oon"
 uf.wizard_size = (700, 500)
 uf.wizard_height_desc = 450
 uf.wizard_apply_button = False

@@ -78,7 +78,7 @@ relax> n_state_model.CoM(centre=[0.0, 0.0, 1.0])
 relax> n_state_model.CoM(pivot_point=[0.0, 0.0, 0.0], centre=[0.0, 0.0, 1.0])
 """
 uf.backend = n_state_model_obj._CoM
-uf.menu_text = "&CoM"
+uf.menu_text = "Co&M"
 uf.wizard_height_desc = 350
 uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False

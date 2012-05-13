@@ -329,7 +329,7 @@ To apply the ribbon style to the PDB file loaded, type:
 relax> molmol.ribbon()
 """
 uf.backend = molmol.ribbon
-uf.menu_text = "&ribbon"
+uf.menu_text = "ri&bbon"
 uf.wizard_size = (700, 500)
 uf.wizard_height_desc = 450
 uf.wizard_apply_button = False

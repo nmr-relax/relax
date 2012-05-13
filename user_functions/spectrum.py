@@ -425,7 +425,7 @@ To specify that the two R2 spectra 'ncyc2' and 'ncyc2b' are the same time point,
 relax> spectrum.replicated(['ncyc2', 'ncyc2b'])
 """
 uf.backend = spectrum.replicated
-uf.menu_text = "&replicated"
+uf.menu_text = "re&plicated"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'

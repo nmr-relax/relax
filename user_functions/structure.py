@@ -141,7 +141,7 @@ uf.desc = """
 This allows atoms to be connected in the internal structural object.  The global index is normally equal to the PDB atom number minus 1.
 """
 uf.backend = generic_fns.structure.main.connect_atom
-uf.menu_text = "&connect_atom"
+uf.menu_text = "co&nnect_atom"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -210,7 +210,7 @@ The scaling value has been fixed to facilitate comparisons within or between pub
 To create the tensor PDB representation, a number of algorithms are utilised.  Firstly the centre of mass is calculated for the selected residues and is represented in the PDB by a C atom.  Then the axes of the diffusion are calculated, as unit vectors scaled to the appropriate length (multiplied by the eigenvalue Dx, Dy, Dz, Dpar, Dper, or Diso as well as the scale value), and a C atom placed at the position of this vector plus the centre of mass.  Finally a uniform distribution of vectors on a sphere is generated using spherical coordinates.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These unit vectors, which are distributed within the PDB frame and are of 1 Angstrom in length, are first rotated into the diffusion frame using a rotation matrix (the spherical diffusion tensor is not rotated).  Then they are multiplied by the diffusion tensor matrix to extend the vector out to the correct length, and finally multiplied by the scale value so that the vectors reasonably superimpose onto the macromolecular structure.  The last set of algorithms place all this information into a PDB file.  The distribution of vectors are represented by H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines.
 """
 uf.backend = generic_fns.structure.geometric.create_diff_tensor_pdb
-uf.menu_text = "create_diff_&tensor_pdb"
+uf.menu_text = "&create_diff_tensor_pdb"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 800)
@@ -265,7 +265,7 @@ This creates a PDB file containing an artificial vectors, the length of which de
 Because of the symmetry of the diffusion tensor reversing the orientation of the XH bond vector has no effect.  Therefore by setting the symmetry flag two chains 'A' and 'B' will be added to the PDB file whereby chain 'B' is chain 'A' with the XH bonds reversed.
 """
 uf.backend = generic_fns.structure.geometric.create_vector_dist
-uf.menu_text = "create_&vector_dist"
+uf.menu_text = "cr&eate_vector_dist"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
@@ -393,7 +393,7 @@ relax> structure.displacement(2, 3)
 relax> structure.displacement(model_from=2, model_to=3)
 """
 uf.backend = generic_fns.structure.main.displacement
-uf.menu_text = "&displacement"
+uf.menu_text = "displace&ment"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
