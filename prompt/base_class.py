@@ -235,16 +235,3 @@ def _strip_lead(text):
 
     # Return the new text.
     return new_text
-
-
-
-class User_fn_class:
-    def __init__(self):
-        """Initialise the user function class, compiling the help string."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__doc__ + "\n" + help.relax_class_help
-
-        # Add a description to the help string.
-        if hasattr(self, '__description__'):
-            self.__relax_help__ = self.__relax_help__ + "\n\n" + _strip_lead(self.__description__)
