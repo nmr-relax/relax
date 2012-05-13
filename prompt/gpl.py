@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'gpl' user function for displaying licence information."""
+"""The GPL licence information object for the prompt UI."""
 __docformat__ = 'plaintext'
 
 
