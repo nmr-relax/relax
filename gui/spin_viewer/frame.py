@@ -40,6 +40,7 @@ from gui.icons import relax_icons
 from gui.misc import gui_raise, gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
 from gui.wizard import Wiz_page, Wiz_window
+from gui.uf_objects import build_uf_menus
 
 
 class Spin_view_window(wx.Frame):
@@ -114,10 +115,8 @@ class Spin_view_window(wx.Frame):
         if status.show_gui:
             self.SetMenuBar(self.menubar)
 
-        # The user function menu entry.
-        menu = wx.Menu()
-        title = "&User functions"
-        self.menubar.Append(menu, title)
+        # The user function menus.
+        self.menu_uf_id = build_uf_menus(parent=self, menubar=self.menubar)
 
 
     def Show(self, show=True):
