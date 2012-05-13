@@ -422,11 +422,8 @@ def is_int_or_int_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
     # An integer
     if not isinstance(arg, list):
-        # Check if it is an integer.
-        try:
-            is_int(arg, name)
-        except:
-            fail = True    # Not an integer.
+        if not is_int(arg, raise_error=False):
+            fail = True
 
     # A list.
     else:
@@ -445,10 +442,8 @@ def is_int_or_int_list(arg, name=None, size=None, can_be_none=False, can_be_empt
                 continue
 
             # Check if it is an integer.
-            try:
-                is_int(arg[i], name)
-            except:
-                fail = True    # Not an integer.
+            if not is_int(arg[i], raise_error=False):
+                fail = True
 
     # Fail.
     if fail:
@@ -683,10 +678,7 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
 
     # A number.
     if not isinstance(arg, tuple):
-        # Check if it is a number.
-        try:
-            is_num(arg, name)
-        except:
+        if not is_num(arg, raise_error=False):
             fail = True
 
     # Other checks.
@@ -701,7 +693,7 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not check_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if not is_num(arg[i], raise_error=False):
                 fail = True
 
     # Fail.
@@ -959,15 +951,9 @@ def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, 
 
     # A number or a string.
     if not isinstance(arg, list):
-        # Check if it is a string.
-        try:
-            is_str(arg, name)
-        except:
-            # Not a string, therefore check if it is a number.
-            try:
-                is_num(arg, name)
-            except:
-                fail = True    # Neither a number or a string.
+        # Check if it is a string or number.
+        if not (is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+            fail = True
 
     # A list.
     else:
@@ -981,15 +967,8 @@ def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, 
 
         # Check the arguments.
         for i in range(len(arg)):
-            # Check if it is a string.
-            try:
-                is_str(arg[i], name)
-            except:
-                # Not a string, therefore check if it is a number.
-                try:
-                    is_num(arg[i], name)
-                except:
-                    fail = True    # Neither a number or a string.
+            if not (is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+                fail = True
 
     # Fail.
     if fail:
@@ -1038,11 +1017,8 @@ def is_str_or_num_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
     # A string.
     if not isinstance(arg, list):
-        # Check if it is a string.
-        try:
-            is_str(arg, name)
-        except:
-            fail = True    # Not a string.
+        if not is_str(arg, raise_error=False):
+            fail = True
 
     # A list.
     else:
@@ -1054,13 +1030,10 @@ def is_str_or_num_list(arg, name=None, size=None, can_be_none=False, can_be_empt
         if not can_be_empty and arg == []:
             fail = True
 
-       # Check the arguments.
+        # Check the arguments.
         for i in range(len(arg)):
-            # Check if it is a number.
-            try:
-                is_num(arg[i], name)
-            except:
-                fail = True    # Not a number.
+            if not is_num(arg[i], raise_error=False):
+                fail = True
 
     # Fail.
     if fail:
@@ -1109,11 +1082,8 @@ def is_str_or_str_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
     # A string.
     if not isinstance(arg, list):
-        # Check if it is a string.
-        try:
-            is_str(arg, name)
-        except:
-            fail = True    # Not a string.
+        if not is_str(arg, raise_error=False):
+            fail = True
 
     # A list.
     else:
@@ -1127,11 +1097,8 @@ def is_str_or_str_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
        # Check the arguments.
         for i in range(len(arg)):
-            # Check if it is a string.
-            try:
-                is_str(arg[i], name)
-            except:
-                fail = True    # Not a string.
+            if not is_str(arg[i], raise_error=False):
+                fail = True
 
     # Fail.
     if fail:
