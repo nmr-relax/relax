@@ -38,7 +38,7 @@ from gui import paths
 from gui.analyses.elements import Text_ctrl
 from gui.fonts import font
 from gui.misc import add_border, int_to_gui, str_to_gui
-from gui.uf_pages.base import UF_page
+from gui.wizard import Wiz_page
 
 
 class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
@@ -459,7 +459,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
 
 
-class Spectral_error_type_page(UF_page):
+class Spectral_error_type_page(Wiz_page):
     """The NOE peak intensity reading wizard page for specifying the type of error to be used."""
 
     # Class variables.
