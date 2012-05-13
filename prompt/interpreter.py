@@ -132,7 +132,6 @@ class Interpreter:
         objects['intro_off'] = self.off
         objects['intro_on'] = self.on
         objects['exit'] = objects['bye'] = objects['quit'] = objects['q'] = _Exit()
-        objects['script'] = self.script
 
         # Modify the help system.
         objects['help_python'] = _Helper_python()
@@ -249,40 +248,6 @@ class Interpreter:
         else:
             prompt(intro=self.__intro_string, local=locals())
 
-
-    def script(self, file=None, quit=False):
-        """Function for executing a script file."""
-
-        # Function intro text.
-        if status.prompt_intro:
-            text = status.ps3 + "script("
-            text = text + "file=" + repr(file)
-            text = text + ", quit=" + repr(quit) + ")"
-            print(text)
-
-        # File argument.
-        if file == None:
-            raise RelaxNoneError('file')
-        elif not isinstance(file, str):
-            raise RelaxStrError('file', file)
-
-        # Test if the script file exists.
-        if not access(file, F_OK):
-            raise RelaxError("The script file '" + file + "' does not exist.")
-
-        # Quit argument.
-        if not isinstance(quit, int) or (quit != False and quit != True):
-            raise RelaxBinError('quit', quit)
-
-        # Turn on the function intro flag.
-        orig_intro_state = status.prompt_intro
-        status.prompt_intro = True
-
-        # Execute the script.
-        run_script(local=self._locals, script_file=file, quit=quit)
-
-        # Return the function intro flag to the original value.
-        status.prompt_intro = orig_intro_state
 
 
 class _Exit:

@@ -68,6 +68,7 @@ __all__ += [
     'residue',
     'reset',
     'results',
+    'script',
     'select',
     'sequence',
     'spectrum',
@@ -115,6 +116,7 @@ import user_functions.relax_fit
 import user_functions.residue
 import user_functions.reset
 import user_functions.results
+import user_functions.script
 import user_functions.select
 import user_functions.sequence
 import user_functions.spectrum
