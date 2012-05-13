@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,9 @@
 
 # Module docstring.
 """Module for building documentation."""
+
+# Python module imports.
+from string import split, strip
 
 
 # Some constants.

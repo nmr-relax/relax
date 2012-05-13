@@ -24,9 +24,7 @@
 """The base class for all the user function classes."""
 
 # Python module imports.
-import platform
-from re import split
-import sys
+from string import split
 from textwrap import wrap
 
 # relax module imports.
@@ -34,7 +32,6 @@ import ansi
 import help
 from relax_string import strip_lead
 from status import Status; status = Status()
-from string import split, strip
 
 
 def _bold_text(text):
