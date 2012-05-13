@@ -259,15 +259,15 @@ class Pipe_editor(wx.Frame):
 
         # Launch the respective user functions.
         if event.GetEventObject() == self.button_create:
-            store['pipe.create'](event)
+            store['pipe.create'](event, parent=self)
         elif event.GetEventObject() == self.button_copy:
-            store['pipe.copy'](event)
+            store['pipe.copy'](event, parent=self)
         elif event.GetEventObject() == self.button_delete:
-            store['pipe.delete'](event)
+            store['pipe.delete'](event, parent=self)
         elif event.GetEventObject() == self.button_hybrid:
-            store['pipe.hybridise'](event)
+            store['pipe.hybridise'](event, parent=self)
         elif event.GetEventObject() == self.button_switch:
-            store['pipe.switch'](event)
+            store['pipe.switch'](event, parent=self)
 
 
     def add_logo(self, box):
