@@ -58,7 +58,7 @@ class Uf_object(object):
         wizard = Wiz_window(parent=self._parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
         # Create the page.
-        page = self.create_page(wizard)
+        page = self.create_page(wizard, sync=self._sync)
 
         # Add the page to the wizard.
         wizard.add_page(page, apply_button=self._apply_button)
@@ -96,11 +96,13 @@ class Uf_object(object):
         self._sync = sync
 
 
-    def create_page(self, wizard=None):
+    def create_page(self, wizard=None, sync=False):
         """Create the user function page object.
 
         @keyword wizard:    The parent wizard.
         @type wizard:       Wiz_window instance
+        @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
+        @type sync:         bool
         @return:            The user function page object.
         @rtype:             Uf_page instance
         """
