@@ -240,34 +240,34 @@ class Uf_object(object):
         self.__relax_help__ = ""
 
         # Add the title.
-        self.__relax_help__ = "%s%s\n" % (self.__relax_help__, _bold_text(self._title))
+        self.__relax_help__ = "%s%s\n" % (self.__relax_help__, bold_text(self._title))
 
         # Add the keyword args.
         if self._kargs != None:
-            self.__relax_help__ += _build_subtitle("Keyword Arguments")
+            self.__relax_help__ += build_subtitle("Keyword Arguments")
             for i in range(len(self._kargs)):
                 # The text.
                 text = "%s:  %s" % (self._kargs[i]['name'], self._kargs[i]['desc'])
 
                 # Format.
-                text = _format_text(text)
+                text = format_text(text)
 
                 # Add to the docstring.
                 self.__relax_help__ = "%s%s\n" % (self.__relax_help__, text)
 
         # Add the description.
         if self._desc != None:
-            self.__relax_help__ += _build_subtitle("Description")
-            self.__relax_help__ += _format_text(self._desc)
+            self.__relax_help__ += build_subtitle("Description")
+            self.__relax_help__ += format_text(self._desc)
 
         # Add the additional sections.
         if self._additional != None:
             # Loop over each section.
             for i in range(len(self._additional)):
-                self.__relax_help__ += '\n%s' % _build_subtitle(self._additional[i][0])
-                self.__relax_help__ += _format_text(self._additional[i][1])
+                self.__relax_help__ += '\n%s' % build_subtitle(self._additional[i][0])
+                self.__relax_help__ += format_text(self._additional[i][1])
 
         # Add the examples.
         if self._examples != None:
-            self.__relax_help__ += '\n%s' % _build_subtitle("Examples")
-            self.__relax_help__ += _format_text(self._examples)
+            self.__relax_help__ += '\n%s' % build_subtitle("Examples")
+            self.__relax_help__ += format_text(self._examples)

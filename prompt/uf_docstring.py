@@ -34,7 +34,7 @@ from relax_string import strip_lead
 from status import Status; status = Status()
 
 
-def _bold_text(text):
+def bold_text(text):
     """Convert the text to bold.
 
     This is for use in the help system.
@@ -56,7 +56,7 @@ def _bold_text(text):
     return new_text
 
 
-def _build_doc(fn):
+def build_doc(fn):
     """Build the fn.__doc__ docstring.
 
     @param fn:  The user function to build the docstring for.
@@ -71,33 +71,33 @@ def _build_doc(fn):
 
     # Add the keyword args.
     if hasattr(fn, '_doc_args'):
-        fn.__doc__ = fn.__doc__ + _build_subtitle("Keyword Arguments")
+        fn.__doc__ = fn.__doc__ + build_subtitle("Keyword Arguments")
         for arg, desc in fn._doc_args:
             # The text.
             text = "%s:  %s" % (arg, desc)
 
             # Format.
-            text = _format_text(text)
+            text = format_text(text)
 
             # Add to the docstring.
             fn.__doc__ = "%s%s\n" % (fn.__doc__, text)
 
     # Add the description.
     if hasattr(fn, '_doc_desc'):
-        fn.__doc__ = fn.__doc__ + _build_subtitle("Description")
-        fn.__doc__ = fn.__doc__ + _format_text(fn._doc_desc)
+        fn.__doc__ = fn.__doc__ + build_subtitle("Description")
+        fn.__doc__ = fn.__doc__ + format_text(fn._doc_desc)
 
     # Add the examples.
     if hasattr(fn, '_doc_examples'):
-        fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle("Examples")
-        fn.__doc__ = fn.__doc__ + _format_text(fn._doc_examples)
+        fn.__doc__ = fn.__doc__ + '\n' + build_subtitle("Examples")
+        fn.__doc__ = fn.__doc__ + format_text(fn._doc_examples)
 
     # Add the additional sections.
     if hasattr(fn, '_doc_additional'):
         # Loop over each section.
         for i in range(len(fn._doc_additional)):
-            fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle(fn._doc_additional[i][0])
-            fn.__doc__ = fn.__doc__ + _format_text(fn._doc_additional[i][1])
+            fn.__doc__ = fn.__doc__ + '\n' + build_subtitle(fn._doc_additional[i][0])
+            fn.__doc__ = fn.__doc__ + format_text(fn._doc_additional[i][1])
 
     # Convert the _doc_args list into a dictionary for easy argument description retrieval.
     if hasattr(fn, '_doc_args'):
@@ -110,7 +110,7 @@ def _build_doc(fn):
 
 
 
-def _build_subtitle(text, bold=True):
+def build_subtitle(text, bold=True):
     """Create the formatted subtitle string.
 
     @param text:        The name of the subtitle.
@@ -123,7 +123,7 @@ def _build_subtitle(text, bold=True):
 
     # Bold.
     if bold:
-        new = "\n%s\n\n" % _bold_text(text)
+        new = "\n%s\n\n" % bold_text(text)
 
     # Underline.
     else:
@@ -133,7 +133,7 @@ def _build_subtitle(text, bold=True):
     return new
 
 
-def _format_text(text):
+def format_text(text):
     """Format the text by stripping whitespace and wrapping.
 
     @param text:    The text to strip and wrap.
