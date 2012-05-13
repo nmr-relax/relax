@@ -52,6 +52,7 @@ LIST_FLOAT = 'a list of floating point numbers'
 LIST_INT = 'a list of integers'
 LIST_NUM = 'a list of numbers'
 LIST_STR = 'a list of strings'
+LIST_VAL = 'a list of values'
 MATRIX_FLOAT = 'a matrix of floating point numbers'
 NONE = 'None'
 NUM = 'a number'
@@ -61,6 +62,7 @@ TUPLE_INT = 'a tuple of integers'
 TUPLE_NUM = 'a tuple of numbers'
 TUPLE_STR = 'a tuple of strings'
 STR = 'a string'
+VAL = 'a value'
 
 
 def save_state():
@@ -496,6 +498,15 @@ class RelaxStrListStrError(BaseArgError):
 class RelaxNoneStrListStrError(BaseArgError):
     simple_types = [NONE, STR]
     list_types = [LIST_STR]
+
+# Value or list of values.
+class RelaxValListValError(BaseArgError):
+    simple_types = [VAL]
+    list_types = [LIST_VAL]
+
+class RelaxNoneValListValError(BaseArgError):
+    simple_types = [NONE, VAL]
+    list_types = [LIST_VAL]
 
 
 # Tuple types.

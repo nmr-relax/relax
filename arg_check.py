@@ -35,7 +35,7 @@ except ImportError:
     float128 = float64    # Support for 32-bit numpy versions.
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError, RelaxNoneValListValError, RelaxValListValError
 from relax_io import DummyFileObject
 from types import FunctionType, MethodType
 
@@ -1231,13 +1231,13 @@ def is_val_or_list(arg, name=None, size=None, can_be_none=False, can_be_empty=Fa
         if not raise_error:
             return False
         if can_be_none and size != None:
-            raise RelaxNoneNumStrListNumStrError(name, arg, size)
+            raise RelaxNoneValListValError(name, arg, size)
         elif can_be_none:
-            raise RelaxNoneNumStrListNumStrError(name, arg)
+            raise RelaxNoneValListValError(name, arg)
         elif size != None:
-            raise RelaxNumStrListNumStrError(name, arg, size)
+            raise RelaxValListValError(name, arg, size)
         else:
-            raise RelaxNumStrListNumStrError(name, arg)
+            raise RelaxValListValError(name, arg)
 
     # Success.
     return True
