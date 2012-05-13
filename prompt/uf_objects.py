@@ -223,7 +223,7 @@ class Uf_object(object):
             self._karg_names.append(self._kargs[i]['name'])
 
         # Build the user function documentation.
-        self._build_doc()
+        self.__relax_help__ = self._build_doc()
 
 
     def __repr__(self):
@@ -234,17 +234,21 @@ class Uf_object(object):
 
 
     def _build_doc(self):
-        """Create the user function documentation."""
+        """Create the user function documentation.
+
+        @return:    The user function documentation to use in the help system.
+        @rtype:     str
+        """
 
         # Initialise.
-        self.__relax_help__ = ""
+        doc = ""
 
         # Add the title.
-        self.__relax_help__ = "%s%s\n" % (self.__relax_help__, bold_text(self._title))
+        doc = "%s%s\n" % (doc, bold_text(self._title))
 
         # Add the keyword args.
         if self._kargs != None:
-            self.__relax_help__ += build_subtitle("Keyword Arguments")
+            doc += build_subtitle("Keyword Arguments")
             for i in range(len(self._kargs)):
                 # The text.
                 text = "%s:  %s" % (self._kargs[i]['name'], self._kargs[i]['desc'])
@@ -253,21 +257,24 @@ class Uf_object(object):
                 text = format_text(text)
 
                 # Add to the docstring.
-                self.__relax_help__ = "%s%s\n" % (self.__relax_help__, text)
+                doc = "%s%s\n" % (doc, text)
 
         # Add the description.
         if self._desc != None:
-            self.__relax_help__ += build_subtitle("Description")
-            self.__relax_help__ += format_text(self._desc)
+            doc += build_subtitle("Description")
+            doc += format_text(self._desc)
 
         # Add the additional sections.
         if self._additional != None:
             # Loop over each section.
             for i in range(len(self._additional)):
-                self.__relax_help__ += '\n%s' % build_subtitle(self._additional[i][0])
-                self.__relax_help__ += format_text(self._additional[i][1])
+                doc += '\n%s' % build_subtitle(self._additional[i][0])
+                doc += format_text(self._additional[i][1])
 
         # Add the examples.
         if self._examples != None:
-            self.__relax_help__ += '\n%s' % build_subtitle("Examples")
-            self.__relax_help__ += format_text(self._examples)
+            doc += '\n%s' % build_subtitle("Examples")
+            doc += format_text(self._examples)
+
+        # Return the documentation.
+        return doc
