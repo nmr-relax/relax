@@ -37,7 +37,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 # relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
-from gui.uf_objects import build_uf_menus
+from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
 
 
 class Menu:
@@ -216,7 +216,7 @@ class Menu:
         """
 
         # Launch the user functions.
-        uf_storage['gpl']()
+        uf_store['gpl']()
 
         # Show the relax controller.
         self.gui.show_controller(event)
@@ -230,7 +230,7 @@ class Menu:
         """
 
         # Launch the user functions.
-        uf_storage['sys_info']()
+        uf_store['sys_info']()
 
 
     def update_menus(self, event):
