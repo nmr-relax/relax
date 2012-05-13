@@ -35,12 +35,6 @@ import help
 from status import Status; status = Status()
 from string import split, strip
 
-# The width of the text.
-if platform.uname()[0] in ['Windows', 'Microsoft']:
-    width = 80
-else:
-    width = 100
-
 
 def _bold_text(text):
     """Convert the text to bold.
@@ -178,7 +172,7 @@ def _format_text(text):
             new_text = new_text + "\n"
 
         # Wrap the line.
-        for wrapped_line in wrap(line, width):
+        for wrapped_line in wrap(line, status.text_width):
             new_text = new_text + wrapped_line + "\n"
 
     # Return the formatted text.
