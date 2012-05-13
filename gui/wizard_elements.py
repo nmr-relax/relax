@@ -513,7 +513,7 @@ class Sequence:
         if self.element_type == 'default':
             # Translate the read_only flag if None.
             if read_only == None:
-                read_only = True
+                read_only = False
 
             # Init.
             sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
