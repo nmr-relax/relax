@@ -34,9 +34,9 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
-from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from generic_fns.pipes import has_pipe
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from status import Status; status = Status()
 
 # relax GUI module imports.

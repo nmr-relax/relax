@@ -27,7 +27,6 @@ from string import lower
 from time import sleep
 
 # relax module imports.
-from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from float import floatAsByteArray
 from info import Info_box; info = Info_box()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_index_loop, spin_loop
@@ -36,6 +35,7 @@ from generic_fns import selection
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from relax_io import DummyFileObject
+from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()
 
 
