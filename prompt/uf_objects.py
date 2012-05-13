@@ -108,7 +108,6 @@ class Uf_object(object):
                 values.append(uf_kargs[self._kargs[i]['name']])
 
             # The print out.
-            asdf
             print(self._intro_text(keys, values))
 
         # Check the argument values.
