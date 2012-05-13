@@ -36,7 +36,7 @@ from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
-from gui.uf_pages import User_functions; user_functions = User_functions()
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Relax_data_list:
@@ -164,7 +164,7 @@ class Relax_data_list:
         """
 
         # Launch the dialog.
-        user_functions.bruker.read()
+        uf_store['bruker.read']()
 
 
     def build_element(self):
@@ -327,7 +327,7 @@ class Relax_data_list:
             id = gui_to_str(self.element.GetItemText(item))
 
         # Launch the dialog.
-        user_functions.relax_data.delete(ri_id=id)
+        uf_store['relax_data.delete'](ri_id=id)
 
 
     def relax_data_read(self, event):
@@ -338,7 +338,7 @@ class Relax_data_list:
         """
 
         # Launch the dialog.
-        user_functions.relax_data.read()
+        uf_store['relax_data.read']()
 
 
     def resize(self, event):

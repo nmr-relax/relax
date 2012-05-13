@@ -37,7 +37,7 @@ from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
-from gui.uf_pages import User_functions; user_functions = User_functions()
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Spectra_list:
@@ -236,7 +236,7 @@ class Spectra_list:
             id = gui_to_str(self.element.GetItemText(item))
 
         # Launch the dialog.
-        user_functions.spectrum.delete(spectrum_id=id)
+        uf_store['spectrum.delete'](spectrum_id=id)
 
 
     def delete(self):

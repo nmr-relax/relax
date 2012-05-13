@@ -47,9 +47,7 @@ from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data, Question
 from gui.misc import gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
 from gui import paths
-from gui.uf_pages.relax_fit import Relax_time_page
-from gui.uf_pages.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
-from gui.uf_pages.spin import Name_page
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 
 
@@ -326,12 +324,12 @@ class Auto_rx(Base_analysis):
 
             # Ask about naming spins, and add the spin.name user function page.
             if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
-                page = Name_page(self.wizard, sync=True)
+                page = uf_store['spin.name'].create_page(self.wizard, sync=True)
                 self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
 
 
         # The spectrum.read_intensities page.
-        self.page_intensity = Read_intensities_page(self.wizard, sync=True)
+        self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self.wizard, sync=True)
         self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
 
         # Error type selection page.
@@ -340,24 +338,24 @@ class Auto_rx(Base_analysis):
         self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
-        page = Replicated_page(self.wizard, sync=True)
+        page = uf_store['spectrum.replicated'].create_page(self.wizard, sync=True)
         self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
         page.on_init = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
-        page = Baseplane_rmsd_page(self.wizard, sync=True)
+        page = uf_store['spectrum.baseplane_rmsd'].create_page(self.wizard, sync=True)
         self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
         page.on_init = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
-        page = Integration_points_page(self.wizard, sync=True)
+        page = uf_store['spectrum.integration_points'].create_page(self.wizard, sync=True)
         self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_init = self.wizard_update_pts
 
         # The relax_fit.relax_time page.
-        page = Relax_time_page(self.wizard, sync=True)
+        page = uf_store['relax_fit.relax_time'].create_page(self.wizard, sync=True)
         self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
         page.on_init = self.wizard_update_relax_time
 

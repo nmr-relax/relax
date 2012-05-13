@@ -51,8 +51,7 @@ from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
-from gui.uf_pages.structure import Read_pdb_page, Vectors_page
-from gui.uf_pages import User_functions; user_functions = User_functions()
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 
 
@@ -585,11 +584,11 @@ class Auto_model_free(Base_analysis):
         self.vect_wizard = Wiz_window(parent=self.gui, size_x=800, size_y=600, title="Load unit vectors from file")
 
         # Create the PDB reading page.
-        page = Read_pdb_page(self.vect_wizard)
+        page = uf_store['structure.read_pdb'].create_page(self.vect_wizard)
         self.vect_wizard.add_page(page, skip_button=True)
 
         # Create the vector loading page.
-        page = Vectors_page(self.vect_wizard)
+        page = uf_store['structure.vectors'].create_page(self.vect_wizard)
         self.vect_wizard.add_page(page)
 
         # Reset the cursor.
@@ -718,7 +717,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        user_functions.value.set(param='csa')
+        uf_store['value.set'](param='csa')
 
 
     def value_set_heteronuc_type(self, event):
@@ -729,7 +728,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        user_functions.value.set(param='heteronuc_type')
+        uf_store['value.set'](param='heteronuc_type')
 
 
     def value_set_proton_type(self, event):
@@ -740,7 +739,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        user_functions.value.set(param='proton_type')
+        uf_store['value.set'](param='proton_type')
 
 
     def value_set_r(self, event):
@@ -751,7 +750,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        user_functions.value.set(param='r')
+        uf_store['value.set'](param='r')
 
 
 
