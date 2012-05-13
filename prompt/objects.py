@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the special objects for auto-generating the user functions and classes."""
+"""The special auto-generated user function and class objects."""
 
 # relax module imports.
 import arg_check
