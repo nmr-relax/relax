@@ -1207,3 +1207,70 @@ def is_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, r
 
     # Success.
     return True
+
+
+def is_val_or_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
+    """Test if the argument is a value or a list of values.
+
+    @param arg:                             The argument.
+    @type arg:                              anything
+    @keyword name:                          The plain English name of the argument.
+    @type name:                             str
+    @keyword size:                          The number of elements required.
+    @type size:                             None or int
+    @keyword can_be_none:                   A flag specifying if the argument can be none.
+    @type can_be_none:                      bool
+    @keyword can_be_empty:                  A flag which if True allows the list to be empty.
+    @type can_be_empty:                     bool
+    @keyword raise_error:                   A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                      bool
+    @raise RelaxNumStrListNumStrError:      If not a float, a string, or a list of floats or strings (and the raise_error flag is set).
+    @raise RelaxNoneNumStrListNumStrError:  If not a float, a string, a list of floats or strings, or None (and the raise_error flag is set).
+    @return:                                The answer to the question (if raise_error is not set).
+    @rtype:                                 bool
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return True
+
+    # A value.
+    if not isinstance(arg, list):
+        # Check for all types of value.
+        if not (is_bool(arg, raise_error=False) or is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+            fail = True
+
+    # A list.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Check the arguments.
+        for i in range(len(arg)):
+            # Check for all types of value.
+            if not (is_bool(arg, raise_error=False) or is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+                fail = True
+
+    # Fail.
+    if fail:
+        if not raise_error:
+            return False
+        if can_be_none and size != None:
+            raise RelaxNoneNumStrListNumStrError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneNumStrListNumStrError(name, arg)
+        elif size != None:
+            raise RelaxNumStrListNumStrError(name, arg, size)
+        else:
+            raise RelaxNumStrListNumStrError(name, arg)
+
+    # Success.
+    return True
