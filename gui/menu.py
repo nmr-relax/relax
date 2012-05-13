@@ -37,7 +37,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 # relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
-from gui.uf_objects import Uf_storage
+from gui.uf_objects import build_uf_menus
 
 
 class Menu:
@@ -118,7 +118,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor, id=self.MENU_VIEW_PIPE_EDIT)
 
         # The auto generated 'User functions' menu entries.
-        self._user_functions()
+        self.menu_uf_id = build_uf_menus(parent=self.gui, menubar=self.menubar)
 
         # The 'Tools' menu entries.
         menu = wx.Menu()
@@ -231,76 +231,6 @@ class Menu:
 
         # Launch the user functions.
         uf_storage['sys_info']()
-
-
-    def _user_functions(self):
-        """Auto-generate the user function sub-menu."""
-
-        # The menu.
-        menu = wx.Menu()
-
-        # Initialise some variables.
-        class_list = []
-        store = Uf_storage()
-
-        # Loop over the user functions.
-        class_item = None
-        for name, data in uf_info.uf_loop():
-            # Split up the name.
-            if search('\.', name):
-                class_name, uf_name = split(name, '.')
-            else:
-                class_name = None
-
-            # Generate a sub menu.
-            if class_name:
-                if class_name not in class_list:
-                    # Add the last sub menu.
-                    if class_item != None:
-                        menu.AppendItem(class_item)
-
-                    # Get the user function class data object.
-                    class_data = uf_info.get_class(class_name)
-
-                    # Create a unique ID.
-                    class_id = wx.NewId()
-
-                    # Create the menu entry.
-                    class_item = build_menu_item(menu, id=class_id, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
-
-                    # Initialise the sub menu.
-                    sub_menu = wx.Menu()
-                    class_item.SetSubMenu(sub_menu)
-
-                    # Add the class name to the list to block further sub menu creation.
-                    class_list.append(class_name)
-
-                # Create the user function menu entry.
-                uf_id = wx.NewId()
-                sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
-
-            # No sub menu.
-            else:
-                # Add the last sub menu.
-                if class_item != None:
-                    menu.AppendItem(class_item)
-                    class_item = None
-
-                # The menu item.
-                uf_id = wx.NewId()
-                menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
-
-            # Bind the menu item.
-            self.gui.Bind(wx.EVT_MENU, store[name], id=uf_id)
-
-        # Add the very last sub menu.
-        if class_item != None:
-            menu.AppendItem(class_item)
-
-        # Add the sub-menu.
-        title = "&User functions"
-        self.menubar.Append(menu, title)
-        self.menu_uf_id = self.menubar.FindMenu(title)
 
 
     def update_menus(self, event):

@@ -32,16 +32,99 @@ from wx.lib import scrolledpanel
 
 # relax module imports.
 import arg_check
+from graphics import fetch_icon
 from prompt.base_class import _strip_lead
 from relax_errors import AllRelaxErrors, RelaxError
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI imports.
 from gui.components.free_file_format import Free_file_format
+from gui.components.menu import build_menu_item
 from gui.errors import gui_raise
 from gui.fonts import font
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_page, Wiz_window
+
+
+def build_uf_menus(parent=None, menubar=None):
+    """Auto-generate the user function sub-menu.
+
+    @keyword parent:    The parent window to bind the events to.
+    @type parent:       wx instance
+    @keyword menubar:   The menubar to attach the user function menus to.
+    @type menubar:      wx.MenuBar instance
+    @return:            The menu ID.
+    @rtype:             int
+    """
+
+    # The user function menu.
+    menu = wx.Menu()
+
+    # Initialise some variables.
+    class_list = []
+    uf_store = Uf_storage()
+
+    # Loop over the user functions.
+    class_item = None
+    for name, data in uf_info.uf_loop():
+        # Split up the name.
+        if search('\.', name):
+            class_name, uf_name = split(name, '.')
+        else:
+            class_name = None
+
+        # Generate a sub menu.
+        if class_name:
+            if class_name not in class_list:
+                # Add the last sub menu.
+                if class_item != None:
+                    menu.AppendItem(class_item)
+
+                # Get the user function class data object.
+                class_data = uf_info.get_class(class_name)
+
+                # Create a unique ID.
+                class_id = wx.NewId()
+
+                # Create the menu entry.
+                class_item = build_menu_item(menu, id=class_id, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
+
+                # Initialise the sub menu.
+                sub_menu = wx.Menu()
+                class_item.SetSubMenu(sub_menu)
+
+                # Add the class name to the list to block further sub menu creation.
+                class_list.append(class_name)
+
+            # Create the user function menu entry.
+            uf_id = wx.NewId()
+            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+
+        # No sub menu.
+        else:
+            # Add the last sub menu.
+            if class_item != None:
+                menu.AppendItem(class_item)
+                class_item = None
+
+            # The menu item.
+            uf_id = wx.NewId()
+            menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+
+        # Bind the menu item to the parent.
+        parent.Bind(wx.EVT_MENU, uf_store[name], id=uf_id)
+
+    # Add the very last sub menu.
+    if class_item != None:
+        menu.AppendItem(class_item)
+
+    # Add the user function menu to the menu bar.
+    title = "&User functions"
+    menubar.Append(menu, title)
+
+    # Return the menu ID.
+    return menubar.FindMenu(title)
+
 
 
 class Uf_object(object):
