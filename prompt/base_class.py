@@ -42,20 +42,6 @@ else:
     width = 100
 
 
-# Module variables.
-###################
-
-# The prompts (to change the Python prompt, as well as the function print outs).
-PS1_ORIG = 'relax> '
-PS2_ORIG = 'relax| '
-PS3_ORIG = '\n%s' % PS1_ORIG
-
-# Coloured text.
-PS1_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
-PS2_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS2_ORIG, ansi.end)
-PS3_COLOUR = "\n%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
-
-
 def _bold_text(text):
     """Convert the text to bold.
 

@@ -41,7 +41,6 @@ import sys
 
 # relax module imports.
 from info import Info_box
-from prompt.base_class import PS1_ORIG, PS2_ORIG, PS3_ORIG, PS1_COLOUR, PS2_COLOUR, PS3_COLOUR
 from prompt.command import Ls, Lh, Ll, system
 from prompt.gpl import GPL
 from prompt.help import _Helper, _Helper_python
@@ -51,6 +50,20 @@ from prompt.uf_objects import Class_container, Uf_object
 from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
+
+
+# Module variables.
+###################
+
+# The prompts (to change the Python prompt, as well as the function print outs).
+PS1_ORIG = 'relax> '
+PS2_ORIG = 'relax| '
+PS3_ORIG = '\n%s' % PS1_ORIG
+
+# Coloured text.
+PS1_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
+PS2_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS2_ORIG, ansi.end)
+PS3_COLOUR = "\n%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
 
 
 class Interpreter:
