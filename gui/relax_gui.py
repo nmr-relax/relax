@@ -49,7 +49,6 @@ from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 import test_suite.test_suite_runner
-from user_functions.data import Uf_info; uf_info = Uf_info()
 from version import version
 
 # relax GUI module imports.
@@ -143,9 +142,6 @@ class Main(wx.Frame):
 
         # Initialise the GUI data.
         self.init_data()
-
-        # Auto-generate the user functions and classes.
-        self.auto_generate()
 
         # Build the menu bar.
         self.menu = Menu(self)
@@ -272,18 +268,6 @@ class Main(wx.Frame):
         # Re-perform the layout of the GUI elements, and refresh.
         self.Layout()
         self.Refresh()
-
-
-    def auto_generate(self):
-        """Build the user function objects from the user function data object information."""
-
-        # Generate the user functions.
-        for name, data in uf_info.uf_loop():
-            # Generate a new container.
-            obj = Uf_object(name, self, title=data.title, size=data.wizard_size, height_desc=data.wizard_height_desc, apply_button=data.wizard_apply_button, sync=data.gui_sync)
-
-            # Store it.
-            uf_store[name] = obj
 
 
     def close_windows(self):

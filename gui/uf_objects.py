@@ -56,9 +56,10 @@ class Uf_object(object):
         @type parent:       wx object
         """
 
-        # The parent object.
+        # The parent object defaults to the main relax window.
         if parent == None:
-            parent = self._parent
+            app = wx.GetApp()
+            parent = app.gui
 
         # Create the wizard dialog.
         wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
@@ -73,13 +74,11 @@ class Uf_object(object):
         wizard.run()
 
 
-    def __init__(self, name, parent, title=None, size=None, height_desc=None, apply_button=True, sync=False):
+    def __init__(self, name, title=None, size=None, height_desc=None, apply_button=True, sync=False):
         """Set up the object.
 
         @param name:            The name of the user function.
         @type name:             str
-        @param parent:          The parent wx element.
-        @type parent:           wx.Frame instance
         @keyword title:         The long title of the user function to set as the window title.
         @type title:            str
         @keyword size:          The window size.
@@ -94,7 +93,6 @@ class Uf_object(object):
 
         # Store the args.
         self._name = name
-        self._parent = parent
         self._title = title
         self._size = size
         self._height_desc = height_desc
@@ -567,6 +565,14 @@ class Uf_storage(dict):
         if self._instance is None:
             # Instantiate.
             self._instance = dict.__new__(self, *args, **kargs)
+
+            # Generate the user functions.
+            for name, data in uf_info.uf_loop():
+                # Generate a new container.
+                obj = Uf_object(name, title=data.title, size=data.wizard_size, height_desc=data.wizard_height_desc, apply_button=data.wizard_apply_button, sync=data.gui_sync)
+
+                # Store it.
+                self._instance[name] = obj
 
         # Already instantiated, so return the instance.
         return self._instance
