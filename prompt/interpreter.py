@@ -47,7 +47,7 @@ from prompt.gpl import GPL
 from prompt.help import _Helper, _Helper_python
 if dep_check.readline_module:
     from prompt.tab_completion import Tab_completion
-from prompt.user_functions import Class_container, Uf_object
+from prompt.uf_objects import Class_container, Uf_object
 from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
