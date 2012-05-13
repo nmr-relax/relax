@@ -31,6 +31,7 @@ import wx
 
 # relax module imports.
 from graphics import fetch_icon
+from prompt.gpl import gpl
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
@@ -215,8 +216,8 @@ class Menu:
         @type event:    wx event
         """
 
-        # Launch the user functions.
-        uf_store['gpl']()
+        # Print the GPL to STDOUT.
+        print(gpl.__doc__)
 
         # Show the relax controller.
         self.gui.show_controller(event)
@@ -229,7 +230,7 @@ class Menu:
         @type event:    wx event
         """
 
-        # Launch the user functions.
+        # Launch the user function.
         uf_store['sys_info']()
 
 
