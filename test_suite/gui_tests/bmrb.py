@@ -27,13 +27,10 @@
 from os import sep
 
 # relax module imports.
-from generic_fns.pipes import VALID_TYPES
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
-from gui.misc import str_to_gui
-from gui import uf_pages
 from gui.wizard import Wiz_window
 
 
