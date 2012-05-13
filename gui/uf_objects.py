@@ -47,15 +47,21 @@ from gui.wizard import Wiz_page, Wiz_window
 class Uf_object(object):
     """The object for auto-generating the GUI user functions."""
 
-    def __call__(self, event):
+    def __call__(self, event=None, parent=None):
         """Make the GUI user function executable.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @keyword event:     The wx event.
+        @type event:        wx event or None
+        @keyword parent:    The parent wx object to associate the user function wizard to.
+        @type parent:       wx object
         """
 
+        # The parent object.
+        if parent == None:
+            parent = self._parent
+
         # Create the wizard dialog.
-        wizard = Wiz_window(parent=self._parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
+        wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
         # Create the page.
         page = self.create_page(wizard, sync=self._sync)
