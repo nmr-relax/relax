@@ -100,23 +100,16 @@ class Uf_object(object):
 
         # Function intro text.
         if status.prompt_intro:
-            # The prompt and user function name.
-            text = "%s%s(" % (status.ps3, self._name)
+            # Convert the keys and values.
+            keys = []
+            values = []
+            for i in range(self._karg_num):
+                keys.append(self._kargs[i]['name'])
+                values.append(uf_kargs[self._kargs[i]['name']])
 
-            # The keyword args.
-            for i in range(len(self._kargs)):
-                # Comma separation.
-                if i >= 1:
-                    text += ", "
-
-                # Add the arg.
-                text += "%s=%s" % (self._kargs[i]['name'], repr(uf_kargs[self._kargs[i]['name']]))
-
-            # The end.
-            text += ")"
-
-            # Print out.
-            print(text)
+            # The print out.
+            asdf
+            print(self._intro_text(keys, values))
 
         # Check the argument values.
         for i in range(self._karg_num):
@@ -243,21 +236,36 @@ class Uf_object(object):
         # Initialise.
         doc = ""
 
-        # Add the title.
-        doc = "%s%s\n" % (doc, bold_text(self._title))
+        # A title.
+        doc += build_subtitle("The %s user function." % self._name)
+
+        # The synopsis.
+        doc += build_subtitle("Synopsis")
+        doc += "%s" % self._title
+        doc += "\n\n"
+
+        # The defaults.
+        doc += build_subtitle("Defaults")
+        keys = []
+        values = []
+        for i in range(self._karg_num):
+            keys.append(self._kargs[i]['name'])
+            values.append(self._kargs[i]['default'])
+        doc += "%s" % self._intro_text(keys, values, prompt=False)
+        doc += "\n\n"
 
         # Add the keyword args.
         if self._kargs != None:
             doc += build_subtitle("Keyword Arguments")
             for i in range(len(self._kargs)):
                 # The text.
-                text = "%s:  %s" % (self._kargs[i]['name'], self._kargs[i]['desc'])
+                text = "%s:  %s" % (bold_text(self._kargs[i]['name']), self._kargs[i]['desc'])
 
                 # Format.
                 text = format_text(text)
 
                 # Add to the docstring.
-                doc = "%s%s\n" % (doc, text)
+                doc += "    %s\n" % text
 
         # Add the description.
         if self._desc != None:
@@ -278,3 +286,42 @@ class Uf_object(object):
 
         # Return the documentation.
         return doc
+
+
+    def _intro_text(self, keys, values, prompt=True):
+        """Build and return the user function intro text.
+
+        @param keys:        The user function keys.
+        @type keys:         list of str
+        @param values:      The values corresponding to the keys.
+        @type values:       list
+        @keyword prompt:    A flag which if True will cause the prompt text to be included.
+        @type prompt:       bool
+        @return:            The user function intro text.
+        @rtype:             str
+        """
+
+        # Initialise.
+        text = ""
+
+        # The prompt.
+        if prompt:
+            text += status.ps3
+
+        # The user function name.
+        text += "%s(" % self._name
+
+        # The keyword args.
+        for i in range(len(keys)):
+            # Comma separation.
+            if i >= 1:
+                text += ", "
+
+            # Add the arg.
+            text += "%s=%s" % (keys[i], repr(values[i]))
+
+        # The end.
+        text += ")"
+
+        # Return the text.
+        return text
