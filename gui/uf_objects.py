@@ -57,8 +57,12 @@ def build_uf_menus(parent=None, menubar=None):
     @rtype:             int
     """
 
-    # The user function menu.
-    menu = wx.Menu()
+    # The user function menus.
+    menu1 = wx.Menu()
+    menu2 = wx.Menu()
+
+    # The menu splitting.
+    pattern = '^[a-m]'
 
     # Initialise some variables.
     class_list = []
@@ -66,6 +70,8 @@ def build_uf_menus(parent=None, menubar=None):
 
     # Loop over the user functions.
     class_item = None
+    menu = menu1
+    menu_index = 0
     for name, data in uf_info.uf_loop():
         # Split up the name.
         if search('\.', name):
@@ -111,6 +117,11 @@ def build_uf_menus(parent=None, menubar=None):
             uf_id = wx.NewId()
             menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
+        # New menu.
+        if menu_index == 0 and not search(pattern, name):
+            menu = menu2
+            menu_index = 1
+
         # Bind the menu item to the parent.
         parent.Bind(wx.EVT_MENU, uf_store[name], id=uf_id)
 
@@ -119,11 +130,13 @@ def build_uf_menus(parent=None, menubar=None):
         menu.AppendItem(class_item)
 
     # Add the user function menu to the menu bar.
-    title = "&User functions"
-    menubar.Append(menu, title)
+    title1 = "&User functions (a-m)"
+    title2 = "&User functions (n-z)"
+    menubar.Append(menu1, title1)
+    menubar.Append(menu2, title2)
 
-    # Return the menu ID.
-    return menubar.FindMenu(title)
+    # Return the menu IDs.
+    return [menubar.FindMenu(title1), menubar.FindMenu(title2)]
 
 
 

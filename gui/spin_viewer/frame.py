@@ -116,7 +116,7 @@ class Spin_view_window(wx.Frame):
             self.SetMenuBar(self.menubar)
 
         # The user function menus.
-        self.menu_uf_id = build_uf_menus(parent=self, menubar=self.menubar)
+        self.menu_uf_ids = build_uf_menus(parent=self, menubar=self.menubar)
 
 
     def Show(self, show=True):

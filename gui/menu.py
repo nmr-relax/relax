@@ -118,7 +118,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor, id=self.MENU_VIEW_PIPE_EDIT)
 
         # The auto generated 'User functions' menu entries.
-        self.menu_uf_id = build_uf_menus(parent=self.gui, menubar=self.menubar)
+        self.menu_uf_ids = build_uf_menus(parent=self.gui, menubar=self.menubar)
 
         # The 'Tools' menu entries.
         menu = wx.Menu()
@@ -259,14 +259,16 @@ class Menu:
         # The view menu entries.
         self.menubar.Enable(self.MENU_VIEW_PROMPT, enable)
 
-        # Loop over the user function menu items.
-        menu = self.menubar.GetMenu(self.menu_uf_id)
-        for item in menu.GetMenuItems():
-            # Enable/disable.
-            item.Enable(enable)
+        # Loop over the user function menus.
+        for id in self.menu_uf_ids:
+            # Loop over the user function menu items.
+            menu = self.menubar.GetMenu(id)
+            for item in menu.GetMenuItems():
+                # Enable/disable.
+                item.Enable(enable)
 
-            # Sub-menu.
-            submenu = item.GetSubMenu()
-            if submenu:
-                for subitem in submenu.GetMenuItems():
-                    subitem.Enable(enable)
+                # Sub-menu.
+                submenu = item.GetSubMenu()
+                if submenu:
+                    for subitem in submenu.GetMenuItems():
+                        subitem.Enable(enable)
