@@ -174,6 +174,8 @@ class Uf_object(object):
                 arg_check.is_str_or_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'tuple':
                 arg_check.is_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+            elif py_type == 'val_or_list':
+                arg_check.is_val_or_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             else:
                 raise RelaxError("The Python object type '%s' is unknown." % py_type)
 
