@@ -43,7 +43,7 @@ uf.title_short = "Diffusion tensor data copying."
 uf.add_keyarg(
     name = "pipe_from",
     py_type = "str",
-    desc_short = "pipe from",
+    desc_short = "source data pipe",
     desc = "The name of the data pipe to copy the diffusion tensor data from.",
     wiz_element_type = 'combo',
     wiz_combo_iter = pipes.pipe_names,
@@ -53,7 +53,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "pipe_to",
     py_type = "str",
-    desc_short = "pipe to",
+    desc_short = "destination data pipe",
     desc = "The name of the data pipe to copy the diffusion tensor data to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = pipes.pipe_names,

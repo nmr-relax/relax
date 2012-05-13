@@ -44,14 +44,14 @@ uf.add_keyarg(
     name = "tensor_from",
     default = None,
     py_type = "str",
-    desc_short = "tensor from",
+    desc_short = "source tensor ID",
     desc = "The identification string of the alignment tensor to copy the data from."
 )
 uf.add_keyarg(
     name = "pipe_from",
     default = None,
     py_type = "str",
-    desc_short = "pipe from",
+    desc_short = "source data pipe",
     desc = "The name of the data pipe to copy the alignment tensor data from.",
     wiz_element_type = 'combo',
     wiz_combo_iter = pipes.pipe_names,
@@ -61,7 +61,7 @@ uf.add_keyarg(
     name = "tensor_to",
     default = None,
     py_type = "str",
-    desc_short = "tensor to",
+    desc_short = "destination tensor ID",
     desc = "The identification string of the alignment tensor to copy the data to.",
     can_be_none = True
 )
@@ -69,7 +69,7 @@ uf.add_keyarg(
     name = "pipe_to",
     default = None,
     py_type = "str",
-    desc_short = "pipe to",
+    desc_short = "destination data pipe",
     desc = "The name of the data pipe to copy the alignment tensor data to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = pipes.pipe_names,
