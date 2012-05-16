@@ -171,7 +171,7 @@ class Free_file_format:
         if hasattr(self, 'data_col'):
             settings['data_col'] =  gui_to_int(self.data_col.GetValue())
         if hasattr(self, 'err_col'):
-            settings['err_col'] =   gui_to_int(self.err_col.GetValue())
+            settings['error_col'] = gui_to_int(self.err_col.GetValue())
 
         # The column separator.
         settings['sep'] = str(self.sep.GetValue())
