@@ -47,29 +47,31 @@ from gui import paths
 class Selector_bool:
     """Wizard GUI element for boolean selection."""
 
-    def __init__(self, name=None, parent=None, element_type='default', sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None, default=True):
+    def __init__(self, name=None, parent=None, element_type='default', sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, default=True):
         """Build the boolean selector widget for selecting between True and False.
 
-        @keyword name:          The name of the element to use in titles, etc.
-        @type name:             str
-        @keyword parent:        The wizard GUI element.
-        @type parent:           wx.Panel instance
-        @keyword element_type:  The type of GUI element to create.  This is currently unused, but can in the future specify alternative selector widgets.
-        @type element_type:     str
-        @keyword sizer:         The sizer to put the combo box widget into.
-        @type sizer:            wx.Sizer instance
-        @keyword desc:          The text description.
-        @type desc:             str
-        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
-        @type tooltip:          str
-        @keyword divider:       The position of the divider.
-        @type divider:          int
-        @keyword padding:       Spacing to the left and right of the widgets.
-        @type padding:          int
-        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:           None or int
-        @keyword default:       The default boolean value.
-        @type default:          bool
+        @keyword name:              The name of the element to use in titles, etc.
+        @type name:                 str
+        @keyword parent:            The wizard GUI element.
+        @type parent:               wx.Panel instance
+        @keyword element_type:      The type of GUI element to create.  This is currently unused, but can in the future specify alternative selector widgets.
+        @type element_type:         str
+        @keyword sizer:             The sizer to put the combo box widget into.
+        @type sizer:                wx.Sizer instance
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
+        @type tooltip:              str
+        @keyword divider:           The position of the divider.
+        @type divider:              int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        @keyword height_element:    The height in pixels of the GUI element.
+        @type height_element:       int
+        @keyword default:           The default boolean value.
+        @type default:              bool
         """
 
         # Store the args.
@@ -99,7 +101,7 @@ class Selector_bool:
         # The combo box element.
         style = wx.CB_DROPDOWN | wx.CB_READONLY
         self.combo = wx.ComboBox(parent, -1, value=bool_to_gui(default), style=style, choices=['True', 'False'])
-        self.combo.SetMinSize((50, parent.height_element))
+        self.combo.SetMinSize((50, height_element))
         self.combo.SetFont(font.normal)
         sub_sizer.Add(self.combo, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -154,33 +156,35 @@ class Selector_bool:
 class Selector_dir:
     """Wizard GUI element for selecting directories."""
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, read_only=False):
         """Build the file selection element.
 
-        @keyword name:      The name of the element to use in titles, etc.
-        @type name:         str
-        @keyword default:   The default value of the element.
-        @type default:      str
-        @keyword parent:    The wizard GUI element.
-        @type parent:       wx.Panel instance
-        @keyword sizer:     The sizer to put the input field into.
-        @type sizer:        wx.Sizer instance
-        @keyword desc:      The text description.
-        @type desc:         str
-        @keyword message:   The file selector prompt string.
-        @type message:      String
-        @keyword style:     The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
-        @type style:        long
-        @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
-        @type tooltip:      str
-        @keyword divider:   The position of the divider.
-        @type divider:      int
-        @keyword padding:   Spacing to the left and right of the widgets.
-        @type padding:      int
-        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:       None or int
-        @keyword read_only: A flag which if True means that the text of the element cannot be edited.
-        @type read_only:    bool
+        @keyword name:              The name of the element to use in titles, etc.
+        @type name:                 str
+        @keyword default:           The default value of the element.
+        @type default:              str
+        @keyword parent:            The wizard GUI element.
+        @type parent:               wx.Panel instance
+        @keyword sizer:             The sizer to put the input field into.
+        @type sizer:                wx.Sizer instance
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword message:           The file selector prompt string.
+        @type message:              String
+        @keyword style:             The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
+        @type style:                long
+        @keyword tooltip:           The tooltip which appears on hovering over all the GUI elements.
+        @type tooltip:              str
+        @keyword divider:           The position of the divider.
+        @type divider:              int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        @keyword height_element:    The height in pixels of the GUI element.
+        @type height_element:       int
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
         """
 
         # Store the args.
@@ -214,7 +218,7 @@ class Selector_dir:
             parent.file_selection_field = []
         parent.file_selection_field.append(wx.TextCtrl(parent, -1, default))
         self._field = parent.file_selection_field[-1]
-        self._field.SetMinSize((-1, parent.height_element))
+        self._field.SetMinSize((-1, height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -226,7 +230,7 @@ class Selector_dir:
 
         # The file selection button.
         button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open-folder'), wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((parent.height_element, parent.height_element))
+        button.SetMinSize((height_element, height_element))
         button.SetToolTipString("Select the directory.")
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
@@ -282,37 +286,39 @@ class Selector_dir:
 class Selector_file:
     """Wizard GUI element for selecting files."""
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=True, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, preview=True, read_only=False):
         """Build the file selection element.
 
-        @keyword name:      The name of the element to use in titles, etc.
-        @type name:         str
-        @keyword default:   The default value of the element.
-        @type default:      str
-        @keyword parent:    The wizard GUI element.
-        @type parent:       wx.Panel instance
-        @keyword sizer:     The sizer to put the input field into.
-        @type sizer:        wx.Sizer instance
-        @keyword desc:      The text description.
-        @type desc:         str
-        @keyword message:   The file selector prompt string.
-        @type message:      String
-        @keyword wildcard:  The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
-        @type wildcard:     String
-        @keyword style:     The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
-        @type style:        long
-        @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
-        @type tooltip:      str
-        @keyword divider:   The position of the divider.
-        @type divider:      int
-        @keyword padding:   Spacing to the left and right of the widgets.
-        @type padding:      int
-        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:       None or int
-        @keyword preview:   A flag which if true will allow the file to be previewed.
-        @type preview:      bool
-        @keyword read_only: A flag which if True means that the text of the element cannot be edited.
-        @type read_only:    bool
+        @keyword name:              The name of the element to use in titles, etc.
+        @type name:                 str
+        @keyword default:           The default value of the element.
+        @type default:              str
+        @keyword parent:            The wizard GUI element.
+        @type parent:               wx.Panel instance
+        @keyword sizer:             The sizer to put the input field into.
+        @type sizer:                wx.Sizer instance
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword message:           The file selector prompt string.
+        @type message:              String
+        @keyword wildcard:          The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
+        @type wildcard:             String
+        @keyword style:             The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
+        @type style:                long
+        @keyword tooltip:           The tooltip which appears on hovering over all the GUI elements.
+        @type tooltip:              str
+        @keyword divider:           The position of the divider.
+        @type divider:              int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        @keyword height_element:    The height in pixels of the GUI element.
+        @type height_element:       int
+        @keyword preview:           A flag which if true will allow the file to be previewed.
+        @type preview:              bool
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
         """
 
         # Store the args.
@@ -346,7 +352,7 @@ class Selector_file:
             parent.file_selection_field = []
         parent.file_selection_field.append(wx.TextCtrl(parent, -1, default))
         self._field = parent.file_selection_field[-1]
-        self._field.SetMinSize((-1, parent.height_element))
+        self._field.SetMinSize((-1, height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -358,7 +364,7 @@ class Selector_file:
 
         # The file selection button.
         button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((parent.height_element, parent.height_element))
+        button.SetMinSize((height_element, height_element))
         button.SetToolTipString("Select the file.")
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
@@ -375,7 +381,7 @@ class Selector_file:
             # The preview button.
             parent.file_selection_preview_button.append(wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY)))
             button = parent.file_selection_preview_button[-1]
-            button.SetMinSize((parent.height_element, parent.height_element))
+            button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Preview")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, parent.preview_file, button)
@@ -440,7 +446,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, single_value=False, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, single_value=False, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -479,6 +485,8 @@ class Sequence:
         @type padding:              int
         @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:               None or int
+        @keyword height_element:    The height in pixels of the GUI element.
+        @type height_element:       int
         @keyword single_value:      A flag which if True will cause single input values to be treated as single values rather than a list or tuple.
         @type single_value:         bool
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
@@ -536,7 +544,7 @@ class Sequence:
 
             # The input field.
             self._field = wx.TextCtrl(parent, -1, '')
-            self._field.SetMinSize((50, parent.height_element))
+            self._field.SetMinSize((50, height_element))
             self._field.SetFont(font.normal)
             sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -551,7 +559,7 @@ class Sequence:
 
             # The edit button.
             button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.edit_rename, wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((parent.height_element, parent.height_element))
+            button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Edit the values.")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)
@@ -712,7 +720,7 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -753,6 +761,8 @@ class Sequence_2D(Sequence):
         @type padding:              int
         @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:               None or int
+        @keyword height_element:    The height in pixels of the GUI element.
+        @type height_element:       int
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
         @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
@@ -763,7 +773,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only, can_be_none=can_be_none)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
 
 
     def open_dialog(self, event):
@@ -1180,46 +1190,48 @@ class Value:
         - strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, min=0, max=1000, tooltip=None, divider=None, padding=0, spacer=None, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', value_type=None, sizer=None, desc=None, combo_choices=None, combo_data=None, min=0, max=1000, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, read_only=False, can_be_none=False):
         """Set up the base value element.
 
-        @keyword name:          The name of the element to use in titles, etc.
-        @type name:             str
-        @keyword default:       The default value of the element.
-        @type default:          float or int or str
-        @keyword parent:        The wizard GUI element.
-        @type parent:           wx.Panel instance
-        @keyword element_type:  The type of GUI element to create.  This can be set to:
-                                    - 'text', a wx.TextCtrl element will be used.
-                                    - 'combo', a wx.ComboBox element will be used.
-                                    - 'spin', a wx.SpinCtrl element will be used.  This is only valid for integer types!
-        @type element_type:     str
-        @keyword value_type:    The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
-        @type value_type:       str
-        @keyword sizer:         The sizer to put the input field widget into.
-        @type sizer:            wx.Sizer instance
-        @keyword desc:          The text description.
-        @type desc:             str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword min:           For a SpinCtrl, the minimum value allowed.
-        @type min:              int
-        @keyword max:           For a SpinCtrl, the maximum value allowed.
-        @type max:              int
-        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
-        @type tooltip:          str
-        @keyword divider:       The position of the divider.
-        @type divider:          int
-        @keyword padding:       Spacing to the left and right of the widgets.
-        @type padding:          int
-        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
-        @type spacer:           None or int
-        @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
-        @type read_only:        bool
-        @keyword can_be_none:   A flag which specifies if the element is allowed to have the None value.
-        @type can_be_none:      bool
+        @keyword name:              The name of the element to use in titles, etc.
+        @type name:                 str
+        @keyword default:           The default value of the element.
+        @type default:              float or int or str
+        @keyword parent:            The wizard GUI element.
+        @type parent:               wx.Panel instance
+        @keyword element_type:      The type of GUI element to create.  This can be set to:
+                                        - 'text', a wx.TextCtrl element will be used.
+                                        - 'combo', a wx.ComboBox element will be used.
+                                        - 'spin', a wx.SpinCtrl element will be used.  This is only valid for integer types!
+        @type element_type:         str
+        @keyword value_type:        The type of Python object that the value should be.  This can be one of 'float', 'int', or 'str'.
+        @type value_type:           str
+        @keyword sizer:             The sizer to put the input field widget into.
+        @type sizer:                wx.Sizer instance
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:        list of str
+        @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:           list
+        @keyword min:               For a SpinCtrl, the minimum value allowed.
+        @type min:                  int
+        @keyword max:               For a SpinCtrl, the maximum value allowed.
+        @type max:                  int
+        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
+        @type tooltip:              str
+        @keyword divider:           The position of the divider.
+        @type divider:              int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        @keyword height_element:    The height in pixels of the GUI element.
+        @type height_element:       int
+        @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
+        @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Set the default.
@@ -1334,7 +1346,7 @@ class Value:
             raise RelaxError("Unknown element type '%s'." % self.element_type)
 
         # Set up the input field.
-        self._field.SetMinSize((50, parent.height_element))
+        self._field.SetMinSize((50, height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
