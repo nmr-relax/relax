@@ -216,16 +216,19 @@ class Relax_data_store(dict):
             status.observers.pipe_alteration.notify()
 
 
-    def is_empty(self):
+    def is_empty(self, verbosity=False):
         """Method for testing if the relax data store is empty.
 
-        @return:    True if the data store is empty, False otherwise.
-        @rtype:     bool
+        @keyword verbosity: A flag which if True will cause messages to be printed to STDERR.
+        @type verbosity:    bool
+        @return:            True if the data store is empty, False otherwise.
+        @rtype:             bool
         """
 
         # No pipes should exist.
         if not self.keys() == []:
-            stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
+            if verbosity:
+                stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
             return False
 
         # Objects which should be in here.
@@ -252,7 +255,8 @@ class Relax_data_store(dict):
                 continue
 
             # An object has been added.
-            stderr.write("The relax data store contains the object %s.\n" % name)
+            if verbosity:
+                stderr.write("The relax data store contains the object %s.\n" % name)
             return False
 
         # The data store is empty.
