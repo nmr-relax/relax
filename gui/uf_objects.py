@@ -638,6 +638,10 @@ class Uf_page(Wiz_page):
             # Store the value.
             kargs[name] = self.GetValue(name)
 
+        # Handle the free file format args.
+        if 'free_file_format' in self.uf_args:
+            kargs.update(self.uf_args['free_file_format'].GetValue())
+
         # Display the relax controller, if asked.
         if self.uf_data.display:
             # Get the App.
