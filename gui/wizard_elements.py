@@ -1371,9 +1371,14 @@ class Value:
     def Clear(self):
         """Special method for clearing or resetting the GUI element."""
 
-        # Clear the value from a TextCtrl or ComboBox.
-        if self.element_type in ['text', 'combo']:
+        # Clear the value from a TextCtrl.
+        if self.element_type == 'text':
             self._field.Clear()
+
+        # Clear the value from a ComboBox.
+        if self.element_type == 'combo':
+            self._field.Clear()
+            self._field.SetValue('')
 
 
     def GetValue(self):
