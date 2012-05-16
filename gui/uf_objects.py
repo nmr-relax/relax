@@ -44,6 +44,7 @@ from gui.errors import gui_raise
 from gui.fonts import font
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_page, Wiz_window
+from gui.wizard_elements import Selector_bool, Selector_dir, Selector_file, Sequence, Sequence_2D, Value
 
 
 def build_uf_menus(parent=None, menubar=None):
@@ -232,8 +233,8 @@ class Uf_page(Wiz_page):
         self.name = name
         self.sync = sync
 
-        # Default value data structure.
-        self.defaults = {}
+        # Storage of the user function argument elements.
+        self.uf_args = {}
 
         # Yield to allow the cursor to be changed.
         wx.Yield()
@@ -291,6 +292,64 @@ class Uf_page(Wiz_page):
         return stripped_text
 
 
+    def Clear(self, key):
+        """Special wizard method for clearing the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.
+        @type key:      str
+        """
+
+        # Call the argument element's method.
+        self.uf_args[key].Clear()
+
+
+    def GetValue(self, key):
+        """Special wizard method for getting the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.
+        @type key:      str
+        @return:        The value that the specific GUI element's GetValue() method returns.
+        @rtype:         unknown
+        """
+
+        # The key is not set, so assume this is a hidden argument.
+        if key not in self.uf_args.keys():
+            return None
+
+        # Call the argument element's method.
+        return self.uf_args[key].GetValue()
+
+
+    def ResetChoices(self, key, combo_choices=None, combo_data=None, combo_default=None):
+        """Special user function page method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # Call the argument element's method.
+        self.uf_args[key].ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
+
+
+    def SetValue(self, key, value):
+        """Special wizard method for setting the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.
+        @type key:      str
+        @param value:   The value that the specific GUI element's SetValue() method expects.
+        @type value:    unknown
+        """
+
+        # Call the argument element's method.
+        self.uf_args[key].SetValue(value)
+
+
     def add_contents(self, sizer):
         """Add the specific GUI elements.
 
@@ -312,7 +371,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  file selection dialog.
             if arg['arg_type'] == 'file sel':
-                self.element_file_sel(key=arg['name'], default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
 
             # Special arg type:  dir arg.
             elif arg['arg_type'] == 'dir':
@@ -320,7 +379,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  directory selection dialog.
             elif arg['arg_type'] == 'dir sel':
-                self.element_dir_sel(key=arg['name'], default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], read_only=arg['wiz_read_only'])
+                self.uf_args[arg['name']] = Selector_dir(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
 
             # Special arg type:  free format file settings.
             elif arg['arg_type'] == 'free format':
@@ -335,11 +394,11 @@ class Uf_page(Wiz_page):
 
             # Value types.
             elif arg['py_type'] in ['float', 'int', 'num', 'str']:
-                self.element_value(key=arg['name'], default=arg['default'], element_type=arg['wiz_element_type'], value_type=arg['py_type'], min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], tooltip=arg['desc'], read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+                self.uf_args[arg['name']] = Value(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], value_type=arg['py_type'], min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # Bool type.
             elif arg['py_type'] == 'bool':
-                self.element_bool(key=arg['name'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'])
+                self.uf_args[arg['name']] = Selector_bool(name=arg['name'], parent=self, element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'], divider=self._div_left, height_element=self.height_element)
 
             # Sequence types.
             elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list']:
@@ -369,7 +428,7 @@ class Uf_page(Wiz_page):
                 if isinstance(arg['dim'], int):
                     dim = arg['dim']
 
-                self.element_sequence(key=arg['name'], default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], single_value=single_value, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+                self.uf_args[arg['name']] = Sequence(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], single_value=single_value, divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # 2D sequence types.
             elif arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_tuple_of_tuples', 'int_tuple_of_tuples', 'num_tuple_of_tuples', 'str_tuple_of_tuples', 'float_matrix', 'int_matrix']:
@@ -387,7 +446,7 @@ class Uf_page(Wiz_page):
                 else:
                     value_type = 'str'
 
-                self.element_sequence_2D(key=arg['name'], default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=arg['dim'], min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+                self.uf_args[arg['name']] = Sequence_2D(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=arg['dim'], min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # Unknown type.
             else:
@@ -395,7 +454,7 @@ class Uf_page(Wiz_page):
 
         # Add the free format element.
         if free_format:
-            Free_file_format(sizer, parent=self, data_cols=free_format_data, padding=3, spacer=0)
+            self.uf_args['free_file_format'] = Free_file_format(sizer, parent=self, data_cols=free_format_data, padding=3, spacer=0)
 
 
     def add_desc(self, sizer, max_y=220):
