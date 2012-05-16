@@ -151,6 +151,37 @@ class Free_file_format:
             main_sizer.Add(button_sizer, 0, wx.ALL, 0)
 
 
+    def GetValue(self):
+        """Return the free file format settings as a keyword dictionary.
+
+        @return:    The dictionary of free file format settings.
+        @rtype:     dict
+        """
+
+        # Initialise.
+        settings = {}
+
+        # Get the column numbers.
+        settings['spin_id_col'] =   gui_to_int(self.spin_id_col.GetValue())
+        settings['mol_name_col'] =  gui_to_int(self.mol_name_col.GetValue())
+        settings['res_num_col'] =   gui_to_int(self.res_num_col.GetValue())
+        settings['res_name_col'] =  gui_to_int(self.res_name_col.GetValue())
+        settings['spin_num_col'] =  gui_to_int(self.spin_num_col.GetValue())
+        settings['spin_name_col'] = gui_to_int(self.spin_name_col.GetValue())
+        if hasattr(self, 'data_col'):
+            settings['data_col'] =  gui_to_int(self.data_col.GetValue())
+        if hasattr(self, 'err_col'):
+            settings['err_col'] =   gui_to_int(self.err_col.GetValue())
+
+        # The column separator.
+        settings['sep'] = str(self.sep.GetValue())
+        if settings['sep'] == 'white space':
+            settings['sep'] = None
+
+        # Return the settings.
+        return settings
+
+
     def reset(self, event):
         """Reset the free file format widget contents to the original values.
 
