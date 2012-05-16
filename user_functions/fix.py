@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'fix' user function data."""
+"""The fix user function definitions."""
 
 # relax module imports.
 from generic_fns import fix

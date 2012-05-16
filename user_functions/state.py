@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'state' user function data."""
+"""The state user function definitions."""
 
 # relax module imports.
 from generic_fns.state import load_state, save_state

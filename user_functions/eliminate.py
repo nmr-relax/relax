@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'eliminate' user function for removing failed models."""
+"""The eliminate user function definitions for removing failed models."""
 
 # relax module imports.
 from generic_fns import eliminate

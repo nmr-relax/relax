@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'bmrb' user function data."""
+"""The bmrb user function definitions."""
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH

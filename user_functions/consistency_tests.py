@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'consistency_tests' user function data."""
+"""The consistency_tests user function definitions."""
 
 # relax module imports.
 from generic_fns import frq

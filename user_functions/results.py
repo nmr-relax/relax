@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'results' user function data."""
+"""The results user function definitions."""
 
 # relax module imports.
 from generic_fns import results

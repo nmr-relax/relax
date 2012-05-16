@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'structure' user function data."""
+"""The structure user function definitions."""
 
 # Python module imports.
 from os import sep

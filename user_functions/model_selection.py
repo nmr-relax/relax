@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'model_selection' user function data."""
+"""The model_selection user function definitions."""
 
 # relax module imports.
 from generic_fns import model_selection, pipes

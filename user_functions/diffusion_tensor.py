@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'diffusion_tensor' user function data."""
+"""The diffusion_tensor user function definitions."""
 
 # relax module imports.
 from generic_fns import diffusion_tensor, pipes

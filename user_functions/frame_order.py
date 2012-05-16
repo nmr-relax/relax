@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the user function data of the Frame Order theories."""
+"""The frame_order user function definitions."""
 
 # relax module imports.
 from specific_fns.setup import frame_order_obj

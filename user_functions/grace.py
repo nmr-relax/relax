@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'grace' user function data for controlling the Grace data viewing software."""
+"""The grace user function definitions for controlling the Grace data viewing software."""
 
 # relax module imports.
 from generic_fns import grace, minimise

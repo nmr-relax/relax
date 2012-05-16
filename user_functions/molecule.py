@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'molecule' user function data."""
+"""The molecule user function definitions."""
 
 # relax module imports.
 from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, copy_molecule, create_molecule, delete_molecule, display_molecule, get_molecule_ids, id_string_doc, name_molecule, type_molecule

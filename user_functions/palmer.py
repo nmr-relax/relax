@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'palmer' user function data for controlling the Modelfree4 software."""
+"""The palmer user function definitions for controlling the Modelfree4 software."""
 
 # relax module imports.
 from generic_fns import palmer

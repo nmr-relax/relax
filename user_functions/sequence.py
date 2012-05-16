@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'sequence' user function data."""
+"""The sequence user function definitions."""
 
 # relax module imports.
 from generic_fns import pipes, sequence

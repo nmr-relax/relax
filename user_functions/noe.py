@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'noe' user function data."""
+"""The noe user function definitions."""
 
 # relax module imports.
 from generic_fns import noesy, spectrum

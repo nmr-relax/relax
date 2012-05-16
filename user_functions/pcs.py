@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the pcs pseudocontact shift user function data."""
+"""The pcs user function definitions."""
 
 # relax module imports.
 from generic_fns import align_tensor, pcs, pipes

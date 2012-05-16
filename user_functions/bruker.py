@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Bruker Dynamics Center user function data."""
+"""The bruker user function definitions for interfacing with the Bruker Dynamics Center."""
 
 # relax module imports.
 from generic_fns import bruker

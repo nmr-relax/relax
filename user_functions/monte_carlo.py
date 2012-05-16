@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Monte Carlo simulation 'monte_carlo' user function data."""
+"""The monte_carlo user function definitions for Monte Carlo simulations."""
 
 # relax module imports.
 from generic_fns import monte_carlo

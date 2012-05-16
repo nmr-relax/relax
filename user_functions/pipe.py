@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'pipe' user function data."""
+"""The pipe user function definitions."""
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH

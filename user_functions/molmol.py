@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'molmol' user function data for interacting with Molmol."""
+"""The molmol user function definitions for interacting with Molmol."""
 
 # Python module imports.
 from os import sep

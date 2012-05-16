@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'n_state_model' user function data."""
+"""The n_state_model user function definitions."""
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH

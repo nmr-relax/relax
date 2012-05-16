@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Reduced Spectral Density Mapping 'jw_mapping' user function data."""
+"""The jw_mapping user function definitions for Reduced Spectral Density Mapping."""
 
 # relax module imports.
 from generic_fns import frq

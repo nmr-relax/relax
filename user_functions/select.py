@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'select' user function data."""
+"""The select user function definitions."""
 
 # relax module imports.
 from generic_fns import selection

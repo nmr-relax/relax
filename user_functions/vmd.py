@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'vmd' user function data for controlling VMD."""
+"""The vmd user function definitions for controlling VMD."""
 
 # relax module imports.
 from generic_fns import vmd

@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'frq' user function data for manipulating spectrometer frequencies."""
+"""The frq user function definitions for manipulating spectrometer frequencies."""
 
 # relax module imports.
 import generic_fns.frq

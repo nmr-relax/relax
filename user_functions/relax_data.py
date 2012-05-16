@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'relax_data' user function data."""
+"""The relax_data user function definitions."""
 
 # relax module imports.
 from generic_fns import pipes, relax_data

@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'value' user function data."""
+"""The value user function definitions."""
 
 # Python module imports.
 from os import sep

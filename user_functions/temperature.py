@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'temperature' user function data."""
+"""The temperature user function definitions."""
 
 # relax module imports.
 from generic_fns import temperature

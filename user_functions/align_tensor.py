@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'align_tensor' user function data."""
+"""The align_tensor user function definitions."""
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH

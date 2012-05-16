@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'spin' user function data."""
+"""The spin user function definitions."""
 
 # relax module imports.
 from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, get_molecule_names, get_residue_ids, get_residue_names, get_residue_nums, get_spin_ids, id_string_doc, name_spin, number_spin, set_spin_element

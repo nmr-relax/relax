@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'deselect' user function data."""
+"""The deselect user function definitions."""
 
 # relax module imports.
 from generic_fns import selection

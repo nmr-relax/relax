@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'dx' user function data for controlling the OpenDX visualisation software."""
+"""The dx user function definitions for controlling the OpenDX visualisation software."""
 
 # relax module imports.
 from generic_fns import diffusion_tensor

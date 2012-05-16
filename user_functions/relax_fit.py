@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the relax_fit user function data."""
+"""The relax_fit user function definitions."""
 
 # relax module imports.
 from generic_fns import spectrum

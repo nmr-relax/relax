@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'residue' user function data."""
+"""The residue user function definitions."""
 
 # relax module imports.
 from generic_fns.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, get_molecule_ids, get_molecule_names, get_residue_ids, id_string_doc, name_residue, number_residue

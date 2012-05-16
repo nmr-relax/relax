@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'pymol' user function data for interacting with PyMOL."""
+"""The pymol user function definitions for interacting with PyMOL."""
 
 # Python module imports.
 from os import sep

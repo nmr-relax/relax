@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the user function data for paramagnetic related functions."""
+"""The paramag user function definitions for paramagnetic related functions."""
 
 # relax module imports.
 from generic_fns import paramag, pipes

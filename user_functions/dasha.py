@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'dasha' user function data for controlling the Dasha model-free software."""
+"""The dasha user function definitions for controlling the Dasha model-free software."""
 
 # relax module imports.
 from generic_fns import dasha

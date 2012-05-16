@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the model-free analysis 'model_free' user function data."""
+"""The model_free user function definitions for model-free analysis."""
 
 # Python module imports.
 from os import sep

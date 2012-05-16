@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the rdc user function data."""
+"""The rdc user function definitions."""
 
 # relax module imports.
 from generic_fns import align_tensor, pipes, rdc

@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'sys_info' user function data."""
+"""The sys_info user function definitions."""
 
 # relax module imports.
 from generic_fns.sys_info import sys_info

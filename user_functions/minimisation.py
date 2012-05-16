@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'minimisation' user function data."""
+"""The minimisation user function definitions."""
 
 # Python module imports.
 from string import split

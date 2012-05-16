@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'angles' user function data."""
+"""The angles user function definitions."""
 
 # relax module imports.
 from generic_fns import angles
