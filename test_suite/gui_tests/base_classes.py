@@ -41,6 +41,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui.wizard import Wiz_window
 from gui.uf_objects import Uf_page
 
 
