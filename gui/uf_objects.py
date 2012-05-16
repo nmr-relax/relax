@@ -215,9 +215,6 @@ class Uf_object(object):
 class Uf_page(Wiz_page):
     """User function specific pages for the wizards."""
 
-    # The path to the user function.
-    uf_path = None
-
     def __init__(self, name, parent=None, height_desc=220, sync=False):
         """Set up the window.
 
