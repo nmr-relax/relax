@@ -586,44 +586,18 @@ class Uf_page(Wiz_page):
             interpreter.queue(uf, *args, **kwds)
 
 
+    def on_completion(self):
+        """Update the argument GUI elements if needed."""
+
+        # Update the args.
+        self.update_args()
+
+
     def on_display(self):
         """Clear and update the data if needed."""
 
-        # Loop over the arguments.
-        for i in range(len(self.uf_data.kargs)):
-            # The argument name.
-            name = self.uf_data.kargs[i]['name']
-
-            # No iterator method for updating the list.
-            iterator = self.uf_data.kargs[i]['wiz_combo_iter']
-            if iterator == None:
-                continue
-
-            # Get the new choices and data (in a safe way).
-            try:
-                choices = []
-                data = []
-                for vals in iterator():
-                    if arg_check.is_tuple(vals, size=2, raise_error=False):
-                        choices.append(vals[0])
-                        data.append(vals[1])
-                    else:
-                        choices.append(vals)
-                        data.append(vals)
-
-            # Catch all RelaxErrors.
-            except AllRelaxErrors, instance:
-                # Signal the failure to the wizard.
-                self.setup_fail = True
-
-                # Display a dialog with the error.
-                gui_raise(instance)
-
-                # Return as a failure.
-                return False
-
-            # Reset.
-            self.ResetChoices(name, combo_choices=choices, combo_data=data)
+        # Update the args.
+        self.update_args()
 
 
     def on_execute(self):
@@ -705,6 +679,44 @@ class Uf_page(Wiz_page):
         # Yield the bits.
         for i in range(len(text)):
             yield text[i], type[i]
+
+
+    def update_args(self):
+        # Loop over the arguments.
+        for i in range(len(self.uf_data.kargs)):
+            # The argument name.
+            name = self.uf_data.kargs[i]['name']
+
+            # No iterator method for updating the list.
+            iterator = self.uf_data.kargs[i]['wiz_combo_iter']
+            if iterator == None:
+                continue
+
+            # Get the new choices and data (in a safe way).
+            try:
+                choices = []
+                data = []
+                for vals in iterator():
+                    if arg_check.is_tuple(vals, size=2, raise_error=False):
+                        choices.append(vals[0])
+                        data.append(vals[1])
+                    else:
+                        choices.append(vals)
+                        data.append(vals)
+
+            # Catch all RelaxErrors.
+            except AllRelaxErrors, instance:
+                # Signal the failure to the wizard.
+                self.setup_fail = True
+
+                # Display a dialog with the error.
+                gui_raise(instance)
+
+                # Return as a failure.
+                return False
+
+            # Reset.
+            self.ResetChoices(name, combo_choices=choices, combo_data=data)
 
 
 
