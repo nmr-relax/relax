@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""RDC-based system tests."""
+"""System tests of the molecule, residue, and spin sequence operators."""
 
 
 # Python module imports.
@@ -29,37 +29,36 @@ from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
-from generic_fns.mol_res_spin import count_spins, spin_loop
+from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 
-class Rdc(SystemTestCase):
-    """Class for testing RDC operations."""
+class Mol_res_spin(SystemTestCase):
+    """Class for testing the mol_res_spin functions."""
 
-    def test_rdc_load(self):
-        """Test for the loading of some RDC data with the spin ID format."""
+    def setUp(self):
+        """Set up for all the functional tests."""
 
-        # Create a data pipe.
-        self.interpreter.pipe.create('test', 'N-state')
+        # Create the data pipe.
+        self.interpreter.pipe.create('mf', 'mf')
 
-        # Data directory.
-        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+    def test_residue_delete(self):
+        """Test residue deletion."""
+
+        # Read a PDB file.
+        self.interpreter.structure.read_pdb(file='sphere.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'sphere')
 
         # Load the spins.
-        self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
-        self.interpreter.sequence.display()
+        self.interpreter.structure.load_spins()
 
-        # Load the RDCs.
-        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id_col=1, data_col=2, error_col=3)
-        self.interpreter.sequence.display()
+        # Test the original sequence data.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(len(cdp.mol[0].res), 9)
 
-        # The RDCs.
-        rdcs = [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, 1.33652530397, -1.6021670281]
+        # Delete the first residue.
+        self.interpreter.residue.delete(res_id='#sphere_mol1:1')
 
-        # Checks.
-        self.assertEqual(count_spins(), 8)
-        i = 0
-        for spin in spin_loop():
-            self.assertAlmostEqual(rdcs[i], spin.rdc['tb'])
-            i += 1
-
+        # Test the remaining sequence data.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(len(cdp.mol[0].res), 8)

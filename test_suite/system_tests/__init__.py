@@ -44,6 +44,7 @@ from load_spins import Load_spins
 from model_elimination import Modelim
 from model_free import Mf
 from model_selection import Modsel
+from mol_res_spin import Mol_res_spin
 from n_state_model import N_state_model
 from noe import Noe
 from noe_restraints import Noe_restraints
@@ -145,6 +146,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Mol_res_spin))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))

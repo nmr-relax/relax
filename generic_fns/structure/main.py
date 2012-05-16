@@ -103,6 +103,9 @@ def connect_atom(index1=None, index2=None):
 def delete():
     """Simple function for deleting all structural data."""
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Run the object method.
     cdp.structure.delete()
 
@@ -131,6 +134,9 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
     @keyword centroid:          An alternative position of the centroid, used for studying pivoted systems.
     @type centroid:             list of float or numpy rank-1, 3D array
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Convert the model_from and model_to args to lists, is supplied.
     if model_from != None:
@@ -182,6 +188,9 @@ def find_pivot(models=None, atom_id=None, init_pos=None):
     @type init_pos:     list of float or numpy rank-1, 3D array
     """
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Initialised the starting position if needed.
     if init_pos == None:
         init_pos = zeros(3, float64)
@@ -218,8 +227,6 @@ def find_pivot(models=None, atom_id=None, init_pos=None):
 
     # Print out.
     print("Motional pivot found at:  %s" % results)
-
-
 
 
 def get_pos(spin_id=None, str_id=None, ave_pos=False):
@@ -615,6 +622,9 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
     if method not in allowed:
         raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Validate the models.
     cdp.structure.validate_models()
 
@@ -689,6 +699,9 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
     @keyword unit:          A flag which if True will cause the function to calculate the unit vectors.
     @type unit:             bool
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
