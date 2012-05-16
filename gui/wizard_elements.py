@@ -62,8 +62,8 @@ class Selector_bool:
         @type desc:             str
         @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
         @type tooltip:          str
-        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:          None or int
+        @keyword divider:       The position of the divider.
+        @type divider:          int
         @keyword padding:       Spacing to the left and right of the widgets.
         @type padding:          int
         @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
@@ -90,7 +90,7 @@ class Selector_bool:
 
         # The divider.
         if not divider:
-            divider = parent._div_left
+            raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
         x, y = text.GetSize()
@@ -173,8 +173,8 @@ class Selector_dir:
         @type style:        long
         @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
         @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:      None or int
+        @keyword divider:   The position of the divider.
+        @type divider:      int
         @keyword padding:   Spacing to the left and right of the widgets.
         @type padding:      int
         @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
@@ -203,7 +203,7 @@ class Selector_dir:
 
         # The divider.
         if not divider:
-            divider = parent._div_left
+            raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
         x, y = text.GetSize()
@@ -303,8 +303,8 @@ class Selector_file:
         @type style:        long
         @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
         @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:      None or int
+        @keyword divider:   The position of the divider.
+        @type divider:      int
         @keyword padding:   Spacing to the left and right of the widgets.
         @type padding:      int
         @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
@@ -335,7 +335,7 @@ class Selector_file:
 
         # The divider.
         if not divider:
-            divider = parent._div_left
+            raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
         x, y = text.GetSize()
@@ -473,8 +473,8 @@ class Sequence:
         @type combo_list_size:      int or None
         @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
         @type tooltip:              str
-        @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:              None or int
+        @keyword divider:           The position of the divider.
+        @type divider:              int
         @keyword padding:           Spacing to the left and right of the widgets.
         @type padding:              int
         @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
@@ -528,7 +528,7 @@ class Sequence:
 
             # The divider.
             if not divider:
-                divider = parent._div_left
+                raise RelaxError("The divider position has not been supplied.")
 
             # Spacing.
             x, y = text.GetSize()
@@ -1210,8 +1210,8 @@ class Value:
         @type max:              int
         @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
         @type tooltip:          str
-        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
-        @type divider:          None or int
+        @keyword divider:       The position of the divider.
+        @type divider:          int
         @keyword padding:       Spacing to the left and right of the widgets.
         @type padding:          int
         @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
@@ -1271,7 +1271,7 @@ class Value:
 
         # The divider.
         if not divider:
-            divider = parent._div_left
+            raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
         x, y = text.GetSize()
