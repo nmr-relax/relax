@@ -42,9 +42,14 @@ from gui.components.free_file_format import Free_file_format
 from gui.components.menu import build_menu_item
 from gui.errors import gui_raise
 from gui.fonts import font
+from gui.input_elements.bool import Selector_bool
+from gui.input_elements.dir import Selector_dir
+from gui.input_elements.file import Selector_file
+from gui.input_elements.sequence import Sequence
+from gui.input_elements.sequence_2D import Sequence_2D
+from gui.input_elements.value import Value
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_page, Wiz_window
-from gui.wizard_elements import Selector_bool, Selector_dir, Selector_file, Sequence, Sequence_2D, Value
 
 
 def build_uf_menus(parent=None, menubar=None):
