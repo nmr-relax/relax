@@ -95,7 +95,9 @@ class GuiTestCase(TestCase):
 
         # Set all the values.
         for key in kargs:
-            uf_page.SetValue(key=key, value=kargs[key])
+            # The argument is a GUI element.
+            if key in uf_page.uf_args:
+                uf_page.SetValue(key=key, value=kargs[key])
 
         # Execute the user function.
         uf_page.on_execute()
