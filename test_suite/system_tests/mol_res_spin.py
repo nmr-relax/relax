@@ -57,7 +57,7 @@ class Mol_res_spin(SystemTestCase):
         self.assertEqual(len(cdp.mol[0].res), 9)
 
         # Delete the first residue.
-        self.interpreter.residue.delete(res_id='#sphere_mol1:1&:GLY')
+        self.interpreter.residue.delete(res_id='#sphere_mol1:1')
 
         # Test the remaining sequence data.
         self.assertEqual(len(cdp.mol), 1)

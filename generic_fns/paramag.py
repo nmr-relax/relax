@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,6 @@ from warnings import warn
 from generic_fns import grace, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
-from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
 
 

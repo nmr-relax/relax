@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -796,27 +796,33 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     # Loop over the file data to create the data structures for packing.
     values = []
     errors = []
-    ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
-            id, value, error = data
+            mol_name, res_num, res_name, spin_num, spin_name, value, error = data
         elif data_col:
-            id, value = data
+            mol_name, res_num, res_name, spin_num, spin_name, value = data
             error = None
         else:
-            id, error = data
+            mol_name, res_num, res_name, spin_num, spin_name, error = data
             value = None
 
-        # Pack the spin ID info.
-        ids.append(id)
-
-        # Convert the data.
+        # Store all the info.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin_num)
+        spin_names.append(spin_name)
         values.append(value)
         errors.append(error)
 
     # Pack the data.
-    pack_data(ri_id, ri_type, frq, values, errors, ids)
+    pack_data(ri_id, ri_type, frq, values, errors, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
 def return_data_desc(name):
