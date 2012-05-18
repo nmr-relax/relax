@@ -92,7 +92,7 @@ class GuiTestCase(TestCase):
             self._wizard = Wiz_window(self.app.gui)
 
         # Create the page.
-        uf_page = Uf_page(uf_name, parent=self._wizard)
+        uf_page = Uf_page(uf_name, parent=self._wizard, sync=True)
 
         # Update the user function page.
         uf_page.on_display()
