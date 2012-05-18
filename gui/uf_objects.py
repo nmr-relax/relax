@@ -35,6 +35,7 @@ import arg_check
 from graphics import fetch_icon
 from relax_errors import AllRelaxErrors, RelaxError
 from relax_string import strip_lead
+from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI imports.
@@ -648,7 +649,7 @@ class Uf_page(Wiz_page):
         self.execute(self.name, **kargs)
 
         # Bring the controller to the front.
-        if self.uf_data.display:
+        if status.show_gui and self.uf_data.display:
             wx.CallAfter(app.gui.controller.Raise)
 
 
