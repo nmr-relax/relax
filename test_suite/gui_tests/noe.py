@@ -91,7 +91,7 @@ class Noe(GuiTestCase):
             status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
         ]
         errors = [3600, 3000]
-        types = [1, 0]
+        types = ['ref', 'sat']
 
         # Loop over the 2 spectra.
         for i in range(2):
@@ -100,9 +100,9 @@ class Noe(GuiTestCase):
 
             # The spectrum.
             page = analysis.wizard.get_page(analysis.page_indices['read'])
-            page.file.SetValue(str_to_gui(files[i]))
-            page.spectrum_id.SetValue(str_to_gui(ids[i]))
-            page.proton.SetValue(str_to_gui('HN'))
+            page.uf_args['file'].SetValue(str_to_gui(files[i]))
+            page.uf_args['spectrum_id'].SetValue(str_to_gui(ids[i]))
+            page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Move down 2 pages.
             analysis.wizard._go_next(None)
@@ -110,14 +110,14 @@ class Noe(GuiTestCase):
 
             # Set the errors.
             page = analysis.wizard.get_page(analysis.page_indices['rmsd'])
-            page.error.SetValue(int_to_gui(errors[i]))
+            page.uf_args['error'].SetValue(int_to_gui(errors[i]))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
 
             # Set the type.
             page = analysis.wizard.get_page(analysis.page_indices['spectrum_type'])
-            page.spectrum_type.SetSelection(types[i])
+            page.uf_args['spectrum_type'].SetValue(types[i])
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
