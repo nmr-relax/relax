@@ -108,6 +108,7 @@ class Value:
         self.default = default
         self.element_type = element_type
         self.can_be_none = can_be_none
+        self.read_only = read_only
 
         # The value types.
         if value_type in ['float', 'num']:
@@ -266,7 +267,15 @@ class Value:
 
         # Convert and return the value from a ComboBox.
         if self.element_type == 'combo':
-            return self.convert_from_gui(self._field.GetClientData(self._field.GetSelection()))
+            # An element selected from the list.
+            value = self.convert_from_gui(self._field.GetClientData(self._field.GetSelection()))
+
+            # A non-list value.
+            if value == None:
+                value = self.convert_from_gui(self._field.GetValue())
+
+            # Return the value.
+            return value
 
 
     def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
@@ -344,7 +353,19 @@ class Value:
         # Convert and set the value for a ComboBox.
         elif self.element_type == 'combo':
             # Loop until the proper client data is found.
+            found = False
             for i in range(self._field.GetCount()):
                 if self._field.GetClientData(i) == value:
                     self._field.SetSelection(i)
+                    found = True
                     break
+
+            # No value found.
+            if not found:
+                # Invalid value.
+                if self.read_only:
+                    raise RelaxError("The Value element is read only, cannot set the value '%s'." % value)
+
+                # Set the unknown value.
+                else:
+                    self._field.SetValue(value)
