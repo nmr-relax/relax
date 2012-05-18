@@ -382,7 +382,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  file selection dialog.
             if arg['arg_type'] == 'file sel':
-                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
+                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
 
             # Special arg type:  dir arg.
             elif arg['arg_type'] == 'dir':
@@ -390,7 +390,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  directory selection dialog.
             elif arg['arg_type'] == 'dir sel':
-                self.uf_args[arg['name']] = Selector_dir(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
+                self.uf_args[arg['name']] = Selector_dir(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, style=arg['wiz_dirsel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
 
             # Special arg type:  free format file settings.
             elif arg['arg_type'] == 'free format':

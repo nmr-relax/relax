@@ -23,6 +23,9 @@
 # Module docstring.
 """The module of all the objects used to hold the user function details."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from graphics import IMAGE_PATH
 from relax_errors import RelaxError
@@ -185,7 +188,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=wx.FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=wx.DD_DEFAULT_STYLE, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -221,6 +224,12 @@ class Uf_container(object):
         @type wiz_combo_iter:           iterator or None
         @keyword wiz_combo_list_min:    The minimum length of the Combo_list element.
         @type wiz_combo_list_min:       int or None
+        @keyword wiz_filesel_wildcard:  The file selection dialog wildcard string.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
+        @type wiz_filesel_wildcard:     str or None
+        @keyword wiz_filesel_style:     The file selection dialog style.
+        @type wiz_filesel_style:        int
+        @keyword wiz_dirsel_style:      The directory selection dialog style.
+        @type wiz_dirsel_style:         int
         @keyword wiz_read_only:         A flag which if True means that the text of the GUI wizard page element cannot be edited.  If the default of None is given, then each UI element will decide for itself what to do.
         @type wiz_read_only:            bool or None
         @keyword can_be_none:           A flag which specifies if the argument is allowed to have the None value.
@@ -240,6 +249,10 @@ class Uf_container(object):
             raise RelaxError("The 'desc_short' argument must be supplied.")
         if desc == None:
             raise RelaxError("The 'desc' argument must be supplied.")
+
+        # Check the file selection dialog.
+        if arg_type == "file sel" and wiz_filesel_style == None:
+            raise RelaxError("The file selection style must always be provided.")
 
         # Append a new argument dictionary to the list, and alias it.
         self.kargs.append({})
@@ -264,6 +277,9 @@ class Uf_container(object):
         arg['wiz_combo_data'] = wiz_combo_data
         arg['wiz_combo_iter'] = wiz_combo_iter
         arg['wiz_combo_list_min'] = wiz_combo_list_min
+        arg['wiz_filesel_wildcard'] = wiz_filesel_wildcard
+        arg['wiz_filesel_style'] = wiz_filesel_style
+        arg['wiz_dirsel_style'] = wiz_dirsel_style
         arg['wiz_read_only'] = wiz_read_only
         arg['can_be_none'] = can_be_none
         arg['can_be_empty'] = can_be_empty

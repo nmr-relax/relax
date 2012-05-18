@@ -23,6 +23,9 @@
 # Module docstring.
 """The script user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns import script
 from graphics import WIZARD_IMAGE_PATH
@@ -37,7 +40,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file containing the relaxation data."
+    desc = "The name of the file containing the relaxation data.",
+    wiz_filesel_wildcard = "relax scripts (*.py)|*.py",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

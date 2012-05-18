@@ -23,6 +23,9 @@
 # Module docstring.
 """The sequence user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns import pipes, sequence
 from graphics import WIZARD_IMAGE_PATH
@@ -154,7 +157,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file containing the sequence data."
+    desc = "The name of the file containing the sequence data.",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -281,7 +285,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file."
+    desc = "The name of the file.",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

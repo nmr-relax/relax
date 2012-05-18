@@ -23,6 +23,9 @@
 # Module docstring.
 """The n_state_model user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_fns.setup import n_state_model_obj
@@ -116,7 +119,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file."
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_SAVE
 )
 
 uf.add_keyarg(

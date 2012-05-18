@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+import wx
 
 # relax module imports.
 from prompt.doc_string import docs
@@ -165,7 +166,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file containing the values."
+    desc = "The name of the file containing the values.",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -443,7 +445,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file."
+    desc = "The name of the file.",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

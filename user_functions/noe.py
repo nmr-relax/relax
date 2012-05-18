@@ -23,6 +23,9 @@
 # Module docstring.
 """The noe user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns import noesy, spectrum
 from graphics import ANALYSIS_IMAGE_PATH
@@ -46,7 +49,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file containing the restraint data."
+    desc = "The name of the file containing the restraint data.",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

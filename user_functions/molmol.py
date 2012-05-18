@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+import wx
 
 # relax module imports.
 import colour
@@ -175,7 +176,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "",
-    desc = "The name of the Molmol macro file."
+    desc = "The name of the Molmol macro file.",
+    wiz_filesel_wildcard = "Molmol macro files (*.mac)|*.mac;*.MAC",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -268,6 +271,8 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The optional name of the file.",
+    wiz_filesel_wildcard = "Molmol macro files (*.mac)|*.mac;*.MAC",
+    wiz_filesel_style = wx.FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -345,7 +350,9 @@ uf.add_keyarg(
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file containing the tensor geometric object."
+    desc = "The name of the PDB file containing the tensor geometric object.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.desc = """
 In executing this user function, a PDB file must have previously been loaded , a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.

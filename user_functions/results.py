@@ -23,6 +23,9 @@
 # Module docstring.
 """The results user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns import results
 from graphics import WIZARD_IMAGE_PATH
@@ -61,7 +64,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file to read results from."
+    desc = "The name of the file to read results from.",
+    wiz_filesel_wildcard = "relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -91,7 +96,9 @@ uf.add_keyarg(
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method."
+    desc = "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method.",
+    wiz_filesel_wildcard = "relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

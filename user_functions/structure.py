@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+import wx
 
 # relax module imports.
 import generic_fns.structure.geometric
@@ -162,7 +163,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file."
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -235,7 +238,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file."
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -505,7 +510,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file."
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -624,7 +631,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the XYZ file."
+    desc = "The name of the XYZ file.",
+    wiz_filesel_wildcard = "XYZ files (*.xyz)|*.xyz;*.XYZ",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -970,7 +979,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file."
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

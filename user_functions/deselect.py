@@ -23,6 +23,9 @@
 # Module docstring.
 """The deselect user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns import selection
 from graphics import WIZARD_IMAGE_PATH
@@ -66,7 +69,8 @@ uf.add_keyarg(
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file containing the list of spins to deselect."
+    desc = "The name of the file containing the list of spins to deselect.",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

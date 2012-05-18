@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+import wx
 
 # relax module imports.
 import colour
@@ -115,7 +116,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file containing the cone geometric object."
+    desc = "The name of the PDB file containing the cone geometric object.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.desc = """
 The PDB file containing the geometric object must be created using the complementary frame_order.cone_pdb or n_state_model.cone_pdb user functions.
@@ -239,7 +242,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PyMOL macro file."
+    desc = "The name of the PyMOL macro file.",
+    wiz_filesel_wildcard = "PyMOL macro files (*.pml)|*.pml;*.PML",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -332,6 +337,8 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The optional name of the file.",
+    wiz_filesel_wildcard = "PyMOL macro files (*.pml)|*.pml;*.PML",
+    wiz_filesel_style = wx.FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -384,7 +391,9 @@ uf.add_keyarg(
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file containing the tensor geometric object."
+    desc = "The name of the PDB file containing the tensor geometric object.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.desc = """
 In executing this user function, a PDB file must have previously been loaded into this data pipe a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.
@@ -430,7 +439,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the PDB file containing the vector distribution."
+    desc = "The name of the PDB file containing the vector distribution.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.desc = """
 A PDB file of the macromolecule must have previously been loaded as the vector distribution will be overlain with the macromolecule within PyMOL.  The PDB file containing the vector distribution must be created using the complementary structure.create_vector_dist user function.

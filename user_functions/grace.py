@@ -23,6 +23,9 @@
 # Module docstring.
 """The grace user function definitions for controlling the Grace data viewing software."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns import grace, minimise
 from graphics import WIZARD_IMAGE_PATH
@@ -50,7 +53,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file."
+    desc = "The name of the file.",
+    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -138,7 +143,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the file."
+    desc = "The name of the file.",
+    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

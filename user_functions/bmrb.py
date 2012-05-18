@@ -23,6 +23,9 @@
 # Module docstring.
 """The bmrb user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from generic_fns import bmrb, exp_info, pipes
@@ -216,7 +219,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the BMRB NMR-STAR formatted file to read."
+    desc = "The name of the BMRB NMR-STAR formatted file to read.",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -259,7 +263,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "script file",
-    desc = "The name of the script file."
+    desc = "The name of the script file.",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -568,7 +573,8 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method."
+    desc = "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method.",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

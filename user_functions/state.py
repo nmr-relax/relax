@@ -23,6 +23,9 @@
 # Module docstring.
 """The state user function definitions."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from generic_fns.state import load_state, save_state
 from graphics import WIZARD_IMAGE_PATH
@@ -45,7 +48,9 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The file name, which can be a string or a file descriptor object, of a saved program state."
+    desc = "The file name, which can be a string or a file descriptor object, of a saved program state.",
+    wiz_filesel_wildcard = "relax state files (*.bz2)|*.bz2|relax state files (*.gz)|*.gz|relax state files (*.*)|*.*",
+    wiz_filesel_style = wx.FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -97,7 +102,9 @@ uf.add_keyarg(
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The file name, which can be a string or a file descriptor object, to save the current program state in."
+    desc = "The file name, which can be a string or a file descriptor object, to save the current program state in.",
+    wiz_filesel_wildcard = "relax state files (*.bz2)|*.bz2|relax state files (*.gz)|*.gz|relax state files (*.*)|*.*",
+    wiz_filesel_style = wx.FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
