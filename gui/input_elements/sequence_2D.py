@@ -235,7 +235,7 @@ class Sequence_window_2D(Sequence_window):
         # Loop over the entries.
         for i in range(len(values)):
             # Fixed dimension sequences - set the first value of the pre-created list.
-            if self.dim:
+            if self.dim[0] != None:
                 self.sequence.SetStringItem(index=i, col=0, label=self.convert_to_gui(values[i][0]))
 
             # Variable dimension sequences - append the first value to the end of the blank list.
@@ -273,6 +273,6 @@ class Sequence_window_2D(Sequence_window):
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
 
         # The fixed dimension sequence - add all the rows needed.
-        if self.dim:
+        if self.dim[0] != None:
             for i in range(self.dim[0]):
                 self.append_row(None)

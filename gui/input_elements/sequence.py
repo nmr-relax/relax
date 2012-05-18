@@ -453,7 +453,7 @@ class Sequence_window(wx.Dialog):
         sizer.Add(button_sizer, 0, wx.ALIGN_CENTER|wx.ALL, 0)
 
         # The non-fixed sequence buttons.
-        if not self.dim:
+        if self.dim == None or (isinstance(self.dim, tuple) and self.dim[0] == None):
             # The add button.
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
