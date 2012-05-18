@@ -93,6 +93,9 @@ class GuiTestCase(TestCase):
         # Create the page.
         uf_page = Uf_page(uf_name, parent=self._wizard)
 
+        # Update the user function page.
+        uf_page.on_display()
+
         # Set all the values.
         for key in kargs:
             uf_page.SetValue(key=key, value=kargs[key])
