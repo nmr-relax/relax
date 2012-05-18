@@ -433,7 +433,7 @@ class Uf_page(Wiz_page):
                 if isinstance(arg['dim'], int):
                     dim = arg['dim']
 
-                self.uf_args[arg['name']] = Sequence(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], single_value=single_value, divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+                self.uf_args[arg['name']] = Sequence(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], single_value=single_value, divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # 2D sequence types.
             elif arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_tuple_of_tuples', 'int_tuple_of_tuples', 'num_tuple_of_tuples', 'str_tuple_of_tuples', 'float_matrix', 'int_matrix']:
@@ -451,7 +451,7 @@ class Uf_page(Wiz_page):
                 else:
                     value_type = 'str'
 
-                self.uf_args[arg['name']] = Sequence_2D(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=arg['dim'], min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, desc_short=arg['desc_short'], combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+                self.uf_args[arg['name']] = Sequence_2D(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=arg['dim'], min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_size=arg['wiz_combo_list_size'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # Unknown type.
             else:
