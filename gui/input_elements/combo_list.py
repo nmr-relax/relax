@@ -86,6 +86,10 @@ class Combo_list:
         self._can_be_none = can_be_none
         self._min_length = min_length
 
+        # Set the data if needed.
+        if self._data == None:
+            self._data = deepcopy(self._choices)
+
         # The value types.
         if value_type in ['float', 'num']:
             self.convert_from_gui = gui_to_float
