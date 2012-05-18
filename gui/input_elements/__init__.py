@@ -25,6 +25,7 @@
 
 __all__ = [
     'bool',
+    'combo_list',
     'dir',
     'file',
     'sequence_2D',

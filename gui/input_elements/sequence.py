@@ -32,7 +32,7 @@ from relax_errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.components.combo_list import Combo_list
+from gui.input_elements.combo_list import Combo_list
 from gui.fonts import font
 from gui.misc import add_border, float_to_gui, gui_to_float, gui_to_int, gui_to_list, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, str_to_gui, tuple_to_gui
 from gui import paths
