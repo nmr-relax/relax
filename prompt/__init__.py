@@ -29,7 +29,6 @@ __all__ = [
     'gpl',
     'help',
     'interpreter',
-    'objects',
     'tab_completion',
     'uf_docstring',
     'uf_objects'
