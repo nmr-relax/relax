@@ -99,7 +99,7 @@ class Controller(wx.Frame):
 
         # IO redirection for STDOUT (with splitting if logging or teeing modes are set).
         out = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stdout, stream=0)
-        if sys.stdout == sys.__stdout__:
+        if sys.stdout == sys.__stdout__ or status.relax_mode in ['test suite', 'system tests', 'unit tests', 'GUI tests']:
             sys.stdout = out
         else:
             split_stdout = SplitIO()
@@ -108,7 +108,7 @@ class Controller(wx.Frame):
 
         # IO redirection for STDERR (with splitting if logging or teeing modes are set).
         err = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stderr, stream=1)
-        if sys.stderr == sys.__stderr__:
+        if sys.stderr == sys.__stderr__ or status.relax_mode in ['test suite', 'system tests', 'unit tests', 'GUI tests']:
             sys.stderr = err
         else:
             split_stderr = SplitIO()
