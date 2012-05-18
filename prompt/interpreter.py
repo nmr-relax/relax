@@ -97,9 +97,6 @@ class Interpreter:
         else:
             self.prompt_colour_off()
 
-        # The function intro flag (store in the execution information container).
-        status.prompt_intro = False
-
         # Set up the interpreter objects.
         self._locals = self._setup()
 
