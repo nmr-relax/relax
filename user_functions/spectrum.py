@@ -407,7 +407,7 @@ uf.add_keyarg(
     desc = "The list of replicated spectra ID strings.",
     wiz_element_type = 'combo_list',
     wiz_combo_iter = spectrum.get_ids,
-    wiz_combo_list_size = 2,
+    wiz_combo_list_min = 2,
     wiz_read_only = True
 )
 uf.desc = """

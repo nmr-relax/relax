@@ -208,7 +208,7 @@ uf.add_keyarg(
     desc = "A list of the atoms (as spin ID strings) that the pseudo-atom is composed of.",
     wiz_element_type = "combo_list",
     wiz_combo_iter = get_spin_ids,
-    wiz_combo_list_size = 2,
+    wiz_combo_list_min = 2,
     wiz_read_only = True
 )
 uf.add_keyarg(

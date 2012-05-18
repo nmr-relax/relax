@@ -192,7 +192,7 @@ uf.add_keyarg(
     desc = "An array containing the names of all data pipes to hybridise.",
     wiz_element_type = 'combo_list',
     wiz_combo_iter = pipes.pipe_names,
-    wiz_combo_list_size = 2
+    wiz_combo_list_min = 2
 )
 uf.backend = hybrid_obj._hybridise
 uf.desc = """
