@@ -97,7 +97,7 @@ class Mf(GuiTestCase):
 
         # The PDB file.
         page = analysis.vect_wizard.get_page(0)
-        page.file.SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
+        page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
         analysis.vect_wizard._go_next(None)
 
         # The unit vectors.
