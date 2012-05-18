@@ -168,9 +168,9 @@ class Rx(GuiTestCase):
 
             # The spectrum.
             page = analysis.wizard.get_page(analysis.page_indices['read'])
-            page.file.SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
-            page.spectrum_id.SetValue(str_to_gui(names[i]))
-            page.proton.SetValue(str_to_gui('HN'))
+            page.uf_args['file'].SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
+            page.uf_args['spectrum_id'].SetValue(str_to_gui(names[i]))
+            page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
@@ -185,14 +185,14 @@ class Rx(GuiTestCase):
             # Replicated spectra:
             if names[i] in replicated.keys():
                 page = analysis.wizard.get_page(analysis.page_indices['repl'])
-                page.spectrum_id_boxes[1].SetStringSelection(str_to_gui(replicated[names[i]]))
+                page.uf_args['spectrum_ids'].SetValue(value=replicated[names[i]], index=1)
 
             # Go to the next page.
             analysis.wizard._go_next(None)
 
             # Set the delay time.
             page = analysis.wizard.get_page(analysis.page_indices['relax_time'])
-            page.time.SetValue(float_to_gui(ncyc[i]*time))
+            page.uf_args['time'].SetValue(float_to_gui(ncyc[i]*time))
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
