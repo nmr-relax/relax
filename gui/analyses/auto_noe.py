@@ -424,7 +424,7 @@ class Auto_noe(Base_analysis):
         """
 
         # Go to the spectrum.integration_points page.
-        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
         if int_method != 'height':
             return self.page_indices['pts']
 
@@ -441,7 +441,7 @@ class Auto_noe(Base_analysis):
         """
 
         # Go to the spectrum.integration_points page.
-        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
         if int_method != 'height':
             return self.page_indices['pts']
 
@@ -457,11 +457,11 @@ class Auto_noe(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['pts'])
-        page.spectrum_id.SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_id'].SetValue(id)
 
 
     def wizard_update_repl(self):
@@ -471,11 +471,11 @@ class Auto_noe(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['repl'])
-        page.spectrum_id_boxes[0].SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_ids'].SetValue(value=id, index=0)
 
 
     def wizard_update_rmsd(self):
@@ -485,11 +485,11 @@ class Auto_noe(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.baseplane_rmsd page.
         page = self.wizard.get_page(self.page_indices['rmsd'])
-        page.spectrum_id.SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_id'].SetValue(id)
 
 
     def wizard_update_spectrum_type(self):
@@ -499,11 +499,11 @@ class Auto_noe(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the noe.spectrum_type page.
         page = self.wizard.get_page(self.page_indices['spectrum_type'])
-        page.spectrum_id.SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_id'].SetValue(id)
 
 
 
