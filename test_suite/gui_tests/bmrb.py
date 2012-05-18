@@ -51,7 +51,7 @@ class Bmrb(GuiTestCase):
         self.execute_uf(uf_name='pipe.create', pipe_name='results', pipe_type='mf')
 
         # Read the results.
-        self.execute_uf(uf_name='results.read', file='final_results_trunc_1.3', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        self.execute_uf(uf_name='results.read', file=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'+sep+'final_results_trunc_1.3')
 
         # Play with the data.
         self.execute_uf(uf_name='deselect.all')
@@ -81,12 +81,12 @@ class Bmrb(GuiTestCase):
 
         self.execute_uf(uf_name='bmrb.citation', cite_id='test', authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]], doi="10.1039/b702202f", pubmed_id="17579774", full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm.", status="published", type="journal", journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems", volume=3, issue=7, page_first=483, page_last=498, year=2007)
         self.execute_uf(uf_name='bmrb.software', name='X', url='http://www.nmr-relax.com', vendor_name='me', cite_ids=['test'], tasks=['procrastinating', 'nothing much', 'wasting time'])
-        self.execute_uf(uf_name='bmrb.script', file='noe.py', dir=status.install_path+sep+'sample_scripts', analysis_type='noe', engine='relax')
-        self.execute_uf(uf_name='bmrb.script', file='relax_fit.py', dir=status.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
-        self.execute_uf(uf_name='bmrb.script', file='dauvergne_protocol.py', dir=status.install_path+sep+'sample_scripts'+sep+'model_free', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
+        self.execute_uf(uf_name='bmrb.script', file=status.install_path+sep+'sample_scripts'+sep+'noe.py', analysis_type='noe', engine='relax')
+        self.execute_uf(uf_name='bmrb.script', file=status.install_path+sep+'sample_scripts'+sep+'relax_fit.py', analysis_type='relax_fit', engine='relax')
+        self.execute_uf(uf_name='bmrb.script', file=status.install_path+sep+'sample_scripts'+sep+'model_free'+sep+'dauvergne_protocol.py', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
         # Write, then read the data to a new data pipe.
-        self.execute_uf(uf_name='bmrb.write', file=ds.tmpfile, dir=None, version=ds.version, force=True)
+        self.execute_uf(uf_name='bmrb.write', file=ds.tmpfile, version=ds.version, force=True)
         self.execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='mf')
         self.execute_uf(uf_name='bmrb.read', file=ds.tmpfile, version=ds.version)
 
