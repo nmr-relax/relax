@@ -345,18 +345,37 @@ class Combo_list:
         """Special method for setting the value of the GUI element.
 
         @keyword value: The value to set.
-        @type value:    anything
+        @type value:    value or list of values
         @keyword index: The index of the value to set.
         @type index:    int
         """
 
-        # Add elements as needed.
-        if len(self._combo_boxes) <= index:
-            for i in range(len(self._combo_boxes) - index + 1):
-                self._add(None)
+        # Single element.
+        if index != None:
+            # Add elements as needed.
+            if len(self._combo_boxes) <= index:
+                for i in range(len(self._combo_boxes) - index + 1):
+                    self._add(None)
 
-        # Loop until the proper client data is found.
-        for j in range(self._combo_boxes[index].GetCount()):
-            if self._combo_boxes[index].GetClientData(j) == value:
-                self._combo_boxes[index].SetSelection(j)
-                break
+            # Loop until the proper client data is found.
+            for j in range(self._combo_boxes[index].GetCount()):
+                if self._combo_boxes[index].GetClientData(j) == value:
+                    self._combo_boxes[index].SetSelection(j)
+                    break
+
+        # A list of values.
+        else:
+            # Add elements as needed.
+            if len(self._combo_boxes) <= len(value):
+                for i in range(len(value) - len(self._combo_boxes)):
+                    self._add(None)
+
+            # Loop over the list.
+            for i in range(len(value)):
+                # Loop until the proper client data is found.
+                for j in range(self._combo_boxes[i].GetCount()):
+                    if self._combo_boxes[i].GetClientData(j) == value:
+                        self._combo_boxes[i].SetSelection(j)
+                        break
+
+
