@@ -182,6 +182,28 @@ class Free_file_format:
         return settings
 
 
+    def SetValue(self, key, value):
+        """Special method for setting the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.  This can be one of ['spin_id_col', 'mol_name_col', 'res_num_col', 'res_name_col', 'spin_num_col', 'spin_name_col', 'data_col', 'error_col', 'sep'].
+        @type key:      str
+        @param value:   The value that the specific GUI element's SetValue() method expects.
+        @type value:    unknown
+        """
+
+        # Get the element.
+        obj = getattr(self, key)
+
+        # Convert the data.
+        if key == 'sep':
+            value = str_to_gui(value)
+        else:
+            value = int_to_gui(value)
+
+        # Set the value.
+        obj.SetValue(value)
+
+
     def reset(self, event):
         """Reset the free file format widget contents to the original values.
 

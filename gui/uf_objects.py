@@ -351,8 +351,13 @@ class Uf_page(Wiz_page):
         @type value:    unknown
         """
 
+        # Handle the free file format args (for external control, i.e. via the test suite).
+        if key in ['spin_id_col', 'mol_name_col', 'res_num_col', 'res_name_col', 'spin_num_col', 'spin_name_col', 'data_col', 'error_col', 'sep']:
+            self.uf_args['free_file_format'].SetValue(key, value)
+
         # Call the argument element's method.
-        self.uf_args[key].SetValue(value)
+        else:
+            self.uf_args[key].SetValue(value)
 
 
     def add_contents(self, sizer):
