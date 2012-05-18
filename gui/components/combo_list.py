@@ -35,7 +35,7 @@ from gui.paths import icon_16x16
 class Combo_list:
     """The combo list GUI element."""
 
-    def __init__(self, parent, sizer, desc, value_type=None, n=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True, can_be_none=False):
+    def __init__(self, parent, sizer, desc, value_type=None, n=1, min_length=None, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True, can_be_none=False):
         """Build the combo box list widget for a list of list selections.
 
         @param parent:          The parent GUI element.
@@ -48,6 +48,8 @@ class Combo_list:
         @type value_type:       str
         @keyword n:             The number of initial entries.
         @type n:                int
+        @keyword min_length:    The minimum length for the Combo_list object.
+        @type min_length:       int or None
         @keyword choices:       The list of choices (all combo boxes will have the same list).
         @type choices:          list of str
         @keyword data:          The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the choices list.  If not supplied, the choices list will be used for the returned data.
@@ -82,6 +84,7 @@ class Combo_list:
         self._padding = padding
         self._read_only = read_only
         self._can_be_none = can_be_none
+        self._min_length = min_length
 
         # The value types.
         if value_type in ['float', 'num']:
@@ -255,6 +258,7 @@ class Combo_list:
         text = u'['
 
         # Loop over the combo boxes.
+        n = 0
         for i in range(len(self._combo_boxes)):
             # Get the value.
             val = self.convert_from_gui(self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection()))
@@ -270,11 +274,17 @@ class Combo_list:
             # Add the value.
             text = "%s'%s'" % (text, val)
 
+            # Increment the number.
+            n += 1
+
         # End.
         text = "%s]" % text
 
         # Return the list.
-        return text
+        if self._min_length != None and n < self._min_length:
+            return None
+        else:
+            return text
 
 
     def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):

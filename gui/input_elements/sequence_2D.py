@@ -48,7 +48,7 @@ class Sequence_2D(Sequence):
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_min=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -79,8 +79,8 @@ class Sequence_2D(Sequence):
         @type combo_choices:        list of str
         @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:           list
-        @keyword combo_list_size:   The number of initial entries in a Combo_list object.
-        @type combo_list_size:      int or None
+        @keyword combo_list_min:    The minimum length for the Combo_list object.
+        @type combo_list_min:       int or None
         @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
         @type tooltip:              str
         @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -101,7 +101,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_min=combo_list_min, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
 
 
     def open_dialog(self, event):
