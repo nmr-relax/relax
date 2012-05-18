@@ -37,6 +37,7 @@ import dep_check
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from generic_fns.reset import reset
+from relax_io import delete
 from status import Status; status = Status()
 
 # relax GUI module imports.
