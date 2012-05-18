@@ -113,7 +113,7 @@ This user function must only be called after all peak intensities have been load
 
 Six different types of error analysis are supported depending on whether peak heights or volumes are supplied, whether noise is determined from replicated spectra or the RMSD of the baseplane noise, and whether all spectra or only a subset have been duplicated.  These are:
 
-                                                         ____________________________________________________________________________________________
+____________________________________________________________________________________________
 |          |                                        |                                      |
 | Int type | Noise source                           | Error scope                          |
 |__________|________________________________________|______________________________________|
