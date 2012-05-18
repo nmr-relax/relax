@@ -25,8 +25,10 @@
 
 # Python module imports.
 from os import sep
+from tempfile import mktemp
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -86,13 +88,14 @@ class Bmrb(GuiTestCase):
         self.execute_uf(uf_name='bmrb.script', file=status.install_path+sep+'sample_scripts'+sep+'model_free'+sep+'dauvergne_protocol.py', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
         # Write, then read the data to a new data pipe.
-        self.execute_uf(uf_name='bmrb.write', file=ds.tmpfile, version=ds.version, force=True)
+        ds.tmpfile = mktemp()
+        self.execute_uf(uf_name='bmrb.write', file=ds.tmpfile, version='3.1', force=True)
         self.execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='mf')
-        self.execute_uf(uf_name='bmrb.read', file=ds.tmpfile, version=ds.version)
+        self.execute_uf(uf_name='bmrb.read', file=ds.tmpfile, version='3.1')
 
         # Display tests.
         self.execute_uf(uf_name='sequence.display')
         self.execute_uf(uf_name='relax_data.display', ri_id='R1_800')
 
         # Save the program state.
-        self.execute_uf(uf_name='state.save', file='devnull', force=True)
+        self.execute_uf(uf_name='state.save', state='devnull', force=True)
