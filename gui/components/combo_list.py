@@ -327,21 +327,22 @@ class Combo_list:
                 self._combo_boxes[i].SetStringSelection(string)
 
 
-    def SetValue(self, value):
+    def SetValue(self, value=None, index=None):
         """Special method for setting the value of the GUI element.
 
-        @param value:   The value to set.
-        @type value:    list of str or None
+        @keyword value: The value to set.
+        @type value:    anything
+        @keyword index: The index of the value to set.
+        @type index:    int
         """
 
-        # No value.
-        if values == None:
-            return
+        # Add elements as needed.
+        if len(self._combo_boxes) <= index:
+            for i in range(len(self._combo_boxes) - index + 1):
+                self._add(None)
 
-        # Loop over the combo boxes.
-        for i in range(len(self._combo_boxes)):
-            # Loop until the proper client data is found.
-            for j in range(self._combo_boxes[i].GetCount()):
-                if self._combo_boxes[i].GetClientData(j) == value:
-                    self._combo_boxes[i].SetSelection(j)
-                    break
+        # Loop until the proper client data is found.
+        for j in range(self._combo_boxes[index].GetCount()):
+            if self._combo_boxes[index].GetClientData(j) == value:
+                self._combo_boxes[index].SetSelection(j)
+                break

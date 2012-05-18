@@ -263,19 +263,27 @@ class Sequence:
             self._field.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
 
 
-    def SetValue(self, value):
+    def SetValue(self, value=None, index=None):
         """Special method for setting the value of the GUI element.
 
-        @param value:   The value to set.
-        @type value:    list of str
+        @keyword value: The value to set.
+        @type value:    value or list of values
+        @keyword index: The index of the value to set, if the full list is not given.
+        @type index:    int or None
         """
 
-        # Handle single values.
-        if self.single_value and len(value) == 1:
-            value = value[0]
+        # The ComboBox list.
+        if self.element_type == 'combo_list':
+            self._field.SetValue(value=value, index=index)
 
-        # Convert and set the value.
-        self._field.SetValue(self.convert_to_gui(value))
+        # The other elements.
+        else:
+            # Handle single values.
+            if self.single_value and len(value) == 1:
+                value = value[0]
+
+            # Convert and set the value.
+            self._field.SetValue(self.convert_to_gui(value))
 
 
     def open_dialog(self, event):
