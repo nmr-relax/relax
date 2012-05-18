@@ -1170,6 +1170,16 @@ def replicated(spectrum_ids=None):
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
 
+    # Test for None.
+    if spectrum_ids == None:
+        warn(RelaxWarning("The spectrum ID list cannot be None."))
+        return
+
+    # Test for more than one element.
+    if len(spectrum_ids) == 1:
+        warn(RelaxWarning("The number of spectrum IDs in the list %s must be greater than one." % spectrum_ids))
+        return
+
     # Initialise.
     if not hasattr(cdp, 'replicates'):
         cdp.replicates = []
