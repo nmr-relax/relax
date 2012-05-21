@@ -173,6 +173,9 @@ class Uf_object(object):
         # Create the page.
         page = self.create_page(wizard, sync=self._sync)
 
+        # For an update of the argument data.
+        page.update_args()
+
         # Loop over the keyword args, using the Uf_page.SetValue() method to set the user function argument GUI element values.
         for key in kwds:
             page.SetValue(key, kwds[key])
