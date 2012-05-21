@@ -351,7 +351,11 @@ class Combo_list:
         """
 
         # Single element.
-        if index != None:
+        if not isinstance(value, list):
+            # The index default.
+            if index == None:
+                index = 0
+
             # Add elements as needed.
             if len(self._combo_boxes) <= index:
                 for i in range(len(self._combo_boxes) - index + 1):
@@ -377,5 +381,3 @@ class Combo_list:
                     if self._combo_boxes[i].GetClientData(j) == value:
                         self._combo_boxes[i].SetSelection(j)
                         break
-
-
