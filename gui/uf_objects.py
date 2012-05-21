@@ -150,8 +150,11 @@ def build_uf_menus(parent=None, menubar=None):
 class Uf_object(object):
     """The object for auto-generating the GUI user functions."""
 
-    def __call__(self, event=None, parent=None):
+    def __call__(self, event=None, parent=None, **kwds):
         """Make the GUI user function executable.
+
+        All keyword args, apart from 'event' and 'parent' will be assumed to be user function arguments and the Uf_page.SetValue() method of the page will be used to set the GUI arg elements to the values supplied.
+
 
         @keyword event:     The wx event.
         @type event:        wx event or None
@@ -169,6 +172,10 @@ class Uf_object(object):
 
         # Create the page.
         page = self.create_page(wizard, sync=self._sync)
+
+        # Loop over the keyword args, using the Uf_page.SetValue() method to set the user function argument GUI element values.
+        for key in kwds:
+            page.SetValue(key, kwds[key])
 
         # Add the page to the wizard.
         wizard.add_page(page, apply_button=self._apply_button)
