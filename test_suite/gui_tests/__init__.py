@@ -83,10 +83,10 @@ class GUI_test_runner:
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
-            suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
-            suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
-            suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
-            suite_array.append(TestLoader().loadTestsFromTestCase(State))
+            #suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
+            #suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
+            #suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
+            #suite_array.append(TestLoader().loadTestsFromTestCase(State))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
