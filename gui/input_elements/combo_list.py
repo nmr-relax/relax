@@ -320,6 +320,9 @@ class Combo_list:
 
         # Loop over the combo boxes.
         for i in range(len(self._combo_boxes)):
+            # Store the current selection's client data to restore at the end.
+            sel = self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection())
+
             # First clear all data.
             self._combo_boxes[i].Clear()
 
@@ -328,7 +331,7 @@ class Combo_list:
                 self._combo_boxes[i].Insert(self.convert_to_gui(self._choices[j]), j, self._data[j])
 
             # Set the default selection.
-            if self._default != None:
+            if sel == None and self._default != None:
                 # Translate if needed.
                 if self._default in self._choices:
                     string = self._default
@@ -339,6 +342,12 @@ class Combo_list:
 
                 # Set the selection.
                 self._combo_boxes[i].SetStringSelection(string)
+
+            # Restore the selection.
+            else:
+                for j in range(self._combo_boxes[i].GetCount()):
+                    if self._combo_boxes[i].GetClientData(j) == sel:
+                        self._combo_boxes[i].SetSelection(j)
 
 
     def SetValue(self, value=None, index=None):
