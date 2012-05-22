@@ -101,12 +101,19 @@ class Interpreter:
         self._locals = self._setup()
 
 
-    def _execute_uf(self, uf_name=None, *args, **kargs):
+    def _execute_uf(self, *args, **kargs):
         """Private method for executing the given user function.
 
         @keyword uf_name:   The name of the user function.
         @type uf_name:      str
         """
+
+        # Checks.
+        if 'uf_name' not in kargs:
+            raise RelaxError("The user function name argument 'uf_name' has not been supplied.")
+
+        # Process the user function name.
+        uf_name = kargs.pop('uf_name')
 
         # Split up the name.
         if search('\.', uf_name):
