@@ -24,6 +24,7 @@
 """Base classes for the system tests."""
 
 # Python module imports.
+from os import sep
 from shutil import rmtree
 from unittest import TestCase
 
@@ -35,16 +36,33 @@ from relax_io import delete
 
 
 class SystemTestCase(TestCase):
+    """The system test base class."""
+
     def __init__(self, methodName=None):
         """Set up the test case class for the system tests."""
 
         # Execute the TestCase __init__ method.
         super(SystemTestCase, self).__init__(methodName)
 
+        # The directory where the tests are located, and a string used for classifying skipped tests.
+        self._test_dir = 'test_suite' + sep + 'system_tests'
+        self._skip_type = 'system'
+
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
+
+
+    def script_exec(self, script):
+        """Execute a relax script within the system test framework.
+
+        @param script:  The full path of the script to execute.
+        @type script:   str
+        """
+
+        # Execute the script.
+        self.interpreter.run(script_file=script)
 
 
     def tearDown(self):

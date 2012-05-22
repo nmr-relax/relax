@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,7 +39,7 @@ class Bmrb(SystemTestCase):
     """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
 
     def __init__(self, methodName='runTest'):
-        """Skip the tests if scipy is not installed.
+        """Skip the tests if bmrblib is not installed.
 
         @keyword methodName:    The name of the test.
         @type methodName:       str
@@ -48,7 +48,7 @@ class Bmrb(SystemTestCase):
         # Missing module.
         if not dep_check.bmrblib_module:
             # Store in the status object. 
-            status.skipped_tests.append([methodName, 'Bmrblib', 'system'])
+            status.skipped_tests.append([methodName, 'Bmrblib', self._skip_type])
 
         # Execute the base class method.
         super(Bmrb, self).__init__(methodName)
@@ -231,7 +231,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.0'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        self.script_exec(status.install_path + sep+self._test_dir+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
         self.data_check(version='3.0')
@@ -244,7 +244,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.1'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        self.script_exec(status.install_path + sep+self._test_dir+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
         self.data_check(version='3.1')

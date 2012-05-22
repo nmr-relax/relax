@@ -1,13 +1,14 @@
 # Script for testing the reading and writing of BMRB files.
 
 # Python module imports.
-import sys
 from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
+
+system_test_asdfsda
 
 # Missing temp file (allow this script to run outside of the system test framework).
 state_file = 'devnull'

@@ -24,6 +24,7 @@
 """Base classes for the GUI tests."""
 
 # Python module imports.
+from os import sep
 import Queue
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -47,13 +48,17 @@ from gui.uf_objects import Uf_page
 
 
 class GuiTestCase(TestCase):
-    """The GUI specific test case."""
+    """The GUI test base class."""
 
     def __init__(self, methodName=None):
         """Set up the test case class for the system tests."""
 
         # Execute the TestCase __init__ method.
         super(GuiTestCase, self).__init__(methodName)
+
+        # The directory where the tests are located, and a string used for classifying skipped tests.
+        self._test_dir = 'test_suite' + sep + 'gui_tests'
+        self._skip_type = 'gui'
 
         # Get the wx app, if the test suite is launched from the gui.
         self.app = wx.GetApp()
@@ -106,6 +111,17 @@ class GuiTestCase(TestCase):
 
         # Flush the interpreter to force synchronous user functions operation.
         interpreter.flush()
+
+
+    def script_exec(self, script):
+        """Execute a GUI script within the GUI test framework.
+
+        @param script:  The full path of the script to execute.
+        @type script:   str
+        """
+
+        # Execute the script.
+        execfile(script, globals(), locals())
 
 
     def setUp(self):
