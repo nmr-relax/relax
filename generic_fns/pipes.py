@@ -43,7 +43,7 @@ PIPE_DESC = {
     'jw':  'Reduced spectral density mapping',
     'hybrid':  'Special hybrid pipe',
     'mf':  'Model-free analysis',
-    'N-state':  'N-state model of domain motions',
+    'N-state':  'N-state model or ensemble analysis',
     'noe':  'Steady state NOE calculation',
     'relax_fit':  'Relaxation curve fitting'
 }
