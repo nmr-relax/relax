@@ -30,6 +30,7 @@ import wx
 # relax module imports.
 from prompt.doc_string import docs
 from generic_fns import diffusion_tensor, pipes, value
+from generic_fns.mol_res_spin import id_string_doc
 from graphics import WIZARD_IMAGE_PATH
 from relax_errors import RelaxError
 from specific_fns.jw_mapping import Jw_mapping
@@ -312,8 +313,8 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
-    desc_short = "spin ID string",
-    desc = "The spin identifier.",
+    desc_short = "spin ID to restrict value setting to",
+    desc = id_string_doc[1],
     can_be_none = True
 )
 uf.desc = """
