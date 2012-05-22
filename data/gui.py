@@ -149,7 +149,7 @@ class Free_file_format(Element):
         self.spin_num_col =  4
         self.spin_name_col = 5
         self.data_col =      6
-        self.err_col =       7
+        self.error_col =     7
 
         # The column separator (set to None for white space).
         self.sep = None

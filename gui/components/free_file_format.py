@@ -100,7 +100,7 @@ class Free_file_format:
         self.spin_name_col = Value(name='spin_name_col', parent=self.parent, value_type='int', sizer=field_sizer, desc="Spin name column:", divider=divider, padding=padding, spacer=spacer, can_be_none=True)
         if data_cols:
             self.data_col = Value(name='data_col', parent=self.parent, value_type='int', sizer=field_sizer, desc="Data column:", divider=divider, padding=padding, spacer=spacer, can_be_none=True)
-            self.err_col = Value(name='err_col', parent=self.parent, value_type='int', sizer=field_sizer, desc="Error column:", divider=divider, padding=padding, spacer=spacer, can_be_none=True)
+            self.error_col = Value(name='error_col', parent=self.parent, value_type='int', sizer=field_sizer, desc="Error column:", divider=divider, padding=padding, spacer=spacer, can_be_none=True)
 
         # The column separator.
         self.sep = Value(name='sep', parent=self.parent, element_type='combo', value_type='str', sizer=field_sizer, desc="Column separator:", combo_choices=["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=spacer, read_only=False, can_be_none=True)
@@ -170,8 +170,8 @@ class Free_file_format:
         settings['spin_name_col'] = gui_to_int(self.spin_name_col.GetValue())
         if hasattr(self, 'data_col'):
             settings['data_col'] =  gui_to_int(self.data_col.GetValue())
-        if hasattr(self, 'err_col'):
-            settings['error_col'] = gui_to_int(self.err_col.GetValue())
+        if hasattr(self, 'error_col'):
+            settings['error_col'] = gui_to_int(self.error_col.GetValue())
 
         # The column separator.
         settings['sep'] = str(self.sep.GetValue())
@@ -240,8 +240,8 @@ class Free_file_format:
         # The data and error.
         if hasattr(self, 'data_col'):
             ds.relax_gui.free_file_format.data_col = gui_to_int(self.data_col.GetValue())
-        if hasattr(self, 'err_col'):
-            ds.relax_gui.free_file_format.err_col = gui_to_int(self.err_col.GetValue())
+        if hasattr(self, 'error_col'):
+            ds.relax_gui.free_file_format.error_col = gui_to_int(self.error_col.GetValue())
 
         # The column separator.
         ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
@@ -261,8 +261,8 @@ class Free_file_format:
         self.spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
         if hasattr(self, 'data_col'):
             self.data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
-        if hasattr(self, 'err_col'):
-            self.err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
+        if hasattr(self, 'error_col'):
+            self.error_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.error_col))
 
         # The column separator.
         if not ds.relax_gui.free_file_format.sep:
