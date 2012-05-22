@@ -101,6 +101,33 @@ class Interpreter:
         self._locals = self._setup()
 
 
+    def _execute_uf(self, uf_name=None, *args, **kargs):
+        """Private method for executing the given user function.
+
+        @keyword uf_name:   The name of the user function.
+        @type uf_name:      str
+        """
+
+        # Split up the name.
+        if search('\.', uf_name):
+            class_name, uf_name = split(uf_name, '.')
+        else:
+            class_name = None
+
+        # Get the class object.
+        if class_name:
+            class_obj = self._locals[class_name]
+
+        # Get the user function.
+        if class_name:
+            uf = getattr(class_obj, uf_name)
+        else:
+            uf = self._locals[uf_name]
+
+        # Call the user function.
+        uf(*args, **kargs)
+
+
     def _setup(self):
         """Set up all the interpreter objects.
 
