@@ -40,6 +40,7 @@ from data.gui import Gui
 from generic_fns.reset import reset
 from relax_io import delete
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
@@ -69,23 +70,7 @@ class GuiTestCase(TestCase):
             self._gui_launch = True
 
 
-    def check_exceptions(self):
-        """Check that no exception has occurred."""
-
-        # Check.
-        try:
-            # Get the exception from the queue.
-            index, exc = status.exception_queue.get(block=False)
-
-            # Fail.
-            self.fail()
-
-        # No exception.
-        except Queue.Empty:
-            pass
-
-
-    def execute_uf(self, uf_name=None, **kargs):
+    def _execute_uf(self, uf_name=None, **kargs):
         """Execute the given user function.
 
         @keyword uf_name:   The name of the user function.
@@ -95,6 +80,25 @@ class GuiTestCase(TestCase):
         # Create and store a wizard instance to be used in all user function pages (if needed).
         if not hasattr(self, '_wizard'):
             self._wizard = Wiz_window(self.app.gui)
+
+        # Get the user function data object.
+        uf_data = uf_info.get_uf(uf_name)
+
+        # Merge the file and directory args, as needed.
+        for i in range(len(uf_data.kargs)):
+            # Alias.
+            arg = uf_data.kargs[i]
+
+            # File selection and associated directory arg.
+            if arg['arg_type'] == 'dir' and arg['name'] in kargs:
+                # Find the associated file selection arg name.
+                for j in range(len(uf_data.kargs)):
+                    if uf_data.kargs[i]['arg_type'] == 'file sel':
+                        file_sel_name = uf_data.kargs[i]['name']
+
+                # Prepend the directory to the file, if needed.
+                if file_sel_name in kargs:
+                    kargs[file_sel_name] = kargs[arg['name']] + sep + kargs[file_sel_name]
 
         # Create the page.
         uf_page = Uf_page(uf_name, parent=self._wizard, sync=True)
@@ -111,6 +115,22 @@ class GuiTestCase(TestCase):
 
         # Flush the interpreter to force synchronous user functions operation.
         interpreter.flush()
+
+
+    def check_exceptions(self):
+        """Check that no exception has occurred."""
+
+        # Check.
+        try:
+            # Get the exception from the queue.
+            index, exc = status.exception_queue.get(block=False)
+
+            # Fail.
+            self.fail()
+
+        # No exception.
+        except Queue.Empty:
+            pass
 
 
     def script_exec(self, script):
