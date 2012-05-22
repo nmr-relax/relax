@@ -237,12 +237,13 @@ class Sequence:
         value = self._field.GetValue()
 
         # Handle single values.
+        value_set = False
         if self.single_value:
             try:
                 value = self.convert_from_gui(value)
                 value_set = True
             except:
-                value_set = False
+                pass
 
         # Convert to a sequence, handling bad user behaviour.
         if not value_set:
