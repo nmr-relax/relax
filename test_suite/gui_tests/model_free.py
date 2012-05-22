@@ -72,7 +72,7 @@ class Mf(GuiTestCase):
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
         # Load the sequence.
-        self.execute_uf(uf_name='sequence.read', file=data_path+'noe.500.out')
+        self._execute_uf(uf_name='sequence.read', file=data_path+'noe.500.out')
 
         # Load the relaxation data.
         data = [
@@ -84,13 +84,13 @@ class Mf(GuiTestCase):
             ['r2.900.out',  'r2_900',  'R2',  900e6]
         ]
         for i in range(len(data)):
-            self.execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3])
+            self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3])
 
         # Set the values.
-        self.execute_uf(uf_name='value.set', param='csa')
-        self.execute_uf(uf_name='value.set', param='r')
-        self.execute_uf(uf_name='value.set', param='heteronuc_type')
-        self.execute_uf(uf_name='value.set', param='proton_type')
+        self._execute_uf(uf_name='value.set', param='csa')
+        self._execute_uf(uf_name='value.set', param='r')
+        self._execute_uf(uf_name='value.set', param='heteronuc_type')
+        self._execute_uf(uf_name='value.set', param='proton_type')
 
         # The unit vector loading wizard.
         analysis.load_unit_vectors(None)

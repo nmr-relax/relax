@@ -112,13 +112,13 @@ class Rx(GuiTestCase):
 
         # Load the sequence.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
-        self.execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_name_col=2, res_num_col=1, spin_name_col=None, spin_num_col=None)
+        self._execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_name_col=2, res_num_col=1, spin_name_col=None, spin_num_col=None)
 
         # Unresolved spins.
-        self.execute_uf(uf_name='deselect.read', file=data_path+'unresolved', mol_name_col=None, res_name_col=None, res_num_col=1, spin_name_col=None, spin_num_col=None, change_all=True)
+        self._execute_uf(uf_name='deselect.read', file=data_path+'unresolved', mol_name_col=None, res_name_col=None, res_num_col=1, spin_name_col=None, spin_num_col=None, change_all=True)
 
         # Name the spins.
-        self.execute_uf(uf_name='spin.name', name='N')
+        self._execute_uf(uf_name='spin.name', name='N')
 
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
         interpreter.flush()
