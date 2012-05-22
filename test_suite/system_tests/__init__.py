@@ -24,9 +24,12 @@
 """The relax system/functional tests."""
 
 # Python module imports.
-from relax_errors import RelaxError
+from re import search
 from string import split
 from unittest import TestSuite
+
+# relax module imports.
+from relax_errors import RelaxError
 
 # relax system/functional test module imports.
 from align_tensor import Align_tensor
@@ -113,21 +116,31 @@ class System_test_runner:
 
         # Specific tests.
         for test in tests:
-            # Split.
-            row = split(test, '.')
+            # The entire test class.
+            if not search('\.', test):
+                # The uninstantiated class object.
+                obj = globals()[test]
 
-            # Check.
-            if len(row) != 2:
-                raise RelaxError("The test '%s' is not in the correct format.  It should consist of the test case class, a dot, and the specific test." % test)
+                # Add the tests.
+                suite_array.append(TestLoader().loadTestsFromTestCase(obj))
 
-            # Unpack.
-            class_name, test_name = row
+            # Single system test.
+            else:
+                # Split.
+                row = split(test, '.')
 
-            # Get the class object.
-            obj = globals()[class_name]
+                # Check.
+                if len(row) != 2:
+                    raise RelaxError("The test '%s' is not in the correct format.  It should consist of the test case class, a dot, and the specific test." % test)
 
-            # Add the test.
-            suite_array.append(TestLoader().loadTestsFromNames([test_name], obj))
+                # Unpack.
+                class_name, test_name = row
+
+                # Get the class object.
+                obj = globals()[class_name]
+
+                # Add the test.
+                suite_array.append(TestLoader().loadTestsFromNames([test_name], obj))
 
         # All tests.
         if not tests:
