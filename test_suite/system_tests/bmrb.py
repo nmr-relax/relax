@@ -231,7 +231,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.0'
 
         # Execute the script.
-        self.script_exec(status.install_path + sep+self._test_dir+sep+'scripts'+sep+'bmrb_rw.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
         self.data_check(version='3.0')
@@ -244,7 +244,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.1'
 
         # Execute the script.
-        self.script_exec(status.install_path + sep+self._test_dir+sep+'scripts'+sep+'bmrb_rw.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
         self.data_check(version='3.1')

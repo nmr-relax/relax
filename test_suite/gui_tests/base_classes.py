@@ -57,8 +57,7 @@ class GuiTestCase(TestCase):
         # Execute the TestCase __init__ method.
         super(GuiTestCase, self).__init__(methodName)
 
-        # The directory where the tests are located, and a string used for classifying skipped tests.
-        self._test_dir = 'test_suite' + sep + 'gui_tests'
+        # A string used for classifying skipped tests.
         self._skip_type = 'gui'
 
         # Get the wx app, if the test suite is launched from the gui.

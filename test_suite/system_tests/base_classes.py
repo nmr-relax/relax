@@ -44,8 +44,7 @@ class SystemTestCase(TestCase):
         # Execute the TestCase __init__ method.
         super(SystemTestCase, self).__init__(methodName)
 
-        # The directory where the tests are located, and a string used for classifying skipped tests.
-        self._test_dir = 'test_suite' + sep + 'system_tests'
+        # A string used for classifying skipped tests.
         self._skip_type = 'system'
 
         # Load the interpreter.
