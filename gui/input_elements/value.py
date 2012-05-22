@@ -341,6 +341,9 @@ class Value:
 
         # Update the choices for a ComboBox.
         if self.element_type == 'combo':
+            # Store the current selection's client data to restore at the end.
+            sel = self._field.GetClientData(self._field.GetSelection())
+
             # First clear all data.
             self.Clear()
 
@@ -358,7 +361,7 @@ class Value:
                 self._field.Insert(self.convert_to_gui(combo_choices[i]), i, combo_data[i])
 
             # Set the default selection.
-            if combo_default != None:
+            if sel == None and combo_default != None:
                 # Translate if needed.
                 if combo_default in combo_choices:
                     string = combo_default
@@ -369,3 +372,9 @@ class Value:
 
                 # Set the selection.
                 self._field.SetStringSelection(string)
+
+            # Restore the selection.
+            else:
+                for j in range(self._field.GetCount()):
+                    if self._field.GetClientData(j) == sel:
+                        self._field.SetSelection(j)
