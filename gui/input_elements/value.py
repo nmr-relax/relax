@@ -195,7 +195,7 @@ class Value:
             self._field = wx.ComboBox(parent, -1, '', style=style)
 
             # Update the choices.
-            self.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=default)
+            self.UpdateChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=default)
 
         # Unknown field.
         else:
@@ -278,59 +278,6 @@ class Value:
             return value
 
 
-    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
-        """Special wizard method for resetting the list of choices in a ComboBox type element.
-
-        @param key:             The key corresponding to the desired GUI element.
-        @type key:              str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:    str or None
-        """
-
-        # A TextCtrl?!
-        if self.element_type == 'text':
-            raise RelaxError("Cannot reset the list of ComboBox choices as this is a TextCtrl!")
-
-        # A SpinCtrl?!
-        if self.element_type == 'spin':
-            raise RelaxError("Cannot reset the list of ComboBox choices as this is a SpinCtrl!")
-
-        # Reset the choices for a ComboBox.
-        if self.element_type == 'combo':
-            # First clear all data.
-            self.Clear()
-
-            # Set the data if needed.
-            if combo_data == None:
-                combo_data = deepcopy(combo_choices)
-
-            # Handle None in combo boxes by prepending a None element to the lists.
-            if self.can_be_none:
-                combo_choices.insert(0, '')
-                combo_data.insert(0, None)
-
-            # Loop over the choices and data, adding both to the end.
-            for i in range(len(combo_choices)):
-                self._field.Insert(self.convert_to_gui(combo_choices[i]), i, combo_data[i])
-
-            # Set the default selection.
-            if combo_default != None:
-                # Translate if needed.
-                if combo_default in combo_choices:
-                    string = combo_default
-                elif combo_default not in combo_data:
-                    string = combo_default
-                else:
-                    string = combo_choices[combo_data.index(combo_default)]
-
-                # Set the selection.
-                self._field.SetStringSelection(string)
-
-
     def SetValue(self, value):
         """Special method for setting the value of the GUI element.
 
@@ -369,3 +316,56 @@ class Value:
                 # Set the unknown value.
                 else:
                     self._field.SetValue(value)
+
+
+    def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for updating the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # A TextCtrl?!
+        if self.element_type == 'text':
+            raise RelaxError("Cannot update the list of ComboBox choices as this is a TextCtrl!")
+
+        # A SpinCtrl?!
+        if self.element_type == 'spin':
+            raise RelaxError("Cannot update the list of ComboBox choices as this is a SpinCtrl!")
+
+        # Update the choices for a ComboBox.
+        if self.element_type == 'combo':
+            # First clear all data.
+            self.Clear()
+
+            # Set the data if needed.
+            if combo_data == None:
+                combo_data = deepcopy(combo_choices)
+
+            # Handle None in combo boxes by prepending a None element to the lists.
+            if self.can_be_none:
+                combo_choices.insert(0, '')
+                combo_data.insert(0, None)
+
+            # Loop over the choices and data, adding both to the end.
+            for i in range(len(combo_choices)):
+                self._field.Insert(self.convert_to_gui(combo_choices[i]), i, combo_data[i])
+
+            # Set the default selection.
+            if combo_default != None:
+                # Translate if needed.
+                if combo_default in combo_choices:
+                    string = combo_default
+                elif combo_default not in combo_data:
+                    string = combo_default
+                else:
+                    string = combo_choices[combo_data.index(combo_default)]
+
+                # Set the selection.
+                self._field.SetStringSelection(string)

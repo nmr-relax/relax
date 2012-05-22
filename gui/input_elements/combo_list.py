@@ -291,8 +291,50 @@ class Combo_list:
             return text
 
 
-    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
-        """Special wizard method for resetting the list of choices in a ComboBox type element.
+    def SetValue(self, value=None, index=None):
+        """Special method for setting the value of the GUI element.
+
+        @keyword value: The value to set.
+        @type value:    value or list of values
+        @keyword index: The index of the value to set.
+        @type index:    int
+        """
+
+        # Single element.
+        if not isinstance(value, list):
+            # The index default.
+            if index == None:
+                index = 0
+
+            # Add elements as needed.
+            if len(self._combo_boxes) <= index:
+                for i in range(len(self._combo_boxes) - index + 1):
+                    self._add(None)
+
+            # Loop until the proper client data is found.
+            for j in range(self._combo_boxes[index].GetCount()):
+                if self._combo_boxes[index].GetClientData(j) == value:
+                    self._combo_boxes[index].SetSelection(j)
+                    break
+
+        # A list of values.
+        else:
+            # Add elements as needed.
+            if len(self._combo_boxes) <= len(value):
+                for i in range(len(value) - len(self._combo_boxes)):
+                    self._add(None)
+
+            # Loop over the list.
+            for i in range(len(value)):
+                # Loop until the proper client data is found.
+                for j in range(self._combo_boxes[i].GetCount()):
+                    if self._combo_boxes[i].GetClientData(j) == value:
+                        self._combo_boxes[i].SetSelection(j)
+                        break
+
+
+    def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for updating the list of choices in a ComboBox type element.
 
         @param key:             The key corresponding to the desired GUI element.
         @type key:              str
@@ -348,45 +390,3 @@ class Combo_list:
                 for j in range(self._combo_boxes[i].GetCount()):
                     if self._combo_boxes[i].GetClientData(j) == sel:
                         self._combo_boxes[i].SetSelection(j)
-
-
-    def SetValue(self, value=None, index=None):
-        """Special method for setting the value of the GUI element.
-
-        @keyword value: The value to set.
-        @type value:    value or list of values
-        @keyword index: The index of the value to set.
-        @type index:    int
-        """
-
-        # Single element.
-        if not isinstance(value, list):
-            # The index default.
-            if index == None:
-                index = 0
-
-            # Add elements as needed.
-            if len(self._combo_boxes) <= index:
-                for i in range(len(self._combo_boxes) - index + 1):
-                    self._add(None)
-
-            # Loop until the proper client data is found.
-            for j in range(self._combo_boxes[index].GetCount()):
-                if self._combo_boxes[index].GetClientData(j) == value:
-                    self._combo_boxes[index].SetSelection(j)
-                    break
-
-        # A list of values.
-        else:
-            # Add elements as needed.
-            if len(self._combo_boxes) <= len(value):
-                for i in range(len(value) - len(self._combo_boxes)):
-                    self._add(None)
-
-            # Loop over the list.
-            for i in range(len(value)):
-                # Loop until the proper client data is found.
-                for j in range(self._combo_boxes[i].GetCount()):
-                    if self._combo_boxes[i].GetClientData(j) == value:
-                        self._combo_boxes[i].SetSelection(j)
-                        break

@@ -336,23 +336,6 @@ class Uf_page(Wiz_page):
         return self.uf_args[key].GetValue()
 
 
-    def ResetChoices(self, key, combo_choices=None, combo_data=None, combo_default=None):
-        """Special user function page method for resetting the list of choices in a ComboBox type element.
-
-        @param key:             The key corresponding to the desired GUI element.
-        @type key:              str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
-        @type combo_default:    str or None
-        """
-
-        # Call the argument element's method.
-        self.uf_args[key].ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
-
-
     def SetValue(self, key, value):
         """Special wizard method for setting the value of the GUI element corresponding to the key.
 
@@ -369,6 +352,23 @@ class Uf_page(Wiz_page):
         # Call the argument element's method.
         else:
             self.uf_args[key].SetValue(value)
+
+
+    def UpdateChoices(self, key, combo_choices=None, combo_data=None, combo_default=None):
+        """Special user function page method for updating the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # Call the argument element's method.
+        self.uf_args[key].UpdateChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
 
 
     def add_contents(self, sizer):
@@ -740,8 +740,8 @@ class Uf_page(Wiz_page):
                 # Return as a failure.
                 return False
 
-            # Reset.
-            self.ResetChoices(name, combo_choices=choices, combo_data=data)
+            # Update the GUI element.
+            self.UpdateChoices(name, combo_choices=choices, combo_data=data)
 
 
 

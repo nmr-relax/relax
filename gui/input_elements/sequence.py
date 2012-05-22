@@ -270,24 +270,6 @@ class Sequence:
         return value
 
 
-    def ResetChoices(self, combo_choices=None, combo_data=None, combo_default=None):
-        """Special wizard method for resetting the list of choices in a ComboBox type element.
-
-        @param key:             The key corresponding to the desired GUI element.
-        @type key:              str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo_list'.
-        @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo_list'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
-        @type combo_data:       list
-        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo_list'.
-        @type combo_default:    str or None
-        """
-
-        # The ComboBox list.
-        if self.element_type == 'combo_list':
-            self._field.ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
-
-
     def SetValue(self, value=None, index=None):
         """Special method for setting the value of the GUI element.
 
@@ -312,6 +294,24 @@ class Sequence:
 
             # Convert and set the value.
             self._field.SetValue(self.convert_to_gui(value))
+
+
+    def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for updating the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo_list'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo_list'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo_list'.
+        @type combo_default:    str or None
+        """
+
+        # The ComboBox list.
+        if self.element_type == 'combo_list':
+            self._field.UpdateChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
 
 
     def open_dialog(self, event):
