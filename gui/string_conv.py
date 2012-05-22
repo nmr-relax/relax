@@ -369,11 +369,15 @@ def py_to_gui(value):
     """
 
     # No input.
-    if string == None:
+    if value == None:
         string = ''
 
-    # Return the unicode version of the string.
-    return unicode(string)
+    # All other types.
+    else:
+        string = unicode(value)
+
+    # Return the GUI string.
+    return string
 
 
 def str_to_gui(string):
