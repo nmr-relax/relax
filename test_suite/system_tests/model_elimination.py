@@ -63,7 +63,7 @@ class Modelim(SystemTestCase):
         """Test the elimination of a model-free model with the local tm = 51 ns."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
 
         # Checks.
         self.assert_(return_spin(':13').select)

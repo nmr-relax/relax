@@ -57,7 +57,7 @@ class Dasha(SystemTestCase):
             return
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
 
         # Check the global data.
         self.assertEqual(len(cdp.ri_ids), 3)

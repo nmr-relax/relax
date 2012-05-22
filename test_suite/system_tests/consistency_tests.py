@@ -125,4 +125,4 @@ class Ct(SystemTestCase):
         """Test a complete consistency tests run using a script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')

@@ -61,7 +61,7 @@ class SystemTestCase(TestCase):
         """
 
         # Execute the script.
-        self.interpreter.run(script_file=script)
+        self.script_exec(script)
 
 
     def tearDown(self):

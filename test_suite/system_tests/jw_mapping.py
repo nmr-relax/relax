@@ -117,4 +117,4 @@ class Jw(SystemTestCase):
         """Test a complete jw mapping run using a script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')
