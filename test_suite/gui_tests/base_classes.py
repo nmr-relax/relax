@@ -102,6 +102,18 @@ class GuiTestCase(TestCase):
             # Set the keyword arg.
             kargs[name] = args[i]
 
+        # Add the keyword args not supplied, using the default value.
+        for i in range(len(uf_data.kargs)):
+            # Alias.
+            arg = uf_data.kargs[i]
+
+            # Already set.
+            if arg['name'] in kargs:
+                continue
+
+            # Set the default.
+            kargs[arg['name']] = arg['default']
+
         # Merge the file and directory args, as needed.
         for i in range(len(uf_data.kargs)):
             # Alias.
