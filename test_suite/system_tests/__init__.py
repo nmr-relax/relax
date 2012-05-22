@@ -118,6 +118,10 @@ class System_test_runner:
         for test in tests:
             # The entire test class.
             if not search('\.', test):
+                # Check that the class exists.
+                if test not in globals():
+                    raise RelaxError("The system test class '%s' does not exist." % test)
+
                 # The uninstantiated class object.
                 obj = globals()[test]
 
