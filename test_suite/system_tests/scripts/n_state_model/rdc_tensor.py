@@ -49,7 +49,7 @@ self._execute_uf(uf_name='minimise', min_algor='newton', constraints=False)
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Show the tensors.
-self._execute_uf(uf_name='align_tensor.display', align_id=tag)
+self._execute_uf(uf_name='align_tensor.display', tensor=tag)
 
 # Back calc.
 self._execute_uf(uf_name='rdc.back_calc')
