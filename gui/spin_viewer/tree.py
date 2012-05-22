@@ -37,7 +37,7 @@ from status import Status; status = Status()
 from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
-from gui.misc import gui_to_str
+from gui.string_conv import gui_to_str
 
 
 class Mol_res_spin_tree(wx.Window):

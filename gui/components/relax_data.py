@@ -34,8 +34,9 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
 from gui.fonts import font
-from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
+from gui.misc import add_border
 from gui import paths
+from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 

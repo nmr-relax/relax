@@ -32,7 +32,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.fonts import font
-from gui.misc import bool_to_gui, gui_to_bool
+from gui.string_conv import bool_to_gui, gui_to_bool
 
 
 class Selector_bool:

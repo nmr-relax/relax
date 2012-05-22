@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,8 +28,8 @@ from copy import deepcopy
 import wx
 
 # relax GUI module imports.
-from gui.misc import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from gui.paths import icon_16x16
+from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 
 
 class Combo_list:

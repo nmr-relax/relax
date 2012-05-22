@@ -38,8 +38,9 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
+from gui.misc import add_border, open_file, protected_exec
 from gui import paths
+from gui.string_conv import bool_to_gui, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 
 
 class Wiz_page(wx.Panel):

@@ -33,8 +33,8 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
-from gui.misc import gui_to_str, str_to_gui
 from gui import paths
+from gui.string_conv import gui_to_str, str_to_gui
 
 
 class Selector_file:

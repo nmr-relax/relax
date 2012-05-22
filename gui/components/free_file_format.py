@@ -34,8 +34,8 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.input_elements.value import Value
 from gui.message import Question
-from gui.misc import gui_to_int, int_to_gui, str_to_gui
 from gui import paths
+from gui.string_conv import gui_to_int, int_to_gui, str_to_gui
 from gui.wizard import Wiz_page
 
 

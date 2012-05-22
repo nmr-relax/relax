@@ -36,8 +36,9 @@ from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.message import Question
-from gui.misc import add_border, gui_to_str, str_to_gui
+from gui.misc import add_border
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
+from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage
 
 

@@ -38,8 +38,9 @@ from status import Status; status = Status()
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.misc import add_border, gui_to_str, open_file, str_to_gui
+from gui.misc import add_border, open_file
 from gui.paths import icon_22x22
+from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 

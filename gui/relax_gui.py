@@ -63,13 +63,14 @@ from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
-from gui.misc import gui_to_str, open_file, protected_exec
+from gui.misc import open_file, protected_exec
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.components.free_file_format import Free_file_format_window
+from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage, Uf_object; uf_store = Uf_storage()
 
 

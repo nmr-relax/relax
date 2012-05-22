@@ -45,8 +45,9 @@ from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data, Question
-from gui.misc import gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
+from gui.misc import protected_exec
 from gui import paths
+from gui.string_conv import gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 

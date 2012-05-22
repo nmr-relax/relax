@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,7 +32,7 @@ import wx
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.misc import gui_to_str, str_to_gui
+from gui.string_conv import gui_to_str, str_to_gui
 
 
 class RelaxDirDialog(wx.DirDialog):
