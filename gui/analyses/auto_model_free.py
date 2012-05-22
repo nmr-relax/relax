@@ -37,6 +37,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import has_pipe
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
+from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -716,8 +717,11 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('csa')
+
         # Call the user function.
-        uf_store['value.set'](param='csa')
+        uf_store['value.set'](val=val, param='csa')
 
 
     def value_set_heteronuc_type(self, event):
@@ -727,8 +731,11 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('heteronuc_type')
+
         # Call the user function.
-        uf_store['value.set'](param='heteronuc_type')
+        uf_store['value.set'](val=val, param='heteronuc_type')
 
 
     def value_set_proton_type(self, event):
@@ -738,8 +745,11 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('proton_type')
+
         # Call the user function.
-        uf_store['value.set'](param='proton_type')
+        uf_store['value.set'](val=val, param='proton_type')
 
 
     def value_set_r(self, event):
@@ -749,8 +759,11 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('r')
+
         # Call the user function.
-        uf_store['value.set'](param='r')
+        uf_store['value.set'](val=val, param='r')
 
 
 
