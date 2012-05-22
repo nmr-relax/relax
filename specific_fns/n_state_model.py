@@ -61,12 +61,20 @@ class N_state_model(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_data_desc = self._return_data_desc_spin
         self.set_selected_sim = self._set_selected_sim_global
         self.sim_return_selected = self._sim_return_selected_global
         self.test_grid_ops = self._test_grid_ops_general
+
+        # Set up the spin parameters.
+        self.SPIN_PARAMS.add('r', units='Angstrom', grace_string='Bond length')
+        self.SPIN_PARAMS.add('csa', units='ppm', grace_string='\\qCSA\\Q')
+        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
+        self.SPIN_PARAMS.add('proton_type', default='1H')
 
 
     def _assemble_param_vector(self, sim_index=None):
@@ -1853,7 +1861,10 @@ class N_state_model(API_base, API_common):
 
         # Parameters.
         if set == 'all' or set == 'params':
-            pass
+            names.append('r')
+            names.append('csa')
+            names.append('heteronuc_type')
+            names.append('proton_type')
 
         # Minimisation statistics.
         if set == 'all' or set == 'min':
