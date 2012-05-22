@@ -95,8 +95,8 @@ class GuiTestCase(TestCase):
                     if uf_data.kargs[j]['arg_type'] == 'file sel':
                         file_sel_name = uf_data.kargs[j]['name']
 
-                # Prepend the directory to the file, if needed.
-                if file_sel_name in kargs:
+                # Prepend the directory to the file, if needed and supplied.
+                if file_sel_name in kargs and kargs[arg['name']]:
                     kargs[file_sel_name] = kargs[arg['name']] + sep + kargs[file_sel_name]
 
                 # Remove the directory argument.
