@@ -111,13 +111,26 @@ class Sequence:
         self.single_value = single_value
         self.can_be_none = can_be_none
 
+        # The base types.
+        if value_type in ['float', 'num']:
+            self.convert_from_gui = gui_to_float
+            self.convert_to_gui =   float_to_gui
+        elif value_type == 'int':
+            self.convert_from_gui = gui_to_int
+            self.convert_to_gui =   int_to_gui
+        elif value_type == 'str':
+            self.convert_from_gui = gui_to_str
+            self.convert_to_gui =   str_to_gui
+        else:
+            raise RelaxError("Unknown base data type '%s'." % value_type)
+
         # The sequence types.
         if seq_type == 'list':
-            self.convert_from_gui = gui_to_list
-            self.convert_to_gui =   list_to_gui
+            self.convert_from_gui_seq = gui_to_list
+            self.convert_to_gui_seq =   list_to_gui
         elif seq_type == 'tuple':
-            self.convert_from_gui = gui_to_tuple
-            self.convert_to_gui =   tuple_to_gui
+            self.convert_from_gui_seq = gui_to_tuple
+            self.convert_to_gui_seq =   tuple_to_gui
         else:
             raise RelaxError("Unknown sequence type '%s'." % seq_type)
 
@@ -187,7 +200,7 @@ class Sequence:
 
             # Set the default value.
             if self.default != None:
-                self._field.SetValue(self.convert_to_gui(self.default))
+                self._field.SetValue(self.convert_to_gui_seq(self.default))
 
         # Initialise the combo list input field.
         elif self.element_type == 'combo_list':
@@ -221,17 +234,26 @@ class Sequence:
         # The value.
         value = self._field.GetValue()
 
-        # Convert, handling bad user behaviour.
-        try:
-            value = self.convert_from_gui(value)
-        except RelaxError:
-            if self.seq_type == 'list':
-                value = []
-            else:
-                value = ()
+        # Handle single values.
+        if self.single_value:
+            try:
+                value = self.convert_from_gui(value)
+                value_set = True
+            except:
+                value_set = False
+
+        # Convert to a sequence, handling bad user behaviour.
+        if not value_set:
+            try:
+                value = self.convert_from_gui_seq(value)
+            except RelaxError:
+                if self.seq_type == 'list':
+                    value = []
+                else:
+                    value = ()
 
         # Handle single values.
-        if self.single_value and len(value) == 1:
+        if self.single_value and isinstance(value, list):
             if self.seq_type == 'list' and not isinstance(value, list):
                 value = [value]
             elif self.seq_type == 'tuple' and not isinstance(value, tuple):
