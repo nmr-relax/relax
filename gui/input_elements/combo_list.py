@@ -254,41 +254,32 @@ class Combo_list:
     def GetValue(self):
         """Return the value represented by this GUI element.
 
-        @return:    The list of choices as a GUI string.
-        @rtype:     unicode
+        @return:    The list of choices.
+        @rtype:     list
         """
 
-        # Build the string form of the list.
-        text = u'['
-
         # Loop over the combo boxes.
+        data = []
         n = 0
         for i in range(len(self._combo_boxes)):
             # Get the value.
             val = self.convert_from_gui(self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection()))
 
             # Nothing, so skip.
-            if val == None or not len(val):
+            if val == None:
                 continue
 
-            # Add a comma.
-            if len(text) > 1:
-                text = "%s, " % text
-
             # Add the value.
-            text = "%s'%s'" % (text, val)
+            data.append(val)
 
             # Increment the number.
             n += 1
-
-        # End.
-        text = "%s]" % text
 
         # Return the list.
         if self._min_length != None and n < self._min_length:
             return None
         else:
-            return text
+            return data
 
 
     def SetValue(self, value=None, index=None):
