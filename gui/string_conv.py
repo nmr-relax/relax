@@ -221,6 +221,31 @@ def gui_to_list(string):
     return val
 
 
+def gui_to_py(string):
+    """Super function for converting the GUI string to a Python object.
+
+    @param string:  The Python object in string form.
+    @type string:   str or unicode
+    @return:        The value.
+    @rtype:         python object
+    """
+
+    # No value.
+    if string in ['', u'', None]:
+        return None
+
+    # Use an eval call to create a standard object.
+    try:
+        value = eval(string)
+
+    # A string or sequence of strings.
+    except NameError:
+        value = str(string)
+
+    # Return the python type.
+    return value
+
+
 def gui_to_str(string):
     """Convert the GUI obtained string to a string.
 
@@ -332,6 +357,23 @@ def nothing(value):
 
     # Return, unmodified.
     return value
+
+
+def py_to_gui(value):
+    """Super function for converting a Python object to a GUI string.
+
+    @param string:  The value.
+    @type string:   anything
+    @return:        The Python object in GUI string form.
+    @rtype:         unicode
+    """
+
+    # No input.
+    if string == None:
+        string = ''
+
+    # Return the unicode version of the string.
+    return unicode(string)
 
 
 def str_to_gui(string):
