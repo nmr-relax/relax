@@ -36,7 +36,7 @@ from gui.input_elements.combo_list import Combo_list
 from gui.fonts import font
 from gui.misc import add_border
 from gui import paths
-from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_list, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, str_to_gui, tuple_to_gui
+from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_list, gui_to_py, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, py_to_gui, str_to_gui, tuple_to_gui
 
 
 class Sequence:
@@ -123,7 +123,8 @@ class Sequence:
             self.convert_from_gui = gui_to_str
             self.convert_to_gui =   str_to_gui
         else:
-            raise RelaxError("Unknown base data type '%s'." % value_type)
+            self.convert_from_gui = gui_to_py
+            self.convert_to_gui =   py_to_gui
 
         # The sequence types.
         if seq_type == 'list':
@@ -253,15 +254,15 @@ class Sequence:
                 else:
                     value = ()
 
-        # Handle single values.
-        if self.single_value and isinstance(value, list):
+        # Convert single values to sequences as needed.
+        if not self.single_value:
             if self.seq_type == 'list' and not isinstance(value, list):
                 value = [value]
             elif self.seq_type == 'tuple' and not isinstance(value, tuple):
                 value = (value,)
 
-        # Handle empty values.
-        if len(value) == 0:
+        # Handle empty list and tuple values.
+        if not self.single_value and len(value) == 0:
             return None
 
         # Return the value.
