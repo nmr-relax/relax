@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,7 +34,7 @@ from generic_fns.mol_res_spin import return_spin
 
 # GUI module imports.
 from gui import paths
-from gui.misc import str_to_gui
+from gui.string_conv import str_to_gui
 
 
 

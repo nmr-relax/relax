@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,8 +30,8 @@ import wx.lib.buttons
 
 # relax GUI module imports.
 from gui.fonts import font
-from gui.misc import str_to_gui
 from gui.paths import icon_16x16
+from gui.string_conv import str_to_gui
 
 
 class Spin_ctrl:

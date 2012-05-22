@@ -33,7 +33,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.misc import int_to_gui, str_to_gui
+from gui.string_conv import int_to_gui, str_to_gui
 from gui.wizard import Wiz_window
 
 

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -37,7 +37,8 @@ from generic_fns.pipes import cdp_name
 from gui import paths
 from gui.analyses.elements import Text_ctrl
 from gui.fonts import font
-from gui.misc import add_border, int_to_gui, str_to_gui
+from gui.misc import add_border
+from gui.string_conv import int_to_gui, str_to_gui
 from gui.wizard import Wiz_page
 
 

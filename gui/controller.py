@@ -39,8 +39,9 @@ from status import Status; status = Status()
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, str_to_gui
+from gui.misc import add_border
 from gui.paths import IMAGE_PATH, icon_16x16
+from gui.string_conv import str_to_gui
 from info import Info_box
 
 
