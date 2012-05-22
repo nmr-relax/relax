@@ -279,8 +279,11 @@ class Sequence:
         # The other elements.
         else:
             # Handle single values.
-            if self.single_value and len(value) == 1:
-                value = value[0]
+            if self.single_value and isinstance(value, list):
+                if len(value) == 1:
+                    value = value[0]
+                else:
+                    raise RelaxError("The list of values '%s' cannot be converted to a single value." % value)
 
             # Convert and set the value.
             self._field.SetValue(self.convert_to_gui(value))
