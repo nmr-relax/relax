@@ -239,7 +239,7 @@ def gui_to_py(string):
         value = eval(string)
 
     # A string or sequence of strings.
-    except NameError:
+    except:
         value = str(string)
 
     # Return the python type.
