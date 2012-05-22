@@ -265,6 +265,9 @@ class Combo_list:
             # Get the value.
             val = self.convert_from_gui(self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection()))
 
+            # Manually added value by the user.
+            if val == None:
+                val = self.convert_from_gui(self._combo_boxes[i].GetValue())
             # Nothing, so skip.
             if val == None:
                 continue
@@ -303,10 +306,22 @@ class Combo_list:
                     self._add(None)
 
             # Loop until the proper client data is found.
+            found = False
             for j in range(self._combo_boxes[index].GetCount()):
                 if self._combo_boxes[index].GetClientData(j) == value:
                     self._combo_boxes[index].SetSelection(j)
+                    found = True
                     break
+
+            # No value found.
+            if not found:
+                # Invalid value.
+                if self._read_only:
+                    raise RelaxError("The Value element is read only, cannot set the value '%s'." % value)
+
+                # Set the unknown value.
+                else:
+                    self._combo_boxes[index].SetValue(value)
 
         # A list of values.
         else:
