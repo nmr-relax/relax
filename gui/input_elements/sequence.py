@@ -236,8 +236,14 @@ class Sequence:
         # The value.
         value = self._field.GetValue()
 
+        # Handle Combo_list elements.
+        if self.element_type == 'combo_list':
+            # Empty lists.
+            if value == []:
+                return None
+
         # Non Combo_list elements.
-        if self.element_type != 'combo_list':
+        else:
             # Handle single values.
             value_set = False
             if self.single_value:
@@ -251,8 +257,12 @@ class Sequence:
             if not value_set:
                 try:
                     value = self.convert_from_gui_seq(value)
+
+                # Set the value to None or an empty sequence.
                 except RelaxError:
-                    if self.seq_type == 'list':
+                    if self.can_be_none:
+                        value = None
+                    elif self.seq_type == 'list':
                         value = []
                     else:
                         value = ()
@@ -263,7 +273,7 @@ class Sequence:
                 value = value[0]
 
         # Convert single values to sequences as needed.
-        else:
+        elif value != None:
             if self.seq_type == 'list' and not isinstance(value, list):
                 value = [value]
             elif self.seq_type == 'tuple' and not isinstance(value, tuple):
