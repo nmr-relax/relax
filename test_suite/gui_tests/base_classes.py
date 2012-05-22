@@ -69,12 +69,19 @@ class GuiTestCase(TestCase):
             self._gui_launch = True
 
 
-    def _execute_uf(self, uf_name=None, **kargs):
+    def _execute_uf(self, *args, **kargs):
         """Execute the given user function.
 
         @keyword uf_name:   The name of the user function.
         @type uf_name:      str
         """
+
+        # Checks.
+        if 'uf_name' not in kargs:
+            raise RelaxError("The user function name argument 'uf_name' has not been supplied.")
+
+        # Process the user function name.
+        uf_name = kargs.pop('uf_name')
 
         # Create and store a wizard instance to be used in all user function pages (if needed).
         if not hasattr(self, '_wizard'):
@@ -82,6 +89,18 @@ class GuiTestCase(TestCase):
 
         # Get the user function data object.
         uf_data = uf_info.get_uf(uf_name)
+
+        # Convert the args into keyword args.
+        for i in range(len(args)):
+            # The keyword name for this arg.
+            name = uf_data.kargs[i]['name']
+
+            # Check.
+            if name in kargs:
+                raise RelaxError("The argument '%s' clashes with the %s keyword argument of '%s'." % (arg[i], name, kargs[name]))
+
+            # Set the keyword arg.
+            kargs[name] = args[i]
 
         # Merge the file and directory args, as needed.
         for i in range(len(uf_data.kargs)):
