@@ -39,7 +39,7 @@ self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
 self._execute_uf(uf_name='grid_search', inc=3)
-self._execute_uf(uf_name='minimise', 'newton', constraints=False)
+self._execute_uf(uf_name='minimise', min_algor='newton', constraints=False)
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
