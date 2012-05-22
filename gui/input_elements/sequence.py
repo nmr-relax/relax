@@ -259,7 +259,7 @@ class Sequence:
 
         # Convert sequences to single values as needed.
         if self.single_value:
-            if isinstance(value, list) or isinstance(value, tuple):
+            if (isinstance(value, list) or isinstance(value, tuple)) and len(value) == 1:
                 value = value[0]
 
         # Convert single values to sequences as needed.
