@@ -307,7 +307,7 @@ uf.add_keyarg(
     desc = "The parameter(s).",
     wiz_element_type = 'combo_list',
     wiz_combo_iter = value.get_parameters,
-    wiz_read_only = True,
+    wiz_read_only = False,
     can_be_none = True
 )
 uf.add_keyarg(
