@@ -670,9 +670,6 @@ class Uf_page(Wiz_page):
             # Go to the last line.
             app.gui.controller.log_panel.on_goto_end(None)
 
-            # Wait a little while.
-            sleep(0.5)
-
         # Execute the user function.
         self.execute(self.name, **kargs)
 
