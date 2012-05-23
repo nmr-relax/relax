@@ -285,10 +285,6 @@ class Value:
         @type value:    list of str or None
         """
 
-        # No value.
-        if value == None:
-            return
-
         # Convert and set the value for a TextCtrl.
         if self.element_type == 'text':
             self._field.SetValue(self.convert_to_gui(value))
