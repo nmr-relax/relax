@@ -71,8 +71,15 @@ class Mf(GuiTestCase):
         # The data path.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
+        # Launch the spin viewer window.
+        self.app.gui.show_tree()
+
+        # Run through the spin loading wizard.
+        self.app.gui.spin_viewer.load_spins_wizard()
+        page = self.app.gui.spin_viewer.wizard.get_page(0)
+
         # Load the sequence.
-        self._execute_uf(uf_name='sequence.read', file=data_path+'noe.500.out')
+        self._execute_uf(uf_name='sequence.read', file=data_path+'noe.500.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
         # Load the relaxation data.
         data = [
@@ -84,7 +91,7 @@ class Mf(GuiTestCase):
             ['r2.900.out',  'r2_900',  'R2',  900e6]
         ]
         for i in range(len(data)):
-            self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3])
+            self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
         # Set the values.
         self._execute_uf(uf_name='value.set', param='csa')
