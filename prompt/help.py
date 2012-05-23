@@ -73,9 +73,16 @@ For assistance in using a function, simply type 'help(function)'.  All functions
             print((self.text))
             return
 
+        # Alias the object.
+        obj = args[0]
+
+        # Automatically create the user function docstring help text, storing it so it only needs to be built once.
+        if not hasattr(obj, '__relax_help__') and hasattr(obj, '_build_doc'):
+            obj.__relax_help__ = obj._build_doc()
+
         # The relax help system.
-        if hasattr(args[0], '__relax_help__'):
-            pydoc.pager(args[0].__relax_help__)
+        if hasattr(obj, '__relax_help__'):
+            pydoc.pager(obj.__relax_help__)
             return
 
         # Default to the normal Python help system.

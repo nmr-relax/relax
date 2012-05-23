@@ -214,9 +214,6 @@ class Uf_object(object):
         for i in range(self._karg_num):
             self._karg_names.append(self._kargs[i]['name'])
 
-        # Build the user function documentation.
-        self.__relax_help__ = self._build_doc()
-
 
     def __repr__(self):
         """Replacement function for displaying an instance of this user function class."""
