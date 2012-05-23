@@ -147,9 +147,6 @@ class GuiTestCase(TestCase):
         # Execute the user function.
         uf_page.on_execute()
 
-        # Flush the interpreter to force synchronous user functions operation.
-        interpreter.flush()
-
 
     def check_exceptions(self):
         """Check that no exception has occurred."""
