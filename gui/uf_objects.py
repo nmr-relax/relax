@@ -150,43 +150,31 @@ def build_uf_menus(parent=None, menubar=None):
 class Uf_object(object):
     """The object for auto-generating the GUI user functions."""
 
-    def __call__(self, event=None, parent=None, **kwds):
+    def __call__(self, event=None, wx_parent=None, wx_wizard_run=True, **kwds):
         """Make the GUI user function executable.
 
-        All keyword args, apart from 'event' and 'parent' will be assumed to be user function arguments and the Uf_page.SetValue() method of the page will be used to set the GUI arg elements to the values supplied.
+        All keyword args, apart from 'event', 'wx_parent' and 'wx_wizard_run' will be assumed to be user function arguments and the Uf_page.SetValue() method of the page will be used to set the GUI arg elements to the values supplied.
 
 
-        @keyword event:     The wx event.
-        @type event:        wx event or None
-        @keyword parent:    The parent wx object to associate the user function wizard to.
-        @type parent:       wx object
+        @keyword event:         The wx event.
+        @type event:            wx event or None
+        @keyword wx_parent:     The parent wx object to associate the user function wizard to.
+        @type wx_parent:        wx object
+        @keyword wx_wizard_run: A flag which if True will call the wizard run() method.
+        @type wx_wizard_run:    bool
         """
 
-        # The parent object defaults to the main relax window.
-        if parent == None:
-            app = wx.GetApp()
-            parent = app.gui
-
-        # Do not reuse an old wizard (checking that the parent of an old wizard is not the same).
-        if self.wizard == None or parent != self.wizard.GetParent():
-            # Create the wizard dialog.
-            self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
-
-            # Create the page.
-            self.page = self.create_page(self.wizard, sync=self._sync)
-
-            # For an update of the argument data.
-            self.page.update_args()
-
-            # Add the page to the wizard.
-            self.wizard.add_page(self.page, apply_button=self._apply_button)
+        # Create a new wizard if needed (checking that the parent of an old wizard is not the same).
+        if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()):
+            self.create_wizard(wx_parent)
 
         # Loop over the keyword args, using the Uf_page.SetValue() method to set the user function argument GUI element values.
         for key in kwds:
             self.page.SetValue(key, kwds[key])
 
-        # Execute the wizard.
-        self.wizard.run()
+        # Execute the wizard when asked.
+        if wx_wizard_run:
+            self.wizard.run()
 
 
     def __init__(self, name, title=None, size=None, height_desc=None, apply_button=True, sync=False):
@@ -219,7 +207,7 @@ class Uf_object(object):
 
 
     def create_page(self, wizard=None, sync=False):
-        """Create the user function page object.
+        """Create the user function wizard page GUI object.
 
         @keyword wizard:    The parent wizard.
         @type wizard:       Wiz_window instance
@@ -231,6 +219,31 @@ class Uf_object(object):
 
         # Initialise and return the page.
         return Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
+
+
+    def create_wizard(self, parent=None):
+        """Create the user function wizard GUI object, with embedded wizard page.
+
+        @keyword parent:    The parent wx window.
+        @type parent:       wx.Window instance
+        """
+
+        # The parent object defaults to the main relax window.
+        if parent == None:
+            app = wx.GetApp()
+            parent = app.gui
+
+        # Create the wizard dialog.
+        self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
+
+        # Create the page.
+        self.page = self.create_page(self.wizard, sync=self._sync)
+
+        # For an update of the argument data.
+        self.page.update_args()
+
+        # Add the page to the wizard.
+        self.wizard.add_page(self.page, apply_button=self._apply_button)
 
 
 
@@ -604,7 +617,7 @@ class Uf_page(Wiz_page):
         """
 
         # Synchronous execution.
-        if self.sync:
+        if self.sync or status.gui_uf_force_sync:
             interpreter.apply(uf, *args, **kwds)
 
         # Asynchronous execution.

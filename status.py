@@ -57,6 +57,7 @@ class Status(object):
             self._instance.test_mode = False
             self._instance.prompt_intro = False
             self._instance.show_gui = False
+            self._instance.gui_uf_force_sync = False
             self._instance.install_path = self._instance._det_install_path()
 
             # Set up the singleton.

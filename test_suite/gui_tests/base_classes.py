@@ -46,7 +46,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 # relax GUI module imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_window
-from gui.uf_objects import Uf_page
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class GuiTestCase(TestCase):
@@ -83,10 +83,6 @@ class GuiTestCase(TestCase):
 
         # Process the user function name.
         uf_name = kargs.pop('uf_name')
-
-        # Create and store a wizard instance to be used in all user function pages (if needed).
-        if not hasattr(self, '_wizard'):
-            self._wizard = Wiz_window(self.app.gui)
 
         # Get the user function data object.
         uf_data = uf_info.get_uf(uf_name)
@@ -134,18 +130,20 @@ class GuiTestCase(TestCase):
                 # Remove the directory argument.
                 kargs.pop(arg['name'])
 
-        # Create the page.
-        uf_page = Uf_page(uf_name, parent=self._wizard, sync=True)
+        # The user function object.
+        uf = uf_store[uf_name]
 
-        # Update the user function page.
-        uf_page.on_display()
+        # Force synchronous operation of the user functions.
+        status.gui_uf_force_sync = True
 
-        # Set all the values.
-        for key in kargs:
-            uf_page.SetValue(key=key, value=kargs[key])
+        # Call the GUI user function object with all keyword args, but do not execute the wizard.
+        uf(wx_wizard_run=False, **kargs)
 
         # Execute the user function.
-        uf_page.on_execute()
+        uf.page.on_execute()
+
+        # Restore the synchronous or asynchronous operation of the user functions so the GUI can return to normal.
+        status.gui_uf_force_sync = False
 
 
     def check_exceptions(self):
@@ -250,16 +248,8 @@ class GuiTestCase(TestCase):
                 # Destroy the Python object part.
                 delattr(self.app.gui, window)
 
-        # Destroy the GUI.
-        if not self._gui_launch and hasattr(self.app, 'gui'):
-            self.app.gui.Destroy()
-
         # Recreate the GUI data object.
         ds.relax_gui = Gui()
-
-        # Delete any wizard objects.
-        if hasattr(self, '_wizard'):
-            del self._wizard
 
         # Flush all wx events to make sure the GUI is ready for the next test.
         wx.Yield()
