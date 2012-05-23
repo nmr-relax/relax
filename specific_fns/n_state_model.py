@@ -60,6 +60,9 @@ class N_state_model(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Execute the base class __init__ method.
+        super(N_state_model, self).__init__()
+
         # Place methods into the API.
         self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_single_global

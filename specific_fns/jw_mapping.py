@@ -41,6 +41,9 @@ class Jw_mapping(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Execute the base class __init__ method.
+        super(Jw_mapping, self).__init__()
+
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.create_mc_data = self._create_mc_relax_data

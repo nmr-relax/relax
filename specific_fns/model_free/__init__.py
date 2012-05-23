@@ -54,6 +54,9 @@ class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_comm
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Execute the base class __init__ method.
+        super(Model_free, self).__init__()
+
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.return_error = self._return_error_relax_data

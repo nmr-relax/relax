@@ -29,33 +29,36 @@ from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNo
 from specific_fns.api_objects import Param_list
 
 
-class API_base:
+class API_base(object):
     """Base class defining the specific_fns API.
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
 
-    # Class variables.
-    SPIN_PARAMS = Param_list()
-    GLOBAL_PARAMS = Param_list()
+    def __init__(self):
+        """Set up the specific objects."""
 
-    # Add some spin specific objects.
-    SPIN_PARAMS.add('select', desc='The spin selection flag')
-    SPIN_PARAMS.add('fixed', desc='The fixed flag')
-    SPIN_PARAMS.add('chi2', desc='Chi-squared value')
-    SPIN_PARAMS.add('iter', desc='Optimisation iterations')
-    SPIN_PARAMS.add('f_count', desc='Number of function calls')
-    SPIN_PARAMS.add('g_count', desc='Number of gradient calls')
-    SPIN_PARAMS.add('h_count', desc='Number of Hessian calls')
-    SPIN_PARAMS.add('warning', desc='Optimisation warning')
+        # Class variables.
+        self.SPIN_PARAMS = Param_list()
+        self.GLOBAL_PARAMS = Param_list()
 
-    # Add some global objects.
-    GLOBAL_PARAMS.add('chi2', desc='Chi-squared value')
-    GLOBAL_PARAMS.add('iter', desc='Optimisation iterations')
-    GLOBAL_PARAMS.add('f_count', desc='Number of function calls')
-    GLOBAL_PARAMS.add('g_count', desc='Number of gradient calls')
-    GLOBAL_PARAMS.add('h_count', desc='Number of Hessian calls')
-    GLOBAL_PARAMS.add('warning', desc='Optimisation warning')
+        # Add some spin specific objects.
+        self.SPIN_PARAMS.add('select', desc='The spin selection flag')
+        self.SPIN_PARAMS.add('fixed', desc='The fixed flag')
+        self.SPIN_PARAMS.add('chi2', desc='Chi-squared value')
+        self.SPIN_PARAMS.add('iter', desc='Optimisation iterations')
+        self.SPIN_PARAMS.add('f_count', desc='Number of function calls')
+        self.SPIN_PARAMS.add('g_count', desc='Number of gradient calls')
+        self.SPIN_PARAMS.add('h_count', desc='Number of Hessian calls')
+        self.SPIN_PARAMS.add('warning', desc='Optimisation warning')
+
+        # Add some global objects.
+        self.GLOBAL_PARAMS.add('chi2', desc='Chi-squared value')
+        self.GLOBAL_PARAMS.add('iter', desc='Optimisation iterations')
+        self.GLOBAL_PARAMS.add('f_count', desc='Number of function calls')
+        self.GLOBAL_PARAMS.add('g_count', desc='Number of gradient calls')
+        self.GLOBAL_PARAMS.add('h_count', desc='Number of Hessian calls')
+        self.GLOBAL_PARAMS.add('warning', desc='Optimisation warning')
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
