@@ -180,10 +180,10 @@ class Main(wx.Frame):
             wx.CallAfter(uf_store['script'](script))
 
 
-    def about_gui(self, event):
+    def about_gui(self, event=None):
         """The about message for the relax GUI.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -195,10 +195,10 @@ class Main(wx.Frame):
             dialog.Show()
 
 
-    def about_relax(self, event):
+    def about_relax(self, event=None):
         """The about message for relax.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -210,10 +210,10 @@ class Main(wx.Frame):
             dialog.Show()
 
 
-    def action_state_save(self, event):
+    def action_state_save(self, event=None):
         """Save the program state.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -226,10 +226,10 @@ class Main(wx.Frame):
         self.state_save()
 
 
-    def action_state_save_as(self, event):
+    def action_state_save_as(self, event=None):
         """Save the program state with file name selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -312,8 +312,13 @@ class Main(wx.Frame):
             sys.stderr.write(text)
 
 
-    def contact_relax(self, event):
-        """Write an email to the relax mailing-list using the standard mailing program."""
+    def contact_relax(self, event=None):
+        """Write an email to the relax mailing-list using the standard mailing program.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
         webbrowser.open_new('mailto:relax-users@gna.org')
 
 
@@ -337,7 +342,7 @@ class Main(wx.Frame):
     def exit_gui(self, event=None):
         """Catch the main window closure and perform the exit procedure.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -392,10 +397,10 @@ class Main(wx.Frame):
         ds.relax_gui = Gui()
 
 
-    def free_file_format_settings(self, event):
+    def free_file_format_settings(self, event=None):
         """Open the free file format settings window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -407,10 +412,10 @@ class Main(wx.Frame):
             win.Show()
 
 
-    def references(self, event):
+    def references(self, event=None):
         """Display the references relevant for relax.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -420,10 +425,10 @@ class Main(wx.Frame):
             self.references.Show()
 
 
-    def relax_manual(self, event):
+    def relax_manual(self, event=None):
         """Display the relax manual.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -439,10 +444,10 @@ class Main(wx.Frame):
         open_file(file)
 
 
-    def run_test_suite(self, event, categories=['system', 'unit', 'gui']):
+    def run_test_suite(self, event=None, categories=['system', 'unit', 'gui']):
         """Execute the full test suite.
 
-        @param event:           The wx event.
+        @keyword event:         The wx event.
         @type event:            wx event
         @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
         @type categories:       list of str
@@ -509,10 +514,10 @@ class Main(wx.Frame):
         self.test_suite_flag = False
 
 
-    def run_test_suite_gui(self, event):
+    def run_test_suite_gui(self, event=None):
         """Execute the GUI tests.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -520,10 +525,10 @@ class Main(wx.Frame):
         self.run_test_suite(event, categories=['gui'])
 
 
-    def run_test_suite_sys(self, event):
+    def run_test_suite_sys(self, event=None):
         """Execute the system tests.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -531,10 +536,10 @@ class Main(wx.Frame):
         self.run_test_suite(event, categories=['system'])
 
 
-    def run_test_suite_unit(self, event):
+    def run_test_suite_unit(self, event=None):
         """Execute the unit tests.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -542,10 +547,10 @@ class Main(wx.Frame):
         self.run_test_suite(event, categories=['unit'])
 
 
-    def show_controller(self, event):
+    def show_controller(self, event=None):
         """Display the relax controller window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -559,10 +564,10 @@ class Main(wx.Frame):
             self.controller.Show()
 
 
-    def show_pipe_editor(self, event):
+    def show_pipe_editor(self, event=None):
         """Display the data pipe editor window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -586,10 +591,10 @@ class Main(wx.Frame):
             self.pipe_editor.Show()
 
 
-    def show_prompt(self, event):
+    def show_prompt(self, event=None):
         """Display the relax prompt window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -610,7 +615,7 @@ class Main(wx.Frame):
     def show_results_viewer(self, event=None):
         """Display the analysis results.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -652,10 +657,10 @@ class Main(wx.Frame):
         wx.CallAfter(self.show_results_viewer_safe, warn=False)
 
 
-    def show_tree(self, event):
+    def show_tree(self, event=None):
         """Display the molecule, residue, and spin tree window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -682,7 +687,7 @@ class Main(wx.Frame):
     def state_load(self, event=None, file_name=None):
         """Load the program state.
 
-        @param event:       The wx event.
+        @keyword event:     The wx event.
         @type event:        wx event
         @keyword file_name: The name of the file to load (for dialogless operation).
         @type file_name:    str

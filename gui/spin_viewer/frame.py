@@ -146,7 +146,7 @@ class Spin_view_window(wx.Frame):
     def refresh(self, event=None):
         """Event handler for the refresh action (thread safe).
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -174,10 +174,10 @@ class Spin_view_window(wx.Frame):
             wx.EndBusyCursor()
 
 
-    def handler_close(self, event):
+    def handler_close(self, event=None):
         """Event handler for the close window action.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -190,10 +190,10 @@ class Spin_view_window(wx.Frame):
         self.Hide()
 
 
-    def load_spins_wizard(self, event):
+    def load_spins_wizard(self, event=None):
         """The spin loading wizard.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -307,7 +307,7 @@ class Spin_view_window(wx.Frame):
     def update_pipes(self, event=None):
         """Update the spin view data pipe selector.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -512,10 +512,10 @@ class Load_method_page(Wiz_page):
             self.selection = 'sequence'
 
 
-    def _on_select(self, event):
+    def _on_select(self, event=None):
         """Handle the radio button switching.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
