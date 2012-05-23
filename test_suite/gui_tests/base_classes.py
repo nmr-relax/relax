@@ -24,6 +24,7 @@
 """Base classes for the GUI tests."""
 
 # Python module imports.
+from math import pi    # This is needed for relax scripts as pi is located in the relax prompt namespace.
 from os import sep
 import Queue
 from shutil import rmtree
