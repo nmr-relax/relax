@@ -210,10 +210,10 @@ class Auto_model_free(Base_analysis):
         super(Auto_model_free, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
 
-    def _about(self, event):
+    def _about(self, event=None):
         """The about window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -530,10 +530,10 @@ class Auto_model_free(Base_analysis):
         self.relax_data.delete()
 
 
-    def execute(self, event):
+    def execute(self, event=None):
         """Set up, execute, and process the automatic model-free protocol.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -572,10 +572,10 @@ class Auto_model_free(Base_analysis):
         event.Skip()
 
 
-    def load_unit_vectors(self, event):
+    def load_unit_vectors(self, event=None):
         """Create the wizard for structure.read_pdb and structure.vectors.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -601,10 +601,10 @@ class Auto_model_free(Base_analysis):
         self.vect_wizard.run()
 
 
-    def mode_dialog(self, event):
+    def mode_dialog(self, event=None):
         """The calculation mode selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -638,10 +638,10 @@ class Auto_model_free(Base_analysis):
             self.relax_data.observer_register(remove=True)
 
 
-    def results_directory(self, event):
+    def results_directory(self, event=None):
         """The results directory selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -711,10 +711,10 @@ class Auto_model_free(Base_analysis):
             self.max_iter.SetValue(int(self.data.max_iter))
 
 
-    def value_set_csa(self, event):
+    def value_set_csa(self, event=None):
         """Set the CSA via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -725,10 +725,10 @@ class Auto_model_free(Base_analysis):
         uf_store['value.set'](val=val, param='csa')
 
 
-    def value_set_heteronuc_type(self, event):
+    def value_set_heteronuc_type(self, event=None):
         """Set the type of heteronucleus via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -739,10 +739,10 @@ class Auto_model_free(Base_analysis):
         uf_store['value.set'](val=val, param='heteronuc_type')
 
 
-    def value_set_proton_type(self, event):
+    def value_set_proton_type(self, event=None):
         """Set the type of proton via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -753,10 +753,10 @@ class Auto_model_free(Base_analysis):
         uf_store['value.set'](val=val, param='proton_type')
 
 
-    def value_set_r(self, event):
+    def value_set_r(self, event=None):
         """Set the bond length via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -908,10 +908,10 @@ class Local_tm_list:
         self.field.SetValue(list_to_gui(self.GetValue()))
 
 
-    def modify(self, event):
+    def modify(self, event=None):
         """Modify the model-free model selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1229,10 +1229,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         sizer.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
-    def select_ellipsoid(self, event):
+    def select_ellipsoid(self, event=None):
         """The ellipsoid global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1243,10 +1243,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_final(self, event):
+    def select_final(self, event=None):
         """The final stage of the protocol has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1257,10 +1257,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_full_analysis(self, event):
+    def select_full_analysis(self, event=None):
         """The full analysis has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1271,10 +1271,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_local_tm(self, event):
+    def select_local_tm(self, event=None):
         """The local_tm global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1285,10 +1285,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_prolate(self, event):
+    def select_prolate(self, event=None):
         """The prolate global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1299,10 +1299,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_oblate(self, event):
+    def select_oblate(self, event=None):
         """The oblate global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1313,10 +1313,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_sphere(self, event):
+    def select_sphere(self, event=None):
         """The sphere global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
