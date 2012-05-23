@@ -168,6 +168,9 @@ class Uf_object(object):
         if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()):
             self.create_wizard(wx_parent)
 
+        # Update all of the user function argument choices (ComboBoxes) to be current.
+        self.page.update_args()
+
         # Loop over the keyword args, using the Uf_page.SetValue() method to set the user function argument GUI element values.
         for key in kwds:
             self.page.SetValue(key, kwds[key])
