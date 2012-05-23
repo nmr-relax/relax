@@ -23,25 +23,22 @@
 # Module docstring.
 """The spin viewer frame."""
 
-
 # Python module imports.
 import wx
 
 # relax module imports.
-from generic_fns import structure
 from generic_fns.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
 from relax_errors import RelaxNoPipeError
 
 # relax GUI module imports.
 from gui.paths import icon_32x32, WIZARD_IMAGE_PATH
-from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
 from gui.misc import gui_raise
 from gui.spin_viewer.splitter import Tree_splitter
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
-from gui.uf_objects import build_uf_menus
+from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
 
 
 class Spin_view_window(wx.Frame):
