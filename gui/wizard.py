@@ -154,10 +154,10 @@ class Wiz_page(wx.Panel):
         sizer.AddSpacer(10)
 
 
-    def _apply(self, event):
+    def _apply(self, event=None):
         """Apply the operation.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -679,10 +679,10 @@ class Wiz_page(wx.Panel):
         """
 
 
-    def preview_file(self, event):
+    def preview_file(self, event=None):
         """Preview a file.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1150,10 +1150,10 @@ class Wiz_window(wx.Dialog):
         self._buttons_built = True
 
 
-    def _cancel(self, event):
+    def _cancel(self, event=None):
         """Cancel the operation.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1189,10 +1189,10 @@ class Wiz_window(wx.Dialog):
         self._pages[i].on_init()
 
 
-    def _go_back(self, event):
+    def _go_back(self, event=None):
         """Return to the previous page.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1203,10 +1203,10 @@ class Wiz_window(wx.Dialog):
         self._display_page(self._current_page)
 
 
-    def _go_next(self, event):
+    def _go_next(self, event=None):
         """Move to the next page.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1262,10 +1262,10 @@ class Wiz_window(wx.Dialog):
         return self._current_page + 1
 
 
-    def _ok(self, event):
+    def _ok(self, event=None):
         """Accept the operation.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1318,10 +1318,10 @@ class Wiz_window(wx.Dialog):
             yield next
 
 
-    def _skip(self, event):
+    def _skip(self, event=None):
         """Skip the page.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
