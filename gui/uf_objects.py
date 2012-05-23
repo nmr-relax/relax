@@ -168,8 +168,7 @@ class Uf_object(object):
             parent = app.gui
 
         # Do not reuse an old wizard (checking that the parent of an old wizard is not the same).
-        if self.wizard != None and parent != self.wizard.GetParent():
-            prin
+        if self.wizard == None or parent != self.wizard.GetParent():
             # Create the wizard dialog.
             self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
