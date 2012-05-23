@@ -60,7 +60,7 @@ def fetch_icon(icon=None, size='16x16'):
         return None
 
     # Initialise the path.
-    path = 'graphics' + sep
+    path = status.install_path + sep + 'graphics' + sep
 
     # Split up the icon code.
     elements = split(icon, '.')
