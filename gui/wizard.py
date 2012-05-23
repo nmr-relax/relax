@@ -1045,6 +1045,9 @@ class Wiz_window(wx.Dialog):
             # Page skipping.
             self._skip_flag.append(False)
 
+        # Flag to suppress later button addition.
+        self._buttons_built = False
+
 
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
@@ -1142,6 +1145,9 @@ class Wiz_window(wx.Dialog):
             self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self._cancel, button)
             self._buttons[i]['cancel'] = button
+
+        # Flag to suppress later button addition.
+        self._buttons_built = True
 
 
     def _cancel(self, event):
@@ -1432,7 +1438,8 @@ class Wiz_window(wx.Dialog):
                 return
 
         # Build the buttons for the entire wizard.
-        self._build_buttons()
+        if not self._buttons_built:
+            self._build_buttons()
 
         # Display the first page.
         self._display_page(0)

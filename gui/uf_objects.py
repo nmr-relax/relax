@@ -167,24 +167,27 @@ class Uf_object(object):
             app = wx.GetApp()
             parent = app.gui
 
-        # Create the wizard dialog.
-        wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
+        # Do not reuse an old wizard (checking that the parent of an old wizard is not the same).
+        if self.wizard != None and parent != self.wizard.GetParent():
+            prin
+            # Create the wizard dialog.
+            self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
 
-        # Create the page.
-        page = self.create_page(wizard, sync=self._sync)
+            # Create the page.
+            self.page = self.create_page(self.wizard, sync=self._sync)
 
-        # For an update of the argument data.
-        page.update_args()
+            # For an update of the argument data.
+            self.page.update_args()
+
+            # Add the page to the wizard.
+            self.wizard.add_page(self.page, apply_button=self._apply_button)
 
         # Loop over the keyword args, using the Uf_page.SetValue() method to set the user function argument GUI element values.
         for key in kwds:
-            page.SetValue(key, kwds[key])
-
-        # Add the page to the wizard.
-        wizard.add_page(page, apply_button=self._apply_button)
+            self.page.SetValue(key, kwds[key])
 
         # Execute the wizard.
-        wizard.run()
+        self.wizard.run()
 
 
     def __init__(self, name, title=None, size=None, height_desc=None, apply_button=True, sync=False):
@@ -211,6 +214,9 @@ class Uf_object(object):
         self._height_desc = height_desc
         self._apply_button = apply_button
         self._sync = sync
+
+        # Initialise the wizard storage.
+        self.wizard = None
 
 
     def create_page(self, wizard=None, sync=False):
