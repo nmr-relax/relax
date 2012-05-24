@@ -37,6 +37,7 @@ import wx
 from prompt import interpreter
 from relax_errors import AllRelaxErrors
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.errors import gui_raise
@@ -72,7 +73,7 @@ class Interpreter(object):
         return self._instance
 
 
-    def _get_uf(self, uf):
+    def _get_backend(self, uf):
         """Return the user function object corresponding to the given string.
 
         @param uf:  The name of the user function.
@@ -81,23 +82,11 @@ class Interpreter(object):
         @rtype:     func
         """
 
-        # Handle the user function class.
-        if search('\.', uf):
-            # Split the user function.
-            uf_class, uf_fn = split(uf, '.')
+        # Get the user function info object.
+        info = uf_info.get_uf(uf)
 
-            # Get the user function class.
-            obj = getattr(self._interpreter, uf_class)
-
-            # Get the function.
-            fn = getattr(obj, uf_fn)
-
-        # Simple user function.
-        else:
-            fn = getattr(self._interpreter, uf)
-
-        # Return the user function.
-        return fn
+        # Return the backend.
+        return info.backend
 
 
     def apply(self, uf, *args, **kwds):
@@ -117,8 +106,8 @@ class Interpreter(object):
         if status.debug:
             sys.stdout.write("debug> GUI interpreter:  Applying the %s user function for synchronous execution.\n" % uf)
 
-        # Get the user function.
-        fn = self._get_uf(uf)
+        # Get the user function backend.
+        fn = self._get_backend(uf)
 
         # Execute the user function.
         try:
@@ -211,7 +200,7 @@ class Interpreter(object):
             sys.stdout.write("debug> GUI interpreter:  Queuing the %s user function for asynchronous execution.\n" % uf)
 
         # Get the user function.
-        fn = self._get_uf(uf)
+        fn = self._get_backend(uf)
 
         # Call the thread's method.
         self._interpreter_thread.queue(fn, *args, **kwds)
