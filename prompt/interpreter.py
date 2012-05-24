@@ -177,6 +177,7 @@ class Interpreter:
             objects[name] = obj
 
         # Add the user functions.
+        self._uf_dict = {}
         for name, data in uf_info.uf_loop():
             # Split up the name.
             if search('\.', name):
@@ -196,6 +197,9 @@ class Interpreter:
                 setattr(class_obj, uf_name, obj)
             else:
                 objects[name] = obj
+
+            # Store the user functions by full text name (for faster retrieval).
+            self._uf_dict[name] = obj
 
         # Return the dictionary.
         return objects
