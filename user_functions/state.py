@@ -122,8 +122,7 @@ uf.add_keyarg(
     desc = "The type of compression to use when creating the file.",
     wiz_element_type = "combo",
     wiz_combo_choices = ["No compression", "bzip2 compression", "gzip compression"],
-    wiz_combo_data = [0, 1, 2],
-    can_be_none = True
+    wiz_combo_data = [0, 1, 2]
 )
 uf.add_keyarg(
     name = "force",
