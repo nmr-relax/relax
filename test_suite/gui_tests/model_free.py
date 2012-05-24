@@ -35,6 +35,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 # relax GUI imports.
 from gui.analyses import auto_model_free
 from gui.string_conv import float_to_gui, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 
 
@@ -71,15 +72,23 @@ class Mf(GuiTestCase):
         # The data path.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
+        # Open and close the about window (mimicking user behaviour).
+        analysis._about()
+        analysis.about_dialog.Close()
+
         # Launch the spin viewer window.
         self.app.gui.show_tree()
 
         # Run through the spin loading wizard.
         self.app.gui.spin_viewer.load_spins_wizard()
-        page = self.app.gui.spin_viewer.wizard.get_page(0)
+        self.app.gui.spin_viewer.wizard._go_next()
+        page = self.app.gui.spin_viewer.wizard.get_page(1)
+        page.SetValue('file', data_path+'noe.500.out')
+        self.app.gui.spin_viewer.wizard._go_next()
+        self.app.gui.spin_viewer.wizard._go_next()
 
-        # Load the sequence.
-        self._execute_uf(uf_name='sequence.read', file=data_path+'noe.500.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+        # Close the spin viewer window.
+        self.app.gui.spin_viewer.handler_close()
 
         # Load the relaxation data.
         data = [
@@ -93,30 +102,34 @@ class Mf(GuiTestCase):
         for i in range(len(data)):
             self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
-        # Set the values.
-        self._execute_uf(uf_name='value.set', param='csa')
-        self._execute_uf(uf_name='value.set', param='r')
-        self._execute_uf(uf_name='value.set', param='heteronuc_type')
-        self._execute_uf(uf_name='value.set', param='proton_type')
+        # Set the values, using the methods behind the buttons to set up the user functions with default values, and then manually executing the user function.
+        analysis.value_set_csa()
+        uf_store['value.set'].page.on_execute()
+        analysis.value_set_r()
+        uf_store['value.set'].page.on_execute()
+        analysis.value_set_heteronuc_type()
+        uf_store['value.set'].page.on_execute()
+        analysis.value_set_proton_type()
+        uf_store['value.set'].page.on_execute()
 
         # The unit vector loading wizard.
-        analysis.load_unit_vectors(None)
+        analysis.load_unit_vectors()
 
         # The PDB file.
         page = analysis.vect_wizard.get_page(0)
         page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
-        analysis.vect_wizard._go_next(None)
+        analysis.vect_wizard._go_next()
 
         # The unit vectors.
-        analysis.vect_wizard._go_next(None)
+        analysis.vect_wizard._go_next()
 
         # Select only the tm0 and tm1 local tm models.
         analysis.local_tm_model_field.select = [True, True, False, False, False, False, False, False, False, False]
-        analysis.local_tm_model_field.modify(None)
+        analysis.local_tm_model_field.modify()
 
         # Select only the m1 and m2 model-free models.
         analysis.mf_model_field.select = [False, True, True, False, False, False, False, False, False, False]
-        analysis.mf_model_field.modify(None)
+        analysis.mf_model_field.modify()
 
         # Change the grid increments.
         analysis.grid_inc.SetValue(3)
@@ -130,8 +143,8 @@ class Mf(GuiTestCase):
         analysis.max_iter.SetValue(1)
 
         # Set the protocol mode to automatic.
-        analysis.mode_win.select_full_analysis(None)
-        analysis.mode_dialog(None)
+        analysis.mode_win.select_full_analysis()
+        analysis.mode_dialog()
 
         # Check that the data has been correctly updated prior to execution.
         analysis.sync_ds(upload=True)
