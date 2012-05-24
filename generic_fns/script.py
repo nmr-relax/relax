@@ -56,8 +56,8 @@ def script(file=None, dir=None):
         raise RelaxError("The script file '%s' does not exist." % file_path)
 
     # Turn on the function intro flag.
-    orig_intro_state = status.prompt_intro
-    status.prompt_intro = True
+    orig_intro_state = status.uf_intro
+    status.uf_intro = True
 
     # Load the interpreter.
     interpreter = prompt.interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
@@ -68,4 +68,4 @@ def script(file=None, dir=None):
     prompt.interpreter.run_script(local=interpreter._locals, script_file=file_path)
 
     # Return the function intro flag to the original value.
-    status.prompt_intro = orig_intro_state
+    status.uf_intro = orig_intro_state

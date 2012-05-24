@@ -206,9 +206,9 @@ class Interpreter:
 
 
     def off(self, verbose=True):
-        """Turn the function introductions off."""
+        """Turn the user function introductions off."""
 
-        status.prompt_intro = False
+        status.uf_intro = False
 
         # Print out.
         if verbose:
@@ -216,9 +216,9 @@ class Interpreter:
 
 
     def on(self, verbose=True):
-        """Turn the function introductions on."""
+        """Turn the user function introductions on."""
 
-        status.prompt_intro = True
+        status.uf_intro = True
 
         # Print out.
         if verbose:
@@ -273,8 +273,8 @@ class Interpreter:
 
         # Execute the script file if given.
         if script_file:
-            # Turn on the function intro flag.
-            status.prompt_intro = True
+            # Turn on the user function intro flag.
+            status.uf_intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)

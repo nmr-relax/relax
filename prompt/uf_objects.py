@@ -99,7 +99,7 @@ class Uf_object(object):
                 uf_kargs[name] = self._kargs[i]['default']
 
         # Function intro text.
-        if status.prompt_intro:
+        if status.uf_intro:
             # Convert the keys and values.
             keys = []
             values = []
