@@ -28,6 +28,7 @@ from prompt.interpreter import Interpreter
 from relax_errors import RelaxNoneFunctionError, RelaxTupleError
 
 # Unit test imports.
+from container import Container
 from data_types import DATA_TYPES
 
 
@@ -51,8 +52,9 @@ class Test_eliminate(TestCase):
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
 
-        # Alias the user function class.
-        self.eliminate_fns = self.interpreter.eliminate
+        # Place the user functions into a container.
+        self.eliminate_fns = Container()
+        self.eliminate_fns.eliminate = self.interpreter.eliminate
 
 
     def test_eliminate_function(self):
