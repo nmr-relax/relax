@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.residue import Residue
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
@@ -35,8 +35,19 @@ from data_types import DATA_TYPES
 class Test_residue(Residue_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.residue' module."""
 
-    # Instantiate the user function class.
-    residue_fns = Residue()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_residue, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.residue_fns = self.interpreter.residue
 
 
     def test_copy_argfail_pipe_from(self):

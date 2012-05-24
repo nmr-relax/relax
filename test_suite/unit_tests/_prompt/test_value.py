@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.value import Value
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxNoneNumStrListNumStrError, RelaxNoneStrError, RelaxNoneStrListStrError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
@@ -35,8 +35,19 @@ from data_types import DATA_TYPES
 class Test_value(Value_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.value' module."""
 
-    # Instantiate the user function class.
-    value_fns = Value()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_value, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.value_fns = self.interpreter.value
 
 
     def test_set_argfail_val(self):

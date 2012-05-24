@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.molmol import Molmol
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxNoneStrError, RelaxNoneStrListNumError, RelaxStrError
 
 # Unit test imports.
@@ -34,8 +34,19 @@ from data_types import DATA_TYPES
 class Test_molmol(TestCase):
     """Unit tests for the functions of the 'prompt.molmol' module."""
 
-    # Instantiate the user function class.
-    molmol_fns = Molmol()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_molmol, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.molmol_fns = self.interpreter.molmol
 
 
     def test_macro_apply_argfail_data_type(self):

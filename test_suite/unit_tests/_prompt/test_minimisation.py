@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,19 +24,34 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.minimisation import Minimisation
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneListNumError, RelaxNoneNumError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
+from container import Container
 from data_types import DATA_TYPES
 
 
 class Test_minimisation(Minimisation_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.minimisation' module."""
 
-    # Instantiate the user function class.
-    minimisation_fns = Minimisation()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_minimisation, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Place the user functions into a container.
+        self.minimisation_fns = Container()
+        self.minimisation_fns.calc = self.interpreter.calc
+        self.minimisation_fns.grid_search = self.interpreter.grid_search
+        self.minimisation_fns.minimise = self.interpreter.minimise
 
 
     def test_calc_argfail_verbosity(self):

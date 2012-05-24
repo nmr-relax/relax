@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,8 +24,8 @@
 from unittest import TestCase
 
 # relax module imports.
+from prompt.interpreter import Interpreter
 from test_suite.unit_tests.state_testing_base import State_base_class
-from prompt.state import State
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
 # Unit test imports.
@@ -35,12 +35,23 @@ from data_types import DATA_TYPES
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.state' module."""
 
-    # Instantiate the user function class.
-    state = State()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
 
-    # Rename the user functions.
-    state.load_state = state.load
-    state.save_state = state.save
+        # Execute the base __init__ methods.
+        super(Test_state, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.state = self.interpreter.state
+
+        # Alias the user functions to work with the backend.
+        self.state.load_state = self.state.load
+        self.state.save_state = self.state.save
 
 
     def test_load_argfail_state(self):
@@ -119,6 +130,3 @@ class Test_state(State_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxIntError, self.state.save_state, state='a', compress_type=data[1])
-
-
-
