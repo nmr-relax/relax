@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxNoneFunctionError, RelaxTupleError
+from relax_errors import RelaxNoneFunctionError, RelaxNoneTupleError
 
 # Unit test imports.
 from container import Container
@@ -80,4 +80,4 @@ class Test_eliminate(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxTupleError, self.eliminate_fns.eliminate, function=dummy_function, args=data[1])
+            self.assertRaises(RelaxNoneTupleError, self.eliminate_fns.eliminate, function=dummy_function, args=data[1])
