@@ -323,9 +323,10 @@ class Combo_list:
                 if self._read_only:
                     raise RelaxError("The Value element is read only, cannot set the value '%s'." % value)
 
-                # Set the unknown value.
+                # Set the unknown value, and remove the selection.
                 else:
-                    self._combo_boxes[index].SetValue(value)
+                    self._combo_boxes[index].SetSelection(wx.NOT_FOUND)
+                    self._combo_boxes[index].SetValue(self.convert_to_gui(value))
 
         # A list of values.
         else:

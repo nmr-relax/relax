@@ -313,9 +313,10 @@ class Value:
                 if self.read_only:
                     raise RelaxError("The Value element is read only, cannot set the value '%s'." % value)
 
-                # Set the unknown value.
+                # Set the unknown value, and remove the selection.
                 else:
-                    self._field.SetValue(value)
+                    self._field.SetSelection(wx.NOT_FOUND)
+                    self._field.SetValue(self.convert_to_gui(value))
 
 
     def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
