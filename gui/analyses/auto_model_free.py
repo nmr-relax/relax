@@ -218,11 +218,11 @@ class Auto_model_free(Base_analysis):
         """
 
         # Initialise the dialog.
-        dialog = About_window(self)
+        self.about_dialog = About_window(self)
 
         # Show the dialog.
         if status.show_gui:
-            dialog.Show()
+            self.about_dialog.Show()
 
 
     def activate(self):
