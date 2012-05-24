@@ -40,6 +40,7 @@ class Jw(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
+        print "hello"
         self.interpreter.pipe.create('jw', 'jw')
 
 
