@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxNoneStrError, RelaxNoneStrListNumError, RelaxStrError
+from relax_errors import RelaxNoneStrError, RelaxNoneListNumError, RelaxNoneStrListNumError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -75,30 +75,56 @@ class Test_pymol(TestCase):
             self.assertRaises(RelaxStrError, self.pymol_fns.macro_apply, data_type='a', style=data[1])
 
 
-    def test_macro_apply_argfail_colour_start(self):
-        """The colour_start arg test of the pymol.macro_apply() user function."""
+    def test_macro_apply_argfail_colour_start_name(self):
+        """The colour_start_name arg test of the pymol.macro_apply() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, str, and num list arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start=data[1])
+            self.assertRaises(RelaxNoneStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start_name=data[1])
 
 
-    def test_macro_apply_argfail_colour_end(self):
-        """The colour_end arg test of the pymol.macro_apply() user function."""
+    def test_macro_apply_argfail_colour_start_rgb(self):
+        """The colour_start_rgb arg test of the pymol.macro_apply() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, str, and num list arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
+            # Catch the None and num list arguments, and skip them.
+            if data[0] == 'None' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end=data[1])
+            self.assertRaises(RelaxNoneListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start_rgb=data[1])
+
+
+    def test_macro_apply_argfail_colour_end_name(self):
+        """The colour_end_name arg test of the pymol.macro_apply() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end_name=data[1])
+
+
+    def test_macro_apply_argfail_colour_end_rgb(self):
+        """The colour_end_rgb arg test of the pymol.macro_apply() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and num list arguments, and skip them.
+            if data[0] == 'None' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end_rgb=data[1])
 
 
     def test_macro_apply_argfail_colour_list(self):
