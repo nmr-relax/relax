@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
 # Unit test imports.
@@ -95,7 +95,7 @@ class Test_residue(Residue_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or  data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
@@ -107,12 +107,12 @@ class Test_residue(Residue_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            # Catch the None, int and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.residue_fns.create, res_num=data[1], res_name='NH')
+            self.assertRaises(RelaxNoneIntError, self.residue_fns.create, res_num=data[1], res_name='NH')
 
 
     def test_create_argfail_res_name(self):
