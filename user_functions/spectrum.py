@@ -278,7 +278,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "int_col",
-    py_type = "int",
+    py_type = "int_or_int_list",
     desc_short = "intensity column",
     desc = "The optional column containing the peak intensity data (used by the generic intensity file format, or if the intensities are in a non-standard column).",
     can_be_none = True
@@ -333,7 +333,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "int",
+    py_type = "str",
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator used by the generic intensity format (the default is white space).",

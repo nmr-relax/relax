@@ -189,8 +189,7 @@ uf.add_keyarg(
     name = "N",
     py_type = "int",
     desc_short = "number of states N",
-    desc = "The number of states.",
-    can_be_none = True
+    desc = "The number of states."
 )
 uf.desc = """
 Prior to optimisation, the number of states in the N-state model can be specified.  If the number of states is not set, then this parameter will be equal to the number of loaded structures - the ensemble size.

@@ -45,7 +45,7 @@ uf.title = "Load a saved program state."
 uf.title_short = "Saved state loading."
 uf.add_keyarg(
     name = "state",
-    py_type = "str",
+    py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, of a saved program state.",
