@@ -263,7 +263,11 @@ class Combo_list:
         n = 0
         for i in range(len(self._combo_boxes)):
             # Get the value.
-            val = self.convert_from_gui(self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection()))
+            sel_index = self._combo_boxes[i].GetSelection()
+            if sel_index == wx.NOT_FOUND:
+                val = None
+            else:
+                val = self.convert_from_gui(self._combo_boxes[i].GetClientData(sel_index))
 
             # Manually added value by the user.
             if val == None:
@@ -369,7 +373,11 @@ class Combo_list:
         # Loop over the combo boxes.
         for i in range(len(self._combo_boxes)):
             # Store the current selection's client data to restore at the end.
-            sel = self._combo_boxes[i].GetClientData(self._combo_boxes[i].GetSelection())
+            sel_index = self._combo_boxes[i].GetSelection()
+            if sel_index == wx.NOT_FOUND:
+                sel = None
+            else:
+                sel = self._combo_boxes[i].GetClientData(sel_index)
 
             # First clear all data.
             self._combo_boxes[i].Clear()

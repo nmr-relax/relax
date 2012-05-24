@@ -268,7 +268,11 @@ class Value:
         # Convert and return the value from a ComboBox.
         if self.element_type == 'combo':
             # An element selected from the list.
-            value = self.convert_from_gui(self._field.GetClientData(self._field.GetSelection()))
+            sel_index = self._field.GetSelection()
+            if sel_index == wx.NOT_FOUND:
+                value = None
+            else:
+                value = self.convert_from_gui(self._field.GetClientData(sel_index))
 
             # A non-list value.
             if value == None:
@@ -338,7 +342,11 @@ class Value:
         # Update the choices for a ComboBox.
         if self.element_type == 'combo':
             # Store the current selection's client data to restore at the end.
-            sel = self._field.GetClientData(self._field.GetSelection())
+            sel_index = self._field.GetSelection()
+            if sel_index == wx.NOT_FOUND:
+                sel = None
+            else:
+                sel = self._field.GetClientData(sel_index)
 
             # First clear all data.
             self.Clear()
