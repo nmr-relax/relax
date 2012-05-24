@@ -329,6 +329,45 @@ class Uf_page(Wiz_page):
         return stripped_text
 
 
+    def _intro_text(self, keys, values, prompt=True):
+        """Build and return the user function intro text.
+
+        @param keys:        The user function keys.
+        @type keys:         list of str
+        @param values:      The values corresponding to the keys.
+        @type values:       list
+        @keyword prompt:    A flag which if True will cause the prompt text to be included.
+        @type prompt:       bool
+        @return:            The user function intro text.
+        @rtype:             str
+        """
+
+        # Initialise.
+        text = ""
+
+        # The prompt.
+        if prompt:
+            text += status.ps3
+
+        # The user function name.
+        text += "%s(" % self.name
+
+        # The keyword args.
+        for i in range(len(keys)):
+            # Comma separation.
+            if i >= 1:
+                text += ", "
+
+            # Add the arg.
+            text += "%s=%s" % (keys[i], repr(values[i]))
+
+        # The end.
+        text += ")"
+
+        # Return the text.
+        return text
+
+
     def Clear(self, key):
         """Special wizard method for clearing the value of the GUI element corresponding to the key.
 
@@ -672,6 +711,18 @@ class Uf_page(Wiz_page):
 
             # Go to the last line.
             app.gui.controller.log_panel.on_goto_end(None)
+
+        # The user function intro text.
+        if status.uf_intro:
+            # Convert the keys and values.
+            keys = []
+            values = []
+            for i in range(len(self.uf_data.kargs)):
+                keys.append(self.uf_data.kargs[i]['name'])
+                values.append(kargs[self.uf_data.kargs[i]['name']])
+
+            # The print out.
+            print(self._intro_text(keys, values))
 
         # Execute the user function.
         self.execute(self.name, **kargs)
