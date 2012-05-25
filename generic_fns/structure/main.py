@@ -819,6 +819,10 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         else:
             vector = bond_vectors
 
+        # Convert to a single vector if needed.
+        if len(vector) == 1:
+            vector = vector[0]
+
         # Set the vector.
         setattr(spin, object_name, vector)
 
