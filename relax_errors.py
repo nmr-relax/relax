@@ -199,8 +199,11 @@ class RelaxFault(BaseError):
 
 # Not implemented yet.
 class RelaxImplementError(BaseError):
-    def __init__(self):
-        self.text = "This has not yet been implemented for the current data pipe."
+    def __init__(self, fn_name=None):
+        if fn_name:
+            self.text = "The %s function has not yet been implemented for the current data pipe." % fn_name
+        else:
+            self.text = "This has not yet been implemented for the current data pipe."
 
 
 # Program errors.
