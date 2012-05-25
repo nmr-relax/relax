@@ -196,6 +196,7 @@ class API_base(object):
 
         This basic method will first search for a global parameter and, if not found, then a spin parameter.
 
+
         @param param:   The specific analysis parameter.
         @type param:    str
         @return:        The default value.
@@ -548,14 +549,24 @@ class API_base(object):
     def return_data_desc(self, name):
         """Return a description of the parameter.
 
+        This basic method will first search for a global parameter and, if not found, then a spin parameter.
+
+
         @param name:    The name or description of the parameter.
         @type name:     str
         @return:        The object description, or None.
         @rtype:         str or None
         """
 
-        # Not implemented.
-        raise RelaxImplementError('return_data_desc')
+        # The global parameter.
+        desc = self.GLOBAL_PARAMS.get_desc(name)
+
+        # A spin parameter.
+        if desc == None:
+            desc = self.SPIN_PARAMS.get_desc(name)
+
+        # Return the description.
+        return desc
 
 
     # Empty documentation string.
