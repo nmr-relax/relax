@@ -78,8 +78,8 @@ class Jw(SystemTestCase):
 
         # Loop over residues.
         for res in residue_loop():
-            self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
-            self.assertEqual(res.spin[0].csa, N15_CSA)
+            self.assertAlmostEqual(res.spin[0].r, NH_BOND_LENGTH)
+            self.assertAlmostEqual(res.spin[0].csa, N15_CSA)
 
 
     def test_mapping(self):
