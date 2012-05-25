@@ -37,7 +37,7 @@ self._execute_uf(uf_name='value.set', val=15.7, param='orientation')
 self._execute_uf(uf_name='value.set', val=13 * 1e-9, param='tc')
 
 # Select the frequency.
-self._execute_uf(uf_name='jw_mapping.set_frq', frq=600.0 * 1e6)
+self._execute_uf(uf_name='consistency_tests.set_frq', frq=600.0 * 1e6)
 
 # Try the reduced spectral density mapping.
 self._execute_uf(uf_name='calc')
