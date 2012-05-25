@@ -834,9 +834,9 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 plural = ''
 
             if spin.name:
-                print("Extracted %s %s-%s vector%s for '%s'." % (num, spin.name, attached_name, plural, id))
+                print("Extracted %s %s-%s vector%s for the spin '%s'." % (num, spin.name, attached_name, plural, id))
             else:
-                print("Extracted %s %s-%s vector%s for '%s'." % (num, spin.num, attached_name, plural, id))
+                print("Extracted %s %s-%s vector%s for the spin '%s'." % (num, spin.num, attached_name, plural, id))
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:
