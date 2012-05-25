@@ -165,7 +165,7 @@ class Uf_object(object):
         """
 
         # Create a new wizard if needed (checking that the parent of an old wizard is not the same).
-        if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()):
+        if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()) or self.wizard._pages[0] == None:
             self.create_wizard(wx_parent)
 
         # Update all of the user function argument choices (ComboBoxes) to be current.
