@@ -12,7 +12,7 @@ name = 'consistency'
 self._execute_uf(uf_name='pipe.create', pipe_name=name, pipe_type='ct')
 
 # Load the sequence.
-self._execute_uf(uf_name='sequence.read', status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
+self._execute_uf(uf_name='sequence.read', file=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
 
 # Load the relaxation data.
 self._execute_uf(uf_name='relax_data.read', ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
