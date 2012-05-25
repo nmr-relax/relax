@@ -260,8 +260,11 @@ class RelaxPdbLoadError(BaseError):
 
 # Multiple unit vectors.
 class RelaxMultiVectorError(BaseError):
-    def __init__(self):
-        self.text = "The multiple unit XH bond vectors per spin - this is not supported by the current data pipe type."
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The multiple unit XH bond vectors for the spin '%s' - this is not supported by the current data pipe type." % spin_id
+        else:
+            self.text = "The multiple unit XH bond vectors per spin - this is not supported by the current data pipe type."
 
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
