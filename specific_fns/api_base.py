@@ -194,14 +194,23 @@ class API_base(object):
     def default_value(self, param):
         """Return the default parameter values.
 
+        This basic method will first search for a global parameter and, if not found, then a spin parameter.
+
         @param param:   The specific analysis parameter.
         @type param:    str
         @return:        The default value.
         @rtype:         float
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # The global parameter.
+        val = self.GLOBAL_PARAMS.get_default(param)
+
+        # A spin parameter.
+        if val == None:
+            val = self.SPIN_PARAMS.get_default(param)
+
+        # Return the value.
+        return val
 
 
     def deselect(self, model_info, sim_index=None):
