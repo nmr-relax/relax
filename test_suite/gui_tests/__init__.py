@@ -33,6 +33,7 @@ from relax_errors import RelaxError
 
 # relax GUI test module imports.
 from bmrb import Bmrb
+from consistency_tests import Ct
 from jw_mapping import Jw_mapping
 from model_free import Mf
 from n_state_model import N_state_model
@@ -43,6 +44,7 @@ from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
 __all__ = ['bmrb',
+           'consistency_tests',
            'jw_mapping',
            'model_free',
            'n_state_model',
@@ -104,6 +106,7 @@ class GUI_test_runner:
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Jw_mapping))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
