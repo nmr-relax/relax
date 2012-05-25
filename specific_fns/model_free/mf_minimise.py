@@ -1102,7 +1102,14 @@ class Mf_minimise:
 
             # Vectors.
             if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                # Check that this is a single vector!
+                if arg_check.is_num_list(spin.xh_vect[0], raise_error=False):
+                    raise RelaxMultiVectorError(data_store.spin_id)
+
+                # Store the vector.
                 data_store.xh_unit_vectors.append(spin.xh_vect)
+
+            # No vector.
             else:
                 data_store.xh_unit_vectors.append(None)
 
