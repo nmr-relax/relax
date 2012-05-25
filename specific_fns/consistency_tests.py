@@ -34,6 +34,7 @@ from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
+import specific_fns
 
 
 class Consistency_tests(API_base, API_common):
