@@ -40,7 +40,6 @@ class Jw(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        print "hello"
         self.interpreter.pipe.create('jw', 'jw')
 
 
@@ -50,7 +49,7 @@ class Jw(SystemTestCase):
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping_calc_test.py')
 
-        # Correct jw values:
+        # Correct jw values.
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
         jwx = [1.8456254300773903e-10, 1.6347516082378241e-10]
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
