@@ -693,7 +693,7 @@ class Main(wx.Frame):
             return
 
         # Warning.
-        if not self.analysis.init_state:
+        if not self.analysis.init_state or not ds.is_empty():
             # The message.
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
