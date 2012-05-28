@@ -310,7 +310,7 @@ class Sequence:
                     raise RelaxError("The list of values '%s' cannot be converted to a single value." % value)
 
             # Convert and set the value.
-            self._field.SetValue(self.convert_to_gui(value))
+            self._field.SetValue(self.convert_to_gui_seq(value))
 
 
     def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
