@@ -36,7 +36,7 @@ EIG_FRAME = array([[ 2, -1,  2],
 a, b, g = R_to_euler_zyz(EIG_FRAME)
 
 # Load the tensors.
-script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'pseudo_ellipse_out_of_frame_theta_x_tensors_beta112_5.py')
+self._execute_uf(uf_name='script', file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'pseudo_ellipse_out_of_frame_theta_x_tensors_beta112_5.py')
 
 # Data stores.
 ds.chi2 = []
@@ -46,7 +46,7 @@ ds.angles = []
 for i in range(INC):
     # Switch data pipes.
     ds.angles.append(get_angle(i, incs=INC, deg=True))
-    pipe.switch('cone_%s_deg' % ds.angles[-1])
+    self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%s_deg' % ds.angles[-1])
 
     # Data init.
     cdp.ave_pos_alpha  = cdp.ave_pos_alpha2  = 0.0
@@ -60,19 +60,19 @@ for i in range(INC):
     cdp.cone_sigma_max = cdp.cone_sigma_max2 = pi / 6.0
 
     # Select the Frame Order model.
-    frame_order.select_model(model='pseudo-ellipse')
+    self._execute_uf(uf_name='frame_order.select_model', model='pseudo-ellipse')
 
     # Set the reference domain.
-    frame_order.ref_domain('full')
+    self._execute_uf(uf_name='frame_order.ref_domain', ref='full')
 
     # Calculate the chi2.
-    calc()
+    self._execute_uf(uf_name='calc')
     #cdp.chi2b = cdp.chi2
-    #minimise('simplex')
+    #self._execute_uf(uf_name='minimise', min_algor='simplex')
     ds.chi2.append(cdp.chi2)
 
 # Save the program state.
-#state.save("pseudo_ellipse", force=True)
+#self._execute_uf(uf_name='state.save', state="pseudo_ellipse", force=True)
 
 # Chi2 print out.
 print "\n\n"
