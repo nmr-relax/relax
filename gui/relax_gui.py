@@ -25,18 +25,15 @@
 """Main module for the relax graphical user interface."""
 
 # Python module imports.
-import os
-from os import F_OK, access, getcwd, mkdir, sep
+from os import F_OK, access, getcwd, sep
 import platform
 from re import search
 from string import split
 import sys
 from textwrap import wrap
-from thread import start_new_thread
 from time import sleep
 import webbrowser
 import wx
-from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -45,7 +42,6 @@ from info import Info_box
 from generic_fns import state
 from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
-from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 import test_suite.test_suite_runner
@@ -54,7 +50,6 @@ from version import version
 # relax GUI module imports.
 from gui.about import About_gui, About_relax
 from gui.analyses import Analysis_controller
-from gui.base_classes import Container
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
 from gui.filedialog import RelaxFileDialog
@@ -71,7 +66,7 @@ from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.components.free_file_format import Free_file_format_window
 from gui.string_conv import gui_to_str
-from gui.uf_objects import Uf_storage, Uf_object; uf_store = Uf_storage()
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Main(wx.Frame):
