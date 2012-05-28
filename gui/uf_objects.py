@@ -405,9 +405,23 @@ class Uf_page(Wiz_page):
         @type value:    unknown
         """
 
+        # Find the argument.
+        arg = None
+        for i in range(len(self.uf_data.kargs)):
+            if self.uf_data.kargs[i]['name'] == key:
+                arg = self.uf_data.kargs[i]
+
+        # No match.
+        if arg == None:
+            raise RelaxError("The key '%s' is unknown." % key)
+
         # Handle the free file format args (for external control, i.e. via the test suite).
         if 'free_file_format' in self.uf_args and key in ['spin_id_col', 'mol_name_col', 'res_num_col', 'res_name_col', 'spin_num_col', 'spin_name_col', 'data_col', 'error_col', 'sep']:
             self.uf_args['free_file_format'].SetValue(key, value)
+
+        # Skip functions and function args, as these are not supported in the GUI.
+        elif arg['arg_type'] in ['func', 'func args']:
+            pass
 
         # Call the argument element's method.
         else:
