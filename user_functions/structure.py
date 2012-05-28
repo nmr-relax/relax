@@ -24,6 +24,7 @@
 """The structure user function definitions."""
 
 # Python module imports.
+from numpy import eye
 from os import sep
 import wx
 
@@ -727,6 +728,7 @@ uf.title_short = "Structure rotation."
 uf.add_keyarg(
     name = "R",
     py_type = "float_matrix",
+    default = eye(3),
     dim = (3, 3),
     desc_short = "rotation matrix",
     desc = "The rotation matrix in forwards rotation notation."
