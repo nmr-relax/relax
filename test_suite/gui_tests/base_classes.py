@@ -170,8 +170,14 @@ class GuiTestCase(TestCase):
         @type script:   str
         """
 
+        # The namespace to pass into the script execution environment.
+        space = locals()
+
+        # Place some objects in the local namespace.
+        space.update({'pi': pi})
+
         # Execute the script.
-        exec_script(script, locals())
+        exec_script(script, space)
 
 
     def setUp(self):
