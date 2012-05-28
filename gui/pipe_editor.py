@@ -39,7 +39,7 @@ from gui.message import Question
 from gui.misc import add_border
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
 from gui.string_conv import gui_to_str, str_to_gui
-from gui.uf_objects import Uf_storage
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Pipe_editor(wx.Frame):
@@ -255,20 +255,17 @@ class Pipe_editor(wx.Frame):
         @type event:    wx event
         """
 
-        # The user function storage singleton.
-        store = Uf_storage()
-
         # Launch the respective user functions.
         if event.GetEventObject() == self.button_create:
-            store['pipe.create'](event, parent=self)
+            uf_store['pipe.create'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_copy:
-            store['pipe.copy'](event, parent=self)
+            uf_store['pipe.copy'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_delete:
-            store['pipe.delete'](event, parent=self)
+            uf_store['pipe.delete'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_hybrid:
-            store['pipe.hybridise'](event, parent=self)
+            uf_store['pipe.hybridise'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_switch:
-            store['pipe.switch'](event, parent=self)
+            uf_store['pipe.switch'](event, wx_parent=self)
 
 
     def add_logo(self, box):

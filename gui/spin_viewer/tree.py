@@ -201,7 +201,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        uf_store['molecule.create'](parent=self.gui.spin_viewer)
+        uf_store['molecule.create'](wx_parent=self.gui.spin_viewer)
 
 
     def create_residue(self, event):
@@ -212,7 +212,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        uf_store['residue.create'](parent=self.gui.spin_viewer, mol_name=self.info['mol_name'])
+        uf_store['residue.create'](wx_parent=self.gui.spin_viewer, mol_name=self.info['mol_name'])
 
 
     def create_spin(self, event):
@@ -223,7 +223,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        uf_store['spin.create'](parent=self.gui.spin_viewer, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
+        uf_store['spin.create'](wx_parent=self.gui.spin_viewer, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
 
 
     def delete_molecule(self, event):
