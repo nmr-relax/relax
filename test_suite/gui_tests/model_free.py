@@ -34,6 +34,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.analyses import auto_model_free
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import float_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
@@ -66,9 +67,6 @@ class Mf(GuiTestCase):
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
-        # Set up a wizard window instance for all of the user function pages.
-        wizard = Wiz_window(self.app.gui)
-
         # The data path.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
@@ -89,6 +87,9 @@ class Mf(GuiTestCase):
 
         # Close the spin viewer window.
         self.app.gui.spin_viewer.handler_close()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
 
         # Load the relaxation data.
         data = [
