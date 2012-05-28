@@ -39,6 +39,7 @@ import dep_check
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from generic_fns.reset import reset
+from prompt.interpreter import exec_script
 from relax_io import delete
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -170,7 +171,7 @@ class GuiTestCase(TestCase):
         """
 
         # Execute the script.
-        execfile(script, globals(), locals())
+        exec_script(script, locals())
 
 
     def setUp(self):
