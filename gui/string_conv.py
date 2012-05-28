@@ -26,6 +26,7 @@
 
 # Python module imports.
 from math import pow
+from numpy import ndarray
 from string import split
 
 # relax module imports.
@@ -341,6 +342,10 @@ def list_to_gui(list):
     # No input.
     if list == None:
         list = ''
+
+    # Handle numpy arrays.
+    if isinstance(list, ndarray):
+        list = list.tolist()
 
     # Convert.
     return unicode(list)
