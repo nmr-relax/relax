@@ -34,6 +34,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 import dep_check
 from generic_fns import pipes
+from generic_fns.reset import reset
 from relax_errors import RelaxError
 from status import Status; status = Status()
 
@@ -382,6 +383,9 @@ class Analysis_controller:
 
         # Delete.
         self.delete_all()
+
+        # Reset relax.
+        reset()
 
 
     def menu_new(self, event):
