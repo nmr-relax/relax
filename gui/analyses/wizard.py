@@ -32,6 +32,7 @@ from wx.lib import buttons
 # relax GUI module imports.
 from gui import paths
 from gui.fonts import font
+from gui.input_elements.value import Value
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
 
@@ -110,7 +111,7 @@ class Data_pipe_page(Wiz_page):
         """
 
         # The pipe name input.
-        self.pipe_name = self.input_field(sizer, "The data pipe name:")
+        self.pipe_name = Value(name='pipe_name', parent=self, value_type='str', sizer=sizer, desc="The data pipe name:", divider=self._div_left, height_element=self.height_element)
 
         # Spacing.
         sizer.AddStretchSpacer(3)
@@ -257,7 +258,7 @@ class New_analysis_page(Wiz_page):
         sizer.AddStretchSpacer(2)
 
         # Add the analysis name field.
-        self.analysis_name = self.input_field(sizer, "The name of the new analysis:", tooltip='The name of the analysis can be changed to any text.')
+        self.analysis_name = Value(name='analysis_name', parent=self, value_type='str', sizer=sizer, desc="The name of the new analysis:", tooltip='The name of the analysis can be changed to any text.', divider=self._div_left, height_element=self.height_element)
 
 
     def create_button(self, id=-1, box=None, size=None, bmp=None, text='', tooltip='', fn=None, disabled=False):

@@ -98,10 +98,7 @@ class Selector_dir:
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
-        if not hasattr(parent, 'file_selection_field'):
-            parent.file_selection_field = []
-        parent.file_selection_field.append(wx.TextCtrl(parent, -1, default))
-        self._field = parent.file_selection_field[-1]
+        self._field = wx.TextCtrl(parent, -1, default)
         self._field.SetMinSize((-1, height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)

@@ -33,6 +33,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
+from gui.misc import open_file
 from gui import paths
 from gui.string_conv import gui_to_str, str_to_gui
 
@@ -102,10 +103,7 @@ class Selector_file:
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
-        if not hasattr(parent, 'file_selection_field'):
-            parent.file_selection_field = []
-        parent.file_selection_field.append(wx.TextCtrl(parent, -1, default))
-        self._field = parent.file_selection_field[-1]
+        self._field = wx.TextCtrl(parent, -1, default)
         self._field.SetMinSize((-1, height_element))
         self._field.SetFont(font.normal)
         sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -124,21 +122,16 @@ class Selector_file:
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
 
         # File preview.
-        if not hasattr(parent, 'file_selection_preview_button'):
-            parent.file_selection_preview_button = []
-        if not preview:
-            parent.file_selection_preview_button.append(None)
-        else:
+        if preview:
             # A little spacing.
             sub_sizer.AddSpacer(5)
 
             # The preview button.
-            parent.file_selection_preview_button.append(wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY)))
-            button = parent.file_selection_preview_button[-1]
+            button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY))
             button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Preview")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-            parent.Bind(wx.EVT_BUTTON, parent.preview_file, button)
+            parent.Bind(wx.EVT_BUTTON, self.preview_file, button)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -185,3 +178,21 @@ class Selector_file:
 
         # Convert and set the value for a TextCtrl.
         self._field.SetValue(str_to_gui(value))
+
+
+    def preview_file(self, event=None):
+        """Preview a file.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The file name.
+        file = gui_to_str(self._field.GetValue())
+
+        # No file, so do nothing.
+        if file == None:
+            return
+
+        # Open the file as text.
+        open_file(file, force_text=True)
