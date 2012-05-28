@@ -38,6 +38,7 @@ from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.string_conv import gui_to_str
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Mol_res_spin_tree(wx.Window):
