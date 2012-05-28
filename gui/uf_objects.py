@@ -48,6 +48,7 @@ from gui.input_elements.dir import Selector_dir
 from gui.input_elements.file import Selector_file
 from gui.input_elements.sequence import Sequence
 from gui.input_elements.sequence_2D import Sequence_2D
+from gui.input_elements.spin_id import Spin_id
 from gui.input_elements.value import Value
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.wizard import Wiz_page, Wiz_window
@@ -486,6 +487,10 @@ class Uf_page(Wiz_page):
             # Special arg type:  functions and their arguments!
             elif arg['arg_type'] in ['func', 'func args']:
                 pass
+
+            # Special arg type:  spin IDs.
+            elif arg['arg_type'] in ['spin ID']:
+                self.uf_args[arg['name']] = Spin_id(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, can_be_none=arg['can_be_none'])
 
             # Value types.
             elif arg['py_type'] in ['float', 'int', 'num', 'str']:
