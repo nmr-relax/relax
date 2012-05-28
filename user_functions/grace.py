@@ -100,8 +100,7 @@ uf.add_keyarg(
     desc_short = "x data type",
     desc = "The data type for the X-axis (no regular expression is allowed).",
     wiz_element_type = 'combo',
-    wiz_combo_iter = grace.get_data_types,
-    wiz_read_only = True
+    wiz_combo_iter = grace.get_data_types
 )
 uf.add_keyarg(
     name = "y_data_type",
@@ -109,8 +108,7 @@ uf.add_keyarg(
     desc_short = "y data type",
     desc = "The data type for the Y-axis (no regular expression is allowed).",
     wiz_element_type = 'combo',
-    wiz_combo_iter = grace.get_data_types,
-    wiz_read_only = True
+    wiz_combo_iter = grace.get_data_types
 )
 uf.add_keyarg(
     name = "spin_id",
