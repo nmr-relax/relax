@@ -237,9 +237,10 @@ uf.add_keyarg(
     name = "max_iter",
     default = 10000000,
     py_type = "int",
+    min = 1,
+    max = 1000000000,
     desc_short = "maximum number of iterations",
-    desc = "The maximum number of iterations.  The default value is 1e7.",
-    can_be_none = True
+    desc = "The maximum number of iterations.  The default value is 1e7."
 )
 uf.add_keyarg(
     name = "constraints",
