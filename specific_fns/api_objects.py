@@ -153,6 +153,27 @@ class Param_list:
             self.add('warning', scope=scope, desc='Optimisation warning')
 
 
+    def base_loop(self, set=None):
+        """An iterator method for looping over all the base parameters.
+
+        @keyword set:   The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:      str
+        @returns:       The parameter names.
+        @rtype:         str
+        """
+
+        # Loop over the parameters.
+        for name in self._names:
+            # Skip the parameter if the set does not match.
+            if set == 'generic' and self._param_set[name] != 'generic':
+                continue
+            elif set == 'params' and self._param_set[name] != 'params':
+                continue
+
+            # Yield the parameter name.
+            yield name
+
+
     def check_param(self, name):
         """Check if the parameter exists.
 
@@ -339,27 +360,31 @@ class Param_list:
         return self._units[name]
 
 
-    def loop(self, set=None):
+    def loop(self, set=None, error_names=False, sim_names=False):
         """An iterator method for looping over all the parameters.
 
-        @keyword set:   The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
-        @type set:      str
-        @returns:   The parameter names.
-        @rtype:     str
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
+        @type sim_names:        bool
+        @returns:               The parameter names.
+        @rtype:                 str
         """
 
-        # Loop over the parameters.
-        for name in self._names:
-            # Skip the parameter if the set does not match.
-            if set == 'generic' and self._param_set[name] != 'generic':
-                continue
-            elif set == 'params' and self._param_set[name] != 'params':
-                continue
-
-            # Yield the parameter name.
+        # Loop over and yield the parameters.
+        for name in self.base_loop(set=set):
             yield name
 
-        # Yield the minimisation names.
-        if set == 'all' or set == 'min':
-            for name in ['chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning']:
-                yield name
+        # Error names.
+        if error_names:
+            for name in self.base_loop(set=set):
+                if self.get_err(name):
+                    yield name + '_err'
+
+        # Sim names.
+        if sim_names:
+            for name in self.base_loop(set=set):
+                if self.get_sim(name):
+                    yield name + '_sim'
