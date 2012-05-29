@@ -42,11 +42,14 @@ class Param_list:
         self._defaults = {}
         self._units = {}
         self._desc = {}
+        self._types = {}
         self._conv_factor = {}
         self._grace_string = {}
+        self._err = {}
+        self._sim = {}
 
 
-    def add(self, name, string=None, default=None, units=None, desc=None, conv_factor=None, grace_string=None):
+    def add(self, name, string=None, default=None, units=None, desc=None, type=None, conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -59,18 +62,27 @@ class Param_list:
         @type units:            None or str
         @keyword desc:          The text description of the parameter.
         @type desc:             None or str
+        @keyword type:          The Python type that this parameter should be.
+        @type type:             Python type object
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
+        @keyword err:           A flag which if True indicates that the parameter name + '_err' error data structure can exist.
+        @type err:              bool
+        @keyword sim:           A flag which if True indicates that the parameter name + '_sim' Monte Carlo simulation data structure can exist.
+        @type sim:              bool
         """
 
-        # Append the values.
+        # Add the values.
         self._names.append(name)
         self._defaults[name] = default
         self._units[name] = units
         self._desc[name] = desc
         self._conv_factor[name] = conv_factor
+        self._type[name] = type
+        self._err[name] = err
+        self._sim[name] = sim
 
         # The parameter string.
         if string:
@@ -161,6 +173,23 @@ class Param_list:
         return self._desc[name]
 
 
+    def get_err(self, name):
+        """Return the error flag for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The error flag for the parameter.
+        @rtype:         bool
+        """
+
+        # Check.
+        if name not in self._names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the type.
+        return self._err[name]
+
+
     def get_grace_string(self, name):
         """Return the Grace string for the parameter.
 
@@ -176,6 +205,40 @@ class Param_list:
 
         # Return the value.
         return self._grace_string[name]
+
+
+    def get_sim(self, name):
+        """Return the Monte Carlo simulation flag for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Monte Carlo simulation flag for the parameter.
+        @rtype:         bool
+        """
+
+        # Check.
+        if name not in self._names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the type.
+        return self._sim[name]
+
+
+    def get_type(self, name):
+        """Return the Python type for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Python type.
+        @rtype:         Python type object
+        """
+
+        # Check.
+        if name not in self._names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the type.
+        return self._type[name]
 
 
     def get_units(self, name):
