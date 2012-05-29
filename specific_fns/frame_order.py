@@ -79,6 +79,7 @@ class Frame_order(API_base, API_common):
         self.PARAMS.add('cone_theta', scope='global', units='rad', desc='The isotropic cone opening half-angle', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('cone_s1', scope='global', units='', desc='The isotropic cone order parameter', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('cone_sigma_max', scope='global', units='rad', desc='The torsion angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('params', scope='global', desc='The model parameters', py_type=list)
 
         # Set up the spin parameters.
         self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
@@ -933,9 +934,11 @@ class Frame_order(API_base, API_common):
         @rtype:                 list of str
         """
 
-        # Return the parameter object names.
-        param_names = self.data_names(set='params')
-        return param_names
+        # First update the model, if needed.
+        self._update_model()
+
+        # Return the parameter list object.
+        return cdp.params
 
 
     def get_param_values(self, model_info=None, sim_index=None):
