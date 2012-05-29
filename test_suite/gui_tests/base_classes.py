@@ -141,8 +141,8 @@ class GuiTestCase(TestCase):
         # Call the GUI user function object with all keyword args, but do not execute the wizard.
         uf(wx_wizard_run=False, **kargs)
 
-        # Execute the user function.
-        uf.page.on_execute()
+        # Execute the user function, by mimicking a click on 'ok'.
+        uf.wizard._ok()
 
         # Restore the synchronous or asynchronous operation of the user functions so the GUI can return to normal.
         status.gui_uf_force_sync = False
