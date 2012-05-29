@@ -140,11 +140,13 @@ class API_base(object):
         raise RelaxImplementError('data_init')
 
 
-    def data_names(self, set='all', error_names=False, sim_names=False):
+    def data_names(self, set='all', scope=None, error_names=False, sim_names=False):
         """Return a list of names of data structures.
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
         @type set:              str
+        @keyword scope:         The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
+        @type scope:            str or None
         @keyword error_names:   A flag which if True will add the error object names as well.
         @type error_names:      bool
         @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
@@ -157,7 +159,7 @@ class API_base(object):
         names = []
 
         # Loop over the parameters.
-        for name in self.PARAMS.loop(set=set, error_names=error_names, sim_names=sim_names):
+        for name in self.PARAMS.loop(set=set, scope=scope, error_names=error_names, sim_names=sim_names):
             names.append(name)
 
         # Return the names.

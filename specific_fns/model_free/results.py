@@ -404,10 +404,10 @@ class Results:
         # Construct the simulation data structures.
         if data_set == 'sim_0':
             # Get the parameter object names.
-            param_names = self.data_names(set='params')
+            param_names = self.data_names(set='params', scope='spin')
 
             # Get the minimisation statistic object names.
-            min_names = self.data_names(set='min')
+            min_names = self.data_names(set='min', scope='spin')
 
             # Loop over all the parameter names.
             for object_name in param_names:

@@ -667,7 +667,7 @@ class Model_free_main:
             raise RelaxNoSequenceError
 
         # Get all data structure names.
-        names = self.data_names()
+        names = self.data_names(scope='spin')
 
         # Loop over the spins.
         for spin in spin_loop():
@@ -1217,7 +1217,7 @@ class Model_free_main:
         """
 
         # Get the data names.
-        data_names = self.data_names()
+        data_names = self.data_names(scope='spin')
 
         # Loop over the data structure names.
         for name in data_names:
@@ -2022,7 +2022,7 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Get the parameter object names.
-        param_names = self.data_names(set='params')
+        param_names = self.data_names(set='params', scope='spin')
 
 
         # Diffusion tensor parameter errors.
@@ -2157,8 +2157,8 @@ class Model_free_main:
             obj_name = self.return_data_name(mf_params[i])
 
             # Check if it is a model-free parameter.
-            if obj_name not in self.data_names(set='params') and obj_name not in self.data_names(set='generic'):
-                raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params'), self.data_names(set='generic')))
+            if obj_name not in self.data_names(set='params', scope='spin') and obj_name not in self.data_names(set='generic', scope='spin'):
+                raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params', scope='spin'), self.data_names(set='generic', scope='spin')))
 
             # Set the parameter.
             for spin in spin_loop(spin_id):
@@ -2224,10 +2224,10 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Get the parameter object names.
-        param_names = self.data_names(set='params')
+        param_names = self.data_names(set='params', scope='spin')
 
         # Get the minimisation statistic object names.
-        min_names = self.data_names(set='min')
+        min_names = self.data_names(set='min', scope='spin')
 
         # List of diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -2413,7 +2413,7 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Get the parameter object names.
-        param_names = self.data_names(set='params')
+        param_names = self.data_names(set='params', scope='spin')
 
 
         # Diffusion tensor parameters.
