@@ -1910,7 +1910,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.heteronuc_type, '15N')
             self.assertEqual(spin.proton_type, '1H')
             self.assertEqual(spin.attached_proton, None)
-            self.assertEqual(spin.nucleus, None)
 
             # Model-free tests.
             self.assertEqual(spin.model, model[j])
