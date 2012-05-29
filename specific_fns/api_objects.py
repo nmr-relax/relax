@@ -24,6 +24,7 @@
 """A module of special objects used within the specific function API."""
 
 # Python module imports.
+from re import search
 from types import FunctionType, MethodType
 
 # relax module imports.
@@ -254,6 +255,10 @@ class Param_list:
         @return:        The description.
         @rtype:         None or str
         """
+
+        # Skip error and simulation structures.
+        if search('_err$', name) or search('_sim$', name):
+            return None
 
         # Parameter check.
         self.check_param(name)
