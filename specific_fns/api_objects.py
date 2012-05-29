@@ -53,7 +53,7 @@ class Param_list:
         self._py_types = {}
         self._conv_factor = {}
         self._grace_string = {}
-        self._param_set = {}
+        self._set = {}
         self._err = {}
         self._sim = {}
 
@@ -63,7 +63,7 @@ class Param_list:
             self.add('fixed', desc='The fixed flag')
 
 
-    def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, param_set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
+    def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -80,8 +80,8 @@ class Param_list:
         @type desc:             None or str
         @keyword py_type:       The Python type that this parameter should be.
         @type py_type:          Python type object
-        @keyword param_set:     The parameter set to associate the parameter with.  The default is the 'generic' set.  This can be set to 'params' to specify an analysis specific parameter.
-        @type param_set:        str
+        @keyword set:           The parameter set to associate the parameter with.  The default is the 'generic' set.  This can be set to 'params' to specify an analysis specific parameter.
+        @type set:              str
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
@@ -103,7 +103,7 @@ class Param_list:
         self._units[name] = units
         self._desc[name] = desc
         self._py_types[name] = py_type
-        self._param_set[name] = param_set
+        self._set[name] = set
         self._conv_factor[name] = conv_factor
         self._err[name] = err
         self._sim[name] = sim
@@ -165,9 +165,9 @@ class Param_list:
         # Loop over the parameters.
         for name in self._names:
             # Skip the parameter if the set does not match.
-            if set == 'generic' and self._param_set[name] != 'generic':
+            if set == 'generic' and self._set[name] != 'generic':
                 continue
-            elif set == 'params' and self._param_set[name] != 'params':
+            elif set == 'params' and self._set[name] != 'params':
                 continue
 
             # Yield the parameter name.
@@ -292,7 +292,7 @@ class Param_list:
         return self._grace_string[name]
 
 
-    def get_param_set(self, name):
+    def get_set(self, name):
         """Return the parameter set that the parameter belongs to.
 
         @param name:    The name of the parameter.
@@ -305,7 +305,7 @@ class Param_list:
         self.check_param(name)
 
         # Return the type.
-        return self._param_set[name]
+        return self._set[name]
 
 
     def get_sim(self, name):
