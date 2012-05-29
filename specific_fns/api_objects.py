@@ -52,11 +52,12 @@ class Param_list:
         self._py_types = {}
         self._conv_factor = {}
         self._grace_string = {}
+        self._param_set = {}
         self._err = {}
         self._sim = {}
 
 
-    def add(self, name, string=None, default=None, units=None, desc=None, py_type=None, conv_factor=None, grace_string=None, param=False, err=False, sim=False):
+    def add(self, name, string=None, default=None, units=None, desc=None, py_type=None, param_set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -69,13 +70,14 @@ class Param_list:
         @type units:            None or str
         @keyword desc:          The text description of the parameter.
         @type desc:             None or str
-        @keyword py_type:          The Python type that this parameter should be.
-        @type py_type:             Python type object
+        @keyword py_type:       The Python type that this parameter should be.
+        @type py_type:          Python type object
+        @keyword param_set:     The parameter set to associate the parameter with.  The default is the 'generic' set.  This can be set to 'params' to specify an analysis specific parameter.
+        @type param_set:        str
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
-        @keyword param:         A flag which if True will set this to an analysis specific parameter belonging to the 'params' set.  If False, then the parameter will belong to the 'generic' set.
         @keyword err:           A flag which if True indicates that the parameter name + '_err' error data structure can exist.
         @type err:              bool
         @keyword sim:           A flag which if True indicates that the parameter name + '_sim' Monte Carlo simulation data structure can exist.
@@ -87,9 +89,9 @@ class Param_list:
         self._defaults[name] = default
         self._units[name] = units
         self._desc[name] = desc
-        self._conv_factor[name] = conv_factor
         self._py_types[name] = py_type
-        self._param[name] = param
+        self._param_set[name] = param_set
+        self._conv_factor[name] = conv_factor
         self._err[name] = err
         self._sim[name] = sim
 
@@ -214,6 +216,23 @@ class Param_list:
 
         # Return the value.
         return self._grace_string[name]
+
+
+    def get_param_set(self, name):
+        """Return the parameter set that the parameter belongs to.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The parameter set.
+        @rtype:         str
+        """
+
+        # Check.
+        if name not in self._names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the type.
+        return self._param_set[name]
 
 
     def get_sim(self, name):
