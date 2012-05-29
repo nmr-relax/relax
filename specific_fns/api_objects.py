@@ -60,7 +60,7 @@ class Param_list:
 
         # Add some spin specific objects.
         if self.spin_data:
-            self.add('select', scope='spin', desc='The spin selection flag', py_type=bool)
+            self.add('select', scope='spin', desc='The spin selection flag', py_type=bool, sim=True)
             self.add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
 
 
