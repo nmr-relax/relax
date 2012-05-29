@@ -159,11 +159,13 @@ class Param_list:
             self.add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
 
-    def base_loop(self, set=None):
+    def base_loop(self, set=None, scope=None):
         """An iterator method for looping over all the base parameters.
 
         @keyword set:   The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
         @type set:      str
+        @keyword scope: The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
+        @type scope:    str or None
         @returns:       The parameter names.
         @rtype:         str
         """
@@ -173,9 +175,15 @@ class Param_list:
             # Skip the parameter if the set does not match.
             if set == 'generic' and self._set[name] != 'generic':
                 continue
-            elif set == 'params' and self._set[name] != 'params':
+            if set == 'params' and self._set[name] != 'params':
                 continue
-            elif set == 'min' and self._set[name] != 'min':
+            if set == 'min' and self._set[name] != 'min':
+                continue
+
+            # Skip the parameter is outside of the scope.
+            if scope == 'global' and self._scope[name] == 'spin':
+                continue
+            if scope == 'spin' and self._scope[name] == 'global':
                 continue
 
             # Yield the parameter name.
@@ -262,7 +270,7 @@ class Param_list:
         """
 
         # Skip error and simulation structures.
-        if search('_err$', name) or search('_sim$', name):
+        if name not in ['ri_data_err'] and (search('_err$', name) or search('_sim$', name)):
             return None
 
         # Parameter check.
@@ -372,11 +380,13 @@ class Param_list:
         return self._units[name]
 
 
-    def loop(self, set=None, error_names=False, sim_names=False):
+    def loop(self, set=None, scope=None, error_names=False, sim_names=False):
         """An iterator method for looping over all the parameters.
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
         @type set:              str
+        @keyword scope:         The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
+        @type scope:            str or None
         @keyword error_names:   A flag which if True will add the error object names as well.
         @type error_names:      bool
         @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
@@ -386,7 +396,7 @@ class Param_list:
         """
 
         # Loop over and yield the parameters.
-        for name in self.base_loop(set=set):
+        for name in self.base_loop(set=set, scope=scope):
             yield name
 
         # Error names.
