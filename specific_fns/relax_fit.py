@@ -69,10 +69,13 @@ class Relax_fit(API_base, API_common):
         # Set up the spin parameters.
         self.PARAMS.add('intensities', scope='spin', py_type=list, grace_string='\\qPeak intensities\\Q')
         self.PARAMS.add('relax_times', scope='spin', py_type=list, grace_string='\\qRelaxation time period (s)\\Q')
-        self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
-        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, grace_string='\\qI\\s0\\Q', err=True, sim=True)
-        self.PARAMS.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, grace_string='\\qI\\sinf\\Q', err=True, sim=True)
+        self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
+        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self.PARAMS.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
+
+        # Add the minimisation data.
+        self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
     def _assemble_param_vector(self, spin=None, sim_index=None):
@@ -558,7 +561,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Loop over the data structure names.
-        for name in self.data_names():
+        for name in self.data_names(set='params'):
             # Data structures which are initially empty arrays.
             list_data = [ 'params' ]
             if name in list_data:
