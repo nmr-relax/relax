@@ -108,6 +108,19 @@ class Param_list:
             self._grace_string[name] = name
 
 
+    def check_param(self, name):
+        """Check if the parameter exists.
+
+        @param name:        The name of the parameter to search for.
+        @type name:         str
+        @raises RelaxError: If the parameter does not exist.
+        """
+
+        # Check.
+        if name not in self._names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+
     def contains(self, name):
         """Determine if the given name is within the parameter list.
 
@@ -134,9 +147,8 @@ class Param_list:
         @rtype:         float
         """
 
-        # Check.
-        if name not in self._names:
-            return 1.0
+        # Parameter check.
+        self.check_param(name)
 
         # No factor.
         if self._conv_factor[name] == None:
@@ -159,9 +171,8 @@ class Param_list:
         @rtype:         None or str
         """
 
-        # Check.
-        if name not in self._names:
-            return None
+        # Parameter check.
+        self.check_param(name)
 
         # Return the default value.
         return self._defaults[name]
@@ -176,9 +187,8 @@ class Param_list:
         @rtype:         None or str
         """
 
-        # Check.
-        if name not in self._names:
-            return None
+        # Parameter check.
+        self.check_param(name)
 
         # Return the description.
         return self._desc[name]
@@ -193,9 +203,8 @@ class Param_list:
         @rtype:         bool
         """
 
-        # Check.
-        if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+        # Parameter check.
+        self.check_param(name)
 
         # Return the type.
         return self._err[name]
@@ -210,9 +219,8 @@ class Param_list:
         @rtype:         str
         """
 
-        # Check.
-        if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+        # Parameter check.
+        self.check_param(name)
 
         # Return the value.
         return self._grace_string[name]
@@ -227,9 +235,8 @@ class Param_list:
         @rtype:         str
         """
 
-        # Check.
-        if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+        # Parameter check.
+        self.check_param(name)
 
         # Return the type.
         return self._param_set[name]
@@ -244,9 +251,8 @@ class Param_list:
         @rtype:         bool
         """
 
-        # Check.
-        if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+        # Parameter check.
+        self.check_param(name)
 
         # Return the type.
         return self._sim[name]
@@ -261,9 +267,8 @@ class Param_list:
         @rtype:         Python type object
         """
 
-        # Check.
-        if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+        # Parameter check.
+        self.check_param(name)
 
         # Return the Python type.
         return self._py_types[name]
@@ -278,9 +283,8 @@ class Param_list:
         @rtype:         str
         """
 
-        # Check.
-        if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+        # Parameter check.
+        self.check_param(name)
 
         # Function.
         if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
