@@ -59,8 +59,8 @@ class Param_list:
 
         # Add some spin specific objects.
         if self.spin_data:
-            self.add('select', desc='The spin selection flag')
-            self.add('fixed', desc='The fixed flag')
+            self.add('select', scope='spin', desc='The spin selection flag', py_type=bool)
+            self.add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
 
 
     def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
@@ -95,6 +95,8 @@ class Param_list:
         # Check.
         if scope == None:
             raise RelaxError("The parameter scope must be set.")
+        if py_type == None:
+            raise RelaxError("The parameter type must be set.")
 
         # Add the values.
         self._names.append(name)
