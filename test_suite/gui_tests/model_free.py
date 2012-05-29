@@ -213,7 +213,6 @@ class Mf(GuiTestCase):
             self.assertEqual(spin.proton_type, '1H')
             self.assertEqual(spin.heteronuc_type, '15N')
             self.assertEqual(spin.attached_proton, None)
-            self.assertEqual(spin.nucleus, None)
             self.assertAlmostEqual(spin.r, 1.02 * 1e-10)
             self.assertAlmostEqual(spin.csa, -172e-6)
 
