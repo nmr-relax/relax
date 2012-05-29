@@ -1238,126 +1238,6 @@ class Model_free_main:
                 setattr(data_cont, name, init_data)
 
 
-    def xdata_names(self, set='all', error_names=False, sim_names=False):
-        """Return a list of all spin container specific model-free object names.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'model', the model-free model name.
-            - 'equation', the model-free equation type.
-            - 'params', an array of the model-free parameter names associated with the model.
-            - 's2', S2.
-            - 's2f', S2f.
-            - 's2s', S2s.
-            - 'local_tm', local tm.
-            - 'te', te.
-            - 'tf', tf.
-            - 'ts', ts.
-            - 'rex', Rex.
-            - 'r', bond length.
-            - 'csa', CSA value.
-            - 'nucleus', the heteronucleus type.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for
-                                model-free parameter names, or to 'min' for minimisation specific
-                                object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('select')
-            names.append('fixed')
-            names.append('proton_type')
-            names.append('heteronuc_type')
-            names.append('attached_proton')
-            names.append('nucleus')
-            names.append('model')
-            names.append('equation')
-            names.append('params')
-            names.append('xh_vect')
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('s2')
-            names.append('s2f')
-            names.append('s2s')
-            names.append('local_tm')
-            names.append('te')
-            names.append('tf')
-            names.append('ts')
-            names.append('rex')
-            names.append('r')
-            names.append('csa')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Relaxation data.
-        if set == 'all':
-            names = names + relax_data.get_data_names()
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            names.append('s2_err')
-            names.append('s2f_err')
-            names.append('s2s_err')
-            names.append('local_tm_err')
-            names.append('te_err')
-            names.append('tf_err')
-            names.append('ts_err')
-            names.append('rex_err')
-            names.append('r_err')
-            names.append('csa_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            names.append('s2_sim')
-            names.append('s2f_sim')
-            names.append('s2s_sim')
-            names.append('local_tm_sim')
-            names.append('te_sim')
-            names.append('tf_sim')
-            names.append('ts_sim')
-            names.append('rex_sim')
-            names.append('r_sim')
-            names.append('csa_sim')
-
-        # Relaxation data simulation values.
-        if sim_names and set == 'all':
-            names = names + relax_data.get_data_names(sim_names=True)
-
-        # Return the names.
-        return names
-
-
     def data_type(self, param=None):
         """Return the type of data, as a string, that the parameter should be.
 
@@ -2076,23 +1956,6 @@ class Model_free_main:
                 spin.select = False
 
 
-    def return_data_desc(self, name):
-        """Return a description of the spin specific object.
-
-        @param name:    The name of the spin specific object.
-        @type name:     str
-        @return:        The object description, or None.
-        @rtype:         str or None
-        """
-
-        # Spin parameter.
-        if self.SPIN_PARAMS.contains(name):
-            return self.SPIN_PARAMS.get_desc(name)
-
-        # Otherwise try the relaxation data specific objects.
-        return relax_data.return_data_desc(name)
-
-
     return_data_name_doc = ["Model-free data type string matching patterns", """
         _____________________________________________
         |                        |                  |
@@ -2125,24 +1988,6 @@ class Model_free_main:
         |________________________|__________________|
 
         """]
-
-    def return_data_name(self, param):
-        """Return a unique identifying string for the model-free parameter.
-
-        @param param:   The model-free parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Diffusion tensor parameters.
-        diff_obj = diffusion_tensor.return_data_name(param)
-        if diff_obj:
-            return param
-
-        # Spin parameter.
-        if self.SPIN_PARAMS.contains(param):
-            return param
 
 
     set_doc = ["Model-free set details", """
