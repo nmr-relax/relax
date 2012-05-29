@@ -1374,6 +1374,10 @@ class Frame_order(API_base, API_common):
 
         # Loop over all the data names.
         for object_name in param_names:
+            # Skip non-existent objects.
+            if not hasattr(cdp, object_name):
+                continue
+
             # Name for the simulation object.
             sim_object_name = object_name + '_sim'
 
@@ -1444,6 +1448,10 @@ class Frame_order(API_base, API_common):
 
         # Loop over the parameters.
         for param in param_names:
+            # Skip non-existent objects.
+            if not hasattr(cdp, param):
+                continue
+
             # Return the parameter array.
             if index == inc:
                 return getattr(cdp, param + "_sim")
