@@ -45,6 +45,7 @@ class Param_list:
 
         # Initialise the lists and dictionaries for the parameter info.
         self._names = []
+        self._scope = {}
         self._string = {}
         self._defaults = {}
         self._units = {}
@@ -57,11 +58,13 @@ class Param_list:
         self._sim = {}
 
 
-    def add(self, name, string=None, default=None, units=None, desc=None, py_type=None, param_set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
+    def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, param_set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
         @type name:             str
+        @keyword scope:         The parameter scope.  This can be set to 'global' for parameters located within the global scope of the current data pipe.  Or set to 'spin' for spin specific parameters.
+        @type scope:            str
         @keyword string:        The string representation of the parameter.
         @type string:           None or str
         @keyword default:       The default value of the parameter.
@@ -84,8 +87,13 @@ class Param_list:
         @type sim:              bool
         """
 
+        # Check.
+        if scope == None:
+            raise RelaxError("The parameter scope must be set.")
+
         # Add the values.
         self._names.append(name)
+        self._scope[name] = scope
         self._defaults[name] = default
         self._units[name] = units
         self._desc[name] = desc
