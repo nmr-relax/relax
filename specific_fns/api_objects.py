@@ -33,15 +33,15 @@ from relax_errors import RelaxError
 class Param_list:
     """A special object for handling global and spin parameters."""
 
-    def __init__(self, min_stats=False):
+    def __init__(self, spin_data=True):
         """Set up the class.
 
-        @keyword min_stats:     A flag which if True will include the parameters 'chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning' in the list.
-        @type min_stats:        bool
+        @keyword spin_data:         A flag which if True indicates that the specific analysis operates with spins.
+        @type spin_data:            bool
         """
 
         # Store the flags.
-        self.min_stats = min_stats
+        self.spin_data = spin_data
 
         # Initialise the lists and dictionaries for the parameter info.
         self._names = []
@@ -57,13 +57,18 @@ class Param_list:
         self._err = {}
         self._sim = {}
 
+        # Add some spin specific objects.
+        if self.spin_data:
+            self.add('select', desc='The spin selection flag')
+            self.add('fixed', desc='The fixed flag')
+
 
     def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, param_set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
         @type name:             str
-        @keyword scope:         The parameter scope.  This can be set to 'global' for parameters located within the global scope of the current data pipe.  Or set to 'spin' for spin specific parameters.
+        @keyword scope:         The parameter scope.  This can be set to 'global' for parameters located within the global scope of the current data pipe.  Or set to 'spin' for spin specific parameters.  Alternatively the value 'both' indicates that there are both global and specific versions of this parameter.
         @type scope:            str
         @keyword string:        The string representation of the parameter.
         @type string:           None or str
@@ -114,6 +119,38 @@ class Param_list:
             self._grace_string[name] = grace_string
         else:
             self._grace_string[name] = name
+
+
+    def add_min_data(self, min_stats_global=False, min_stats_spin=False):
+        """Add minimisation specific objects.
+
+        @keyword min_stats_global:  A flag which if True will include the parameters 'chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning' in the list of global parameters.
+        @type min_stats_global:     bool
+        @keyword min_stats_spin:    A flag which if True will include the parameters 'chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning' in the list of spin parameters.
+        @type min_stats_spin:       bool
+        """
+
+        # Store the flags.
+        self.min_stats_global = min_stats_global
+        self.min_stats_spin = min_stats_spin
+
+        # Global minimisation data.
+        if self.min_stats_global or self.min_stats_spin:
+            # The scope.
+            if self.min_stats_global and self.min_stats_spin:
+                scope = 'both'
+            elif self.min_stats_global:
+                scope = 'global'
+            else:
+                scope = 'spin'
+
+            # The minimisation parameters.
+            self.add('chi2', scope=scope, desc='Chi-squared value')
+            self.add('iter', scope=scope, desc='Optimisation iterations')
+            self.add('f_count', scope=scope, desc='Number of function calls')
+            self.add('g_count', scope=scope, desc='Number of gradient calls')
+            self.add('h_count', scope=scope, desc='Number of Hessian calls')
+            self.add('warning', scope=scope, desc='Optimisation warning')
 
 
     def check_param(self, name):
