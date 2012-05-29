@@ -81,7 +81,7 @@ class Param_list:
         @type desc:             None or str
         @keyword py_type:       The Python type that this parameter should be.
         @type py_type:          Python type object
-        @keyword set:           The parameter set to associate the parameter with.  The default is the 'generic' set.  This can be set to 'params' to specify an analysis specific parameter.
+        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
@@ -93,11 +93,14 @@ class Param_list:
         @type sim:              bool
         """
 
-        # Check.
+        # Checks.
         if scope == None:
             raise RelaxError("The parameter scope must be set.")
         if py_type == None:
             raise RelaxError("The parameter type must be set.")
+        allowed_sets = ['all', 'generic', 'params', 'min']
+        if set not in allowed_sets:
+            raise RelaxError("The parameter set '%s' must be one of %s." % (set, allowed_sets))
 
         # Add the values.
         self._names.append(name)
@@ -148,12 +151,12 @@ class Param_list:
                 scope = 'spin'
 
             # The minimisation parameters.
-            self.add('chi2', scope=scope, desc='Chi-squared value', py_type=float)
-            self.add('iter', scope=scope, desc='Optimisation iterations', py_type=int)
-            self.add('f_count', scope=scope, desc='Number of function calls', py_type=int)
-            self.add('g_count', scope=scope, desc='Number of gradient calls', py_type=int)
-            self.add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int)
-            self.add('warning', scope=scope, desc='Optimisation warning', py_type=str)
+            self.add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', err=False, sim=True)
+            self.add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', err=False, sim=True)
+            self.add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', err=False, sim=True)
+            self.add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', err=False, sim=True)
+            self.add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', err=False, sim=True)
+            self.add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
 
     def base_loop(self, set=None):
@@ -171,6 +174,8 @@ class Param_list:
             if set == 'generic' and self._set[name] != 'generic':
                 continue
             elif set == 'params' and self._set[name] != 'params':
+                continue
+            elif set == 'min' and self._set[name] != 'min':
                 continue
 
             # Yield the parameter name.
