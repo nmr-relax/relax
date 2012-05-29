@@ -33,8 +33,15 @@ from relax_errors import RelaxError
 class Param_list:
     """A special object for handling global and spin parameters."""
 
-    def __init__(self):
-        """Set up the class."""
+    def __init__(self, min_stats=False):
+        """Set up the class.
+
+        @keyword min_stats:     A flag which if True will include the parameters 'chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning' in the list.
+        @type min_stats:        bool
+        """
+
+        # Store the flags.
+        self.min_stats = min_stats
 
         # Initialise the lists and dictionaries for the parameter info.
         self._names = []
