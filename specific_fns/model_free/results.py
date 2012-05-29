@@ -736,7 +736,7 @@ class Results:
                 # Selected simulations.
                 all_select_sim[-1].append(bool(file_line[col['select']]))
 
-                # Initial print out for the simulation.
+                # Initial printout for the simulation.
                 if verbosity:
                     if diff_sim_set == None:
                         print("\nLoading simulations.")

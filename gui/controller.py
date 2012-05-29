@@ -123,7 +123,7 @@ class Controller(wx.Frame):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
 
-        # The relax intro print out, to mimic the prompt/script interface.
+        # The relax intro printout, to mimic the prompt/script interface.
         info = Info_box()
         print(info.intro_text())
 
@@ -1093,7 +1093,7 @@ class Redirect_text(object):
         @type string:   str
         """
 
-        # Debugging print out to the terminal.
+        # Debugging printout to the terminal.
         if status.debug or status.test_mode:
             self.orig_io.write(string)
 

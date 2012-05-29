@@ -1035,7 +1035,7 @@ def matrix_angles(basis_set=0, tensors=None):
     # Initialise the matrix of angles.
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
-    # Header print out.
+    # Header printout.
     sys.stdout.write("\nData pipe: " + repr(pipes.cdp_name()) + "\n")
     sys.stdout.write("\n5D angles in deg between the vectors ")
     if basis_set == 0:

@@ -523,7 +523,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             # Append the error.
             spin.rdc_err[align_id] = error
 
-        # Append the data for print out.
+        # Append the data for printout.
         mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)

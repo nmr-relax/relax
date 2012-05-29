@@ -327,7 +327,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         set_fn(val=value, error=error, param=param, spin_id=id)
 
-        # Append the data for print out.
+        # Append the data for printout.
         mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)

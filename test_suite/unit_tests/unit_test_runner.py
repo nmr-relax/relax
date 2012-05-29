@@ -5,7 +5,7 @@
 #                         (see https://gna.org/users/varioustoxins             #
 #                                      for contact details)                    #
 #                                                                              #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                    #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                    #
 #                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #
@@ -426,7 +426,7 @@ class Unit_test_runner(object):
         # Store the root path.
         self.root_path = root_path
 
-        # Verbose print out.
+        # Verbose printout.
         if ((search_for_root_path) == True or (search_for_unit_test_path == True)) and verbose:
             print('searching for paths')
             print('-------------------')

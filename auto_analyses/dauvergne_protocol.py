@@ -442,7 +442,7 @@ class dAuvergne_protocol:
             break
 
 
-        # Final print out.
+        # Final printout.
         ##################
 
         print("\nConvergence:")

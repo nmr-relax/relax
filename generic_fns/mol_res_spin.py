@@ -2014,7 +2014,7 @@ def parse_token(token, verbosity=False):
                         Each element can be either a single number, a range of numbers (two numbers
                         separated by '-'), or a name.
     @type token:        str
-    @keyword verbosity: A flag which if True will cause a number of print outs to be activated.
+    @keyword verbosity: A flag which if True will cause a number of printouts to be activated.
     @type verbosity:    bool
     @return:            A list of identifying numbers and names.
     @rtype:             list of int and str

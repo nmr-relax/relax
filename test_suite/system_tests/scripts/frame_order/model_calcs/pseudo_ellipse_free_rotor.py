@@ -92,7 +92,7 @@ for round in range(len(files)):
     # Save the program state.
     #self._execute_uf(uf_name='state.save', state="pseudo_ellipse_free_rotor%s" % round, force=True)
 
-# Chi2 print out.
+# Chi2 printout.
 ds.chi2 = chi2
 print "\n\n"
 for round in range(len(files)):

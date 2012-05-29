@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -55,7 +55,7 @@ class Test_kronecker_product(TestCase):
 
 
     def print_nice(self, daeg):
-        """Formatted print out of the tensor."""
+        """Formatted printout of the tensor."""
 
         # Loop over the rows.
         for i in range(9):

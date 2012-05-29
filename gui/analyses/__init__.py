@@ -199,7 +199,7 @@ class Analysis_controller:
     def delete_analysis(self, index):
         """Delete the analysis tab and data store corresponding to the index.
 
-        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then print outs at each stage will occur to allow the following of the code and observer object notifications.
+        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then printouts at each stage will occur to allow the following of the code and observer object notifications.
 
 
         @param index:   The index of the analysis to delete.

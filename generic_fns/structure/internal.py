@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -971,7 +971,7 @@ class Internal(Base_struct_API):
         @rtype:                 bool
         """
 
-        # Initial print out.
+        # Initial printout.
         if verbosity:
             print("\nInternal relax PDB parser.")
 
@@ -1084,7 +1084,7 @@ class Internal(Base_struct_API):
         @rtype:                 bool
         """
 
-        # Initial print out.
+        # Initial printout.
         if verbosity:
             print("\nInternal relax XYZ parser.")
 
@@ -1282,7 +1282,7 @@ class Internal(Base_struct_API):
                         print(atom_ref)
                         raise RelaxError("The atoms of model %i do not match the first model." % self.structural_data[i].num)
 
-        # Final print out.
+        # Final printout.
         print("\tAll models are consistent")
 
 

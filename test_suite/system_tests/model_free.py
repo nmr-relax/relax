@@ -1813,7 +1813,7 @@ class Mf(SystemTestCase):
         # Read the results.
         self.interpreter.results.read(file='results_1.2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
-        # Debugging print out.
+        # Debugging printout.
         print(cdp)
 
         # The spin specific data.

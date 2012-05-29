@@ -55,7 +55,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 # Module variables.
 ###################
 
-# The prompts (to change the Python prompt, as well as the function print outs).
+# The prompts (to change the Python prompt, as well as the function printouts).
 PS1_ORIG = 'relax> '
 PS2_ORIG = 'relax| '
 PS3_ORIG = '\n%s' % PS1_ORIG
@@ -91,7 +91,7 @@ class Interpreter:
         info = Info_box()
         self.__intro_string = info.intro_text()
 
-        # The prompts (change the Python prompt, as well as the function print outs).
+        # The prompts (change the Python prompt, as well as the function printouts).
         if ansi.enable_control_chars(stream=1):
             self.prompt_colour_on()
         else:

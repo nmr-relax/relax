@@ -744,7 +744,7 @@ class Uf_page(Wiz_page):
                 keys.append(self.uf_data.kargs[i]['name'])
                 values.append(kargs[self.uf_data.kargs[i]['name']])
 
-            # The print out.
+            # The printout.
             print(self._intro_text(keys, values))
 
         # Execute the user function.

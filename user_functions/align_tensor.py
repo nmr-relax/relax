@@ -151,7 +151,7 @@ This will show all information relating to the alignment tensor, including the d
     - Alignment tensor.
     - Magnetic susceptibility tensor.
 
-All possible tensor parameters and information will also be shown (Eigensystem, GDO, Aa, Ar, R, eta, chi_ax, chi_rh, etc).  The print out will be extensive.
+All possible tensor parameters and information will also be shown (Eigensystem, GDO, Aa, Ar, R, eta, chi_ax, chi_rh, etc).  The printout will be extensive.
 
 If no tensor is specified, all tensors will be displayed.
 """

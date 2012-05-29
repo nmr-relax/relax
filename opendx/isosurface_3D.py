@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -130,7 +130,7 @@ class Iso3D(Base_Map):
                     # Increment the value of the third parameter.
                     values[2] = values[2] + self.step_size[2]
 
-                # Progress incrementation and print out.
+                # Progress incrementation and printout.
                 percent = percent + percent_inc
                 print(("%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2)))
 

@@ -360,7 +360,7 @@ class Main(wx.Frame):
             else:
                 width = 100
 
-            # A print out.
+            # A printout.
             text = "\n\nThank you for citing:\n"
             text = text + "\n\nrelaxGUI\n========\n\n"
             for line in wrap(info.bib['Bieri11'].cite_short(), width):

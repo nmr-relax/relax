@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -495,7 +495,7 @@ class Scientific_data(Base_struct_API):
         @rtype:                 bool
         """
 
-        # Initial print out.
+        # Initial printout.
         if verbosity:
             print("\nScientific Python PDB parser.")
 

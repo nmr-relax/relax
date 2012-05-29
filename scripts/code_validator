@@ -152,7 +152,7 @@ class Validate:
             if proper_spacing:
                 continue
 
-            # Initial print out.
+            # Initial printout.
             if ok:
                 sys.stdout.write(self.indent + "    Line num: ")
                 sys.stdout.write(`i+1`)
@@ -186,7 +186,7 @@ class Validate:
                 if row[1][0] in ascii_uppercase:
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)
@@ -312,7 +312,7 @@ class Validate:
                 if not row:
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1+j+2`)
@@ -361,7 +361,7 @@ class Validate:
                 if row[1][-2] == '.':
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+2`)
@@ -444,7 +444,7 @@ class Validate:
                 if indent_ok:
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+2`)
@@ -503,7 +503,7 @@ class Validate:
                 if not bad_spacing:
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)
@@ -540,7 +540,7 @@ class Validate:
                 if not search('[' + ascii_uppercase + ']', name[0]):
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)
@@ -585,7 +585,7 @@ class Validate:
                 if search("class", self.lines[i-1]):
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)
@@ -676,7 +676,7 @@ class Validate:
             if spacing % 4 == 0:
                 continue
 
-            # Initial print out.
+            # Initial printout.
             if ok:
                 sys.stdout.write(self.indent + "    Line num: ")
                 sys.stdout.write(`i+1`)
@@ -709,7 +709,7 @@ class Validate:
                 elif search("^ *\'\'\'", self.lines[i+1]):
                     continue
 
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)
@@ -798,7 +798,7 @@ class Validate:
             if not double_space:
                 continue
 
-            # Initial print out.
+            # Initial printout.
             if ok:
                 sys.stdout.write(self.indent + "    Line num: ")
                 sys.stdout.write(`i+1`)
@@ -825,7 +825,7 @@ class Validate:
         for i in xrange(len(self.lines)):
             # Find the whitespace.
             if search("\t", self.lines[i]):
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)
@@ -877,7 +877,7 @@ class Validate:
         for i in xrange(len(self.lines)):
             # Find the whitespace.
             if search(" $", self.lines[i]):
-                # Initial print out.
+                # Initial printout.
                 if ok:
                     sys.stdout.write(self.indent + "    Line num: ")
                     sys.stdout.write(`i+1`)

@@ -107,7 +107,7 @@ class Uf_object(object):
                 keys.append(self._kargs[i]['name'])
                 values.append(uf_kargs[self._kargs[i]['name']])
 
-            # The print out.
+            # The printout.
             print(self._intro_text(keys, values))
 
         # Check the argument values.

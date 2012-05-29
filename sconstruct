@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -393,7 +393,7 @@ class Main:
             print("Removing the distribution directory 'dist' used to create a Mac OS X app.")
             rmtree('dist')
 
-        # Final print out.
+        # Final printout.
         print "\n\n\n"
 
 
@@ -429,7 +429,7 @@ class Main:
                 if search('^relax_state_.*.bz2', file):
                     remove(path.join(root, file))
 
-        # Final print out.
+        # Final printout.
         print "\n\n\n"
 
 
@@ -569,7 +569,7 @@ class Main:
             string = string + "Building the relaxation curve fitting module " + `str(self.relax_fit_object[0])` + "\n"
             return string
 
-        # Add the print out as an action to take before constructing the first object.
+        # Add the printout as an action to take before constructing the first object.
         env.AddPreAction(nodes[0], Action(self.dummy, print_string))
 
 
@@ -588,7 +588,7 @@ class Main:
             sys.stderr.write("The program version number has not been set.\n\n")
             sys.exit()
 
-        # Final print out.
+        # Final printout.
         print "\n\n\n"
 
 

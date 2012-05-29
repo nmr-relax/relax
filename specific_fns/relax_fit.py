@@ -681,7 +681,7 @@ class Relax_fit(API_base, API_common):
                 # Get the spin id string.
                 spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
-                # Individual spin print out.
+                # Individual spin printout.
                 if verbosity >= 2:
                     print("\n\n")
 

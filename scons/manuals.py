@@ -79,7 +79,7 @@ def clean_manual_files(target, source, env):
         else:
             print(("Removing the file " + repr(file) + "."))
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -352,7 +352,7 @@ def compile_api_manual_html(target, source, env):
         # Close the file.
         file.close()
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -388,7 +388,7 @@ def compile_user_manual_html(target, source, env):
     # Return to the base directory.
     chdir(base_dir)
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -453,7 +453,7 @@ def compile_user_manual_pdf(target, source, env, convert=True):
     # Return to the base directory.
     chdir(base_dir)
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -476,7 +476,7 @@ def fetch_docstrings(target, source, env):
     # Delete the Fetch_docstrings class.  This allows the loaded dll files to be deleted through python on MS Windows.
     del Fetch_docstrings
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -494,5 +494,5 @@ def version_file(target, source, env):
     file.write("Version " + version + '\n')
     file.close()
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
