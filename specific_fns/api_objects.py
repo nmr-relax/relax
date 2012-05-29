@@ -147,12 +147,12 @@ class Param_list:
                 scope = 'spin'
 
             # The minimisation parameters.
-            self.add('chi2', scope=scope, desc='Chi-squared value')
-            self.add('iter', scope=scope, desc='Optimisation iterations')
-            self.add('f_count', scope=scope, desc='Number of function calls')
-            self.add('g_count', scope=scope, desc='Number of gradient calls')
-            self.add('h_count', scope=scope, desc='Number of Hessian calls')
-            self.add('warning', scope=scope, desc='Optimisation warning')
+            self.add('chi2', scope=scope, desc='Chi-squared value', py_type=float)
+            self.add('iter', scope=scope, desc='Optimisation iterations', py_type=int)
+            self.add('f_count', scope=scope, desc='Number of function calls', py_type=int)
+            self.add('g_count', scope=scope, desc='Number of gradient calls', py_type=int)
+            self.add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int)
+            self.add('warning', scope=scope, desc='Optimisation warning', py_type=str)
 
 
     def base_loop(self, set=None):
