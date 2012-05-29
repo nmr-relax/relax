@@ -49,14 +49,14 @@ class Param_list:
         self._defaults = {}
         self._units = {}
         self._desc = {}
-        self._types = {}
+        self._py_types = {}
         self._conv_factor = {}
         self._grace_string = {}
         self._err = {}
         self._sim = {}
 
 
-    def add(self, name, string=None, default=None, units=None, desc=None, py_type=None, conv_factor=None, grace_string=None, err=False, sim=False):
+    def add(self, name, string=None, default=None, units=None, desc=None, py_type=None, conv_factor=None, grace_string=None, param=False, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -75,6 +75,7 @@ class Param_list:
         @type conv_factor:      None, float or func
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
+        @keyword param:         A flag which if True will set this to an analysis specific parameter belonging to the 'params' set.  If False, then the parameter will belong to the 'generic' set.
         @keyword err:           A flag which if True indicates that the parameter name + '_err' error data structure can exist.
         @type err:              bool
         @keyword sim:           A flag which if True indicates that the parameter name + '_sim' Monte Carlo simulation data structure can exist.
@@ -87,7 +88,8 @@ class Param_list:
         self._units[name] = units
         self._desc[name] = desc
         self._conv_factor[name] = conv_factor
-        self._py_type[name] = py_type
+        self._py_types[name] = py_type
+        self._param[name] = param
         self._err[name] = err
         self._sim[name] = sim
 
@@ -245,7 +247,7 @@ class Param_list:
             raise RelaxError("The parameter '%s' does not exist." % name)
 
         # Return the Python type.
-        return self._py_type[name]
+        return self._py_types[name]
 
 
     def get_units(self, name):
