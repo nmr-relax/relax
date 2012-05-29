@@ -56,7 +56,7 @@ class Param_list:
         self._sim = {}
 
 
-    def add(self, name, string=None, default=None, units=None, desc=None, type=None, conv_factor=None, grace_string=None, err=False, sim=False):
+    def add(self, name, string=None, default=None, units=None, desc=None, py_type=None, conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -69,8 +69,8 @@ class Param_list:
         @type units:            None or str
         @keyword desc:          The text description of the parameter.
         @type desc:             None or str
-        @keyword type:          The Python type that this parameter should be.
-        @type type:             Python type object
+        @keyword py_type:          The Python type that this parameter should be.
+        @type py_type:             Python type object
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
@@ -87,7 +87,7 @@ class Param_list:
         self._units[name] = units
         self._desc[name] = desc
         self._conv_factor[name] = conv_factor
-        self._type[name] = type
+        self._py_type[name] = py_type
         self._err[name] = err
         self._sim[name] = sim
 
@@ -244,8 +244,8 @@ class Param_list:
         if name not in self._names:
             raise RelaxError("The parameter '%s' does not exist." % name)
 
-        # Return the type.
-        return self._type[name]
+        # Return the Python type.
+        return self._py_type[name]
 
 
     def get_units(self, name):
