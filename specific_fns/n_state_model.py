@@ -77,6 +77,9 @@ class N_state_model(API_base, API_common):
         self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
         self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
 
+        # Add the minimisation data.
+        self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
+
 
     def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
