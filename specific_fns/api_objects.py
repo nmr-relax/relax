@@ -292,3 +292,29 @@ class Param_list:
 
         # Return the value.
         return self._units[name]
+
+
+    def loop(self, set=None):
+        """An iterator method for looping over all the parameters.
+
+        @keyword set:   The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:      str
+        @returns:   The parameter names.
+        @rtype:     str
+        """
+
+        # Loop over the parameters.
+        for name in self._names:
+            # Skip the parameter if the set does not match.
+            if set == 'generic' and self._param_set[name] != 'generic':
+                continue
+            elif set == 'params' and self._param_set[name] != 'params':
+                continue
+
+            # Yield the parameter name.
+            yield name
+
+        # Yield the minimisation names.
+        if set == 'all' or set == 'min':
+            for name in ['chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning']:
+                yield name
