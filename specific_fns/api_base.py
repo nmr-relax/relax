@@ -39,26 +39,7 @@ class API_base(object):
         """Set up the specific objects."""
 
         # Class variables.
-        self.SPIN_PARAMS = Param_list()
-        self.GLOBAL_PARAMS = Param_list()
-
-        # Add some spin specific objects.
-        self.SPIN_PARAMS.add('select', desc='The spin selection flag')
-        self.SPIN_PARAMS.add('fixed', desc='The fixed flag')
-        self.SPIN_PARAMS.add('chi2', desc='Chi-squared value')
-        self.SPIN_PARAMS.add('iter', desc='Optimisation iterations')
-        self.SPIN_PARAMS.add('f_count', desc='Number of function calls')
-        self.SPIN_PARAMS.add('g_count', desc='Number of gradient calls')
-        self.SPIN_PARAMS.add('h_count', desc='Number of Hessian calls')
-        self.SPIN_PARAMS.add('warning', desc='Optimisation warning')
-
-        # Add some global objects.
-        self.GLOBAL_PARAMS.add('chi2', desc='Chi-squared value')
-        self.GLOBAL_PARAMS.add('iter', desc='Optimisation iterations')
-        self.GLOBAL_PARAMS.add('f_count', desc='Number of function calls')
-        self.GLOBAL_PARAMS.add('g_count', desc='Number of gradient calls')
-        self.GLOBAL_PARAMS.add('h_count', desc='Number of Hessian calls')
-        self.GLOBAL_PARAMS.add('warning', desc='Optimisation warning')
+        self.PARAMS = Param_list()
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
@@ -172,12 +153,21 @@ class API_base(object):
         @rtype:                 list of str
         """
 
-        # Not implemented.
-        raise RelaxImplementError('data_names')
+        # Initialise.
+        names = []
+
+        # Loop over the parameters.
+        for name in self.PARAMS.loop(set=set, error_names=error_names, sim_names=sim_names):
+            names.append(name)
+
+        # Return the names.
+        return names
 
 
     def data_type(self, param=None):
         """Return the type of data that the parameter should be.
+
+        This basic method will first search for a global parameter and, if not found, then a spin parameter.
 
         @keyword param:     The parameter name.
         @type param:        list of str
@@ -185,8 +175,8 @@ class API_base(object):
         @rtype:             any type
         """
 
-        # Not implemented.
-        raise RelaxImplementError('data_type')
+        # Return the type.
+        return self.PARAMS.get_type(param)
 
 
     # Empty documentation string.
@@ -203,15 +193,8 @@ class API_base(object):
         @rtype:         float
         """
 
-        # The global parameter.
-        val = self.GLOBAL_PARAMS.get_default(param)
-
-        # A spin parameter.
-        if val == None:
-            val = self.SPIN_PARAMS.get_default(param)
-
         # Return the value.
-        return val
+        return self.PARAMS.get_default(param)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -529,8 +512,8 @@ class API_base(object):
         @rtype:             float
         """
 
-        # Not implemented.
-        raise RelaxImplementError('return_conversion_factor')
+        # Return the factor.
+        return self.PARAMS.get_conv_factor(param)
 
 
     def return_data(self, spin):
@@ -558,15 +541,8 @@ class API_base(object):
         @rtype:         str or None
         """
 
-        # The global parameter.
-        desc = self.GLOBAL_PARAMS.get_desc(name)
-
-        # A spin parameter.
-        if desc == None:
-            desc = self.SPIN_PARAMS.get_desc(name)
-
         # Return the description.
-        return desc
+        return self.PARAMS.get_desc(name)
 
 
     # Empty documentation string.
@@ -580,8 +556,12 @@ class API_base(object):
         @rtype:         str
         """
 
-        # Not implemented.
-        raise RelaxImplementError('return_data_name')
+        # No parameter.
+        if not self.PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return param
 
 
     def return_error(self, data_id):
@@ -609,8 +589,8 @@ class API_base(object):
         @rtype:         str
         """
 
-        # Not implemented.
-        raise RelaxImplementError('return_grace_string')
+        # The string.
+        return self.PARAMS.get_grace_string(param)
 
 
     def return_units(self, param):
@@ -622,8 +602,8 @@ class API_base(object):
         @rtype:             str
         """
 
-        # Not implemented.
-        raise RelaxImplementError('return_units')
+        # Return the name.
+        return self.PARAMS.get_units(param)
 
 
     def return_value(self, spin, param, sim=None, bc=False):

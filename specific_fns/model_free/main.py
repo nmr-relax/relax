@@ -1238,7 +1238,7 @@ class Model_free_main:
                 setattr(data_cont, name, init_data)
 
 
-    def data_names(self, set='all', error_names=False, sim_names=False):
+    def xdata_names(self, set='all', error_names=False, sim_names=False):
         """Return a list of all spin container specific model-free object names.
 
         Description

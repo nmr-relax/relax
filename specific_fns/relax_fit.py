@@ -56,11 +56,8 @@ class Relax_fit(API_base, API_common):
 
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
-        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_name = self._return_data_name_spin
-        self.return_grace_string = self._return_grace_string_spin
         self.return_value = self._return_value_general
         self.set_error = self._set_error_spin
         self.set_param_values = self._set_param_values_spin
@@ -70,11 +67,12 @@ class Relax_fit(API_base, API_common):
         self.sim_return_selected = self._sim_return_selected_spin
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('rx', default=8.0, grace_string='\\qR\\sx\\Q')
-        self.SPIN_PARAMS.add('intensities', grace_string='\\qPeak intensities\\Q')
-        self.SPIN_PARAMS.add('i0', default=10000.0, grace_string='\\qI\\s0\\Q')
-        self.SPIN_PARAMS.add('iinf', default=0.0, grace_string='\\qI\\sinf\\Q')
-        self.SPIN_PARAMS.add('relax_times', grace_string='\\qRelaxation time period (s)\\Q')
+        self.PARAMS.add('intensities', scope='spin', py_type=list, grace_string='\\qPeak intensities\\Q')
+        self.PARAMS.add('relax_times', scope='spin', py_type=list, grace_string='\\qRelaxation time period (s)\\Q')
+        self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
+        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self.PARAMS.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, grace_string='\\qI\\sinf\\Q', err=True, sim=True)
+        self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
 
 
     def _assemble_param_vector(self, spin=None, sim_index=None):
@@ -573,74 +571,6 @@ class Relax_fit(API_base, API_common):
             # If the name is not in 'data_cont', add it.
             if not hasattr(data_cont, name):
                 setattr(data_cont, name, init_data)
-
-
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Return a list of names of data structures.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'params', an array of the parameter names associated with the model.
-            - 'rx', either the R1 or R2 relaxation rate.
-            - 'i0', the initial intensity.
-            - 'iinf', the intensity at infinity.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('params')
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('rx')
-            names.append('i0')
-            names.append('iinf')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            names.append('rx_err')
-            names.append('i0_err')
-            names.append('iinf_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            names.append('rx_sim')
-            names.append('i0_sim')
-            names.append('iinf_sim')
-
-        # Return the names.
-        return names
 
 
     default_value_doc = ["Relaxation curve fitting default values", """

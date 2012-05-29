@@ -60,9 +60,6 @@ class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_comm
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.return_error = self._return_error_relax_data
-        self.return_conversion_factor = self._return_conversion_factor_spin
-        self.return_grace_string = self._return_grace_string_spin
-        self.return_units = self._return_units_spin
         self.return_value = self._return_value_general
         self.sim_pack_data = self._sim_pack_relax_data
         self.test_grid_ops = self._test_grid_ops_general
@@ -75,34 +72,36 @@ class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_comm
         self.pymol_macro = self._pymol_macros.create_macro
         self.molmol_macro = self._molmol_macros.create_macro
 
+        # Set up the global parameters.
+        self.PARAMS.add('tm', scope='global', default=diffusion_tensor.default_value('tm'), conv_factor=1e-9, grace_string='\\xt\\f{}\\sm', units='ns', py_type=float, err=True, sim=True)
+        self.PARAMS.add('Diso', scope='global', default=diffusion_tensor.default_value('Diso'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Dx', scope='global', default=diffusion_tensor.default_value('Dx'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Dy', scope='global', default=diffusion_tensor.default_value('Dy'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Dz', scope='global', default=diffusion_tensor.default_value('Dz'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Dpar', scope='global', default=diffusion_tensor.default_value('Dpar'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Dper', scope='global', default=diffusion_tensor.default_value('Dper'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Da', scope='global', default=diffusion_tensor.default_value('Da'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('Dratio', scope='global', default=diffusion_tensor.default_value('Dratio'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('alpha', scope='global', default=diffusion_tensor.default_value('alpha'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('beta', scope='global', default=diffusion_tensor.default_value('beta'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('gamma', scope='global', default=diffusion_tensor.default_value('gamma'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('theta', scope='global', default=diffusion_tensor.default_value('theta'), py_type=float, err=True, sim=True)
+        self.PARAMS.add('phi', scope='global', default=diffusion_tensor.default_value('phi'), py_type=float, err=True, sim=True)
+
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('tm', default=diffusion_tensor.default_value('tm'), conv_factor=1e-9, grace_string='\\xt\\f{}\\sm', units='ns')
-        self.SPIN_PARAMS.add('Diso', default=diffusion_tensor.default_value('Diso'))
-        self.SPIN_PARAMS.add('Dx', default=diffusion_tensor.default_value('Dx'))
-        self.SPIN_PARAMS.add('Dy', default=diffusion_tensor.default_value('Dy'))
-        self.SPIN_PARAMS.add('Dz', default=diffusion_tensor.default_value('Dz'))
-        self.SPIN_PARAMS.add('Dpar', default=diffusion_tensor.default_value('Dpar'))
-        self.SPIN_PARAMS.add('Dper', default=diffusion_tensor.default_value('Dper'))
-        self.SPIN_PARAMS.add('Da', default=diffusion_tensor.default_value('Da'))
-        self.SPIN_PARAMS.add('Dratio', default=diffusion_tensor.default_value('Dratio'))
-        self.SPIN_PARAMS.add('alpha', default=diffusion_tensor.default_value('alpha'))
-        self.SPIN_PARAMS.add('beta', default=diffusion_tensor.default_value('beta'))
-        self.SPIN_PARAMS.add('gamma', default=diffusion_tensor.default_value('gamma'))
-        self.SPIN_PARAMS.add('theta', default=diffusion_tensor.default_value('theta'))
-        self.SPIN_PARAMS.add('phi', default=diffusion_tensor.default_value('phi'))
-        self.SPIN_PARAMS.add('local_tm', default=10.0 * 1e-9, desc='The spin specific global correlation time (seconds)', grace_string='\\xt\\f{}\\sm', units='ns')
-        self.SPIN_PARAMS.add('s2', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q')
-        self.SPIN_PARAMS.add('s2f', default=0.8, desc='S2f, the faster motion model-free generalised order parameter', grace_string='\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q')
-        self.SPIN_PARAMS.add('s2s', default=0.8, desc='S2s, the slower motion model-free generalised order parameter', grace_string='\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q')
-        self.SPIN_PARAMS.add('te', default=100.0 * 1e-12, desc='Single motion effective internal correlation time (seconds)', conv_factor=1e-12, grace_string='\\xt\\f{}\\se', units='ps')
-        self.SPIN_PARAMS.add('tf', default=10.0 * 1e-12, desc='Faster motion effective internal correlation time (seconds)', conv_factor=1e-12, grace_string='\\xt\\f{}\\sf', units='ps')
-        self.SPIN_PARAMS.add('ts', default=1000.0 * 1e-12, desc='Slower motion effective internal correlation time (seconds)', conv_factor=1e-12, grace_string='\\xt\\f{}\\ss', units='ps')
-        self.SPIN_PARAMS.add('rex', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', conv_factor=self._conv_factor_rex, units=self._units_rex, grace_string='\\qR\\sex\\Q')
-        self.SPIN_PARAMS.add('r', default=NH_BOND_LENGTH, units='Angstrom', desc='Bond length (meters)', conv_factor=1e-10, grace_string='Bond length')
-        self.SPIN_PARAMS.add('csa', default=N15_CSA, units='ppm', desc='Chemical shift anisotropy (unitless)', conv_factor=1e-6, grace_string='\\qCSA\\Q')
-        self.SPIN_PARAMS.add('heteronuc_type', default='15N', desc='The heteronucleus spin type')
-        self.SPIN_PARAMS.add('proton_type', default='1H', desc='The proton spin type')
-        self.SPIN_PARAMS.add('model', desc='The model')
-        self.SPIN_PARAMS.add('equation', desc='The model equation')
-        self.SPIN_PARAMS.add('params', desc='The model parameters')
-        self.SPIN_PARAMS.add('xh_vect', desc='XH bond vector')
+        self.PARAMS.add('local_tm', scope='spin', default=10.0 * 1e-9, desc='The spin specific global correlation time (seconds)', py_type=float, grace_string='\\xt\\f{}\\sm', units='ns', err=True, sim=True)
+        self.PARAMS.add('s2', scope='spin', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', py_type=float, grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
+        self.PARAMS.add('s2f', scope='spin', default=0.8, desc='S2f, the faster motion model-free generalised order parameter', py_type=float, grace_string='\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
+        self.PARAMS.add('s2s', scope='spin', default=0.8, desc='S2s, the slower motion model-free generalised order parameter', py_type=float, grace_string='\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
+        self.PARAMS.add('te', scope='spin', default=100.0 * 1e-12, desc='Single motion effective internal correlation time (seconds)', py_type=float, conv_factor=1e-12, grace_string='\\xt\\f{}\\se', units='ps', err=True, sim=True)
+        self.PARAMS.add('tf', scope='spin', default=10.0 * 1e-12, desc='Faster motion effective internal correlation time (seconds)', py_type=float, conv_factor=1e-12, grace_string='\\xt\\f{}\\sf', units='ps', err=True, sim=True)
+        self.PARAMS.add('ts', scope='spin', default=1000.0 * 1e-12, desc='Slower motion effective internal correlation time (seconds)', py_type=float, conv_factor=1e-12, grace_string='\\xt\\f{}\\ss', units='ps', err=True, sim=True)
+        self.PARAMS.add('rex', scope='spin', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', py_type=float, conv_factor=self._conv_factor_rex, units=self._units_rex, grace_string='\\qR\\sex\\Q', err=True, sim=True)
+        self.PARAMS.add('r', scope='spin', default=NH_BOND_LENGTH, units='Angstrom', desc='Bond length (meters)', py_type=float, conv_factor=1e-10, grace_string='Bond length', err=True, sim=True)
+        self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=True, sim=True)
+        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus spin type', py_type=str)
+        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton spin type', py_type=str)
+        self.PARAMS.add('model', scope='spin', desc='The model', py_type=str)
+        self.PARAMS.add('equation', scope='spin', desc='The model equation', py_type=str)
+        self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
+        self.PARAMS.add('xh_vect', scope='spin', desc='XH bond vector', py_type=list)

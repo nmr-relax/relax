@@ -64,20 +64,18 @@ class N_state_model(API_base, API_common):
         super(N_state_model, self).__init__()
 
         # Place methods into the API.
-        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_desc = self._return_data_desc_spin
         self.set_selected_sim = self._set_selected_sim_global
         self.sim_return_selected = self._sim_return_selected_global
         self.test_grid_ops = self._test_grid_ops_general
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('r', units='Angstrom', grace_string='Bond length')
-        self.SPIN_PARAMS.add('csa', units='ppm', grace_string='\\qCSA\\Q')
-        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
-        self.SPIN_PARAMS.add('proton_type', default='1H')
+        self.PARAMS.add('r', scope='spin', units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
+        self.PARAMS.add('csa', scope='spin', units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
+        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
+        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
 
 
     def _assemble_param_vector(self, sim_index=None):
@@ -1827,67 +1825,6 @@ class N_state_model(API_base, API_common):
 
         # Return the data.
         return mc_data
-
-
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Return a list of names of data structures.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            pass
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('r')
-            names.append('csa')
-            names.append('heteronuc_type')
-            names.append('proton_type')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            pass
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            pass
-
-        # Return the names.
-        return names
 
 
     default_value_doc = ["N-state model default values", """

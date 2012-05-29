@@ -48,26 +48,22 @@ class Jw_mapping(API_base, API_common):
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.create_mc_data = self._create_mc_relax_data
-        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_name = self._return_data_name_spin
         self.return_error = self._return_error_relax_data
-        self.return_grace_string = self._return_grace_string_spin
-        self.return_units = self._return_units_spin
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
         self.sim_pack_data = self._sim_pack_relax_data
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('j0', string='J(0)', grace_string='\\qJ(0)\\Q')
-        self.SPIN_PARAMS.add('jwx', grace_string='\\qJ(\\xw\\f{}\\sX\\N)\\Q')
-        self.SPIN_PARAMS.add('jwh', grace_string='\\qJ(\\xw\\f{}\\sH\\N)\\Q')
-        self.SPIN_PARAMS.add('r', default=NH_BOND_LENGTH, units='Angstrom', grace_string='Bond length')
-        self.SPIN_PARAMS.add('csa', default=N15_CSA, units='ppm', grace_string='\\qCSA\\Q')
-        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
-        self.SPIN_PARAMS.add('proton_type', default='1H')
+        self.PARAMS.add('j0', scope='spin', string='J(0)', desc='Spectral density value at 0 MHz', py_type=float, set='params', grace_string='\\qJ(0)\\Q', err=True, sim=True)
+        self.PARAMS.add('jwx', scope='spin', string='J(wX)', desc='Spectral density value at the frequency of the heteronucleus', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sX\\N)\\Q', err=True, sim=True)
+        self.PARAMS.add('jwh', scope='spin', string='J(wH)', desc='Spectral density value at the frequency of the proton', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sH\\N)\\Q', err=True, sim=True)
+        self.PARAMS.add('r', scope='spin', default=NH_BOND_LENGTH, units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
+        self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
+        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
+        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
 
 
     def _set_frq(self, frq=None):
@@ -230,50 +226,6 @@ class Jw_mapping(API_base, API_common):
             if not hasattr(data_cont, name):
                 # Set the attribute.
                 setattr(data_cont, name, None)
-
-
-    def data_names(self, set=None, error_names=False, sim_names=False):
-        """Return a list of all spin container specific J(w) mapping object names.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'r', bond length.
-            - 'csa', CSA value.
-            - 'heteronuc_type', the heteronucleus type.
-            - 'j0', spectral density value at 0 MHz.
-            - 'jwx', spectral density value at the frequency of the heteronucleus.
-            - 'jwh', spectral density value at the frequency of the heteronucleus.
-
-
-        @keyword set:           An unused variable.
-        @type set:              ignored
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Values.
-        names.append('r')
-        names.append('csa')
-        names.append('heteronuc_type')
-
-        # Spectral density values.
-        names.append('j0')
-        names.append('jwx')
-        names.append('jwh')
-
-        # Return the names.
-        return names
 
 
     default_value_doc = ["Reduced spectral density mapping default values", """

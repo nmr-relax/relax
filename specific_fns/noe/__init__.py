@@ -45,12 +45,9 @@ class Noe(Noe_main, API_base, API_common):
 
         # Place methods into the API.
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_desc = self._return_data_desc_spin
-        self.return_data_name = self._return_data_name_spin
-        self.return_grace_string = self._return_grace_string_spin
         self.return_value = self._return_value_general
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('ref', desc='The reference peak intensity', grace_string='Reference intensity')
-        self.SPIN_PARAMS.add('sat', desc='The saturated peak intensity', grace_string='Saturated intensity')
-        self.SPIN_PARAMS.add('noe', desc='The NOE', grace_string='\\qNOE\\Q')
+        self.PARAMS.add('ref', scope='spin', desc='The reference peak intensity', py_type=float, grace_string='Reference intensity')
+        self.PARAMS.add('sat', scope='spin', desc='The saturated peak intensity', py_type=float, grace_string='Saturated intensity')
+        self.PARAMS.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)
