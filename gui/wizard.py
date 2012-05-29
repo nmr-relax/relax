@@ -840,6 +840,14 @@ class Wiz_window(wx.Dialog):
         return self._pages[index]
 
 
+    def reset(self):
+        """Reset the wizard."""
+
+        # Clear the execution counts.
+        for i in range(len(self._exec_count)):
+            self._exec_count[i] = 0
+
+
     def run(self, modal=False):
         """Execute the wizard.
 

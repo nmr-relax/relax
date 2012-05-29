@@ -169,6 +169,10 @@ class Uf_object(object):
         if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()) or self.wizard._pages[0] == None:
             self.create_wizard(wx_parent)
 
+        # Otherwise reset the wizard.
+        else:
+            self.wizard.reset()
+
         # Update all of the user function argument choices (ComboBoxes) to be current.
         self.page.update_args()
 
