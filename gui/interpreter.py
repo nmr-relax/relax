@@ -159,16 +159,16 @@ class Interpreter(object):
             sys.stdout.write("debug> GUI interpreter:  Flushing.\n")
 
         # Wait a little while to prevent races with the reading of the queue.
-        sleep(0.5)
+        sleep(0.05)
 
         # Loop until empty.
         while not self._interpreter_thread.empty():
             # Wait a bit for the queue to empty.
-            sleep(0.2)
+            sleep(0.05)
 
             # Wait until execution is complete.
             while status.exec_lock.locked():
-                sleep(0.5)
+                sleep(0.1)
 
         # Debugging.
         if status.debug:
