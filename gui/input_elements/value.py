@@ -370,13 +370,21 @@ class Value:
                 # Translate if needed.
                 if combo_default in combo_choices:
                     string = combo_default
+                    set_sel = True
                 elif combo_default not in combo_data:
                     string = combo_default
+                    set_sel = False
                 else:
                     string = combo_choices[combo_data.index(combo_default)]
+                    set_sel = True
 
                 # Set the selection.
-                self._field.SetStringSelection(string)
+                if set_sel:
+                    self._field.SetStringSelection(string)
+
+                # Set the value.
+                else:
+                    self._field.SetValue(string)
 
             # Restore the selection.
             else:
