@@ -70,6 +70,60 @@ class Mf(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
+    def check_read_results_1_3(self):
+        """Common code for the test_read_results_1_3*() tests."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+
+        # Read the equivalent 1.2 results file for the checks.
+        self.interpreter.pipe.create('1.2', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.2', dir=path)
+
+        # Get the two data pipes.
+        pipe_12 = pipes.get_pipe('1.2')
+        pipe_13 = pipes.get_pipe('1.3')
+
+        # Test that the objects in the base pipes are the same.
+        print("Comparison of the objects of the base data pipe:")
+        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
+
+        # Test that the diffusion tensor data is the same.
+        print("Comparison of the objects of the diffusion tensor:")
+        self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
+
+        # Test the number of molecules.
+        self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
+
+        # Loop over the molecules.
+        for i in xrange(len(pipe_12.mol)):
+            # Test the objects.
+            print("Comparison of the objects of the molecule:")
+            self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
+
+            # Test the number of residues.
+            self.assertEqual(len(pipe_12.mol[i].res), len(pipe_13.mol[i].res))
+
+            # Loop over the residues.
+            for j in xrange(len(pipe_12.mol[i].res)):
+                # Ok, really don't need to do a full comparison of all 162 residues for this test!
+                if j > 10:
+                    break
+
+                # Test the objects.
+                print("Comparison of the objects of the residue:")
+                self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
+
+                # Test the number of spins.
+                self.assertEqual(len(pipe_12.mol[i].res[j].spin), len(pipe_13.mol[i].res[j].spin))
+
+                # Loop over the spins.
+                for k in xrange(len(pipe_12.mol[i].res[j].spin)):
+                    # Test the objects.
+                    print("Comparison of the objects of the spin:")
+                    self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
+
+
     def mesg_opt_debug(self, spin):
         """Method for returning a string to help debug the minimisation.
 
@@ -2238,63 +2292,77 @@ class Mf(SystemTestCase):
                     self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[i][ri_id])
 
 
-    def test_read_results_1_3(self):
-        """Read a relax 1.3 model-free results file using the user function results.read()."""
+    def test_read_results_1_3_v1(self):
+        """Read a 1.3 model-free results file (relax XML version 1)."""
 
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
         self.interpreter.pipe.create('1.3', 'mf')
-        self.interpreter.results.read(file='final_results_trunc_1.3', dir=path)
+        self.interpreter.results.read(file='final_results_trunc_1.3_v1', dir=path)
 
-        # Read the equivalent 1.2 results file for the checks.
-        self.interpreter.pipe.create('1.2', 'mf')
-        self.interpreter.results.read(file='final_results_trunc_1.2', dir=path)
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
-        # Get the two data pipes.
-        pipe_12 = pipes.get_pipe('1.2')
-        pipe_13 = pipes.get_pipe('1.3')
 
-        # Test that the objects in the base pipes are the same.
-        print("Comparison of the objects of the base data pipe:")
-        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
+    def test_read_results_1_3_pre_py273_v1(self):
+        """Read a 1.3 model-free results file (pre-Python 2.7.3, relax XML version 1)."""
 
-        # Test that the diffusion tensor data is the same.
-        print("Comparison of the objects of the diffusion tensor:")
-        self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
-        # Test the number of molecules.
-        self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_pre_py2.7.3_v1', dir=path)
 
-        # Loop over the molecules.
-        for i in xrange(len(pipe_12.mol)):
-            # Test the objects.
-            print("Comparison of the objects of the molecule:")
-            self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
-            # Test the number of residues.
-            self.assertEqual(len(pipe_12.mol[i].res), len(pipe_13.mol[i].res))
 
-            # Loop over the residues.
-            for j in xrange(len(pipe_12.mol[i].res)):
-                # Ok, really don't need to do a full comparison of all 162 residues for this test!
-                if j > 10:
-                    break
+    def test_read_results_1_3_v2(self):
+        """Read a 1.3 model-free results file (relax XML version 2)."""
 
-                # Test the objects.
-                print("Comparison of the objects of the residue:")
-                self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
-                # Test the number of spins.
-                self.assertEqual(len(pipe_12.mol[i].res[j].spin), len(pipe_13.mol[i].res[j].spin))
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_v2', dir=path)
 
-                # Loop over the spins.
-                for k in xrange(len(pipe_12.mol[i].res[j].spin)):
-                    # Test the objects.
-                    print("Comparison of the objects of the spin:")
-                    self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
+
+    def test_read_results_1_3_v2_broken(self):
+        """Read a 1.3 model-free results file (relax XML version 2) with corrupted floats.
+
+        The floats are deliberately mangled to test the IEEE-754 reading.
+        """
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_v2_broken', dir=path)
+
+        # The shared part of the test.
+        self.check_read_results_1_3()
+
+
+    def test_read_results_1_3_pre_py273_v2(self):
+        """Read a 1.3 model-free results file (pre-Python 2.7.3, relax XML version 2)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
+
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
 
     def test_select_m4(self):
@@ -2493,6 +2561,7 @@ class Mf(SystemTestCase):
         file = DummyFileObject()
 
         # Write the results file into a dummy file.
+        self.interpreter.results.write(file='xxx', dir='.', force=True)
         self.interpreter.results.write(file=file, dir=path)
 
         # Now, get the contents of that file, and then 'close' that file.
@@ -2502,9 +2571,9 @@ class Mf(SystemTestCase):
         # Read the 1.3 results file, extract the data, then close it again.
         a, b, c = platform.python_version_tuple()
         if dep_check.xml_type == 'internal' and int(a) >= 2 and int(b) >= 7 and int(c) >= 3:
-            file = open_read_file(file_name='final_results_trunc_1.3_new', dir=path)
+            file = open_read_file(file_name='final_results_trunc_1.3_v2', dir=path)
         else:
-            file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
+            file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
         true_lines = file.readlines()
         file.close()
 

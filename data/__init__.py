@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -295,15 +295,19 @@ class Relax_data_store(dict):
         relax_node = doc.childNodes[0]
 
         # Get the relax version of the XML file.
-        file_version = str(relax_node.getAttribute('version'))
+        file_version = relax_node.getAttribute('file_version')
+        if file_version == '':
+            file_version = 1
+        else:
+            file_version = int(file_version)
 
         # Get the GUI nodes.
         gui_nodes = relax_node.getElementsByTagName('relax_gui')
         if gui_nodes:
-            self.relax_gui.from_xml(gui_nodes[0])
+            self.relax_gui.from_xml(gui_nodes[0], file_version=file_version)
 
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, blacklist=['pipe', 'relax_gui'])
+        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
@@ -330,7 +334,7 @@ class Relax_data_store(dict):
                 raise RelaxError("The data pipe '%s' is not empty." % pipe_to)
 
             # Load the data.
-            self[pipe_to].from_xml(pipe_nodes[0], dir=dir)
+            self[pipe_to].from_xml(pipe_nodes[0], dir=dir, file_version=file_version)
 
         # Load the state.
         else:
@@ -397,6 +401,7 @@ class Relax_data_store(dict):
 
         # Create the top level element, including the relax URL.
         top_element = xmldoc.createElementNS('http://www.nmr-relax.com', 'relax')
+        top_element.setAttribute("xmlns", "http://www.nmr-relax.com")
 
         # Append the element.
         xmldoc.appendChild(top_element)
@@ -404,6 +409,7 @@ class Relax_data_store(dict):
         # Set the relax version number, and add a creation time.
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
+        top_element.setAttribute('file_version', "2")
 
         # Add all objects in the data store base object to the XML element.
         if all:

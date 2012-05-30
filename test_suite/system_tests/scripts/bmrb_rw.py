@@ -20,7 +20,7 @@ if not hasattr(ds, 'tmpfile'):
 self._execute_uf(uf_name='pipe.create', pipe_name='results', pipe_type='mf')
 
 # Read the results.
-self._execute_uf(uf_name='results.read', file='final_results_trunc_1.3', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+self._execute_uf(uf_name='results.read', file='final_results_trunc_1.3_v2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
 # Play with the data.
 self._execute_uf(uf_name='deselect.all')

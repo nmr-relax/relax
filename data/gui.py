@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -48,11 +48,13 @@ class Gui(Element):
         self.desc = 'The relax GUI information store.'
 
 
-    def from_xml(self, gui_node):
+    def from_xml(self, gui_node, file_version=1):
         """Recreate the gui data structure from the XML gui node.
 
-        @param gui_node:    The gui XML node.
-        @type gui_node:     xml.dom.minicompat.Element instance
+        @param gui_node:        The gui XML node.
+        @type gui_node:         xml.dom.minicompat.Element instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Init.
@@ -61,15 +63,15 @@ class Gui(Element):
 
         # Get the analyses node and recreate the analyses structure.
         analyses_nodes = gui_node.getElementsByTagName('analyses')
-        self.analyses.from_xml(analyses_nodes[0])
+        self.analyses.from_xml(analyses_nodes[0], file_version=file_version)
 
         # Get the file settings node and recreate the structure.
         format_nodes = gui_node.getElementsByTagName('free_file_format')
         if format_nodes:
-            self.free_file_format.from_xml(format_nodes[0])
+            self.free_file_format.from_xml(format_nodes[0], file_version=file_version)
 
         # Recreate all the other data structures.
-        xml_to_object(gui_node, self, blacklist=['analyses', 'free_file_format'])
+        xml_to_object(gui_node, self, file_version=file_version, blacklist=['analyses', 'free_file_format'])
 
 
 
@@ -106,11 +108,13 @@ class Analyses(RelaxListType):
         return len(self)-1
 
 
-    def from_xml(self, analyses_node):
+    def from_xml(self, analyses_node, file_version=1):
         """Recreate the analyses data structure from the XML analyses node.
 
         @param analyses_node:   The analyses XML node.
         @type analyses_node:    xml.dom.minicompat.Element instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Get all the analysis nodes.
@@ -122,7 +126,7 @@ class Analyses(RelaxListType):
             index = self.add()
 
             # Recreate the analysis container.
-            self[index].from_xml(node)
+            self[index].from_xml(node, file_version=file_version)
 
 
 class Free_file_format(Element):
