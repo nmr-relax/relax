@@ -339,10 +339,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
+    arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["@N", "@C"],
     can_be_none = True
 )
 uf.desc = """
