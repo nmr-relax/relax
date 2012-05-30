@@ -832,8 +832,11 @@ class Uf_page(Wiz_page):
                 # Return as a failure.
                 return False
 
+            # Get the current value, for setting as the default.
+            val = self.uf_args[name].GetValue()
+
             # Update the GUI element.
-            self.UpdateChoices(name, combo_choices=choices, combo_data=data)
+            self.UpdateChoices(name, combo_choices=choices, combo_data=data, combo_default=val)
 
 
 
