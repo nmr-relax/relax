@@ -39,7 +39,7 @@ from gui.string_conv import gui_to_str, str_to_gui
 class Spin_id:
     """GUI element for the input of spin ID strings."""
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', sizer=None, desc="spin ID string", combo_choices=['@N', '@C'], combo_data=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, can_be_none=True):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', sizer=None, desc="spin ID string", combo_choices=None, combo_data=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, can_be_none=True):
         """Set up the base spin ID element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -54,9 +54,9 @@ class Spin_id:
         @type sizer:                wx.Sizer instance
         @keyword desc:              The text description.
         @type desc:                 str
-        @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @keyword combo_choices:     The list of choices to present to the user.
         @type combo_choices:        list of str
-        @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @keyword combo_data:        The data returned by a call to GetValue().  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:           list
         @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
         @type tooltip:              str
@@ -83,6 +83,10 @@ class Spin_id:
         self.name = name
         self.default = default
         self.can_be_none = can_be_none
+
+        # The combo choices, if not supplied.
+        if combo_choices == None or combo_choices == []:
+            combo_choices = ['@N', '@C', '@H', '@O', '@P']
 
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -131,7 +135,7 @@ class Spin_id:
         if tooltip == None:
             tooltip = ''
         else:
-            tooltip += '\n'
+            tooltip += '\n\n'
         tooltip += id_string_doc[1][1:-1]
 
         # Set the tooltip.
@@ -195,9 +199,9 @@ class Spin_id:
 
         @param key:             The key corresponding to the desired GUI element.
         @type key:              str
-        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @keyword combo_choices: The list of choices to present to the user.
         @type combo_choices:    list of str
-        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @keyword combo_data:    The data returned by a call to GetValue().  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
         @type combo_data:       list
         @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
         @type combo_default:    str or None
@@ -217,11 +221,6 @@ class Spin_id:
         if combo_data == None:
             combo_data = deepcopy(combo_choices)
 
-        # Handle None in combo boxes by prepending a None element to the lists.
-        if self.can_be_none:
-            combo_choices.insert(0, '')
-            combo_data.insert(0, None)
-
         # Loop over the choices and data, adding both to the end.
         for i in range(len(combo_choices)):
             self._field.Insert(str_to_gui(combo_choices[i]), i, combo_data[i])
@@ -231,13 +230,21 @@ class Spin_id:
             # Translate if needed.
             if combo_default in combo_choices:
                 string = combo_default
+                set_sel = True
             elif combo_default not in combo_data:
                 string = combo_default
+                set_sel = False
             else:
                 string = combo_choices[combo_data.index(combo_default)]
+                set_sel = True
 
             # Set the selection.
-            self._field.SetStringSelection(string)
+            if set_sel:
+                self._field.SetStringSelection(string)
+
+            # Set the value.
+            else:
+                self._field.SetValue(string)
 
         # Restore the selection.
         else:
