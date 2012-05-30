@@ -894,9 +894,11 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
+    default = "@N",
     py_type = "str",
+    arg_type = "spin ID",
     desc_short = "spin ID string",
-    desc = "The spin identification string.",
+    desc = "The spin identification string for restricting the loading of vectors to certain spins.",
     can_be_none = True
 )
 uf.add_keyarg(
