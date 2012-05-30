@@ -35,7 +35,7 @@ from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, 
 class Combo_list:
     """The combo list GUI element."""
 
-    def __init__(self, parent, sizer, desc, value_type=None, n=1, min_length=None, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True, can_be_none=False):
+    def __init__(self, parent, sizer, desc, value_type=None, n=1, min_length=1, choices=None, data=None, default=None, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True, can_be_none=False):
         """Build the combo box list widget for a list of list selections.
 
         @param parent:          The parent GUI element.
@@ -49,7 +49,7 @@ class Combo_list:
         @keyword n:             The number of initial entries.
         @type n:                int
         @keyword min_length:    The minimum length for the Combo_list object.
-        @type min_length:       int or None
+        @type min_length:       int
         @keyword choices:       The list of choices (all combo boxes will have the same list).
         @type choices:          list of str
         @keyword data:          The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the choices list.  If not supplied, the choices list will be used for the returned data.
@@ -122,6 +122,8 @@ class Combo_list:
             self._divider = divider
 
         # Build the first rows.
+        if n < min_length:
+            n = min_length
         for i in range(n):
             self._build_row()
 
@@ -195,6 +197,7 @@ class Combo_list:
                 self._combo_boxes[-1].SetStringSelection(self._default)
 
         # The add button.
+        button = None
         if index == 0:
             button = wx.BitmapButton(self._parent, -1, wx.Bitmap(icon_16x16.add, wx.BITMAP_TYPE_ANY))
             button.SetMinSize((27, 27))
@@ -202,7 +205,7 @@ class Combo_list:
             self._parent.Bind(wx.EVT_BUTTON, self._add, button)
 
         # The delete button.
-        elif index == 1:
+        elif index == self._min_length:
             button = wx.BitmapButton(self._parent, -1, wx.Bitmap(icon_16x16.remove, wx.BITMAP_TYPE_ANY))
             button.SetMinSize((27, 27))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -228,7 +231,7 @@ class Combo_list:
             if index == 0:
                 text.SetToolTipString(self._tooltip)
             combo.SetToolTipString(self._tooltip)
-            if index <= 1:
+            if index <= 1 and button != None:
                 button.SetToolTipString(self._tooltip)
 
 
