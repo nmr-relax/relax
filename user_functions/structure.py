@@ -451,9 +451,11 @@ uf.title = "Load spins from the structure into the relax data store."
 uf.title_short = "Loading spins from structure."
 uf.add_keyarg(
     name = "spin_id",
+    default = "@N",
     py_type = "str",
+    arg_type = "spin ID",
     desc_short = "spin ID string",
-    desc = "The spin identification string.",
+    desc = "The spin identification string for the selective loading of certain spins into the relax data store.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -498,6 +500,7 @@ relax>     structure.load_spins(spin_id=id)
 uf.backend = generic_fns.structure.main.load_spins
 uf.menu_text = "&load_spins"
 uf.gui_icon = "relax.spin"
+uf.wizard_height_desc = 300
 uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'load_spins.png'
 
