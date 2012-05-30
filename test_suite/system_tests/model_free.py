@@ -2561,7 +2561,6 @@ class Mf(SystemTestCase):
         file = DummyFileObject()
 
         # Write the results file into a dummy file.
-        self.interpreter.results.write(file='xxx', dir='.', force=True)
         self.interpreter.results.write(file=file, dir=path)
 
         # Now, get the contents of that file, and then 'close' that file.
