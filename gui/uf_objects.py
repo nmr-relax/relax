@@ -805,6 +805,12 @@ class Uf_page(Wiz_page):
 
 
     def update_args(self):
+        """Update all the argument ComboBox choices.
+
+        @return:    The status of the update - False if a RelaxError occurs, True otherwise.
+        @rtype:     bool
+        """
+
         # Loop over the arguments.
         for i in range(len(self.uf_data.kargs)):
             # The argument name.
@@ -843,6 +849,9 @@ class Uf_page(Wiz_page):
 
             # Update the GUI element.
             self.UpdateChoices(name, combo_choices=choices, combo_data=data, combo_default=val)
+
+        # Successful update.
+        return True
 
 
 
