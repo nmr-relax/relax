@@ -214,6 +214,10 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
         fail = True
 
+    # Fail on empty lists.
+    elif not len(arg):
+        fail = True
+
     # Fail if not a matrix.
     elif not isinstance(arg[0], list) and not isinstance(arg[0], ndarray):
         fail = True
