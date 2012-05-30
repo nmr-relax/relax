@@ -31,6 +31,7 @@ from relax_errors import RelaxNoPipeError
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
@@ -49,16 +50,19 @@ class Dead_uf_pages(GuiTestCase):
             # Call the object, then simulate the 'ok' click.
             mol_create(mol_name='x', mol_type='protein')
             mol_create.wizard._ok()
+            interpreter.flush()
         except RelaxNoPipeError, instance:
             sys.stderr.write(instance.__str__())
 
         # Create a data pipe.
         pipe_create(pipe_name='test', pipe_type='mf')
         pipe_create.wizard._ok()
+        interpreter.flush()
 
         # Try to create the molecule a second time.
         mol_create(mol_name='x', mol_type='protein')
         mol_create.wizard._ok()
+        interpreter.flush()
 
         # Checks.
         self.assertEqual(len(cdp.mol), 1)
