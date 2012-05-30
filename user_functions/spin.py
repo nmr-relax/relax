@@ -340,19 +340,19 @@ uf = uf_info.add_uf('spin.name')
 uf.title = "Name the spins."
 uf.title_short = "Spin naming."
 uf.add_keyarg(
-    name = "spin_id",
-    py_type = "str",
-    desc_short = "spin ID string",
-    desc = "The spin identification string corresponding to one or more spins.",
-    wiz_element_type = 'combo',
-    wiz_combo_iter = get_spin_ids,
-    can_be_none = True
-)
-uf.add_keyarg(
     name = "name",
     py_type = "str",
     desc_short = "new spin name",
     desc = "The new name."
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "spin ID string",
+    desc = "The spin identification string corresponding to one or more spins.",
+    wiz_combo_iter = get_spin_ids,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "force",
