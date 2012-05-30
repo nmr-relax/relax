@@ -68,6 +68,6 @@ for i in range(INC):
 #self._execute_uf(uf_name='state.save', state="rotor", force=True)
 
 # Chi2 printout.
-print "\n\n"
+print("\n\n")
 for i in range(INC):
     print("Cone %3i deg, chi2: %s" % (ds.angles[i], ds.chi2[i]))

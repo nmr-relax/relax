@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -244,7 +244,7 @@ def model_free_results(directory, pdbfile):
 
     # No diffusion tensor (local tm model was selected)
     except:
-        print "\nModel without diffusion tensor was selected (local TM)!\nNo diffusion tensor was created!\n\n"
+        print("\nModel without diffusion tensor was selected (local TM)!\nNo diffusion tensor was created!\n\n")
 
     ##################################################################################################
 
@@ -333,7 +333,7 @@ def model_free_results(directory, pdbfile):
 
     ##################################################################################################
 
-    print '\n\n__________________________________________________________\n\nSuccessfully generated model-free results files\nsee results tab\n__________________________________________________________'
+    print('\n\n__________________________________________________________\n\nSuccessfully generated model-free results files\nsee results tab\n__________________________________________________________')
 
     returnstring = [residue, model, s2, rex, te]
     return returnstring # return data for results table dialog

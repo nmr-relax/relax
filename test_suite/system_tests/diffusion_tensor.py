@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -902,7 +902,7 @@ class Diffusion_tensor(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Print out.
-        print cdp.diff_tensor
+        print(cdp.diff_tensor)
 
         # The real data.
         Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()

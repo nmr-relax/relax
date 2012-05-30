@@ -120,7 +120,7 @@ class Bruker_import:
                         return
 
                 # Feedback
-                print "Reading BRUKER PDC "+exp_type+" file.\n"
+                print("Reading BRUKER PDC "+exp_type+" file.\n")
 
             # The entries
             if 'SECTION:' in self.entries[line][0]:
@@ -209,7 +209,7 @@ class Bruker_import:
 
         # Print entries
         if not self.UI == 'GUI':
-            print text
+            print(text)
 
         # craete output file
         if self.output_file:
@@ -228,15 +228,15 @@ class Bruker_import:
         # Feedback
         if self.output_file:
             if self.dir:
-                print 'Created BRUKER PDC file '+self.dir+sep+self.output_file
+                print('Created BRUKER PDC file '+self.dir+sep+self.output_file)
                 # The return value
                 self.value = self.dir+sep+self.output_file
             else:
-                print 'Created BRUKER PDC file '+self.output_file
+                print('Created BRUKER PDC file '+self.output_file)
                 # The return value
                 self.value = self.output_file
         else:
-            print 'Created BRUKER PDC file.'
+            print('Created BRUKER PDC file.')
             # Return the dummy file
             self.value = file
 

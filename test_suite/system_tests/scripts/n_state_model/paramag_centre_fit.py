@@ -78,7 +78,6 @@ cdp.align_tensors[0].Ayy = 0.556994/2000
 cdp.align_tensors[0].Axy = -0.506392/2000
 cdp.align_tensors[0].Axz = 0.560544/2000
 cdp.align_tensors[0].Ayz = -0.286367/2000
-print cdp.align_tensors[0].A
 
 #cdp.align_tensors[0].Axx = 0.0
 #cdp.align_tensors[0].Ayy = 0.0
@@ -90,8 +89,6 @@ print cdp.align_tensors[0].A
 #self._execute_uf(uf_name='grid_search, inc=6)
 self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=500)
 #self._execute_uf(uf_name='calc')
-
-print cdp.align_tensors[0].A
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)
@@ -107,4 +104,3 @@ print("chi2: %s" % cdp.chi2)
 
 # Map.
 #self._execute_uf(uf_name='dx.map', params=['paramag_x', 'paramag_y', 'paramag_z'], inc=10, lower=[30, -20, 26], upper=[33, -18, 30])
-print cdp

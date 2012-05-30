@@ -1943,7 +1943,7 @@ class Mf(SystemTestCase):
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Debugging print out.
+            # Debugging printout.
             print(res)
             print(spin)
 
@@ -2007,7 +2007,7 @@ class Mf(SystemTestCase):
         # Read the results.
         self.interpreter.results.read(file='pse4_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
-        # Debugging print out.
+        # Debugging printout.
         print(cdp)
 
         # The spin specific data.
@@ -2094,7 +2094,7 @@ class Mf(SystemTestCase):
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Debugging print out.
+            # Debugging printout.
             print(res)
             print(spin)
 
@@ -2154,7 +2154,7 @@ class Mf(SystemTestCase):
         # Read the results.
         self.interpreter.results.read(file='tem1_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
-        # Debugging print out.
+        # Debugging printout.
         print(cdp)
 
         # The spin specific data.
@@ -2239,7 +2239,7 @@ class Mf(SystemTestCase):
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Debugging print out.
+            # Debugging printout.
             print(res)
             print(spin)
 
@@ -2282,7 +2282,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            print ri_data
             if not ri_data[i].keys():
                 self.assertEqual(spin.ri_data, {})
                 self.assertEqual(spin.ri_data_err, {})

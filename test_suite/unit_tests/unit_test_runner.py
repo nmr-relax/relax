@@ -109,7 +109,7 @@ def import_module(module_path):
     #try:
     module = __import__(module_path)
     #except:
-    #    print 'failed'
+    #    print('failed')
     #    sys.exit()
 
     if module != None:

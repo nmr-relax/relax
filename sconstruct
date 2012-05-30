@@ -366,15 +366,15 @@ class Main:
 
         # Print out.
         print
-        print "#########################"
-        print "# Cleaning up all files #"
-        print "#########################\n\n"
+        print("#########################")
+        print("# Cleaning up all files #")
+        print("#########################\n\n")
 
         # Extensions of files to remove.
         temp_extns = ['so', 'sconsign', 'dll', 'pyd']
 
         # Print out.
-        print "\nRemoving the files ending in " + `temp_extns` + ".\n"
+        print("\nRemoving the files ending in " + `temp_extns` + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -394,7 +394,7 @@ class Main:
             rmtree('dist')
 
         # Final printout.
-        print "\n\n\n"
+        print("\n\n\n")
 
 
     def clean_files(self, target, source, env):
@@ -402,15 +402,15 @@ class Main:
 
         # Print out.
         print
-        print "###############################"
-        print "# Cleaning up temporary files #"
-        print "###############################\n\n"
+        print("###############################")
+        print("# Cleaning up temporary files #")
+        print("###############################\n\n")
 
         # Extensions of temporary files.
         temp_extns = ['pyc', 'pyo', 'bak', 'o', 'os', 'obj', 'exp', 'lib']
 
         # Print out.
-        print "\nRemoving the files ending in " + `temp_extns` + ".\n"
+        print("\nRemoving the files ending in " + `temp_extns` + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -422,7 +422,7 @@ class Main:
                         remove(path.join(root, file))
 
         # Remove relax save state files.
-        print "Removing temporary relax save state files (of the form relax_state_xxxxxxxx_xxxxxx.bz2).\n"
+        print("Removing temporary relax save state files (of the form relax_state_xxxxxxxx_xxxxxx.bz2).\n")
         for root, dirs, files in walk(getcwd()):
             # Loop over the files in the current directory.
             for file in files:
@@ -430,7 +430,7 @@ class Main:
                     remove(path.join(root, file))
 
         # Final printout.
-        print "\n\n\n"
+        print("\n\n\n")
 
 
     def dummy(self, target, source, env):
@@ -578,10 +578,10 @@ class Main:
 
         # Print out.
         print
-        print "#######################################"
-        print "# Checking the program version number #"
-        print "#######################################\n\n"
-        print "Version number: " + version + "\n"
+        print("#######################################")
+        print("# Checking the program version number #")
+        print("#######################################\n\n")
+        print("Version number: " + version + "\n")
 
         # Test.
         if version == "repository checkout":
@@ -589,7 +589,7 @@ class Main:
             sys.exit()
 
         # Final printout.
-        print "\n\n\n"
+        print("\n\n\n")
 
 
 # Execute the main class.

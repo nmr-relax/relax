@@ -66,7 +66,6 @@ self._execute_uf(uf_name='paramag.centre', pos=[ -14.845,    0.969,    0.265])
 
 # Set up the model.
 self._execute_uf(uf_name='n_state_model.select_model', model='population')
-print n_state_model_obj._assemble_param_vector()
 
 # Set pc to the exact values.
 self._execute_uf(uf_name='value.set', val=0.3, param='p0')
@@ -78,11 +77,8 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[0], params=( 1.4
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[1], params=( 3.56720663040924505435e-04, -2.68385787902088840916e-04, -1.69361406642305853832e-04,  1.71873715515064501074e-04, -3.05790155096090983822e-04), param_types=2)
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[2], params=( 2.32088908680377300801e-07,  2.08076808579168379617e-06, -2.21735465435989729223e-06, -3.74311563209448033818e-06, -2.40784858070560310370e-06), param_types=2)
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.62495279588228071048e-04,  7.35617367964106275147e-04,  6.39754192258981332648e-05,  6.27880171180572523460e-05,  2.01197582457700226708e-04), param_types=2)
-print n_state_model_obj._assemble_param_vector()
 
 # Calculation.
-print cdp
-print cdp.mol[0].res[0].spin[0]
 self._execute_uf(uf_name='calc')
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2) > 1e-15:
@@ -94,7 +90,6 @@ if abs(cdp.chi2) > 1e-15:
 
 # Minimisation.
 self._execute_uf(uf_name='minimise', min_algor='sd', func_tol=1e-2)
-print cdp
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)

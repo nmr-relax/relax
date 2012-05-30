@@ -39,5 +39,5 @@ ds.chi2 = cdp.chi2
 #self._execute_uf(uf_name='state.save', state="free_rotor", force=True)
 
 # Chi2 printout.
-print "\n\n"
+print("\n\n")
 print("Chi2: %s" % cdp.chi2)

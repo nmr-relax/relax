@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -73,7 +73,6 @@ class Peak_lists(SystemTestCase):
 
         # Check the heights.
         for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-            print spin
             # The data.
             if res_num == 1501:
                 index = 0

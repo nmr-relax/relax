@@ -2,7 +2,8 @@
 #                                                                             #
 # Copyright (C) 2006  Gary S Thompson (see https://gna.org/users for contact  #
 #                                      details)                               #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+#                                                                             #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -748,19 +749,19 @@ NegNaN_C            = bitpatternToFloat('111111111111010101010101010101010101010
 PosNaN = PosNaN_C
 NegNaN = NegNaN_C
 
-#print "%-30s%-20.40g" % ("Pos zero: ", PosZero)
-#print "%-30s%-20.40g" % ("Neg zero: ", NegZero)
-#print "%-30s%-20.40g" % ("Pos epsilon denorm: ", PosEpsilonDenorm)
-#print "%-30s%-20.40g" % ("Neg epsilon denorm: ", NegEpsilonDenorm)
-#print "%-30s%-20.40g" % ("Pos epsilon norm: ", PosEpsilonNorm)
-#print "%-30s%-20.40g" % ("Neg epsilon norm: ", NegEpsilonNorm)
-#print "%-30s%-20.40g" % ("Max: ", PosMax)
-#print "%-30s%-20.40g" % ("Min: ", NegMin)
-#print "%-30s%-20.40g" % ("Pos inf: ", PosInf)
-#print "%-30s%-20.40g" % ("Neg inf: ", NegInf)
-#print "%-30s%-20.40g" % ("Pos NaN (A): ", PosNaN_A)
-#print "%-30s%-20.40g" % ("Neg NaN (A): ", NegNaN_A)
-#print "%-30s%-20.40g" % ("Pos NaN (B): ", PosNaN_B)
-#print "%-30s%-20.40g" % ("Neg NaN (B): ", NegNaN_B)
-#print "%-30s%-20.40g" % ("Pos NaN (C): ", PosNaN_C)
-#print "%-30s%-20.40g" % ("Neg NaN (C): ", NegNaN_C)
+#print("%-30s%-20.40g" % ("Pos zero: ", PosZero))
+#print("%-30s%-20.40g" % ("Neg zero: ", NegZero))
+#print("%-30s%-20.40g" % ("Pos epsilon denorm: ", PosEpsilonDenorm))
+#print("%-30s%-20.40g" % ("Neg epsilon denorm: ", NegEpsilonDenorm))
+#print("%-30s%-20.40g" % ("Pos epsilon norm: ", PosEpsilonNorm))
+#print("%-30s%-20.40g" % ("Neg epsilon norm: ", NegEpsilonNorm))
+#print("%-30s%-20.40g" % ("Max: ", PosMax))
+#print("%-30s%-20.40g" % ("Min: ", NegMin)
+#print("%-30s%-20.40g" % ("Pos inf: ", PosInf)))
+#print("%-30s%-20.40g" % ("Neg inf: ", NegInf))
+#print("%-30s%-20.40g" % ("Pos NaN (A): ", PosNaN_A))
+#print("%-30s%-20.40g" % ("Neg NaN (A): ", NegNaN_A))
+#print("%-30s%-20.40g" % ("Pos NaN (B): ", PosNaN_B))
+#print("%-30s%-20.40g" % ("Neg NaN (B): ", NegNaN_B))
+#print("%-30s%-20.40g" % ("Pos NaN (C): ", PosNaN_C))
+#print("%-30s%-20.40g" % ("Neg NaN (C): ", NegNaN_C))

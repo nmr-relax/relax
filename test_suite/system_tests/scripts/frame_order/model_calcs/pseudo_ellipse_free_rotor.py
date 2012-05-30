@@ -94,8 +94,8 @@ for round in range(len(files)):
 
 # Chi2 printout.
 ds.chi2 = chi2
-print "\n\n"
+print("\n\n")
 for round in range(len(files)):
-    print "\n\nFile: %s\n" % files[round]
+    print("\n\nFile: %s\n" % files[round])
     for i in range(INC):
         print("Cone %3i deg, chi2: %s" % (get_angle(i, incs=INC, deg=True), chi2[round][i]))

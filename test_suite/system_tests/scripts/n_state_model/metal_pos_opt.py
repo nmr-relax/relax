@@ -78,7 +78,7 @@ for i in xrange(len(align_list)):
 
     # Check that the chi2 is zero!
     if cdp.chi2 > 1e-15:
-        print "Chi2: %s" % cdp.chi2
+        print("Chi2: %s" % cdp.chi2)
         raise RelaxError("The chi2 value must be zero here!")
 
     # Minimisation.
@@ -88,16 +88,16 @@ for i in xrange(len(align_list)):
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i])
 
 # Print out.
-print "\n\n"
-print "##############################"
-print "# Ln3+ position optimisation #"
-print "##############################\n\n\n"
+print("\n\n")
+print("##############################")
+print("# Ln3+ position optimisation #")
+print("##############################\n\n\n")
 
 # Exact position check.
 self._execute_uf(uf_name='paramag.centre', fix=False)
 self._execute_uf(uf_name='calc')
 if cdp.chi2 > 1e-15:
-    print "Chi2: %s" % cdp.chi2
+    print("Chi2: %s" % cdp.chi2)
     raise RelaxError("The chi2 value must be zero here!")
 
 # Shift the metal.
@@ -107,7 +107,7 @@ cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.02
 print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
 self._execute_uf(uf_name='calc')
 if cdp.chi2 < 1e-15:
-    print "Chi2: %s" % cdp.chi2
+    print("Chi2: %s" % cdp.chi2)
     raise RelaxError("The chi2 value cannot be zero here!")
 
 # Optimise the Ln3+ position.
@@ -121,10 +121,10 @@ if "%.3f" % x == "%.3f" % cdp.paramagnetic_centre[0] and "%.3f" % y == "%.3f" % 
     raise RelaxError("The metal position has not been optimised!")
 
 # Print out.
-print "\n\n"
-print "#######################"
-print "# Tensor optimisation #"
-print "#######################\n\n\n"
+print("\n\n")
+print("#######################")
+print("# Tensor optimisation #")
+print("#######################\n\n\n")
 
 # Optimise each tensor again, one by one.
 self._execute_uf(uf_name='paramag.centre', fix=True)
@@ -134,10 +134,10 @@ for i in xrange(len(align_list)):
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i], fixed=True)
 
 # Print out.
-print "\n\n"
-print "#######################"
-print "# Global optimisation #"
-print "#######################\n\n\n"
+print("\n\n")
+print("#######################")
+print("# Global optimisation #")
+print("#######################\n\n\n")
 
 # Optimise everything.
 self._execute_uf(uf_name='align_tensor.fix', fixed=False)
