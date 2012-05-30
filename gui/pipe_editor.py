@@ -25,6 +25,7 @@
 
 # Python module imports.
 import wx
+import wx.grid
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
