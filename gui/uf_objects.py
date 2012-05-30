@@ -163,18 +163,23 @@ class Uf_object(object):
         @type wx_parent:        wx object
         @keyword wx_wizard_run: A flag which if True will call the wizard run() method.
         @type wx_wizard_run:    bool
+        @return:                The status of the call.  If the call failed, False will be returned.
+        @rtype:                 bool
         """
 
         # Create a new wizard if needed (checking that the parent of an old wizard is not the same).
         if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()) or self.wizard._pages[0] == None:
-            self.create_wizard(wx_parent)
+            status = self.create_wizard(wx_parent)
+            if not status:
+                return False
 
         # Otherwise reset the wizard.
         else:
             self.wizard.reset()
 
-        # Update all of the user function argument choices (ComboBoxes) to be current.
-        self.page.update_args()
+        # Update all of the user function argument choices (ComboBoxes) to be current, returning if a failure occurred.
+        if not self.page.update_args():
+            return False
 
         # Loop over the keyword args, using the Uf_page.SetValue() method to set the user function argument GUI element values.
         for key in kwds:
@@ -248,7 +253,8 @@ class Uf_object(object):
         self.page = self.create_page(self.wizard, sync=self._sync)
 
         # For an update of the argument data.
-        self.page.update_args()
+        if not self.page.update_args():
+            return False
 
         # Add the page to the wizard.
         self.wizard.add_page(self.page, apply_button=self._apply_button)
@@ -694,14 +700,14 @@ class Uf_page(Wiz_page):
         """Update the argument GUI elements if needed."""
 
         # Update the args.
-        self.update_args()
+        return self.update_args()
 
 
     def on_display(self):
         """Clear and update the data if needed."""
 
         # Update the args.
-        self.update_args()
+        return self.update_args()
 
 
     def on_execute(self):
