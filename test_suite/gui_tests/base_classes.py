@@ -139,7 +139,7 @@ class GuiTestCase(TestCase):
         status.gui_uf_force_sync = True
 
         # Call the GUI user function object with all keyword args, but do not execute the wizard.
-        uf(wx_wizard_run=False, **kargs)
+        uf(**kargs)
 
         # Execute the user function, by mimicking a click on 'ok'.
         uf.wizard._ok()
