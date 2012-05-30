@@ -239,6 +239,8 @@ class Uf_object(object):
 
         @keyword parent:    The parent wx window.
         @type parent:       wx.Window instance
+        @return:            True if the wizard was created, False if a problem was encountered.
+        @rtype:             bool
         """
 
         # The parent object defaults to the main relax window.
@@ -258,6 +260,9 @@ class Uf_object(object):
 
         # Add the page to the wizard.
         self.wizard.add_page(self.page, apply_button=self._apply_button)
+
+        # Success.
+        return True
 
 
 
