@@ -246,15 +246,15 @@ class Results_viewer(wx.Frame):
 
             # Grace files.
             if type == 'grace':
-                uf_store['grace.view'](file=file)
+                uf_store['grace.view'](file=file, wx_parent=self)
 
             # PyMOL macro files.
             elif type == 'pymol':
-                uf_store['pymol.macro_run'](file=file)
+                uf_store['pymol.macro_run'](file=file, wx_parent=self)
 
             # Molmol macro files.
             elif type == 'molmol':
-                uf_store['molmol.macro_run'](file=file)
+                uf_store['molmol.macro_run'](file=file, wx_parent=self)
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
