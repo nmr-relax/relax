@@ -43,7 +43,7 @@ class State(GuiTestCase):
         """Test the loading of a relax save state with no GUI data."""
 
         # Simulate the 'Open relax state' menu entry.
-        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'OMP' + sep + 'final_results_trunc_1.3'
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'OMP' + sep + 'final_results_trunc_1.3_v2'
         self.app.gui.state_load(file_name=file)
 
         # Show the pipe editor.
