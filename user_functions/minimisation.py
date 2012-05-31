@@ -30,6 +30,7 @@ from string import split
 from generic_fns import minimise
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The calc user function.
@@ -44,9 +45,9 @@ uf.add_keyarg(
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
-uf.desc = """
-This will call the target function for the analysis type associated with the current data pipe using the current parameter values.  This can be used to find, for example, the chi-squared value for different parameter values.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will call the target function for the analysis type associated with the current data pipe using the current parameter values.  This can be used to find, for example, the chi-squared value for different parameter values.")
 uf.backend = minimise.calc
 uf.menu_text = "&calc"
 uf.gui_icon = "relax.minimise"
@@ -97,9 +98,9 @@ uf.add_keyarg(
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
-uf.desc = """
-This will perform a grid search across the parameter space.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will perform a grid search across the parameter space.")
 uf.backend = minimise.grid_search
 uf.menu_text = "&grid_search"
 uf.gui_icon = "relax.grid_search"
@@ -263,183 +264,85 @@ uf.add_keyarg(
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
-uf.desc = """
-This will perform an optimisation starting from the current parameter values.  This is only suitable for data pipe types which have target functions and hence support optimisation.
-"""
-uf.additional = [["Diagonal scaling", """
-Diagonal scaling is the transformation of parameter values such that each value has a similar order of magnitude.  Certain minimisation techniques, for example the trust region methods, perform extremely poorly with badly scaled problems.  In addition, methods which are insensitive to scaling such as Newton minimisation may still benefit due to the minimisation of round off errors.
-
-In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by (2 * pi * 600,000,000)**2 to make it field strength independent.  The scaling vector for this model may be something like [1.0, 1e-9, 1/(2 * pi * 6e8)**2].  By dividing the unscaled parameter vector by the scaling vector the scaled parameter vector is [0.5, 0.2, 15.0].  To revert to the original unscaled parameter vector, the scaled parameter vector and scaling vector are multiplied.
-"""],
-["Minimisation algorithms", """
-A minimisation function is selected if the minimisation algorithm argument, which should be a string, matches a certain pattern.  Because the python regular expression 'match' statement is used, various strings can be supplied to select the same minimisation algorithm.  Below is a list of the minimisation algorithms available together with the corresponding patterns.
-
-This is a short description of python regular expression, for more information, see the regular expression syntax section of the Python Library Reference.  Some of the regular expression syntax used in this function is:
-
-    - '[]':  A sequence or set of characters to match to a single character.  For example, '[Nn]ewton' will match both 'Newton' and 'newton'.
-
-    - '^':  Match the start of the string.
-
-    - '$':  Match the end of the string.  For example, '^[Ll][Mm]$' will match 'lm' and 'LM' but will not match if characters are placed either before or after these strings.
-
-To select a minimisation algorithm, set the argument to a string which matches the given pattern.
-
-
-Unconstrained line search methods::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Minimisation algorithm            | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Back-and-forth coordinate descent | '^[Cc][Dd]$' or '^[Cc]oordinate[ _-][Dd]escent$'    |
-    |                                   |                                                     |
-    | Steepest descent                  | '^[Ss][Dd]$' or '^[Ss]teepest[ _-][Dd]escent$'      |
-    |                                   |                                                     |
-    | Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
-    |                                   |                                                     |
-    | Newton                            | '^[Nn]ewton$'                                       |
-    |                                   |                                                     |
-    | Newton-CG                         | '^[Nn]ewton[ _-][Cc][Gg]$' or '^[Nn][Cc][Gg]$'      |
-    |___________________________________|_____________________________________________________|
-
-
-Unconstrained trust-region methods::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Minimisation algorithm            | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Cauchy point                      | '^[Cc]auchy'                                        |
-    |                                   |                                                     |
-    | Dogleg                            | '^[Dd]ogleg'                                        |
-    |                                   |                                                     |
-    | CG-Steihaug                       | '^[Cc][Gg][-_ ][Ss]teihaug' or '^[Ss]teihaug'       |
-    |                                   |                                                     |
-    | Exact trust region                | '^[Ee]xact'                                         |
-    |___________________________________|_____________________________________________________|
-
-
-Unconstrained conjugate gradient methods::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Minimisation algorithm            | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Fletcher-Reeves                   | '^[Ff][Rr]$' or '^[Ff]letcher[-_ ][Rr]eeves$'       |
-    |                                   |                                                     |
-    | Polak-Ribiere                     | '^[Pp][Rr]$' or '^[Pp]olak[-_ ][Rr]ibiere$'         |
-    |                                   |                                                     |
-    | Polak-Ribiere +                   | '^[Pp][Rr]\+$' or '^[Pp]olak[-_ ][Rr]ibiere\+$'     |
-    |                                   |                                                     |
-    | Hestenes-Stiefel                  | '^[Hh][Ss]$' or '^[Hh]estenes[-_ ][Ss]tiefel$'      |
-    |___________________________________|_____________________________________________________|
-
-
-Miscellaneous unconstrained methods::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Minimisation algorithm            | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Simplex                           | '^[Ss]implex$'                                      |
-    |                                   |                                                     |
-    | Levenberg-Marquardt               | '^[Ll][Mm]$' or '^[Ll]evenburg-[Mm]arquardt$'       |
-    |___________________________________|_____________________________________________________|
-
-
-Global minimisation methods::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Minimisation algorithm            | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Simulated Annealing               | '^[Ss][Aa]$' or '^[Ss]imulated [Aa]nnealing$'       |
-    |___________________________________|_____________________________________________________|
-"""],
-["Minimisation options", """
-The minimisation options can be given in any order.
-
-
-Line search algorithms.  These are used in the line search methods and the conjugate gradient methods.  The default is the Backtracking line search.  The algorithms are::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Line search algorithm             | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Backtracking line search          | '^[Bb]ack'                                          |
-    |                                   |                                                     |
-    | Nocedal and Wright interpolation  | '^[Nn][Ww][Ii]' or                                  |
-    | based line search                 | '^[Nn]ocedal[ _][Ww]right[ _][Ii]nt'                |
-    |                                   |                                                     |
-    | Nocedal and Wright line search    | '^[Nn][Ww][Ww]' or                                  |
-    | for the Wolfe conditions          | '^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe'              |
-    |                                   |                                                     |
-    | More and Thuente line search      | '^[Mm][Tt]' or '^[Mm]ore[ _][Tt]huente$'            |
-    |                                   |                                                     |
-    | No line search                    | '^[Nn]o [Ll]ine [Ss]earch$'                         |
-    |___________________________________|_____________________________________________________|
-
-
-
-Hessian modifications.  These are used in the Newton, Dogleg, and Exact trust region algorithms::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Hessian modification              | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Unmodified Hessian                | '^[Nn]o [Hh]essian [Mm]od'                          |
-    |                                   |                                                     |
-    | Eigenvalue modification           | '^[Ee]igen'                                         |
-    |                                   |                                                     |
-    | Cholesky with added multiple of   | '^[Cc]hol'                                          |
-    | the identity                      |                                                     |
-    |                                   |                                                     |
-    | The Gill, Murray, and Wright      | '^[Gg][Mm][Ww]$'                                    |
-    | modified Cholesky algorithm       |                                                     |
-    |                                   |                                                     |
-    | The Schnabel and Eskow 1999       | '^[Ss][Ee]99'                                       |
-    | algorithm                         |                                                     |
-    |___________________________________|_____________________________________________________|
-
-
-
-Hessian type, these are used in a few of the trust region methods including the Dogleg and Exact trust region algorithms.  In these cases, when the Hessian type is set to Newton, a Hessian modification can also be supplied as above.  The default Hessian type is Newton, and the default Hessian modification when Newton is selected is the GMW algorithm::
-    ___________________________________________________________________________________________
-    |                                   |                                                     |
-    | Hessian type                      | Patterns                                            |
-    |___________________________________|_____________________________________________________|
-    |                                   |                                                     |
-    | Quasi-Newton BFGS                 | '^[Bb][Ff][Gg][Ss]$'                                |
-    |                                   |                                                     |
-    | Newton                            | '^[Nn]ewton$'                                       |
-    |___________________________________|_____________________________________________________|
-
-
-For Newton minimisation, the default line search algorithm is the More and Thuente line search, while the default Hessian modification is the GMW algorithm.
-"""]
-]
-uf.prompt_examples = """
-To apply Newton minimisation together with the GMW81 Hessian modification algorithm, the
-More and Thuente line search algorithm, a function tolerance of 1e-25, no gradient
-tolerance, a maximum of 10,000,000 iterations, constraints turned on to limit parameter
-values, and have normal printout, type any combination of:
-
-relax> minimise('newton')
-relax> minimise('Newton')
-relax> minimise('newton', 'gmw')
-relax> minimise('newton', 'mt')
-relax> minimise('newton', 'gmw', 'mt')
-relax> minimise('newton', 'mt', 'gmw')
-relax> minimise('newton', func_tol=1e-25)
-relax> minimise('newton', func_tol=1e-25, grad_tol=None)
-relax> minimise('newton', max_iter=1e7)
-relax> minimise('newton', constraints=True, max_iter=1e7)
-relax> minimise('newton', verbosity=1)
-
-To use constrained Simplex minimisation with a maximum of 5000 iterations, type:
-
-relax> minimise('simplex', constraints=True, max_iter=5000)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will perform an optimisation starting from the current parameter values.  This is only suitable for data pipe types which have target functions and hence support optimisation.")
+# Diagonal scaling.
+uf.desc.append(Desc_container("Diagonal scaling"))
+uf.desc[-1].add_paragraph("Diagonal scaling is the transformation of parameter values such that each value has a similar order of magnitude.  Certain minimisation techniques, for example the trust region methods, perform extremely poorly with badly scaled problems.  In addition, methods which are insensitive to scaling such as Newton minimisation may still benefit due to the minimisation of round off errors.")
+uf.desc[-1].add_paragraph("In Model-free analysis for example, if S2 = 0.5, te = 200 ps, and Rex = 15 1/s at 600 MHz, the unscaled parameter vector would be [0.5, 2.0e-10, 1.055e-18].  Rex is divided by (2 * pi * 600,000,000)**2 to make it field strength independent.  The scaling vector for this model may be something like [1.0, 1e-9, 1/(2 * pi * 6e8)**2].  By dividing the unscaled parameter vector by the scaling vector the scaled parameter vector is [0.5, 0.2, 15.0].  To revert to the original unscaled parameter vector, the scaled parameter vector and scaling vector are multiplied.")
+# Minimisation algorithms.
+uf.desc.append(Desc_container("Minimisation algorithms"))
+uf.desc[-1].add_paragraph("A minimisation function is selected if the minimisation algorithm argument, which should be a string, matches a certain pattern.  Because the python regular expression 'match' statement is used, various strings can be supplied to select the same minimisation algorithm.  Below is a list of the minimisation algorithms available together with the corresponding patterns.")
+uf.desc[-1].add_paragraph("This is a short description of python regular expression, for more information, see the regular expression syntax section of the Python Library Reference.  Some of the regular expression syntax used in this function is:")
+uf.desc[-1].add_item_list_element("'[]'", "A sequence or set of characters to match to a single character.  For example, '[Nn]ewton' will match both 'Newton' and 'newton'.")
+uf.desc[-1].add_item_list_element("'^'", "Match the start of the string.")
+uf.desc[-1].add_item_list_element("'$'", "Match the end of the string.  For example, '^[Ll][Mm]$' will match 'lm' and 'LM' but will not match if characters are placed either before or after these strings.")
+uf.desc[-1].add_paragraph("To select a minimisation algorithm, set the argument to a string which matches the given pattern.")
+uf.desc[-1].add_paragraph("Unconstrained line search methods:")
+uf.desc[-1].add_table_titles(["Minimisation algorithm", "Patterns"])
+uf.desc[-1].add_table_row(["Back-and-forth coordinate descent", "'^[Cc][Dd]$' or '^[Cc]oordinate[ _-][Dd]escent$'"])
+uf.desc[-1].add_table_row(["Steepest descent", "'^[Ss][Dd]$' or '^[Ss]teepest[ _-][Dd]escent$'"])
+uf.desc[-1].add_table_row(["Quasi-Newton BFGS", "'^[Bb][Ff][Gg][Ss]$'"])
+uf.desc[-1].add_table_row(["Newton", "'^[Nn]ewton$'"])
+uf.desc[-1].add_table_row(["Newton-CG", "'^[Nn]ewton[ _-][Cc][Gg]$' or '^[Nn][Cc][Gg]$'"])
+uf.desc[-1].add_paragraph("Unconstrained trust-region methods:")
+uf.desc[-1].add_table_titles(["Minimisation algorithm", "Patterns"])
+uf.desc[-1].add_table_row(["Cauchy point", "'^[Cc]auchy'"])
+uf.desc[-1].add_table_row(["Dogleg", "'^[Dd]ogleg'"])
+uf.desc[-1].add_table_row(["CG-Steihaug", "'^[Cc][Gg][-_ ][Ss]teihaug' or '^[Ss]teihaug'"])
+uf.desc[-1].add_table_row(["Exact trust region", "'^[Ee]xact'"])
+uf.desc[-1].add_paragraph("Unconstrained conjugate gradient methods:")
+uf.desc[-1].add_table_titles(["Minimisation algorithm", "Patterns"])
+uf.desc[-1].add_table_row(["Fletcher-Reeves", "'^[Ff][Rr]$' or '^[Ff]letcher[-_ ][Rr]eeves$'"])
+uf.desc[-1].add_table_row(["Polak-Ribiere", "'^[Pp][Rr]$' or '^[Pp]olak[-_ ][Rr]ibiere$'"])
+uf.desc[-1].add_table_row(["Polak-Ribiere +", "'^[Pp][Rr]\+$' or '^[Pp]olak[-_ ][Rr]ibiere\+$'"])
+uf.desc[-1].add_table_row(["Hestenes-Stiefel", "'^[Hh][Ss]$' or '^[Hh]estenes[-_ ][Ss]tiefel$'"])
+uf.desc[-1].add_paragraph("Miscellaneous unconstrained methods:")
+uf.desc[-1].add_table_titles(["Minimisation algorithm", "Patterns"])
+uf.desc[-1].add_table_row(["Simplex", "'^[Ss]implex$'"])
+uf.desc[-1].add_table_row(["Levenberg-Marquardt", "'^[Ll][Mm]$' or '^[Ll]evenburg-[Mm]arquardt$'"])
+uf.desc[-1].add_paragraph("Global minimisation methods:")
+uf.desc[-1].add_table_titles(["Minimisation algorithm", "Patterns"])
+uf.desc[-1].add_table_row(["Simulated Annealing", "'^[Ss][Aa]$' or '^[Ss]imulated [Aa]nnealing$'"])
+# Minimisation options.
+uf.desc.append(Desc_container("Minimisation options"))
+uf.desc[-1].add_paragraph("The minimisation options can be given in any order.")
+uf.desc[-1].add_paragraph("Line search algorithms.  These are used in the line search methods and the conjugate gradient methods.  The default is the Backtracking line search.  The algorithms are:")
+uf.desc[-1].add_table_titles(["Line search algorithm", "Patterns"])
+uf.desc[-1].add_table_row(["Backtracking line search", "'^[Bb]ack'"])
+uf.desc[-1].add_table_row(["Nocedal and Wright interpolation based line search", "'^[Nn][Ww][Ii]' or '^[Nn]ocedal[ _][Ww]right[ _][Ii]nt'"])
+uf.desc[-1].add_table_row(["Nocedal and Wright line search for the Wolfe conditions", "'^[Nn][Ww][Ww]' or '^[Nn]ocedal[ _][Ww]right[ _][Ww]olfe'"])
+uf.desc[-1].add_table_row(["More and Thuente line search", "'^[Mm][Tt]' or '^[Mm]ore[ _][Tt]huente$'"])
+uf.desc[-1].add_table_row(["No line search", "'^[Nn]o [Ll]ine [Ss]earch$'"])
+uf.desc[-1].add_paragraph("Hessian modifications.  These are used in the Newton, Dogleg, and Exact trust region algorithms:")
+uf.desc[-1].add_table_titles(["Hessian modification", "Patterns"])
+uf.desc[-1].add_table_row(["Unmodified Hessian", "'^[Nn]o [Hh]essian [Mm]od'"])
+uf.desc[-1].add_table_row(["Eigenvalue modification", "'^[Ee]igen'"])
+uf.desc[-1].add_table_row(["Cholesky with added multiple of the identity", "'^[Cc]hol'"])
+uf.desc[-1].add_table_row(["The Gill, Murray, and Wright modified Cholesky algorithm", "'^[Gg][Mm][Ww]$'"])
+uf.desc[-1].add_table_row(["The Schnabel and Eskow 1999 algorithm", "'^[Ss][Ee]99'"])
+uf.desc[-1].add_paragraph("Hessian type, these are used in a few of the trust region methods including the Dogleg and Exact trust region algorithms.  In these cases, when the Hessian type is set to Newton, a Hessian modification can also be supplied as above.  The default Hessian type is Newton, and the default Hessian modification when Newton is selected is the GMW algorithm:")
+uf.desc[-1].add_table_titles(["Hessian type", "Patterns"])
+uf.desc[-1].add_table_row(["Quasi-Newton BFGS", "'^[Bb][Ff][Gg][Ss]$'"])
+uf.desc[-1].add_table_row(["Newton", "'^[Nn]ewton$'"])
+uf.desc[-1].add_paragraph("For Newton minimisation, the default line search algorithm is the More and Thuente line search, while the default Hessian modification is the GMW algorithm.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To apply Newton minimisation together with the GMW81 Hessian modification algorithm, the More and Thuente line search algorithm, a function tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints turned on to limit parameter values, and have normal printout, type any combination of:")
+uf.desc[-1].add_prompt("relax> minimise('newton')")
+uf.desc[-1].add_prompt("relax> minimise('Newton')")
+uf.desc[-1].add_prompt("relax> minimise('newton', 'gmw')")
+uf.desc[-1].add_prompt("relax> minimise('newton', 'mt')")
+uf.desc[-1].add_prompt("relax> minimise('newton', 'gmw', 'mt')")
+uf.desc[-1].add_prompt("relax> minimise('newton', 'mt', 'gmw')")
+uf.desc[-1].add_prompt("relax> minimise('newton', func_tol=1e-25)")
+uf.desc[-1].add_prompt("relax> minimise('newton', func_tol=1e-25, grad_tol=None)")
+uf.desc[-1].add_prompt("relax> minimise('newton', max_iter=1e7)")
+uf.desc[-1].add_prompt("relax> minimise('newton', constraints=True, max_iter=1e7)")
+uf.desc[-1].add_prompt("relax> minimise('newton', verbosity=1)")
+uf.desc[-1].add_paragraph("To use constrained Simplex minimisation with a maximum of 5000 iterations, type:")
+uf.desc[-1].add_prompt("relax> minimise('simplex', constraints=True, max_iter=5000)")
 uf.backend = minimise.minimise
 uf.menu_text = "&minimise"
 uf.gui_icon = "relax.minimise"
