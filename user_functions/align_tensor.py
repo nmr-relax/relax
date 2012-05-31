@@ -76,8 +76,10 @@ uf.add_keyarg(
     wiz_combo_iter = pipes.pipe_names,
     can_be_none = True
 )
+# Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will copy the alignment tensor data to a new tensor or a new data pipe.  The destination data pipe must not contain any alignment tensor data corresponding to the tensor_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will default to the current data pipe.  Both the tensor_from and tensor_to arguments must be supplied.")
+# Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To copy the alignment tensor data corresponding to 'Pf1' from the data pipe 'old' to the current data pipe, type one of:")
 uf.desc[-1].add_prompt("relax> align_tensor.copy('Pf1', 'old')")
@@ -246,36 +248,26 @@ uf.add_keyarg(
     desc_short = "errors flag",
     desc = "A flag which determines if the alignment tensor data or its errors are being input."
 )
-uf.desc = """
-Using this function, the alignment tensor data can be set up.  The params argument should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor, which can be specified by the param_types argument, where the values correspond to:
-
-    0:  {Sxx, Syy, Sxy, Sxz, Syz}  (unitless),
-    1:  {Szz, Sxx-yy, Sxy, Sxz, Syz}  (Pales default format),
-    2:  {Axx, Ayy, Axy, Axz, Ayz}  (unitless),
-    3:  {Azz, Axx-yy, Axy, Axz, Ayz}  (unitless),
-    4:  {Axx, Ayy, Axy, Axz, Ayz}  (units of Hertz),
-    5:  {Azz, Axx-yy, Axy, Axz, Ayz}  (units of Hertz),
-    6:  {Pxx, Pyy, Pxy, Pxz, Pyz}  (unitless),
-    7:  {Pzz, Pxx-yy, Pxy, Pxz, Pyz}  (unitless),
-
-Other formats may be added later.  The relationship between the Saupe order matrix S and the alignment tensor A is
-
-    S = 3/2 A.
-
-The probability matrix P is related to the alignment tensor A by
-
-    A = P - 1/3 I,
-
-where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond vectors must all be of equal length.
-"""
-uf.prompt_examples = """
-To set a rhombic tensor to the run 'CaM', type one of:
-
-relax> align_tensor.init('super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
-                         2.8599e-04), param_types=1)
-relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04,
-                         -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)
-"""
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Using this function, the alignment tensor data can be set up.  The params argument should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor, which can be specified by the param_types argument, where the values correspond to:")
+uf.desc[-1].add_item_list_element("0", "{Sxx, Syy, Sxy, Sxz, Syz}  (unitless),")
+uf.desc[-1].add_item_list_element("1", "{Szz, Sxx-yy, Sxy, Sxz, Syz}  (Pales default format),")
+uf.desc[-1].add_item_list_element("2", "{Axx, Ayy, Axy, Axz, Ayz}  (unitless),")
+uf.desc[-1].add_item_list_element("3", "{Azz, Axx-yy, Axy, Axz, Ayz}  (unitless),")
+uf.desc[-1].add_item_list_element("4", "{Axx, Ayy, Axy, Axz, Ayz}  (units of Hertz),")
+uf.desc[-1].add_item_list_element("5", "{Azz, Axx-yy, Axy, Axz, Ayz}  (units of Hertz),")
+uf.desc[-1].add_item_list_element("6", "{Pxx, Pyy, Pxy, Pxz, Pyz}  (unitless),")
+uf.desc[-1].add_item_list_element("7", "{Pzz, Pxx-yy, Pxy, Pxz, Pyz}  (unitless).")
+uf.desc[-1].add_paragraph("Other formats may be added later.  The relationship between the Saupe order matrix S and the alignment tensor A is")
+uf.desc[-1].add_verbatim("    S = 3/2 A.")
+uf.desc[-1].add_paragraph("The probability matrix P is related to the alignment tensor A by")
+uf.desc[-1].add_verbatim("    A = P - 1/3 I,")
+uf.desc[-1].add_paragraph("where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond vectors must all be of equal length.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set a rhombic tensor to the run 'CaM', type one of:")
+uf.desc[-1].add_prompt("relax> align_tensor.init('super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
+uf.desc[-1].add_prompt("relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
 uf.backend = align_tensor.init
 uf.menu_text = "&init"
 uf.wizard_size = (800, 600)
