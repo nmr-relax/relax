@@ -277,14 +277,27 @@ class Uf_object(object):
                 # Loop over the elements.
                 for type, element in self._desc[i].element_loop():
                     # A paragraph or verbatim text.
-                    if type in ['paragraph', 'verbatim']:
+                    if type == 'paragraph':
                         doc += format_text(element) + '\n'
+
+                    # Verbatim text.
+                    elif type == 'verbatim':
+                        doc += element + '\n\n'
 
                     # A list.
                     elif type == 'list':
                         # Loop over the list elements.
                         for j in range(len(element)):
                             doc += format_text("    - %s" % element[j])
+
+                        # Final newline.
+                        doc += '\n'
+
+                    # An itemised list.
+                    elif type == 'item list':
+                        # Loop over the list elements.
+                        for j in range(len(element)):
+                            doc += format_text("    %s:  %s" % (element[j][0], element[j][1]))
 
                         # Final newline.
                         doc += '\n'
