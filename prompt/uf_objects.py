@@ -25,7 +25,7 @@
 
 # relax module imports.
 import arg_check
-from prompt.uf_docstring import bold_text, build_subtitle, format_text
+from prompt.uf_docstring import bold_text, build_subtitle, create_table, format_text
 from prompt.help import relax_class_help
 from relax_errors import RelaxError
 from relax_string import strip_lead
