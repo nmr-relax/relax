@@ -133,18 +133,14 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will show all information relating to the alignment tensor, including the different tensor forms:
-
-    - Probability tensor.
-    - Saupe order matrix.
-    - Alignment tensor.
-    - Magnetic susceptibility tensor.
-
-All possible tensor parameters and information will also be shown (Eigensystem, GDO, Aa, Ar, R, eta, chi_ax, chi_rh, etc).  The printout will be extensive.
-
-If no tensor is specified, all tensors will be displayed.
-"""
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will show all information relating to the alignment tensor, including the different tensor forms:")
+uf.desc[-1].add_list_element("Probability tensor.")
+uf.desc[-1].add_list_element("Saupe order matrix.")
+uf.desc[-1].add_list_element("Alignment tensor.")
+uf.desc[-1].add_list_element("Magnetic susceptibility tensor.")
+uf.desc[-1].add_paragraph("All possible tensor parameters and information will also be shown (Eigensystem, GDO, Aa, Ar, R, eta, chi_ax, chi_rh, etc).  The printout will be extensive.")
+uf.desc[-1].add_paragraph("If no tensor is specified, all tensors will be displayed.")
 uf.backend = align_tensor.display
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
