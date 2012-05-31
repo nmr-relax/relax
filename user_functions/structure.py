@@ -451,7 +451,6 @@ uf.title = "Load spins from the structure into the relax data store."
 uf.title_short = "Loading spins from structure."
 uf.add_keyarg(
     name = "spin_id",
-    default = "@N",
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "spin ID string",
