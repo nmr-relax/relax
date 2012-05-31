@@ -89,7 +89,18 @@ class Class_container(object):
         doc += build_subtitle("User functions")
         doc += "This class contains the following user functions:\n\n"
         for uf_name, uf in uf_info.uf_loop(self._name):
-            doc += "    - %s\n" % uf_name
+            # The unformatted text.
+            text = "    %s:  %s" % (uf_name, uf.title)
+
+            # Format.
+            text = format_text(text)
+
+            # Replace the arg text with bold text.
+            length = 7 + len(uf_name)
+            text = "    %s:  %s" % (bold_text(uf_name), text[length:])
+
+            # Add to the docstring.
+            doc += "%s\n" % text
 
         # Return the documentation.
         return doc
