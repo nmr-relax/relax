@@ -30,6 +30,7 @@ import opendx.main
 from prompt.doc_string import docs
 from specific_fns.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -73,9 +74,9 @@ uf.add_keyarg(
     desc_short = "visual program execution flag",
     desc = "A flag specifying whether to execute the visual program automatically at start-up.  The default of True causes the program to be executed."
 )
-uf.desc = """
-This will execute OpenDX to display the space maps created previously by the dx.map user function.  This will work for any type of OpenDX map.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will execute OpenDX to display the space maps created previously by the dx.map user function.  This will work for any type of OpenDX map.")
 uf.backend = opendx.main.run
 uf.menu_text = "&execute"
 uf.gui_icon = "oxygen.categories.applications-education"
@@ -181,41 +182,25 @@ uf.add_keyarg(
     desc = "A user supplied remapping function.  This function will receive the parameter array and must return an array of equal length.",
     can_be_none = True
 )
-uf.desc = """
-This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:
-_____________________________________________________________________________
-|                                           |                               |
-| Surface type                              | Name                          |
-|___________________________________________|_______________________________|
-|                                           |                               |
-| 3D isosurface                             | 'Iso3D'                       |
-|___________________________________________|_______________________________|
-"""
-uf.additional = [
-    docs.regexp.doc,
-    diffusion_tensor.__return_data_name_prompt_doc__,
-    Model_free.return_data_name_doc
-]
-uf.prompt_examples = """
-The following commands will generate a map of the extended model-free space for model 'm5'
-consisting of the parameters {S2, S2f, ts}.  Files will be output into the
-directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and
-residue number 6 will be mapped.
-
-relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6')
-relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')
-relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')
-relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20,
-              file_prefix='map', dir='dx')
-
-
-To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te,
-Rex}, name the results 'test', and to place the files in the current directory, use one of
-the following commands:
-
-relax> dx.map(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)
-relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:")
+uf.desc[-1].add_table_titles(["Surface type", "Name"])
+uf.desc[-1].add_table_row(["3D isosurface", "'Iso3D'"])
+# Additional.
+uf.desc.append(docs.regexp.doc)
+uf.desc.append(diffusion_tensor.__return_data_name_prompt_doc__)
+uf.desc.append(Model_free.return_data_name_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following commands will generate a map of the extended model-free space for model 'm5' consisting of the parameters {S2, S2f, ts}.  Files will be output into the directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and residue number 6 will be mapped.")
+uf.desc[-1].add_prompt("relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6')")
+uf.desc[-1].add_prompt("relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')")
+uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')")
+uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20, file_prefix='map', dir='dx')")
+uf.desc[-1].add_paragraph("To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te, Rex}, name the results 'test', and to place the files in the current directory, use one of the following commands:")
+uf.desc[-1].add_prompt("relax> dx.map(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)")
+uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)")
 uf.backend = opendx.main.map
 uf.menu_text = "&map"
 uf.gui_icon = "relax.grid_search"
