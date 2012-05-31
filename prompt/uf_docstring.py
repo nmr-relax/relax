@@ -56,24 +56,32 @@ def bold_text(text):
     return new_text
 
 
-def build_subtitle(text, bold=True):
+def build_subtitle(text, bold=True, start_nl=True):
     """Create the formatted subtitle string.
 
     @param text:        The name of the subtitle.
     @type text:         str
-    @keyword colour:    A flag which if true will return bold text.  Otherwise an underlined title will be returned.
-    @type colour:       bool
+    @keyword bold:      A flag which if true will return bold text.  Otherwise an underlined title will be returned.
+    @type bold:         bool
+    @keyword start_nl:  A flag which if True will add a newline to the start of the text.
+    @type start_nl:     bool
     @return:            The formatted subtitle.
     @rtype:             str
     """
 
+    # Starting newline.
+    if start_nl:
+        new = "\n"
+    else:
+        new = ""
+
     # Bold.
     if bold:
-        new = "\n%s\n\n" % bold_text(text)
+        new += "%s\n\n" % bold_text(text)
 
     # Underline.
     else:
-        new = "\n%s\n%s\n\n" % (text, "~"*len(text))
+        new += "%s\n%s\n\n" % (text, "~"*len(text))
 
     # Return the subtitle.
     return new

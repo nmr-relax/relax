@@ -233,7 +233,7 @@ class Uf_object(object):
         doc = ""
 
         # A title.
-        doc += build_subtitle("The %s user function." % self._name)
+        doc += build_subtitle("The %s user function." % self._name, start_nl=False)
 
         # The synopsis.
         doc += build_subtitle("Synopsis")
