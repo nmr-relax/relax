@@ -27,6 +27,7 @@
 from graphics import WIZARD_IMAGE_PATH
 from generic_fns import align_tensor, pipes
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -75,29 +76,18 @@ uf.add_keyarg(
     wiz_combo_iter = pipes.pipe_names,
     can_be_none = True
 )
-uf.desc = """
-This will copy the alignment tensor data to a new tensor or a new data pipe.  The destination data pipe must not contain any alignment tensor data corresponding to the tensor_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will default to the current data pipe.  Both the tensor_from and tensor_to arguments must be supplied.
-"""
-uf.prompt_examples = """
-To copy the alignment tensor data corresponding to 'Pf1' from the data pipe 'old' to the
-current data pipe, type one of:
-
-relax> align_tensor.copy('Pf1', 'old')
-relax> align_tensor.copy(tensor_from='Pf1', pipe_from='old')
-
-
-To copy the alignment tensor data corresponding to 'Otting' from the current data pipe to
-the data pipe new, type one of:
-
-relax> align_tensor.copy('Otting', pipe_to='new')
-relax> align_tensor.copy(tensor_from='Otting', pipe_to='new')
-
-
-To copy the alignment tensor data of 'Otting' to that of 'Otting new', type one of:
-
-relax> align_tensor.copy('Otting', tensor_to='Otting new')
-relax> align_tensor.copy(tensor_from='Pf1', tensor_to='Otting new')
-"""
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will copy the alignment tensor data to a new tensor or a new data pipe.  The destination data pipe must not contain any alignment tensor data corresponding to the tensor_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will default to the current data pipe.  Both the tensor_from and tensor_to arguments must be supplied.")
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the alignment tensor data corresponding to 'Pf1' from the data pipe 'old' to the current data pipe, type one of:")
+uf.desc[-1].add_prompt("relax> align_tensor.copy('Pf1', 'old')")
+uf.desc[-1].add_prompt("relax> align_tensor.copy(tensor_from='Pf1', pipe_from='old')")
+uf.desc[-1].add_paragraph("To copy the alignment tensor data corresponding to 'Otting' from the current data pipe to the data pipe new, type one of:")
+uf.desc[-1].add_prompt("relax> align_tensor.copy('Otting', pipe_to='new')")
+uf.desc[-1].add_prompt("relax> align_tensor.copy(tensor_from='Otting', pipe_to='new')")
+uf.desc[-1].add_paragraph("To copy the alignment tensor data of 'Otting' to that of 'Otting new', type one of:")
+uf.desc[-1].add_prompt("relax> align_tensor.copy('Otting', tensor_to='Otting new')")
+uf.desc[-1].add_prompt("relax> align_tensor.copy(tensor_from='Pf1', tensor_to='Otting new')")
 uf.backend = align_tensor.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
