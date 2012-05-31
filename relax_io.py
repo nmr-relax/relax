@@ -47,7 +47,6 @@ from warnings import warn
 
 # relax module imports.
 import generic_fns
-from generic_fns.mol_res_spin import generate_spin_id_data_array, spin_id_to_data_list
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
 
@@ -557,7 +556,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
                 warn(RelaxWarning("Invalid spin ID, skipping the line %s" % line))
                 continue
 
-            mol_name, res_num, res_name, spin_num, spin_name = spin_id_to_data_list(line[spin_id_col-1])
+            mol_name, res_num, res_name, spin_num, spin_name = generic_fns.mol_res_spin.spin_id_to_data_list(line[spin_id_col-1])
 
         # Convert the spin data.
         else:
