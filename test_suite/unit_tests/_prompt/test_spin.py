@@ -268,7 +268,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.name, spin_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.name, name='N', spin_id=data[1])
 
 
     def test_name_argfail_name(self):
