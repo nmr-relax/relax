@@ -354,5 +354,8 @@ class Uf_object(object):
         # The end.
         text += ")"
 
+        # Wrap the text.
+        text = format_text(text)
+
         # Return the text.
         return text
