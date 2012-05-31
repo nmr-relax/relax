@@ -86,7 +86,7 @@ class Class_container(object):
             doc += "\n\n%s\n" % strip_lead(self.__description__)
 
         # The member user functions.
-        doc += build_subtitle("User functions")
+        doc += build_subtitle("Contents")
         doc += "This class contains the following user functions:\n\n"
         for uf_name, uf in uf_info.uf_loop(self._name):
             # The unformatted text.
