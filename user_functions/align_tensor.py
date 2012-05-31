@@ -111,9 +111,9 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will delete the specified alignment tensor data from the current data pipe.  If no tensor is specified, all tensors will be deleted.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will delete the specified alignment tensor data from the current data pipe.  If no tensor is specified, all tensors will be deleted.")
 uf.backend = align_tensor.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -171,9 +171,8 @@ uf.add_keyarg(
     desc_short = "fixed flag",
     desc = "The flag specifying if the tensors should be fixed or variable."
 )
-uf.desc = """
-If the ID string is left unset, then all alignment tensors will be fixed.
-"""
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("If the ID string is left unset, then all alignment tensors will be fixed.")
 uf.backend = align_tensor.fix
 uf.menu_text = "&fix"
 uf.gui_icon = "oxygen.status.object-locked"
@@ -300,9 +299,9 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will calculate the angles between all loaded alignment tensors for the current data pipe.  The matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent on the basis set.  If the basis_set argument is set to the default of 0, the vectors {Sxx, Syy, Sxy, Sxz, Syz} are used.  If the basis_set argument is set to 1, the vectors {Szz, Sxxyy, Sxy, Sxz, Syz} are used instead.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will calculate the angles between all loaded alignment tensors for the current data pipe.  The matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent on the basis set.  If the basis_set argument is set to the default of 0, the vectors {Sxx, Syy, Sxy, Sxz, Syz} are used.  If the basis_set argument is set to 1, the vectors {Szz, Sxxyy, Sxy, Sxz, Syz} are used instead.")
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.gui_icon = "oxygen.categories.applications-education"
@@ -332,14 +331,13 @@ uf.add_keyarg(
     wiz_combo_iter = align_tensor.get_ids,
     wiz_read_only = True
 )
-uf.desc = """
-Prior to optimisation of the N-state model and Frame Order theories using alignment tensors, which tensor is a reduction of which other tensor must be specified through this user function.
-"""
-uf.prompt_examples = """
-To state that the alignment tensor loaded as 'chi3 C-dom' is a reduction of 'chi3 N-dom', type:
-
-relax> align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Prior to optimisation of the N-state model and Frame Order theories using alignment tensors, which tensor is a reduction of which other tensor must be specified through this user function.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To state that the alignment tensor loaded as 'chi3 C-dom' is a reduction of 'chi3 N-dom', type:")
+uf.desc[-1].add_prompt("relax> align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')")
 uf.backend = align_tensor.reduction
 uf.menu_text = "&reduction"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
@@ -364,14 +362,13 @@ uf.add_keyarg(
     desc_short = "domain",
     desc = "The domain label."
 )
-uf.desc = """
-Prior to optimisation of the N-state model or Frame Order theories, the domain to which each alignment tensor belongs must be specified.
-"""
-uf.prompt_examples = """
-To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
-
-relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Prior to optimisation of the N-state model or Frame Order theories, the domain to which each alignment tensor belongs must be specified.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:")
+uf.desc[-1].add_prompt("relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')")
 uf.backend = align_tensor.set_domain
 uf.menu_text = "&set_domain"
 uf.gui_icon = "oxygen.actions.edit-select"
@@ -403,11 +400,10 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will perform a singular value decomposition of all tensors loaded for the current data pipe.  If the basis_set argument is set to the default of 0, the matrix on which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz} layed out as:
-
------
-
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will perform a singular value decomposition of all tensors loaded for the current data pipe.  If the basis_set argument is set to the default of 0, the matrix on which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz} layed out as:")
+uf.desc[-1].add_verbatim("""
     | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
     | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
     | Sxx3 Syy3 Sxy3 Sxz3 Syz3 |
@@ -415,13 +411,9 @@ This will perform a singular value decomposition of all tensors loaded for the c
     |  .    .    .    .    .   |
     |  .    .    .    .    .   |
     | SxxN SyyN SxyN SxzN SyzN |
-
------
-
-If basis_set is set to 1, the geometric basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.  The matrix is:
-
------
-
+""")
+uf.desc[-1].add_paragraph("If basis_set is set to 1, the geometric basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.  The matrix is:")
+uf.desc[-1].add_verbatim("""
     | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
     | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
     | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
@@ -429,20 +421,13 @@ If basis_set is set to 1, the geometric basis set consisting of the stretching a
     |  .     .     .    .    .   |
     |  .     .     .    .    .   |
     | SzzN SxxyyN SxyN SxzN SyzN |
-
------
-
-The relationships between the geometric and unitary basis sets are:
-
------
-
+""")
+uf.desc[-1].add_paragraph("The relationships between the geometric and unitary basis sets are:")
+uf.desc[-1].add_verbatim("""
     Szz = - Sxx - Syy,
     Sxxyy = Sxx - Syy,
-
------
-
-The SVD values and condition number are dependent upon the basis set chosen.
-"""
+""")
+uf.desc[-1].add_paragraph("The SVD values and condition number are dependent upon the basis set chosen.")
 uf.backend = align_tensor.svd
 uf.menu_text = "s&vd"
 uf.gui_icon = "oxygen.categories.applications-education"
