@@ -99,6 +99,25 @@ class Desc_container(object):
         self._types = []
 
 
+    def add_item_list_element(self, item, text):
+        """Add the element of an itemised list to the description.
+
+        @param item:    The item text.
+        @type item:     str
+        @param text:    The itemised list element text.
+        @type text:     str
+        """
+
+        # Create a new block if needed.
+        if self._types[-1] != 'item list':
+            self._data.append([[item, text]])
+            self._types.append('item list')
+
+        # Append the element to an existing itemised list structure.
+        else:
+            self._data[-1].append([item, text])
+
+
     def add_list_element(self, text):
         """Add the element of a list to the description.
 
