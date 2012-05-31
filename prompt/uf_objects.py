@@ -280,6 +280,15 @@ class Uf_object(object):
                     if type in ['paragraph', 'verbatim']:
                         doc += format_text(element) + '\n'
 
+                    # A list.
+                    elif type == 'list':
+                        # Loop over the list elements.
+                        for j in range(len(element)):
+                            doc += format_text("    - %s" % element[j])
+
+                        # Final newline.
+                        doc += '\n'
+
                     # A table.
                     elif type == 'table':
                         doc += create_table(element) + '\n'
