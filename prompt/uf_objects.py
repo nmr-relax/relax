@@ -30,6 +30,7 @@ from prompt.help import relax_class_help
 from relax_errors import RelaxError
 from relax_string import strip_lead
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Class_container(object):
@@ -77,11 +78,18 @@ class Class_container(object):
         # Usage help string.
         doc += build_subtitle("Usage")
         doc += format_text(relax_class_help)
+        doc += "\n"
 
         # Add a description to the help string.
         if hasattr(self, '__description__'):
             doc += build_subtitle("Description")
-            doc += "\n\n%s" % strip_lead(self.__description__)
+            doc += "\n\n%s\n" % strip_lead(self.__description__)
+
+        # The member user functions.
+        doc += build_subtitle("User functions")
+        doc += "This class contains the following user functions:\n\n"
+        for uf_name, uf in uf_info.uf_loop(self._name):
+            doc += "    - %s\n" % uf_name
 
         # Return the documentation.
         return doc
