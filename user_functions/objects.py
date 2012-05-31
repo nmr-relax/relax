@@ -81,6 +81,130 @@ class Container:
 
 
 
+class Desc_container(object):
+    """A special object for holding and processing user function description information."""
+
+    def __init__(self, title="Description"):
+        """Set up the container.
+
+        @keyword section:   The section title.
+        @type section:      str
+        """
+
+        # Store the title.
+        self._title = title
+
+        # Initialise internal storage objects.
+        self._data = []
+        self._types = []
+
+
+    def add_list_element(self, text):
+        """Add the element of a list to the description.
+
+        @param text:    The list element text.
+        @type text:     str
+        """
+
+        # Store the text.
+        self._data.append(text)
+        self._types.append('list')
+
+
+    def add_paragraph(self, text):
+        """Add a paragraph of text to the description.
+
+        @param text:    The paragraph text.
+        @type text:     str
+        """
+
+        # Store the text.
+        self._data.append(text)
+        self._types.append('paragraph')
+
+
+    def add_prompt(self, text):
+        """Add the text of a relax prompt example to the description.
+
+        @param text:    The relax prompt text.
+        @type text:     str
+        """
+
+        # Create a block  if needed.
+        if self._types[-1] != 'prompt':
+            self._data.append([text])
+            self._types.append('prompt')
+
+        # Append the example to an existing example block.
+        else:
+            self._data[-1].append(text)
+
+
+    def add_table_titles(self, titles):
+        """Add a row of table titles to the description.
+
+        @param text:    The table titles.
+        @type text:     list of str
+        """
+
+        # Create a new table.
+        self._data.append([titles])
+        self._types.append('table')
+
+
+    def add_table_row(self, row):
+        """Add a table row to the description.
+
+        @param text:    The table row.
+        @type text:     list of str
+        """
+
+        # Create a new table if needed.
+        if self._types[-1] != 'table' or len(row) != len(self._data[-1][-1]):
+            self._data.append([row])
+            self._types.append('table')
+
+        # Append the row to an existing table.
+        else:
+            self._data[-1].append(row)
+
+
+    def add_verbatim(self, text):
+        """Add a section of verbatim text to the description.
+
+        @param text:    The verbatim text.
+        @type text:     str
+        """
+
+        # Store the text.
+        self._data.append(text)
+        self._types.append('verbatim')
+
+
+    def element_loop(self):
+        """Iterator method yielding the description elements.
+
+        @return:    The element type and corresponding data. 
+        @rtype:     str and anything
+        """
+
+        # Loop over the elements.
+        for i in range(len(self._data)):
+            yield self._types[i], self._data[i]
+
+
+    def get_title(self):
+        """Return the title of the section.
+
+        @return:    The section title.
+        @rtype:     str
+        """
+
+        # The title.
+        return self._title
+
+
+
 class Uf_container(object):
     """This class is used to process and store all of the user function specific information.
 
@@ -94,8 +218,8 @@ class Uf_container(object):
     @type backend:              executable object
     @ivar display:              A flag specifying if the user function displays output to STDOUT.  This is used for certain UIs to display that output.
     @type display:              str
-    @ivar desc:                 The full, multi-paragraph description.
-    @type desc:                 str
+    @ivar desc:                 The multi-paragraph description defined via the Desc_container class.
+    @type desc:                 list of Desc_container instances
     @ivar additional:           Additional documentation, usually appended to the end of the description.
     @type additional:           list of str
     @ivar prompt_examples:      The examples of how to use the prompt front end.
@@ -145,7 +269,7 @@ class Uf_container(object):
         self.kargs = []
         self.backend = None
         self.display = False
-        self.desc = None
+        self.desc = []
         self.additional = None
         self.prompt_examples = None
         self.menu_text = ''
