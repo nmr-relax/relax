@@ -152,15 +152,21 @@ class Uf_info(object):
         return self._uf[name]
 
 
-    def uf_loop(self):
+    def uf_loop(self, uf_class=None):
         """Iterator method for looping over the user functions.
 
-        @return:    The user function name and data container.
-        @rtype:     tuple of str and Uf_container instance
+        @keyword uf_class:  If given, restrict the iterator to a user function class.
+        @type uf_class:     str or None
+        @return:            The user function name and data container.
+        @rtype:             tuple of str and Uf_container instance
         """
 
         # Loop over the user functions.
         for i in range(len(self._uf_names)):
+            # Restriction.
+            if uf_class and not search("^%s\." % uf_class, self._uf_names[i]):
+                continue
+
             yield self._uf_names[i], self._uf[self._uf_names[i]]
 
 
