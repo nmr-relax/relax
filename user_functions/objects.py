@@ -106,9 +106,14 @@ class Desc_container(object):
         @type text:     str
         """
 
-        # Store the text.
-        self._data.append(text)
-        self._types.append('list')
+        # Create a new block if needed.
+        if self._types[-1] != 'list':
+            self._data.append([text])
+            self._types.append('list')
+
+        # Append the element to an existing list structure.
+        else:
+            self._data[-1].append(text)
 
 
     def add_paragraph(self, text):
@@ -130,7 +135,7 @@ class Desc_container(object):
         @type text:     str
         """
 
-        # Create a block  if needed.
+        # Create a new block if needed.
         if self._types[-1] != 'prompt':
             self._data.append([text])
             self._types.append('prompt')
