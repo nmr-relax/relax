@@ -254,31 +254,44 @@ class Uf_object(object):
         if self._kargs != None:
             doc += build_subtitle("Keyword Arguments")
             for i in range(len(self._kargs)):
-                # The text.
-                text = "%s:  %s" % (bold_text(self._kargs[i]['name']), self._kargs[i]['desc'])
+                # The unformatted text.
+                text = "    %s:  %s" % (self._kargs[i]['name'], self._kargs[i]['desc'])
 
                 # Format.
                 text = format_text(text)
 
+                # Replace the arg text with bold text.
+                length = 7 + len(self._kargs[i]['name'])
+                text = "    %s:  %s" % (bold_text(self._kargs[i]['name']), text[length:])
+
                 # Add to the docstring.
-                doc += "    %s\n" % text
+                doc += "%s\n" % text
 
-        # Add the description.
-        if self._desc != None:
-            doc += build_subtitle("Description")
-            doc += format_text(self._desc)
+        # Add the description sections.
+        if isinstance(self._desc, list) and len(self._desc):
+            # Loop over the sections.
+            for i in range(len(self._desc)):
+                # The title.
+                doc += build_subtitle(self._desc[i].get_title())
 
-        # Add the additional sections.
-        if self._additional != None:
-            # Loop over each section.
-            for i in range(len(self._additional)):
-                doc += '\n%s' % build_subtitle(self._additional[i][0])
-                doc += format_text(self._additional[i][1])
+                # Loop over the elements.
+                for type, element in self._desc[i].element_loop():
+                    # A paragraph or verbatim text.
+                    if type in ['paragraph', 'verbatim']:
+                        doc += format_text(element) + '\n'
 
-        # Add the examples.
-        if self._examples != None:
-            doc += '\n%s' % build_subtitle("Examples")
-            doc += format_text(self._examples)
+                    # A table.
+                    elif type == 'table':
+                        doc += create_table(element) + '\n'
+
+                    # A prompt example.
+                    elif type == 'prompt':
+                        # Loop over the prompt examples.
+                        for j in range(len(element)):
+                            doc += format_text(element[j])
+
+                        # Final newline.
+                        doc += '\n'
 
         # Return the documentation.
         return doc

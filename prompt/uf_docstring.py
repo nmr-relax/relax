@@ -80,44 +80,20 @@ def build_subtitle(text, bold=True):
 
 
 def format_text(text):
-    """Format the text by stripping whitespace and wrapping.
+    """Format the line of text by wrapping.
 
-    @param text:    The text to strip and wrap.
+    @param text:    The line of text to wrap.
     @type text:     str
-    @return:        The stripped and wrapped text.
+    @return:        The wrapped text.
     @rtype:         str
     """
 
-    # First strip whitespace.
-    stripped_text = strip_lead(text)
-
-    # Remove the first characters if newlines.
-    while True:
-        if stripped_text[0] == "\n":
-            stripped_text = stripped_text[1:]
-        else:
-            break
-
-    # Remove the last character if a newline.
-    while True:
-        if stripped_text[-1] == "\n":
-            stripped_text = stripped_text[:-1]
-        else:
-            break
-
-    # Then split into lines.
-    lines = split(stripped_text, "\n")
-
     # Then wrap each line.
     new_text = ""
-    for line in lines:
-        # Empty line, so preserve.
-        if not len(line):
-            new_text = new_text + "\n"
 
-        # Wrap the line.
-        for wrapped_line in wrap(line, status.text_width):
-            new_text = new_text + wrapped_line + "\n"
+    # Wrap the line.
+    for wrapped_line in wrap(text, status.text_width):
+        new_text += wrapped_line + "\n"
 
     # Return the formatted text.
     return new_text
