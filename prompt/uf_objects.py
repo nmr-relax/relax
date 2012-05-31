@@ -46,14 +46,7 @@ class Class_container(object):
 
         # Store the args.
         self._name = name
-
-        # Build the relax help system string.
-        self.__relax_help__ = desc
-        self.__relax_help__ += "\n%s" % relax_class_help
-
-        # Add a description to the help string.
-        if hasattr(self, '__description__'):
-            self.__relax_help__ += "\n\n%s" % strip_lead(self.__description__)
+        self._desc = desc
 
 
     def __repr__(self):
@@ -61,6 +54,37 @@ class Class_container(object):
 
         # Return a description.
         return "<The %s user function class object>" % self._name
+
+
+    def _build_doc(self):
+        """Create the user function class documentation.
+
+        @return:    The user function class documentation to use in the help system.
+        @rtype:     str
+        """
+
+        # Initialise.
+        doc = ""
+
+        # The title.
+        doc += build_subtitle("The %s user function class." % self._name, start_nl=False)
+
+        # The synopsis.
+        doc += build_subtitle("Synopsis")
+        doc += self._desc
+        doc += "\n\n"
+
+        # Usage help string.
+        doc += build_subtitle("Usage")
+        doc += format_text(relax_class_help)
+
+        # Add a description to the help string.
+        if hasattr(self, '__description__'):
+            doc += build_subtitle("Description")
+            doc += "\n\n%s" % strip_lead(self.__description__)
+
+        # Return the documentation.
+        return doc
 
 
 
@@ -232,7 +256,7 @@ class Uf_object(object):
         # Initialise.
         doc = ""
 
-        # A title.
+        # The title.
         doc += build_subtitle("The %s user function." % self._name, start_nl=False)
 
         # The synopsis.

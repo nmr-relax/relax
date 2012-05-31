@@ -35,10 +35,7 @@ from status import Status; status = Status()
 # Generic string printed out for function classes.
 ##################################################
 
-relax_class_help = """
-This is a python class which contains user functions.  To list these functions, either place a
-period at the end of class name and hit the tab key, or type 'dir(class_name)'.
-"""
+relax_class_help = "This is a python class which contains user functions.  To list these functions, either place a period at the end of class name and hit the tab key, or type 'dir(class_name)'."
 
 
 # Helper classes.
