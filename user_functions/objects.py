@@ -97,6 +97,7 @@ class Desc_container(object):
         # Initialise internal storage objects.
         self._data = []
         self._types = []
+        self._format = {}
 
 
     def add_item_list_element(self, item, text):
@@ -164,16 +165,21 @@ class Desc_container(object):
             self._data[-1].append(text)
 
 
-    def add_table_titles(self, titles):
+    def add_table_titles(self, titles, spacing=True):
         """Add a row of table titles to the description.
 
-        @param text:    The table titles.
-        @type text:     list of str
+        @param titles:      The table titles.
+        @type titles:       list of str
+        @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
+        @type spacing:      bool
         """
 
         # Create a new table.
         self._data.append([titles])
         self._types.append('table')
+
+        # Store the formatting.
+        self._format[repr(len(self._data)-1)] = spacing
 
 
     def add_table_row(self, row):
@@ -205,16 +211,29 @@ class Desc_container(object):
         self._types.append('verbatim')
 
 
-    def element_loop(self):
+    def element_loop(self, format=False):
         """Iterator method yielding the description elements.
 
-        @return:    The element type and corresponding data. 
-        @rtype:     str and anything
+        @keyword format:    A flag which if True will cause formatting information to be returned.
+        @return:            The element type and corresponding data (and formatting info, if asked for). 
+        @rtype:             str and anything
         """
 
         # Loop over the elements.
         for i in range(len(self._data)):
-            yield self._types[i], self._data[i]
+            # The format.
+            if format:
+                # The key and value.
+                key = repr(i)
+                val = None
+                if self._format.has_key(key):
+                    val = self._format[key]
+
+                yield self._types[i], self._data[i], val
+
+            # No format.
+            else:
+                yield self._types[i], self._data[i]
 
 
     def get_title(self):

@@ -326,7 +326,7 @@ class Uf_object(object):
                 doc += build_subtitle(self._desc[i].get_title())
 
                 # Loop over the elements.
-                for type, element in self._desc[i].element_loop():
+                for type, element, format in self._desc[i].element_loop(format=True):
                     # A paragraph or verbatim text.
                     if type == 'paragraph':
                         doc += format_text(element) + '\n'
@@ -355,7 +355,7 @@ class Uf_object(object):
 
                     # A table.
                     elif type == 'table':
-                        doc += create_table(element) + '\n'
+                        doc += create_table(element, spacing=format) + '\n'
 
                     # A prompt example.
                     elif type == 'prompt':

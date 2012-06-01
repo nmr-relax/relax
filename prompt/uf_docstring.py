@@ -88,13 +88,15 @@ def build_subtitle(text, bold=True, start_nl=True):
     return new
 
 
-def create_table(table):
+def create_table(table, spacing=True):
     """Format and return the table as text.
 
-    @param table:   The table data.
-    @type table:    list of lists of str
-    @return:        The formatted table.
-    @rtype:         str
+    @param table:       The table data.
+    @type table:        list of lists of str
+    @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
+    @type spacing:      bool
+    @return:            The formatted table.
+    @rtype:             str
     """
 
     # Initialise some variables.
@@ -217,8 +219,9 @@ def create_table(table):
                     # Pack the data.
                     col_text[k][j] = lines[k]
 
-        # Blank line.
-        text += table_line(widths=new_widths)
+        # Blank line (between rows when asked, and for the first row after the header).
+        if spacing or i == 1:
+            text += table_line(widths=new_widths)
 
         # The contents.
         for k in range(num_lines):
