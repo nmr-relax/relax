@@ -58,7 +58,7 @@ class Test_uf_objects(TestCase):
             print(name)
 
             # Generate a new container.
-            obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc, examples=data.prompt_examples, additional=data.additional)
+            obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc)
 
             # Create the documentation and print it.
             text = obj._build_doc()
