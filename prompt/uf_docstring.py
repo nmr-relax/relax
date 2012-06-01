@@ -137,6 +137,9 @@ def create_table(table):
         free_space_wrap = free_space
         col_wrap = [True] * num_cols
 
+        # New total width.
+        total_width = status.text_width
+
         # Loop.
         while 1:
             # The average column width.
@@ -170,9 +173,6 @@ def create_table(table):
                     if new_widths[i] > ave_width:
                         new_widths[i] = ave_width
                 break
-
-            # New total width.
-            total_width = status.text_width
 
         # Debugging printouts.
         if status.debug:
