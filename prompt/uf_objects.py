@@ -363,8 +363,8 @@ class Uf_object(object):
                         for j in range(len(element)):
                             doc += format_text(element[j])
 
-                        # Final newline.
-                        doc += '\n'
+                        # Final double newline.
+                        doc += '\n\n'
 
         # Return the documentation.
         return doc
