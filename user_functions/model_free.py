@@ -30,6 +30,7 @@ from os import sep
 from graphics import ANALYSIS_IMAGE_PATH
 from specific_fns.setup import model_free_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -105,63 +106,45 @@ uf.add_keyarg(
     desc = "The spin identification string.",
     can_be_none = True
 )
-uf.desc = """
-This user function should almost never be used.  It is provided for academic reasons for the study of old analyses and published results.  If you are looking for a normal model-free model, use the model_free.select_model user function instead.
-"""
-uf.additional = [["Model-free equation", """
-The model-free equation can be one of the following:
-
-    - 'mf_orig' selects the original model-free equations with parameters {S2, te}.
-    - 'mf_ext' selects the extended model-free equations with parameters {S2f, tf, S2, ts}.
-    - 'mf_ext2' selects the extended model-free equations with parameters {S2f, tf, S2s, ts}.
-"""],
-["Model-free parameters", """
-The following parameters are accepted for the original model-free equation:
-
-    's2':   The square of the generalised order parameter.
-    'te':   The effective correlation time.
-
-The following parameters are accepted for the extended model-free equation:
-
-    's2f':  The square of the generalised order parameter of the faster motion.
-    'tf':   The effective correlation time of the faster motion.
-    's2':   The square of the generalised order parameter S2 = S2f * S2s.
-    'ts':   The effective correlation time of the slower motion.
-
-The following parameters are accepted for the extended 2 model-free equation:
-
-    's2f':  The square of the generalised order parameter of the faster motion.
-    'tf':   The effective correlation time of the faster motion.
-    's2s':  The square of the generalised order parameter of the slower motion.
-    'ts':   The effective correlation time of the slower motion.
-
-The following parameters are accepted for all equations:
-
-    'rex':  The chemical exchange relaxation.
-    'r':    The average bond length <r>.
-    'csa':  The chemical shift anisotropy.
-"""],
-["Spin identification string", """
-If 'spin_id' is supplied then the model will only be created for the corresponding spins.  Otherwise the model will be created for all spins.
-"""]
-]
-uf.prompt_examples = """
-The following commands will create the model-free model 'm1' which is based on the original
-model-free equation and contains the single parameter 's2'.
-
-relax> model_free.create_model('m1', 'mf_orig', ['s2'])
-relax> model_free.create_model(model='m1', params=['s2'], equation='mf_orig')
-
-
-The following commands will create the model-free model 'large_model' which is based on the
-extended model-free equation and contains the seven parameters 's2f', 'tf', 's2', 'ts',
-'rex', 'csa', 'r'.
-
-relax> model_free.create_model('large_model', 'mf_ext', ['s2f', 'tf', 's2', 'ts', 'rex',
-                               'csa', 'r'])
-relax> model_free.create_model(model='large_model', params=['s2f', 'tf', 's2', 'ts', 'rex',
-                               'csa', 'r'], equation='mf_ext')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function should almost never be used.  It is provided for academic reasons for the study of old analyses and published results.  If you are looking for a normal model-free model, use the model_free.select_model user function instead.")
+# Model-free equation.
+uf.desc.append(Desc_container("Model-free equation"))
+uf.desc[-1].add_paragraph("The model-free equation can be one of the following:")
+uf.desc[-1].add_list_element("'mf_orig' selects the original model-free equations with parameters {S2, te}.")
+uf.desc[-1].add_list_element("'mf_ext' selects the extended model-free equations with parameters {S2f, tf, S2, ts}.")
+uf.desc[-1].add_list_element("'mf_ext2' selects the extended model-free equations with parameters {S2f, tf, S2s, ts}.")
+# Model-free parameters.
+uf.desc.append(Desc_container("Model-free parameters"))
+uf.desc[-1].add_paragraph("The following parameters are accepted for the original model-free equation:")
+uf.desc[-1].add_item_list_element("'s2'", " The square of the generalised order parameter.")
+uf.desc[-1].add_item_list_element("'te'", " The effective correlation time.")
+uf.desc[-1].add_paragraph("The following parameters are accepted for the extended model-free equation:")
+uf.desc[-1].add_item_list_element("'s2f'", "The square of the generalised order parameter of the faster motion.")
+uf.desc[-1].add_item_list_element("'tf'", " The effective correlation time of the faster motion.")
+uf.desc[-1].add_item_list_element("'s2'", " The square of the generalised order parameter S2 = S2f * S2s.")
+uf.desc[-1].add_item_list_element("'ts'", " The effective correlation time of the slower motion.")
+uf.desc[-1].add_paragraph("The following parameters are accepted for the extended 2 model-free equation:")
+uf.desc[-1].add_item_list_element("'s2f'", "The square of the generalised order parameter of the faster motion.")
+uf.desc[-1].add_item_list_element("'tf'", " The effective correlation time of the faster motion.")
+uf.desc[-1].add_item_list_element("'s2s'", "The square of the generalised order parameter of the slower motion.")
+uf.desc[-1].add_item_list_element("'ts'", " The effective correlation time of the slower motion.")
+uf.desc[-1].add_paragraph("The following parameters are accepted for all equations:")
+uf.desc[-1].add_item_list_element("'rex'", "The chemical exchange relaxation.")
+uf.desc[-1].add_item_list_element("'r'", "  The average bond length <r>.")
+uf.desc[-1].add_item_list_element("'csa'", "The chemical shift anisotropy.")
+# Spin identification string.
+uf.desc.append(Desc_container("Spin identification string"))
+uf.desc[-1].add_paragraph("If 'spin_id' is supplied then the model will only be created for the corresponding spins.  Otherwise the model will be created for all spins.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following commands will create the model-free model 'm1' which is based on the original model-free equation and contains the single parameter 's2'.")
+uf.desc[-1].add_prompt("relax> model_free.create_model('m1', 'mf_orig', ['s2'])")
+uf.desc[-1].add_prompt("relax> model_free.create_model(model='m1', params=['s2'], equation='mf_orig')")
+uf.desc[-1].add_paragraph("The following commands will create the model-free model 'large_model' which is based on the extended model-free equation and contains the seven parameters 's2f', 'tf', 's2', 'ts', 'rex', 'csa', 'r'.")
+uf.desc[-1].add_prompt("relax> model_free.create_model('large_model', 'mf_ext', ['s2f', 'tf', 's2', 'ts', 'rex', 'csa', 'r'])")
+uf.desc[-1].add_prompt("relax> model_free.create_model(model='large_model', params=['s2f', 'tf', 's2', 'ts', 'rex', 'csa', 'r'], equation='mf_ext')")
 uf.backend = model_free_obj._create_model
 uf.menu_text = "&create_model"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -176,14 +159,13 @@ uf = uf_info.add_uf('model_free.delete')
 uf.title = "Delete all model-free data from the current data pipe."
 uf.title_short = "Model-free data deletion."
 uf.display = True
-uf.desc = """
-This will delete all of the model-free data - parameters, model, etc. - from the current data pipe.
-"""
-uf.prompt_examples = """
-To delete all model-free data, type:
-
-relax> model_free.delete()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will delete all of the model-free data - parameters, model, etc. - from the current data pipe.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To delete all model-free data, type:")
+uf.desc[-1].add_prompt("relax> model_free.delete()")
 uf.backend = model_free_obj._delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -204,16 +186,14 @@ uf.add_keyarg(
     desc = "The spin identification string.",
     can_be_none = True
 )
-uf.desc = """
-This function will remove the local tm parameter from the model-free parameter set.  If there is no local tm parameter within the set nothing will happen.
-
-If no spin identification string is given, then the function will apply to all spins.
-"""
-uf.prompt_examples = """
-The following command will remove the parameter 'tm':
-
-relax> model_free.remove_tm()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This function will remove the local tm parameter from the model-free parameter set.  If there is no local tm parameter within the set nothing will happen.")
+uf.desc[-1].add_paragraph("If no spin identification string is given, then the function will apply to all spins.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following command will remove the parameter 'tm':")
+uf.desc[-1].add_prompt("relax> model_free.remove_tm()")
 uf.backend = model_free_obj._remove_tm
 uf.menu_text = "&remove_tm"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -421,123 +401,109 @@ uf.add_keyarg(
     desc = "The spin identification string.",
     can_be_none = True
 )
-uf.desc = """
-This allows a standard model-free model to be selected from a long list of models.
-"""
-uf.additional = [["The preset models", """
-The standard preset model-free models are
-    'm0' = {},
-    'm1' = {S2},
-    'm2' = {S2, te},
-    'm3' = {S2, Rex},
-    'm4' = {S2, te, Rex},
-    'm5' = {S2f, S2, ts},
-    'm6' = {S2f, tf, S2, ts},
-    'm7' = {S2f, S2, ts, Rex},
-    'm8' = {S2f, tf, S2, ts, Rex},
-    'm9' = {Rex}.
-
-The preset model-free models with optimisation of the CSA value are
-    'm10' = {CSA},
-    'm11' = {CSA, S2},
-    'm12' = {CSA, S2, te},
-    'm13' = {CSA, S2, Rex},
-    'm14' = {CSA, S2, te, Rex},
-    'm15' = {CSA, S2f, S2, ts},
-    'm16' = {CSA, S2f, tf, S2, ts},
-    'm17' = {CSA, S2f, S2, ts, Rex},
-    'm18' = {CSA, S2f, tf, S2, ts, Rex},
-    'm19' = {CSA, Rex}.
-
-The preset model-free models with optimisation of the bond length are
-    'm20' = {r},
-    'm21' = {r, S2},
-    'm22' = {r, S2, te},
-    'm23' = {r, S2, Rex},
-    'm24' = {r, S2, te, Rex},
-    'm25' = {r, S2f, S2, ts},
-    'm26' = {r, S2f, tf, S2, ts},
-    'm27' = {r, S2f, S2, ts, Rex},
-    'm28' = {r, S2f, tf, S2, ts, Rex},
-    'm29' = {r, CSA, Rex}.
-
-The preset model-free models with both optimisation of the bond length and CSA are
-    'm30' = {r, CSA},
-    'm31' = {r, CSA, S2},
-    'm32' = {r, CSA, S2, te},
-    'm33' = {r, CSA, S2, Rex},
-    'm34' = {r, CSA, S2, te, Rex},
-    'm35' = {r, CSA, S2f, S2, ts},
-    'm36' = {r, CSA, S2f, tf, S2, ts},
-    'm37' = {r, CSA, S2f, S2, ts, Rex},
-    'm38' = {r, CSA, S2f, tf, S2, ts, Rex},
-    'm39' = {r, CSA, Rex}.
-
-Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
-relaxation data.  This is due to the extreme flexibly of these models where a change in the
-parameter 'r' is compensated by a corresponding change in the parameter 'csa' and
-vice versa.
-
-
-Additional preset model-free models, which are simply extensions of the above models with
-the addition of a local tm parameter are:
-    'tm0' = {tm},
-    'tm1' = {tm, S2},
-    'tm2' = {tm, S2, te},
-    'tm3' = {tm, S2, Rex},
-    'tm4' = {tm, S2, te, Rex},
-    'tm5' = {tm, S2f, S2, ts},
-    'tm6' = {tm, S2f, tf, S2, ts},
-    'tm7' = {tm, S2f, S2, ts, Rex},
-    'tm8' = {tm, S2f, tf, S2, ts, Rex},
-    'tm9' = {tm, Rex}.
-
-The preset model-free models with optimisation of the CSA value are
-    'tm10' = {tm, CSA},
-    'tm11' = {tm, CSA, S2},
-    'tm12' = {tm, CSA, S2, te},
-    'tm13' = {tm, CSA, S2, Rex},
-    'tm14' = {tm, CSA, S2, te, Rex},
-    'tm15' = {tm, CSA, S2f, S2, ts},
-    'tm16' = {tm, CSA, S2f, tf, S2, ts},
-    'tm17' = {tm, CSA, S2f, S2, ts, Rex},
-    'tm18' = {tm, CSA, S2f, tf, S2, ts, Rex},
-    'tm19' = {tm, CSA, Rex}.
-
-The preset model-free models with optimisation of the bond length are
-    'tm20' = {tm, r},
-    'tm21' = {tm, r, S2},
-    'tm22' = {tm, r, S2, te},
-    'tm23' = {tm, r, S2, Rex},
-    'tm24' = {tm, r, S2, te, Rex},
-    'tm25' = {tm, r, S2f, S2, ts},
-    'tm26' = {tm, r, S2f, tf, S2, ts},
-    'tm27' = {tm, r, S2f, S2, ts, Rex},
-    'tm28' = {tm, r, S2f, tf, S2, ts, Rex},
-    'tm29' = {tm, r, CSA, Rex}.
-
-The preset model-free models with both optimisation of the bond length and CSA are
-    'tm30' = {tm, r, CSA},
-    'tm31' = {tm, r, CSA, S2},
-    'tm32' = {tm, r, CSA, S2, te},
-    'tm33' = {tm, r, CSA, S2, Rex},
-    'tm34' = {tm, r, CSA, S2, te, Rex},
-    'tm35' = {tm, r, CSA, S2f, S2, ts},
-    'tm36' = {tm, r, CSA, S2f, tf, S2, ts},
-    'tm37' = {tm, r, CSA, S2f, S2, ts, Rex},
-    'tm38' = {tm, r, CSA, S2f, tf, S2, ts, Rex},
-    'tm39' = {tm, r, CSA, Rex}.
-"""],
-["Spin identification string", """
-If 'spin_id' is supplied then the model will only be selected for the corresponding spins.  Otherwise the model will be selected for all spins.
-"""]
-]
-uf.prompt_examples = """
-To pick model 'm1' for all selected spins, type:
-
-relax> model_free.select_model('m1')
-relax> model_free.select_model(model='m1')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows a standard model-free model to be selected from a long list of models.")
+# The preset models.
+uf.desc.append(Desc_container("The preset models"))
+uf.desc[-1].add_paragraph("The standard preset model-free models are")
+uf.desc[-1].add_item_list_element("'m0'", "{},")
+uf.desc[-1].add_item_list_element("'m1'", "{S2},")
+uf.desc[-1].add_item_list_element("'m2'", "{S2, te},")
+uf.desc[-1].add_item_list_element("'m3'", "{S2, Rex},")
+uf.desc[-1].add_item_list_element("'m4'", "{S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'m5'", "{S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'m6'", "{S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'m7'", "{S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m8'", "{S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m9'", "{Rex}.")
+uf.desc[-1].add_paragraph("The preset model-free models with optimisation of the CSA value are")
+uf.desc[-1].add_item_list_element("'m10'", "{CSA},")
+uf.desc[-1].add_item_list_element("'m11'", "{CSA, S2},")
+uf.desc[-1].add_item_list_element("'m12'", "{CSA, S2, te},")
+uf.desc[-1].add_item_list_element("'m13'", "{CSA, S2, Rex},")
+uf.desc[-1].add_item_list_element("'m14'", "{CSA, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'m15'", "{CSA, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'m16'", "{CSA, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'m17'", "{CSA, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m18'", "{CSA, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m19'", "{CSA, Rex}.")
+uf.desc[-1].add_paragraph("The preset model-free models with optimisation of the bond length are")
+uf.desc[-1].add_item_list_element("'m20'", "{r},")
+uf.desc[-1].add_item_list_element("'m21'", "{r, S2},")
+uf.desc[-1].add_item_list_element("'m22'", "{r, S2, te},")
+uf.desc[-1].add_item_list_element("'m23'", "{r, S2, Rex},")
+uf.desc[-1].add_item_list_element("'m24'", "{r, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'m25'", "{r, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'m26'", "{r, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'m27'", "{r, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m28'", "{r, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m29'", "{r, CSA, Rex}.")
+uf.desc[-1].add_paragraph("The preset model-free models with both optimisation of the bond length and CSA are")
+uf.desc[-1].add_item_list_element("'m30'", "{r, CSA},")
+uf.desc[-1].add_item_list_element("'m31'", "{r, CSA, S2},")
+uf.desc[-1].add_item_list_element("'m32'", "{r, CSA, S2, te},")
+uf.desc[-1].add_item_list_element("'m33'", "{r, CSA, S2, Rex},")
+uf.desc[-1].add_item_list_element("'m34'", "{r, CSA, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'m35'", "{r, CSA, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'m36'", "{r, CSA, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'m37'", "{r, CSA, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m38'", "{r, CSA, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'m39'", "{r, CSA, Rex}.")
+uf.desc[-1].add_paragraph("Warning:  The models in the thirties range fail when using standard R1, R2, and NOE relaxation data.  This is due to the extreme flexibly of these models where a change in the parameter 'r' is compensated by a corresponding change in the parameter 'csa' and vice versa.")
+uf.desc.append(Desc_container("The preset local tm models"))
+uf.desc[-1].add_paragraph("Additional preset model-free models, which are simply extensions of the above models with the addition of a local tm parameter are:")
+uf.desc[-1].add_item_list_element("'tm0'", "{tm},")
+uf.desc[-1].add_item_list_element("'tm1'", "{tm, S2},")
+uf.desc[-1].add_item_list_element("'tm2'", "{tm, S2, te},")
+uf.desc[-1].add_item_list_element("'tm3'", "{tm, S2, Rex},")
+uf.desc[-1].add_item_list_element("'tm4'", "{tm, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'tm5'", "{tm, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm6'", "{tm, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm7'", "{tm, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm8'", "{tm, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm9'", "{tm, Rex}.")
+uf.desc[-1].add_paragraph("The preset model-free models with optimisation of the CSA value are")
+uf.desc[-1].add_item_list_element("'tm10'", "{tm, CSA},")
+uf.desc[-1].add_item_list_element("'tm11'", "{tm, CSA, S2},")
+uf.desc[-1].add_item_list_element("'tm12'", "{tm, CSA, S2, te},")
+uf.desc[-1].add_item_list_element("'tm13'", "{tm, CSA, S2, Rex},")
+uf.desc[-1].add_item_list_element("'tm14'", "{tm, CSA, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'tm15'", "{tm, CSA, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm16'", "{tm, CSA, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm17'", "{tm, CSA, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm18'", "{tm, CSA, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm19'", "{tm, CSA, Rex}.")
+uf.desc[-1].add_paragraph("The preset model-free models with optimisation of the bond length are")
+uf.desc[-1].add_item_list_element("'tm20'", "{tm, r},")
+uf.desc[-1].add_item_list_element("'tm21'", "{tm, r, S2},")
+uf.desc[-1].add_item_list_element("'tm22'", "{tm, r, S2, te},")
+uf.desc[-1].add_item_list_element("'tm23'", "{tm, r, S2, Rex},")
+uf.desc[-1].add_item_list_element("'tm24'", "{tm, r, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'tm25'", "{tm, r, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm26'", "{tm, r, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm27'", "{tm, r, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm28'", "{tm, r, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm29'", "{tm, r, CSA, Rex}.")
+uf.desc[-1].add_paragraph("The preset model-free models with both optimisation of the bond length and CSA are")
+uf.desc[-1].add_item_list_element("'tm30'", "{tm, r, CSA},")
+uf.desc[-1].add_item_list_element("'tm31'", "{tm, r, CSA, S2},")
+uf.desc[-1].add_item_list_element("'tm32'", "{tm, r, CSA, S2, te},")
+uf.desc[-1].add_item_list_element("'tm33'", "{tm, r, CSA, S2, Rex},")
+uf.desc[-1].add_item_list_element("'tm34'", "{tm, r, CSA, S2, te, Rex},")
+uf.desc[-1].add_item_list_element("'tm35'", "{tm, r, CSA, S2f, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm36'", "{tm, r, CSA, S2f, tf, S2, ts},")
+uf.desc[-1].add_item_list_element("'tm37'", "{tm, r, CSA, S2f, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm38'", "{tm, r, CSA, S2f, tf, S2, ts, Rex},")
+uf.desc[-1].add_item_list_element("'tm39'", "{tm, r, CSA, Rex}.")
+# Spin identification string.
+uf.desc.append(Desc_container("Spin identification string"))
+uf.desc[-1].add_paragraph("If 'spin_id' is supplied then the model will only be selected for the corresponding spins.  Otherwise the model will be selected for all spins.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To pick model 'm1' for all selected spins, type:")
+uf.desc[-1].add_prompt("relax> model_free.select_model('m1')")
+uf.desc[-1].add_prompt("relax> model_free.select_model(model='m1')")
 uf.backend = model_free_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"

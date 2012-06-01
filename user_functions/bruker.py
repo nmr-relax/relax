@@ -30,6 +30,7 @@ import wx
 from generic_fns import bruker
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -65,9 +66,9 @@ uf.add_keyarg(
     desc = "The directory where the file is located.",
     can_be_none = True
 )
-uf.desc = """
-This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.")
 uf.backend = bruker.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"

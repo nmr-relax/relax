@@ -30,6 +30,7 @@ import wx
 from specific_fns.setup import frame_order_obj
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -83,13 +84,11 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing file."
 )
-uf.desc = """
-This function creates a PDB file containing an artificial geometric structure representing the Frame Order cone models.
-
-There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the size argument).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.
-
-To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This function creates a PDB file containing an artificial geometric structure representing the Frame Order cone models.")
+uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the size argument).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.")
+uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
 uf.backend = frame_order_obj._cone_pdb
 uf.menu_text = "&cone_pdb"
 uf.gui_icon = "oxygen.actions.document-save"
@@ -114,15 +113,14 @@ uf.add_keyarg(
     desc_short = "PDB file",
     desc = "The PDB file to associate the domain to."
 )
-uf.desc = """
-To display the frame order cone models within Pymol, the two domains need to be associated with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving domain will be rotated to its average position.
-"""
-uf.prompt_examples = """
-To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:
-
-relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')
-relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To display the frame order cone models within Pymol, the two domains need to be associated with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving domain will be rotated to its average position.")
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:")
+uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')")
+uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')")
 uf.backend = frame_order_obj._domain_to_pdb
 uf.menu_text = "&domain_to_pdb"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
@@ -139,15 +137,14 @@ uf.add_keyarg(
     desc_short = "pivot point",
     desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates)."
 )
-uf.desc = """
-This will set the pivot point for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.
-"""
-uf.prompt_examples = """
-To set the pivot point, type one of:
-
-relax> frame_order.pivot([12.067, 14.313, -3.2675])
-relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will set the pivot point for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.")
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To set the pivot point, type one of:")
+uf.desc[-1].add_prompt("relax> frame_order.pivot([12.067, 14.313, -3.2675])")
+uf.desc[-1].add_prompt("relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])")
 uf.backend = frame_order_obj._pivot
 uf.menu_text = "&pivot"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
@@ -163,14 +160,13 @@ uf.add_keyarg(
     desc_short = "reference frame",
     desc = "The domain which will act as the frame of reference.  This is only valid for the '2-domain' Frame Order theories."
 )
-uf.desc = """
-Prior to optimisation of the '2-domain' Frame Order theories, which of the two domains will act as the frame of reference must be specified.  This is important for the attachment of cones to domains, etc.
-"""
-uf.prompt_examples = """
-To set up the isotropic cone frame order model with 'centre' domain being the frame of reference, type:
-
-relax> frame_order.ref_domain(ref='centre')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Prior to optimisation of the '2-domain' Frame Order theories, which of the two domains will act as the frame of reference must be specified.  This is important for the attachment of cones to domains, etc.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set up the isotropic cone frame order model with 'centre' domain being the frame of reference, type:")
+uf.desc[-1].add_prompt("relax> frame_order.ref_domain(ref='centre')")
 uf.backend = frame_order_obj._ref_domain
 uf.menu_text = "&ref_domain"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -217,46 +213,29 @@ uf.add_keyarg(
     ],
     wiz_read_only = True,
 )
-uf.desc = """
-Prior to optimisation, the Frame Order model should be selected.  These models consist of three parameter categories:
-
-    - The average domain position.  This includes the parameters ave_pos_alpha, ave_pos_beta, and ave_pos_gamma.  These Euler angles rotate the tensors from the arbitrary PDB frame of the moving domain to the average domain position.
-
-    - The frame order eigenframe.  This includes the parameters eigen_alpha, eigen_beta, and eigen_gamma.  These Euler angles define the major modes of motion.  The cone central axis is defined as the z-axis.  The pseudo-elliptic cone x and y-axes are defined as the x and y-axes of the eigenframe.
-
-    - The cone parameters.  These are defined as the tilt-torsion angles cone_theta_x, cone_theta_y, and cone_sigma_max.  The cone_theta_x and cone_theta_y parameters define the two cone opening angles of the pseudo-ellipse.  The amount of domain torsion is defined as the average domain position, plus and minus cone_sigma_max.  The isotropic cones are defined by setting cone_theta_x = cone_theta_y and converting the single parameter into a 2nd rank order parameter.
-
-The list of available models are:
-
-    'pseudo-ellipse' - The pseudo-elliptic cone model.  This is the full model consisting of the parameters ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, and cone_sigma_max.
-
-    'pseudo-ellipse, torsionless' - The pseudo-elliptic cone with the torsion angle cone_sigma_max set to zero.
-
-    'pseudo-ellipse, free rotor' - The pseudo-elliptic cone with no torsion angle restriction.
-
-    'iso cone' - The isotropic cone model.  The cone is defined by a single order parameter s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due to rotational symmetry about the cone axis, the average position alpha Euler angle ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to a single z-axis defined by the parameters axis_theta and axis_phi.
-
-    'iso cone, torsionless' - The isotropic cone model with the torsion angle cone_sigma_max set to zero.
-
-    'iso cone, free rotor' - The isotropic cone model with no torsion angle restriction.
-
-    'line' - The line cone model.  This is the pseudo-elliptic cone with one of the cone angles, cone_theta_y, assumed to be statistically negligible.  I.e. the cone angle is so small that it cannot be distinguished from noise.
-
-    'line, torsionless' - The line cone model with the torsion angle cone_sigma_max set to zero.
-
-    'line, free rotor' - The line cone model with no torsion angle restriction.
-
-    'rotor' - The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.
-
-    'rigid' - No domain motions.
-
-    'free rotor' - The only motion is free rotation about the cone axis.
-"""
-uf.prompt_examples = """
-To select the isotropic cone model, type:
-
-relax> frame_order.select_model(model='iso cone')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Prior to optimisation, the Frame Order model should be selected.  These models consist of three parameter categories:")
+uf.desc[-1].add_list_element("The average domain position.  This includes the parameters ave_pos_alpha, ave_pos_beta, and ave_pos_gamma.  These Euler angles rotate the tensors from the arbitrary PDB frame of the moving domain to the average domain position.")
+uf.desc[-1].add_list_element("The frame order eigenframe.  This includes the parameters eigen_alpha, eigen_beta, and eigen_gamma.  These Euler angles define the major modes of motion.  The cone central axis is defined as the z-axis.  The pseudo-elliptic cone x and y-axes are defined as the x and y-axes of the eigenframe.")
+uf.desc[-1].add_list_element("The cone parameters.  These are defined as the tilt-torsion angles cone_theta_x, cone_theta_y, and cone_sigma_max.  The cone_theta_x and cone_theta_y parameters define the two cone opening angles of the pseudo-ellipse.  The amount of domain torsion is defined as the average domain position, plus and minus cone_sigma_max.  The isotropic cones are defined by setting cone_theta_x = cone_theta_y and converting the single parameter into a 2nd rank order parameter.")
+uf.desc[-1].add_paragraph("The list of available models are:")
+uf.desc[-1].add_item_list_element("'pseudo-ellipse'", "The pseudo-elliptic cone model.  This is the full model consisting of the parameters ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, and cone_sigma_max.")
+uf.desc[-1].add_item_list_element("'pseudo-ellipse, torsionless'", "The pseudo-elliptic cone with the torsion angle cone_sigma_max set to zero.")
+uf.desc[-1].add_item_list_element("'pseudo-ellipse, free rotor'", "The pseudo-elliptic cone with no torsion angle restriction.")
+uf.desc[-1].add_item_list_element("'iso cone'", "The isotropic cone model.  The cone is defined by a single order parameter s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due to rotational symmetry about the cone axis, the average position alpha Euler angle ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to a single z-axis defined by the parameters axis_theta and axis_phi.")
+uf.desc[-1].add_item_list_element("'iso cone, torsionless'", "The isotropic cone model with the torsion angle cone_sigma_max set to zero.")
+uf.desc[-1].add_item_list_element("'iso cone, free rotor'", "The isotropic cone model with no torsion angle restriction.")
+uf.desc[-1].add_item_list_element("'line'", "The line cone model.  This is the pseudo-elliptic cone with one of the cone angles, cone_theta_y, assumed to be statistically negligible.  I.e. the cone angle is so small that it cannot be distinguished from noise.")
+uf.desc[-1].add_item_list_element("'line, torsionless'", "The line cone model with the torsion angle cone_sigma_max set to zero.")
+uf.desc[-1].add_item_list_element("'line, free rotor'", "The line cone model with no torsion angle restriction.")
+uf.desc[-1].add_item_list_element("'rotor'", "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
+uf.desc[-1].add_item_list_element("'rigid'", "No domain motions.")
+uf.desc[-1].add_item_list_element("'free rotor'", "The only motion is free rotation about the cone axis.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To select the isotropic cone model, type:")
+uf.desc[-1].add_prompt("relax> frame_order.select_model(model='iso cone')")
 uf.backend = frame_order_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"

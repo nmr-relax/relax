@@ -28,6 +28,7 @@ from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, copy_molecule, create_mo
 from generic_fns import pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -78,23 +79,18 @@ uf.add_keyarg(
     desc = "The name of the new molecule.  If left blank, the new molecule will have the same name as the old.  This needs to be a molecule ID string, starting with '#'.",
     can_be_none = True
 )
-uf.desc = """
-This will copy all the data associated with a molecule to a second molecule.  This includes all residue and spin system information.  The new molecule name must be unique in the destination data pipe.
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-To copy the molecule data from the molecule 'GST' to the new molecule 'wt-GST', type:
-
-relax> molecule.copy('#GST', '#wt-GST')
-relax> molecule.copy(mol_from='#GST', mol_to='#wt-GST')
-
-
-To copy the molecule data of the molecule 'Ap4Aase' from the data pipe 'm1' to 'm2', assuming the current
-data pipe is 'm1', type:
-
-relax> molecule.copy(mol_from='#ApAase', pipe_to='m2')
-relax> molecule.copy(pipe_from='m1', mol_from='#ApAase', pipe_to='m2', mol_to='#ApAase')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will copy all the data associated with a molecule to a second molecule.  This includes all residue and spin system information.  The new molecule name must be unique in the destination data pipe.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the molecule data from the molecule 'GST' to the new molecule 'wt-GST', type:")
+uf.desc[-1].add_prompt("relax> molecule.copy('#GST', '#wt-GST')")
+uf.desc[-1].add_prompt("relax> molecule.copy(mol_from='#GST', mol_to='#wt-GST')")
+uf.desc[-1].add_paragraph("To copy the molecule data of the molecule 'Ap4Aase' from the data pipe 'm1' to 'm2', assuming the current data pipe is 'm1', type:")
+uf.desc[-1].add_prompt("relax> molecule.copy(mol_from='#ApAase', pipe_to='m2')")
+uf.desc[-1].add_prompt("relax> molecule.copy(pipe_from='m1', mol_from='#ApAase', pipe_to='m2', mol_to='#ApAase')")
 uf.backend = copy_molecule
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -124,18 +120,19 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This adds a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified.  However, if given, it should be one of"""
+# Description.
+uf.desc.append(Desc_container())
+text = "This adds a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified.  However, if given, it should be one of"
 for i in range(len(ALLOWED_MOL_TYPES)-1):
-    uf.desc += " '%s'," % ALLOWED_MOL_TYPES[i]
-uf.desc += " or '%s'." % ALLOWED_MOL_TYPES[-1]
-uf.prompt_examples = """
-To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
-
-relax> molecule.create('Ap4Aase')
-relax> molecule.create('ATP')
-relax> molecule.create('MgF4')
-"""
+    text += " '%s'," % ALLOWED_MOL_TYPES[i]
+text += " or '%s'." % ALLOWED_MOL_TYPES[-1]
+uf.desc[-1].add_paragraph(text)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:")
+uf.desc[-1].add_prompt("relax> molecule.create('Ap4Aase')")
+uf.desc[-1].add_prompt("relax> molecule.create('ATP')")
+uf.desc[-1].add_prompt("relax> molecule.create('MgF4')")
 uf.backend = create_molecule
 uf.menu_text = "c&reate"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -156,10 +153,10 @@ uf.add_keyarg(
     wiz_combo_iter = get_molecule_ids,
     wiz_read_only = True
 )
-uf.desc = """
-This can be used to delete a single or sets of molecules from the relax data store.  The molecule will be deleted from the current data pipe.
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This can be used to delete a single or sets of molecules from the relax data store.  The molecule will be deleted from the current data pipe.")
+uf.desc.append(id_string_doc)
 uf.backend = delete_molecule
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -183,7 +180,7 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.additional = [id_string_doc]
+uf.desc.append(id_string_doc)
 uf.backend = display_molecule
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -219,18 +216,16 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the molecule to be renamed."
 )
-uf.desc = """
-This simply allows molecules to be named (or renamed).
-"""
-uf.prompt_examples = """
-To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type one of:
-
-relax> molecule.name('#Ap4Aase', 'Inhib Ap4Aase', True)
-relax> molecule.name(mol_id='#Ap4Aase', name='Inhib Ap4Aase', force=True)
-
-This assumes the molecule 'Ap4Aase' already exists.
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This simply allows molecules to be named (or renamed).")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type one of:")
+uf.desc[-1].add_prompt("relax> molecule.name('#Ap4Aase', 'Inhib Ap4Aase', True)")
+uf.desc[-1].add_prompt("relax> molecule.name(mol_id='#Ap4Aase', name='Inhib Ap4Aase', force=True)")
+uf.desc[-1].add_paragraph("This assumes the molecule 'Ap4Aase' already exists.")
+uf.desc.append(id_string_doc)
 uf.backend = name_molecule
 uf.menu_text = "&name"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -269,20 +264,18 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the molecule to type to be overwritten."
 )
-uf.desc = """
-This allows the type of the molecule to be specified.  It can be one of:
-
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the type of the molecule to be specified.  It can be one of:")
 for i in range(len(ALLOWED_MOL_TYPES)-1):
-    uf.desc += "   '%s',\n" % ALLOWED_MOL_TYPES[i]
-uf.desc += "   '%s'.\n" % ALLOWED_MOL_TYPES[-1]
-uf.prompt_examples = """
-To set the molecule 'Ap4Aase' to the 'protein' type, type one of:
-
-relax> molecule.type('#Ap4Aase', 'protein', True)
-relax> molecule.type(mol_id='#Ap4Aase', type='protein', force=True)
-"""
-uf.additional = [id_string_doc]
+    uf.desc[-1].add_list_element("'%s',\n" % ALLOWED_MOL_TYPES[i])
+uf.desc[-1].add_list_element("'%s'.\n" % ALLOWED_MOL_TYPES[-1])
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set the molecule 'Ap4Aase' to the 'protein' type, type one of:")
+uf.desc[-1].add_prompt("relax> molecule.type('#Ap4Aase', 'protein', True)")
+uf.desc[-1].add_prompt("relax> molecule.type(mol_id='#Ap4Aase', type='protein', force=True)")
+uf.desc.append(id_string_doc)
 uf.backend = type_molecule
 uf.menu_text = "&type"
 uf.gui_icon = "oxygen.actions.edit-rename"

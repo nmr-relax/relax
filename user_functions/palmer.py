@@ -27,6 +27,7 @@
 from generic_fns import palmer
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -132,23 +133,18 @@ uf.add_keyarg(
     desc = "The spin identification string.",
     can_be_none = True
 )
-uf.desc = """
-The following files are created
-
-    'dir/mfin',
-    'dir/mfdata',
-    'dir/mfpar',
-    'dir/mfmodel',
-    'dir/run.sh'.
-
-The file 'dir/run.sh' contains the single command,
-
-    'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',
-
-which can be used to execute modelfree4.
-
-If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The following files are created")
+uf.desc[-1].add_list_element("'dir/mfin'")
+uf.desc[-1].add_list_element("'dir/mfdata'")
+uf.desc[-1].add_list_element("'dir/mfpar'")
+uf.desc[-1].add_list_element("'dir/mfmodel'")
+uf.desc[-1].add_list_element("'dir/run.sh'")
+uf.desc[-1].add_paragraph("The file 'dir/run.sh' contains the single command,")
+uf.desc[-1].add_verbatim("'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',")
+uf.desc[-1].add_paragraph("which can be used to execute modelfree4.")
+uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
 uf.backend = palmer.create
 uf.menu_text = "&create"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -185,15 +181,12 @@ uf.add_keyarg(
     desc_short = "Modelfree4 executable file",
     desc = "The name of the executable Modelfree program file."
 )
-uf.desc = """
-Modelfree 4 will be executed as
-
-$ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out
-
-If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be placed on the command line as '-s pdb_file_name'.
-
-If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Modelfree 4 will be executed as")
+uf.desc[-1].add_prompt("$ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
+uf.desc[-1].add_paragraph("If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be placed on the command line as '-s pdb_file_name'.")
+uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
 uf.backend = palmer.execute
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.menu_text = "&execute"
@@ -214,9 +207,9 @@ uf.add_keyarg(
     desc = "The directory where the file 'mfout' is found.",
     can_be_none = True
 )
-uf.desc = """
-The model-free results will be extracted from the Modelfree4 results file 'mfout' located in the given directory.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The model-free results will be extracted from the Modelfree4 results file 'mfout' located in the given directory.")
 uf.backend = palmer.extract
 uf.menu_text = "ex&tract"
 uf.gui_icon = "oxygen.actions.archive-extract"

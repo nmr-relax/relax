@@ -34,6 +34,7 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
 import specific_fns
+from user_functions.objects import Desc_container
 
 
 class Jw_mapping(API_base, API_common):
@@ -228,24 +229,13 @@ class Jw_mapping(API_base, API_common):
                 setattr(data_cont, name, None)
 
 
-    default_value_doc = ["Reduced spectral density mapping default values", """
-        These default values are found in the file 'physical_constants.py'.
-
-        _______________________________________________________________________________________
-        |                                       |                    |                        |
-        | Data type                             | Object name        | Value                  |
-        |_______________________________________|____________________|________________________|
-        |                                       |                    |                        |
-        | Bond length                           | 'r'                | 1.02 * 1e-10           |
-        |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -172 * 1e-6            |
-        |                                       |                    |                        |
-        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                  |
-        |                                       |                    |                        |
-        | Proton type                           | 'proton_type'      | '1H'                   |
-        |_______________________________________|____________________|________________________|
-
-        """]
+    default_value_doc = Desc_container("Reduced spectral density mapping default values")
+    default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
+    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
+    default_value_doc.add_table_row(["Bond length", "'r'", "1.02 * 1e-10"])
+    default_value_doc.add_table_row(["CSA", "'csa'", "-172 * 1e-6"])
+    default_value_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
+    default_value_doc.add_table_row(["Proton type", "'proton_type'", "'1H'"])
 
 
     def overfit_deselect(self):
@@ -283,33 +273,19 @@ class Jw_mapping(API_base, API_common):
                     spin.select = False
 
 
-    return_data_name_doc = ["Reduced spectral density mapping data type string matching patterns", """
-        _____________________________________________
-        |                        |                  |
-        | Data type              | Object name      |
-        |________________________|__________________|
-        |                        |                  |
-        | J(0)                   | 'j0'             |
-        |                        |                  |
-        | J(wX)                  | 'jwx'            |
-        |                        |                  |
-        | J(wH)                  | 'jwh'            |
-        |                        |                  |
-        | Bond length            | 'r'              |
-        |                        |                  |
-        | CSA                    | 'csa'            |
-        |                        |                  |
-        | Heteronucleus type     | 'heteronuc_type' |
-        |                        |                  |
-        | Proton type            | 'proton_type'    |
-        |________________________|__________________|
-
-        """]
+    return_data_name_doc = Desc_container("Reduced spectral density mapping data type string matching patterns")
+    return_data_name_doc.add_table_titles(["Data type", "Object name"])
+    return_data_name_doc.add_table_row(["J(0)", "'j0'"])
+    return_data_name_doc.add_table_row(["J(wX)", "'jwx'"])
+    return_data_name_doc.add_table_row(["J(wH)", "'jwh'"])
+    return_data_name_doc.add_table_row(["Bond length", "'r'"])
+    return_data_name_doc.add_table_row(["CSA", "'csa'"])
+    return_data_name_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'"])
+    return_data_name_doc.add_table_row(["Proton type", "'proton_type'"])
 
 
-    set_doc = ["Reduced spectral density mapping set details", """
-        In reduced spectral density mapping, three values must be set prior to the calculation of spectral density values:  the bond length, CSA, and heteronucleus type.
-        """]
+    set_doc = Desc_container("Reduced spectral density mapping set details")
+    set_doc.add_paragraph("In reduced spectral density mapping, three values must be set prior to the calculation of spectral density values:  the bond length, CSA, and heteronucleus type.")
 
 
     def set_error(self, model_info, index, error):

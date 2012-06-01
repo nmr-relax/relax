@@ -33,6 +33,7 @@ from generic_fns import pymol_control
 from graphics import WIZARD_IMAGE_PATH
 from specific_fns.model_free.pymol import Pymol
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -46,20 +47,17 @@ uf_class.gui_icon = "relax.pymol_icon"
 uf = uf_info.add_uf('pymol.cartoon')
 uf.title = "Apply the PyMOL cartoon style and colour by secondary structure."
 uf.title_short = "PyMOL cartoon style application."
-uf.desc = """
-This applies the PyMOL cartoon style which is equivalent to hiding everything and clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and green loops.  The following commands are executed:
-
-    cmd.hide('everything', file)
-    cmd.show('cartoon', file)
-    util.cbss(file, 'red', 'yellow', 'green')
-
-where file is the file name without the '.pdb' extension.
-"""
-uf.prompt_examples = """
-To apply this user function, type:
-
-relax> pymol.cartoon()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This applies the PyMOL cartoon style which is equivalent to hiding everything and clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and green loops.  The following commands are executed:")
+uf.desc[-1].add_list_element("cmd.hide('everything', file)")
+uf.desc[-1].add_list_element("cmd.show('cartoon', file)")
+uf.desc[-1].add_list_element("util.cbss(file, 'red', 'yellow', 'green')")
+uf.desc[-1].add_paragraph("where file is the file name without the '.pdb' extension.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To apply this user function, type:")
+uf.desc[-1].add_prompt("relax> pymol.cartoon()")
 uf.backend = pymol_control.cartoon
 uf.menu_text = "cart&oon"
 uf.wizard_size = (700, 500)
@@ -72,9 +70,9 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 uf = uf_info.add_uf('pymol.clear_history')
 uf.title = "Clear the PyMOL command history."""
 uf.title_short = "Clear PyMOL history."""
-uf.desc = """
-This will clear the Pymol history from memory.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will clear the Pymol history from memory.")
 uf.backend = pymol_control.pymol_obj.clear_history
 uf.menu_text = "clear_&history"
 uf.wizard_size = (600, 300)
@@ -92,14 +90,13 @@ uf.add_keyarg(
     desc_short = "PyMOL command",
     desc = "The PyMOL command to execute."
 )
-uf.desc = """
-This allows PyMOL commands to be passed to the program.  This can be useful for automation or scripting.
-"""
-uf.prompt_examples = """
-To reinitialise the PyMOL instance, type:
-
-relax> pymol.command("reinitialise")
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows PyMOL commands to be passed to the program.  This can be useful for automation or scripting.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To reinitialise the PyMOL instance, type:")
+uf.desc[-1].add_prompt("relax> pymol.command(\"reinitialise\")")
 uf.backend = pymol_control.command
 uf.menu_text = "&command"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -120,26 +117,20 @@ uf.add_keyarg(
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
     wiz_filesel_style = wx.FD_OPEN
 )
-uf.desc = """
-The PDB file containing the geometric object must be created using the complementary frame_order.cone_pdb or n_state_model.cone_pdb user functions.
-
-The cone PDB file is read in using the command:
-
-    load file
-
-The average CoM-pivot point vector, the residue 'AVE' is displayed using the commands:
-
-    select resn AVE
-    show sticks, 'sele'
-    color blue, 'sele'
-
-The cone object, the residue 'CON', is displayed using the commands:
-
-    select resn CON
-    hide ('sele')
-    show sticks, 'sele'
-    color white, 'sele'
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The PDB file containing the geometric object must be created using the complementary frame_order.cone_pdb or n_state_model.cone_pdb user functions.")
+uf.desc[-1].add_paragraph("The cone PDB file is read in using the command:")
+uf.desc[-1].add_list_element("load file")
+uf.desc[-1].add_paragraph("The average CoM-pivot point vector, the residue 'AVE' is displayed using the commands:")
+uf.desc[-1].add_list_element("select resn AVE")
+uf.desc[-1].add_list_element("show sticks, 'sele'")
+uf.desc[-1].add_list_element("color blue, 'sele'")
+uf.desc[-1].add_paragraph("The cone object, the residue 'CON', is displayed using the commands:")
+uf.desc[-1].add_list_element("select resn CON")
+uf.desc[-1].add_list_element("hide ('sele')")
+uf.desc[-1].add_list_element("show sticks, 'sele'")
+uf.desc[-1].add_list_element("color white, 'sele'")
 uf.backend = pymol_control.cone_pdb
 uf.menu_text = "cone_&pdb"
 uf.wizard_size = (800, 600)
@@ -208,22 +199,19 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This allows spin specific values to be mapped to a structure through PyMOL macros.  Currently only the 'classic' style, which is described below, is available.
-"""
-uf.additional = [
-    colour._linear_gradient_doc,
-    Pymol.classic_style_doc,
-    colour.__molmol_colours_prompt_doc__,
-    colour.__x11_colours_prompt_doc__
-]
-uf.prompt_examples = """
-To map the order parameter values, S2, onto the structure using the classic style, type:
-
-relax> pymol.macro_apply('s2')
-relax> pymol.macro_apply(data_type='s2')
-relax> pymol.macro_apply(data_type='s2', style="classic")
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows spin specific values to be mapped to a structure through PyMOL macros.  Currently only the 'classic' style, which is described below, is available.")
+uf.desc.append(colour._linear_gradient_doc)
+uf.desc.append(Pymol.classic_style_doc)
+uf.desc.append(colour.__molmol_colours_doc__)
+uf.desc.append(colour.__x11_colours_doc__)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To map the order parameter values, S2, onto the structure using the classic style, type:")
+uf.desc[-1].add_prompt("relax> pymol.macro_apply('s2')")
+uf.desc[-1].add_prompt("relax> pymol.macro_apply(data_type='s2')")
+uf.desc[-1].add_prompt("relax> pymol.macro_apply(data_type='s2', style=\"classic\")")
 uf.backend = pymol_control.macro_apply
 uf.menu_text = "&macro_apply"
 uf.gui_icon = "relax.pymol_icon"
@@ -255,15 +243,14 @@ uf.add_keyarg(
     desc = "The directory name.",
     can_be_none = True
 )
-uf.desc = """
-This user function is for opening and running a PyMOL macro located within a text file.
-"""
-uf.prompt_examples = """
-To execute the macro file 's2.pml' located in the directory 'pymol', type:
-
-relax> pymol.macro_run(file='s2.pml')
-relax> pymol.macro_run(file='s2.pml', dir='pymol')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function is for opening and running a PyMOL macro located within a text file.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To execute the macro file 's2.pml' located in the directory 'pymol', type:")
+uf.desc[-1].add_prompt("relax> pymol.macro_run(file='s2.pml')")
+uf.desc[-1].add_prompt("relax> pymol.macro_run(file='s2.pml', dir='pymol')")
 uf.backend = pymol_control.macro_run
 uf.menu_text = "macro_&run"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -357,23 +344,19 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )
-uf.desc = """
-This allows residues specific values to be mapped to a structure through the creation of a PyMOL macro which can be executed in PyMOL by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
-"""
-uf.additional = [
-    colour._linear_gradient_doc,
-    Pymol.classic_style_doc,
-    colour.__molmol_colours_prompt_doc__,
-    colour.__x11_colours_prompt_doc__
-]
-uf.prompt_examples = """
-To create a PyMOL macro mapping the order parameter values, S2, onto the structure using
-the classic style, type:
-
-relax> pymol.macro_write('s2')
-relax> pymol.macro_write(data_type='s2')
-relax> pymol.macro_write(data_type='s2', style="classic", file='s2.pml', dir='pymol')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows residues specific values to be mapped to a structure through the creation of a PyMOL macro which can be executed in PyMOL by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.")
+uf.desc.append(colour._linear_gradient_doc)
+uf.desc.append(Pymol.classic_style_doc)
+uf.desc.append(colour.__molmol_colours_doc__)
+uf.desc.append(colour.__x11_colours_doc__)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To create a PyMOL macro mapping the order parameter values, S2, onto the structure using the classic style, type:")
+uf.desc[-1].add_prompt("relax> pymol.macro_write('s2')")
+uf.desc[-1].add_prompt("relax> pymol.macro_write(data_type='s2')")
+uf.desc[-1].add_prompt("relax> pymol.macro_write(data_type='s2', style=\"classic\", file='s2.pml', dir='pymol')")
 uf.backend = pymol_control.macro_write
 uf.menu_text = "macro_&write"
 uf.gui_icon = "oxygen.actions.document-save"
@@ -395,32 +378,24 @@ uf.add_keyarg(
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
     wiz_filesel_style = wx.FD_OPEN
 )
-uf.desc = """
-In executing this user function, a PDB file must have previously been loaded into this data pipe a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.
-
-The tensor PDB file is read in using the command:
-
-    load file
-
-The centre of mass residue 'COM' is displayed using the commands:
-
-    select resn COM
-    show dots, 'sele'
-    color blue, 'sele'
-
-The axes of the diffusion tensor, the residue 'AXS', is displayed using the commands:
-
-    select resn AXS
-    hide ('sele')
-    show sticks, 'sele'
-    color cyan, 'sele'
-    label 'sele', name
-
-The simulation axes, the residues 'SIM', are displayed using the commands:
-
-    select resn SIM
-    colour cyan, 'sele'
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("In executing this user function, a PDB file must have previously been loaded into this data pipe a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.")
+uf.desc[-1].add_paragraph("The tensor PDB file is read in using the command:")
+uf.desc[-1].add_list_element("load file")
+uf.desc[-1].add_paragraph("The centre of mass residue 'COM' is displayed using the commands:")
+uf.desc[-1].add_list_element("select resn COM")
+uf.desc[-1].add_list_element("show dots, 'sele'")
+uf.desc[-1].add_list_element("color blue, 'sele'")
+uf.desc[-1].add_paragraph("The axes of the diffusion tensor, the residue 'AXS', is displayed using the commands:")
+uf.desc[-1].add_list_element("select resn AXS")
+uf.desc[-1].add_list_element("hide ('sele')")
+uf.desc[-1].add_list_element("show sticks, 'sele'")
+uf.desc[-1].add_list_element("color cyan, 'sele'")
+uf.desc[-1].add_list_element("label 'sele', name")
+uf.desc[-1].add_paragraph("The simulation axes, the residues 'SIM', are displayed using the commands:")
+uf.desc[-1].add_list_element("select resn SIM")
+uf.desc[-1].add_list_element("colour cyan, 'sele'")
 uf.backend = pymol_control.tensor_pdb
 uf.menu_text = "&tensor_pdb"
 uf.wizard_size = (1000, 700)
@@ -443,13 +418,11 @@ uf.add_keyarg(
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
     wiz_filesel_style = wx.FD_OPEN
 )
-uf.desc = """
-A PDB file of the macromolecule must have previously been loaded as the vector distribution will be overlain with the macromolecule within PyMOL.  The PDB file containing the vector distribution must be created using the complementary structure.create_vector_dist user function.
-
-The vector distribution PDB file is read in using the command:
-
-    load file
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("A PDB file of the macromolecule must have previously been loaded as the vector distribution will be overlain with the macromolecule within PyMOL.  The PDB file containing the vector distribution must be created using the complementary structure.create_vector_dist user function.")
+uf.desc[-1].add_paragraph("The vector distribution PDB file is read in using the command:")
+uf.desc[-1].add_list_element("load file")
 uf.backend = pymol_control.vector_dist
 uf.menu_text = "vector_&dist"
 uf.wizard_size = (800, 500)
@@ -460,12 +433,12 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 uf = uf_info.add_uf('pymol.view')
 uf.title = "View the collection of molecules from the loaded PDB file."
 uf.title_short = "Molecule viewing."
-uf.desc = """
-This will simply launch Pymol.
-"""
-uf.prompt_examples = """
-relax> pymol.view()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will simply launch Pymol.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_prompt("relax> pymol.view()")
 uf.backend = pymol_control.view
 uf.menu_text = "&view"
 uf.wizard_size = (600, 300)

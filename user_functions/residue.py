@@ -28,6 +28,7 @@ from generic_fns.mol_res_spin import copy_residue, create_residue, delete_residu
 from generic_fns import pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -78,26 +79,18 @@ uf.add_keyarg(
     desc = "The residue ID string of the residue to copy the data to.  If left blank, the new residue will have the same name as the old.",
     can_be_none = True
 )
-uf.desc = """
-This will copy all the data associated with the identified residue to the new, non-existent residue.  The new residue cannot currently exist.
-"""
-uf.prompt_examples = """
-To copy the residue data from residue 1 to the new residue 2, type:
-
-relax> residue.copy(res_from=':1', res_to=':2')
-
-
-To copy residue 1 of the molecule 'Old mol' to residue 5 of the molecule 'New mol', type:
-
-relax> residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
-
-
-To copy the residue data of residue 1 from the data pipe 'm1' to 'm2', assuming the current
-data pipe is 'm1', type:
-
-relax> residue.copy(res_from=':1', pipe_to='m2')
-relax> residue.copy(pipe_from='m1', res_from=':1', pipe_to='m2', res_to=':1')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will copy all the data associated with the identified residue to the new, non-existent residue.  The new residue cannot currently exist.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the residue data from residue 1 to the new residue 2, type:")
+uf.desc[-1].add_prompt("relax> residue.copy(res_from=':1', res_to=':2')")
+uf.desc[-1].add_paragraph("To copy residue 1 of the molecule 'Old mol' to residue 5 of the molecule 'New mol', type:")
+uf.desc[-1].add_prompt("relax> residue.copy(res_from='#Old mol:1', res_to='#New mol:5')")
+uf.desc[-1].add_paragraph("To copy the residue data of residue 1 from the data pipe 'm1' to 'm2', assuming the current data pipe is 'm1', type:")
+uf.desc[-1].add_prompt("relax> residue.copy(res_from=':1', pipe_to='m2')")
+uf.desc[-1].add_prompt("relax> residue.copy(pipe_from='m1', res_from=':1', pipe_to='m2', res_to=':1')")
 uf.backend = copy_residue
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -137,16 +130,15 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-Using this, a new sequence can be generated without using the sequence user functions.  However if the sequence already exists, the new residue will be added to the end of the residue list (the residue numbers of this list need not be sequential).  The same residue number cannot be used more than once.  A corresponding single spin system will be created for this residue.  The spin system number and name or additional spin systems can be added later if desired.
-"""
-uf.prompt_examples = """
-The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:
-
-relax> residue.create(1, 'ALA')
-relax> residue.create(2, 'GLY')
-relax> residue.create(3, 'LYS')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Using this, a new sequence can be generated without using the sequence user functions.  However if the sequence already exists, the new residue will be added to the end of the residue list (the residue numbers of this list need not be sequential).  The same residue number cannot be used more than once.  A corresponding single spin system will be created for this residue.  The spin system number and name or additional spin systems can be added later if desired.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:")
+uf.desc[-1].add_prompt("relax> residue.create(1, 'ALA')")
+uf.desc[-1].add_prompt("relax> residue.create(2, 'GLY')")
+uf.desc[-1].add_prompt("relax> residue.create(3, 'LYS')")
 uf.backend = create_residue
 uf.menu_text = "c&reate"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -167,10 +159,10 @@ uf.add_keyarg(
     wiz_combo_iter = get_residue_ids,
     wiz_read_only = True
 )
-uf.desc = """
-This can be used to delete a single or sets of residues.  See the ID string documentation for more information.  If spin system/atom ids are included a RelaxError will be raised.
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This can be used to delete a single or sets of residues.  See the ID string documentation for more information.  If spin system/atom ids are included a RelaxError will be raised.")
+uf.desc.append(id_string_doc)
 uf.backend = delete_residue
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -193,10 +185,10 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will display the residue data loaded into the current data pipe.
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will display the residue data loaded into the current data pipe.")
+uf.desc.append(id_string_doc)
 uf.backend = display_residue
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -232,22 +224,18 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the residue to be renamed."
 )
-uf.desc = """
-This simply allows residues to be named (or renamed).
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX,
-2 XXX, 3 XXX}:
-
-relax> residue.name(':1', 'XXX', force=True)
-relax> residue.name(':2', 'XXX', force=True)
-relax> residue.name(':3', 'XXX', force=True)
-
-Alternatively:
-
-relax> residue.name(':1,2,3', 'XXX', force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This simply allows residues to be named (or renamed).")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX, 2 XXX, 3 XXX}:")
+uf.desc[-1].add_prompt("relax> residue.name(':1', 'XXX', force=True)")
+uf.desc[-1].add_prompt("relax> residue.name(':2', 'XXX', force=True)")
+uf.desc[-1].add_prompt("relax> residue.name(':3', 'XXX', force=True)")
+uf.desc[-1].add_paragraph("Alternatively:")
+uf.desc[-1].add_prompt("relax> residue.name(':1,2,3', 'XXX', force=True)")
 uf.backend = name_residue
 uf.menu_text = "&name"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -284,18 +272,16 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the residue to be renumbered."
 )
-uf.desc = """
-This simply allows residues to be numbered.  The new number cannot correspond to an existing residue.
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
-{101 ALA, 102 GLY, 103 LYS}:
-
-relax> residue.number(':1', 101, force=True)
-relax> residue.number(':2', 102, force=True)
-relax> residue.number(':3', 103, force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This simply allows residues to be numbered.  The new number cannot correspond to an existing residue.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to {101 ALA, 102 GLY, 103 LYS}:")
+uf.desc[-1].add_prompt("relax> residue.number(':1', 101, force=True)")
+uf.desc[-1].add_prompt("relax> residue.number(':2', 102, force=True)")
+uf.desc[-1].add_prompt("relax> residue.number(':3', 103, force=True)")
 uf.backend = number_residue
 uf.menu_text = "&number"
 uf.gui_icon = "oxygen.actions.edit-rename"

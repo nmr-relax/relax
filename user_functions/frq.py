@@ -27,6 +27,7 @@
 import generic_fns.frq
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -51,9 +52,9 @@ uf.add_keyarg(
     desc_short = "spectrometer frequency",
     desc = "The spectrometer frequency in Hertz."
 )
-uf.desc = """
-This allows the spectrometer frequency of a given experiment to be set.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the spectrometer frequency of a given experiment to be set.")
 uf.backend = generic_fns.frq.set
 uf.menu_text = "&set"
 uf.gui_icon = "oxygen.actions.edit-rename"

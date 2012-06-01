@@ -30,6 +30,7 @@ import wx
 from generic_fns.state import load_state, save_state
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -67,26 +68,20 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A boolean flag which if True will cause the current program state to be overwritten."
 )
-uf.desc = """
-This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.
-        
-Both the XML and pickled saved state formats are supported and automatically determined.  For more advanced users, file descriptor objects are also supported.  If the force flag is set to True, then the relax data store will be reset prior to the loading of the saved state.
-"""
-uf.prompt_examples = """
-The following commands will load the state saved in the file 'save'.
-
-relax> state.load('save')
-relax> state.load(state='save')
-
-
-Use one of the following commands to load the state saved in the bzip2 compressed file
-'save.bz2':
-
-relax> state.load('save')
-relax> state.load(state='save')
-relax> state.load('save.bz2')
-relax> state.load(state='save.bz2', force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.")
+uf.desc[-1].add_paragraph("Both the XML and pickled saved state formats are supported and automatically determined.  For more advanced users, file descriptor objects are also supported.  If the force flag is set to True, then the relax data store will be reset prior to the loading of the saved state.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following commands will load the state saved in the file 'save'.")
+uf.desc[-1].add_prompt("relax> state.load('save')")
+uf.desc[-1].add_prompt("relax> state.load(state='save')")
+uf.desc[-1].add_paragraph("Use one of the following commands to load the state saved in the bzip2 compressed file 'save.bz2':")
+uf.desc[-1].add_prompt("relax> state.load('save')")
+uf.desc[-1].add_prompt("relax> state.load(state='save')")
+uf.desc[-1].add_prompt("relax> state.load('save.bz2')")
+uf.desc[-1].add_prompt("relax> state.load(state='save.bz2', force=True)")
 uf.backend = load_state
 uf.menu_text = "&load"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -138,37 +133,26 @@ uf.add_keyarg(
     desc_short = "pickle flag",
     desc = "A flag which if true will cause the state file to be a pickled object rather than the default XML format."
 )
-uf.desc = """
-This will place the program state - the relax data store - into a file for later reloading or reference.  The default format is an XML formatted file, but this can be changed to a Python pickled object through the pickle flag.  Note, the pickle format is not human readable and often is not compatible with newer relax versions.
-
-The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compress_type argument which can be set to
-
-    0:  No compression (no file extension).
-    1:  bzip2 compression ('.bz2' file extension).
-    2:  gzip compression ('.gz' file extension).
-"""
-uf.prompt_examples = """
-The following commands will save the current program state, uncompressed, into the file 'save':
-
-relax> state.save('save', compress_type=0)
-relax> state.save(state='save', compress_type=0)
-
-
-The following commands will save the current program state into the bzip2 compressed file
-'save.bz2':
-
-relax> state.save('save')
-relax> state.save(state='save')
-relax> state.save('save.bz2')
-relax> state.save(state='save.bz2')
-
-
-If the file 'save' already exists, the following commands will save the current program
-state by overwriting the file.
-
-relax> state.save('save', force=True)
-relax> state.save(state='save', force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will place the program state - the relax data store - into a file for later reloading or reference.  The default format is an XML formatted file, but this can be changed to a Python pickled object through the pickle flag.  Note, the pickle format is not human readable and often is not compatible with newer relax versions.")
+uf.desc[-1].add_paragraph("The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compress_type argument which can be set to")
+uf.desc[-1].add_item_list_element("0", "No compression (no file extension).")
+uf.desc[-1].add_item_list_element("1", "bzip2 compression ('.bz2' file extension).")
+uf.desc[-1].add_item_list_element("2", "gzip compression ('.gz' file extension).")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following commands will save the current program state, uncompressed, into the file 'save':")
+uf.desc[-1].add_prompt("relax> state.save('save', compress_type=0)")
+uf.desc[-1].add_prompt("relax> state.save(state='save', compress_type=0)")
+uf.desc[-1].add_paragraph("The following commands will save the current program state into the bzip2 compressed file 'save.bz2':")
+uf.desc[-1].add_prompt("relax> state.save('save')")
+uf.desc[-1].add_prompt("relax> state.save(state='save')")
+uf.desc[-1].add_prompt("relax> state.save('save.bz2')")
+uf.desc[-1].add_prompt("relax> state.save(state='save.bz2')")
+uf.desc[-1].add_paragraph("If the file 'save' already exists, the following commands will save the current program state by overwriting the file.")
+uf.desc[-1].add_prompt("relax> state.save('save', force=True)")
+uf.desc[-1].add_prompt("relax> state.save(state='save', force=True)")
 uf.backend = save_state
 uf.menu_text = "&save"
 uf.gui_icon = "oxygen.actions.document-save"

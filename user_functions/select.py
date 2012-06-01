@@ -30,6 +30,7 @@ import wx
 from generic_fns import selection
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -44,14 +45,13 @@ uf = uf_info.add_uf("select.all")
 uf.title = "Select all spins in the current data pipe."
 uf.title_short = "Selection of all spins."
 uf.display = True
-uf.desc = """
-This will select all spins, irregardless of their current state.
-"""
-uf.prompt_examples = """
-To select all spins, simply type:
-
-relax> select.all()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will select all spins, irregardless of their current state.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To select all spins, simply type:")
+uf.desc[-1].add_prompt("relax> select.all()")
 uf.backend = selection.sel_all
 uf.menu_text = "&all"
 uf.wizard_size = (600, 550)
@@ -168,27 +168,20 @@ uf.add_keyarg(
     desc_short = "change all",
     desc = "A flag specifying if all other spins should be changed."
 )
-uf.desc = """
-The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
-
-Empty lines and lines beginning with a hash are ignored.
-
-The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified in the file to be deselected.
-"""
-uf.additional = [selection.boolean_doc]
-uf.prompt_examples = """
-To select all residues listed with residue numbers in the first column of the file
-'isolated_peaks', type one of:
-
-relax> select.read('isolated_peaks', res_num_col=1)
-relax> select.read(file='isolated_peaks', res_num_col=1)
-
-To select the spins in the second column of the relaxation data file 'r1.600' while
-deselecting all other spins, for example type:
-
-relax> select.read('r1.600', spin_num_col=2, change_all=True)
-relax> select.read(file='r1.600', spin_num_col=2, change_all=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
+uf.desc[-1].add_paragraph("Empty lines and lines beginning with a hash are ignored.")
+uf.desc[-1].add_paragraph("The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified in the file to be deselected.")
+uf.desc.append(selection.boolean_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To select all residues listed with residue numbers in the first column of the file 'isolated_peaks', type one of:")
+uf.desc[-1].add_prompt("relax> select.read('isolated_peaks', res_num_col=1)")
+uf.desc[-1].add_prompt("relax> select.read(file='isolated_peaks', res_num_col=1)")
+uf.desc[-1].add_paragraph("To select the spins in the second column of the relaxation data file 'r1.600' while deselecting all other spins, for example type:")
+uf.desc[-1].add_prompt("relax> select.read('r1.600', spin_num_col=2, change_all=True)")
+uf.desc[-1].add_prompt("relax> select.read(file='r1.600', spin_num_col=2, change_all=True)")
 uf.backend = selection.sel_read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -209,14 +202,13 @@ uf.add_keyarg(
     desc = "The spin ID string.",
     can_be_none = True
 )
-uf.desc = """
-By supplying the spin ID string, a subset of spins can have their selection status reversed.
-"""
-uf.prompt_examples = """
-To select all currently deselected spins and deselect those which are selected type:
-
-relax> select.reverse()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("By supplying the spin ID string, a subset of spins can have their selection status reversed.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To select all currently deselected spins and deselect those which are selected type:")
+uf.desc[-1].add_prompt("relax> select.reverse()")
 uf.backend = selection.reverse
 uf.menu_text = "re&verse"
 uf.gui_icon = "oxygen.actions.system-switch-user"
@@ -261,22 +253,18 @@ uf.add_keyarg(
     desc_short = "change all",
     desc = "A flag specifying if all other spins should be changed."
 )
-uf.desc = """
-The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified by the spin ID string to be selected.
-"""
-uf.additional = [selection.boolean_doc]
-uf.prompt_examples = """
-To select only glycines and alanines, assuming they have been loaded with the names GLY and
-ALA, type one of:
-
-relax> select.spin(spin_id=':GLY|:ALA')
-
-To select residue 5 CYS in addition to the currently selected residues, type one of:
-
-relax> select.spin(':5')
-relax> select.spin(':5&:CYS')
-relax> select.spin(spin_id=':5&:CYS')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified by the spin ID string to be selected.")
+uf.desc.append(selection.boolean_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To select only glycines and alanines, assuming they have been loaded with the names GLY and ALA, type one of:")
+uf.desc[-1].add_prompt("relax> select.spin(spin_id=':GLY|:ALA')")
+uf.desc[-1].add_paragraph("To select residue 5 CYS in addition to the currently selected residues, type one of:")
+uf.desc[-1].add_prompt("relax> select.spin(':5')")
+uf.desc[-1].add_prompt("relax> select.spin(':5&:CYS')")
+uf.desc[-1].add_prompt("relax> select.spin(spin_id=':5&:CYS')")
 uf.backend = selection.sel_spin
 uf.menu_text = "&spin"
 uf.gui_icon = "relax.spin"

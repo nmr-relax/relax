@@ -28,9 +28,8 @@ from os import sep
 import wx
 
 # relax module imports.
-from prompt.doc_string import docs
+from prompt.doc_string import regexp_doc
 from generic_fns import diffusion_tensor, pipes, value
-from generic_fns.mol_res_spin import id_string_doc
 from graphics import WIZARD_IMAGE_PATH
 from relax_errors import RelaxError
 from specific_fns.jw_mapping import Jw_mapping
@@ -39,6 +38,7 @@ from specific_fns.relax_fit import Relax_fit
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -79,25 +79,22 @@ uf.add_keyarg(
     wiz_combo_iter = value.get_parameters,
     wiz_read_only = True
 )
-uf.desc = """
-If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.
-"""
-uf.prompt_examples = """
-To copy the CSA values from the data pipe 'm1' to 'm2', type:
-
-relax> value.copy('m1', 'm2', 'csa')
-"""
-uf.additional = [
-    docs.regexp.doc,
-    Model_free.set_doc,
-    Model_free.return_data_name_doc,
-    Jw_mapping.set_doc,
-    Jw_mapping.return_data_name_doc,
-    Relax_fit.set_doc,
-    Relax_fit.return_data_name_doc,
-    N_state_model.set_doc,
-    N_state_model.return_data_name_doc
-]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
+uf.desc[-1].add_prompt("relax> value.copy('m1', 'm2', 'csa')")
+uf.desc.append(regexp_doc)
+uf.desc.append(Model_free.set_doc)
+uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(Jw_mapping.set_doc)
+uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Relax_fit.set_doc)
+uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(N_state_model.set_doc)
+uf.desc.append(N_state_model.return_data_name_doc)
 uf.backend = value.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -120,19 +117,16 @@ uf.add_keyarg(
     wiz_combo_iter = value.get_parameters,
     wiz_read_only = True
 )
-uf.additional = [
-    docs.regexp.doc,
-    Model_free.return_data_name_doc,
-    Jw_mapping.return_data_name_doc,
-    Noe.return_data_name_doc,
-    Relax_fit.return_data_name_doc,
-    N_state_model.return_data_name_doc
-]
-uf.prompt_examples = """
-To show all CSA values, type:
-
-relax> value.display('csa')
-"""
+uf.desc.append(regexp_doc)
+uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Noe.return_data_name_doc)
+uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(N_state_model.return_data_name_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To show all CSA values, type:")
+uf.desc[-1].add_prompt("relax> value.display('csa')")
 uf.backend = value.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -256,31 +250,25 @@ uf.add_keyarg(
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets."
 )
-uf.desc = """
-The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
-
-If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.
-"""
-uf.additional = [
-    docs.regexp.doc,
-    Model_free.set_doc,
-    Model_free.return_data_name_doc,
-    Jw_mapping.set_doc,
-    Jw_mapping.return_data_name_doc,
-    Relax_fit.set_doc,
-    Relax_fit.return_data_name_doc,
-    N_state_model.set_doc,
-    N_state_model.return_data_name_doc
-]
-uf.prompt_examples = """
-To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are
-only identified by residue name and number, type one of the following:
-
-relax> value.read('csa', 'data/csa_value', spin_id='@N')
-relax> value.read('csa', 'csa_value', dir='data', spin_id='@N')
-relax> value.read(param='csa', file='csa_value', dir='data', res_num_col=1, res_name_col=2,
-                  data_col=3, error_col=4, spin_id='@N')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
+uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
+uf.desc.append(regexp_doc)
+uf.desc.append(Model_free.set_doc)
+uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(Jw_mapping.set_doc)
+uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Relax_fit.set_doc)
+uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(N_state_model.set_doc)
+uf.desc.append(N_state_model.return_data_name_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are only identified by residue name and number, type one of the following:")
+uf.desc[-1].add_prompt("relax> value.read('csa', 'data/csa_value', spin_id='@N')")
+uf.desc[-1].add_prompt("relax> value.read('csa', 'csa_value', dir='data', spin_id='@N')")
+uf.desc[-1].add_prompt("relax> value.read(param='csa', file='csa_value', dir='data', res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')")
 uf.backend = value.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -313,114 +301,68 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
+    arg_type = "spin ID",
     desc_short = "spin ID to restrict value setting to",
-    desc = id_string_doc[1],
+    desc = "The spin ID string to restrict value setting to.",
     can_be_none = True
 )
-uf.desc = """
-If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.
-
-The val argument can be None, a single value, or an array of values while the parameter argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the 'val' argument while the Param column refers to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds to either a single value or single string, and 'n' corresponds to either an array of values or an array of strings.
-
-____________________________________________________________________________________________
-|       |       |                                                                          |
-| Value | Param | Description                                                              |
-|_______|_______|__________________________________________________________________________|
-|       |       |                                                                          |
-| None  | None  | This case is used to set the model parameters prior to minimisation or   |
-|       |       | calculation.  The model parameters are set to the default values.        |
-|       |       |                                                                          |
-|   1   | None  | Invalid combination.                                                     |
-|       |       |                                                                          |
-|   n   | None  | This case is used to set the model parameters prior to minimisation or   |
-|       |       | calculation.  The length of the val array must be equal to the number    |
-|       |       | of model parameters.  The parameters will be set to the corresponding    |
-|       |       | number.                                                                  |
-|       |       |                                                                          |
-| None  |   1   | The parameter matching the string will be set to the default value.      |
-|       |       |                                                                          |
-|   1   |   1   | The parameter matching the string will be set to the supplied number.    |
-|       |       |                                                                          |
-|   n   |   1   | Invalid combination.                                                     |
-|       |       |                                                                          |
-| None  |   n   | Each parameter matching the strings will be set to the default values.   |
-|       |       |                                                                          |
-|   1   |   n   | Each parameter matching the strings will be set to the supplied number.  |
-|       |       |                                                                          |
-|   n   |   n   | Each parameter matching the strings will be set to the corresponding     |
-|       |       | number.  Both arrays must be of equal length.                            |
-|_______|_______|__________________________________________________________________________|
-"""
-uf.additional = [
-["Spin identification", """
-If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.
-"""],
-    docs.regexp.doc,
-    Model_free.set_doc,
-    Model_free.return_data_name_doc,
-    Model_free.default_value_doc,
-    Jw_mapping.set_doc,
-    Jw_mapping.return_data_name_doc,
-    Jw_mapping.default_value_doc,
-    diffusion_tensor.__set_prompt_doc__,
-    diffusion_tensor.__return_data_name_prompt_doc__,
-    diffusion_tensor.__default_value_prompt_doc__,
-    Relax_fit.set_doc,
-    Relax_fit.return_data_name_doc,
-    Relax_fit.default_value_doc,
-    N_state_model.set_doc,
-    N_state_model.return_data_name_doc,
-    N_state_model.default_value_doc
-]
-uf.prompt_examples = """
-To set the parameter values for the current data pipe to the default values, for all spins,
-type:
-
-relax> value.set()
-
-
-To set the parameter values of residue 10, which is in the current model-free data pipe 'm4'
-and has the parameters {S2, te, Rex}, the following can be used.  Rex term is the value for
-the first given field strength.
-
-relax> value.set([0.97, 2.048*1e-9, 0.149], spin_id=':10')
-relax> value.set(val=[0.97, 2.048*1e-9, 0.149], spin_id=':10')
-
-
-To set the CSA value of all spins to the default value, type:
-
-relax> value.set(param='csa')
-
-
-To set the CSA value of all spins to -172 ppm, type:
-
-relax> value.set(-172 * 1e-6, 'csa')
-relax> value.set(val=-172 * 1e-6, param='csa')
-
-
-To set the NH bond length of all spins to 1.02 Angstroms, type:
-
-relax> value.set(1.02 * 1e-10, 'r')
-relax> value.set(val=1.02 * 1e-10, param='r')
-
-
-To set both the bond length and the CSA value to the default values, type:
-
-relax> value.set(param=['r', 'csa'])
-
-
-To set both tf and ts to 100 ps, type:
-
-relax> value.set(100e-12, ['tf', 'ts'])
-relax> value.set(val=100e-12, param=['tf', 'ts'])
-
-
-To set the S2 and te parameter values of residue 126, Ca spins to 0.56 and 13 ps, type:
-
-relax> value.set([0.56, 13e-12], ['s2', 'te'], ':126@Ca')
-relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')
-relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.")
+uf.desc[-1].add_paragraph("The val argument can be None, a single value, or an array of values while the parameter argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the 'val' argument while the Param column refers to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds to either a single value or single string, and 'n' corresponds to either an array of values or an array of strings.")
+uf.desc[-1].add_table_titles(["Value", "Param", "Description"])
+uf.desc[-1].add_table_row(["None", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The model parameters are set to the default values."])
+uf.desc[-1].add_table_row(["1", "None", "Invalid combination."])
+uf.desc[-1].add_table_row(["n", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The length of the val array must be equal to the number of model parameters.  The parameters will be set to the corresponding number."])
+uf.desc[-1].add_table_row(["None", "1", "The parameter matching the string will be set to the default value."])
+uf.desc[-1].add_table_row(["1", "1", "The parameter matching the string will be set to the supplied number."])
+uf.desc[-1].add_table_row(["n", "1", "Invalid combination."])
+uf.desc[-1].add_table_row(["None", "n", "Each parameter matching the strings will be set to the default values."])
+uf.desc[-1].add_table_row(["1", "n", "Each parameter matching the strings will be set to the supplied number."])
+uf.desc[-1].add_table_row(["n", "n", "Each parameter matching the strings will be set to the corresponding number.  Both arrays must be of equal length."])
+# Spin identification.
+uf.desc.append(Desc_container("Spin identification"))
+uf.desc[-1].add_paragraph("If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.")
+uf.desc.append(regexp_doc)
+uf.desc.append(Model_free.set_doc)
+uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(Model_free.default_value_doc)
+uf.desc.append(Jw_mapping.set_doc)
+uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Jw_mapping.default_value_doc)
+uf.desc.append(diffusion_tensor.__set_doc__)
+uf.desc.append(diffusion_tensor.__return_data_name_doc__)
+uf.desc.append(diffusion_tensor.__default_value_doc__)
+uf.desc.append(Relax_fit.set_doc)
+uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(Relax_fit.default_value_doc)
+uf.desc.append(N_state_model.set_doc)
+uf.desc.append(N_state_model.return_data_name_doc)
+uf.desc.append(N_state_model.default_value_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set the parameter values for the current data pipe to the default values, for all spins, type:")
+uf.desc[-1].add_prompt("relax> value.set()")
+uf.desc[-1].add_paragraph("To set the parameter values of residue 10, which is in the current model-free data pipe 'm4' and has the parameters {S2, te, Rex}, the following can be used.  Rex term is the value for the first given field strength.")
+uf.desc[-1].add_prompt("relax> value.set([0.97, 2.048*1e-9, 0.149], spin_id=':10')")
+uf.desc[-1].add_prompt("relax> value.set(val=[0.97, 2.048*1e-9, 0.149], spin_id=':10')")
+uf.desc[-1].add_paragraph("To set the CSA value of all spins to the default value, type:")
+uf.desc[-1].add_prompt("relax> value.set(param='csa')")
+uf.desc[-1].add_paragraph("To set the CSA value of all spins to -172 ppm, type:")
+uf.desc[-1].add_prompt("relax> value.set(-172 * 1e-6, 'csa')")
+uf.desc[-1].add_prompt("relax> value.set(val=-172 * 1e-6, param='csa')")
+uf.desc[-1].add_paragraph("To set the NH bond length of all spins to 1.02 Angstroms, type:")
+uf.desc[-1].add_prompt("relax> value.set(1.02 * 1e-10, 'r')")
+uf.desc[-1].add_prompt("relax> value.set(val=1.02 * 1e-10, param='r')")
+uf.desc[-1].add_paragraph("To set both the bond length and the CSA value to the default values, type:")
+uf.desc[-1].add_prompt("relax> value.set(param=['r', 'csa'])")
+uf.desc[-1].add_paragraph("To set both tf and ts to 100 ps, type:")
+uf.desc[-1].add_prompt("relax> value.set(100e-12, ['tf', 'ts'])")
+uf.desc[-1].add_prompt("relax> value.set(val=100e-12, param=['tf', 'ts'])")
+uf.desc[-1].add_paragraph("To set the S2 and te parameter values of residue 126, Ca spins to 0.56 and 13 ps, type:")
+uf.desc[-1].add_prompt("relax> value.set([0.56, 13e-12], ['s2', 'te'], ':126@Ca')")
+uf.desc[-1].add_prompt("relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')")
+uf.desc[-1].add_prompt("relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')")
 uf.backend = value.set
 uf.menu_text = "&set"
 uf.wizard_height_desc = 400
@@ -471,31 +413,25 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )
-uf.desc = """
-The values corresponding to the given parameter will be written to file.
-"""
-uf.additional = [
-    docs.regexp.doc,
-    Model_free.return_data_name_doc,
-    Jw_mapping.return_data_name_doc,
-    Noe.return_data_name_doc,
-    Relax_fit.return_data_name_doc,
-    N_state_model.return_data_name_doc
-]
-uf.prompt_examples = """
-To write the CSA values to the file 'csa.txt', type one of:
-
-relax> value.write('csa', 'csa.txt')
-relax> value.write(param='csa', file='csa.txt')
-
-
-To write the NOE values to the file 'noe', type one of:
-
-relax> value.write('noe', 'noe.out')
-relax> value.write(param='noe', file='noe.out')
-relax> value.write(param='noe', file='noe.out')
-relax> value.write(param='noe', file='noe.out', force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The values corresponding to the given parameter will be written to file.")
+uf.desc.append(regexp_doc)
+uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Noe.return_data_name_doc)
+uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(N_state_model.return_data_name_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To write the CSA values to the file 'csa.txt', type one of:")
+uf.desc[-1].add_prompt("relax> value.write('csa', 'csa.txt')")
+uf.desc[-1].add_prompt("relax> value.write(param='csa', file='csa.txt')")
+uf.desc[-1].add_paragraph("To write the NOE values to the file 'noe', type one of:")
+uf.desc[-1].add_prompt("relax> value.write('noe', 'noe.out')")
+uf.desc[-1].add_prompt("relax> value.write(param='noe', file='noe.out')")
+uf.desc[-1].add_prompt("relax> value.write(param='noe', file='noe.out')")
+uf.desc[-1].add_prompt("relax> value.write(param='noe', file='noe.out', force=True)")
 uf.backend = value.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"

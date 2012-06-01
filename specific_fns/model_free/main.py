@@ -40,6 +40,7 @@ from minfx.generic import generic_minimise
 import specific_fns
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
+from user_functions.objects import Desc_container
 
 
 
@@ -1282,34 +1283,18 @@ class Model_free_main:
             return types[param]
 
 
-    default_value_doc = ["Model-free default values", """
-        _______________________________________________________________________________________
-        |                                       |                    |                        |
-        | Data type                             | Object name        | Value                  |
-        |_______________________________________|____________________|________________________|
-        |                                       |                    |                        |
-        | Local tm                              | 'local_tm'         | 10 * 1e-9              |
-        |                                       |                    |                        |
-        | Order parameters S2, S2f, and S2s     | 's2', 's2f', 's2s' | 0.8                    |
-        |                                       |                    |                        |
-        | Correlation time te                   | 'te'               | 100 * 1e-12            |
-        |                                       |                    |                        |
-        | Correlation time tf                   | 'tf'               | 10 * 1e-12             |
-        |                                       |                    |                        |
-        | Correlation time ts                   | 'ts'               | 1000 * 1e-12           |
-        |                                       |                    |                        |
-        | Chemical exchange relaxation          | 'rex'              | 0.0                    |
-        |                                       |                    |                        |
-        | Bond length                           | 'r'                | 1.02 * 1e-10           |
-        |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -172 * 1e-6            |
-        |                                       |                    |                        |
-        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                  |
-        |                                       |                    |                        |
-        | Proton type                           | 'proton_type'      | '1H'                   |
-        |_______________________________________|____________________|________________________|
-
-        """]
+    default_value_doc = Desc_container("Model-free default values")
+    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
+    default_value_doc.add_table_row(["Local tm", "'local_tm'", "10 * 1e-9"])
+    default_value_doc.add_table_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
+    default_value_doc.add_table_row(["Correlation time te", "'te'", "100 * 1e-12"])
+    default_value_doc.add_table_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
+    default_value_doc.add_table_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
+    default_value_doc.add_table_row(["Chemical exchange relaxation", "'rex'", "0.0"])
+    default_value_doc.add_table_row(["Bond length", "'r'", "1.02 * 1e-10"])
+    default_value_doc.add_table_row(["CSA", "'csa'", "-172 * 1e-6"])
+    default_value_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
+    default_value_doc.add_table_row(["Proton type", "'proton_type'", "'1H'"])
 
     def default_value(self, param):
         """The default model-free parameter values.
@@ -1508,23 +1493,17 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    eliminate_doc = [["Local tm model elimination rule", """
-        The local tm, in some cases, may exceed the value expected for a global correlation time. Generally the tm value will be stuck at the upper limit defined for the parameter.  These models are eliminated using the rule:
-
-            tm >= c
-
-        The default value of c is 50 ns, although this can be overridden by supplying the value (in seconds) as the first element of the args tuple.
-        """],
-        ["Internal correlation times {te, tf, ts} model elimination rules", """
-        These parameters may experience the same problem as the local tm in that the model fails and the parameter value is stuck at the upper limit.  These parameters are constrained using the formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:
-
-            te, tf, ts >= c . tm
-
-        The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.
-        """],
-        ["Arguments", """
-        The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
-        """]]
+    eliminate_doc = []
+    eliminate_doc.append(Desc_container("Local tm model elimination rule"))
+    eliminate_doc[-1].add_paragraph("The local tm, in some cases, may exceed the value expected for a global correlation time. Generally the tm value will be stuck at the upper limit defined for the parameter.  These models are eliminated using the rule:")
+    eliminate_doc[-1].add_verbatim("    tm >= c")
+    eliminate_doc[-1].add_paragraph("The default value of c is 50 ns, although this can be overridden by supplying the value (in seconds) as the first element of the args tuple.")
+    eliminate_doc.append(Desc_container("Internal correlation times {te, tf, ts} model elimination rules"))
+    eliminate_doc[-1].add_paragraph("These parameters may experience the same problem as the local tm in that the model fails and the parameter value is stuck at the upper limit.  These parameters are constrained using the formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:")
+    eliminate_doc[-1].add_verbatim("    te, tf, ts >= c . tm.")
+    eliminate_doc[-1].add_paragraph("The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.")
+    eliminate_doc.append(Desc_container("Arguments"))
+    eliminate_doc[-1].add_paragraph("The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).")
 
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model-free model elimination, parameter by parameter.
@@ -1956,52 +1935,30 @@ class Model_free_main:
                 spin.select = False
 
 
-    return_data_name_doc = ["Model-free data type string matching patterns", """
-        _____________________________________________
-        |                        |                  |
-        | Data type              | Object name      |
-        |________________________|__________________|
-        |                        |                  |
-        | Local tm               | 'local_tm'       |
-        |                        |                  |
-        | Order parameter S2     | 's2'             |
-        |                        |                  |
-        | Order parameter S2f    | 's2f'            |
-        |                        |                  |
-        | Order parameter S2s    | 's2s'            |
-        |                        |                  |
-        | Correlation time te    | 'te'             |
-        |                        |                  |
-        | Correlation time tf    | 'tf'             |
-        |                        |                  |
-        | Correlation time ts    | 'ts'             |
-        |                        |                  |
-        | Chemical exchange      | 'rex'            |
-        |                        |                  |
-        | Bond length            | 'r'              |
-        |                        |                  |
-        | CSA                    | 'csa'            |
-        |                        |                  |
-        | Heteronucleus type     | 'heteronuc_type' |
-        |                        |                  |
-        | Proton type            | 'proton_type'    |
-        |________________________|__________________|
-
-        """]
+    return_data_name_doc = Desc_container("Model-free data type string matching patterns")
+    return_data_name_doc.add_table_titles(["Data type", "Object name"])
+    return_data_name_doc.add_table_row(["Local tm", "'local_tm'"])
+    return_data_name_doc.add_table_row(["Order parameter S2", "'s2'"])
+    return_data_name_doc.add_table_row(["Order parameter S2f", "'s2f'"])
+    return_data_name_doc.add_table_row(["Order parameter S2s", "'s2s'"])
+    return_data_name_doc.add_table_row(["Correlation time te", "'te'"])
+    return_data_name_doc.add_table_row(["Correlation time tf", "'tf'"])
+    return_data_name_doc.add_table_row(["Correlation time ts", "'ts'"])
+    return_data_name_doc.add_table_row(["Chemical exchange", "'rex'"])
+    return_data_name_doc.add_table_row(["Bond length", "'r'"])
+    return_data_name_doc.add_table_row(["CSA", "'csa'"])
+    return_data_name_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'"])
+    return_data_name_doc.add_table_row(["Proton type", "'proton_type'"])
 
 
-    set_doc = ["Model-free set details", """
-        Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.
-
-        Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
-
-            value = rex / (2.0 * pi * frequency) ** 2
-
-        where:
-            rex is the chemical exchange value for the current frequency.
-            pi is in the namespace of relax, ie just type 'pi'.
-            frequency is the proton frequency corresponding to the data.
-        """]
+    set_doc = Desc_container("Model-free set details")
+    set_doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.")
+    set_doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:")
+    set_doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
+    set_doc.add_paragraph("where:")
+    set_doc.add_list_element("rex is the chemical exchange value for the current frequency.")
+    set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
+    set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
 
 
     def set_error(self, model_info, index, error):

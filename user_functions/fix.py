@@ -27,6 +27,7 @@
 from generic_fns import fix
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The fix user function.
@@ -57,17 +58,13 @@ uf.add_keyarg(
     desc_short = "fixed",
     desc = "A flag specifying if the parameters should be fixed or allowed to change."
 )
-uf.desc = """
-The keyword argument 'element' can be any of the following:
-
-    'diff' - the diffusion tensor parameters.  This will allow all diffusion tensor parameters to be toggled.
-    
-    'all_spins' - using this keyword, all parameters from all spins will be toggled.
-    
-    'all' - all parameters will be toggled.  This is equivalent to combining both 'diff' and 'all_spins'.
-
-The flag 'fixed', if set to True, will fix parameters during optimisation whereas a value of False will allow parameters to vary.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The keyword argument 'element' can be any of the following:")
+uf.desc[-1].add_item_list_element("'diff'", "The diffusion tensor parameters.  This will allow all diffusion tensor parameters to be toggled.")
+uf.desc[-1].add_item_list_element("'all_spins'", "Using this keyword, all parameters from all spins will be toggled.")
+uf.desc[-1].add_item_list_element("'all'", "All parameters will be toggled.  This is equivalent to combining both 'diff' and 'all_spins'.")
+uf.desc[-1].add_paragraph("The flag 'fixed', if set to True, will fix parameters during optimisation whereas a value of False will allow parameters to vary.")
 uf.backend = fix.fix
 uf.menu_text = "&fix"
 uf.gui_icon = "oxygen.status.object-locked"

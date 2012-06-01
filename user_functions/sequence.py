@@ -30,6 +30,7 @@ import wx
 from generic_fns import pipes, sequence
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -63,26 +64,19 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will copy the sequence data between data pipes.  The destination data pipe must not contain any sequence data.  If the source and destination pipes are not specified, then both will default to the current data pipe (hence providing one is essential).
-"""
-uf.prompt_examples = """
-To copy the sequence from the data pipe 'm1' to the current data pipe, type:
-
-relax> sequence.copy('m1')
-relax> sequence.copy(pipe_from='m1')
-
-
-To copy the sequence from the current data pipe to the data pipe 'm9', type:
-
-relax> sequence.copy(pipe_to='m9')
-
-
-To copy the sequence from the data pipe 'm1' to 'm2', type:
-
-relax> sequence.copy('m1', 'm2')
-relax> sequence.copy(pipe_from='m1', pipe_to='m2')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will copy the sequence data between data pipes.  The destination data pipe must not contain any sequence data.  If the source and destination pipes are not specified, then both will default to the current data pipe (hence providing one is essential).")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the sequence from the data pipe 'm1' to the current data pipe, type:")
+uf.desc[-1].add_prompt("relax> sequence.copy('m1')")
+uf.desc[-1].add_prompt("relax> sequence.copy(pipe_from='m1')")
+uf.desc[-1].add_paragraph("To copy the sequence from the current data pipe to the data pipe 'm9', type:")
+uf.desc[-1].add_prompt("relax> sequence.copy(pipe_to='m9')")
+uf.desc[-1].add_paragraph("To copy the sequence from the data pipe 'm1' to 'm2', type:")
+uf.desc[-1].add_prompt("relax> sequence.copy('m1', 'm2')")
+uf.desc[-1].add_prompt("relax> sequence.copy(pipe_from='m1', pipe_to='m2')")
 uf.backend = sequence.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -137,9 +131,9 @@ uf.add_keyarg(
     desc_short = "spin name flag",
     desc = "A flag which if True will cause the spin name column to be shown."
 )
-uf.desc = """
-This will print out the sequence information of all loaded spins in the current data pipe.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will print out the sequence information of all loaded spins in the current data pipe.")
 uf.backend = sequence.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -231,43 +225,25 @@ uf.add_keyarg(
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
     can_be_none = True
 )
-uf.desc = """
-The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
-"""
-uf.prompt_examples = """
-The following commands will read protein backbone 15N sequence data out of a file called
-'seq' where the residue numbers and names are in the first and second columns respectively:
-
-relax> sequence.read('seq')
-relax> sequence.read('seq', res_num_col=1, res_name_col=2)
-relax> sequence.read(file='seq', res_num_col=1, res_name_col=2, sep=None)
-
-
-The following commands will read the residue sequence out of the file 'noe.out' which also
-contains the NOE values:
-
-relax> sequence.read('noe.out')
-relax> sequence.read('noe.out', res_num_col=1, res_name_col=2)
-relax> sequence.read(file='noe.out', res_num_col=1, res_name_col=2)
-
-
-The following commands will read the sequence out of the file 'noe.600.out' where the
-residue numbers are in the second column, the names are in the sixth column and the columns
-are separated by commas:
-
-relax> sequence.read('noe.600.out', res_num_col=2, res_name_col=6, sep=',')
-relax> sequence.read(file='noe.600.out', res_num_col=2, res_name_col=6, sep=',')
-
-
-The following commands will read the RNA residues and atoms (including C2, C5, C6, C8, N1,
-and N3) from the file '500.NOE', where the residue number, residue name, spin number, and
-spin name are in the first to fourth columns respectively:
-
-relax> sequence.read('500.NOE', res_num_col=1, res_name_col=2, spin_num_col=3,
-                     spin_name_col=4)
-relax> sequence.read(file='500.NOE', res_num_col=1, res_name_col=2, spin_num_col=3,
-                     spin_name_col=4)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following commands will read protein backbone 15N sequence data out of a file called 'seq' where the residue numbers and names are in the first and second columns respectively:")
+uf.desc[-1].add_prompt("relax> sequence.read('seq')")
+uf.desc[-1].add_prompt("relax> sequence.read('seq', res_num_col=1, res_name_col=2)")
+uf.desc[-1].add_prompt("relax> sequence.read(file='seq', res_num_col=1, res_name_col=2, sep=None)")
+uf.desc[-1].add_paragraph("The following commands will read the residue sequence out of the file 'noe.out' which also contains the NOE values:")
+uf.desc[-1].add_prompt("relax> sequence.read('noe.out')")
+uf.desc[-1].add_prompt("relax> sequence.read('noe.out', res_num_col=1, res_name_col=2)")
+uf.desc[-1].add_prompt("relax> sequence.read(file='noe.out', res_num_col=1, res_name_col=2)")
+uf.desc[-1].add_paragraph("The following commands will read the sequence out of the file 'noe.600.out' where the residue numbers are in the second column, the names are in the sixth column and the columns are separated by commas:")
+uf.desc[-1].add_prompt("relax> sequence.read('noe.600.out', res_num_col=2, res_name_col=6, sep=',')")
+uf.desc[-1].add_prompt("relax> sequence.read(file='noe.600.out', res_num_col=2, res_name_col=6, sep=',')")
+uf.desc[-1].add_paragraph("The following commands will read the RNA residues and atoms (including C2, C5, C6, C8, N1, and N3) from the file '500.NOE', where the residue number, residue name, spin number, and spin name are in the first to fourth columns respectively:")
+uf.desc[-1].add_prompt("relax> sequence.read('500.NOE', res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)")
+uf.desc[-1].add_prompt("relax> sequence.read(file='500.NOE', res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)")
 uf.backend = sequence.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -345,9 +321,9 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )
-uf.desc = """
-Write the sequence data to file.  If no directory name is given, the file will be placed in the current working directory.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Write the sequence data to file.  If no directory name is given, the file will be placed in the current working directory.")
 uf.backend = sequence.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"

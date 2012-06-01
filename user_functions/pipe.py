@@ -28,6 +28,7 @@ from graphics import WIZARD_IMAGE_PATH
 from generic_fns import pipes
 from specific_fns.setup import hybrid_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -58,19 +59,16 @@ uf.add_keyarg(
     desc = "The name of the target data pipe to copy the data to.",
     can_be_none = True
 )
-uf.desc = """
-This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.
-"""
-uf.prompt_examples = """
-To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:
-
-relax> pipe.copy('m1', 'm2')
-relax> pipe.copy(pipe_from='m1', pipe_to='m2')
-
-If the current data pipe is 'm1', then the following command can be used:
-
-relax> pipe.copy(pipe_to='m2')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:")
+uf.desc[-1].add_prompt("relax> pipe.copy('m1', 'm2')")
+uf.desc[-1].add_prompt("relax> pipe.copy(pipe_from='m1', pipe_to='m2')")
+uf.desc[-1].add_paragraph("If the current data pipe is 'm1', then the following command can be used:")
+uf.desc[-1].add_prompt("relax> pipe.copy(pipe_to='m2')")
 uf.backend = pipes.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -98,23 +96,21 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.backend = pipes.create
-uf.desc = """
-The data pipe name can be any string however the data pipe type can only be one of the following:
-
-    'ct':  Consistency testing,
-    'frame order':  The Frame Order theories,
-    'jw':  Reduced spectral density mapping,
-    'hybrid':  A special hybrid pipe,
-    'mf':  Model-free analysis,
-    'N-state':  N-state model of domain motions,
-    'noe':  Steady state NOE calculation,
-    'relax_fit':  Relaxation curve fitting,
-"""
-uf.prompt_examples = """
-To set up a model-free analysis data pipe with the name 'm5', type:
-
-relax> pipe.create('m5', 'mf')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The data pipe name can be any string however the data pipe type can only be one of the following:")
+uf.desc[-1].add_item_list_element("'ct'", "Consistency testing,")
+uf.desc[-1].add_item_list_element("'frame order'", "The Frame Order theories,")
+uf.desc[-1].add_item_list_element("'jw'", "Reduced spectral density mapping,")
+uf.desc[-1].add_item_list_element("'hybrid'", "A special hybrid pipe,")
+uf.desc[-1].add_item_list_element("'mf'", "Model-free analysis,")
+uf.desc[-1].add_item_list_element("'N-state'", "N-state model of domain motions,")
+uf.desc[-1].add_item_list_element("'noe'", "Steady state NOE calculation,")
+uf.desc[-1].add_item_list_element("'relax_fit'", "Relaxation curve fitting,")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set up a model-free analysis data pipe with the name 'm5', type:")
+uf.desc[-1].add_prompt("relax> pipe.create('m5', 'mf')")
 uf.menu_text = "crea&te"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_size = (700, 500)
@@ -127,11 +123,10 @@ uf.title = "Print the name of the current data pipe."
 uf.title_short = "Current data pipe printing."
 uf.display = True
 uf.backend = pipes.current
-uf.prompt_examples = """
-To run the user function, type:
-
-relax> pipe.current()
-"""
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To run the user function, type:")
+uf.desc[-1].add_prompt("relax> pipe.current()")
 uf.menu_text = "c&urrent"
 uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -150,9 +145,9 @@ uf.add_keyarg(
     wiz_combo_iter = pipes.pipe_names,
     can_be_none = True
 )
-uf.desc = """
-This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.")
 uf.backend = pipes.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -165,11 +160,10 @@ uf.title = "Print a list of all the data pipes."
 uf.title_short = "Data pipe listing."
 uf.display = True
 uf.backend = pipes.display
-uf.prompt_examples = """
-To run the user function, type:
-
-relax> pipe.display()
-"""
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To run the user function, type:")
+uf.desc[-1].add_prompt("relax> pipe.display()")
 uf.menu_text = "di&splay"
 uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -195,18 +189,15 @@ uf.add_keyarg(
     wiz_combo_list_min = 2
 )
 uf.backend = hybrid_obj._hybridise
-uf.desc = """
-This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised diffusion tensors.  The N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe.  This hybrid data pipe can then be compared via model selection to a data pipe whereby the entire protein is assumed to have a single diffusion tensor.
-
-The requirements for data pipes to be hybridised is that the molecules, sequences, and spin systems for all the data pipes is the same, and that no spin system is allowed to be selected in two or more data pipes.  The selections must not overlap to allow for rigorous statistical comparisons.
-"""
-uf.prompt_examples = """
-The two data pipes 'N_sphere' and 'C_ellipsoid' could be hybridised into a single data pipe
-called 'mixed model' by typing:
-
-relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
-relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised diffusion tensors.  The N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe.  This hybrid data pipe can then be compared via model selection to a data pipe whereby the entire protein is assumed to have a single diffusion tensor.")
+uf.desc[-1].add_paragraph("The requirements for data pipes to be hybridised is that the molecules, sequences, and spin systems for all the data pipes is the same, and that no spin system is allowed to be selected in two or more data pipes.  The selections must not overlap to allow for rigorous statistical comparisons.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The two data pipes 'N_sphere' and 'C_ellipsoid' could be hybridised into a single data pipe called 'mixed model' by typing:")
+uf.desc[-1].add_prompt("relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])")
+uf.desc[-1].add_prompt("relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])")
 uf.menu_text = "&hybridise"
 uf.gui_icon = "relax.pipe_hybrid"
 uf.wizard_size = (800, 800)
@@ -226,15 +217,14 @@ uf.add_keyarg(
     wiz_combo_iter = pipes.pipe_names
 )
 uf.backend = pipes.switch
-uf.desc = """
-This will switch between the various data pipes within the relax data store.
-"""
-uf.prompt_examples = """
-To switch to the 'ellipsoid' data pipe, type:
-
-relax> pipe.switch('ellipsoid')
-relax> pipe.switch(pipe_name='ellipsoid')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will switch between the various data pipes within the relax data store.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To switch to the 'ellipsoid' data pipe, type:")
+uf.desc[-1].add_prompt("relax> pipe.switch('ellipsoid')")
+uf.desc[-1].add_prompt("relax> pipe.switch(pipe_name='ellipsoid')")
 uf.menu_text = "&switch"
 uf.gui_icon = "oxygen.actions.system-switch-user"
 uf.wizard_size = (650, 450)

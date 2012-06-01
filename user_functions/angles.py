@@ -27,6 +27,7 @@
 from generic_fns import angles
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -38,13 +39,11 @@ uf_class.menu_text = "&angles"
 uf = uf_info.add_uf('angles.diff_frame')
 uf.title = "Calculate the angles defining the XH bond vector within the diffusion frame."
 uf.title_short = "Diffusion frame XH vector angle calculation."
-uf.desc = """
-If the diffusion tensor is isotropic, then nothing will be done.
-
-If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for each XH bond vector.
-
-If the diffusion tensor is asymmetric, then the three angles will be calculated.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("If the diffusion tensor is isotropic, then nothing will be done.")
+uf.desc[-1].add_paragraph("If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for each XH bond vector.")
+uf.desc[-1].add_paragraph("If the diffusion tensor is asymmetric, then the three angles will be calculated.")
 uf.backend = angles.angle_diff_frame
 uf.menu_text = "&diff_frame"
 uf.wizard_size = (800, 400)

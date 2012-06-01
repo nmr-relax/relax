@@ -30,6 +30,7 @@ import wx
 from generic_fns import pipes, relax_data
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -67,9 +68,9 @@ uf.add_keyarg(
     desc = "The spectrometer frequency in Hz.",
     can_be_none = True
 )
-uf.desc = """
-This allows relaxation data of the given type and frequency to be back calculated from the model parameter values.  If the relaxation data ID, type and frequency are not given, then relaxation data matching that currently loaded in the relax data store will be back-calculated.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows relaxation data of the given type and frequency to be back calculated from the model parameter values.  If the relaxation data ID, type and frequency are not given, then relaxation data matching that currently loaded in the relax data store will be back-calculated.")
 uf.backend = relax_data.back_calc
 uf.menu_text = "&back_calc"
 uf.gui_icon = "oxygen.categories.applications-education"
@@ -110,23 +111,19 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will copy relaxation data from one data pipe to another.  If the relaxation ID data string is not given then all relaxation data will be copied, otherwise only a specific data set will be copied.
-"""
-uf.prompt_examples = """
-To copy all relaxation data from pipe 'm1' to pipe 'm9', type one of:
-
-relax> relax_data.copy('m1', 'm9')
-relax> relax_data.copy(pipe_from='m1', pipe_to='m9')
-relax> relax_data.copy('m1', 'm9', None)
-relax> relax_data.copy(pipe_from='m1', pipe_to='m9', ri_id=None)
-
-To copy only the NOE relaxation data with the ID string of 'NOE_800' from 'm3' to 'm6', type
-one of:
-
-relax> relax_data.copy('m3', 'm6', 'NOE_800')
-relax> relax_data.copy(pipe_from='m3', pipe_to='m6', ri_id='NOE_800')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will copy relaxation data from one data pipe to another.  If the relaxation ID data string is not given then all relaxation data will be copied, otherwise only a specific data set will be copied.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy all relaxation data from pipe 'm1' to pipe 'm9', type one of:")
+uf.desc[-1].add_prompt("relax> relax_data.copy('m1', 'm9')")
+uf.desc[-1].add_prompt("relax> relax_data.copy(pipe_from='m1', pipe_to='m9')")
+uf.desc[-1].add_prompt("relax> relax_data.copy('m1', 'm9', None)")
+uf.desc[-1].add_prompt("relax> relax_data.copy(pipe_from='m1', pipe_to='m9', ri_id=None)")
+uf.desc[-1].add_paragraph("To copy only the NOE relaxation data with the ID string of 'NOE_800' from 'm3' to 'm6', type one of:")
+uf.desc[-1].add_prompt("relax> relax_data.copy('m3', 'm6', 'NOE_800')")
+uf.desc[-1].add_prompt("relax> relax_data.copy(pipe_from='m3', pipe_to='m6', ri_id='NOE_800')")
 uf.backend = relax_data.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -147,14 +144,13 @@ uf.add_keyarg(
     wiz_combo_iter = relax_data.get_ids,
     wiz_read_only = True
 )
-uf.desc = """
-The relaxation data corresponding to the given relaxation data ID string will be removed from the current data pipe.
-"""
-uf.prompt_examples = """
-To delete the relaxation data corresponding to the ID 'NOE_600', type:
-
-relax> relax_data.delete('NOE_600')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The relaxation data corresponding to the given relaxation data ID string will be removed from the current data pipe.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To delete the relaxation data corresponding to the ID 'NOE_600', type:")
+uf.desc[-1].add_prompt("relax> relax_data.delete('NOE_600')")
 uf.backend = relax_data.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -176,14 +172,13 @@ uf.add_keyarg(
     wiz_combo_iter = relax_data.get_ids,
     wiz_read_only = True
 )
-uf.desc = """
-This will display the relaxation data corresponding to the given ID.
-"""
-uf.prompt_examples = """
-To display the NOE relaxation data at 600 MHz with the ID string 'NOE_600', type:
-
-relax> relax_data.display('NOE_600')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will display the relaxation data corresponding to the given ID.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To display the NOE relaxation data at 600 MHz with the ID string 'NOE_600', type:")
+uf.desc[-1].add_prompt("relax> relax_data.display('NOE_600')")
 uf.backend = relax_data.display
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -215,9 +210,9 @@ uf.add_keyarg(
     wiz_combo_choices = ["height", "volume"],
     wiz_read_only = True
 )
-uf.desc = """
-This is essential for BMRB data deposition.  It is used to specify whether peak heights or peak volumes were measured.  The two currently allowed values for the type argument are 'height' and 'volume'.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  It is used to specify whether peak heights or peak volumes were measured.  The two currently allowed values for the type argument are 'height' and 'volume'.")
 uf.backend = relax_data.peak_intensity_type
 uf.menu_text = "peak_&intensity_type"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -344,37 +339,20 @@ uf.add_keyarg(
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
     can_be_none = True
 )
-uf.desc = """
-This will load the relaxation data into the relax data store.  The data is associated with the spectrometer frequency in Hertz.  For subsequent analysis, this frequency must be set to the exact field strength.  This value is stored in the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
-
-The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
-"""
-uf.prompt_examples = """
-The following commands will read the protein NOE relaxation data collected at 600 MHz out of
-a file called 'noe.600.out' where the residue numbers, residue names, data, errors are in
-the first, second, third, and forth columns respectively.
-
-relax> relax_data.read('NOE_600', 'NOE', 599.7 * 1e6, 'noe.600.out', res_num_col=1,
-                       res_name_col=2, data_col=3, error_col=4)
-relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0 * 1e6, file='noe.600.out',
-                       res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-
-
-The following commands will read the R2 data out of the file 'r2.out' where the residue
-numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
-respectively.  The columns are separated by commas.
-
-relax> relax_data.read('R2_800', 'R2', 8.0 * 1e8, 'r2.out', res_num_col=2, res_name_col=3,
-                       data_col=5, error_col=6, sep=',')
-relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=8.0*1e8, file='r2.out',
-                       res_num_col=2, res_name_col=3, data_col=5, error_col=6, sep=',')
-
-
-The following commands will read the R1 data out of the file 'r1.out' where the columns are
-separated by the symbol '%'
-
-relax> relax_data.read('R1_300', 'R1', 300.1 * 1e6, 'r1.out', sep='%')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will load the relaxation data into the relax data store.  The data is associated with the spectrometer frequency in Hertz.  For subsequent analysis, this frequency must be set to the exact field strength.  This value is stored in the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.")
+uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following commands will read the protein NOE relaxation data collected at 600 MHz out of a file called 'noe.600.out' where the residue numbers, residue names, data, errors are in the first, second, third, and forth columns respectively.")
+uf.desc[-1].add_prompt("relax> relax_data.read('NOE_600', 'NOE', 599.7 * 1e6, 'noe.600.out', res_num_col=1, res_name_col=2, data_col=3, error_col=4)")
+uf.desc[-1].add_prompt("relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0 * 1e6, file='noe.600.out', res_num_col=1, res_name_col=2, data_col=3, error_col=4)")
+uf.desc[-1].add_paragraph("The following commands will read the R2 data out of the file 'r2.out' where the residue numbers, residue names, data, errors are in the second, third, fifth, and sixth columns respectively.  The columns are separated by commas.")
+uf.desc[-1].add_prompt("relax> relax_data.read('R2_800', 'R2', 8.0 * 1e8, 'r2.out', res_num_col=2, res_name_col=3, data_col=5, error_col=6, sep=',')")
+uf.desc[-1].add_prompt("relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=8.0*1e8, file='r2.out', res_num_col=2, res_name_col=3, data_col=5, error_col=6, sep=',')")
+uf.desc[-1].add_paragraph("The following commands will read the R1 data out of the file 'r1.out' where the columns are separated by the symbol '%'")
+uf.desc[-1].add_prompt("relax> relax_data.read('R1_300', 'R1', 300.1 * 1e6, 'r1.out', sep='%')")
 uf.backend = relax_data.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -408,15 +386,13 @@ uf.add_keyarg(
         'no calibration applied'
     ]
 )
-uf.desc = """
-This is essential for BMRB data deposition.  The currently allowed methods are:
-
-    'methanol',
-    'monoethylene glycol',
-    'no calibration applied'.
-
-Other strings will be accepted if supplied.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  The currently allowed methods are:")
+uf.desc[-1].add_list_element("'methanol',")
+uf.desc[-1].add_list_element("'monoethylene glycol',")
+uf.desc[-1].add_list_element("'no calibration applied'.")
+uf.desc[-1].add_paragraph("Other strings will be accepted if supplied.")
 uf.backend = relax_data.temp_calibration
 uf.menu_text = "&temp_calibration"
 uf.gui_icon = "oxygen.status.weather-clear"
@@ -453,16 +429,15 @@ uf.add_keyarg(
     ],
     wiz_read_only = True
 )
-uf.desc = """
-This is essential for BMRB data deposition.  The currently allowed methods are:
-
-    'single scan interleaving',
-    'temperature compensation block',
-    'single scan interleaving and temperature compensation block',
-    'single fid interleaving',
-    'single experiment interleaving',
-    'no temperature control applied'.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  The currently allowed methods are:")
+uf.desc[-1].add_list_element("'single scan interleaving',")
+uf.desc[-1].add_list_element("'temperature compensation block',")
+uf.desc[-1].add_list_element("'single scan interleaving and temperature compensation block',")
+uf.desc[-1].add_list_element("'single fid interleaving',")
+uf.desc[-1].add_list_element("'single experiment interleaving',")
+uf.desc[-1].add_list_element("'no temperature control applied'.")
 uf.backend = relax_data.temp_control
 uf.menu_text = "temp_contro&l"
 uf.gui_icon = "oxygen.status.weather-clear"
@@ -513,9 +488,9 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )
-uf.desc = """
-If no directory name is given, the file will be placed in the current working directory.  The relaxation data ID string is required for selecting which relaxation data to write to file.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("If no directory name is given, the file will be placed in the current working directory.  The relaxation data ID string is required for selecting which relaxation data to write to file.")
 uf.backend = relax_data.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"

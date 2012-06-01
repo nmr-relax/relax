@@ -27,6 +27,7 @@
 from generic_fns import paramag, pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -92,34 +93,23 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the current paramagnetic centre to be overwritten."
 )
-uf.desc = """
-This is required for specifying where the paramagnetic centre is located in the loaded structure file.  If no structure number is given, then the average atom position will be calculated if multiple structures are loaded.
-
-A different set of structures than those loaded into the current data pipe can also be used to determine the position, or its average.  This can be achieved by loading the alternative structures into another data pipe, and then specifying that pipe through the pipe argument.
-
-If the average position flag is set to True, the average position from all models will be used as the position of the paramagnetic centre.  If False, then the positions from all structures will be used.  If multiple positions are used, then a fast paramagnetic centre motion will be assumed so that PCSs for a single tensor will be calculated for each position, and the PCS values linearly averaged.
-"""
-uf.prompt_examples = """
-If the paramagnetic centre is the lanthanide Dysprosium which is labelled as Dy in a loaded
-PDB file, then type one of:
-
-relax> paramag.centre('Dy')
-relax> paramag.centre(atom_id='Dy')
-
-If the carbon atom 'C1' of residue '4' in the PDB file is to be used as the paramagnetic
-centre, then type:
-
-relax> paramag.centre(':4@C1')
-
-To state that the Dy3+ atomic position is [0.136, 12.543, 4.356], type one of:
-
-relax> paramag.centre([0.136, 12.543, 4.356])
-relax> paramag.centre(pos=[0.136, 12.543, 4.356])
-
-To find an unknown paramagnetic centre, type:
-
-relax> paramag.centre(fix=False)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is required for specifying where the paramagnetic centre is located in the loaded structure file.  If no structure number is given, then the average atom position will be calculated if multiple structures are loaded.")
+uf.desc[-1].add_paragraph("A different set of structures than those loaded into the current data pipe can also be used to determine the position, or its average.  This can be achieved by loading the alternative structures into another data pipe, and then specifying that pipe through the pipe argument.")
+uf.desc[-1].add_paragraph("If the average position flag is set to True, the average position from all models will be used as the position of the paramagnetic centre.  If False, then the positions from all structures will be used.  If multiple positions are used, then a fast paramagnetic centre motion will be assumed so that PCSs for a single tensor will be calculated for each position, and the PCS values linearly averaged.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("If the paramagnetic centre is the lanthanide Dysprosium which is labelled as Dy in a loaded PDB file, then type one of:")
+uf.desc[-1].add_prompt("relax> paramag.centre('Dy')")
+uf.desc[-1].add_prompt("relax> paramag.centre(atom_id='Dy')")
+uf.desc[-1].add_paragraph("If the carbon atom 'C1' of residue '4' in the PDB file is to be used as the paramagnetic centre, then type:")
+uf.desc[-1].add_prompt("relax> paramag.centre(':4@C1')")
+uf.desc[-1].add_paragraph("To state that the Dy3+ atomic position is [0.136, 12.543, 4.356], type one of:")
+uf.desc[-1].add_prompt("relax> paramag.centre([0.136, 12.543, 4.356])")
+uf.desc[-1].add_prompt("relax> paramag.centre(pos=[0.136, 12.543, 4.356])")
+uf.desc[-1].add_paragraph("To find an unknown paramagnetic centre, type:")
+uf.desc[-1].add_prompt("relax> paramag.centre(fix=False)")
 uf.backend = paramag.centre
 uf.menu_text = "&centre"
 uf.wizard_height_desc = 400

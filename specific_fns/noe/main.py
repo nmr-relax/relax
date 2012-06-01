@@ -31,6 +31,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
 from specific_fns.api_common import API_common
+from user_functions.objects import Desc_container
 
 
 class Noe_main:
@@ -166,20 +167,11 @@ class Noe_main:
                 spin.select = False
 
 
-    return_data_name_doc = ["NOE calculation data type string matching patterns", """
-        _________________________________________
-        |                        |              |
-        | Data type              | Object name  |
-        |________________________|______________|
-        |                        |              |
-        | Reference intensity    | 'ref'        |
-        |                        |              |
-        | Saturated intensity    | 'sat'        |
-        |                        |              |
-        | NOE                    | 'noe'        |
-        |________________________|______________|
-
-        """]
+    return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")
+    return_data_name_doc.add_table_titles(["Data type", "Object name"])
+    return_data_name_doc.add_table_row(["Reference intensity", "'ref'"])
+    return_data_name_doc.add_table_row(["Saturated intensity", "'sat'"])
+    return_data_name_doc.add_table_row(["NOE", "'noe'"])
 
 
     def return_units(self, param):

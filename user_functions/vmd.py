@@ -27,7 +27,7 @@
 from generic_fns import vmd
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
-
+from user_functions.objects import Desc_container
 
 # The user function class.
 uf_class = uf_info.add_class('vmd')
@@ -39,12 +39,12 @@ uf_class.menu_text = "&vmd"
 uf = uf_info.add_uf('vmd.view')
 uf.title = "View the structures loaded into the relax data store using VMD."
 uf.title_short = "Molecular viewing using VMD."
-uf.desc = """
-This will launch VMD with all of the structures loaded into the relax data store.
-"""
-uf.prompt_examples = """
-relax> vmd.view()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will launch VMD with all of the structures loaded into the relax data store.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_prompt("relax> vmd.view()")
 uf.backend = vmd.view
 uf.menu_text = "&view"
 uf.wizard_size = (600, 300)

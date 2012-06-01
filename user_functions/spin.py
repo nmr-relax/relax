@@ -28,6 +28,7 @@ from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin,
 from generic_fns import pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -78,26 +79,18 @@ uf.add_keyarg(
     desc = "The spin identifier string of the spin to copy the data to.  If left blank, the new spin will have the same name as the old.",
     can_be_none = True
 )
-uf.desc = """
-This will copy all the data associated with the identified spin to the new, non-existent spin.  The new spin must not already exist.
-"""
-uf.prompt_examples = """
-To copy the spin data from spin 1 to the new spin 2, type:
-
-relax> spin.copy(spin_from='@1', spin_to='@2')
-
-
-To copy spin 1 of the molecule 'Old mol' to spin 5 of the molecule 'New mol', type:
-
-relax> spin.copy(spin_from='#Old mol@1', spin_to='#New mol@5')
-
-
-To copy the spin data of spin 1 from the data pipe 'm1' to 'm2', assuming the current
-data pipe is 'm1', type:
-
-relax> spin.copy(spin_from='@1', pipe_to='m2')
-relax> spin.copy(pipe_from='m1', spin_from='@1', pipe_to='m2', spin_to='@1')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will copy all the data associated with the identified spin to the new, non-existent spin.  The new spin must not already exist.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the spin data from spin 1 to the new spin 2, type:")
+uf.desc[-1].add_prompt("relax> spin.copy(spin_from='@1', spin_to='@2')")
+uf.desc[-1].add_paragraph("To copy spin 1 of the molecule 'Old mol' to spin 5 of the molecule 'New mol', type:")
+uf.desc[-1].add_prompt("relax> spin.copy(spin_from='#Old mol@1', spin_to='#New mol@5')")
+uf.desc[-1].add_paragraph("To copy the spin data of spin 1 from the data pipe 'm1' to 'm2', assuming the current data pipe is 'm1', type:")
+uf.desc[-1].add_prompt("relax> spin.copy(spin_from='@1', pipe_to='m2')")
+uf.desc[-1].add_prompt("relax> spin.copy(pipe_from='m1', spin_from='@1', pipe_to='m2', spin_to='@1')")
 uf.backend = copy_spin
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
@@ -156,16 +149,15 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This will add a new spin data container to the relax data storage object.  The same spin number cannot be used more than once.
-"""
-uf.prompt_examples = """
-The following sequence of commands will generate the sequence 1 C4, 2 C9, 3 C15:
-
-relax> spin.create(1, 'C4')
-relax> spin.create(2, 'C9')
-relax> spin.create(3, 'C15')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will add a new spin data container to the relax data storage object.  The same spin number cannot be used more than once.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following sequence of commands will generate the sequence 1 C4, 2 C9, 3 C15:")
+uf.desc[-1].add_prompt("relax> spin.create(1, 'C4')")
+uf.desc[-1].add_prompt("relax> spin.create(2, 'C9')")
+uf.desc[-1].add_prompt("relax> spin.create(3, 'C15')")
 uf.backend = create_spin
 uf.menu_text = "c&reate"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -221,16 +213,14 @@ uf.add_keyarg(
     wiz_combo_choices = ["linear"],
     wiz_read_only = True
 )
-uf.desc = """
-This will create a spin data container representing a number of pre-existing spin containers as a pseudo-atom.  The optional spin number must not already exist.
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-The following will create the pseudo-atom named 'Q9' consisting of the protons '@H16',
-'@H17', '@H18':
-
-relax> spin.create_pseudo('Q9', members=['@H16', '@H17', '@H18'])
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will create a spin data container representing a number of pre-existing spin containers as a pseudo-atom.  The optional spin number must not already exist.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following will create the pseudo-atom named 'Q9' consisting of the protons '@H16', '@H17', '@H18':")
+uf.desc[-1].add_prompt("relax> spin.create_pseudo('Q9', members=['@H16', '@H17', '@H18'])")
 uf.backend = create_pseudo_spin
 uf.menu_text = "create_p&seudo"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -251,10 +241,10 @@ uf.add_keyarg(
     wiz_element_type = 'combo',
     wiz_combo_iter = get_spin_ids
 )
-uf.desc = """
-This can be used to delete a single or sets of spins.  See the identification string documentation below for more information.
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This can be used to delete a single or sets of spins.  See the identification string documentation below for more information.")
+uf.desc.append(id_string_doc)
 uf.backend = delete_spin
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
@@ -277,10 +267,10 @@ uf.add_keyarg(
     wiz_combo_iter = get_spin_ids,
     can_be_none = True
 )
-uf.desc = """
-This will display the spin data loaded into the current data pipe.
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will display the spin data loaded into the current data pipe.")
+uf.desc.append(id_string_doc)
 uf.backend = display_spin
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -318,16 +308,15 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the element to be changed."
 )
-uf.desc = """
-This allows the element type of the spins to be set.
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-The set all spins of residue 1 to be carbons, type one of:
-
-relax> spin.element('@1', 'C', force=True)
-relax> spin.element(spin_id='@1', element='C', force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the element type of the spins to be set.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The set all spins of residue 1 to be carbons, type one of:")
+uf.desc[-1].add_prompt("relax> spin.element('@1', 'C', force=True)")
+uf.desc[-1].add_prompt("relax> spin.element(spin_id='@1', element='C', force=True)")
 uf.backend = set_spin_element
 uf.menu_text = "&element"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -361,19 +350,17 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the spin to be renamed."
 )
-uf.desc = """
-This simply allows spins to be named (or renamed).  Spin naming often essential.  For example when reading Sparky peak list files, then the spin name must match that in the file.
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
-2 C12, 3 C13}:
-
-relax> spin.name('@1', 'C11', force=True)
-relax> spin.name('@2', 'C12', force=True)
-relax> spin.name('@3', 'C13', force=True)
-"""
-uf.additional = [id_string_doc]
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This simply allows spins to be named (or renamed).  Spin naming often essential.  For example when reading Sparky peak list files, then the spin name must match that in the file.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11, 2 C12, 3 C13}:")
+uf.desc[-1].add_prompt("relax> spin.name('@1', 'C11', force=True)")
+uf.desc[-1].add_prompt("relax> spin.name('@2', 'C12', force=True)")
+uf.desc[-1].add_prompt("relax> spin.name('@3', 'C13', force=True)")
+uf.desc.append(id_string_doc)
 uf.backend = name_spin
 uf.menu_text = "&name"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -411,18 +398,16 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the spin to be renumbered."
 )
-uf.desc = """
-This simply allows spins to be numbered.  The new number cannot correspond to an existing spin number.
-"""
-uf.additional = [id_string_doc]
-uf.prompt_examples = """
-The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
-{-1 C1, -2 C2, -3 C3}:
-
-relax> spin.number('@1', -1, force=True)
-relax> spin.number('@2', -2, force=True)
-relax> spin.number('@3', -3, force=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This simply allows spins to be numbered.  The new number cannot correspond to an existing spin number.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to {-1 C1, -2 C2, -3 C3}:")
+uf.desc[-1].add_prompt("relax> spin.number('@1', -1, force=True)")
+uf.desc[-1].add_prompt("relax> spin.number('@2', -2, force=True)")
+uf.desc[-1].add_prompt("relax> spin.number('@3', -3, force=True)")
 uf.backend = number_spin
 uf.menu_text = "num&ber"
 uf.gui_icon = "oxygen.actions.edit-rename"

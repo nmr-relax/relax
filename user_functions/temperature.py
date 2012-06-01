@@ -27,6 +27,7 @@
 from generic_fns import temperature
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The temperature user function.
@@ -45,9 +46,9 @@ uf.add_keyarg(
     desc_short = "experimental temperature",
     desc = "The temperature of the experiment in Kalvin."
 )
-uf.desc = """
-This allows the temperature of an experiment to be set.  This value should be in Kalvin.  In certain analyses, for example those which use pseudocontact shift data, knowledge of the temperature is essential.  For the pseudocontact shift, the experiment ID string should match one of the alignment IDs.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the temperature of an experiment to be set.  This value should be in Kalvin.  In certain analyses, for example those which use pseudocontact shift data, knowledge of the temperature is essential.  For the pseudocontact shift, the experiment ID string should match one of the alignment IDs.")
 uf.backend = temperature.set
 uf.menu_text = "&temperature"
 uf.gui_icon = "oxygen.status.weather-clear"

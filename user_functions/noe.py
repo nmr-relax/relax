@@ -31,6 +31,7 @@ from generic_fns import noesy, spectrum
 from graphics import ANALYSIS_IMAGE_PATH
 from specific_fns.setup import noe_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -101,19 +102,16 @@ uf.add_keyarg(
     wiz_combo_choices = [",", ";", "\\t"],
     can_be_none = True
 )
-uf.desc = """
-The format of the file will be automatically determined, for example Xplor formatted restraint files.  A generically formatted file is also supported if it contains minimally four columns with the two proton names and the upper and lower bounds, as specified by the column numbers.  The proton names need to be in the spin ID string format.
-"""
-uf.prompt_examples = """
-To read the Xplor formatted restraint file 'NOE.xpl', type one of:
-
-relax> noe.read_restraints('NOE.xpl')
-relax> noe.read_restraints(file='NOE.xpl')
-
-To read the generic formatted file 'noes', type one of:
-
-relax> noe.read_restraints(file='NOE.xpl', proton1_col=0, proton2_col=1, lower_col=2, upper_col=3)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The format of the file will be automatically determined, for example Xplor formatted restraint files.  A generically formatted file is also supported if it contains minimally four columns with the two proton names and the upper and lower bounds, as specified by the column numbers.  The proton names need to be in the spin ID string format.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To read the Xplor formatted restraint file 'NOE.xpl', type one of:")
+uf.desc[-1].add_prompt("relax> noe.read_restraints('NOE.xpl')")
+uf.desc[-1].add_prompt("relax> noe.read_restraints(file='NOE.xpl')")
+uf.desc[-1].add_paragraph("To read the generic formatted file 'noes', type one of:")
+uf.desc[-1].add_prompt("relax> noe.read_restraints(file='NOE.xpl', proton1_col=0, proton2_col=1, lower_col=2, upper_col=3)")
 uf.backend = noesy.read_restraints
 uf.menu_text = "&read_restraints"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -144,14 +142,12 @@ uf.add_keyarg(
     wiz_combo_iter = spectrum.get_ids,
     wiz_read_only = True
 )
-uf.desc = """
-The spectrum type can be one of the following:
-
-    The steady-state NOE reference spectrum.
-    The steady-state NOE spectrum with proton saturation turned on.
-
-Peak intensities should be loaded before this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID string which can be used here.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The spectrum type can be one of the following:")
+uf.desc[-1].add_list_element("The steady-state NOE reference spectrum.")
+uf.desc[-1].add_list_element("The steady-state NOE spectrum with proton saturation turned on.")
+uf.desc[-1].add_paragraph("Peak intensities should be loaded before this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID string which can be used here.")
 uf.backend = noe_obj._spectrum_type
 uf.menu_text = "&spectrum_type"
 uf.gui_icon = "oxygen.actions.edit-rename"

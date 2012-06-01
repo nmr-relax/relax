@@ -29,6 +29,7 @@ from generic_fns import frq
 from graphics import ANALYSIS_IMAGE_PATH
 from specific_fns.setup import consistency_tests_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -51,13 +52,13 @@ uf.add_keyarg(
     wiz_combo_iter = frq.get_values,
     wiz_read_only = True,
 )
-uf.desc = """
-This will select the relaxation data to use in the consistency tests corresponding to the given frequencies.  The data is selected by the spectrometer frequency in Hertz, which should be set to the exact value (see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file).  Note thought that the R1, R2 and NOE are all expected to have the exact same frequency in the J(w) mapping analysis (to the last decimal point).
-"""
-uf.prompt_examples = """
-relax> consistency_tests.set_frq(600.0 * 1e6)
-relax> consistency_tests.set_frq(frq=600.0 * 1e6)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will select the relaxation data to use in the consistency tests corresponding to the given frequencies.  The data is selected by the spectrometer frequency in Hertz, which should be set to the exact value (see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file).  Note thought that the R1, R2 and NOE are all expected to have the exact same frequency in the J(w) mapping analysis (to the last decimal point).")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_prompt("relax> consistency_tests.set_frq(600.0 * 1e6)")
+uf.desc[-1].add_prompt("relax> consistency_tests.set_frq(frq=600.0 * 1e6)")
 uf.backend = consistency_tests_obj._set_frq
 uf.menu_text = "&set_frq"
 uf.gui_icon = "relax.frq"

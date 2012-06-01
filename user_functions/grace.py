@@ -29,12 +29,13 @@ import wx
 # relax module imports.
 from generic_fns import grace, minimise
 from graphics import WIZARD_IMAGE_PATH
-from prompt.doc_string import docs
+from prompt.doc_string import regexp_doc
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -73,15 +74,14 @@ uf.add_keyarg(
     desc_short = "Grace executable file",
     desc = "The Grace executable file."
 )
-uf.desc = """
-This can be used to view the specified Grace '*.agr' file by opening it with the Grace program.
-"""
-uf.prompt_examples = """
-To view the file 's2.agr' in the directory 'grace', type:
-
-relax> grace.view(file='s2.agr')
-relax> grace.view(file='s2.agr', dir='grace')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This can be used to view the specified Grace '*.agr' file by opening it with the Grace program.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To view the file 's2.agr' in the directory 'grace', type:")
+uf.desc[-1].add_prompt("relax> grace.view(file='s2.agr')")
+uf.desc[-1].add_prompt("relax> grace.view(file='s2.agr', dir='grace')")
 uf.backend = grace.view
 uf.menu_text = "&view"
 uf.gui_icon = "relax.grace_icon"
@@ -168,63 +168,38 @@ uf.add_keyarg(
     desc_short = "normalisation flag",
     desc = "A flag which, if set to True, will cause all graphs to be normalised to a starting value of 1.  This is for the normalisation of series type data."
 )
-uf.desc = """
-This is designed to be as flexible as possible so that any combination of data can be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can be used to create various types of plot.  These include the X-axis and Y-axis data types, the spin identification string, and an argument for selecting what to plot.
-
-The X-axis and Y-axis data type arguments should be plain strings, regular expression is not allowed.  If the X-axis data type argument is not given, the plot will default to having the spin sequence along the x-axis.  The two axes of the Grace plot can be absolutely any of the data types listed in the tables below.  The only limitation, currently anyway, is that the data must belong to the same data pipe.
-
-The spin identification string can be used to limit which spins are used in the plot.  The default is that all spins will be used, however, these arguments can be used to select a subset of all spins, or a single spin for plots of Monte Carlo simulations, etc.
-
-The property which is actually plotted can be controlled by the 'plot_data' argument.  It can be one of the following:
-
-    'value':  Plot values (with errors if they exist).
-    'error':  Plot errors.
-    'sims':   Plot the simulation values.
-
-Normalisation is only allowed for series type data, for example the R2 exponential curves, and will be ignored for all other data types.  If the norm flag is set to True then the y-value of the first point of the series will be set to 1.  This normalisation is useful for highlighting errors in the data sets.
-"""
-uf.additional = [
-    docs.regexp.doc,
-    minimise.return_data_name_doc,
-    Noe.return_data_name_doc,
-    Relax_fit.return_data_name_doc,
-    Jw_mapping.return_data_name_doc,
-    Model_free.return_data_name_doc
-]
-uf.prompt_examples = """
-To write the NOE values for all spins to the Grace file 'noe.agr', type one of:
-
-relax> grace.write('spin', 'noe', file='noe.agr')
-relax> grace.write(y_data_type='noe', file='noe.agr')
-relax> grace.write(x_data_type='spin', y_data_type='noe', file='noe.agr')
-relax> grace.write(y_data_type='noe', file='noe.agr', force=True)
-
-
-To create a Grace file of 's2' vs. 'te' for all spins, type one of:
-
-relax> grace.write('s2', 'te', file='s2_te.agr')
-relax> grace.write(x_data_type='s2', y_data_type='te', file='s2_te.agr')
-relax> grace.write(x_data_type='s2', y_data_type='te', file='s2_te.agr', force=True)
-
-
-To create a Grace file of the Monte Carlo simulation values of 'rex' vs. 'te' for residue
-123, type one of:
-
-relax> grace.write('rex', 'te', spin_id=':123', plot_data='sims', file='s2_te.agr')
-relax> grace.write(x_data_type='rex', y_data_type='te', spin_id=':123',
-                   plot_data='sims', file='s2_te.agr')
-
-
-By plotting the peak intensities, the integrity of exponential relaxation curves can be
-checked and anomalies searched for prior to model-free analysis or reduced spectral density
-mapping.  For example the normalised average peak intensities can be plotted verses the
-relaxation time periods for the relaxation curves of all residues of a protein.  The
-normalisation, whereby the initial peak intensity of each residue I(0) is set to 1,
-emphasises any problems.  To produce this Grace file, type:
-
-relax> grace.write(x_data_type='relax_times', y_data_type='ave_int',
-                   file='intensities_norm.agr', force=True, norm=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is designed to be as flexible as possible so that any combination of data can be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can be used to create various types of plot.  These include the X-axis and Y-axis data types, the spin identification string, and an argument for selecting what to plot.")
+uf.desc[-1].add_paragraph("The X-axis and Y-axis data type arguments should be plain strings, regular expression is not allowed.  If the X-axis data type argument is not given, the plot will default to having the spin sequence along the x-axis.  The two axes of the Grace plot can be absolutely any of the data types listed in the tables below.  The only limitation, currently anyway, is that the data must belong to the same data pipe.")
+uf.desc[-1].add_paragraph("The spin identification string can be used to limit which spins are used in the plot.  The default is that all spins will be used, however, these arguments can be used to select a subset of all spins, or a single spin for plots of Monte Carlo simulations, etc.")
+uf.desc[-1].add_paragraph("The property which is actually plotted can be controlled by the 'plot_data' argument.  It can be one of the following:")
+uf.desc[-1].add_item_list_element("'value'", "Plot values (with errors if they exist).")
+uf.desc[-1].add_item_list_element("'error'", "Plot errors.")
+uf.desc[-1].add_item_list_element("'sims'", "Plot the simulation values.")
+uf.desc[-1].add_paragraph("Normalisation is only allowed for series type data, for example the R2 exponential curves, and will be ignored for all other data types.  If the norm flag is set to True then the y-value of the first point of the series will be set to 1.  This normalisation is useful for highlighting errors in the data sets.")
+uf.desc.append(regexp_doc)
+uf.desc.append(minimise.return_data_name_doc)
+uf.desc.append(Noe.return_data_name_doc)
+uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Model_free.return_data_name_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To write the NOE values for all spins to the Grace file 'noe.agr', type one of:")
+uf.desc[-1].add_prompt("relax> grace.write('spin', 'noe', file='noe.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(y_data_type='noe', file='noe.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(x_data_type='spin', y_data_type='noe', file='noe.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(y_data_type='noe', file='noe.agr', force=True)")
+uf.desc[-1].add_paragraph("To create a Grace file of 's2' vs. 'te' for all spins, type one of:")
+uf.desc[-1].add_prompt("relax> grace.write('s2', 'te', file='s2_te.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(x_data_type='s2', y_data_type='te', file='s2_te.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(x_data_type='s2', y_data_type='te', file='s2_te.agr', force=True)")
+uf.desc[-1].add_paragraph("To create a Grace file of the Monte Carlo simulation values of 'rex' vs. 'te' for residue 123, type one of:")
+uf.desc[-1].add_prompt("relax> grace.write('rex', 'te', spin_id=':123', plot_data='sims', file='s2_te.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(x_data_type='rex', y_data_type='te', spin_id=':123', plot_data='sims', file='s2_te.agr')")
+uf.desc[-1].add_paragraph("By plotting the peak intensities, the integrity of exponential relaxation curves can be checked and anomalies searched for prior to model-free analysis or reduced spectral density mapping.  For example the normalised average peak intensities can be plotted verses the relaxation time periods for the relaxation curves of all residues of a protein.  The normalisation, whereby the initial peak intensity of each residue I(0) is set to 1, emphasises any problems.  To produce this Grace file, type:")
+uf.desc[-1].add_prompt("relax> grace.write(x_data_type='relax_times', y_data_type='ave_int', file='intensities_norm.agr', force=True, norm=True)")
 uf.backend = grace.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"

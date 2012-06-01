@@ -27,7 +27,7 @@
 from generic_fns import diffusion_tensor
 from graphics import WIZARD_IMAGE_PATH
 import opendx.main
-from prompt.doc_string import docs
+from prompt.doc_string import regexp_doc
 from specific_fns.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -188,8 +188,8 @@ uf.desc[-1].add_paragraph("This will map the space corresponding to the spin ide
 uf.desc[-1].add_table_titles(["Surface type", "Name"])
 uf.desc[-1].add_table_row(["3D isosurface", "'Iso3D'"])
 # Additional.
-uf.desc.append(docs.regexp.doc)
-uf.desc.append(diffusion_tensor.__return_data_name_prompt_doc__)
+uf.desc.append(regexp_doc)
+uf.desc.append(diffusion_tensor.__return_data_name_doc__)
 uf.desc.append(Model_free.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

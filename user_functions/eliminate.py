@@ -28,6 +28,7 @@ from generic_fns import eliminate
 from graphics import WIZARD_IMAGE_PATH
 from specific_fns.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The eliminate user function.
@@ -51,17 +52,13 @@ uf.add_keyarg(
     desc = "A tuple of arguments used by the optional function for model elimination.",
     can_be_none = True
 )
-uf.desc = """
-This is used for model validation to eliminate or reject models prior to model selection.  Model validation is a part of mathematical modelling whereby models are either accepted or rejected.
-
-Empirical rules are used for model rejection and are listed below.  However these can be overridden by supplying a function in the prompt and scripting modes.  The function should accept five arguments, a string defining a certain parameter, the value of the parameter, the minimisation instance (ie the residue index if the model is residue specific), and the function arguments.  If the model is rejected, the function should return True, otherwise it should return False.  The function will be executed multiple times, once for each parameter of the model.
-
-The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will be passed to the user supplied function or the inbuilt function.  For a description of the arguments accepted by the inbuilt functions, see below.
-
-Once a model is rejected, the select flag corresponding to that model will be set to False so that model selection, or any other function, will then skip the model.
-"""
-uf.additional = []
-uf.additional += Model_free.eliminate_doc
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used for model validation to eliminate or reject models prior to model selection.  Model validation is a part of mathematical modelling whereby models are either accepted or rejected.")
+uf.desc[-1].add_paragraph("Empirical rules are used for model rejection and are listed below.  However these can be overridden by supplying a function in the prompt and scripting modes.  The function should accept five arguments, a string defining a certain parameter, the value of the parameter, the minimisation instance (ie the residue index if the model is residue specific), and the function arguments.  If the model is rejected, the function should return True, otherwise it should return False.  The function will be executed multiple times, once for each parameter of the model.")
+uf.desc[-1].add_paragraph("The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will be passed to the user supplied function or the inbuilt function.  For a description of the arguments accepted by the inbuilt functions, see below.")
+uf.desc[-1].add_paragraph("Once a model is rejected, the select flag corresponding to that model will be set to False so that model selection, or any other function, will then skip the model.")
+uf.desc += Model_free.eliminate_doc
 uf.backend = eliminate.eliminate
 uf.menu_text = "&eliminate"
 uf.gui_icon = "oxygen.actions.edit-delete"

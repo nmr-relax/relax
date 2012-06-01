@@ -52,6 +52,7 @@ from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from user_functions.objects import Desc_container
 
 
 class N_state_model(API_base, API_common):
@@ -1830,25 +1831,14 @@ class N_state_model(API_base, API_common):
         return mc_data
 
 
-    default_value_doc = ["N-state model default values", """
-        ______________________________________________________________________________________
-        |                             |                             |                        |
-        | Data type                   | Object name                 | Value                  |
-        |_____________________________|_____________________________|________________________|
-        |                             |                             |                        |
-        | Probabilities               | 'p0', 'p1', 'p2', ..., 'pN' | 1/N                    |
-        |                             |                             |                        |
-        | Euler angle alpha           | 'alpha0', 'alpha1', ...     | (c+1) * pi / (N+1)     |
-        |                             |                             |                        |
-        | Euler angle beta            | 'beta0', 'beta1', ...       | (c+1) * pi / (N+1)     |
-        |                             |                             |                        |
-        | Euler angle gamma           | 'gamma0', 'gamma1', ...     | (c+1) * pi / (N+1)     |
-        |_____________________________|_____________________________|________________________|
-
-        In this table, N is the total number of states and c is the index of a given state ranging from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are given a range of values so that no 2 states are equal at the start of optimisation.
-
-        Note that setting the probability for state N will do nothing as it is equal to one minus all the other probabilities.
-        """]
+    default_value_doc = Desc_container("N-state model default values")
+    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
+    default_value_doc.add_table_row(["Probabilities", "'p0', 'p1', 'p2', ..., 'pN'", "1/N"])
+    default_value_doc.add_table_row(["Euler angle alpha", "'alpha0', 'alpha1', ...", "(c+1) * pi / (N+1)"])
+    default_value_doc.add_table_row(["Euler angle beta", "'beta0', 'beta1', ...", "(c+1) * pi / (N+1)"])
+    default_value_doc.add_table_row(["Euler angle gamma", "'gamma0', 'gamma1', ...", "(c+1) * pi / (N+1)"])
+    default_value_doc.add_paragraph("In this table, N is the total number of states and c is the index of a given state ranging from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are given a range of values so that no 2 states are equal at the start of optimisation.")
+    default_value_doc.add_paragraph("Note that setting the probability for state N will do nothing as it is equal to one minus all the other probabilities.")
 
     def default_value(self, param):
         """The default N-state model parameter values.
@@ -2167,29 +2157,16 @@ class N_state_model(API_base, API_common):
         return self._param_num(), self._num_data_points(), cdp.chi2
 
 
-    return_data_name_doc = ["N-state model data type string matching patterns", """
-        ____________________________________________________________________________________________
-        |                        |                             |                                   |
-        | Data type              | Object name                 | Patterns                          |
-        |________________________|_____________________________|___________________________________|
-        |                        |                             |                                   |
-        | Probabilities          | 'probs'                     | 'p0', 'p1', 'p2', ..., 'pN'       |
-        |                        |                             |                                   |
-        | Euler angle alpha      | 'alpha'                     | 'alpha0', 'alpha1', ...           |
-        |                        |                             |                                   |
-        | Euler angle beta       | 'beta'                      | 'beta0', 'beta1', ...             |
-        |                        |                             |                                   |
-        | Euler angle gamma      | 'gamma'                     | 'gamma0', 'gamma1', ...           |
-        |                        |                             |                                   |
-        | Bond length            | 'r'                         | '^r$' or '[Bb]ond[ -_][Ll]ength'  |
-        |                        |                             |                                   |
-        | Heteronucleus type     | 'heteronuc_type'            | '^[Hh]eteronucleus$'              |
-        |                        |                             |                                   |
-        | Proton type            | 'proton_type'               | '^[Pp]roton$'                     |
-        |________________________|_____________________________|___________________________________|
-
-        The objects corresponding to the object names are lists (or arrays) with each element corrsponding to each state.
-        """]
+    return_data_name_doc = Desc_container("N-state model data type string matching patterns")
+    return_data_name_doc.add_table_titles(["Data type", "Object name", "Patterns"])
+    return_data_name_doc.add_table_row(["Probabilities", "'probs'", "'p0', 'p1', 'p2', ..., 'pN'"])
+    return_data_name_doc.add_table_row(["Euler angle alpha", "'alpha'", "'alpha0', 'alpha1', ..."])
+    return_data_name_doc.add_table_row(["Euler angle beta", "'beta'", "'beta0', 'beta1', ..."])
+    return_data_name_doc.add_table_row(["Euler angle gamma", "'gamma'", "'gamma0', 'gamma1', ..."])
+    return_data_name_doc.add_table_row(["Bond length", "'r'", "'^r$' or '[Bb]ond[ -_][Ll]ength'"])
+    return_data_name_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'", "'^[Hh]eteronucleus$'"])
+    return_data_name_doc.add_table_row(["Proton type", "'proton_type'", "'^[Pp]roton$'"])
+    return_data_name_doc.add_paragraph("The objects corresponding to the object names are lists (or arrays) with each element corrsponding to each state.")
 
     def return_data_name(self, param):
         """Return a unique identifying string for the N-state model parameter.
@@ -2329,9 +2306,8 @@ class N_state_model(API_base, API_common):
             return 'Hz'
 
 
-    set_doc = ["N-state model set details", """
-        Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states. To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be added to the end of the parameter name.  So the Euler angle gamma of the third state is specified using the string 'gamma2'.
-        """]
+    set_doc = Desc_container("N-state model set details")
+    set_doc.add_paragraph("Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states. To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be added to the end of the parameter name.  So the Euler angle gamma of the third state is specified using the string 'gamma2'.")
 
 
     def set_error(self, model_info, index, error):

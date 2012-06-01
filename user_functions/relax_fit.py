@@ -28,6 +28,7 @@ from generic_fns import spectrum
 from graphics import WIZARD_IMAGE_PATH
 from specific_fns.setup import relax_fit_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -57,9 +58,9 @@ uf.add_keyarg(
     wiz_combo_iter = spectrum.get_ids,
     wiz_read_only = True
 )
-uf.desc = """
-Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.")
 uf.backend = relax_fit_obj._relax_time
 uf.menu_text = "&relax_time"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -88,13 +89,12 @@ uf.add_keyarg(
     ],
     wiz_read_only = True
 )
-uf.desc = """
-The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv'.
-
-The parameters of these two models are
-    'exp': [Rx, I0],
-    'inv': [Rx, I0, Iinf].
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv'.")
+uf.desc[-1].add_paragraph("The parameters of these two models are")
+uf.desc[-1].add_item_list_element("'exp'", "[Rx, I0],")
+uf.desc[-1].add_item_list_element("'inv'", "[Rx, I0, Iinf].")
 uf.backend = relax_fit_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"

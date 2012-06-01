@@ -33,6 +33,7 @@ from generic_fns import molmol
 from graphics import WIZARD_IMAGE_PATH
 from specific_fns.model_free.molmol import Molmol
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -46,9 +47,9 @@ uf_class.gui_icon = "relax.molmol"
 uf = uf_info.add_uf('molmol.clear_history')
 uf.title = "Clear the Molmol command history."
 uf.title_short = "Clear Molmol history."""
-uf.desc = """
-This will clear the Molmol history from memory.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will clear the Molmol history from memory.")
 uf.backend = molmol.molmol_obj.clear_history
 uf.menu_text = "clear_&history"
 uf.wizard_size = (600, 300)
@@ -66,14 +67,13 @@ uf.add_keyarg(
     desc_short = "Molmol command",
     desc = "The Molmol command to execute."
 )
-uf.desc = """
-This allows Molmol commands to be passed to the program.  This can be useful for automation or scripting.
-"""
-uf.prompt_examples = """
-To reinitialise the Molmol instance, type:
-
-relax> molmol.command("InitAll yes")
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows Molmol commands to be passed to the program.  This can be useful for automation or scripting.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To reinitialise the Molmol instance, type:")
+uf.desc[-1].add_prompt("relax> molmol.command(\"InitAll yes\")")
 uf.backend = molmol.command
 uf.menu_text = "&command"
 uf.gui_icon = "oxygen.actions.edit-rename"
@@ -142,22 +142,19 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-This allows spin specific values to be mapped to a structure through Molmol macros.  Currently only the 'classic' style, which is described below, is available.
-"""
-uf.additional = [
-    colour._linear_gradient_doc,
-    Molmol.classic_style_doc,
-    colour.__molmol_colours_prompt_doc__,
-    colour.__x11_colours_prompt_doc__
-]
-uf.prompt_examples = """
-To map the order parameter values, S2, onto the structure using the classic style, type:
-
-relax> molmol.macro_apply('s2')
-relax> molmol.macro_apply(data_type='s2')
-relax> molmol.macro_apply(data_type='s2', style="classic")
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows spin specific values to be mapped to a structure through Molmol macros.  Currently only the 'classic' style, which is described below, is available.")
+uf.desc.append(colour._linear_gradient_doc)
+uf.desc.append(Molmol.classic_style_doc)
+uf.desc.append(colour.__molmol_colours_doc__)
+uf.desc.append(colour.__x11_colours_doc__)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To map the order parameter values, S2, onto the structure using the classic style, type:")
+uf.desc[-1].add_prompt("relax> molmol.macro_apply('s2')")
+uf.desc[-1].add_prompt("relax> molmol.macro_apply(data_type='s2')")
+uf.desc[-1].add_prompt("relax> molmol.macro_apply(data_type='s2', style=\"classic\")")
 uf.backend = molmol.macro_apply
 uf.menu_text = "&macro_apply"
 uf.gui_icon = "relax.molmol"
@@ -189,15 +186,14 @@ uf.add_keyarg(
     desc = "The directory name.",
     can_be_none = True
 )
-uf.desc = """
- This user function is for opening and running a Molmol macro located within a text file.
- """
-uf.prompt_examples = """
-To execute the macro file 's2.mac' located in the directory 'molmol', type:
-
-relax> molmol.macro_run(file='s2.mac')
-relax> molmol.macro_run(file='s2.mac', dir='molmol')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function is for opening and running a Molmol macro located within a text file.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To execute the macro file 's2.mac' located in the directory 'molmol', type:")
+uf.desc[-1].add_prompt("relax> molmol.macro_run(file='s2.mac')")
+uf.desc[-1].add_prompt("relax> molmol.macro_run(file='s2.mac', dir='molmol')")
 uf.backend = molmol.macro_run
 uf.menu_text = "macro_&run"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -291,23 +287,19 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )
-uf.desc = """
-This allows residues specific values to be mapped to a structure through the creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
-"""
-uf.additional = [
-    colour._linear_gradient_doc,
-    Molmol.classic_style_doc,
-    colour.__molmol_colours_prompt_doc__,
-    colour.__x11_colours_prompt_doc__
-]
-uf.prompt_examples = """
-To create a Molmol macro mapping the order parameter values, S2, onto the structure using
-the classic style, type:
-
-relax> molmol.macro_write('s2')
-relax> molmol.macro_write(data_type='s2')
-relax> molmol.macro_write(data_type='s2', style="classic", file='s2.mac', dir='molmol')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows residues specific values to be mapped to a structure through the creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.")
+uf.desc.append(colour._linear_gradient_doc)
+uf.desc.append(Molmol.classic_style_doc)
+uf.desc.append(colour.__molmol_colours_doc__)
+uf.desc.append(colour.__x11_colours_doc__)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To create a Molmol macro mapping the order parameter values, S2, onto the structure using the classic style, type:")
+uf.desc[-1].add_prompt("relax> molmol.macro_write('s2')")
+uf.desc[-1].add_prompt("relax> molmol.macro_write(data_type='s2')")
+uf.desc[-1].add_prompt("relax> molmol.macro_write(data_type='s2', style=\"classic\", file='s2.mac', dir='molmol')")
 uf.backend = molmol.macro_write
 uf.menu_text = "macro_&write"
 uf.gui_icon = "oxygen.actions.document-save"
@@ -320,19 +312,17 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 uf = uf_info.add_uf('molmol.ribbon')
 uf.title = "Apply the Molmol ribbon style."
 uf.title_short = "Molmol ribbon style application."
-uf.desc = """
-This applies the Molmol ribbon style which is equivalent to clicking on 'ribbon' in the Molmol side menu.  To do this, the following commands are executed:
-
-    CalcAtom 'H'
-    CalcAtom 'HN'
-    CalcSecondary
-    XMacStand ribbon.mac
-"""
-uf.prompt_examples = """
-To apply the ribbon style to the PDB file loaded, type:
-
-relax> molmol.ribbon()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This applies the Molmol ribbon style which is equivalent to clicking on 'ribbon' in the Molmol side menu.  To do this, the following commands are executed:")
+uf.desc[-1].add_list_element("CalcAtom 'H'")
+uf.desc[-1].add_list_element("CalcAtom 'HN'")
+uf.desc[-1].add_list_element("CalcSecondary")
+uf.desc[-1].add_list_element("XMacStand ribbon.mac")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To apply the ribbon style to the PDB file loaded, type:")
+uf.desc[-1].add_prompt("relax> molmol.ribbon()")
 uf.backend = molmol.ribbon
 uf.menu_text = "ri&bbon"
 uf.wizard_size = (700, 500)
@@ -354,39 +344,31 @@ uf.add_keyarg(
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
     wiz_filesel_style = wx.FD_OPEN
 )
-uf.desc = """
-In executing this user function, a PDB file must have previously been loaded , a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.
-
-To display the diffusion tensor, the multiple commands will be executed.  To overlay the structure with the diffusion tensor, everything will be selected and reoriented and moved to their original PDB frame positions:
-
-    SelectAtom ''
-    SelectBond ''
-    SelectAngle ''
-    SelectDist ''
-    SelectPrim ''
-    RotateInit
-    MoveInit
-
-Next the tensor PDB file is read in, selected, and the covalent bonds of the PDB CONECT records calculated:
-
-    ReadPdb file
-    SelectMol '@file'
-    CalcBond 1 1 1
-
-Then only the atoms and bonds of the geometric object are selected and the 'ball/stick' style applied:
-
-    SelectAtom '0'
-    SelectBond '0'
-    SelectAtom ':TNS'
-    SelectBond ':TNS'
-    XMacStand ball_stick.mac
-
-The appearance is finally touched up:
-
-    RadiusAtom 1
-    SelectAtom ':TNS@C*'
-    RadiusAtom 1.5
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("In executing this user function, a PDB file must have previously been loaded , a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.")
+uf.desc[-1].add_paragraph("To display the diffusion tensor, the multiple commands will be executed.  To overlay the structure with the diffusion tensor, everything will be selected and reoriented and moved to their original PDB frame positions:")
+uf.desc[-1].add_list_element("SelectAtom ''")
+uf.desc[-1].add_list_element("SelectBond ''")
+uf.desc[-1].add_list_element("SelectAngle ''")
+uf.desc[-1].add_list_element("SelectDist ''")
+uf.desc[-1].add_list_element("SelectPrim ''")
+uf.desc[-1].add_list_element("RotateInit")
+uf.desc[-1].add_list_element("MoveInit")
+uf.desc[-1].add_paragraph("Next the tensor PDB file is read in, selected, and the covalent bonds of the PDB CONECT records calculated:")
+uf.desc[-1].add_list_element("ReadPdb file")
+uf.desc[-1].add_list_element("SelectMol '@file'")
+uf.desc[-1].add_list_element("CalcBond 1 1 1")
+uf.desc[-1].add_paragraph("Then only the atoms and bonds of the geometric object are selected and the 'ball/stick' style applied:")
+uf.desc[-1].add_list_element("SelectAtom '0'")
+uf.desc[-1].add_list_element("SelectBond '0'")
+uf.desc[-1].add_list_element("SelectAtom ':TNS'")
+uf.desc[-1].add_list_element("SelectBond ':TNS'")
+uf.desc[-1].add_list_element("XMacStand ball_stick.mac")
+uf.desc[-1].add_paragraph("The appearance is finally touched up:")
+uf.desc[-1].add_list_element("RadiusAtom 1")
+uf.desc[-1].add_list_element("SelectAtom ':TNS@C*'")
+uf.desc[-1].add_list_element("RadiusAtom 1.5")
 uf.backend = molmol.tensor_pdb
 uf.menu_text = "&tensor_pdb"
 uf.wizard_size = (1000, 700)
@@ -399,12 +381,12 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 uf = uf_info.add_uf('molmol.view')
 uf.title = "View the collection of molecules from the loaded PDB file."
 uf.title_short = "Molecule viewing."
-uf.desc = """
-This will simply launch Molmol.
-"""
-uf.prompt_examples = """
-relax> molmol.view()
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will simply launch Molmol.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_prompt("relax> molmol.view()")
 uf.backend = molmol.view
 uf.menu_text = "&view"
 uf.wizard_size = (600, 300)

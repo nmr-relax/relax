@@ -27,6 +27,7 @@
 from generic_fns import model_selection, pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The model_selection user function.
@@ -81,33 +82,27 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
-uf.desc = """
-The following model selection methods are supported:
-
-    AIC:  Akaike's Information Criteria.
-    AICc:  Small sample size corrected AIC.
-    BIC:  Bayesian or Schwarz Information Criteria.
-    Bootstrap:  Bootstrap model selection.
-    CV:  Single-item-out cross-validation.
-    Expect:  The expected overall discrepancy (the true values of the parameters are required).
-    Farrow:  Old model-free method by Farrow et al., 1994.
-    Palmer:  Old model-free method by Mandel et al., 1995.
-    Overall:  The realised overall discrepancy (the true values of the parameters are required).
-
-For the methods 'Bootstrap', 'Expect', and 'Overall', the function 'monte_carlo' should have previously been executed with the type argument set to the appropriate value to modify its behaviour.
-
-If the pipes argument is not supplied then all data pipes will be used for model selection.
-"""
-uf.prompt_examples = """
-For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
-program, the following commands will carry out AIC model selection and to place the selected
-results into the 'mixed' data pipe, type one of:
-
-relax> model_selection('AIC', 'mixed')
-relax> model_selection(method='AIC', modsel_pipe='mixed')
-relax> model_selection('AIC', 'mixed', ['m1', 'm2', 'm3', 'm4', 'm5'])
-relax> model_selection(method='AIC', modsel_pipe='mixed', pipes=['m1', 'm2', 'm3', 'm4', 'm5'])
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The following model selection methods are supported:")
+uf.desc[-1].add_item_list_element("AIC", "Akaike's Information Criteria.")
+uf.desc[-1].add_item_list_element("AICc", "Small sample size corrected AIC.")
+uf.desc[-1].add_item_list_element("BIC", "Bayesian or Schwarz Information Criteria.")
+uf.desc[-1].add_item_list_element("Bootstrap", "Bootstrap model selection.")
+uf.desc[-1].add_item_list_element("CV", "Single-item-out cross-validation.")
+uf.desc[-1].add_item_list_element("Expect", "The expected overall discrepancy (the true values of the parameters are required).")
+uf.desc[-1].add_item_list_element("Farrow", "Old model-free method by Farrow et al., 1994.")
+uf.desc[-1].add_item_list_element("Palmer", "Old model-free method by Mandel et al., 1995.")
+uf.desc[-1].add_item_list_element("Overall", "The realised overall discrepancy (the true values of the parameters are required).")
+uf.desc[-1].add_paragraph("For the methods 'Bootstrap', 'Expect', and 'Overall', the function 'monte_carlo' should have previously been executed with the type argument set to the appropriate value to modify its behaviour.")
+uf.desc[-1].add_paragraph("If the pipes argument is not supplied then all data pipes will be used for model selection.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the program, the following commands will carry out AIC model selection and to place the selected results into the 'mixed' data pipe, type one of:")
+uf.desc[-1].add_prompt("relax> model_selection('AIC', 'mixed')")
+uf.desc[-1].add_prompt("relax> model_selection(method='AIC', modsel_pipe='mixed')")
+uf.desc[-1].add_prompt("relax> model_selection('AIC', 'mixed', ['m1', 'm2', 'm3', 'm4', 'm5'])")
+uf.desc[-1].add_prompt("relax> model_selection(method='AIC', modsel_pipe='mixed', pipes=['m1', 'm2', 'm3', 'm4', 'm5'])")
 uf.backend = model_selection.select
 uf.menu_text = "m&odel_selection"
 uf.gui_icon = "relax.discrepancy_curve"

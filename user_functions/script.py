@@ -30,6 +30,8 @@ import wx
 from generic_fns import script
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
+
 
 # The script user function.
 uf = uf_info.add_uf('script')
@@ -52,9 +54,9 @@ uf.add_keyarg(
     desc = "The directory where the file is located.",
     can_be_none = True
 )
-uf.desc = """
-This will execute a relax or any ordinary Python script.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will execute a relax or any ordinary Python script.")
 uf.backend = script.script
 uf.menu_text = "&script"
 uf.gui_icon = "oxygen.mimetypes.application-x-desktop"

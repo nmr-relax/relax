@@ -30,6 +30,7 @@ import wx
 from generic_fns import results
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -44,9 +45,9 @@ uf = uf_info.add_uf('results.display')
 uf.title = "Display the results."
 uf.title_short = "Results display."
 uf.display = True
-uf.desc = """
-This will print to screen (STDOUT) the results contained within the current data pipe.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will print to screen (STDOUT) the results contained within the current data pipe.")
 uf.backend = results.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -76,9 +77,9 @@ uf.add_keyarg(
     desc = "The directory where the file is located.",
     can_be_none = True
 )
-uf.desc = """
-This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found the file with '.bz2' appended followed by the file name with '.gz' appended will be searched for.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found the file with '.bz2' appended followed by the file name with '.gz' appended will be searched for.")
 uf.backend = results.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -135,19 +136,15 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the results file to be overwritten."
 )
-uf.desc = """
-This will write the entire contents of the current data pipe into an XML formatted file.  This results file can then be read back into relax at a later point in time, or transfered to another machine.  This is in contrast to the state.save user function whereby the entire data store, including all data pipes, are saved into a similarly XML formatted file.
-
-To place the results file in the current working directory in the prompt and scripting modes, leave the directory unset.  If the directory is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.
-
-The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compression type which can be set to
-
-    0:  No compression (no file extension),
-    1:  bzip2 compression ('.bz2' file extension),
-    2:  gzip compression ('.gz' file extension).
-
-The complementary read function will automatically handle the compressed files.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will write the entire contents of the current data pipe into an XML formatted file.  This results file can then be read back into relax at a later point in time, or transfered to another machine.  This is in contrast to the state.save user function whereby the entire data store, including all data pipes, are saved into a similarly XML formatted file.")
+uf.desc[-1].add_paragraph("To place the results file in the current working directory in the prompt and scripting modes, leave the directory unset.  If the directory is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.")
+uf.desc[-1].add_paragraph("The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compression type which can be set to")
+uf.desc[-1].add_item_list_element("0", "No compression (no file extension),")
+uf.desc[-1].add_item_list_element("1", "bzip2 compression ('.bz2' file extension),")
+uf.desc[-1].add_item_list_element("2", "gzip compression ('.gz' file extension).")
+uf.desc[-1].add_paragraph("The complementary read function will automatically handle the compressed files.")
 uf.backend = results.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"

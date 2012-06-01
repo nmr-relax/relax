@@ -30,6 +30,7 @@ import wx
 from graphics import WIZARD_IMAGE_PATH
 from generic_fns import bmrb, exp_info, pipes
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -143,45 +144,29 @@ uf.add_keyarg(
     desc_short = "publication year",
     desc = "The publication year."
 )
-uf.desc = """
-The full_citation should be in a format similar to that used in a journal article by either cutting and pasting from another document or by typing. Please include author names, title, journal, page numbers, and year or equivalent information for the type of publication given.
-
-The journal status can only be one of:
-
-    "preparation",
-    "in press",
-    "published",
-    "retracted",
-    "submitted".
-
-The citation type can only be one of:
-
-    "abstract",
-    "BMRB only",
-    "book",
-    "book chapter",
-    "internet",
-    "journal",
-    "personal communication",
-    "thesis".
-
-The standard journal abbreviation is that defined by the Chemical Abstract Services for the journal where the data are or will be published.  If the data in the deposition are related to a J. Biomol. NMR paper, the value must be 'J. Biomol. NMR' to alert the BMRB annotators so that the deposition is properly processed.  If the depositor truly does not know the journal, a value of 'not known' or 'na' is acceptable.
-"""
-uf.prompt_examples = """
-To add the citation "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the
-model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7),
-483-494.", type:
-
-relax> bmrb.citation(authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.",
-                     "R."]], doi="10.1039/b702202f", pubmed_id="17579774",
-                     full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory
-                     formulation of the model-free problem and the diffusion seeded
-                     model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory
-                     formulation of the model-free problem and the diffusion seeded
-                     model-free paradigm.", status="published", type="journal",
-                     journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems",
-                     volume=3, issue=7, page_first=483, page_last=498, year=2007)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The full_citation should be in a format similar to that used in a journal article by either cutting and pasting from another document or by typing. Please include author names, title, journal, page numbers, and year or equivalent information for the type of publication given.")
+uf.desc[-1].add_paragraph("The journal status can only be one of:")
+uf.desc[-1].add_list_element("'preparation',")
+uf.desc[-1].add_list_element("'in press',")
+uf.desc[-1].add_list_element("'published',")
+uf.desc[-1].add_list_element("'retracted',")
+uf.desc[-1].add_list_element("'submitted'.")
+uf.desc[-1].add_paragraph("The citation type can only be one of:")
+uf.desc[-1].add_list_element("'abstract',")
+uf.desc[-1].add_list_element("'BMRB only',")
+uf.desc[-1].add_list_element("'book',")
+uf.desc[-1].add_list_element("'book chapter',")
+uf.desc[-1].add_list_element("'internet',")
+uf.desc[-1].add_list_element("'journal',")
+uf.desc[-1].add_list_element("'personal communication',")
+uf.desc[-1].add_list_element("'thesis'.")
+uf.desc[-1].add_paragraph("The standard journal abbreviation is that defined by the Chemical Abstract Services for the journal where the data are or will be published.  If the data in the deposition are related to a J. Biomol. NMR paper, the value must be 'J. Biomol. NMR' to alert the BMRB annotators so that the deposition is properly processed.  If the depositor truly does not know the journal, a value of 'not known' or 'na' is acceptable.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To add the citation \"d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.\", type:")
+uf.desc[-1].add_prompt("relax> bmrb.citation(authors=[[\"Edward\", \"d'Auvergne\", \"E.\", \"J.\"], [\"Paul\", \"Gooley\", \"P.\", \"R.\"]], doi=\"10.1039/b702202f\", pubmed_id=\"17579774\", full_citation=\"d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.\", title=\"Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm.\", status=\"published\", type=\"journal\", journal_abbrev=\"Mol. Biosyst.\", journal_full=\"Molecular Biosystems\", volume=3, issue=7, page_first=483, page_last=498, year=2007)")
 uf.backend = exp_info.citation
 uf.menu_text = "&citation"
 uf.gui_icon = "oxygen.actions.documentation"
@@ -201,9 +186,9 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.display = True
-uf.desc = """
-This will print the BMRB NMR-STAR formatted data to STDOUT.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will print the BMRB NMR-STAR formatted data to STDOUT.")
 uf.backend = bmrb.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -244,9 +229,9 @@ uf.add_keyarg(
     desc = "The sample conditions label in the NMR-STAR file to restrict loading to.",
     can_be_none = True
 )
-uf.desc = """
-This will allow most of the data from a BMRB NMR-STAR formatted file to be loaded into the relax data store.  Note that a data pipe should be created for storing the data, and that currently only model-free data pipes can be used.  Also, only one sample condition can be read per relax data pipe.  Therefore if one of the sample conditions is not specified and multiple conditions exist in the NMR-STAR file, an error will be raised.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will allow most of the data from a BMRB NMR-STAR formatted file to be loaded into the relax data store.  Note that a data pipe should be created for storing the data, and that currently only model-free data pipes can be used.  Also, only one sample condition can be read per relax data pipe.  Therefore if one of the sample conditions is not specified and multiple conditions exist in the NMR-STAR file, an error will be raised.")
 uf.backend = bmrb.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -328,49 +313,38 @@ uf.add_keyarg(
     desc_short = "universal solution flag",
     desc = "A model-free specific flag specifying if the universal solution was sought after."
 )
-uf.desc = """
-This user function allows scripts used in the analysis to be included in the BMRB deposition.  The following addition information may need to be specified with the script.
-
-The analysis_type must be set.  Allowable values include all the data pipe types used in relax, ie:
-
-    'frame order':  The Frame Order theories,
-    'jw':  Reduced spectral density mapping,
-    'mf':  Model-free analysis,
-    'N-state':  N-state model of domain motions,
-    'noe':  Steady state NOE calculation,
-    'relax_fit':  Relaxation curve fitting,
-
-The model_selection argument only needs to be set if the script selects between different mathematical models.  This can be anything, but the following are recommended:
-
-    'AIC':  Akaike's Information Criteria.
-    'AICc':  Small sample size corrected AIC.
-    'BIC':  Bayesian or Schwarz Information Criteria.
-    'Bootstrap':  Bootstrap model selection.
-    'CV':  Single-item-out cross-validation.
-    'Expect':  The expected overall discrepancy (the true values of the parameters are required).
-    'Farrow':  Old model-free method by Farrow et al., 1994.
-    'Palmer':  Old model-free method by Mandel et al., 1995.
-    'Overall':  The realised overall discrepancy (the true values of the parameters are required).
-
-The engine is the software used in the calculation, optimisation, etc.  This can be anything, but those recognised by relax (automatic program info, citations, etc. added) include:
-
-    'relax':  hence relax was used for the full analysis.
-    'modelfree4':  Art Palmer's Modelfree4 program was used for optimising the model-free parameter values.
-    'dasha':  The Dasha program was used for optimising the model-free parameter values.
-    'curvefit':  Art Palmer's curvefit program was used to determine the R1 or R2 values.
-
-The model_elim flag is model-free specific and should be set if the methods from "d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135." were used.  This should be set to True for the full_analysis.py script.
-
-The universal_solution flag is model-free specific and should be set if the methods from "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494." were used.  This should be set to True for the full_analysis.py script.
-"""
-uf.prompt_examples = """
-For BMRB deposition, to specify that the full_analysis.py script was used, type one of:
-
-relax> bmrb.script('full_analysis.py', 'model-free', 'AIC', 'relax', True, True)
-relax> bmrb.script(file='full_analysis.py', dir=None, analysis_type='model-free',
-                   model_selection='AIC', engine='relax', model_elim=True,
-                   universal_solution=True)
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function allows scripts used in the analysis to be included in the BMRB deposition.  The following addition information may need to be specified with the script.")
+uf.desc[-1].add_paragraph("The analysis_type must be set.  Allowable values include all the data pipe types used in relax, ie:")
+uf.desc[-1].add_item_list_element("'frame order'", "The Frame Order theories,")
+uf.desc[-1].add_item_list_element("'jw'", "Reduced spectral density mapping,")
+uf.desc[-1].add_item_list_element("'mf'", "Model-free analysis,")
+uf.desc[-1].add_item_list_element("'N-state'", "N-state model of domain motions,")
+uf.desc[-1].add_item_list_element("'noe'", "Steady state NOE calculation,")
+uf.desc[-1].add_item_list_element("'relax_fit'", "Relaxation curve fitting,")
+uf.desc[-1].add_paragraph("The model_selection argument only needs to be set if the script selects between different mathematical models.  This can be anything, but the following are recommended:")
+uf.desc[-1].add_item_list_element("'AIC'", "Akaike's Information Criteria.")
+uf.desc[-1].add_item_list_element("'AICc'", "Small sample size corrected AIC.")
+uf.desc[-1].add_item_list_element("'BIC'", "Bayesian or Schwarz Information Criteria.")
+uf.desc[-1].add_item_list_element("'Bootstrap'", "Bootstrap model selection.")
+uf.desc[-1].add_item_list_element("'CV'", "Single-item-out cross-validation.")
+uf.desc[-1].add_item_list_element("'Expect'", "The expected overall discrepancy (the true values of the parameters are required).")
+uf.desc[-1].add_item_list_element("'Farrow'", "Old model-free method by Farrow et al., 1994.")
+uf.desc[-1].add_item_list_element("'Palmer'", "Old model-free method by Mandel et al., 1995.")
+uf.desc[-1].add_item_list_element("'Overall'", "The realised overall discrepancy (the true values of the parameters are required).")
+uf.desc[-1].add_paragraph("The engine is the software used in the calculation, optimisation, etc.  This can be anything, but those recognised by relax (automatic program info, citations, etc. added) include:")
+uf.desc[-1].add_item_list_element("'relax'", "hence relax was used for the full analysis.")
+uf.desc[-1].add_item_list_element("'modelfree4'", "Art Palmer's Modelfree4 program was used for optimising the model-free parameter values.")
+uf.desc[-1].add_item_list_element("'dasha'", "The Dasha program was used for optimising the model-free parameter values.")
+uf.desc[-1].add_item_list_element("'curvefit'", "Art Palmer's curvefit program was used to determine the R1 or R2 values.")
+uf.desc[-1].add_paragraph("The model_elim flag is model-free specific and should be set if the methods from \"d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.\" were used.  This should be set to True for the full_analysis.py script.")
+uf.desc[-1].add_paragraph("The universal_solution flag is model-free specific and should be set if the methods from \"d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.\" were used.  This should be set to True for the full_analysis.py script.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("For BMRB deposition, to specify that the full_analysis.py script was used, type one of:")
+uf.desc[-1].add_prompt("relax> bmrb.script('full_analysis.py', 'model-free', 'AIC', 'relax', True, True)")
+uf.desc[-1].add_prompt("relax> bmrb.script(file='full_analysis.py', dir=None, analysis_type='model-free', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)")
 uf.backend = exp_info.script
 uf.menu_text = "&script"
 uf.gui_icon = "oxygen.mimetypes.application-x-desktop"
@@ -436,30 +410,24 @@ uf.add_keyarg(
     wiz_read_only = False,
     can_be_none = True
 )
-uf.desc = """
-This user function allows the software used in the analysis to be specified in full detail.
-
-For the tasks list, this should be a python list of strings (eg. ['spectral processing']).  Although not restricted to these, the values suggested by the BMRB are:
-
-    'chemical shift assignment',
-    'chemical shift calculation',
-    'collection',
-    'data analysis',
-    'geometry optimization',
-    'peak picking',
-    'processing',
-    'refinement',
-    'structure solution'
-"""
-uf.prompt_examples = """
-For BMRB deposition, to say that Sparky was used in the analysis, type:
-
-relax> cite_id = bmrb.citation(authors=[['Tom', 'Goddard', 'T.', 'D.'], ['D', 'Kneller',
-            'D.', 'G.']], title=""Goddard, T. D. and Kneller, D. G., SPARKY 3, University of
-            California, San Francisco."
-relax> bmrb.software('Sparky', version='3.110', url="http://www.cgl.ucsf.edu/home/sparky/",
-            vendor_name="Goddard, T. D.", cite_ids=[cite_id], tasks=["spectral analysis"])
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function allows the software used in the analysis to be specified in full detail.")
+uf.desc[-1].add_paragraph("For the tasks list, this should be a python list of strings (eg. ['spectral processing']).  Although not restricted to these, the values suggested by the BMRB are:")
+uf.desc[-1].add_list_element("'chemical shift assignment',")
+uf.desc[-1].add_list_element("'chemical shift calculation',")
+uf.desc[-1].add_list_element("'collection',")
+uf.desc[-1].add_list_element("'data analysis',")
+uf.desc[-1].add_list_element("'geometry optimization',")
+uf.desc[-1].add_list_element("'peak picking',")
+uf.desc[-1].add_list_element("'processing',")
+uf.desc[-1].add_list_element("'refinement',")
+uf.desc[-1].add_list_element("'structure solution'")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("For BMRB deposition, to say that Sparky was used in the analysis, type:")
+uf.desc[-1].add_prompt("relax> cite_id = bmrb.citation(authors=[[\"Tom\", \"Goddard\", \"T.\", \"D.\"], [\"D\", \"Kneller\", \"D.\", \"G.\"]], title=\"Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco.\"")
+uf.desc[-1].add_prompt("relax> bmrb.software(\"Sparky\", version=\"3.110\", url=\"http://www.cgl.ucsf.edu/home/sparky/\", vendor_name=\"Goddard, T. D.\", cite_ids=[cite_id], tasks=[\"spectral analysis\"])")
 uf.backend = exp_info.software
 uf.menu_text = "soft&ware"
 uf.gui_icon = "oxygen.apps.utilities-terminal"
@@ -487,22 +455,18 @@ uf.add_keyarg(
     desc = "The version of the software, if applicable.",
     can_be_none = True
 )
-uf.desc = """
-Rather than specifying all the information directly, this user function allows the software packaged used in the analysis to be selected by name.  The programs currently supported are:
-
-    'NMRPipe' - http://spin.niddk.nih.gov/NMRPipe/
-    'Sparky' - http://www.cgl.ucsf.edu/home/sparky/
-
-More can be added if all relevant information (program name, description, website, original citation, purpose, etc.) is emailed to relax-users@gna.org.
-
-Note that relax is automatically added to the BMRB file.
-"""
-uf.prompt_examples = """
-For BMRB deposition, to say that both NMRPipe and Sparky were used prior to relax, type:
-
-relax> bmrb.software_select('NMRPipe')
-relax> bmrb.software_select('Sparky', version='3.113')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Rather than specifying all the information directly, this user function allows the software packaged used in the analysis to be selected by name.  The programs currently supported are:")
+uf.desc[-1].add_item_list_element("'NMRPipe'", "http://spin.niddk.nih.gov/NMRPipe/")
+uf.desc[-1].add_item_list_element("'Sparky'", "http://www.cgl.ucsf.edu/home/sparky/")
+uf.desc[-1].add_paragraph("More can be added if all relevant information (program name, description, website, original citation, purpose, etc.) is emailed to relax-users@gna.org.")
+uf.desc[-1].add_paragraph("Note that relax is automatically added to the BMRB file.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("For BMRB deposition, to say that both NMRPipe and Sparky were used prior to relax, type:")
+uf.desc[-1].add_prompt("relax> bmrb.software_select('NMRPipe')")
+uf.desc[-1].add_prompt("relax> bmrb.software_select('Sparky', version='3.113')")
 uf.backend = exp_info.software_select
 uf.menu_text = "software_se&lect"
 uf.gui_icon = "oxygen.apps.utilities-terminal"
@@ -535,29 +499,26 @@ uf.add_keyarg(
     ],
     wiz_read_only = False
 )
-uf.desc = """
-The thiol state can be any text, thought the BMRB suggests the following:
-
-    'all disulfide bound',
-    'all free',
-    'all other bound',
-    'disulfide and other bound',
-    'free and disulfide bound',
-    'free and other bound',
-    'free disulfide and other bound',
-    'not available',
-    'not present',
-    'not reported',
-    'unknown'.
-
-Alternatively the pure states 'reduced' or 'oxidised' could be specified.
-"""
-uf.prompt_examples = """
-For BMRB deposition, to say that the protein studied is in the oxidised state, tyype one of:
-
-relax> bmrb.thiol_state('oxidised')
-relax> bmrb.thiol_state(state='oxidised')
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The thiol state can be any text, thought the BMRB suggests the following:")
+uf.desc[-1].add_list_element("'all disulfide bound',")
+uf.desc[-1].add_list_element("'all free',")
+uf.desc[-1].add_list_element("'all other bound',")
+uf.desc[-1].add_list_element("'disulfide and other bound',")
+uf.desc[-1].add_list_element("'free and disulfide bound',")
+uf.desc[-1].add_list_element("'free and other bound',")
+uf.desc[-1].add_list_element("'free disulfide and other bound',")
+uf.desc[-1].add_list_element("'not available',")
+uf.desc[-1].add_list_element("'not present',")
+uf.desc[-1].add_list_element("'not reported',")
+uf.desc[-1].add_list_element("'unknown'.")
+uf.desc[-1].add_paragraph("Alternatively the pure states 'reduced' or 'oxidised' could be specified.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("For BMRB deposition, to say that the protein studied is in the oxidised state, tyype one of:")
+uf.desc[-1].add_prompt("relax> bmrb.thiol_state('oxidised')")
+uf.desc[-1].add_prompt("relax> bmrb.thiol_state(state='oxidised')")
 uf.backend = exp_info.thiol_state
 uf.menu_text = "&thiol_state"
 uf.wizard_size = (700, 500)
@@ -599,11 +560,10 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A flag which if True will cause the any pre-existing file to be overwritten."
 )
-uf.desc = """
-This will create a NMR-STAR formatted file of the data in the current data pipe for BMRB deposition.
-
-In the prompt/script UI modes, to place the BMRB file in the current working directory, set dir to None.  If dir is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will create a NMR-STAR formatted file of the data in the current data pipe for BMRB deposition.")
+uf.desc[-1].add_paragraph("In the prompt/script UI modes, to place the BMRB file in the current working directory, set dir to None.  If dir is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.")
 uf.backend = bmrb.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"

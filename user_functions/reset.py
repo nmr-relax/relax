@@ -24,15 +24,16 @@
 import generic_fns.reset
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The reset user function.
 uf = uf_info.add_uf('reset')
 uf.title = "Reinitialise the relax data storage object."
 uf.title_short = "Reset relax."
-uf.desc = """
-All of the data of the relax data storage object will be erased and hence relax will return to its initial state.
-"""
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("All of the data of the relax data storage object will be erased and hence relax will return to its initial state.")
 uf.backend = generic_fns.reset.reset
 uf.menu_text = "&reset"
 uf.gui_icon = "oxygen.actions.dialog-close"
