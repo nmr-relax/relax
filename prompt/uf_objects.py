@@ -31,6 +31,7 @@ from relax_errors import RelaxError
 from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 class Class_container(object):
@@ -271,6 +272,13 @@ class Uf_object(object):
         @return:    The user function documentation to use in the help system.
         @rtype:     str
         """
+
+        # Checks.
+        if not isinstance(self._desc, list):
+            raise RelaxError("The user function 'desc' variable must be a list of Desc_container instances.")
+        for i in range(len(self._desc)):
+            if not isinstance(self._desc[i], Desc_container):
+                raise RelaxError("The user function 'desc' list element '%s' must be a list of Desc_container instances." % self._desc[i])
 
         # Initialise.
         doc = ""
