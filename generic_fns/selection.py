@@ -32,45 +32,20 @@ from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
+from user_functions.objects import Desc_container
 
 
-boolean_doc = ["Boolean operators", """
-The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details how the selections will occur for the different boolean operators.
-__________________________________________________________
-|                    |   |   |   |   |   |   |   |   |   |
-| Spin system        | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
-|____________________|___|___|___|___|___|___|___|___|___|
-|                    |   |   |   |   |   |   |   |   |   |
-| Original selection | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 0 | 1 |
-|                    |   |   |   |   |   |   |   |   |   |
-| New selection      | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 |
-|                    |   |   |   |   |   |   |   |   |   |
-| OR                 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
-|                    |   |   |   |   |   |   |   |   |   |
-| NOR                | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-|                    |   |   |   |   |   |   |   |   |   |
-| AND                | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
-|                    |   |   |   |   |   |   |   |   |   |
-| NAND               | 1 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 |
-|                    |   |   |   |   |   |   |   |   |   |
-| XOR                | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | 1 |
-|                    |   |   |   |   |   |   |   |   |   |
-| XNOR               | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 |
-|____________________|___|___|___|___|___|___|___|___|___|
-""", """
-The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following details how the selections will occur for the different boolean operators:
-
-Spin system:  1 2 3 4 5 6 7 8 9
-Original selection:  0 1 1 1 1 0 1 0 1
-New selection:  0 1 1 1 1 1 0 0 0
-OR:  0 1 1 1 1 1 1 0 1
-NOR:  1 0 0 0 0 0 0 1 0
-AND:  0 1 1 1 1 0 0 0 0
-NAND:  1 0 0 0 0 1 1 1 1
-XOR:  0 0 0 0 0 1 1 0 1
-XNOR:  1 1 1 1 1 0 0 1 0
-"""
-]
+boolean_doc = Desc_container("Boolean operators")
+boolean_doc.add_paragraph("The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details how the selections will occur for the different boolean operators.")
+boolean_doc.add_table_titles(["Spin system", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
+boolean_doc.add_table_row(["Original selection", "0", "1", "1", "1", "1", "0", "1", "0", "1"])
+boolean_doc.add_table_row(["New selection", "0", "1", "1", "1", "1", "1", "0", "0", "0"])
+boolean_doc.add_table_row(["OR", "0", "1", "1", "1", "1", "1", "1", "0", "1"])
+boolean_doc.add_table_row(["NOR", "1", "0", "0", "0", "0", "0", "0", "1", "0"])
+boolean_doc.add_table_row(["AND", "0", "1", "1", "1", "1", "0", "0", "0", "0"])
+boolean_doc.add_table_row(["NAND", "1", "0", "0", "0", "0", "1", "1", "1", "1"])
+boolean_doc.add_table_row(["XOR", "0", "0", "0", "0", "0", "1", "1", "0", "1"])
+boolean_doc.add_table_row(["XNOR", "1", "1", "1", "1", "1", "0", "0", "1", "0"])
 
 
 def desel_all():

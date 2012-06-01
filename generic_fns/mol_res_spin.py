@@ -50,6 +50,7 @@ from generic_fns import relax_re
 from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
+from user_functions.objects import Desc_container
 
 
 ALLOWED_MOL_TYPES = ['protein',
@@ -60,13 +61,10 @@ ALLOWED_MOL_TYPES = ['protein',
 ]
 """The list of allowable molecule types."""
 
-id_string_doc = ["Spin ID string documentation", """
-The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.
-
-If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.
-
-Regular expression can be used to select spins.  For example the string '@H*' will select the protons 'H', 'H2', 'H98'.
-"""]
+id_string_doc = Desc_container("Spin ID string documentation")
+id_string_doc.add_paragraph("The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.")
+id_string_doc.add_paragraph("If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.")
+id_string_doc.add_paragraph("Regular expression can be used to select spins.  For example the string '@H*' will select the protons 'H', 'H2', 'H98'.")
 
 
 

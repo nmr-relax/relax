@@ -32,6 +32,7 @@ from generic_fns import pipes
 from relax_errors import RelaxError
 import specific_fns
 from status import Status; status = Status()
+from user_functions.objects import Desc_container
 
 
 def calc(verbosity=1):
@@ -309,23 +310,13 @@ def return_conversion_factor(stat_type):
     return 1.0
 
 
-return_data_name_doc = ["Minimisation statistic data type string matching patterns", """
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Chi-squared statistic  | 'chi2'       | '^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'           |
-        |                        |              |                                                  |
-        | Iteration count        | 'iter'       | '^[Ii]ter'                                       |
-        |                        |              |                                                  |
-        | Function call count    | 'f_count'    | '^[Ff].*[ -_][Cc]ount'                           |
-        |                        |              |                                                  |
-        | Gradient call count    | 'g_count'    | '^[Gg].*[ -_][Cc]ount'                           |
-        |                        |              |                                                  |
-        | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
-        |________________________|______________|__________________________________________________|
-"""]
+return_data_name_doc = Desc_container("Minimisation statistic data type string matching patterns")
+return_data_name_doc.add_table_titles(["Data type", "Object name", "Patterns"])
+return_data_name_doc.add_table_row(["Chi-squared statistic", "'chi2'", "'^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'"])
+return_data_name_doc.add_table_row(["Iteration count", "'iter'", "'^[Ii]ter'"])
+return_data_name_doc.add_table_row(["Function call count", "'f_count'", "'^[Ff].*[ -_][Cc]ount'"])
+return_data_name_doc.add_table_row(["Gradient call count", "'g_count'", "'^[Gg].*[ -_][Cc]ount'"])
+return_data_name_doc.add_table_row(["Hessian call count", "'h_count'", "'^[Hh].*[ -_][Cc]ount'"])
 
 def return_data_name(name):
     """Return a unique identifying string for the minimisation parameter.
