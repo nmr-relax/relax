@@ -258,9 +258,9 @@ uf.desc[-1].add_item_list_element("5", "{Azz, Axx-yy, Axy, Axz, Ayz}  (units of 
 uf.desc[-1].add_item_list_element("6", "{Pxx, Pyy, Pxy, Pxz, Pyz}  (unitless),")
 uf.desc[-1].add_item_list_element("7", "{Pzz, Pxx-yy, Pxy, Pxz, Pyz}  (unitless).")
 uf.desc[-1].add_paragraph("Other formats may be added later.  The relationship between the Saupe order matrix S and the alignment tensor A is")
-uf.desc[-1].add_verbatim("    S = 3/2 A.")
+uf.desc[-1].add_item_list_element(None, "S = 3/2 A.")
 uf.desc[-1].add_paragraph("The probability matrix P is related to the alignment tensor A by")
-uf.desc[-1].add_verbatim("    A = P - 1/3 I,")
+uf.desc[-1].add_item_list_element(None, "A = P - 1/3 I,")
 uf.desc[-1].add_paragraph("where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond vectors must all be of equal length.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

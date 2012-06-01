@@ -176,9 +176,7 @@ uf.desc[-1].add_paragraph("To select isotropic diffusion, the parameters argumen
 uf.desc[-1].add_item_list_element("0", "{tm}   (Default),")
 uf.desc[-1].add_item_list_element("1", "{Diso},")
 uf.desc[-1].add_paragraph("where")
-uf.desc[-1].add_verbatim("""
-    1 / tm = 6Diso.
-""")
+uf.desc[-1].add_item_list_element(None, "1 / tm = 6Diso.")
 # The spheroid (axially symmetric diffusion).
 uf.desc.append(Desc_container("The spheroid (axially symmetric diffusion)"))
 uf.desc[-1].add_paragraph("When two of the three eigenvalues of the diffusion tensor are equal, the molecule diffuses as a spheroid.  Four pieces of information are required to specify this tensor, the two geometric parameters, Diso and Da, and the two orientational parameters, the polar angle theta and the azimuthal angle phi describing the orientation of the axis of symmetry.  The correlation function of the global diffusion is")
@@ -190,17 +188,13 @@ uf.desc[-1].add_verbatim("""
                i=-1
 """)
 uf.desc[-1].add_paragraph("where")
-uf.desc[-1].add_verbatim("""
-    c-1 = 1/4 (3 dz^2 - 1)^2,
-    c0  = 3 dz^2 (1 - dz^2),
-    c1  = 3/4 (dz^2 - 1)^2,
-""")
+uf.desc[-1].add_item_list_element(None, "c-1 = 1/4 (3 dz^2 - 1)^2,")
+uf.desc[-1].add_item_list_element(None, "c0  = 3 dz^2 (1 - dz^2),")
+uf.desc[-1].add_item_list_element(None, "c1  = 3/4 (dz^2 - 1)^2,")
 uf.desc[-1].add_paragraph("and")
-uf.desc[-1].add_verbatim("""
-    1 / tau -1 = 6Diso - 2Da,
-    1 / tau 0  = 6Diso - Da,
-    1 / tau 1  = 6Diso + 2Da.
-""")
+uf.desc[-1].add_item_list_element(None, "1 / tau -1 = 6Diso - 2Da,")
+uf.desc[-1].add_item_list_element(None, "1 / tau 0  = 6Diso - Da,")
+uf.desc[-1].add_item_list_element(None, "1 / tau 1  = 6Diso + 2Da.")
 uf.desc[-1].add_paragraph("The direction cosine dz is defined as the cosine of the angle alpha between the XH bond vector and the unique axis of the diffusion tensor.")
 uf.desc[-1].add_paragraph("To select axially symmetric anisotropic diffusion, the parameters argument should be a tuple of floating point numbers of length four.  A tuple is a type of data structure enclosed in round brackets, the elements of which are separated by commas.  Alternative sets of parameters, 'param_types', are")
 uf.desc[-1].add_item_list_element("0", "{tm, Da, theta, phi}   (Default),")
@@ -209,21 +203,15 @@ uf.desc[-1].add_item_list_element("2", "{tm, Dratio, theta, phi},")
 uf.desc[-1].add_item_list_element("3", "{Dpar, Dper, theta, phi},")
 uf.desc[-1].add_item_list_element("4", "{Diso, Dratio, theta, phi},")
 uf.desc[-1].add_paragraph("where")
-uf.desc[-1].add_verbatim("""
-    tm = 1 / 6Diso,
-    Diso = 1/3 (Dpar + 2Dper),
-    Da = Dpar - Dper,
-    Dratio = Dpar / Dper.
-""")
+uf.desc[-1].add_item_list_element(None, "tm = 1 / 6Diso,")
+uf.desc[-1].add_item_list_element(None, "Diso = 1/3 (Dpar + 2Dper),")
+uf.desc[-1].add_item_list_element(None, "Da = Dpar - Dper,")
+uf.desc[-1].add_item_list_element(None, "Dratio = Dpar / Dper.")
 uf.desc[-1].add_paragraph("The spherical angles {theta, phi} orienting the unique axis of the diffusion tensor within the PDB frame are defined between")
-uf.desc[-1].add_verbatim("""
-    0 <= theta <= pi,
-    0 <= phi <= 2pi,
-""")
+uf.desc[-1].add_item_list_element(None, "0 <= theta <= pi,")
+uf.desc[-1].add_item_list_element(None, "0 <= phi <= 2pi,")
 uf.desc[-1].add_paragraph("while the angle alpha which is the angle between this axis and the given XH bond vector is defined between")
-uf.desc[-1].add_verbatim("""
-    0 <= alpha <= 2pi.
-""")
+uf.desc[-1].add_item_list_element(None, "0 <= alpha <= 2pi.")
 uf.desc[-1].add_paragraph("The 'spheroid_type' argument should be 'oblate', 'prolate', or None.  The argument will be ignored if the diffusion tensor is not axially symmetric.  If 'oblate' is given, then the constraint Da <= 0 is used while if 'prolate' is given, then the constraint Da >= 0 is used.  If nothing is supplied, then Da will be allowed to have any values.  To prevent minimisation of diffusion tensor parameters in a space with two minima, it is recommended to specify which tensor is to be minimised, thereby partitioning the two minima into the two subspaces along the boundary Da = 0.")
 # The ellipsoid (rhombic diffusion).
 uf.desc.append(Desc_container("The ellipsoid (rhombic diffusion)"))
@@ -236,30 +224,22 @@ uf.desc[-1].add_verbatim("""
                i=-2
 """)
 uf.desc[-1].add_paragraph("where the weights on the exponentials are")
-uf.desc[-1].add_verbatim("""
-    c-2 = 1/4 (d + e),
-    c-1 = 3 dy^2 dz^2,
-    c0  = 3 dx^2 dz^2,
-    c1  = 3 dx^2 dy^2,
-    c2  = 1/4 (d + e).
-""")
+uf.desc[-1].add_item_list_element(None, "c-2 = 1/4 (d + e),")
+uf.desc[-1].add_item_list_element(None, "c-1 = 3 dy^2 dz^2,")
+uf.desc[-1].add_item_list_element(None, "c0  = 3 dx^2 dz^2,")
+uf.desc[-1].add_item_list_element(None, "c1  = 3 dx^2 dy^2,")
+uf.desc[-1].add_item_list_element(None, "c2  = 1/4 (d + e).")
 uf.desc[-1].add_paragraph("Let")
-uf.desc[-1].add_verbatim("""
-    R = sqrt(1 + 3Dr),
-""")
+uf.desc[-1].add_item_list_element(None, "R = sqrt(1 + 3Dr),")
 uf.desc[-1].add_paragraph("then")
-uf.desc[-1].add_verbatim("""
-    d = 3 (dx^4 + dy^4 + dz^4) - 1,
-    e = - 1 / R ((1 + 3Dr)(dx^4 + 2dy^2 dz^2) + (1 - 3Dr)(dy^4 + 2dx^2 dz^2) - 2(dz^4 + 2dx^2 dy^2)).
-""")
+uf.desc[-1].add_item_list_element(None, "d = 3 (dx^4 + dy^4 + dz^4) - 1,")
+uf.desc[-1].add_item_list_element(None, "e = - 1 / R ((1 + 3Dr)(dx^4 + 2dy^2 dz^2) + (1 - 3Dr)(dy^4 + 2dx^2 dz^2) - 2(dz^4 + 2dx^2 dy^2)).")
 uf.desc[-1].add_paragraph("The correlation times are")
-uf.desc[-1].add_verbatim("""
-    1 / tau -2 = 6Diso - 2Da . R,
-    1 / tau -1 = 6Diso - Da (1 + 3Dr),
-    1 / tau 0  = 6Diso - Da (1 - 3Dr),
-    1 / tau 1  = 6Diso + 2Da,
-    1 / tau 1  = 6Diso + 2Da . R.
-""")
+uf.desc[-1].add_item_list_element(None, "1 / tau -2 = 6Diso - 2Da . R,")
+uf.desc[-1].add_item_list_element(None, "1 / tau -1 = 6Diso - Da (1 + 3Dr),")
+uf.desc[-1].add_item_list_element(None, "1 / tau 0  = 6Diso - Da (1 - 3Dr),")
+uf.desc[-1].add_item_list_element(None, "1 / tau 1  = 6Diso + 2Da,")
+uf.desc[-1].add_item_list_element(None, "1 / tau 1  = 6Diso + 2Da . R.")
 uf.desc[-1].add_paragraph("The three direction cosines dx, dy, and dz are the coordinates of a unit vector parallel to the XH bond vector.  Hence the unit vector is [dx, dy, dz].")
 uf.desc[-1].add_paragraph("To select fully anisotropic diffusion, the parameters argument should be a tuple of length six.  A tuple is a type of data structure enclosed in round brackets, the elements of which are separated by commas.  Alternative sets of parameters, 'param_types', are")
 uf.desc[-1].add_item_list_element("0", "{tm, Da, Dr, alpha, beta, gamma}   (Default),")
@@ -267,23 +247,17 @@ uf.desc[-1].add_item_list_element("1", "{Diso, Da, Dr, alpha, beta, gamma},")
 uf.desc[-1].add_item_list_element("2", "{Dx, Dy, Dz, alpha, beta, gamma},")
 uf.desc[-1].add_item_list_element("3", "{Dxx, Dyy, Dzz, Dxy, Dxz, Dyz},")
 uf.desc[-1].add_paragraph("where")
-uf.desc[-1].add_verbatim("""
-    tm = 1 / 6Diso,
-    Diso = 1/3 (Dx + Dy + Dz),
-    Da = Dz - (Dx + Dy)/2,
-    Dr = (Dy - Dx)/2Da.
-""")
+uf.desc[-1].add_item_list_element(None, "tm = 1 / 6Diso,")
+uf.desc[-1].add_item_list_element(None, "Diso = 1/3 (Dx + Dy + Dz),")
+uf.desc[-1].add_item_list_element(None, "Da = Dz - (Dx + Dy)/2,")
+uf.desc[-1].add_item_list_element(None, "Dr = (Dy - Dx)/2Da.")
 uf.desc[-1].add_paragraph("The angles alpha, beta, and gamma are the Euler angles describing the diffusion tensor within the PDB frame.  These angles are defined using the z-y-z axis rotation notation where alpha is the initial rotation angle around the z-axis, beta is the rotation angle around the y-axis, and gamma is the final rotation around the z-axis again.  The angles are defined between")
-uf.desc[-1].add_verbatim("""
-    0 <= alpha <= 2pi,
-    0 <= beta <= pi,
-    0 <= gamma <= 2pi.
-""")
+uf.desc[-1].add_item_list_element(None, "0 <= alpha <= 2pi,")
+uf.desc[-1].add_item_list_element(None, "0 <= beta <= pi,")
+uf.desc[-1].add_item_list_element(None, "0 <= gamma <= 2pi.")
 uf.desc[-1].add_paragraph("Within the PDB frame, the XH bond vector is described using the spherical angles theta and phi where theta is the polar angle and phi is the azimuthal angle defined between")
-uf.desc[-1].add_verbatim("""
-    0 <= theta <= pi,
-    0 <= phi <= 2pi.
-""")
+uf.desc[-1].add_item_list_element(None, "0 <= theta <= pi,")
+uf.desc[-1].add_item_list_element(None, "0 <= phi <= 2pi.")
 uf.desc[-1].add_paragraph("When param_types is set to 3, then the elements of the diffusion tensor matrix defined within the PDB frame can be supplied.")
 # Units.
 uf.desc.append(Desc_container("Units"))

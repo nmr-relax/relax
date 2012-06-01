@@ -126,7 +126,7 @@ uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then t
 # Peak heights with partially replicated spectra.
 uf.desc.append(Desc_container("Peak heights with partially replicated spectra"))
 uf.desc[-1].add_paragraph("When spectra are replicated, the variance for a single spin at a single replicated spectra set is calculated by the formula")
-uf.desc[-1].add_verbatim("    sigma^2 =  sum({Ii - Iav}^2) / (n - 1),")
+uf.desc[-1].add_item_list_element(None, "sigma^2 =  sum({Ii - Iav}^2) / (n - 1),")
 uf.desc[-1].add_paragraph("where sigma^2 is the variance, sigma is the standard deviation, n is the size of the replicated spectra set with i being the corresponding index, Ii is the peak intensity for spectrum i, and Iav is the mean over all spectra i.e. the sum of all peak intensities divided by n.")
 uf.desc[-1].add_paragraph("As the value of n in the above equation is always very low since normally only a couple of spectra are collected per replicated spectra set, the variance of all spins is averaged for a single replicated spectra set.  Although this results in all spins having the same error, the accuracy of the error estimate is significantly improved.")
 uf.desc[-1].add_paragraph("If there are in addition to the replicated spectra loaded peak intensities which only consist of a single spectrum, i.e. not all spectra are replicated, then the variances of replicated replicated spectra sets will be averaged.  This will be used for the entire experiment so that there will be only a single error value for all spins and for all spectra.")
@@ -136,9 +136,9 @@ uf.desc[-1].add_paragraph("If all spectra are collected in duplicate (triplicate
 # Peak volumes with baseplane noise RMSD.
 uf.desc.append(Desc_container("Peak volumes with baseplane noise RMSD"))
 uf.desc[-1].add_paragraph("The method of error analysis when no spectra have been replicated and peak volumes are used is highly dependent on the integration method.  Many methods simply sum the number of points within a fixed region, either a box or oval object.  The number of points used, N, must be specified by another user function in this class.  Then the error is simply given by the sum of variances:")
-uf.desc[-1].add_verbatim("    sigma_vol^2 = sigma_i^2 * N,")
+uf.desc[-1].add_item_list_element(None, "sigma_vol^2 = sigma_i^2 * N,")
 uf.desc[-1].add_paragraph("where sigma_vol is the standard deviation of the volume, sigma_i is the standard deviation of a single point assumed to be equal to the RMSD of the baseplane noise, and N is the total number of points used in the summation integration method.  For a box integration method, this converts to the Nicholson, Kay, Baldisseri, Arango, Young, Bax, and Torchia (1992) Biochemistry, 31: 5253-5263 equation:")
-uf.desc[-1].add_verbatim("    sigma_vol = sigma_i * sqrt(n*m),")
+uf.desc[-1].add_item_list_element(None, "sigma_vol = sigma_i * sqrt(n*m),")
 uf.desc[-1].add_paragraph("where n and m are the dimensions of the box.  Note that a number of programs, for example peakint (http://hugin.ethz.ch/wuthrich/software/xeasy/xeasy_m15.html) does not use all points within the box.  And if the number N can not be determined, this category of error analysis is not possible.")
 uf.desc[-1].add_paragraph("Also note that non-point summation methods, for example when line shape fitting is used to determine peak volumes, the equations above cannot be used.  Hence again this category of error analysis cannot be used.  This is the case for one of the three integration methods used by Sparky (http://www.cgl.ucsf.edu/home/sparky/manual/peaks.html#Integration).  And if fancy techniques are used, for example as Cara does to deconvolute overlapping peaks (http://www.cara.ethz.ch/Wiki/Integration), this again makes this error analysis impossible.")
 # Peak volumes with partially replicated spectra.

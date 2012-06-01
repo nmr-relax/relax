@@ -142,7 +142,7 @@ uf.desc[-1].add_list_element("'dir/mfpar'")
 uf.desc[-1].add_list_element("'dir/mfmodel'")
 uf.desc[-1].add_list_element("'dir/run.sh'")
 uf.desc[-1].add_paragraph("The file 'dir/run.sh' contains the single command,")
-uf.desc[-1].add_verbatim("'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',")
+uf.desc[-1].add_item_list_element(None, "'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',")
 uf.desc[-1].add_paragraph("which can be used to execute modelfree4.")
 uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
 uf.backend = palmer.create
