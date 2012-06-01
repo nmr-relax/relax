@@ -186,7 +186,7 @@ class Interpreter:
                 class_name = None
 
             # Generate a new container.
-            obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc, examples=data.prompt_examples, additional=data.additional)
+            obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc)
 
             # Get the class object.
             if class_name:

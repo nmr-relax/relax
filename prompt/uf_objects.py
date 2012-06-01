@@ -220,7 +220,7 @@ class Uf_object(object):
         self._backend(*new_args, **uf_kargs)
 
 
-    def __init__(self, name, title=None, kargs=None, backend=None, desc=None, examples=None, additional=None):
+    def __init__(self, name, title=None, kargs=None, backend=None, desc=None):
         """Set up the object.
 
         @param name:            The name of the user function.
@@ -233,10 +233,6 @@ class Uf_object(object):
         @type backend:          executable object
         @keyword desc:          The full, multi-paragraph description.
         @type desc:             str
-        @keyword examples:      The examples of how to use the prompt front end.
-        @type examples:         str or None
-        @keyword additional:    The examples of how to use the prompt front end.
-        @type additional:       list of str or None
          """
 
         # Store the args.
@@ -245,8 +241,6 @@ class Uf_object(object):
         self._kargs = kargs
         self._backend = backend
         self._desc = desc
-        self._examples = examples
-        self._additional = additional
 
         # Check the args.
         if title == None:
