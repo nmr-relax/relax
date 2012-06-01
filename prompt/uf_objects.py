@@ -342,7 +342,11 @@ class Uf_object(object):
                     elif type == 'item list':
                         # Loop over the list elements.
                         for j in range(len(element)):
-                            doc += format_text("    %s:  %s" % (element[j][0], element[j][1]))
+                            # No item.
+                            if element[j][0] in [None, '']:
+                                doc += format_text("    %s" % element[j][1])
+                            else:
+                                doc += format_text("    %s:  %s" % (element[j][0], element[j][1]))
 
                         # Final newline.
                         doc += '\n'
