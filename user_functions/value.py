@@ -83,9 +83,6 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
 # Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
-uf.desc[-1].add_prompt("relax> value.copy('m1', 'm2', 'csa')")
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.set_doc)
 uf.desc.append(Model_free.return_data_name_doc)
@@ -95,6 +92,9 @@ uf.desc.append(Relax_fit.set_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(N_state_model.set_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
+uf.desc[-1].add_prompt("relax> value.copy('m1', 'm2', 'csa')")
 uf.backend = value.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
