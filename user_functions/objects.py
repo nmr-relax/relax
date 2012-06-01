@@ -263,10 +263,6 @@ class Uf_container(object):
     @type display:              str
     @ivar desc:                 The multi-paragraph description defined via the Desc_container class.
     @type desc:                 list of Desc_container instances
-    @ivar additional:           Additional documentation, usually appended to the end of the description.
-    @type additional:           list of str
-    @ivar prompt_examples:      The examples of how to use the prompt front end.
-    @type prompt_examples:      str or None
     @ivar menu_text:            The text to use for the GUI menu entry.
     @type menu_text:            str
     @ivar gui_icon:             The code for the icon to use in the GUI.
@@ -291,8 +287,6 @@ class Uf_container(object):
             'backend',
             'display',
             'desc',
-            'additional',
-            'prompt_examples',
             'menu_text',
             'gui_icon',
             'wizard_size',
@@ -313,8 +307,6 @@ class Uf_container(object):
         self.backend = None
         self.display = False
         self.desc = []
-        self.additional = None
-        self.prompt_examples = None
         self.menu_text = ''
         self.gui_icon = None
         self.wizard_size = (600, 400)
@@ -338,7 +330,7 @@ class Uf_container(object):
             raise RelaxError("The object '%s' is not a modifiable attribute." % name)
 
         # Check for duplicative modifications (to catch typo coding errors).
-        if name in ['title', 'title_short', 'backend', 'prompt_examples', 'gui_icon']:
+        if name in ['title', 'title_short', 'backend', 'gui_icon']:
             # No object set yet.
             if not hasattr(self, name):
                 obj = None
