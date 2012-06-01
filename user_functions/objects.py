@@ -109,7 +109,7 @@ class Desc_container(object):
         """
 
         # Create a new block if needed.
-        if len(self._types) and self._types[-1] != 'item list':
+        if not len(self._types) or self._types[-1] != 'item list':
             self._data.append([[item, text]])
             self._types.append('item list')
 
@@ -126,7 +126,7 @@ class Desc_container(object):
         """
 
         # Create a new block if needed.
-        if len(self._types) and self._types[-1] != 'list':
+        if not len(self._types) or self._types[-1] != 'list':
             self._data.append([text])
             self._types.append('list')
 
@@ -155,7 +155,7 @@ class Desc_container(object):
         """
 
         # Create a new block if needed.
-        if len(self._types) and self._types[-1] != 'prompt':
+        if not len(self._types) or self._types[-1] != 'prompt':
             self._data.append([text])
             self._types.append('prompt')
 
@@ -184,7 +184,7 @@ class Desc_container(object):
         """
 
         # Create a new table if needed.
-        if len(self._types) and self._types[-1] != 'table' or len(row) != len(self._data[-1][-1]):
+        if not len(self._types) or self._types[-1] != 'table' or len(row) != len(self._data[-1][-1]):
             self._data.append([row])
             self._types.append('table')
 
