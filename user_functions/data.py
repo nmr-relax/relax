@@ -230,6 +230,9 @@ class Uf_tables(object):
         self._labels.append(label)
         self._tables[label] = Table(title=title, label=label, spacing=spacing, longtable=longtable)
 
+        # Return the table.
+        return self._tables[label]
+
 
     def get_table(self, label):
         """Return the table matching the given label.
