@@ -33,6 +33,7 @@ import ansi
 import help
 from relax_string import strip_lead
 from status import Status; status = Status()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 
 def bold_text(text):
@@ -88,29 +89,34 @@ def build_subtitle(text, bold=True, start_nl=True):
     return new
 
 
-def create_table(table, spacing=True):
+def create_table(label, spacing=True):
     """Format and return the table as text.
 
-    @param table:       The table data.
-    @type table:        list of lists of str
+    @param label:       The unique table label.
+    @type label:        str
     @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
     @type spacing:      bool
     @return:            The formatted table.
     @rtype:             str
     """
 
+    # Get the table.
+    table = uf_tables.get_table(label)
+
     # Initialise some variables.
     text = ''
-    num_rows = len(table)
-    num_cols = len(table[0])
+    num_rows = len(table.cells)
+    num_cols = len(table.headings)
 
     # The column widths.
-    widths = [0] * num_cols
-    for i in range(len(table)):
+    widths = []
+    for j in range(num_cols):
+        widths.append(len(table.headings[j]))
+    for i in range(num_rows):
         for j in range(num_cols):
             # The element is larger than the previous.
-            if len(table[i][j]) > widths[j]:
-                widths[j] = len(table[i][j])
+            if len(table.cells[i][j]) > widths[j]:
+                widths[j] = len(table.cells[i][j])
 
     # The free space for the text.
     used = 0
@@ -194,13 +200,13 @@ def create_table(table, spacing=True):
     # The header.
     text += "_" * total_width + "\n"    # Top rule.
     text += table_line(widths=new_widths)    # Blank line.
-    text += table_line(text=table[0], widths=new_widths)    # The headers.
+    text += table_line(text=table.headings, widths=new_widths)    # The headings.
     text += table_line(widths=new_widths, bottom=True)    # Middle rule.
 
     # The table contents.
-    for i in range(1, num_rows):
+    for i in range(num_rows):
         # Column text, with wrapping.
-        col_text = [table[i]]
+        col_text = [table.cells[i]]
         num_lines = 1
         for j in range(num_cols):
             if col_wrap[j]:
