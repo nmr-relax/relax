@@ -247,5 +247,9 @@ class Uf_tables(object):
         @rtype:         user_functions.objects.Table instance
         """
 
+        # Check the label.
+        if label not in self._tables.keys():
+            raise RelaxError("The table with label '%s' does not exist." % label)
+
         # Return the table.
         return self._tables[label]
