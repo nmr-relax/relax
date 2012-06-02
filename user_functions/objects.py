@@ -97,7 +97,6 @@ class Desc_container(object):
         # Initialise internal storage objects.
         self._data = []
         self._types = []
-        self._format = {}
 
 
     def add_item_list_element(self, item, text):
@@ -165,38 +164,16 @@ class Desc_container(object):
             self._data[-1].append(text)
 
 
-    def add_table_titles(self, titles, spacing=True):
-        """Add a row of table titles to the description.
+    def add_table(self, label):
+        """Add a table to the description.
 
-        @param titles:      The table titles.
-        @type titles:       list of str
-        @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
-        @type spacing:      bool
+        @param label:   The unique label corresponding to a user_functions.objects.Table instance.
+        @type label:    str
         """
 
-        # Create a new table.
-        self._data.append([titles])
+        # Add the table.
+        self._data.append(label)
         self._types.append('table')
-
-        # Store the formatting.
-        self._format[repr(len(self._data)-1)] = spacing
-
-
-    def add_table_row(self, row):
-        """Add a table row to the description.
-
-        @param text:    The table row.
-        @type text:     list of str
-        """
-
-        # Create a new table if needed.
-        if not len(self._types) or self._types[-1] != 'table' or len(row) != len(self._data[-1][-1]):
-            self._data.append([row])
-            self._types.append('table')
-
-        # Append the row to an existing table.
-        else:
-            self._data[-1].append(row)
 
 
     def add_verbatim(self, text):
@@ -211,29 +188,16 @@ class Desc_container(object):
         self._types.append('verbatim')
 
 
-    def element_loop(self, format=False):
+    def element_loop(self):
         """Iterator method yielding the description elements.
 
-        @keyword format:    A flag which if True will cause formatting information to be returned.
-        @return:            The element type and corresponding data (and formatting info, if asked for). 
+        @return:            The element type and corresponding data. 
         @rtype:             str and anything
         """
 
         # Loop over the elements.
         for i in range(len(self._data)):
-            # The format.
-            if format:
-                # The key and value.
-                key = repr(i)
-                val = None
-                if self._format.has_key(key):
-                    val = self._format[key]
-
-                yield self._types[i], self._data[i], val
-
-            # No format.
-            else:
-                yield self._types[i], self._data[i]
+            yield self._types[i], self._data[i]
 
 
     def get_title(self):
@@ -245,6 +209,66 @@ class Desc_container(object):
 
         # The title.
         return self._title
+
+
+
+class Table(object):
+    """A special class defining the tables used in the user function descriptions."""
+
+    def __init__(self, title=None, label=None, spacing=True, longtable=False):
+        """Set up the table container.
+
+        @keyword title:     The title of the table.
+        @type title:        str
+        @keyword label:     The unique label of the table.  This is used to identify tables, and is also used in the table referencing in the LaTeX compilation of the user manual.
+        @type label:        str
+        @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
+        @type spacing:      bool
+        @keyword longtable: A special LaTeX flag which if True will cause the longtables package to be used to spread a table across multiple pages.  This should only be used for tables that do not fit on a single page.
+        @type longtable:    bool
+        """
+
+        # Store the args.
+        self.title = title
+        self.label = label
+        self.spacing = spacing
+        self.longtable = longtable
+
+        # Initialise some objects.
+        self.headings = None
+        self.cells = []
+        self.num_cols = 0
+
+
+    def add_headings(self, headings):
+        """Add a row of table headings.
+
+        @param headings:    The table headings.
+        @type headings:     list of str
+        """
+
+        # Store the titles.
+        self.headings = headings
+
+        # The number of columns.
+        self.num_cols = len(self.headings)
+
+
+    def add_row(self, row):
+        """Add a table row.
+
+        @param row: The table row.
+        @type row:  list of str
+        """
+
+        # Checks.
+        if self.headings == None:
+            raise RelaxError("A row cannot be added as the titles have not been set up.")
+        if len(row) != self.num_cols:
+            raise RelaxError("The number of columns in %s does not match the %s columns of the titles." % (row, self.num_cols))
+
+        # Append the row.
+        self.cells.append(row)
 
 
 

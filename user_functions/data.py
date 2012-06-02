@@ -30,7 +30,7 @@ from string import split
 
 # relax module imports.
 from relax_errors import RelaxError
-from user_functions.objects import Class_container, Uf_container
+from user_functions.objects import Class_container, Table, Uf_container
 
 
 class Uf_info(object):
@@ -182,3 +182,63 @@ class Uf_info(object):
             # Check the backend.
             if uf.backend == None:
                 raise RelaxError("The back end of the %s user function has not been specified." % name)
+
+
+
+class Uf_tables(object):
+    """The data singleton holding all of the description tables."""
+
+    # Class variable for storing the class instance (for the singleton).
+    _instance = None
+
+    def __new__(self, *args, **kargs):
+        """Replacement method for implementing the singleton design pattern."""
+
+        # First instantiation.
+        if self._instance is None:
+            # Instantiate.
+            self._instance = object.__new__(self, *args, **kargs)
+
+            # Initialise a number of class variables.
+            self._tables = {}
+            self._labels = []
+
+        # Already instantiated, so return the instance.
+        return self._instance
+
+
+    def add_table(self, title=None, label=None, spacing=True, longtable=False):
+        """Add a new table to the object.
+
+        @keyword title:     The title of the table.
+        @type title:        str
+        @keyword label:     The unique label of the table.  This is used to identify tables, and is also used in the table referencing in the LaTeX compilation of the user manual.
+        @type label:        str
+        @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
+        @type spacing:      bool
+        @keyword longtable: A special LaTeX flag which if True will cause the longtables package to be used to spread a table across multiple pages.  This should only be used for tables that do not fit on a single page.
+        @type longtable:    bool
+        @return:            The table object.
+        @rtype:             user_functions.objects.Table instance
+        """
+
+        # Check if the table already exists.
+        if label in self._labels:
+            raise RelaxError("The table with label '%s' has already been set up." % label)
+
+        # Store the label and initialise a new object.
+        self._labels.append(label)
+        self._tables[label] = Table(title=title, label=label, spacing=spacing, longtable=longtable)
+
+
+    def get_table(self, label):
+        """Return the table matching the given label.
+
+        @param label:   The unique label of the table.
+        @type label:    str
+        @return:        The table data container.
+        @rtype:         user_functions.objects.Table instance
+        """
+
+        # Return the table.
+        return self._tables[label]
