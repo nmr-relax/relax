@@ -171,6 +171,10 @@ class Desc_container(object):
         @type label:    str
         """
 
+        # Check.
+        if not isinstance(label, str):
+            raise RelaxError("The table label '%s' is not a valid string.")
+
         # Add the table.
         self._data.append(label)
         self._types.append('table')
