@@ -31,6 +31,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
 from specific_fns.api_common import API_common
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -168,10 +169,12 @@ class Noe_main:
 
 
     return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")
-    return_data_name_doc.add_table_titles(["Data type", "Object name"])
-    return_data_name_doc.add_table_row(["Reference intensity", "'ref'"])
-    return_data_name_doc.add_table_row(["Saturated intensity", "'sat'"])
-    return_data_name_doc.add_table_row(["NOE", "'noe'"])
+    table = uf_tables.add_table(title="NOE data type string matching patterns.", label="table: NOE data type patterns")
+    table.add_headings(["Data type", "Object name"])
+    table.add_row(["Reference intensity", "'ref'"])
+    table.add_row(["Saturated intensity", "'sat'"])
+    table.add_row(["NOE", "'noe'"])
+    return_data_name_doc.add_table(table.label)
 
 
     def return_units(self, param):

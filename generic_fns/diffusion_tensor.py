@@ -42,6 +42,7 @@ from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.rotation_matrix import R_to_euler_zyz
 from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -338,22 +339,24 @@ def default_value(param):
 
 # User function documentation.
 __default_value_doc__ = Desc_container("Diffusion tensor parameter default values")
-__default_value_doc__.add_table_titles(["Data type", "Object name", "Value"])
-__default_value_doc__.add_table_row(["tm", "'tm'", "10 * 1e-9"])
-__default_value_doc__.add_table_row(["Diso", "'Diso'", "1.666 * 1e7"])
-__default_value_doc__.add_table_row(["Da", "'Da'", "0.0"])
-__default_value_doc__.add_table_row(["Dr", "'Dr'", "0.0"])
-__default_value_doc__.add_table_row(["Dx", "'Dx'", "1.666 * 1e7"])
-__default_value_doc__.add_table_row(["Dy", "'Dy'", "1.666 * 1e7"])
-__default_value_doc__.add_table_row(["Dz", "'Dz'", "1.666 * 1e7"])
-__default_value_doc__.add_table_row(["Dpar", "'Dpar'", "1.666 * 1e7"])
-__default_value_doc__.add_table_row(["Dper", "'Dper'", "1.666 * 1e7"])
-__default_value_doc__.add_table_row(["Dratio", "'Dratio'", "1.0"])
-__default_value_doc__.add_table_row(["alpha", "'alpha'", "0.0"])
-__default_value_doc__.add_table_row(["beta", "'beta'", "0.0"])
-__default_value_doc__.add_table_row(["gamma", "'gamma'", "0.0"])
-__default_value_doc__.add_table_row(["theta", "'theta'", "0.0"])
-__default_value_doc__.add_table_row(["phi", "'phi'", "0.0"])
+table = uf_tables.add_table(title="Diffusion tensor parameter default values.", label="table: diff default values")
+table.add_headings(["Data type", "Object name", "Value"])
+table.add_row(["tm", "'tm'", "10 * 1e-9"])
+table.add_row(["Diso", "'Diso'", "1.666 * 1e7"])
+table.add_row(["Da", "'Da'", "0.0"])
+table.add_row(["Dr", "'Dr'", "0.0"])
+table.add_row(["Dx", "'Dx'", "1.666 * 1e7"])
+table.add_row(["Dy", "'Dy'", "1.666 * 1e7"])
+table.add_row(["Dz", "'Dz'", "1.666 * 1e7"])
+table.add_row(["Dpar", "'Dpar'", "1.666 * 1e7"])
+table.add_row(["Dper", "'Dper'", "1.666 * 1e7"])
+table.add_row(["Dratio", "'Dratio'", "1.0"])
+table.add_row(["alpha", "'alpha'", "0.0"])
+table.add_row(["beta", "'beta'", "0.0"])
+table.add_row(["gamma", "'gamma'", "0.0"])
+table.add_row(["theta", "'theta'", "0.0"])
+table.add_row(["phi", "'phi'", "0.0"])
+__default_value_doc__.add_table(table.label)
 
 
 def delete():
@@ -1021,22 +1024,24 @@ def return_data_name(name):
 
 # User function documentation.
 __return_data_name_doc__ = Desc_container("Diffusion tensor parameter string matching patterns")
-__return_data_name_doc__.add_table_titles(["Data type", "Object name", "Patterns"])
-__return_data_name_doc__.add_table_row(["Global correlation time - tm", "'tm'", "'^tm$'"])
-__return_data_name_doc__.add_table_row(["Isotropic component of the diffusion tensor - Diso", "'Diso'", "'[Dd]iso'"])
-__return_data_name_doc__.add_table_row(["Anisotropic component of the diffusion tensor - Da", "'Da'", "'[Dd]a'"])
-__return_data_name_doc__.add_table_row(["Rhombic component of the diffusion tensor - Dr", "'Dr'", "'[Dd]r$'"])
-__return_data_name_doc__.add_table_row(["Eigenvalue associated with the x-axis of the diffusion tensor - Dx", "'Dx'", "'[Dd]x'"])
-__return_data_name_doc__.add_table_row(["Eigenvalue associated with the y-axis of the diffusion tensor - Dy", "'Dy'", "'[Dd]y'"])
-__return_data_name_doc__.add_table_row(["Eigenvalue associated with the z-axis of the diffusion tensor - Dz", "'Dz'", "'[Dd]z'"])
-__return_data_name_doc__.add_table_row(["Diffusion coefficient parallel to the major axis of  the spheroid diffusion tensor - Dpar", "'Dpar'", "'[Dd]par'"])
-__return_data_name_doc__.add_table_row(["Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor - Dper", "'Dper'", "'[Dd]per'"])
-__return_data_name_doc__.add_table_row(["Ratio of the parallel and perpendicular components of the spheroid diffusion tensor - Dratio", "'Dratio'", "'[Dd]ratio'"])
-__return_data_name_doc__.add_table_row(["The first Euler angle of the ellipsoid diffusion tensor - alpha", "'alpha'", "'^a$' or 'alpha'"])
-__return_data_name_doc__.add_table_row(["The second Euler angle of the ellipsoid diffusion tensor - beta", "'beta'", "'^b$' or 'beta'"])
-__return_data_name_doc__.add_table_row(["The third Euler angle of the ellipsoid diffusion tensor - gamma", "'gamma'", "'^g$' or 'gamma'"])
-__return_data_name_doc__.add_table_row(["The polar angle defining the major axis of the spheroid diffusion tensor - theta", "'theta'", "'theta'"])
-__return_data_name_doc__.add_table_row(["The azimuthal angle defining the major axis of the spheroid diffusion tensor - phi", "'phi'", "'phi'"])
+table = uf_tables.add_table(title="Diffusion tensor parameter string matching patterns.", label="table: diff data type patterns")
+table.add_headings(["Data type", "Object name", "Patterns"])
+table.add_row(["Global correlation time - tm", "'tm'", "'^tm$'"])
+table.add_row(["Isotropic component of the diffusion tensor - Diso", "'Diso'", "'[Dd]iso'"])
+table.add_row(["Anisotropic component of the diffusion tensor - Da", "'Da'", "'[Dd]a'"])
+table.add_row(["Rhombic component of the diffusion tensor - Dr", "'Dr'", "'[Dd]r$'"])
+table.add_row(["Eigenvalue associated with the x-axis of the diffusion tensor - Dx", "'Dx'", "'[Dd]x'"])
+table.add_row(["Eigenvalue associated with the y-axis of the diffusion tensor - Dy", "'Dy'", "'[Dd]y'"])
+table.add_row(["Eigenvalue associated with the z-axis of the diffusion tensor - Dz", "'Dz'", "'[Dd]z'"])
+table.add_row(["Diffusion coefficient parallel to the major axis of  the spheroid diffusion tensor - Dpar", "'Dpar'", "'[Dd]par'"])
+table.add_row(["Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor - Dper", "'Dper'", "'[Dd]per'"])
+table.add_row(["Ratio of the parallel and perpendicular components of the spheroid diffusion tensor - Dratio", "'Dratio'", "'[Dd]ratio'"])
+table.add_row(["The first Euler angle of the ellipsoid diffusion tensor - alpha", "'alpha'", "'^a$' or 'alpha'"])
+table.add_row(["The second Euler angle of the ellipsoid diffusion tensor - beta", "'beta'", "'^b$' or 'beta'"])
+table.add_row(["The third Euler angle of the ellipsoid diffusion tensor - gamma", "'gamma'", "'^g$' or 'gamma'"])
+table.add_row(["The polar angle defining the major axis of the spheroid diffusion tensor - theta", "'theta'", "'theta'"])
+table.add_row(["The azimuthal angle defining the major axis of the spheroid diffusion tensor - phi", "'phi'", "'phi'"])
+__return_data_name_doc__.add_table(table.label)
 
 
 def return_eigenvalues():

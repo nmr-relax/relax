@@ -222,6 +222,10 @@ class Uf_tables(object):
         @rtype:             user_functions.objects.Table instance
         """
 
+        # Check that the label is supplied.
+        if label == None:
+            raise RelaxError("The table label must be supplied.")
+
         # Check if the table already exists.
         if label in self._labels:
             raise RelaxError("The table with label '%s' has already been set up." % label)

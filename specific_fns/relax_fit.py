@@ -39,6 +39,7 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 # C modules.
@@ -579,10 +580,12 @@ class Relax_fit(API_base, API_common):
 
     default_value_doc = Desc_container("Relaxation curve fitting default values")
     default_value_doc.add_paragraph("These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R1 and R2 values.")
-    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
-    default_value_doc.add_table_row(["Relaxation rate", "'rx'", "8.0"])
-    default_value_doc.add_table_row(["Initial intensity", "'i0'", "10000.0"])
-    default_value_doc.add_table_row(["Intensity at infinity", "'iinf'", "0.0"])
+    table = uf_tables.add_table(title="Relaxation curve fitting default values.", label="table: curve-fit default values")
+    table.add_headings(["Data type", "Object name", "Value"])
+    table.add_row(["Relaxation rate", "'rx'", "8.0"])
+    table.add_row(["Initial intensity", "'i0'", "10000.0"])
+    table.add_row(["Intensity at infinity", "'iinf'", "0.0"])
+    default_value_doc.add_table(table.label)
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -841,12 +844,14 @@ class Relax_fit(API_base, API_common):
 
 
     return_data_name_doc = Desc_container("Relaxation curve fitting data type string matching patterns")
-    return_data_name_doc.add_table_titles(["Data type", "Object name"])
-    return_data_name_doc.add_table_row(["Relaxation rate", "'rx'"])
-    return_data_name_doc.add_table_row(["Peak intensities (series)", "'intensities'"])
-    return_data_name_doc.add_table_row(["Initial intensity", "'i0'"])
-    return_data_name_doc.add_table_row(["Intensity at infinity", "'iinf'"])
-    return_data_name_doc.add_table_row(["Relaxation period times (series)", "'relax_times'"])
+    table = uf_tables.add_table(title="Relaxation curve fitting data type string matching patterns.", label="table: curve-fit data type patterns")
+    table.add_headings(["Data type", "Object name"])
+    table.add_row(["Relaxation rate", "'rx'"])
+    table.add_row(["Peak intensities (series)", "'intensities'"])
+    table.add_row(["Initial intensity", "'i0'"])
+    table.add_row(["Intensity at infinity", "'iinf'"])
+    table.add_row(["Relaxation period times (series)", "'relax_times'"])
+    return_data_name_doc.add_table(table.label)
 
 
     def return_error(self, data_id):

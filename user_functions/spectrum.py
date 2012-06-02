@@ -31,6 +31,7 @@ import wx
 from generic_fns import spectrum
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -113,13 +114,15 @@ uf.title_short = "Peak intensity error analysis."
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function must only be called after all peak intensities have been loaded and all other necessary spectral information set.  This includes the baseplane RMSD and the number of points used in volume integration, both of which are only used if spectra have not been replicated.")
 uf.desc[-1].add_paragraph("Six different types of error analysis are supported depending on whether peak heights or volumes are supplied, whether noise is determined from replicated spectra or the RMSD of the baseplane noise, and whether all spectra or only a subset have been duplicated.  These are:")
-uf.desc[-1].add_table_titles(["Int type", "Noise source", "Error scope"])
-uf.desc[-1].add_table_row(["Heights", "RMSD baseplane", "One sigma per peak per spectrum"])
-uf.desc[-1].add_table_row(["Heights", "Partial duplicate + variance averaging", "One sigma for all peaks, all spectra"])
-uf.desc[-1].add_table_row(["Heights", "All replicated + variance averaging", "One sigma per replicated spectra set"])
-uf.desc[-1].add_table_row(["Volumes", "RMSD baseplane", "One sigma per peak per spectrum"])
-uf.desc[-1].add_table_row(["Volumes", "Partial duplicate + variance averaging", "One sigma for all peaks, all spectra"])
-uf.desc[-1].add_table_row(["Volumes", "All replicated + variance averaging", "One sigma per replicated spectra set"])
+table = uf_tables.add_table(title="The six peak intensity error analysis types.", label="table: peak intensity error analysis")
+table.add_headings(["Int type", "Noise source", "Error scope"])
+table.add_row(["Heights", "RMSD baseplane", "One sigma per peak per spectrum"])
+table.add_row(["Heights", "Partial duplicate + variance averaging", "One sigma for all peaks, all spectra"])
+table.add_row(["Heights", "All replicated + variance averaging", "One sigma per replicated spectra set"])
+table.add_row(["Volumes", "RMSD baseplane", "One sigma per peak per spectrum"])
+table.add_row(["Volumes", "Partial duplicate + variance averaging", "One sigma for all peaks, all spectra"])
+table.add_row(["Volumes", "All replicated + variance averaging", "One sigma per replicated spectra set"])
+uf.desc[-1].add_table(table)
 # Peak heights with baseplane noise RMSD.
 uf.desc.append(Desc_container("Peak heights with baseplane noise RMSD"))
 uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd() user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.")

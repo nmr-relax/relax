@@ -30,6 +30,7 @@ import opendx.main
 from prompt.doc_string import regexp_doc
 from specific_fns.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -185,8 +186,10 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:")
-uf.desc[-1].add_table_titles(["Surface type", "Name"])
-uf.desc[-1].add_table_row(["3D isosurface", "'Iso3D'"])
+table = uf_tables.add_table(title="OpenDx mapping types.", label="table: opendx map")
+table.add_headings(["Surface type", "Name"])
+table.add_row(["3D isosurface", "'Iso3D'"])
+uf.desc[-1].add_table(table.label)
 # Additional.
 uf.desc.append(regexp_doc)
 uf.desc.append(diffusion_tensor.__return_data_name_doc__)

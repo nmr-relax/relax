@@ -38,6 +38,7 @@ from specific_fns.relax_fit import Relax_fit
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -310,16 +311,18 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.")
 uf.desc[-1].add_paragraph("The val argument can be None, a single value, or an array of values while the parameter argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the 'val' argument while the Param column refers to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds to either a single value or single string, and 'n' corresponds to either an array of values or an array of strings.")
-uf.desc[-1].add_table_titles(["Value", "Param", "Description"])
-uf.desc[-1].add_table_row(["None", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The model parameters are set to the default values."])
-uf.desc[-1].add_table_row(["1", "None", "Invalid combination."])
-uf.desc[-1].add_table_row(["n", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The length of the val array must be equal to the number of model parameters.  The parameters will be set to the corresponding number."])
-uf.desc[-1].add_table_row(["None", "1", "The parameter matching the string will be set to the default value."])
-uf.desc[-1].add_table_row(["1", "1", "The parameter matching the string will be set to the supplied number."])
-uf.desc[-1].add_table_row(["n", "1", "Invalid combination."])
-uf.desc[-1].add_table_row(["None", "n", "Each parameter matching the strings will be set to the default values."])
-uf.desc[-1].add_table_row(["1", "n", "Each parameter matching the strings will be set to the supplied number."])
-uf.desc[-1].add_table_row(["n", "n", "Each parameter matching the strings will be set to the corresponding number.  Both arrays must be of equal length."])
+table = uf_tables.add_table(title="The value and parameter combination options for the value.set user function.", label="table: value.set combinations")
+table.add_headings(["Value", "Param", "Description"])
+table.add_row(["None", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The model parameters are set to the default values."])
+table.add_row(["1", "None", "Invalid combination."])
+table.add_row(["n", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The length of the val array must be equal to the number of model parameters.  The parameters will be set to the corresponding number."])
+table.add_row(["None", "1", "The parameter matching the string will be set to the default value."])
+table.add_row(["1", "1", "The parameter matching the string will be set to the supplied number."])
+table.add_row(["n", "1", "Invalid combination."])
+table.add_row(["None", "n", "Each parameter matching the strings will be set to the default values."])
+table.add_row(["1", "n", "Each parameter matching the strings will be set to the supplied number."])
+table.add_row(["n", "n", "Each parameter matching the strings will be set to the corresponding number.  Both arrays must be of equal length."])
+uf.desc[-1].add_table(table)
 # Spin identification.
 uf.desc.append(Desc_container("Spin identification"))
 uf.desc[-1].add_paragraph("If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.")

@@ -40,6 +40,7 @@ from minfx.generic import generic_minimise
 import specific_fns
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -1284,17 +1285,19 @@ class Model_free_main:
 
 
     default_value_doc = Desc_container("Model-free default values")
-    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
-    default_value_doc.add_table_row(["Local tm", "'local_tm'", "10 * 1e-9"])
-    default_value_doc.add_table_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
-    default_value_doc.add_table_row(["Correlation time te", "'te'", "100 * 1e-12"])
-    default_value_doc.add_table_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
-    default_value_doc.add_table_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
-    default_value_doc.add_table_row(["Chemical exchange relaxation", "'rex'", "0.0"])
-    default_value_doc.add_table_row(["Bond length", "'r'", "1.02 * 1e-10"])
-    default_value_doc.add_table_row(["CSA", "'csa'", "-172 * 1e-6"])
-    default_value_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
-    default_value_doc.add_table_row(["Proton type", "'proton_type'", "'1H'"])
+    table = uf_tables.add_table(title="Model-free default values.", label="table: mf default values")
+    table.add_headings(["Data type", "Object name", "Value"])
+    table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
+    table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
+    table.add_row(["Correlation time te", "'te'", "100 * 1e-12"])
+    table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
+    table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
+    table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
+    table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
+    table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
+    table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
+    table.add_row(["Proton type", "'proton_type'", "'1H'"])
+    default_value_doc.add_table(table.label)
 
     def default_value(self, param):
         """The default model-free parameter values.
@@ -1936,19 +1939,21 @@ class Model_free_main:
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
-    return_data_name_doc.add_table_titles(["Data type", "Object name"])
-    return_data_name_doc.add_table_row(["Local tm", "'local_tm'"])
-    return_data_name_doc.add_table_row(["Order parameter S2", "'s2'"])
-    return_data_name_doc.add_table_row(["Order parameter S2f", "'s2f'"])
-    return_data_name_doc.add_table_row(["Order parameter S2s", "'s2s'"])
-    return_data_name_doc.add_table_row(["Correlation time te", "'te'"])
-    return_data_name_doc.add_table_row(["Correlation time tf", "'tf'"])
-    return_data_name_doc.add_table_row(["Correlation time ts", "'ts'"])
-    return_data_name_doc.add_table_row(["Chemical exchange", "'rex'"])
-    return_data_name_doc.add_table_row(["Bond length", "'r'"])
-    return_data_name_doc.add_table_row(["CSA", "'csa'"])
-    return_data_name_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'"])
-    return_data_name_doc.add_table_row(["Proton type", "'proton_type'"])
+    table = uf_tables.add_table(title="Model-free data type string matching patterns.", label="table: mf data type patterns")
+    table.add_headings(["Data type", "Object name"])
+    table.add_row(["Local tm", "'local_tm'"])
+    table.add_row(["Order parameter S2", "'s2'"])
+    table.add_row(["Order parameter S2f", "'s2f'"])
+    table.add_row(["Order parameter S2s", "'s2s'"])
+    table.add_row(["Correlation time te", "'te'"])
+    table.add_row(["Correlation time tf", "'tf'"])
+    table.add_row(["Correlation time ts", "'ts'"])
+    table.add_row(["Chemical exchange", "'rex'"])
+    table.add_row(["Bond length", "'r'"])
+    table.add_row(["CSA", "'csa'"])
+    table.add_row(["Heteronucleus type", "'heteronuc_type'"])
+    table.add_row(["Proton type", "'proton_type'"])
+    return_data_name_doc.add_table(table.label)
 
 
     set_doc = Desc_container("Model-free set details")

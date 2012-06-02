@@ -33,6 +33,7 @@ import generic_fns.structure.geometric
 import generic_fns.structure.main
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -191,11 +192,13 @@ uf.desc[-1].add_paragraph("There are four different types of residue within the 
 uf.desc[-1].add_paragraph("As the Brownian rotational diffusion tensor is a measure of the rate of rotation about different axes - the larger the geometric object, the faster the diffusion of a molecule. For example the diffusion tensor of a water molecule is much larger than that of a macromolecule.")
 uf.desc[-1].add_paragraph("The effective global correlation time experienced by an XH bond vector, not to be confused with the Lipari and Szabo parameter tau_e, will be approximately proportional to the component of the diffusion tensor parallel to it.  The approximation is not exact due to the multiexponential form of the correlation function of Brownian rotational diffusion.  If an XH bond vector is parallel to the longest axis of the tensor, it will be unaffected by rotations about that axis, which are the fastest rotations of the molecule, and therefore its effective global correlation time will be maximal.")
 uf.desc[-1].add_paragraph("To set the size of the diffusion tensor within the PDB frame the unit vectors used to generate the geometric object are first multiplied by the diffusion tensor (which has the units of inverse seconds) then by the scaling factor (which has the units of second Angstroms and has the default value of 1.8e-6 s.Angstrom).  Therefore the rotational diffusion rate per Angstrom is equal the inverse of the scale value (which defaults to 5.56e5 s^-1.Angstrom^-1).  Using the default scaling value for spherical diffusion, the correspondence between global correlation time, Diso diffusion rate, and the radius of the sphere for a number of discrete cases will be:")
-uf.desc[-1].add_table_titles(["tm (ns)", "Diso (s^-1)", "Radius (Angstrom)"])
-uf.desc[-1].add_table_row(["1", "1.67e8", "300"])
-uf.desc[-1].add_table_row(["3", "5.56e7", "100"])
-uf.desc[-1].add_table_row(["10", "1.67e7", "30"])
-uf.desc[-1].add_table_row(["30", "5.56e6", "10"])
+table = uf_tables.add_table(title="Diffusion tensor PDB representation sizes using the default scaling for different diffusion tensors", label="table: diff tensor PDB scaling")
+table.add_headings(["tm (ns)", "Diso (s^-1)", "Radius (Angstrom)"])
+table.add_row(["1", "1.67e8", "300"])
+table.add_row(["3", "5.56e7", "100"])
+table.add_row(["10", "1.67e7", "30"])
+table.add_row(["30", "5.56e6", "10"])
+uf.desc[-1].add_table(table.label)
 uf.desc[-1].add_paragraph("The scaling value has been fixed to facilitate comparisons within or between publications, but can be changed to vary the size of the tensor geometric object if necessary.  Reporting the rotational diffusion rate per Angstrom within figure legends would be useful.")
 uf.desc[-1].add_paragraph("To create the tensor PDB representation, a number of algorithms are utilised.  Firstly the centre of mass is calculated for the selected residues and is represented in the PDB by a C atom.  Then the axes of the diffusion are calculated, as unit vectors scaled to the appropriate length (multiplied by the eigenvalue Dx, Dy, Dz, Dpar, Dper, or Diso as well as the scale value), and a C atom placed at the position of this vector plus the centre of mass.  Finally a uniform distribution of vectors on a sphere is generated using spherical coordinates.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These unit vectors, which are distributed within the PDB frame and are of 1 Angstrom in length, are first rotated into the diffusion frame using a rotation matrix (the spherical diffusion tensor is not rotated).  Then they are multiplied by the diffusion tensor matrix to extend the vector out to the correct length, and finally multiplied by the scale value so that the vectors reasonably superimpose onto the macromolecular structure.  The last set of algorithms place all this information into a PDB file.  The distribution of vectors are represented by H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines.")
 uf.backend = generic_fns.structure.geometric.create_diff_tensor_pdb

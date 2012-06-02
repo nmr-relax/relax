@@ -52,6 +52,7 @@ from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -1832,11 +1833,13 @@ class N_state_model(API_base, API_common):
 
 
     default_value_doc = Desc_container("N-state model default values")
-    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
-    default_value_doc.add_table_row(["Probabilities", "'p0', 'p1', 'p2', ..., 'pN'", "1/N"])
-    default_value_doc.add_table_row(["Euler angle alpha", "'alpha0', 'alpha1', ...", "(c+1) * pi / (N+1)"])
-    default_value_doc.add_table_row(["Euler angle beta", "'beta0', 'beta1', ...", "(c+1) * pi / (N+1)"])
-    default_value_doc.add_table_row(["Euler angle gamma", "'gamma0', 'gamma1', ...", "(c+1) * pi / (N+1)"])
+    table = uf_tables.add_table(title="N-state model default values.", label="table: N-state default values")
+    table.add_headings(["Data type", "Object name", "Value"])
+    table.add_row(["Probabilities", "'p0', 'p1', 'p2', ..., 'pN'", "1/N"])
+    table.add_row(["Euler angle alpha", "'alpha0', 'alpha1', ...", "(c+1) * pi / (N+1)"])
+    table.add_row(["Euler angle beta", "'beta0', 'beta1', ...", "(c+1) * pi / (N+1)"])
+    table.add_row(["Euler angle gamma", "'gamma0', 'gamma1', ...", "(c+1) * pi / (N+1)"])
+    default_value_doc.add_table(table.label)
     default_value_doc.add_paragraph("In this table, N is the total number of states and c is the index of a given state ranging from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are given a range of values so that no 2 states are equal at the start of optimisation.")
     default_value_doc.add_paragraph("Note that setting the probability for state N will do nothing as it is equal to one minus all the other probabilities.")
 
@@ -2158,14 +2161,16 @@ class N_state_model(API_base, API_common):
 
 
     return_data_name_doc = Desc_container("N-state model data type string matching patterns")
-    return_data_name_doc.add_table_titles(["Data type", "Object name", "Patterns"])
-    return_data_name_doc.add_table_row(["Probabilities", "'probs'", "'p0', 'p1', 'p2', ..., 'pN'"])
-    return_data_name_doc.add_table_row(["Euler angle alpha", "'alpha'", "'alpha0', 'alpha1', ..."])
-    return_data_name_doc.add_table_row(["Euler angle beta", "'beta'", "'beta0', 'beta1', ..."])
-    return_data_name_doc.add_table_row(["Euler angle gamma", "'gamma'", "'gamma0', 'gamma1', ..."])
-    return_data_name_doc.add_table_row(["Bond length", "'r'", "'^r$' or '[Bb]ond[ -_][Ll]ength'"])
-    return_data_name_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'", "'^[Hh]eteronucleus$'"])
-    return_data_name_doc.add_table_row(["Proton type", "'proton_type'", "'^[Pp]roton$'"])
+    table = uf_tables.add_table(title="N-state model data type string matching patterns.", label="table: N-state data type patterns")
+    table.add_headings(["Data type", "Object name", "Patterns"])
+    table.add_row(["Probabilities", "'probs'", "'p0', 'p1', 'p2', ..., 'pN'"])
+    table.add_row(["Euler angle alpha", "'alpha'", "'alpha0', 'alpha1', ..."])
+    table.add_row(["Euler angle beta", "'beta'", "'beta0', 'beta1', ..."])
+    table.add_row(["Euler angle gamma", "'gamma'", "'gamma0', 'gamma1', ..."])
+    table.add_row(["Bond length", "'r'", "'^r$' or '[Bb]ond[ -_][Ll]ength'"])
+    table.add_row(["Heteronucleus type", "'heteronuc_type'", "'^[Hh]eteronucleus$'"])
+    table.add_row(["Proton type", "'proton_type'", "'^[Pp]roton$'"])
+    return_data_name_doc.add_table(table.label)
     return_data_name_doc.add_paragraph("The objects corresponding to the object names are lists (or arrays) with each element corrsponding to each state.")
 
     def return_data_name(self, param):

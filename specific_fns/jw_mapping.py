@@ -34,6 +34,7 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
 import specific_fns
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -231,11 +232,13 @@ class Jw_mapping(API_base, API_common):
 
     default_value_doc = Desc_container("Reduced spectral density mapping default values")
     default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
-    default_value_doc.add_table_titles(["Data type", "Object name", "Value"])
-    default_value_doc.add_table_row(["Bond length", "'r'", "1.02 * 1e-10"])
-    default_value_doc.add_table_row(["CSA", "'csa'", "-172 * 1e-6"])
-    default_value_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
-    default_value_doc.add_table_row(["Proton type", "'proton_type'", "'1H'"])
+    table = uf_tables.add_table(title="Reduced spectral density mapping default values.", label="table: J(w) default values")
+    table.add_headings(["Data type", "Object name", "Value"])
+    table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
+    table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
+    table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
+    table.add_row(["Proton type", "'proton_type'", "'1H'"])
+    default_value_doc.add_table(table.label)
 
 
     def overfit_deselect(self):
@@ -274,14 +277,16 @@ class Jw_mapping(API_base, API_common):
 
 
     return_data_name_doc = Desc_container("Reduced spectral density mapping data type string matching patterns")
-    return_data_name_doc.add_table_titles(["Data type", "Object name"])
-    return_data_name_doc.add_table_row(["J(0)", "'j0'"])
-    return_data_name_doc.add_table_row(["J(wX)", "'jwx'"])
-    return_data_name_doc.add_table_row(["J(wH)", "'jwh'"])
-    return_data_name_doc.add_table_row(["Bond length", "'r'"])
-    return_data_name_doc.add_table_row(["CSA", "'csa'"])
-    return_data_name_doc.add_table_row(["Heteronucleus type", "'heteronuc_type'"])
-    return_data_name_doc.add_table_row(["Proton type", "'proton_type'"])
+    table = uf_tables.add_table(title="Reduced spectral density mapping data type string matching patterns.", label="table: J(w) data types")
+    table.add_headings(["Data type", "Object name"])
+    table.add_row(["J(0)", "'j0'"])
+    table.add_row(["J(wX)", "'jwx'"])
+    table.add_row(["J(wH)", "'jwh'"])
+    table.add_row(["Bond length", "'r'"])
+    table.add_row(["CSA", "'csa'"])
+    table.add_row(["Heteronucleus type", "'heteronuc_type'"])
+    table.add_row(["Proton type", "'proton_type'"])
+    return_data_name_doc.add_table(table.label)
 
 
     set_doc = Desc_container("Reduced spectral density mapping set details")
