@@ -125,9 +125,8 @@ def create_table(label, spacing=True):
     used += 3 * (num_cols - 1)   # Middle of the table ' | '.
     free_space = status.text_width - used
 
-    # The total table width.
+    # The maximal width for all cells.
     free_width = sum(widths)
-    total_width = free_width + used
 
     # Column wrapping.
     if free_width > free_space:
@@ -137,16 +136,12 @@ def create_table(label, spacing=True):
             print("Table column wrapping algorithm:")
             print("%-20s %s" % ("num_cols:", num_cols))
             print("%-20s %s" % ("free space:", free_space))
-            print("%-20s %s" % ("total_width:", total_width))
 
         # New structures.
         new_widths = deepcopy(widths)
         num_cols_wrap = num_cols
         free_space_wrap = free_space
         col_wrap = [True] * num_cols
-
-        # New total width.
-        total_width = status.text_width
 
         # Loop.
         while 1:
@@ -196,6 +191,9 @@ def create_table(label, spacing=True):
     else:
         new_widths = widths
         col_wrap = [False] * num_cols
+
+    # The total table width.
+    total_width = sum(new_widths) + used
 
     # The header.
     text += "_" * total_width + "\n"    # Top rule.
