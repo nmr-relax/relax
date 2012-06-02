@@ -163,7 +163,7 @@ def molmol_colours(name):
 # User function documentation.
 __molmol_colours_doc__ = Desc_container("Molmol RGB colour arrays")
 __molmol_colours_doc__.add_paragraph("The following table is a list of colours used in Molmol and their corresponding RGB colour values ranging from 0 to 1.")
-table = uf_tables.add_table(title="Molmol colour names and corresponding RGB colour values (from 0 to 1)", label="table: Molmol colours", spacing=False, longtable=True)
+table = uf_tables.add_table(title="Molmol colour names and corresponding RGB colour values (from 0 to 1)", label="table: Molmol colours", spacing=False, longtable=False)
 table.add_headings(["Name", "Red", "Green", "Blue"])
 table.add_row(["'black'", "0.000", "0.000", "0.000"])
 table.add_row(["'navy'", "0.000", "0.000", "0.502"])
