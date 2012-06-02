@@ -322,7 +322,7 @@ table.add_row(["n", "1", "Invalid combination."])
 table.add_row(["None", "n", "Each parameter matching the strings will be set to the default values."])
 table.add_row(["1", "n", "Each parameter matching the strings will be set to the supplied number."])
 table.add_row(["n", "n", "Each parameter matching the strings will be set to the corresponding number.  Both arrays must be of equal length."])
-uf.desc[-1].add_table(table)
+uf.desc[-1].add_table(table.label)
 # Spin identification.
 uf.desc.append(Desc_container("Spin identification"))
 uf.desc[-1].add_paragraph("If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.")

@@ -122,7 +122,7 @@ table.add_row(["Heights", "All replicated + variance averaging", "One sigma per 
 table.add_row(["Volumes", "RMSD baseplane", "One sigma per peak per spectrum"])
 table.add_row(["Volumes", "Partial duplicate + variance averaging", "One sigma for all peaks, all spectra"])
 table.add_row(["Volumes", "All replicated + variance averaging", "One sigma per replicated spectra set"])
-uf.desc[-1].add_table(table)
+uf.desc[-1].add_table(table.label)
 # Peak heights with baseplane noise RMSD.
 uf.desc.append(Desc_container("Peak heights with baseplane noise RMSD"))
 uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd() user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.")
