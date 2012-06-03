@@ -118,9 +118,9 @@ def create_table(label):
 
     # The free space for the text.
     used = 0
-    used += 2    # Start of the table '| '.
-    used += 2    # End of the table ' |'.
-    used += 3 * (num_cols - 1)   # Middle of the table ' | '.
+    used += 2    # Start of the table '  '.
+    used += 2    # End of the table '  '.
+    used += 3 * (num_cols - 1)   # Middle of the table '   '.
     free_space = status.text_width - used
 
     # The maximal width for all cells.
@@ -194,7 +194,7 @@ def create_table(label):
     total_width = sum(new_widths) + used
 
     # The header.
-    text += "_" * total_width + "\n"    # Top rule.
+    text += " " + "_" * (total_width - 2) + "\n"    # Top rule.
     text += table_line(widths=new_widths)    # Blank line.
     text += table_line(text=table.headings, widths=new_widths)    # The headings.
     text += table_line(widths=new_widths, bottom=True)    # Middle rule.
@@ -274,18 +274,18 @@ def table_line(text=None, widths=None, bottom=False):
 
     # Initialise.
     if bottom:
-        line = "|_"
+        line = " _"
     else:
-        line = "| "
+        line = "  "
 
     # Loop over the columns.
     for i in range(len(widths)):
         # The column separator.
         if i > 0:
             if bottom:
-                line += "_|_"
+                line += "___"
             else:
-                line += " | "
+                line += "   "
 
         # A bottom line.
         if bottom:
@@ -302,9 +302,9 @@ def table_line(text=None, widths=None, bottom=False):
 
     # Close the line.
     if bottom:
-        line += "_|\n"
+        line += "_ \n"
     else:
-        line += " |\n"
+        line += "  \n"
 
     # Return the text.
     return line
