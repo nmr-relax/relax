@@ -21,9 +21,8 @@
 ###############################################################################
 
 # Python module imports.
-from inspect import formatargspec, getargspec, getdoc
 from re import search
-from string import letters, lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
+from string import letters, lowercase, punctuation, replace, split, upper, whitespace
 import sys
 
 # Add the path to the relax base directory.
@@ -32,6 +31,7 @@ sys.path[0] = '../..'
 
 # Import the program relax.
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 
 class Fetch_docstrings:
@@ -41,6 +41,7 @@ class Fetch_docstrings:
         # Initialise some variables.
         self.in_quote = False
         self.table_count = 1
+        self.uf_table_labels = []
 
         # Set up the words to index.
         self.index_entries()
@@ -400,9 +401,6 @@ class Fetch_docstrings:
     def latex_formatting(self, string):
         """Function for handling LaTeX maths environments."""
 
-        # FIXME: delete.
-        return string
-
         # Angstrom.
         string = self.safe_replacement(string, 'Angstroms', '\AA')
         string = self.safe_replacement(string, 'Angstrom', '\AA')
@@ -594,33 +592,6 @@ class Fetch_docstrings:
 
         # Return the new text.
         return string
-
-
-    def num_to_text(self, num):
-        """Convert the number to text.
-        @param num: The number to convert.
-        @type num:  int
-        @return:    The number in the format of 'First', 'Second', 'Third', etc.
-        @rtype:     str
-        """
-
-        # The list.
-        list = ['First',
-                'Second',
-                'Third',
-                'Fourth',
-                'Fifth',
-                'Sixth',
-                'Seventh',
-                'Eighth',
-                'Ninth',
-                'Tenth',
-                'Eleventh',
-                'Twelfth'
-        ]
-
-        # Convert.
-        return list[num-1]
 
 
     def quotes(self, index):
@@ -913,46 +884,69 @@ class Fetch_docstrings:
         self.file.write("\n")
 
 
-    def write_table(self, table):
+    def write_table(self, label):
         """Format and write out a table.
 
-        @param table:   The table.
-        @type table:    list of lists of str
+        @param label:   The unique table label.
+        @type label:    list of lists of str
         """
 
+        # Get the table.
+        table = uf_tables.get_table(label)
+
         # Add a reference.
-        self.file.write("Please see Table~\\ref{table%s}.\n\n" % self.table_count)
+        self.file.write("Please see Table~\\ref{%s} on page~\\pageref{%s}.\n\n" % (label, label))
+
+        # The table already exists, so skip creating it a second time.
+        if label in self.uf_table_labels:
+            return
+        else:
+            self.uf_table_labels.append(label)
 
         # Determine the table wrapping.
-        col_wrap = self.tabular_wrapping(table)
+        col_wrap = self.tabular_wrapping(table.cells)
         wrap = sum(col_wrap)
 
+        # The number of rows and columns.
+        num_rows = len(table.cells)
+        num_cols = len(table.headings)
+
         # Start the centred table.
-        self.file.write("\\begin{table*}\n")
-        self.file.write("\\begin{scriptsize}\n")
-        self.file.write("\\begin{center}\n")
+        if table.longtable:
+            # A longtable.
+            self.file.write("\\onecolumn\n")
+            self.file.write("\\begin{scriptsize}\n")
+            self.file.write("\\begin{center}\n")
+            self.file.write("\\begin{longtable}{%s}\n" % ("l"*num_cols))
+        else:
+            # Normal tables.
+            self.file.write("\\begin{table*}\n")
+            self.file.write("\\begin{scriptsize}\n")
+            self.file.write("\\begin{center}\n")
 
         # A caption.
-        self.file.write("\\caption{%s table for the %s user function.}\n" % (self.num_to_text(self.uf_table_count), self.uf_name_latex))
+        self.file.write("\\caption[%s]{%s}\n" % (table.caption_short, table.caption))
 
-        # The number of rows and columns.
-        num_rows = len(table)
-        num_cols = len(table[0])
-
-        # Start the tabular environment and add the toprule.
-        if wrap:
-            self.file.write("\\begin{tabularx}{\\textwidth}{")
+        # The formatting.
+        if table.longtable:
+            # Start the longtable environment and add the toprule.
+            self.file.write("\\\\\n")
+            self.file.write("\\toprule\n")
         else:
-            self.file.write("\\begin{tabular}{")
-        for i in range(num_cols):
-            if col_wrap[i]:
-                text = "X"
+            # Start the tabular environment and add the toprule.
+            if wrap:
+                self.file.write("\\begin{tabularx}{\\textwidth}{")
             else:
-                text = "l"
-            self.file.write(text)
-        self.file.write("}\n")
-        self.file.write("\\\\[-5pt]")
-        self.file.write("\\toprule\n")
+                self.file.write("\\begin{tabular}{")
+            for i in range(num_cols):
+                if col_wrap[i]:
+                    text = "X"
+                else:
+                    text = "l"
+                self.file.write(text)
+            self.file.write("}\n")
+            self.file.write("\\\\[-5pt]\n")
+            self.file.write("\\toprule\n")
 
         # Generate the LaTeX headings.
         for j in range(num_cols):
@@ -961,7 +955,7 @@ class Fetch_docstrings:
                 self.file.write(' & ')
 
             # The cell contents.
-            cell = table[0][j]
+            cell = table.headings[j]
             cell = self.latex_special_chars(cell)
             cell = self.latex_formatting(cell)
 
@@ -971,11 +965,22 @@ class Fetch_docstrings:
         # End of the header line.
         self.file.write(" \\\\\n")
 
-        # Add the midrule.
-        self.file.write("\\midrule\n")
+        # The central formatting.
+        if table.longtable:
+            self.file.write("\\midrule\n")
+            self.file.write("\\endhead\n\n")
+            self.file.write("\\bottomrule\n")
+            self.file.write("\\endfoot\n")
+        else:
+            # Add the midrule.
+            self.file.write("\\midrule\n")
+
+        # The label for longtables.
+        if table.longtable:
+            self.file.write("\\label{%s}\n" % label)
 
         # Loop over the main table lines.
-        for i in range(1, num_rows):
+        for i in range(num_rows):
             # Loop over the columns.
             for j in range(num_cols):
                 # Column separator.
@@ -983,7 +988,7 @@ class Fetch_docstrings:
                     self.file.write(' & ')
 
                 # The cell contents.
-                cell = table[i][j]
+                cell = table.cells[i][j]
                 cell = self.latex_special_chars(cell)
                 cell = self.latex_formatting(cell)
 
@@ -994,16 +999,22 @@ class Fetch_docstrings:
             self.file.write(" \\\\\n")
 
         # Terminate.
-        self.file.write("\\bottomrule\n")
-        self.file.write("\\\\[-5pt]")
-        self.file.write("\\label{table%s}\n" % self.table_count)
-        if wrap:
-            self.file.write("\\end{tabularx}\n")
+        if table.longtable:
+            self.file.write("\\end{longtable}\n")
+            self.file.write("\\end{center}\n")
+            self.file.write("\\end{scriptsize}\n")
+            self.file.write("\\twocolumn\n")
         else:
-            self.file.write("\\end{tabular}\n")
-        self.file.write("\\end{center}\n")
-        self.file.write("\\end{scriptsize}\n")
-        self.file.write("\\end{table*}\n")
+            self.file.write("\\bottomrule\n")
+            self.file.write("\\\\[-5pt]\n")
+            self.file.write("\\label{%s}\n" % label)
+            if wrap:
+                self.file.write("\\end{tabularx}\n")
+            else:
+                self.file.write("\\end{tabular}\n")
+            self.file.write("\\end{center}\n")
+            self.file.write("\\end{scriptsize}\n")
+            self.file.write("\\end{table*}\n")
 
         # Increment the table counts.
         self.table_count += 1
