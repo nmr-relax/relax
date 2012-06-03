@@ -222,7 +222,7 @@ def create_table(label):
                     col_text[k][j] = lines[k]
 
         # Blank line (between rows when asked, and for the first row after the header).
-        if table.spacing or i == 1:
+        if table.spacing or i == 0:
             text += table_line(widths=new_widths)
 
         # The contents.
