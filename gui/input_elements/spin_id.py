@@ -203,8 +203,6 @@ class Spin_id:
     def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
         """Special wizard method for updating the list of choices in a ComboBox type element.
 
-        @param key:             The key corresponding to the desired GUI element.
-        @type key:              str
         @keyword combo_choices: The list of choices to present to the user.
         @type combo_choices:    list of str
         @keyword combo_data:    The data returned by a call to GetValue().  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.

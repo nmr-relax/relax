@@ -367,8 +367,8 @@ def nothing(value):
 def py_to_gui(value):
     """Super function for converting a Python object to a GUI string.
 
-    @param string:  The value.
-    @type string:   anything
+    @param value:   The value.
+    @type value:    anything
     @return:        The Python object in GUI string form.
     @rtype:         unicode
     """
