@@ -192,12 +192,18 @@ class Desc_container(object):
         self._types.append('verbatim')
 
 
-    def element_loop(self):
+    def element_loop(self, title=False):
         """Iterator method yielding the description elements.
 
+        @keyword title:     A flag which if True will cause the title to be yielded first.
+        @type title:        bool
         @return:            The element type and corresponding data. 
         @rtype:             str and anything
         """
+
+        # The title.
+        if title:
+            yield 'title', self._title
 
         # Loop over the elements.
         for i in range(len(self._data)):
