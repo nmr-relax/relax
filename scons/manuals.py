@@ -323,9 +323,6 @@ def compile_api_manual_html(target, source, env):
         if not search('.html$', full_path):
             continue
 
-        # Print out.
-        print(full_path)
-
         # Open the file and read the data.
         file = open(full_path)
         lines = file.readlines()
