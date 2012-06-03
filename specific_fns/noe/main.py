@@ -169,12 +169,12 @@ class Noe_main:
 
 
     return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")
-    table = uf_tables.add_table(label="table: NOE data type patterns", caption="NOE data type string matching patterns.")
-    table.add_headings(["Data type", "Object name"])
-    table.add_row(["Reference intensity", "'ref'"])
-    table.add_row(["Saturated intensity", "'sat'"])
-    table.add_row(["NOE", "'noe'"])
-    return_data_name_doc.add_table(table.label)
+    _table = uf_tables.add_table(label="table: NOE data type patterns", caption="NOE data type string matching patterns.")
+    _table.add_headings(["Data type", "Object name"])
+    _table.add_row(["Reference intensity", "'ref'"])
+    _table.add_row(["Saturated intensity", "'sat'"])
+    _table.add_row(["NOE", "'noe'"])
+    return_data_name_doc.add_table(_table.label)
 
 
     def return_units(self, param):
