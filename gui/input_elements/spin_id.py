@@ -131,12 +131,18 @@ class Spin_id:
         else:
             sizer.AddSpacer(spacer)
 
-        # Add the ID string documentation, with starting and ending newlines removed, to the tooltip.
+        # Initialise the tooltip string, if not supplied.
         if tooltip == None:
             tooltip = ''
-        else:
-            tooltip += '\n\n'
-        tooltip += id_string_doc[1][1:-1]
+
+        # Add the ID string documentation to the tooltip.
+        for type, element in id_string_doc.element_loop():
+            if type == 'paragraph':
+                # Initial spacing.
+                tooltip += '\n\n'
+
+                # The text.
+                tooltip += element
 
         # Set the tooltip.
         text.SetToolTipString(tooltip)

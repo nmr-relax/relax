@@ -24,8 +24,10 @@
 """Module containing the special objects for auto-generating the GUI user functions and classes."""
 
 # Python module imports.
+from copy import deepcopy
 from re import search
 from string import split
+from textwrap import wrap
 from time import sleep
 import wx
 from wx.lib import scrolledpanel
@@ -37,6 +39,7 @@ from relax_errors import AllRelaxErrors, RelaxError
 from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 # relax GUI imports.
 from gui.components.free_file_format import Free_file_format
@@ -315,6 +318,130 @@ class Uf_page(Wiz_page):
             wx.EndBusyCursor()
 
 
+    def _format_table(self, label):
+        """Format the text by stripping whitespace.
+
+        @param label:       The unique table label.
+        @type label:        str
+        @return:            The formatted table.
+        @rtype:             str
+        """
+
+        # Get the table.
+        table = uf_tables.get_table(label)
+
+        # Initialise some variables.
+        text = ''
+        num_rows = len(table.cells)
+        num_cols = len(table.headings)
+
+        # The column widths.
+        widths = []
+        for j in range(num_cols):
+            widths.append(len(table.headings[j]))
+        for i in range(num_rows):
+            for j in range(num_cols):
+                # The element is larger than the previous.
+                if len(table.cells[i][j]) > widths[j]:
+                    widths[j] = len(table.cells[i][j])
+
+        # The free space for the text.
+        used = 0
+        used += 2    # Start of the table '  '.
+        used += 2    # End of the table '  '.
+        used += 3 * (num_cols - 1)   # Middle of the table '   '.
+        free_space = status.text_width - used
+
+        # The maximal width for all cells.
+        free_width = sum(widths)
+
+        # Column wrapping.
+        if free_width > free_space:
+            # New structures.
+            new_widths = deepcopy(widths)
+            num_cols_wrap = num_cols
+            free_space_wrap = free_space
+            col_wrap = [True] * num_cols
+
+            # Loop.
+            while 1:
+                # The average column width.
+                ave_width = free_space_wrap / num_cols_wrap
+
+                # Rescale.
+                rescale = False
+                for i in range(num_cols):
+                    # Remove the column from wrapping if smaller than the average wrapped width.
+                    if col_wrap[i] and new_widths[i] < ave_width:
+                        # Recalculate.
+                        free_space_wrap = free_space_wrap - new_widths[i]
+                        num_cols_wrap -= 1
+                        rescale = True
+
+                        # Remove the column from wrapping.
+                        col_wrap[i] = False
+
+                # Done.
+                if not rescale:
+                    # Set the column widths.
+                    for i in range(num_cols):
+                        if new_widths[i] > ave_width:
+                            new_widths[i] = ave_width
+                    break
+
+        # No column wrapping.
+        else:
+            new_widths = widths
+            col_wrap = [False] * num_cols
+
+        # The total table width.
+        total_width = sum(new_widths) + used
+
+        # The header.
+        text += "_" * total_width + "\n\n"    # Top rule and black line.
+        text += self._table_line(text=table.headings, widths=new_widths)    # The headings.
+        text += self._table_line(widths=new_widths, bottom=True)    # Middle rule.
+
+        # The table contents.
+        for i in range(num_rows):
+            # Column text, with wrapping.
+            col_text = [table.cells[i]]
+            num_lines = 1
+            for j in range(num_cols):
+                if col_wrap[j]:
+                    # Wrap.
+                    lines = wrap(col_text[0][j], new_widths[j])
+
+                    # Count the lines.
+                    num_lines = len(lines)
+
+                    # Replace the column text.
+                    for k in range(num_lines):
+                        # New row of empty text.
+                        if len(col_text) <= k:
+                            col_text.append(['']*num_cols)
+
+                        # Pack the data.
+                        col_text[k][j] = lines[k]
+
+            # Blank line (between rows when asked, and for the first row after the header).
+            if table.spacing or i == 1:
+                text += self._table_line(widths=new_widths)
+
+            # The contents.
+            for k in range(num_lines):
+                text += self._table_line(text=col_text[k], widths=new_widths)
+
+        # The bottom.
+        text += self._table_line(widths=new_widths, bottom=True)    # Bottom rule.
+
+        # Add a newline.
+        text += '\n'
+
+        # Return the table text.
+        return text
+
+
     def _format_text(self, text):
         """Format the text by stripping whitespace.
 
@@ -383,6 +510,56 @@ class Uf_page(Wiz_page):
         # Return the text.
         return text
 
+
+    def _table_line(self, text=None, widths=None, bottom=False):
+        """Format a line of a table.
+
+        @keyword text:      The list of table elements.  If not given, an empty line will be be produced.
+        @type text:         list of str or None
+        @keyword widths:    The list of column widths for the table.
+        @type widths:       list of int
+        @keyword botton:    A flag which if True will cause a table bottom line to be produced.
+        @type bottom:       bool
+        @return:            The table line.
+        @rtype:             str
+        """
+
+        # Initialise.
+        if bottom:
+            line = "__"
+        else:
+            line = "  "
+
+        # Loop over the columns.
+        for i in range(len(widths)):
+            # The column separator.
+            if i > 0:
+                if bottom:
+                    line += "___"
+                else:
+                    line += "   "
+
+            # A bottom line.
+            if bottom:
+                line += "_" * widths[i]
+
+            # Empty line.
+            elif text == None:
+                line += " " * widths[i]
+
+            # The text.
+            else:
+                line += text[i]
+                line += " " * (widths[i] - len(text[i]))
+
+        # Close the line.
+        if bottom:
+            line += "__\n"
+        else:
+            line += "  \n"
+
+        # Return the text.
+        return line
 
     def Clear(self, key):
         """Special wizard method for clearing the value of the GUI element corresponding to the key.
@@ -582,7 +759,7 @@ class Uf_page(Wiz_page):
         """
 
         # Initialise.
-        spacing = 5
+        spacing = 15
 
         # A line with spacing.
         sizer.AddSpacer(5)
@@ -596,51 +773,79 @@ class Uf_page(Wiz_page):
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Initialise the text elements.
-        text_list = []
-
-        # The description.
-        if self.uf_data.desc != None:
-            for element, type in self.process_doc([self.uf_data.title, self.uf_data.desc]):
-                text_list.append([element, type])
-
-        # Additional documentation.
-        if self.uf_data.additional != None:
-            for i in range(len(self.uf_data.additional)):
-                for element, type in self.process_doc(self.uf_data.additional[i]):
-                    text_list.append([element, type])
-
-        # Loop over the elements.
         tot_x = 0
         tot_y = 0
         text_elements = []
-        i = 0
-        for text, type in text_list:
-            # The text.
-            text_elements.append(wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE))
+        text_types = []
 
-            # Format.
-            if type == 'title':
-                text_elements[-1].SetFont(font.subtitle)
-            elif type == 'desc':
-                text_elements[-1].SetFont(font.normal)
-            elif type == 'table':
-                text_elements[-1].SetFont(font.modern_small)
+        # The description sections.
+        if self.uf_data.desc != None:
+            # Loop over the sections.
+            for i in range(len(self.uf_data.desc)):
+                # Alias.
+                desc = self.uf_data.desc[i]
 
-            # Wrap the text.
-            text_elements[-1].Wrap(self._main_size - 20)
+                # Skip the prompt examples.
+                if desc.get_title() == 'Prompt examples':
+                    continue
 
-            # The text size.
-            x, y = text_elements[-1].GetSizeTuple()
-            tot_x += x
-            tot_y += y
+                # Loop over the text elements.
+                for type, element in desc.element_loop(title=True):
+                    # The text version of the elements.
+                    text = ''
+                    if isinstance(element, str):
+                        text = element
 
-            # Size for the spacing.
-            tot_y += spacing
-            if i != 0:
-                tot_y += spacing
+                    # Format the tables.
+                    if type == 'table':
+                        text = self._format_table(element)
 
-            # Increment.
-            i += 1
+                    # Format the lists.
+                    elif type == 'list':
+                        # Loop over the list elements.
+                        for j in range(len(element)):
+                            text += "    - %s\n\n" % element[j]
+
+                    # Format the item lists.
+                    elif type == 'item list':
+                        # Loop over the list elements.
+                        for j in range(len(element)):
+                            # No item.
+                            if element[j][0] in [None, '']:
+                                text += "    %s\n\n" % element[j][1]
+                            else:
+                                text += "    %s:  %s\n\n" % (element[j][0], element[j][1])
+
+                    # The text.
+                    text = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)
+
+                    # Format.
+                    if type == 'title':
+                        text.SetFont(font.subtitle)
+                    elif type == 'paragraph':
+                        text.SetFont(font.normal)
+                    elif type == 'table':
+                        text.SetFont(font.modern_small)
+
+                    # Wrap the paragraphs and lists.
+                    if type in ['paragraph', 'list', 'item list']:
+                        text.Wrap(self._main_size - 20)
+
+                    # The text size.
+                    x, y = text.GetSizeTuple()
+                    tot_x += x
+                    tot_y += y
+
+                    # The spacing after each element.
+                    tot_y += spacing
+
+                    # The double spacing before each section (not including the first).
+                    if i != 0 and type == 'title':
+                        tot_y += spacing * 2
+
+                    # Append the text objects.
+                    text_elements.append(text)
+                    text_types.append(type)
 
         # Scrolling needed.
         if tot_y > max_y-10:
@@ -651,23 +856,23 @@ class Uf_page(Wiz_page):
         else:
             # Rewrap the text.
             for i in range(len(text_elements)):
-                text_elements[i].Wrap(self._main_size)
+                if text_types[i] in ['paragraph', 'list', 'item list']:
+                    text_elements[i].Wrap(self._main_size)
 
             # Set the panel size.
             panel.SetInitialSize((tot_x, tot_y))
 
         # Add the text.
         for i in range(len(text_elements)):
-            # Initial spacing.
-            if i != 0:
-                panel_sizer.AddSpacer(spacing)
+            # Double spacing before each section (not including the first).
+            if i != 0 and text_types[i] == 'title':
+                panel_sizer.AddSpacer(spacing * 2)
 
             # The text.
             panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
 
-            # Spacer after titles.
-            if text_list[i][1] == 'title':
-                panel_sizer.AddSpacer(spacing)
+            # Spacer after all sections.
+            panel_sizer.AddSpacer(spacing)
 
         # Set up and add the panel to the sizer.
         panel.SetSizer(panel_sizer)
