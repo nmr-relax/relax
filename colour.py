@@ -163,7 +163,7 @@ def molmol_colours(name):
 # User function documentation.
 __molmol_colours_doc__ = Desc_container("Molmol RGB colour arrays")
 __molmol_colours_doc__.add_paragraph("The following table is a list of colours used in Molmol and their corresponding RGB colour values ranging from 0 to 1.")
-table = uf_tables.add_table(title="Molmol colour names and corresponding RGB colour values (from 0 to 1)", label="table: Molmol colours", spacing=False, longtable=False)
+table = uf_tables.add_table(label="table: Molmol colours", caption="Molmol colour names and corresponding RGB colour values (from 0 to 1)", spacing=False, longtable=False)
 table.add_headings(["Name", "Red", "Green", "Blue"])
 table.add_row(["'black'", "0.000", "0.000", "0.000"])
 table.add_row(["'navy'", "0.000", "0.000", "0.502"])
@@ -775,7 +775,7 @@ def x11_colours(name):
 # User function documentation.
 __x11_colours_doc__ = Desc_container("X11 RGB colour arrays")
 __x11_colours_doc__.add_paragraph("The following table is the list of X11 colour names and their corresponding RGB colour values ranging from 0 to 255.")
-table = uf_tables.add_table(title="X11 colour names and corresponding RGB colour values", label="table: X11 colours", spacing=False, longtable=True)
+table = uf_tables.add_table(label="table: X11 colours", caption="X11 colour names and corresponding RGB colour values", spacing=False, longtable=True)
 table.add_headings(["Name", "Red", "Green", "Blue"])
 table.add_row(["snow", "255", "250", "250"])
 table.add_row(["ghost white", "248", "248", "255"])

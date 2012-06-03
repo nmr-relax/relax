@@ -232,7 +232,7 @@ class Jw_mapping(API_base, API_common):
 
     default_value_doc = Desc_container("Reduced spectral density mapping default values")
     default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
-    table = uf_tables.add_table(title="Reduced spectral density mapping default values.", label="table: J(w) default values")
+    table = uf_tables.add_table(label="table: J(w) default values", caption="Reduced spectral density mapping default values.")
     table.add_headings(["Data type", "Object name", "Value"])
     table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
     table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
@@ -277,7 +277,7 @@ class Jw_mapping(API_base, API_common):
 
 
     return_data_name_doc = Desc_container("Reduced spectral density mapping data type string matching patterns")
-    table = uf_tables.add_table(title="Reduced spectral density mapping data type string matching patterns.", label="table: J(w) data types")
+    table = uf_tables.add_table(label="table: J(w) data types", caption="Reduced spectral density mapping data type string matching patterns.")
     table.add_headings(["Data type", "Object name"])
     table.add_row(["J(0)", "'j0'"])
     table.add_row(["J(wX)", "'jwx'"])

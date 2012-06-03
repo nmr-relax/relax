@@ -312,7 +312,7 @@ def return_conversion_factor(stat_type):
 
 
 return_data_name_doc = Desc_container("Minimisation statistic data type string matching patterns")
-table = uf_tables.add_table(title="Minimisation statistic data type string matching patterns.", label="table: min data type patterns")
+table = uf_tables.add_table(label="table: min data type patterns", caption="Minimisation statistic data type string matching patterns.")
 table.add_headings(["Data type", "Object name", "Patterns"])
 table.add_row(["Chi-squared statistic", "'chi2'", "'^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'"])
 table.add_row(["Iteration count", "'iter'", "'^[Ii]ter'"])

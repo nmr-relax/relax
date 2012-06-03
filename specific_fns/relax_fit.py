@@ -580,7 +580,7 @@ class Relax_fit(API_base, API_common):
 
     default_value_doc = Desc_container("Relaxation curve fitting default values")
     default_value_doc.add_paragraph("These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R1 and R2 values.")
-    table = uf_tables.add_table(title="Relaxation curve fitting default values.", label="table: curve-fit default values")
+    table = uf_tables.add_table(label="table: curve-fit default values", caption="Relaxation curve fitting default values.")
     table.add_headings(["Data type", "Object name", "Value"])
     table.add_row(["Relaxation rate", "'rx'", "8.0"])
     table.add_row(["Initial intensity", "'i0'", "10000.0"])
@@ -844,7 +844,7 @@ class Relax_fit(API_base, API_common):
 
 
     return_data_name_doc = Desc_container("Relaxation curve fitting data type string matching patterns")
-    table = uf_tables.add_table(title="Relaxation curve fitting data type string matching patterns.", label="table: curve-fit data type patterns")
+    table = uf_tables.add_table(label="table: curve-fit data type patterns", caption="Relaxation curve fitting data type string matching patterns.")
     table.add_headings(["Data type", "Object name"])
     table.add_row(["Relaxation rate", "'rx'"])
     table.add_row(["Peak intensities (series)", "'intensities'"])

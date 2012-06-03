@@ -207,19 +207,21 @@ class Uf_tables(object):
         return self._instance
 
 
-    def add_table(self, title=None, label=None, spacing=True, longtable=False):
+    def add_table(self, label=None, caption=None, caption_short=None, spacing=True, longtable=False):
         """Add a new table to the object.
 
-        @keyword title:     The title of the table.
-        @type title:        str
-        @keyword label:     The unique label of the table.  This is used to identify tables, and is also used in the table referencing in the LaTeX compilation of the user manual.
-        @type label:        str
-        @keyword spacing:   A flag which if True will cause empty rows to be placed between elements.
-        @type spacing:      bool
-        @keyword longtable: A special LaTeX flag which if True will cause the longtables package to be used to spread a table across multiple pages.  This should only be used for tables that do not fit on a single page.
-        @type longtable:    bool
-        @return:            The table object.
-        @rtype:             user_functions.objects.Table instance
+        @keyword label:         The unique label of the table.  This is used to identify tables, and is also used in the table referencing in the LaTeX compilation of the user manual.
+        @type label:            str
+        @keyword caption:       The caption for the table.
+        @type caption:          str
+        @keyword caption_short: The optional short caption for the table, used in the LaTeX user manual list of tables section for example.
+        @type caption_short:    str
+        @keyword spacing:       A flag which if True will cause empty rows to be placed between elements.
+        @type spacing:          bool
+        @keyword longtable:     A special LaTeX flag which if True will cause the longtables package to be used to spread a table across multiple pages.  This should only be used for tables that do not fit on a single page.
+        @type longtable:        bool
+        @return:                The table object.
+        @rtype:                 user_functions.objects.Table instance
         """
 
         # Check that the label is supplied.
@@ -232,7 +234,7 @@ class Uf_tables(object):
 
         # Store the label and initialise a new object.
         self._labels.append(label)
-        self._tables[label] = Table(title=title, label=label, spacing=spacing, longtable=longtable)
+        self._tables[label] = Table(label=label, caption=caption, caption_short=caption_short, spacing=spacing, longtable=longtable)
 
         # Return the table.
         return self._tables[label]

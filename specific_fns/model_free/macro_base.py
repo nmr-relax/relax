@@ -44,7 +44,7 @@ class Macro:
     classic_style_doc.add_paragraph("Argument string:  \"classic\"")
     classic_style_doc.add_paragraph("Description:  The classic style draws the backbone of a protein in a cylindrical bond style.  Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected residues are shown as black lines.")
     classic_style_doc.add_paragraph("Supported data types:")
-    table = uf_tables.add_table(title="The model-free classic style for mapping model spin specific data onto 3D molecular structures using either PyMOL or Molmol.", label="table: model-free macro classic style")
+    table = uf_tables.add_table(label="table: model-free macro classic style", caption="The model-free classic style for mapping model spin specific data onto 3D molecular structures using either PyMOL or Molmol.", caption_short="The model-free classic style for PyMOL and Molmol data mapping.")
     table.add_headings(["Data type", "String", "Description"])
     table.add_row(["S2.", "'s2'", "The standard model-free order parameter, equal to S2f.S2s for the two timescale models.  The default colour gradient starts at 'yellow' and ends at 'red'."])
     table.add_row(["S2f.", "'s2f'", "The order parameter of the faster of two internal motions.  Residues which are described by model-free models m1 to m4, the single timescale models, are illustrated as white neon bonds.  The default colour gradient is the same as that for the S2 data type."])

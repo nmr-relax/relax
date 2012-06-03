@@ -1285,7 +1285,7 @@ class Model_free_main:
 
 
     default_value_doc = Desc_container("Model-free default values")
-    table = uf_tables.add_table(title="Model-free default values.", label="table: mf default values")
+    table = uf_tables.add_table(label="table: mf default values", caption="Model-free default values.")
     table.add_headings(["Data type", "Object name", "Value"])
     table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
     table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
@@ -1939,7 +1939,7 @@ class Model_free_main:
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
-    table = uf_tables.add_table(title="Model-free data type string matching patterns.", label="table: mf data type patterns")
+    table = uf_tables.add_table(label="table: mf data type patterns", caption="Model-free data type string matching patterns.")
     table.add_headings(["Data type", "Object name"])
     table.add_row(["Local tm", "'local_tm'"])
     table.add_row(["Order parameter S2", "'s2'"])

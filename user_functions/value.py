@@ -311,7 +311,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.")
 uf.desc[-1].add_paragraph("The val argument can be None, a single value, or an array of values while the parameter argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the 'val' argument while the Param column refers to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds to either a single value or single string, and 'n' corresponds to either an array of values or an array of strings.")
-table = uf_tables.add_table(title="The value and parameter combination options for the value.set user function.", label="table: value.set combinations")
+table = uf_tables.add_table(label="table: value.set combinations", caption="The value and parameter combination options for the value.set user function.", caption_short="The value and parameter combinations for the value.set user function.")
 table.add_headings(["Value", "Param", "Description"])
 table.add_row(["None", "None", "This case is used to set the model parameters prior to minimisation or calculation.  The model parameters are set to the default values."])
 table.add_row(["1", "None", "Invalid combination."])

@@ -339,7 +339,7 @@ def default_value(param):
 
 # User function documentation.
 __default_value_doc__ = Desc_container("Diffusion tensor parameter default values")
-table = uf_tables.add_table(title="Diffusion tensor parameter default values.", label="table: diff default values")
+table = uf_tables.add_table(label="table: diff default values", caption="Diffusion tensor parameter default values.")
 table.add_headings(["Data type", "Object name", "Value"])
 table.add_row(["tm", "'tm'", "10 * 1e-9"])
 table.add_row(["Diso", "'Diso'", "1.666 * 1e7"])
@@ -1024,7 +1024,7 @@ def return_data_name(name):
 
 # User function documentation.
 __return_data_name_doc__ = Desc_container("Diffusion tensor parameter string matching patterns")
-table = uf_tables.add_table(title="Diffusion tensor parameter string matching patterns.", label="table: diff data type patterns")
+table = uf_tables.add_table(label="table: diff data type patterns", caption="Diffusion tensor parameter string matching patterns.")
 table.add_headings(["Data type", "Object name", "Patterns"])
 table.add_row(["Global correlation time - tm", "'tm'", "'^tm$'"])
 table.add_row(["Isotropic component of the diffusion tensor - Diso", "'Diso'", "'[Dd]iso'"])

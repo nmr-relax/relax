@@ -186,7 +186,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:")
-table = uf_tables.add_table(title="OpenDx mapping types.", label="table: opendx map")
+table = uf_tables.add_table(label="table: opendx map", caption="OpenDx mapping types.")
 table.add_headings(["Surface type", "Name"])
 table.add_row(["3D isosurface", "'Iso3D'"])
 uf.desc[-1].add_table(table.label)

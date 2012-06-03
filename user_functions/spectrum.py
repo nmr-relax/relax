@@ -114,7 +114,7 @@ uf.title_short = "Peak intensity error analysis."
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function must only be called after all peak intensities have been loaded and all other necessary spectral information set.  This includes the baseplane RMSD and the number of points used in volume integration, both of which are only used if spectra have not been replicated.")
 uf.desc[-1].add_paragraph("Six different types of error analysis are supported depending on whether peak heights or volumes are supplied, whether noise is determined from replicated spectra or the RMSD of the baseplane noise, and whether all spectra or only a subset have been duplicated.  These are:")
-table = uf_tables.add_table(title="The six peak intensity error analysis types.", label="table: peak intensity error analysis")
+table = uf_tables.add_table(label="table: peak intensity error analysis", caption="The six peak intensity error analysis types.")
 table.add_headings(["Int type", "Noise source", "Error scope"])
 table.add_row(["Heights", "RMSD baseplane", "One sigma per peak per spectrum"])
 table.add_row(["Heights", "Partial duplicate + variance averaging", "One sigma for all peaks, all spectra"])

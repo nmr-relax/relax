@@ -1833,7 +1833,7 @@ class N_state_model(API_base, API_common):
 
 
     default_value_doc = Desc_container("N-state model default values")
-    table = uf_tables.add_table(title="N-state model default values.", label="table: N-state default values")
+    table = uf_tables.add_table(label="table: N-state default values", caption="N-state model default values.")
     table.add_headings(["Data type", "Object name", "Value"])
     table.add_row(["Probabilities", "'p0', 'p1', 'p2', ..., 'pN'", "1/N"])
     table.add_row(["Euler angle alpha", "'alpha0', 'alpha1', ...", "(c+1) * pi / (N+1)"])
@@ -2161,7 +2161,7 @@ class N_state_model(API_base, API_common):
 
 
     return_data_name_doc = Desc_container("N-state model data type string matching patterns")
-    table = uf_tables.add_table(title="N-state model data type string matching patterns.", label="table: N-state data type patterns")
+    table = uf_tables.add_table(label="table: N-state data type patterns", caption="N-state model data type string matching patterns.")
     table.add_headings(["Data type", "Object name", "Patterns"])
     table.add_row(["Probabilities", "'probs'", "'p0', 'p1', 'p2', ..., 'pN'"])
     table.add_row(["Euler angle alpha", "'alpha'", "'alpha0', 'alpha1', ..."])
