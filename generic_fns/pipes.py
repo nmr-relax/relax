@@ -52,6 +52,16 @@ for name in VALID_TYPES:
     PIPE_DESC_LIST.append(PIPE_DESC[name])
 
 
+def bundle_names():
+    """Return the list of all data pipe bundles.
+
+    @return:        The list of data pipe bundles.
+    @rtype:         list of str
+    """
+
+    return list(ds.pipe_bundles.keys())
+
+
 def copy(pipe_from=None, pipe_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
