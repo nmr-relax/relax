@@ -245,6 +245,7 @@ class Relax_data_store(dict):
 
         # Objects which should be in here.
         blacklist = [
+                'pipe_bundles',
                 'relax_gui'
         ]
 
