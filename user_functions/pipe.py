@@ -154,17 +154,18 @@ uf.desc[-1].add_item_list_element("'mf'", "Model-free analysis,")
 uf.desc[-1].add_item_list_element("'N-state'", "N-state model of domain motions,")
 uf.desc[-1].add_item_list_element("'noe'", "Steady state NOE calculation,")
 uf.desc[-1].add_item_list_element("'relax_fit'", "Relaxation curve fitting,")
-uf.desc[-1].add_paragraph("The pipe bundling concept is simply a way of grouping data pipes together.  This is useful for:")
-uf.desc[-1].add_list_element("the grouping and categorisation of data pipes when multiple analyses are performed.")
-uf.desc[-1].add_list_element("auto-analyses, in which all the data pipes they create will be placed into one bundle.")
-uf.desc[-1].add_list_element("for the GUI mode as analysis tabs are linked to pipe bundles.  This allows the switching between data pipes to activate the correct analysis.")
+uf.desc[-1].add_paragraph("The pipe bundling concept is simply a way of grouping data pipes together.  This is useful for a number of purposes:")
+uf.desc[-1].add_list_element("The grouping or categorisation of data pipes, for example when multiple related analyses are performed.")
+uf.desc[-1].add_list_element("In the auto-analyses, as all the data pipes that they spawn are bound together within the original bundle.")
+uf.desc[-1].add_list_element("In the graphical user interface mode as analysis tabs are linked to specific pipe bundles.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up a model-free analysis data pipe with the name 'm5', type:")
 uf.desc[-1].add_prompt("relax> pipe.create('m5', 'mf')")
 uf.menu_text = "crea&te"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (700, 500)
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
