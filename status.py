@@ -161,6 +161,9 @@ class Status(object):
         # The observer object for the creation of results files.
         self.observers.result_file = Observer('result_file')
 
+        # The observer object for state loading.
+        self.observers.state_load = Observer('state_load')
+
 
     def init_auto_analysis(self, name, type):
         """Initialise a status container for an auto-analysis.

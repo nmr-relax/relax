@@ -92,6 +92,9 @@ class Analysis_controller:
         # Register the deletion of all analyses for the reset status observer.
         status.observers.reset.register('gui analyses', self.post_reset)
 
+        # Register state loading.
+        status.observers.state_load.register('gui analyses', self.load_from_store)
+
 
     def analysis_data_loop(self):
         """Loop over the analyses, yielding the data objects.

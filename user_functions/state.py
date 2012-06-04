@@ -46,6 +46,7 @@ uf.title = "Load a saved program state."
 uf.title_short = "Saved state loading."
 uf.add_keyarg(
     name = "state",
+    default = "state.bz2",
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
@@ -86,6 +87,7 @@ uf.backend = load_state
 uf.menu_text = "&load"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_size = (800, 600)
+uf.gui_sync = True    # Force synchronous operation to avoid races in the GUI.
 
 
 # The state.save user function.
@@ -94,6 +96,7 @@ uf.title = "Save the program state."
 uf.title_short = "Saving state."
 uf.add_keyarg(
     name = "state",
+    default = "state.bz2",
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
