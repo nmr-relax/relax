@@ -310,6 +310,22 @@ def get_type(name=None):
     return pipe.pipe_type
 
 
+def has_bundle(bundle=None):
+    """Determine if the relax data store contains the data pipe bundle.
+
+    @keyword bundle:    The name of the data pipe bundle.
+    @type bundle:       str
+    @return:            The answer to the question.
+    @rtype:             bool
+    """
+
+    # Is the bundle in the keys.
+    if bundle in ds.pipe_bundles.keys():
+        return True
+    else:
+        return False
+
+
 def has_pipe(name):
     """Determine if the relax data store contains the data pipe.
 
