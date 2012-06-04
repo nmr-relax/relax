@@ -920,6 +920,10 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
             else:
                 file_data[-1].append(repr(error[spin_index]))
 
+    # No data to write, so do nothing!
+    if file_data == [[]]:
+        return
+
     # Open the file for writing.
     file = open_write_file(file_name=file, dir=dir, force=force)
 
