@@ -39,6 +39,14 @@ from gui.wizard import Wiz_window
 class State(GuiTestCase):
     """Class for testing various aspects specific to saved states."""
 
+    def test_old_state_loading(self):
+        """Test the loading of an old relax 1.3 save state with GUI information."""
+
+        # Simulate the 'Open relax state' menu entry.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'gui_analyses_1.3.bz2'
+        self.app.gui.state_load(file_name=file)
+
+
     def test_load_state_no_gui(self):
         """Test the loading of a relax save state with no GUI data."""
 
