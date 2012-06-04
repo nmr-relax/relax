@@ -398,7 +398,7 @@ class Uf_page(Wiz_page):
         total_width = sum(new_widths) + used
 
         # The header.
-        text += "_" * total_width + "\n\n"    # Top rule and black line.
+        text += " " + "_" * (total_width - 2) + "\n\n"    # Top rule and black line.
         text += self._table_line(text=table.headings, widths=new_widths)    # The headings.
         text += self._table_line(widths=new_widths, bottom=True)    # Middle rule.
 
@@ -526,7 +526,7 @@ class Uf_page(Wiz_page):
 
         # Initialise.
         if bottom:
-            line = "__"
+            line = " _"
         else:
             line = "  "
 
@@ -554,7 +554,7 @@ class Uf_page(Wiz_page):
 
         # Close the line.
         if bottom:
-            line += "__\n"
+            line += "_ \n"
         else:
             line += "  \n"
 
