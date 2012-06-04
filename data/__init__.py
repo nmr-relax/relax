@@ -176,6 +176,9 @@ class Relax_data_store(dict):
         # Reset the current data pipe.
         __builtin__.cdp = None
 
+        # Recreate the pipe bundle object.
+        self.instance.pipe_bundles = {}
+
         # Re-add the GUI object.
         self.instance.relax_gui = Gui()
 
