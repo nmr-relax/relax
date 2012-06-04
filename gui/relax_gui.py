@@ -733,9 +733,6 @@ class Main(wx.Frame):
 
             # Load the relax state.
             if protected_exec(state.load_state, file_name, verbosity=0):
-                # Reconstruct the analyses.
-                self.analysis.load_from_store()
-
                 # Update the core of the GUI to match the new data store.
                 self.sync_ds(upload=False)
 

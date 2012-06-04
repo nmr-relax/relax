@@ -258,8 +258,8 @@ class Analysis_controller:
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
 
-        # Store the pipe name.
-        pipe_name = ds.relax_gui.analyses[index].pipe_name
+        # Store the pipe bundle.
+        pipe_bundle = ds.relax_gui.analyses[index].pipe_bundle
 
         # Delete the data store object.
         if status.debug:
@@ -267,10 +267,11 @@ class Analysis_controller:
         ds.relax_gui.analyses.pop(index)
 
         # Delete all data pipes associated with the analysis.
-        if pipes.has_pipe(pipe_name):
-            if status.debug:
-                print("debug> %s:  Deleting the data pipe '%s'." % (full_name, pipe_name))
-            pipes.delete(pipe_name)
+        for pipe in pipes.pipe_names():
+            if pipes.get_bundle(pipe) == pipe_bundle:
+                if status.debug:
+                    print("debug> %s:  Deleting the data pipe '%s' from the '%s' bundle." % (full_name, pipe, pipe_bundle))
+                pipes.delete(pipe)
 
 
     def get_page_from_name(self, name):
@@ -625,6 +626,10 @@ class Analysis_controller:
         # The data pipe.
         if pipe == None:
             pipe = pipes.cdp_name()
+
+        # No pipes to switch to.
+        if pipe == None:
+            return
 
         # Find the page.
         index = self.page_index_from_bundle(pipes.get_bundle(pipe))
