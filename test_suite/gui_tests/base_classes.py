@@ -28,7 +28,7 @@ from math import pi    # This is needed for relax scripts as pi is located in th
 from os import sep
 import Queue
 from shutil import rmtree
-from tempfile import mkdtemp
+from tempfile import mktemp, mkdtemp
 from unittest import TestCase
 import wx
 
@@ -183,6 +183,9 @@ class GuiTestCase(TestCase):
 
     def setUp(self):
         """Set up for all the functional tests."""
+
+        # Create a temporary file for the tests that need it.
+        ds.tmpfile = mktemp()
 
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()
