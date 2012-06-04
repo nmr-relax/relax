@@ -62,7 +62,7 @@ class Analysis_wizard:
         self.wizard.add_page(self.new_page, apply_button=False)
 
         # Add the data pipe name panel.
-        self.pipe_page = Data_pipe_page(self.wizard)
+        self.pipe_page = Data_pipe_page(self.wizard, height_desc=400)
         self.wizard.add_page(self.pipe_page, apply_button=False)
 
         # Reset the cursor.
@@ -101,7 +101,7 @@ class Data_pipe_page(Wiz_page):
 
     # Class variables.
     image_path = paths.WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'Select the name of the data pipe used at the start of the analysis and the name of the data pipe bundle to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Data pipe bundles are simple groupings of the pipes within the data store.\n\nSimple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data, all grouped together within a single data pipe bundle.'
+    main_text = 'Select the name of the data pipe used at the start of the analysis and the name of the data pipe bundle to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Data pipe bundles are simple groupings of the pipes within the data store and each analysis tab is coupled to a specific bundle.\n\nSimple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data, all grouped together within a single bundle.\n\nThe initialisation of a new analysis will call the pipe.create user function with the pipe name and pipe bundle as given below.'
     title = 'Data pipe set up'
 
     def add_contents(self, sizer):
