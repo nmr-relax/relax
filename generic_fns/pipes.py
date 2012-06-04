@@ -236,7 +236,7 @@ def display():
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Heading.
-        print(("%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Current")))
+        print(("%-20s%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Bundle", "Current")))
 
         # Loop over the data pipes.
         for pipe_name in ds:
@@ -246,11 +246,29 @@ def display():
                 current = '*'
 
             # Print out.
-            print("%-20s%-20s%-20s" % ("'"+pipe_name+"'", get_type(pipe_name), current))
+            print("%-20s%-20s%-20s%-20s" % (repr(pipe_name), get_type(pipe_name), repr(get_bundle(pipe_name)), current))
 
     # Release the lock.
     finally:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
+
+
+def get_bundle(pipe=None):
+    """Return the name of the bundle that the given pipe belongs to.
+
+    @keyword pipe:      The name of the data pipe to find the bundle of.
+    @type pipe:         str
+    @return:            The name of the bundle that the pipe is located in.
+    @rtype:             str or None
+    """
+
+    # Check that the data pipe exists.
+    test(pipe)
+
+    # Find and return the bundle.
+    for key in ds.pipe_bundles.keys():
+        if pipe in ds.pipe_bundles[key]:
+            return key
 
 
 def get_pipe(name=None):
