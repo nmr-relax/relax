@@ -89,9 +89,10 @@ class Analysis_wizard:
         analysis_type = gui_to_str(self.wizard.analysis_type)
         analysis_name = gui_to_str(self.new_page.analysis_name.GetValue())
         pipe_name = gui_to_str(self.pipe_page.pipe_name.GetValue())
+        pipe_bundle = gui_to_str(self.pipe_page.pipe_bundle.GetValue())
 
         # Return it.
-        return analysis_type, analysis_name, pipe_name
+        return analysis_type, analysis_name, pipe_name, pipe_bundle
 
 
 
@@ -100,8 +101,8 @@ class Data_pipe_page(Wiz_page):
 
     # Class variables.
     image_path = paths.WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'Select the name of the data pipe to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Simple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data.'
-    title = 'Data pipe name'
+    main_text = 'Select the name of the data pipe used at the start of the analysis and the name of the data pipe bundle to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Data pipe bundles are simple groupings of the pipes within the data store.\n\nSimple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data, all grouped together within a single data pipe bundle.'
+    title = 'Data pipe set up'
 
     def add_contents(self, sizer):
         """Add the specific GUI elements (dummy method).
@@ -111,7 +112,10 @@ class Data_pipe_page(Wiz_page):
         """
 
         # The pipe name input.
-        self.pipe_name = Value(name='pipe_name', parent=self, value_type='str', sizer=sizer, desc="The data pipe name:", divider=self._div_left, height_element=self.height_element)
+        self.pipe_name = Value(name='pipe_name', parent=self, value_type='str', sizer=sizer, desc="The starting data pipe for the analysis:", divider=self._div_left, height_element=self.height_element)
+
+        # The pipe bundle input.
+        self.pipe_bundle = Value(name='pipe_bundle', parent=self, value_type='str', sizer=sizer, desc="The data pipe bundle:", divider=self._div_left, height_element=self.height_element)
 
         # Spacing.
         sizer.AddStretchSpacer(3)
@@ -120,11 +124,12 @@ class Data_pipe_page(Wiz_page):
     def on_display(self):
         """Update the pipe name."""
 
-        # Generate a name for the data pipe based on the type and time.
+        # Generate a name for the data pipe bundle based on the type and time.
         name = "%s (%s)" % (self.parent.analysis_type, asctime(localtime()))
 
-        # Update the field.
-        self.pipe_name.SetValue(str_to_gui(name))
+        # Update the fields.
+        self.pipe_name.SetValue(str_to_gui("origin"))
+        self.pipe_bundle.SetValue(str_to_gui(name))
 
 
 

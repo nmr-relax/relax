@@ -33,7 +33,7 @@ import wx
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
-from generic_fns.pipes import has_pipe
+from generic_fns.pipes import has_bundle, has_pipe
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -62,7 +62,7 @@ class Auto_noe(Base_analysis):
               paths.IMAGE_PATH+'noe.png']
     label = None
 
-    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, data_index=None):
         """Build the automatic NOE analysis GUI frame elements.
 
         @param parent:          The parent wx element.
@@ -83,6 +83,8 @@ class Auto_noe(Base_analysis):
         @type analysis_name:    str
         @keyword pipe_name:     The name of the data pipe associated with this analysis.
         @type pipe_name:        str
+        @keyword pipe_bundle:   The name of the data pipe bundle associated with this analysis.
+        @type pipe_bundle:      str
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """
@@ -97,7 +99,11 @@ class Auto_noe(Base_analysis):
         if data_index == None:
             # First create the data pipe if not already in existence.
             if not has_pipe(pipe_name):
-                self.gui.interpreter.apply('pipe.create', pipe_name, 'noe')
+                self.gui.interpreter.apply('pipe.create', pipe_name=pipe_name, pipe_type='noe', bundle=pipe_bundle)
+
+            # Create the data pipe bundle if needed.
+            if not has_bundle(pipe_bundle):
+                self.gui.interpreter.apply('pipe.bundle', bundle=pipe_bundle, pipe=pipe_name)
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('NOE')
@@ -105,6 +111,7 @@ class Auto_noe(Base_analysis):
             # Store the analysis and pipe names.
             ds.relax_gui.analyses[data_index].analysis_name = analysis_name
             ds.relax_gui.analyses[data_index].pipe_name = pipe_name
+            ds.relax_gui.analyses[data_index].pipe_bundle = pipe_bundle
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
@@ -188,7 +195,7 @@ class Auto_noe(Base_analysis):
         self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Display the data pipe.
-        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the frequency selection GUI element.
         self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the NOE values will be located in the file 'noe.600.out'.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -275,14 +282,14 @@ class Auto_noe(Base_analysis):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
-            status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count)
+            status.observers.exec_lock.register(self.data.pipe_bundle, self.activate)
 
         # Unregister.
         else:
             # The model-free methods.
-            status.observers.gui_uf.unregister(self.data.pipe_name)
-            status.observers.exec_lock.unregister(self.data.pipe_name)
+            status.observers.gui_uf.unregister(self.data.pipe_bundle)
+            status.observers.exec_lock.unregister(self.data.pipe_bundle)
 
             # The embedded objects methods.
             self.peak_intensity.observer_register(remove=True)

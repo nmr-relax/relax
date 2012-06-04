@@ -34,7 +34,7 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.pipes import has_pipe
+from generic_fns.pipes import has_bundle, has_pipe
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from specific_fns.setup import get_specific_fn
@@ -137,7 +137,7 @@ class About_window(About_base):
 class Auto_model_free(Base_analysis):
     """The model-free auto-analysis GUI element."""
 
-    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, data_index=None):
         """Build the automatic model-free protocol GUI element.
 
         @param parent:          The parent wx element.
@@ -156,8 +156,10 @@ class Auto_model_free(Base_analysis):
         @type gui:              gui.relax_gui.Main instance
         @keyword analysis_name: The name of the analysis (the name in the tab part of the notebook).
         @type analysis_name:    str
-        @keyword pipe_name:     The name of the data pipe associated with this analysis.
+        @keyword pipe_name:     The name of the original data pipe for this analysis.
         @type pipe_name:        str
+        @keyword pipe_bundle:   The name of the data pipe bundle associated with this analysis.
+        @type pipe_bundle:      str
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """
@@ -172,7 +174,11 @@ class Auto_model_free(Base_analysis):
         if data_index == None:
             # First create the data pipe if not already in existence.
             if not has_pipe(pipe_name):
-                self.gui.interpreter.apply('pipe.create', pipe_name, 'mf')
+                self.gui.interpreter.apply('pipe.create', pipe_name=pipe_name, pipe_type='mf', bundle=pipe_bundle)
+
+            # Create the data pipe bundle if needed.
+            if not has_bundle(pipe_bundle):
+                self.gui.interpreter.apply('pipe.bundle', bundle=pipe_bundle, pipe=pipe_name)
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('model-free')
@@ -180,6 +186,7 @@ class Auto_model_free(Base_analysis):
             # Store the analysis and pipe names.
             ds.relax_gui.analyses[data_index].analysis_name = analysis_name
             ds.relax_gui.analyses[data_index].pipe_name = pipe_name
+            ds.relax_gui.analyses[data_index].pipe_bundle = pipe_bundle
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].grid_inc = None
@@ -323,8 +330,9 @@ class Auto_model_free(Base_analysis):
         data = Container()
         missing = []
 
-        # The pipe name.
+        # The pipe name and bundle.
         data.pipe_name = self.data.pipe_name
+        data.pipe_bundle = self.data.pipe_bundle
 
         # The model-free models (do not change these unless absolutely necessary).
         data.local_tm_models = self.local_tm_model_field.GetValue()
@@ -474,7 +482,7 @@ class Auto_model_free(Base_analysis):
         self.add_title(box, "Setup for model-free analysis")
 
         # Display the data pipe.
-        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
         self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -625,14 +633,14 @@ class Auto_model_free(Base_analysis):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
-            status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count)
+            status.observers.exec_lock.register(self.data.pipe_bundle, self.activate)
 
         # Unregister.
         else:
             # The model-free methods.
-            status.observers.gui_uf.unregister(self.data.pipe_name)
-            status.observers.exec_lock.unregister(self.data.pipe_name)
+            status.observers.gui_uf.unregister(self.data.pipe_bundle)
+            status.observers.exec_lock.unregister(self.data.pipe_bundle)
 
             # The embedded objects methods.
             self.relax_data.observer_register(remove=True)
@@ -775,7 +783,7 @@ class Execute_mf(Execute):
         """Execute the calculation."""
 
         # Start the protocol.
-        dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, results_dir=self.data.save_dir, diff_model=self.data.global_models, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, diff_tensor_grid_inc=self.data.diff_tensor_grid_inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
+        dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, diff_model=self.data.global_models, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, diff_tensor_grid_inc=self.data.diff_tensor_grid_inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
 
 
 
