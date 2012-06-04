@@ -324,6 +324,14 @@ class Analysis_controller:
             elif ds.relax_gui.analyses[i].analysis_type == 'model-free':
                 analysis_name = 'Model-free'
 
+            # Compatibility with old save files.
+            if not hasattr(ds.relax_gui.analyses[i], 'pipe_bundle'):
+                # First alias the pipe name as the bundle name.
+                ds.relax_gui.analyses[i].pipe_bundle = ds.relax_gui.analyses[i].pipe_name
+
+                # Then bundle the associated pipe into a bundle with the same name.
+                self.gui.interpreter.apply('pipe.bundle', pipe=ds.relax_gui.analyses[i].pipe_name, bundle=ds.relax_gui.analyses[i].pipe_name)
+
             # Set up the analysis.
             self._switch_flag = False
             self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i)
