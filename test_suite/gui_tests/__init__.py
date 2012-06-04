@@ -40,6 +40,7 @@ from jw_mapping import Jw_mapping
 from model_free import Mf
 from n_state_model import N_state_model
 from noe import Noe
+from pipes import Pipes
 from rx import Rx
 from state import State
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
@@ -51,6 +52,7 @@ __all__ = ['bmrb',
            'model_free',
            'n_state_model',
            'noe',
+           'pipes',
            'rx',
            'state']
 
@@ -115,6 +117,7 @@ class GUI_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
 

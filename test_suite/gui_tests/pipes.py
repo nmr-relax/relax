@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,42 +20,20 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import sep
+# Module docstring.
+"""GUI tests for pipe related activities."""
 
 # relax module imports.
-from base_classes import SystemTestCase
-from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
-from status import Status; status = Status()
+import dep_check
+from test_suite.gui_tests.base_classes import GuiTestCase
+from test_suite import system_tests
 
 
-class Pipes(SystemTestCase):
-    """TestCase class for the functional tests of relax data pipes."""
+class Pipes(GuiTestCase, system_tests.pipes.Pipes):
+    """Class for testing the pipe related functions in the GUI."""
 
-    def test_pipe_bundle(self):
-        """Test the pipe bundle concepts."""
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
 
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'pipe_bundle.py')
-
-        # Checks.
-        self.assertEqual(pipes.cdp_name(), None)
-        self.assertEqual(pipes.has_bundle('test bundle 1'), True)
-        self.assertEqual(pipes.has_bundle('test bundle 2'), True)
-        self.assertEqual(pipes.has_bundle('test bundle 3'), False)
-        self.assertEqual(pipes.bundle_names(), ['test bundle 1', 'test bundle 2'])
-        pipe_list = []
-        bundle_list = []
-        for pipe in pipes.pipe_loop():
-            pipe_list.append(pipe)
-            bundle_list.append(pipes.get_bundle(pipe))
-        self.assertEqual(pipe_list, ['test pipe 1', 'test pipe 2', 'test pipe 3', 'test pipe 4', 'test pipe 5', 'test pipe 6'])
-        self.assertEqual(bundle_list, ['test bundle 1', 'test bundle 1', 'test bundle 1', 'test bundle 2', 'test bundle 2', 'test bundle 2'])
-
-
-    def test_pipe_create(self):
-        """Create a data pipe."""
-
-        # Create the data pipe.
-        self.interpreter.pipe.create('test', 'mf')
+        # Force execution of the GuiTestCase __init__ method.
+        GuiTestCase.__init__(self, methodName)
