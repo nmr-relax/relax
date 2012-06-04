@@ -76,6 +76,9 @@ def bundle(bundle=None, pipe=None):
     # Add the pipe to the bundle.
     ds.pipe_bundles[bundle].append(pipe)
 
+    # Notify observers that something has occurred.
+    status.observers.pipe_alteration.notify()
+
 
 def bundle_names():
     """Return the list of all data pipe bundles.
