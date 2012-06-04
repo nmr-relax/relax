@@ -824,7 +824,7 @@ class Uf_page(Wiz_page):
                         text.SetFont(font.subtitle)
                     elif type == 'paragraph':
                         text.SetFont(font.normal)
-                    elif type == 'table':
+                    elif type in ['table', 'verbatim']:
                         text.SetFont(font.modern_small)
 
                     # Wrap the paragraphs and lists.
