@@ -971,49 +971,6 @@ class Uf_page(Wiz_page):
             wx.CallAfter(app.gui.controller.Raise)
 
 
-    def process_doc(self, doc):
-        """Process the documentation list.
-
-        @param doc:     The documentation in the form of a list of the title and description.
-        @type doc:      list of str
-        """
-
-        # The title.
-        yield doc[0], 'title'
-
-        # Strip the leading whitespace, if needed.
-        doc[1] = strip_lead(doc[1])
-
-        # Split up the description.
-        docstring_lines = split(doc[1], "\n")
-
-        # Initialise.
-        text = [""]
-        type = ['desc']
-        in_table = False
-
-        # Loop over the lines of the docstring.
-        for line in docstring_lines:
-            # Start of the table.
-            if not in_table and search('___', line):
-                in_table = True
-                text.append("")
-                type.append("table")
-
-            # Add the line to the text.
-            text[-1] = "%s%s\n" % (text[-1], line)
-
-            # End of the table.
-            if in_table and line == '':
-                in_table = False
-                text.append("")
-                type.append("desc")
-
-        # Yield the bits.
-        for i in range(len(text)):
-            yield text[i], type[i]
-
-
     def update_args(self):
         """Update all the argument ComboBox choices.
 
