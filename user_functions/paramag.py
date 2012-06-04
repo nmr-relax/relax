@@ -96,7 +96,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is required for specifying where the paramagnetic centre is located in the loaded structure file.  If no structure number is given, then the average atom position will be calculated if multiple structures are loaded.")
-uf.desc[-1].add_paragraph("A different set of structures than those loaded into the current data pipe can also be used to determine the position, or its average.  This can be achieved by loading the alternative structures into another data pipe, and then specifying that pipe through the pipe argument.")
+uf.desc[-1].add_paragraph("A different set of structures than those loaded into the current data pipe can also be used to determine the position, or its average.  This can be achieved by loading the alternative structures into another data pipe, and then specifying that pipe.")
 uf.desc[-1].add_paragraph("If the average position flag is set to True, the average position from all models will be used as the position of the paramagnetic centre.  If False, then the positions from all structures will be used.  If multiple positions are used, then a fast paramagnetic centre motion will be assumed so that PCSs for a single tensor will be calculated for each position, and the PCS values linearly averaged.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

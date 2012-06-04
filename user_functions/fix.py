@@ -60,7 +60,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The keyword argument 'element' can be any of the following:")
+uf.desc[-1].add_paragraph("The element can be any of the following:")
 uf.desc[-1].add_item_list_element("'diff'", "The diffusion tensor parameters.  This will allow all diffusion tensor parameters to be toggled.")
 uf.desc[-1].add_item_list_element("'all_spins'", "Using this keyword, all parameters from all spins will be toggled.")
 uf.desc[-1].add_item_list_element("'all'", "All parameters will be toggled.  This is equivalent to combining both 'diff' and 'all_spins'.")

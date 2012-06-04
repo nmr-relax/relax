@@ -212,7 +212,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  It is used to specify whether peak heights or peak volumes were measured.  The two currently allowed values for the type argument are 'height' and 'volume'.")
+uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  It is used to specify whether peak heights or peak volumes were measured.  The two currently allowed values for the peak intensity type are 'height' and 'volume'.")
 uf.backend = relax_data.peak_intensity_type
 uf.menu_text = "peak_&intensity_type"
 uf.gui_icon = "oxygen.actions.edit-rename"

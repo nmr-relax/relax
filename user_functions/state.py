@@ -139,7 +139,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will place the program state - the relax data store - into a file for later reloading or reference.  The default format is an XML formatted file, but this can be changed to a Python pickled object through the pickle flag.  Note, the pickle format is not human readable and often is not compatible with newer relax versions.")
-uf.desc[-1].add_paragraph("The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compress_type argument which can be set to")
+uf.desc[-1].add_paragraph("The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compression type which can be set to")
 uf.desc[-1].add_item_list_element("0", "No compression (no file extension).")
 uf.desc[-1].add_item_list_element("1", "bzip2 compression ('.bz2' file extension).")
 uf.desc[-1].add_item_list_element("2", "gzip compression ('.gz' file extension).")

@@ -95,7 +95,7 @@ uf.add_keyarg(
     name = "params",
     py_type = "str_list",
     desc_short = "parameters",
-    desc = "The parameters to be mapped.  This argument should be an array of strings, the meanings of which are described below."
+    desc = "The parameters to be mapped.  This should be an array of strings, the meanings of which are described below."
 )
 uf.add_keyarg(
     name = "map_type",

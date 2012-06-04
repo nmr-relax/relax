@@ -94,8 +94,8 @@ uf.desc[-1].add_item_list_element("Expect", "The expected overall discrepancy (t
 uf.desc[-1].add_item_list_element("Farrow", "Old model-free method by Farrow et al., 1994.")
 uf.desc[-1].add_item_list_element("Palmer", "Old model-free method by Mandel et al., 1995.")
 uf.desc[-1].add_item_list_element("Overall", "The realised overall discrepancy (the true values of the parameters are required).")
-uf.desc[-1].add_paragraph("For the methods 'Bootstrap', 'Expect', and 'Overall', the function 'monte_carlo' should have previously been executed with the type argument set to the appropriate value to modify its behaviour.")
-uf.desc[-1].add_paragraph("If the pipes argument is not supplied then all data pipes will be used for model selection.")
+uf.desc[-1].add_paragraph("For the methods 'Bootstrap', 'Expect', and 'Overall', the Monte Carlo simulations should have previously been executed with the monte_carlo.create_data method set to Bootstrapping to modify its behaviour.")
+uf.desc[-1].add_paragraph("If the data pipes have not been specified, then all data pipes will be used for model selection.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the program, the following commands will carry out AIC model selection and to place the selected results into the 'mixed' data pipe, type one of:")

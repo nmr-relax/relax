@@ -144,7 +144,7 @@ uf.desc[-1].add_list_element("'dir/run.sh'")
 uf.desc[-1].add_paragraph("The file 'dir/run.sh' contains the single command,")
 uf.desc[-1].add_item_list_element(None, "'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',")
 uf.desc[-1].add_paragraph("which can be used to execute modelfree4.")
-uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
+uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
 uf.backend = palmer.create
 uf.menu_text = "&create"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
@@ -186,7 +186,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Modelfree 4 will be executed as")
 uf.desc[-1].add_prompt("$ modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
 uf.desc[-1].add_paragraph("If a PDB file is loaded and non-isotropic diffusion is selected, then the file name will be placed on the command line as '-s pdb_file_name'.")
-uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
+uf.desc[-1].add_paragraph("If you would like to use a different Modelfree executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
 uf.backend = palmer.execute
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.menu_text = "&execute"

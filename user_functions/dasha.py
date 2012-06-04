@@ -71,7 +71,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The script file created is called 'dir/dasha_script'.")
 # Optimisation algorithms.
 uf.desc.append(Desc_container("Optimisation algorithms"))
-uf.desc[-1].add_paragraph("The two minimisation algorithms within Dasha are accessible through the algorithm argument which can be set to:")
+uf.desc[-1].add_paragraph("The two minimisation algorithms within Dasha are accessible through the algorithm which can be set to:")
 uf.desc[-1].add_item_list_element("'LM'", "The Levenberg-Marquardt algorithm,")
 uf.desc[-1].add_item_list_element("'NR'", "Newton-Raphson algorithm.")
 uf.desc[-1].add_paragraph("For Levenberg-Marquardt minimisation, the function 'lmin' will be called, while for Newton-Raphson, the function 'min' will be executed.")
@@ -112,7 +112,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Dasha will be executed as")
 uf.desc[-1].add_prompt("$ dasha < dasha_script | tee dasha_results")
-uf.desc[-1].add_paragraph("If you would like to use a different Dasha executable file, change the keyword argument 'binary' to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
+uf.desc[-1].add_paragraph("If you would like to use a different Dasha executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
 uf.backend = dasha.execute
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.menu_text = "&execute"

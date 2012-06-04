@@ -57,14 +57,14 @@ uf.add_keyarg(
     py_type = "num_list",
     dim = 3,
     desc_short = "centre of mass",
-    desc = "The optional argument for manually specifying the CoM of the initial position prior to the N rotations to the positions of the N states.",
+    desc = "Manually specify the CoM of the initial position prior to the N rotations to the positions of the N states.  This is optional.",
     can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("WARNING:  This analysis is now defunct!")
 uf.desc[-1].add_paragraph("This is used for analysing the domain motion information content of the N states from the N-state model.  The states do not correspond to physical states, hence nothing can be extracted from the individual states.  This analysis involves the calculation of the pivot to centre of mass (pivot-CoM) order parameter and subsequent cone of motions.")
-uf.desc[-1].add_paragraph("For the analysis, both the pivot point and centre of mass must be specified.  The supplied pivot point must be a vector of floating point numbers of length 3.  If the centre keyword argument is supplied, it must also be a vector of floating point numbers (of length 3).  If the centre argument is not supplied, then the CoM will be calculated from the selected parts of a previously loaded structure.")
+uf.desc[-1].add_paragraph("For the analysis, both the pivot point and centre of mass must be specified.  The supplied pivot point must be a vector of floating point numbers of length 3.  If the centre of mass is supplied, it must also be a vector of floating point numbers (of length 3).  If the centre of mass is not supplied, then the CoM will be calculated from the selected parts of a previously loaded structure.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To perform an analysis where the pivot is at the origin and the CoM is set to the N-terminal domain of a previously loaded PDB file (the C-terminal domain has been deselected), type:")
@@ -139,8 +139,8 @@ uf.desc[-1].add_paragraph("WARNING:  This analysis is now defunct!")
 uf.desc[-1].add_paragraph("This creates a PDB file containing an artificial geometric structure to represent the various cone models.  These models include:")
 uf.desc[-1].add_list_element("'diff in cone'")
 uf.desc[-1].add_list_element("'diff on cone'")
-uf.desc[-1].add_paragraph("The model can be selected by setting the cone_type argument to one of these strings.  The cone is represented as an isotropic cone with its axis parallel to the average pivot-CoM vector, the vertex placed at the pivot point of the domain motions, and the length of the edge of the cone equal to the pivot-CoM distance multipled by the scaling argument.  The resultant PDB file can subsequently read into any molecular viewer.")
-uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The average pivot-CoM vector is presented as the residue 'AVE' with one carbon atom positioned at the pivot and the other at the head of the vector (after scaling by the scale argument).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the varying average pivot-CoM vector for each simulation.")
+uf.desc[-1].add_paragraph("The model can be selected by setting the cone type to one of these values.  The cone is represented as an isotropic cone with its axis parallel to the average pivot-CoM vector, the vertex placed at the pivot point of the domain motions, and the length of the edge of the cone equal to the pivot-CoM distance multiplied by the scaling factor.  The resultant PDB file can subsequently read into any molecular viewer.")
+uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The average pivot-CoM vector is presented as the residue 'AVE' with one carbon atom positioned at the pivot and the other at the head of the vector (after scaling by the scaling factor).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the varying average pivot-CoM vector for each simulation.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined from the average pivot-CoM vector.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
 uf.backend = n_state_model_obj._cone_pdb
 uf.menu_text = "&cone_pdb"

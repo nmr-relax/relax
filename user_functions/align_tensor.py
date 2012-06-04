@@ -78,7 +78,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will copy the alignment tensor data to a new tensor or a new data pipe.  The destination data pipe must not contain any alignment tensor data corresponding to the tensor_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will default to the current data pipe.  Both the tensor_from and tensor_to arguments must be supplied.")
+uf.desc[-1].add_paragraph("This will copy the alignment tensor data to a new tensor or a new data pipe.  The destination data pipe must not contain any alignment tensor data corresponding to the tensor_to label.  If the source or destination data pipes are not supplied, then both will default to the current data pipe.  Both the source and destination tensor IDs must be supplied.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To copy the alignment tensor data corresponding to 'Pf1' from the data pipe 'old' to the current data pipe, type one of:")
@@ -248,7 +248,7 @@ uf.add_keyarg(
     desc = "A flag which determines if the alignment tensor data or its errors are being input."
 )
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Using this function, the alignment tensor data can be set up.  The params argument should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor, which can be specified by the param_types argument, where the values correspond to:")
+uf.desc[-1].add_paragraph("Using this function, the alignment tensor data can be set up.  The alignment tensor parameters should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor which can be specified by the parameter types whereby the values correspond to:")
 uf.desc[-1].add_item_list_element("0", "{Sxx, Syy, Sxy, Sxz, Syz}  (unitless),")
 uf.desc[-1].add_item_list_element("1", "{Szz, Sxx-yy, Sxy, Sxz, Syz}  (Pales default format),")
 uf.desc[-1].add_item_list_element("2", "{Axx, Ayy, Axy, Axz, Ayz}  (unitless),")
@@ -301,7 +301,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will calculate the angles between all loaded alignment tensors for the current data pipe.  The matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent on the basis set.  If the basis_set argument is set to the default of 0, the vectors {Sxx, Syy, Sxy, Sxz, Syz} are used.  If the basis_set argument is set to 1, the vectors {Szz, Sxxyy, Sxy, Sxz, Syz} are used instead.")
+uf.desc[-1].add_paragraph("This will calculate the angles between all loaded alignment tensors for the current data pipe.  The matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent on the basis set.  If the basis set is set to the default of 0, the vectors {Sxx, Syy, Sxy, Sxz, Syz} are used.  If the basis set is set to 1, the vectors {Szz, Sxxyy, Sxy, Sxz, Syz} are used instead.")
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.gui_icon = "oxygen.categories.applications-education"
@@ -402,7 +402,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will perform a singular value decomposition of all tensors loaded for the current data pipe.  If the basis_set argument is set to the default of 0, the matrix on which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz} layed out as:")
+uf.desc[-1].add_paragraph("This will perform a singular value decomposition of all tensors loaded for the current data pipe.  If the basis set is set to the default of 0, the matrix on which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz} layed out as:")
 uf.desc[-1].add_verbatim("""
     | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
     | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
