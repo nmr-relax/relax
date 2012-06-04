@@ -213,6 +213,16 @@ def delete(pipe_name=None):
 
         # Loop over the pipes.
         for pipe in pipes:
+            # Clean up the pipe bundle, if needed.
+            bundle = get_bundle(pipe)
+            if bundle:
+                # Remove the pipe from the bundle, if needed.
+                ds.pipe_bundles[bundle].remove(pipe)
+
+                # Clean up the bundle.
+                if ds.pipe_bundles[bundle] == []:
+                    ds.pipe_bundles.pop(bundle)
+
             # Delete the data pipe.
             del ds[pipe]
 
