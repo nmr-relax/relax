@@ -347,6 +347,7 @@ class Pipe_editor(wx.Frame):
 
         # The type.
         type = get_type(self.selected_pipe)
+        bundle = get_bundle(self.selected_pipe)
 
         # The name.
         names = {
@@ -357,7 +358,7 @@ class Pipe_editor(wx.Frame):
         }
 
         # Create a new analysis with the selected data pipe.
-        self.gui.analysis.new_analysis(analysis_type=type, analysis_name=names[type], pipe_name=self.selected_pipe)
+        self.gui.analysis.new_analysis(analysis_type=type, analysis_name=names[type], pipe_name=self.selected_pipe, pipe_bundle=bundle)
 
 
     def handler_close(self, event):
