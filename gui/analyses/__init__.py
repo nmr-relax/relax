@@ -557,11 +557,11 @@ class Analysis_controller:
         status.observers.gui_analysis.notify()
 
 
-    def page_index_from_pipe(self, pipe):
-        """Find the page holding the data pipe and return its page index.
+    def page_index_from_bundle(self, bundle):
+        """Find the analysis associated with the data pipe bundle and return its page index.
 
-        @param pipe:    The data pipe to find the page of.
-        @type pipe:     str
+        @param bundle:  The data pipe bundle to find the page of.
+        @type bundle:   str
         @return:        The page index.
         @rtype:         int or None
         """
@@ -570,7 +570,7 @@ class Analysis_controller:
         index = None
         for i in range(self._num_analyses):
             # Matching page.
-            if ds.relax_gui.analyses[i].pipe_name == pipe:
+            if ds.relax_gui.analyses[i].pipe_bundle == bundle:
                 index = i
                 break
 
@@ -578,17 +578,17 @@ class Analysis_controller:
         return index
 
 
-    def page_name_from_pipe(self, pipe):
-        """Find the page holding the data pipe and return its name.
+    def page_name_from_bundle(self, bundle):
+        """Find the analysis associated with the bundle and return its name.
 
-        @param pipe:    The data pipe to find the page of.
-        @type pipe:     str
+        @param bundle:  The data pipe bundle to find the page of.
+        @type bundle:   str
         @return:        The page name.
         @rtype:         str or None
         """
 
         # Find the index.
-        index = self.page_index_from_pipe(pipe)
+        index = self.page_index_from_bundle(bundle)
 
         # No matching page.
         if index == None:
@@ -627,7 +627,7 @@ class Analysis_controller:
             pipe = pipes.cdp_name()
 
         # Find the page.
-        index = self.page_index_from_pipe(pipe)
+        index = self.page_index_from_bundle(pipes.get_bundle(pipe))
 
         # No matching page.
         if index == None:
