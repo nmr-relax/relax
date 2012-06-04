@@ -176,8 +176,9 @@ CONV_LOOP = True
 # The following sequence of user function calls can be changed as needed.
 
 # Create the data pipe.
-name = "mf (%s)" % asctime(localtime())
-pipe.create(name, 'mf')
+pipe_bundle = "mf (%s)" % asctime(localtime())
+name = "origin"
+pipe.create(name, 'mf', bundle=pipe_bundle)
 
 # Load the sequence.
 sequence.read(file='noe.500.out', dir=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None)
@@ -213,4 +214,4 @@ value.set('1H', 'proton_type')
 ############
 
 # Do not change!
-dAuvergne_protocol(pipe_name=name, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
+dAuvergne_protocol(pipe_name=name, pipe_bundle=pipe_bundle, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
