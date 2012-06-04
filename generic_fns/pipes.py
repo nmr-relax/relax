@@ -382,14 +382,31 @@ def pipe_loop(name=False):
         status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
-def pipe_names():
+def pipe_names(bundle=None):
     """Return the list of all data pipes.
 
-    @return:        The list of data pipes.
-    @rtype:         list of str
+    @keyword bundle:    If supplied, the pipe names will be restricted to those of the bundle.
+    @type bundle:       str or None
+    @return:            The list of data pipes.
+    @rtype:             list of str
     """
 
-    return list(ds.keys())
+    # Initialise.
+    names = []
+    pipes = ds.keys()
+    pipes.sort()
+
+    # Loop over the pipes.
+    for pipe in pipes:
+        # The bundle restriction.
+        if bundle and get_bundle(pipe) != bundle:
+            continue
+
+        # Add the pipe.
+        names.append(pipe)
+
+    # Return the pipe list.
+    return names
 
 
 def switch(pipe_name=None):
