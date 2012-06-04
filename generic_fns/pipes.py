@@ -90,7 +90,7 @@ def copy(pipe_from=None, pipe_to=None):
     status.observers.pipe_alteration.notify()
 
 
-def create(pipe_name=None, pipe_type=None, switch=True):
+def create(pipe_name=None, pipe_type=None, bundle=None, switch=True):
     """Create a new data pipe.
 
     The current data pipe will be changed to this new data pipe.
@@ -109,6 +109,8 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         'relax_fit':  Relaxation curve fitting,
         'relax_disp':  Relaxation dispersion,
     @type pipe_type:    str
+    @keyword bundle:    The optional data pipe bundle to associate the data pipe with.
+    @type bundle:       str or None
     @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe will remain as is.
     @type switch:       bool
     """
@@ -129,7 +131,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Add the data pipe.
-        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
+        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, bundle=bundle, switch=switch)
 
     # Release the lock.
     finally:

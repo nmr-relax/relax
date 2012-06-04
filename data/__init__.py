@@ -73,6 +73,7 @@ class Relax_data_store(dict):
             self.instance = dict.__new__(self, *args, **kargs)
 
             # Add some initial structures.
+            self.instance.pipe_bundles = {}
             self.instance.relax_gui = Gui()
 
         # Already initialised, so return the instance.
@@ -183,7 +184,7 @@ class Relax_data_store(dict):
         status.observers.pipe_alteration.notify()
 
 
-    def add(self, pipe_name, pipe_type, switch=True):
+    def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.
 
         This method should be used rather than importing the PipeContainer class and using the statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is the name of the data pipe.
@@ -192,6 +193,8 @@ class Relax_data_store(dict):
         @type pipe_name:    str
         @param pipe_type:   The data pipe type.
         @type pipe_type:    str
+        @keyword bundle:    The optional data pipe bundle to associate the data pipe with.
+        @type bundle:       str or None
         @keyword switch:    A flag which if True will cause the new data pipe to be set to the current data pipe.
         @type switch:       bool
         """
@@ -205,6 +208,15 @@ class Relax_data_store(dict):
 
         # Add the data pipe type string to the container.
         self[pipe_name].pipe_type = pipe_type
+
+        # The pipe bundle.
+        if bundle:
+            # A new bundle.
+            if bundle not in self.pipe_bundles.keys():
+                self.pipe_bundles[bundle] = []
+
+            # Add the pipe to the bundle.
+            self.pipe_bundles[bundle].append(pipe_name)
 
         # Change the current data pipe.
         if switch:
