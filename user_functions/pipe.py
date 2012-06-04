@@ -95,6 +95,16 @@ uf.add_keyarg(
     wiz_combo_data = pipes.VALID_TYPES,
     wiz_read_only = True
 )
+uf.add_keyarg(
+    name = "bundle",
+    py_type = "str",
+    desc_short = "the pipe bundle",
+    desc = "The optional pipe bundle is a special grouping or clustering of data pipes.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.bundle_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
 uf.backend = pipes.create
 # Description.
 uf.desc.append(Desc_container())
@@ -107,6 +117,10 @@ uf.desc[-1].add_item_list_element("'mf'", "Model-free analysis,")
 uf.desc[-1].add_item_list_element("'N-state'", "N-state model of domain motions,")
 uf.desc[-1].add_item_list_element("'noe'", "Steady state NOE calculation,")
 uf.desc[-1].add_item_list_element("'relax_fit'", "Relaxation curve fitting,")
+uf.desc[-1].add_paragraph("The pipe bundling concept is simply a way of grouping data pipes together.  This is useful for:")
+uf.desc[-1].add_list_element("the grouping and categorisation of data pipes when multiple analyses are performed.")
+uf.desc[-1].add_list_element("auto-analyses, in which all the data pipes they create will be placed into one bundle.")
+uf.desc[-1].add_list_element("for the GUI mode as analysis tabs are linked to pipe bundles.  This allows the switching between data pipes to activate the correct analysis.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up a model-free analysis data pipe with the name 'm5', type:")
