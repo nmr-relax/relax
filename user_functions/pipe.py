@@ -38,6 +38,43 @@ uf_class.menu_text = "&pipe"
 uf_class.gui_icon = "relax.pipe"
 
 
+# The pipe.bundle user function.
+uf = uf_info.add_uf('pipe.bundle')
+uf.title = "The grouping of data pipes into a bundle."
+uf.title_short = "Data pipe bundling."
+uf.add_keyarg(
+    name = "bundle",
+    py_type = "str",
+    desc_short = "pipe bundle",
+    desc = "The pipe bundle is a special grouping or clustering of data pipes.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.bundle_names,
+    wiz_read_only = False
+)
+uf.add_keyarg(
+    name = "pipe",
+    py_type = "str",
+    desc_short = "data pipe",
+    desc = "The name of the data pipe to add to the bundle.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    wiz_read_only = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Data pipes can be grouped or clustered together through special structures known as pipe bundles.  If the specified data pipe bundle does not currently exist, it will be created.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To add the data pipes 'test 1', 'test 2', and 'test 3' to the bundle 'first analysis', type the following:")
+uf.desc[-1].add_prompt("relax> pipe.bundle('first analysis 1', 'test 1')")
+uf.desc[-1].add_prompt("relax> pipe.bundle('first analysis 1', 'test 2')")
+uf.desc[-1].add_prompt("relax> pipe.bundle('first analysis 1', 'test 3')")
+uf.backend = pipes.bundle
+uf.menu_text = "&bundle"
+uf.gui_icon = "relax.pipe_bundle"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe_bundle.png'
+
+        
 # The pipe.copy user function.
 uf = uf_info.add_uf('pipe.copy')
 uf.title = "Copy a data pipe."

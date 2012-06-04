@@ -52,6 +52,31 @@ for name in VALID_TYPES:
     PIPE_DESC_LIST.append(PIPE_DESC[name])
 
 
+def bundle(bundle=None, pipe=None):
+    """Add the data pipe to the given bundle, created the bundle as needed.
+
+    @keyword bundle:    The name of the data pipe bundle.
+    @type bundle:       str
+    @keyword pipe:      The name of the data pipe to add to the bundle.
+    @type pipe:         str
+    """
+
+    # Check that the data pipe exists.
+    test(pipe)
+
+    # Check that the pipe is not in another bundle.
+    for key in ds.pipe_bundles.keys():
+        if pipe in ds.pipe_bundles[key]:
+            raise RelaxError("The data pipe is already within the '%s' bundle." % key)
+
+    # Create a new bundle if needed.
+    if bundle not in ds.pipe_bundles.keys():
+        ds.pipe_bundles[bundle] = []
+
+    # Add the pipe to the bundle.
+    ds.pipe_bundles[bundle].append(pipe)
+
+
 def bundle_names():
     """Return the list of all data pipe bundles.
 
