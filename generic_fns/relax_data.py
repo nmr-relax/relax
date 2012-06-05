@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from math import modf
 from numpy import array, float64, int32, ones, zeros
 import string
 import sys
@@ -77,6 +78,9 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     # Check if the type is valid.
     if ri_type and ri_type not in VALID_TYPES:
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
+
+    # Frequency checks.
+    frq_checks(frq)
 
     # Initialise the global data for the current pipe if necessary.
     if not hasattr(cdp, 'frq'):
@@ -507,6 +511,27 @@ def display(ri_id=None):
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
 
 
+def frq_checks(frq):
+    """Perform a number of checks on the given frequency.
+
+    @param frq:     The proton frequency value.
+    @type frq:      float or None
+    """
+
+    # No frequency given.
+    if frq == None:
+        return
+
+    # Make sure the precise value has been supplied.
+    frac, integer = modf(frq / 1e6)
+    if frac == 0.0 or frac > 0.99999:
+        warn(RelaxWarning("The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."))
+
+    # Check that Hz have been supplied.
+    if frq < 1e6:
+        warn(RelaxWarning("The proton frequency of %s should be in Hz, but it seems to be in MHz." % frq))
+
+
 def frq_loop():
     """Generator function for returning each unique frequency.
 
@@ -792,6 +817,9 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     # Check if the type is valid.
     if ri_type not in VALID_TYPES:
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
+
+    # Frequency checks.
+    frq_checks(frq)
 
     # Loop over the file data to create the data structures for packing.
     values = []
