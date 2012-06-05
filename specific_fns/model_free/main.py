@@ -38,7 +38,7 @@ from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exi
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 import specific_fns
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container

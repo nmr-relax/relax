@@ -381,6 +381,7 @@ class Uf_object(object):
         @rtype:             str
         """
 
+        print `status.ps3`
         # Initialise.
         text = ""
 
