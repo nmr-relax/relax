@@ -205,6 +205,9 @@ class GuiTestCase(TestCase):
     def tearDown(self):
         """Default tearDown operation - delete temp directories and files and reset relax."""
 
+        # Flush all wx events prior to the clean up operations of this method.  This prevents these events from occurring after the GUI elements have been deleted.
+        wx.Yield()
+
         # Remove the temporary directories.
         if hasattr(ds, 'tmpdir'):
             # Delete the directory.
