@@ -25,7 +25,6 @@ from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
@@ -100,3 +99,32 @@ class Relax_data(SystemTestCase):
 
             # Increment.
             index += 1
+
+
+    def test_delete(self):
+        """Test the relax_data.delete user function, replicating bug #19785."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_19785_relax_data_delete.py')
+
+        # Switch to the first pipe.
+        self.interpreter.pipe.switch('delete 1')
+
+        # Checks.
+        self.assertEqual(cdp.ri_ids, ['R1_900', 'NOE_900', 'R1_500', 'R2_500', 'NOE_500'])
+        self.assert_(not cdp.frq.has_key('R2_900'))
+        self.assert_(not cdp.ri_type.has_key('R2_900'))
+        for spin in spin_loop():
+            self.assert_(not spin.ri_data.has_key('R2_900'))
+            self.assert_(not spin.ri_data_err.has_key('R2_900'))
+
+        # Switch to the second pipe.
+        self.interpreter.pipe.switch('delete 2')
+
+        # Checks.
+        self.assert_(not hasattr(cdp, 'ri_ids'))
+        self.assert_(not hasattr(cdp, 'frq'))
+        self.assert_(not hasattr(cdp, 'ri_type'))
+        for spin in spin_loop():
+            self.assert_(not hasattr(spin, 'ri_data'))
+            self.assert_(not hasattr(spin, 'ri_data_err'))
