@@ -1063,7 +1063,7 @@ class Uf_storage(dict):
             # Generate the user functions.
             for name, data in uf_info.uf_loop():
                 # Generate a new container.
-                obj = Uf_object(name, title=data.title, size=data.wizard_size, height_desc=data.wizard_height_desc, apply_button=data.wizard_apply_button, sync=data.gui_sync)
+                obj = Uf_object(name, title=data.title_short, size=data.wizard_size, height_desc=data.wizard_height_desc, apply_button=data.wizard_apply_button, sync=data.gui_sync)
 
                 # Store it.
                 self._instance[name] = obj
