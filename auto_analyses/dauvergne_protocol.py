@@ -748,7 +748,7 @@ class dAuvergne_protocol:
         # Model selection (delete the model selection pipe if it already exists).
         if has_pipe(modsel_pipe):
             self.interpreter.pipe.delete(modsel_pipe)
-        self.interpreter.model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
+        self.interpreter.model_selection(method='AIC', modsel_pipe=modsel_pipe, bundle=self.pipe_bundle, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
@@ -772,7 +772,7 @@ class dAuvergne_protocol:
             # Create the data pipe (by copying).
             if has_pipe(name):
                 self.interpreter.pipe.delete(name)
-            self.interpreter.pipe.copy(self.pipe_name, name)
+            self.interpreter.pipe.copy(self.pipe_name, name, bundle_to=self.pipe_bundle)
             self.interpreter.pipe.switch(name)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
