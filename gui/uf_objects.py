@@ -931,15 +931,11 @@ class Uf_page(Wiz_page):
             interpreter.queue(uf, *args, **kwds)
 
 
-    def on_completion(self):
-        """Update the argument GUI elements if needed."""
-
-        # Update the args.
-        return self.update_args()
-
-
     def on_display(self):
         """Clear and update the data if needed."""
+
+        # Register this page with the 'gui_uf' observer so that update_args() is called once the any user function completes.
+        status.observers.gui_uf.register(self.name, self.update_args)
 
         # Update the args.
         return self.update_args()
@@ -994,6 +990,13 @@ class Uf_page(Wiz_page):
         # Bring the controller to the front.
         if status.show_gui and self.uf_data.display:
             wx.CallAfter(app.gui.controller.Raise)
+
+
+    def on_next(self):
+        """Remove this page from the observers."""
+
+        # Unregister this page with the 'gui_uf' observer.
+        status.observers.gui_uf.unregister(self.name)
 
 
     def update_args(self):
