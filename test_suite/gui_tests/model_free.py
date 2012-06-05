@@ -105,13 +105,13 @@ class Mf(GuiTestCase):
 
         # Set the values, using the methods behind the buttons to set up the user functions with default values, and then manually executing the user function.
         analysis.value_set_csa()
-        uf_store['value.set'].page.on_execute()
+        uf_store['value.set'].wizard._ok()
         analysis.value_set_r()
-        uf_store['value.set'].page.on_execute()
+        uf_store['value.set'].wizard._ok()
         analysis.value_set_heteronuc_type()
-        uf_store['value.set'].page.on_execute()
+        uf_store['value.set'].wizard._ok()
         analysis.value_set_proton_type()
-        uf_store['value.set'].page.on_execute()
+        uf_store['value.set'].wizard._ok()
 
         # The unit vector loading wizard.
         analysis.load_unit_vectors()
