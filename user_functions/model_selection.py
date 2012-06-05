@@ -73,6 +73,16 @@ uf.add_keyarg(
     desc = "The name of the new data pipe which will be created by this user function by the copying of the selected data pipe."
 )
 uf.add_keyarg(
+    name = "bundle",
+    py_type = "str",
+    desc_short = "pipe bundle",
+    desc = "The optional pipe bundle is a special grouping or clustering of data pipes.  If this is specified, the newly created data pipe will be added to this bundle.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.bundle_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "pipes",
     py_type = "str_list_of_lists",
     desc_short = "data pipes",
@@ -106,5 +116,5 @@ uf.desc[-1].add_prompt("relax> model_selection(method='AIC', modsel_pipe='mixed'
 uf.backend = model_selection.select
 uf.menu_text = "m&odel_selection"
 uf.gui_icon = "relax.discrepancy_curve"
-uf.wizard_size = (800, 600)
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'discrepancy_curve.png'
