@@ -292,7 +292,7 @@ class Uf_object(object):
         for i in range(self._karg_num):
             keys.append(self._kargs[i]['name'])
             values.append(self._kargs[i]['default'])
-        doc += "%s" % self._intro_text(keys, values, prompt=False)
+        doc += "%s" % format_text(self._intro_text(keys, values, prompt=False))
         doc += "\n\n"
 
         # Add the keyword args.
@@ -381,7 +381,6 @@ class Uf_object(object):
         @rtype:             str
         """
 
-        print `status.ps3`
         # Initialise.
         text = ""
 
@@ -403,9 +402,6 @@ class Uf_object(object):
 
         # The end.
         text += ")"
-
-        # Wrap the text.
-        text = format_text(text)
 
         # Return the text.
         return text
