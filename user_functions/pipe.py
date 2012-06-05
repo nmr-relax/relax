@@ -147,8 +147,8 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bundle",
     py_type = "str",
-    desc_short = "the pipe bundle",
-    desc = "The optional pipe bundle is a special grouping or clustering of data pipes.",
+    desc_short = "pipe bundle",
+    desc = "The optional pipe bundle is a special grouping or clustering of data pipes.  If this is specified, the newly created data pipe will be added to this bundle.",
     wiz_element_type = 'combo',
     wiz_combo_iter = pipes.bundle_names,
     wiz_read_only = False,
