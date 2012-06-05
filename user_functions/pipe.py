@@ -216,6 +216,7 @@ uf.backend = pipes.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
+uf.gui_sync = True    # Force synchronous operation to avoid the GUI from blowing up.
 
 
 # The pipe.display user function.
