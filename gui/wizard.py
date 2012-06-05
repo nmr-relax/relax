@@ -573,6 +573,9 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
+        # Execute the page's on_next() method to allow the page to clean itself up.
+        self._pages[self._current_page].on_next()
+
         # Close the window.
         self.Close()
 
