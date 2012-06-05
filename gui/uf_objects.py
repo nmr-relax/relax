@@ -778,6 +778,26 @@ class Uf_page(Wiz_page):
         text_elements = []
         text_types = []
 
+        # The synopsis.
+        if self.uf_data.title:
+            # The text.
+            text = wx.StaticText(panel, -1, self.uf_data.title, style=wx.TE_MULTILINE)
+
+            # Formatting.
+            text.SetFont(font.normal_italic)
+
+            # The text size.
+            x, y = text.GetSizeTuple()
+            tot_x += x
+            tot_y += y
+
+            # The spacing after the element.
+            tot_y += spacing * 1.5
+
+            # Append the text objects.
+            text_elements.append(text)
+            text_types.append('synopsis')
+
         # The description sections.
         if self.uf_data.desc != None:
             # Loop over the sections.
@@ -856,20 +876,24 @@ class Uf_page(Wiz_page):
         else:
             # Rewrap the text.
             for i in range(len(text_elements)):
-                if text_types[i] in ['paragraph', 'list', 'item list']:
+                if text_types[i] in ['synopsis', 'paragraph', 'list', 'item list']:
                     text_elements[i].Wrap(self._main_size)
 
             # Set the panel size.
-            panel.SetInitialSize((tot_x, tot_y))
+            panel.SetInitialSize((self._main_size, tot_y))
 
         # Add the text.
         for i in range(len(text_elements)):
             # Double spacing before each section (not including the first).
-            if i != 0 and text_types[i] == 'title':
+            if i > 1 and text_types[i] == 'title':
                 panel_sizer.AddSpacer(spacing * 2)
 
             # The text.
             panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
+
+            # 1.5 spacing after the synopsis (x0.5 here, x1 below).
+            if i == 0 and text_types[0] == 'synopsis':
+                panel_sizer.AddSpacer(int(spacing * 0.5))
 
             # Spacer after all sections.
             panel_sizer.AddSpacer(spacing)
