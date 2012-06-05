@@ -90,7 +90,7 @@ def bundle_names():
     return list(ds.pipe_bundles.keys())
 
 
-def copy(pipe_from=None, pipe_to=None):
+def copy(pipe_from=None, pipe_to=None, bundle_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
     If the 'pipe_from' argument is None then the current data pipe is assumed as the source.  The
@@ -100,6 +100,8 @@ def copy(pipe_from=None, pipe_to=None):
     @type pipe_from:    str
     @param pipe_to:     The name of the target data pipe to copy the data to.
     @type pipe_to:      str
+    @keyword bundle_to: The optional data pipe bundle to associate the new data pipe with.
+    @type bundle_to:    str or None
     """
 
     # Test if the pipe already exists.
@@ -119,6 +121,10 @@ def copy(pipe_from=None, pipe_to=None):
 
         # Copy the data.
         ds[pipe_to] = ds[pipe_from].__clone__()
+
+        # Bundle the pipe.
+        if bundle_to:
+            bundle(bundle=bundle_to, pipe=pipe_to)
 
     # Release the lock.
     finally:
