@@ -96,9 +96,20 @@ uf.add_keyarg(
     desc = "The name of the target data pipe to copy the data to.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "bundle_to",
+    py_type = "str",
+    desc_short = "destination pipe bundle",
+    desc = "If given, the new data pipe will be grouped into this bundle.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.bundle_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.")
+uf.desc[-1].add_paragraph("The optional bundling allows the newly created data pipe to be placed into either a new or existing data pipe bundle.  If not specified, then the copied data pipe will not be associated with a bundle.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:")
@@ -109,6 +120,7 @@ uf.desc[-1].add_prompt("relax> pipe.copy(pipe_to='m2')")
 uf.backend = pipes.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
+uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
