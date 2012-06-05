@@ -610,10 +610,10 @@ class Analysis_controller:
     def pipe_deletion(self):
         """Remove analysis tabs for which the associated data pipe has been deleted."""
 
-        # Loop over the analyses, noting which no longer have a data pipe.
+        # Loop over the analyses, noting which no longer have an associated data pipe bundle.
         del_list = []
         for i in range(self._num_analyses):
-            if not pipes.has_pipe(ds.relax_gui.analyses[i].pipe_name):
+            if not pipes.has_bundle(ds.relax_gui.analyses[i].pipe_bundle):
                 del_list.append(i)
 
         # Reverse the order of the list so the removal works correctly.
