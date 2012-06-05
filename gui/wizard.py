@@ -464,6 +464,9 @@ class Wiz_window(wx.Dialog):
         # Flag to suppress later button addition.
         self._buttons_built = False
 
+        # Bind some events.
+        self.Bind(wx.EVT_CLOSE, self._handler_close)
+
 
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
@@ -670,6 +673,20 @@ class Wiz_window(wx.Dialog):
         self._display_page(self._current_page)
 
 
+    def _handler_close(self, event=None):
+        """Event handler for the close window action.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the page's on_next() method to allow the page to clean itself up.
+        self._pages[self._current_page].on_next()
+
+        # Continue with the window closing.
+        event.Skip()
+
+
     def _next_fn(self):
         """Standard function for setting the next page to the one directly next in the sequence.
 
@@ -706,6 +723,9 @@ class Wiz_window(wx.Dialog):
 
                 # Increment the execution counter.
                 self._exec_count[i] += 1
+
+        # Execute the current page's on_next() method to allow the page to clean itself up.
+        self._pages[self._current_page].on_next()
 
         # Then close the dialog.
         if self.IsModal():
