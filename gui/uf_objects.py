@@ -561,6 +561,7 @@ class Uf_page(Wiz_page):
         # Return the text.
         return line
 
+
     def Clear(self, key):
         """Special wizard method for clearing the value of the GUI element corresponding to the key.
 
