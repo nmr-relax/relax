@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,9 +24,12 @@
 """Module for relax version information."""
 
 # Python module imports.
-from os import F_OK, access
+from os import F_OK, access, sep
 from string import split
 from subprocess import PIPE, Popen
+
+# relax module imports.
+from status import Status; status = Status()
 
 
 version = "repository checkout"
@@ -40,11 +43,11 @@ def revision():
     """
 
     # Does the base directory exist (i.e. is this a checked out copy).
-    if not access('.svn', F_OK):
+    if not access(status.install_path+sep+'.svn', F_OK):
         return
 
     # Try to run 'svn info'.
-    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    pipe = Popen('svn info %s' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
     # Errors.
     if pipe.stderr.readlines():
@@ -68,11 +71,11 @@ def url():
     """
 
     # Does the base directory exist (i.e. is this a checked out copy).
-    if not access('.svn', F_OK):
+    if not access(status.install_path+sep+'.svn', F_OK):
         return
 
     # Try to run 'svn info'.
-    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    pipe = Popen('svn info %s' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
     # Errors.
     if pipe.stderr.readlines():
