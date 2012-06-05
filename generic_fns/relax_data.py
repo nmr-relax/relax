@@ -478,15 +478,40 @@ def delete(ri_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Check the ID.
+    if ri_id == None:
+        raise RelaxError("The relaxation data ID string must be supplied.")
+
     # Test if data exists.
     if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
         raise RelaxNoRiError(ri_id)
 
-    # Loop over the spins.
+    # Pop the ID, and remove it from the frequency and type lists.
+    cdp.ri_ids.pop(cdp.ri_ids.index(ri_id))
+    del cdp.frq[ri_id]
+    del cdp.ri_type[ri_id]
+
+    # Prune empty structures.
+    if len(cdp.ri_ids) == 0:
+        del cdp.ri_ids
+    if len(cdp.frq) == 0:
+        del cdp.frq
+    if len(cdp.ri_type) == 0:
+        del cdp.ri_type
+
+    # Loop over the spins, deleting the relaxation data and errors when present.
     for spin in spin_loop():
-        # Relaxation data and errors.
-        del spin.ri_data[ri_id]
-        del spin.ri_data_err[ri_id]
+        # Data deletion.
+        if hasattr(spin, 'ri_data') and spin.ri_data.has_key(ri_id):
+            del spin.ri_data[ri_id]
+        if hasattr(spin, 'ri_data_err') and spin.ri_data_err.has_key(ri_id):
+            del spin.ri_data_err[ri_id]
+
+        # Prune empty structures.
+        if hasattr(spin, 'ri_data') and len(spin.ri_data) == 0:
+            del spin.ri_data
+        if hasattr(spin, 'ri_data_err') and len(spin.ri_data_err) == 0:
+            del spin.ri_data_err
 
 
 def display(ri_id=None):
