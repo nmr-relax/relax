@@ -39,7 +39,7 @@ from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
 from status import Status; status = Status()
-from version import version
+import version
 
 
 __all__ = [ 'align_tensor',
@@ -423,9 +423,15 @@ class Relax_data_store(dict):
         xmldoc.appendChild(top_element)
 
         # Set the relax version number, and add a creation time.
-        top_element.setAttribute('version', version)
+        top_element.setAttribute('version', version.version)
         top_element.setAttribute('time', asctime())
         top_element.setAttribute('file_version', "2")
+        rev = version.revision()
+        if rev:
+            top_element.setAttribute('revision', rev)
+        url = version.url()
+        if url:
+            top_element.setAttribute('url', url)
 
         # Add all objects in the data store base object to the XML element.
         if all:
