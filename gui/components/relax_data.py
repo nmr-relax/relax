@@ -37,7 +37,6 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border
-from gui import paths
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
@@ -330,7 +329,7 @@ class Relax_data_list:
 
         # Add button.
         self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_add.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        self.button_add.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_add.SetFont(font.normal)
         self.button_add.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_add, 0, 0, 0)
@@ -339,7 +338,7 @@ class Relax_data_list:
 
         # Bruker button.
         self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_bruker.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.bruker_add, wx.BITMAP_TYPE_ANY))
+        self.button_bruker.SetBitmapLabel(wx.Bitmap(fetch_icon('relax.bruker_add', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_bruker.SetFont(font.normal)
         self.button_bruker.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_bruker, 0, 0, 0)
@@ -348,7 +347,7 @@ class Relax_data_list:
 
         # Delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
-        self.button_delete.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
+        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_delete, 0, 0, 0)
