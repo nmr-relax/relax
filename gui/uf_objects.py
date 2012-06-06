@@ -154,14 +154,25 @@ def build_uf_menus(parent=None, menubar=None):
 class Force_true(object):
     """A special user function arg element which always returns True."""
 
-    def GetValue(self):
-        """Simple method for returning True."""
+    def __init__(self):
+        """Initialise the object."""
 
-        return True
+        # Default to always being True.
+        self._value = True
+
+
+    def GetValue(self):
+        """Simple method for returning the internal value."""
+
+        # Return the stored value.
+        return self._value
 
 
     def SetValue(self, value):
-        """Dummy method."""
+        """Internally store the value being set."""
+
+        # Store the value.
+        self._value = value
 
 
 
