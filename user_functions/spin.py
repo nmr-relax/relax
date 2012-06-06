@@ -360,7 +360,6 @@ uf.desc[-1].add_paragraph("The following sequence of commands will rename the se
 uf.desc[-1].add_prompt("relax> spin.name('@1', 'C11', force=True)")
 uf.desc[-1].add_prompt("relax> spin.name('@2', 'C12', force=True)")
 uf.desc[-1].add_prompt("relax> spin.name('@3', 'C13', force=True)")
-uf.desc.append(id_string_doc)
 uf.backend = name_spin
 uf.menu_text = "&name"
 uf.gui_icon = "oxygen.actions.edit-rename"
