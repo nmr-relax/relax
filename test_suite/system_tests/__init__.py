@@ -63,7 +63,8 @@ from test_suite.system_tests.unit_vectors import Unit_vectors
 
 __all__ = ['align_tensor',
            'angles',
-           'brmb',
+           'bmrb',
+           'bruker',
            'consistency_tests',
            'dasha'
            'diffusion_tensor',
@@ -79,7 +80,6 @@ __all__ = ['align_tensor',
            'noe',
            'noe_restraints',
            'palmer',
-           'pdc',
            'peak_lists'
            'pipes',
            'rdc',
@@ -133,6 +133,7 @@ class System_test_runner:
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Bruker))
             suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
@@ -145,11 +146,11 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Mol_res_spin))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
             suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
-            suite_array.append(TestLoader().loadTestsFromTestCase(Pdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))

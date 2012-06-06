@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -277,7 +277,7 @@ class Read_intensities_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The peak intensity file:", message="Peak intensity file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The peak intensity file:", message="Peak intensity file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'], preview=True)
 
         # The spectrum ID.
         self.spectrum_id = self.input_field(sizer, "The spectrum ID:", tooltip=self.uf._doc_args_dict['spectrum_id'])

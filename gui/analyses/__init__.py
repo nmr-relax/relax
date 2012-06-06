@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,14 +24,17 @@
 """Package for the automatic and custom analysis GUI elements."""
 
 # Python module imports.
+import inspect
 import sys
 import wx
 from types import ListType
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from data.gui import Gui
 import dep_check
 from generic_fns import pipes
+from relax_errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -161,24 +164,55 @@ class Analysis_controller:
     def delete_all(self):
         """Remove all analyses."""
 
+        # Debugging set up.
+        if status.debug:
+            fn_name = sys._getframe().f_code.co_name
+            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
+            class_name = self.__class__.__name__
+            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
+            print("\n\n")
+            print("debug> %s:  Deleting all analyses." % full_name)
+
+        # Unregister all observer objects prior to analysis deletion.  This is to prevent queued wx events being sent to dead or non-existent objects.
+        if status.debug:
+            print("debug> %s:  Unregistering all methods with the observer objects." % full_name)
+        for i in range(self._num_analyses):
+            self._analyses[i].observer_register(remove=True)
+
         # Delete the current tabs.
         while self._num_analyses:
             # Flush all pending events (bug fix for MS Windows).
-            wx.Yield()
+            #wx.Yield()
 
             # Remove the last analysis, until there is nothing left.
+            if status.debug:
+                print("debug> %s:  Deleting the analysis at index %s." % (full_name, self._num_analyses-1))
             self.delete_analysis(self._num_analyses-1)
 
         # Notify the observers of the change.
+        if status.debug:
+            print("debug> %s:  All analyses now deleted." % full_name)
         status.observers.gui_analysis.notify()
 
 
     def delete_analysis(self, index):
         """Delete the analysis tab and data store corresponding to the index.
 
+        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then print outs at each stage will occur to allow the following of the code and observer object notifications.
+
+
         @param index:   The index of the analysis to delete.
         @type index:    int
         """
+
+        # Debugging set up.
+        if status.debug:
+            fn_name = sys._getframe().f_code.co_name
+            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
+            class_name = self.__class__.__name__
+            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
+            print("\n\n")
+            print("debug> %s:  Deleting the analysis at index %s." % (full_name, index))
 
         # Decrement the number of analyses.
         self._num_analyses -= 1
@@ -186,34 +220,53 @@ class Analysis_controller:
         # Shift the current page back one if necessary.
         if self._current > index:
             self._current -= 1
+            if status.debug:
+                print("debug> %s:  Switching the current analysis to index %s." % (full_name, self._current))
 
         # Execute the analysis delete method, if it exists.
         if hasattr(self._analyses[index], 'delete'):
+            if status.debug:
+                print("debug> %s:  Executing the analysis specific delete() method." % full_name)
             self._analyses[index].delete()
 
-        # Delete all data pipes associated with the analysis.
-        if pipes.has_pipe(ds.relax_gui.analyses[index].pipe_name):
-            pipes.delete(ds.relax_gui.analyses[index].pipe_name)
-
-        # Delete the data store object.
-        ds.relax_gui.analyses.pop(index)
-
         # Delete the tab.
+        if status.debug:
+            print("debug> %s:  Deleting the notebook page." % full_name)
         self.notebook.DeletePage(index)
 
         # Delete the tab object.
+        if status.debug:
+            print("debug> %s:  Deleting the analysis GUI object." % full_name)
         self._analyses.pop(index)
 
         # The current page has been deleted, so switch one back (if possible).
         if index == self._current and self._current != 0:
+            if status.debug:
+                print("debug> %s:  Switching to page %s." % (full_name, self._current-1))
             self.switch_page(self._current-1)
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
+            if status.debug:
+                print("debug> %s:  Setting the initial state." % full_name)
             self.set_init_state()
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
+
+        # Store the pipe name.
+        pipe_name = ds.relax_gui.analyses[index].pipe_name
+
+        # Delete the data store object.
+        if status.debug:
+            print("debug> %s:  Deleting the data store object." % full_name)
+        ds.relax_gui.analyses.pop(index)
+
+        # Delete all data pipes associated with the analysis.
+        if pipes.has_pipe(pipe_name):
+            if status.debug:
+                print("debug> %s:  Deleting the data pipe '%s'." % (full_name, pipe_name))
+            pipes.delete(pipe_name)
 
 
     def get_page_from_name(self, name):
@@ -287,6 +340,10 @@ class Analysis_controller:
         @type event:    wx event
         """
 
+        # Notebook not created yet, so skip.
+        if not hasattr(self, 'notebook'):
+            return
+
         # Execution lock.
         if status.exec_lock.locked():
             return
@@ -309,6 +366,10 @@ class Analysis_controller:
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Notebook not created yet, so skip.
+        if not hasattr(self, 'notebook'):
+            return
 
         # Execution lock.
         if status.exec_lock.locked():
@@ -470,9 +531,13 @@ class Analysis_controller:
         # The index.
         self._current = event.GetSelection()
 
+        # Handel calls to the reset user function!
+        if not hasattr(ds, 'relax_gui'):
+            return
+
         # Switch to the major data pipe of that page if not the current one.
         if self._switch_flag and pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
-            self.gui.interpreter.queue('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
+            self.gui.interpreter.apply('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
 
         # Normal operation.
         event.Skip()
@@ -577,7 +642,8 @@ class Analysis_controller:
             index = self._num_analyses - 1
 
             # Delete the tab.
-            self.notebook.DeletePage(index)
+            if hasattr(self, 'notebook'):
+                self.notebook.DeletePage(index)
 
             # Delete the tab object.
             self._analyses.pop(index)
@@ -599,6 +665,14 @@ class Analysis_controller:
         # Delete the previous sizer.
         old_sizer = self.gui.GetSizer()
         old_sizer.DeleteWindows()
+
+        # Delete the notebook.
+        if hasattr(self, 'notebook'):
+            del self.notebook
+
+        # Recreate the GUI data store object (needed if the reset user function is called).
+        if not hasattr(ds, 'relax_gui'):
+            ds.relax_gui = Gui()
 
         # Recreate the start screen.
         self.gui.add_start_screen()

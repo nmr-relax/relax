@@ -242,6 +242,20 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def empty(self):
+        """Report if the structural data structure is empty or not.
+
+        @return:    True if empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # Check the ModelList structure.
+        if len(self.structural_data) == 0:
+            return True
+        else:
+            return False
+
+
     def from_xml(self, str_node, dir=None, id=None):
         """Recreate the structural object from the XML structural object node.
 

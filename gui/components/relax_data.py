@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -102,7 +102,7 @@ class Relax_data_list:
         self.name = 'relaxation data list: %s' % id
 
         # Register the element for updating when a user function completes.
-        status.observers.gui_uf.register(self.name, self.build_element)
+        self.observer_register()
 
 
     def Enable(self, enable=True):
@@ -135,7 +135,16 @@ class Relax_data_list:
         self.button_add.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_add, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_add)
-        self.button_add.SetToolTipString("Read relaxation data from file.")
+        self.button_add.SetToolTipString("Read relaxation data from a file.")
+
+        # Bruker button.
+        self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
+        self.button_bruker.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.bruker_add, wx.BITMAP_TYPE_ANY))
+        self.button_bruker.SetFont(font.normal)
+        self.button_bruker.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_bruker, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.bruker_read, self.button_bruker)
+        self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
 
         # Delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
@@ -145,6 +154,17 @@ class Relax_data_list:
         button_sizer.Add(self.button_delete, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.relax_data_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
+
+
+    def bruker_read(self, event):
+        """Launch the bruker.read user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        user_functions.bruker.read()
 
 
     def build_element(self):
@@ -207,8 +227,8 @@ class Relax_data_list:
     def delete(self):
         """Unregister the class."""
 
-        # Unregister the class.
-        status.observers.gui_uf.unregister(self.name)
+        # Unregister the observer methods.
+        self.observer_register(remove=True)
 
 
     def init_element(self, sizer):
@@ -239,6 +259,22 @@ class Relax_data_list:
 
         # Add list to sizer.
         sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def observer_register(self, remove=False):
+        """Register and unregister methods with the observer objects.
+
+        @keyword remove:    If set to True, then the methods will be unregistered.
+        @type remove:       False
+        """
+
+        # Register.
+        if not remove:
+            status.observers.gui_uf.register(self.name, self.build_element)
+
+        # Unregister.
+        else:
+            status.observers.gui_uf.unregister(self.name)
 
 
     def on_right_click(self, event):

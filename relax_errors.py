@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,9 +32,12 @@ except ImportError:
     bz2 = False
 from cPickle import dump
 from re import match
-from sys import stderr
+import sys
 import time
 from types import ClassType
+
+# relax module imports.
+import ansi
 
 
 # Text variables.
@@ -77,10 +80,10 @@ def save_state():
 
     # Open the file for writing.
     if bz2:
-        stderr.write("\n\nStoring the relax state in the file '%s.bz2'.\n\n\n" % file_name)
+        sys.stderr.write("\n\nStoring the relax state in the file '%s.bz2'.\n\n\n" % file_name)
         file = BZ2File(file_name+'.bz2', 'w')
     else:
-        stderr.write("\n\nStoring the relax state in the file '%s'.\n\n\n" % file_name)
+        sys.stderr.write("\n\nStoring the relax state in the file '%s'.\n\n\n" % file_name)
         file = open(file_name, 'w')
 
     # Pickle the data class and write it to file
@@ -104,8 +107,11 @@ class BaseError(Exception):
         if status.pedantic:
             save_state()
 
-        # Modify the error message to include 'RelaxError' at the start.
-        return ("RelaxError: " + self.text + "\n")
+        # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).
+        if ansi.enable_control_chars(stream=2):
+            return ("%sRelaxError: %s%s\n" % (ansi.relax_error, self.text, ansi.end))
+        else:
+            return ("RelaxError: %s\n" % self.text)
 
 
 class BaseArgError(BaseError):
@@ -251,6 +257,14 @@ class RelaxNoPdbError(BaseError):
 class RelaxPdbLoadError(BaseError):
     def __init__(self, name):
         self.text = "The PDB file " + repr(name) + " could not be loaded properly, no molecular chains could be extracted."
+
+# Multiple unit vectors.
+class RelaxMultiVectorError(BaseError):
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The multiple unit XH bond vectors for the spin '%s' - this is not supported by the current data pipe type." % spin_id
+        else:
+            self.text = "The multiple unit XH bond vectors per spin - this is not supported by the current data pipe type."
 
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
@@ -571,6 +585,30 @@ class RelaxDiffResNumError(BaseError):
 class RelaxDiffSpinNumError(BaseError):
     def __init__(self, pipe1, pipe2):
         self.text = "The number of spins do not match between pipes '%s' and '%s'." % (pipe1, pipe2)
+
+# Multiple spins matching the ID.
+class RelaxMultiMolIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty molecule ID corresponds to more than a single molecule in the current data pipe."
+        else:
+            self.text = "The molecule ID '%s' corresponds to more than a single molecule in the current data pipe." % id
+
+# Multiple spins matching the ID.
+class RelaxMultiResIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty residue ID corresponds to more than a single residue in the current data pipe."
+        else:
+            self.text = "The residue ID '%s' corresponds to more than a single residue in the current data pipe." % id
+
+# Multiple spins matching the ID.
+class RelaxMultiSpinIDError(BaseError):
+    def __init__(self, id):
+        if id == '':
+            self.text = "The empty spin ID corresponds to more than a single spin in the current data pipe."
+        else:
+            self.text = "The spin ID '%s' corresponds to more than a single spin in the current data pipe." % id
 
 # Cannot find the residue in the sequence.
 class RelaxNoResError(BaseError):

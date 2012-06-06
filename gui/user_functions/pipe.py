@@ -27,12 +27,11 @@
 import wx
 
 # relax module imports.
-from generic_fns.pipes import PIPE_DESC, VALID_TYPES, cdp_name, pipe_names
+from generic_fns.pipes import PIPE_DESC_LIST, VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.misc import gui_to_list, gui_to_str, str_to_gui
-from gui.components.combo_list import Combo_list
 from gui.paths import WIZARD_IMAGE_PATH
 
 
@@ -142,22 +141,17 @@ class Create_page(UF_page):
         @type sizer:    wx.Sizer instance
         """
 
-        # The pipe name input.
-        self.pipe_name = self.input_field(sizer, "The data pipe name:", tooltip=self.uf._doc_args_dict['pipe_name'])
-
-        # The type selection.
-        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", tooltip=self.uf._doc_args_dict['pipe_type'], read_only=True)
-        for i in range(len(VALID_TYPES)):
-            self.pipe_type.Append(PIPE_DESC[VALID_TYPES[i]])
-            self.pipe_type.SetClientData(i, VALID_TYPES[i])
+        # The argument GUI elements.
+        self.element_string(key='pipe_name', sizer=sizer, desc="The data pipe name:", tooltip=self.uf._doc_args_dict['pipe_name'])
+        self.element_string(key='pipe_type', element_type='combo', sizer=sizer, desc="The type of data pipe:", combo_choices=PIPE_DESC_LIST, combo_data=VALID_TYPES, tooltip=self.uf._doc_args_dict['pipe_type'], read_only=True)
 
 
     def on_execute(self):
         """Execute the user function."""
 
-        # Get the name and type.
-        pipe_name = gui_to_str(self.pipe_name.GetValue())
-        pipe_type = self.pipe_type.GetClientData(self.pipe_type.GetSelection())
+        # Get the argument values.
+        pipe_name = self.GetValue('pipe_name')
+        pipe_type = self.GetValue('pipe_type')
 
         # Set the name.
         self.execute('pipe.create', pipe_name=pipe_name, pipe_type=pipe_type)
@@ -179,29 +173,22 @@ class Delete_page(UF_page):
         @type sizer:    wx.Sizer instance
         """
 
-        # The pipe selection.
-        self.pipe_name = self.combo_box(sizer, "The pipe:", [], tooltip=self.uf._doc_args_dict['pipe_name'])
+        # The argument GUI elements.
+        self.element_string(key='pipe_name', element_type='combo', sizer=sizer, desc="The pipe:", combo_choices=[], tooltip=self.uf._doc_args_dict['pipe_name'])
 
 
     def on_display(self):
         """Clear and update the pipe name list."""
 
-        # Clear the previous data.
-        self.pipe_name.Clear()
-
-        # Clear the pipe name.
-        self.pipe_name.SetValue(str_to_gui(''))
-
-        # The list of pipe names.
-        for name in pipe_names():
-            self.pipe_name.Append(str_to_gui(name))
+        # Reset the list.
+        self.ResetChoices('pipe_name', combo_choices=pipe_names())
 
 
     def on_execute(self):
         """Execute the user function."""
 
-        # Get the name.
-        pipe_name = str(self.pipe_name.GetValue())
+        # Get the argument values.
+        pipe_name = self.GetValue('pipe_name')
 
         # Delete the data pipe.
         self.execute('pipe.delete', pipe_name)
@@ -223,19 +210,17 @@ class Hybridise_page(UF_page):
         @type sizer:    wx.Sizer instance
         """
 
-        # The hybrid data pipe name input.
-        self.hybrid = self.input_field(sizer, "The hybrid pipe name:", tooltip=self.uf._doc_args_dict['hybrid'])
-
-        # The pipe selection.
-        self.pipes = Combo_list(self, sizer, "The pipes to hybridise:", n=2, choices=pipe_names(), tooltip=self.uf._doc_args_dict['pipes'])
+        # The argument GUI elements.
+        self.element_string(key='hybrid', sizer=sizer, desc="The hybrid pipe name:", tooltip=self.uf._doc_args_dict['hybrid'])
+        self.element_string_list(key='pipes', element_type='combo_list', sizer=sizer, desc="The pipes to hybridise:", combo_choices=pipe_names(), combo_list_size=2, tooltip=self.uf._doc_args_dict['pipes'])
 
 
     def on_execute(self):
         """Execute the user function."""
 
-        # Get the name.
-        hybrid = gui_to_str(self.hybrid.GetValue())
-        pipes = gui_to_list(self.pipes.GetValue())
+        # Get the argument values.
+        hybrid = self.GetValue('hybrid')
+        pipes = self.GetValue('pipes')
 
         # Delete the data pipe.
         self.execute('pipe.hybridise', hybrid=hybrid, pipes=pipes)

@@ -34,7 +34,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from maths_fns.pcs import ave_pcs_tensor
 from physical_constants import g1H, pcs_constant
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
@@ -499,18 +499,22 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     #####################
 
     # Loop over the PCS data.
-    spin_ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     values = []
     errors = []
     for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
-            id, value, error = data
+            mol_name, res_num, res_name, spin_num, spin_name, value, error = data
         elif data_col:
-            id, value = data
+            mol_name, res_num, res_name, spin_num, spin_name, value = data
             error = None
         else:
-            id, error = data
+            mol_name, res_num, res_name, spin_num, spin_name, error = data
             value = None
 
         # Test the error value (cannot be 0.0).
@@ -518,6 +522,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the corresponding spin container.
+        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         spin = return_spin(id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))
@@ -542,12 +547,16 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             spin.pcs_err[align_id] = error
 
         # Append the data for print out.
-        spin_ids.append(id)
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin_num)
+        spin_names.append(spin_name)
         values.append(value)
         errors.append(error)
 
     # Print out.
-    write_spin_data(file=sys.stdout, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
+    write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
 
 
     # Global (non-spin specific) data.

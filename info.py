@@ -28,16 +28,17 @@ import ctypes
 if hasattr(ctypes, 'windll'):
     import ctypes.wintypes
 import numpy
-from os import environ, popen3
+from os import environ, popen3, waitpid
 import platform
 from string import split
+from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
 
 # relax module imports.
 import dep_check
 from status import Status; status = Status()
-from version import version
+from version import version, version_full
 
 
 class Info_box(object):
@@ -141,6 +142,108 @@ class Info_box(object):
         return string
 
 
+    def file_type(self, path):
+        """Return a string representation of the file type.
+
+        @param path:    The full path of the file to return information about.
+        @type path:     str
+        @return:        The single line file type information string.
+        @rtype:         str
+        """
+
+        # MS Windows (has no 'file' command or libmagic, so return nothing).
+        if hasattr(ctypes, 'windll'):
+            return ''
+
+        # The command.
+        cmd = 'file -b %s' % path
+
+        # Execute.
+        pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+        waitpid(pipe.pid, 0)
+
+        # The STDOUT data.
+        data = pipe.stdout.readlines()
+
+        # Mac OS X 3-way binary.
+        if data[0][:-1] == 'Mach-O universal binary with 3 architectures':
+            # Arch.
+            arch = [None, None, None]
+            for i in range(3):
+                row = split(data[i+1], '\t')
+                arch[i] = row[1][:-1]
+            arch.sort()
+
+            # The full file type print out.
+            if arch == ['Mach-O 64-bit executable x86_64', 'Mach-O executable i386', 'Mach-O executable ppc']:
+                file_type = '3-way exec (i386, ppc, x86_64)'
+            elif arch == ['Mach-O 64-bit bundle x86_64', 'Mach-O bundle i386', 'Mach-O bundle ppc']:
+                file_type = '3-way bundle (i386, ppc, x86_64)'
+            elif arch == ['Mach-O 64-bit dynamically linked shared library x86_64', 'Mach-O dynamically linked shared library i386', 'Mach-O dynamically linked shared library ppc']:
+                file_type = '3-way lib (i386, ppc, x86_64)'
+            elif arch == ['Mach-O 64-bit object x86_64', 'Mach-O object i386', 'Mach-O object ppc']:
+                file_type = '3-way obj (i386, ppc, x86_64)'
+            else:
+                file_type = '3-way %s' % arch
+
+        # Mac OS X 2-way binary.
+        elif data[0][:-1] == 'Mach-O universal binary with 2 architectures':
+            # Arch.
+            arch = [None, None]
+            for i in range(2):
+                row = split(data[i+1], '\t')
+                arch[i] = row[1][:-1]
+            arch.sort()
+
+            # The full file type print out.
+            if arch == ['Mach-O executable i386', 'Mach-O executable ppc']:
+                file_type = '2-way exec (i386, ppc)'
+            elif arch == ['Mach-O bundle i386', 'Mach-O bundle ppc']:
+                file_type = '2-way bundle (i386, ppc)'
+            elif arch == ['Mach-O dynamically linked shared library i386', 'Mach-O dynamically linked shared library ppc']:
+                file_type = '2-way lib (i386, ppc)'
+            elif arch == ['Mach-O object i386', 'Mach-O object ppc']:
+                file_type = '2-way obj (i386, ppc)'
+            else:
+                file_type = '2-way %s' % arch
+
+        # Default to all info.
+        else:
+            file_type = data[0][:-1]
+            for i in range(1, len(data)):
+                row = split(data[i], '\t')
+                arch[i] = row[1][:-1]
+                file_type += " %s" % arch
+
+        # Return the string.
+        return file_type
+
+
+    def format_max_width(self, data):
+        """Return the text formatting width for the given data.
+
+        @param data:    The list of things to print out.
+        @type data:     list
+        @return:        The maximum width of the elements in the list.
+        @rtype:         int
+        """
+
+        # Init.
+        width = 0
+
+        # Loop over the data.
+        for i in range(len(data)):
+            # The string representation size.
+            size = len(repr(data[i]))
+
+            # Find the max size.
+            if size > width:
+                width = size
+
+        # Return the max width.
+        return width
+
+
     def intro_text(self):
         """Create the introductory string for STDOUT printing.
 
@@ -189,117 +292,190 @@ class Info_box(object):
         return intro_string
 
 
-    def package_info(self, format="    %-25s%s\n"):
+    def package_info(self):
         """Return a string for printing to STDOUT with info from the Python packages used by relax.
 
-        @keyword format:    The formatting string.
-        @type format:       str
         @return:            The info string.
         @rtype:             str
         """
 
         # Init.
         text = ''
+        package = []
+        status = []
+        version = []
+        path = []
 
         # Intro.
-        text = text + ("\nPython packages (most are optional):\n\n")
+        text = text + ("\nPython packages and modules (most are optional):\n\n")
 
         # Header.
-        format1 = "%-20s %-15s "
-        format2 = "%-15s %-15s\n"
-        text = text + format1 % ("Package", "Installed")
-        text = text + format2 % ("Version", "Path")
+        package.append("Name")
+        status.append("Installed")
+        version.append("Version")
+        path.append("Path")
 
         # minfx.
-        text = text + format1 % ('minfx', True)
-        text = text + format2 % ('Unknown', dep_check.minfx.__path__[0])
+        package.append('minfx')
+        status.append(True)
+        version.append('Unknown')
+        path.append(dep_check.minfx.__path__[0])
 
         # bmrblib.
-        text = text + format1 % ('bmrblib', dep_check.bmrblib_module)
+        package.append('bmrblib')
+        status.append(dep_check.bmrblib_module)
         try:
-            text = text + format2 % ('Unknown', dep_check.bmrblib.__path__[0])
+            version.append('Unknown')
+            path.append(dep_check.bmrblib.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # numpy.
-        text = text + format1 % ('numpy', True)
+        package.append('numpy')
+        status.append(True)
         try:
-            text = text + format2 % (dep_check.numpy.version.version, dep_check.numpy.__path__[0])
+            version.append(dep_check.numpy.version.version)
+            path.append(dep_check.numpy.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # scipy.
-        text = text + format1 % ('scipy', dep_check.scipy_module)
+        package.append('scipy')
+        status.append(dep_check.scipy_module)
         try:
-            text = text + format2 % (dep_check.scipy.version.version, dep_check.scipy.__path__[0])
+            version.append(dep_check.scipy.version.version)
+            path.append(dep_check.scipy.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # wxPython.
-        text = text + format1 % ('wxPython', dep_check.wx_module)
+        package.append('wxPython')
+        status.append(dep_check.wx_module)
         try:
-            text = text + format2 % (dep_check.wx.__version__, dep_check.wx.__path__[0])
+            version.append(dep_check.wx.version())
+            path.append(dep_check.wx.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # mpi4py.
-        text = text + format1 % ('mpi4py', dep_check.mpi4py_module)
+        package.append('mpi4py')
+        status.append(dep_check.mpi4py_module)
         try:
-            text = text + format2 % (dep_check.mpi4py.__version__, dep_check.mpi4py.__path__[0])
+            version.append(dep_check.mpi4py.__version__)
+            path.append(dep_check.mpi4py.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # epydoc.
-        text = text + format1 % ('epydoc', dep_check.epydoc_module)
+        package.append('epydoc')
+        status.append(dep_check.epydoc_module)
         try:
-            text = text + format2 % (dep_check.epydoc.__version__, dep_check.epydoc.__path__[0])
+            version.append(dep_check.epydoc.__version__)
+            path.append(dep_check.epydoc.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # optparse.
-        text = text + format1 % ('optparse', True)
+        package.append('optparse')
+        status.append(True)
         try:
-            text = text + format2 % (dep_check.optparse.__version__, dep_check.optparse.__file__)
+            version.append(dep_check.optparse.__version__)
+            path.append(dep_check.optparse.__file__)
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # readline.
-        text = text + format1 % ('readline', dep_check.readline_module)
+        package.append('readline')
+        status.append(dep_check.readline_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.readline.__file__)
+            path.append(dep_check.readline.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # profile.
-        text = text + format1 % ('profile', dep_check.profile_module)
+        package.append('profile')
+        status.append(dep_check.profile_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.profile.__file__)
+            path.append(dep_check.profile.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # BZ2.
-        text = text + format1 % ('bz2', dep_check.bz2_module)
+        package.append('bz2')
+        status.append(dep_check.bz2_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.bz2.__file__)
+            path.append(dep_check.bz2.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # gzip.
-        text = text + format1 % ('gzip', dep_check.gzip_module)
+        package.append('gzip')
+        status.append(dep_check.gzip_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.gzip.__file__)
+            path.append(dep_check.gzip.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # devnull.
-        text = text + format1 % ('os.devnull', dep_check.devnull_import)
+        package.append('os.devnull')
+        status.append(dep_check.devnull_import)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.os.__file__)
+            path.append(dep_check.os.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
+        # XML.
+        package.append('xml')
+        status.append(dep_check.xml_module)
+        if dep_check.xml_module:
+            version.append("%s (%s)" % (dep_check.xml_version, dep_check.xml_type))
+            path.append(dep_check.xml.__file__)
+        else:
+            version.append('')
+            path.append('')
+
+        # XML minidom.
+        package.append('xml.dom.minidom')
+        version.append('')
+        try:
+            import xml.dom.minidom
+            status.append(True)
+        except:
+            status.append(False)
+        try:
+            path.append(xml.dom.minidom.__file__)
+        except:
+            path.append('')
+
+        # Format the data.
+        fmt_package = "%%-%ss" % (self.format_max_width(package) + 2)
+        fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
+        fmt_version = "%%-%ss" % (self.format_max_width(version) + 2)
+        fmt_path = "%%-%ss" % (self.format_max_width(path) + 2)
+
+        # Add the text.
+        for i in range(len(package)):
+            text += fmt_package % package[i]
+            text += fmt_status % status[i]
+            text += fmt_version % version[i]
+            text += fmt_path % path[i]
+            text += '\n'
+        
         # Return the info string.
         return text
+
 
 
     def ram_info(self, format="    %-25s%s\n"):
@@ -351,6 +527,57 @@ class Info_box(object):
         return text
 
 
+    def relax_module_info(self):
+        """Return a string with info about the relax modules.
+
+        @return:            The info string.
+        @rtype:             str
+        """
+
+        # Init.
+        text = ''
+        name = []
+        status = []
+        file_type = []
+        path = []
+
+        # Intro.
+        text = text + ("\nrelax C modules:\n\n")
+
+        # Header.
+        name.append("Module")
+        status.append("Compiled")
+        file_type.append("File type")
+        path.append("Path")
+
+        # relaxation curve-fitting.
+        name.append('maths_fns.relax_fit')
+        status.append(dep_check.C_module_exp_fn)
+        if hasattr(dep_check, 'relax_fit'):
+            file_type.append(self.file_type(dep_check.relax_fit.__file__))
+            path.append(dep_check.relax_fit.__file__)
+        else:
+            file_type.append('')
+            path.append('')
+
+        # Format the data.
+        fmt_name = "%%-%ss" % (self.format_max_width(name) + 2)
+        fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
+        fmt_file_type = "%%-%ss" % (self.format_max_width(file_type) + 2)
+        fmt_path = "%%-%ss" % (self.format_max_width(path) + 2)
+
+        # Add the text.
+        for i in range(len(name)):
+            text += fmt_name % name[i]
+            text += fmt_status % status[i]
+            text += fmt_file_type % file_type[i]
+            text += fmt_path % path[i]
+            text += '\n'
+        
+        # Return the info string.
+        return text
+
+
     def sys_info(self):
         """Return a string for printing to STDOUT with info about the current relax instance.
 
@@ -359,7 +586,7 @@ class Info_box(object):
         """
 
         # Init.
-        text = self.intro_text()
+        text = ''
 
         # Formatting string.
         format  = "    %-25s%s\n"
@@ -422,11 +649,16 @@ class Info_box(object):
         text = text + (format % ("Python module path: ", sys.path))
 
         # Python packages.
-        text = text + self.package_info(format=format)
+        text = text + self.package_info()
 
-        # C modules.
-        text = text + "\nCompiled relax C modules:\n"
-        text = text + format % ("Relaxation curve fitting: ", dep_check.C_module_exp_fn)
+        # relax info:
+        text = text + "\nrelax information:\n"
+        text = text + (format % ("Version: ", version_full()))
+        if hasattr(self, "multi_processor_string"):
+            text += format % ("Processor fabric: ", self.multi_processor_string)
+
+        # relax modules.
+        text = text + self.relax_module_info()
 
         # End with an empty newline.
         text = text + ("\n")

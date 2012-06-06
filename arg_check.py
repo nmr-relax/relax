@@ -67,69 +67,82 @@ def check_float(num):
     return False
 
 
-def is_bool(arg, name):
+def is_bool(arg, name=None, raise_error=True):
     """Test if the argument is a Boolean.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
-    @raise RelaxBoolError:      If not a Boolean.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxBoolError:      If not a Boolean (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # Check for a Boolean.
     if isinstance(arg, bool):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     else:
-        fail = True
-
-    # The RelaxError.
-    raise RelaxBoolError(name, arg)
+        raise RelaxBoolError(name, arg)
 
 
-def is_float(arg, name, can_be_none=False):
+def is_float(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a float.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
-    @raise RelaxFloatError:     If not an integer.
-    @raise RelaxNoneFloatError: If not an integer or not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxFloatError:     If not an integer (and the raise_error flag is set).
+    @raise RelaxNoneFloatError: If not an integer or not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Check for a float.
     if check_float(arg):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     if not can_be_none:
         raise RelaxFloatError(name, arg)
     else:
         raise RelaxNoneFloatError(name, arg)
 
 
-def is_float_array(arg, name, size=None, can_be_none=False):
+def is_float_array(arg, name=None, size=None, can_be_none=False, raise_error=True):
     """Test if the argument is an array of floats.
 
     @param arg:                     The argument.
     @type arg:                      anything
-    @param name:                    The plain English name of the argument.
+    @keyword name:                  The plain English name of the argument.
     @type name:                     str
     @keyword size:                  The dimension of the array.
     @type size:                     None or int
     @keyword can_be_none:           A flag specifying if the argument can be none.
     @type can_be_none:              bool
-    @raise RelaxListFloatError:     If not a matrix of floats.
-    @raise RelaxNoneListFloatError: If not a matrix of floats or not None.
+    @keyword raise_error:           A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:              bool
+    @raise RelaxListFloatError:     If not a matrix of floats (and the raise_error flag is set).
+    @raise RelaxNoneListFloatError: If not a matrix of floats or not None (and the raise_error flag is set).
+    @return:                        The answer to the question (if raise_error is not set).
+    @rtype:                         bool
     """
 
     # Init.
@@ -137,7 +150,7 @@ def is_float_array(arg, name, size=None, can_be_none=False):
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a list.
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
@@ -156,6 +169,8 @@ def is_float_array(arg, name, size=None, can_be_none=False):
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneListFloatError(name, arg, size)
         elif can_be_none:
@@ -165,20 +180,27 @@ def is_float_array(arg, name, size=None, can_be_none=False):
         else:
             raise RelaxListFloatError(name, arg)
 
+    # Success.
+    return True
 
-def is_float_matrix(arg, name, dim=(3, 3), can_be_none=False):
+
+def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=True):
     """Test if the argument is a matrix of floats.
 
     @param arg:                         The argument.
     @type arg:                          anything
-    @param name:                        The plain English name of the argument.
+    @keyword name:                      The plain English name of the argument.
     @type name:                         str
     @keyword dim:                       The m,n dimensions of the matrix.
     @type dim:                          tuple of int
     @keyword can_be_none:               A flag specifying if the argument can be none.
     @type can_be_none:                  bool
-    @raise RelaxMatrixFloatError:       If not a matrix of floats.
-    @raise RelaxNoneMatrixFloatError:   If not a matrix of floats or not None.
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxMatrixFloatError:       If not a matrix of floats (and the raise_error flag is set).
+    @raise RelaxNoneMatrixFloatError:   If not a matrix of floats or not None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
     """
 
     # Init.
@@ -186,7 +208,7 @@ def is_float_matrix(arg, name, dim=(3, 3), can_be_none=False):
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a list.
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
@@ -214,6 +236,8 @@ def is_float_matrix(arg, name, dim=(3, 3), can_be_none=False):
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and dim != None:
             raise RelaxNoneMatrixFloatError(name, arg, dim)
         elif can_be_none:
@@ -223,69 +247,84 @@ def is_float_matrix(arg, name, dim=(3, 3), can_be_none=False):
         else:
             raise RelaxMatrixFloatError(name, arg)
 
+    # Success.
+    return True
 
-def is_func(arg, name, can_be_none=False):
+
+def is_func(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a function.
 
     @param arg:                     The argument.
     @type arg:                      anything
-    @param name:                    The plain English name of the argument.
+    @keyword name:                  The plain English name of the argument.
     @type name:                     str
     @keyword can_be_none:           A flag specifying if the argument can be none.
     @type can_be_none:              bool
-    @raise RelaxFunctionError:      If not a function.
-    @raise RelaxNoneFunctionError:  If not a function or not None.
+    @keyword raise_error:           A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:              bool
+    @raise RelaxFunctionError:      If not a function (and the raise_error flag is set).
+    @raise RelaxNoneFunctionError:  If not a function or not None (and the raise_error flag is set).
+    @return:                        The answer to the question (if raise_error is not set).
+    @rtype:                         bool
     """
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Check for a function.
     if isinstance(arg, FunctionType) or isinstance(arg, MethodType):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     if not can_be_none:
         raise RelaxFunctionError(name, arg)
     else:
         raise RelaxNoneFunctionError(name, arg)
 
 
-def is_int(arg, name, can_be_none=False):
+def is_int(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is an integer.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
-    @raise RelaxIntError:       If not an integer.
-    @raise RelaxNoneIntError:   If not an integer or not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxIntError:       If not an integer (and the raise_error flag is set).
+    @raise RelaxNoneIntError:   If not an integer or not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Check for an integer (avoiding Booleans).
     if isinstance(arg, int) and not isinstance(arg, bool):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     if not can_be_none:
         raise RelaxIntError(name, arg)
     else:
         raise RelaxNoneIntError(name, arg)
 
 
-def is_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, none_elements=False):
+def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, none_elements=False, raise_error=True):
     """Test if the argument is a list of integers.
 
     @param arg:                         The argument.
     @type arg:                          anything
-    @param name:                        The plain English name of the argument.
+    @keyword name:                      The plain English name of the argument.
     @type name:                         str
     @keyword size:                      The number of elements required.
     @type size:                         None or int
@@ -295,8 +334,12 @@ def is_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, non
     @type can_be_empty:                 bool
     @keyword none_elements:             A flag which if True allows the list to contain None.
     @type none_elements:                bool
-    @raise RelaxIntListIntError:        If not an integer or a list of integers.
-    @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None.
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxIntListIntError:        If not an integer or a list of integers (and the raise_error flag is set).
+    @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
     """
 
     # Init.
@@ -304,7 +347,7 @@ def is_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, non
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Not a list.
     if not isinstance(arg, list):
@@ -332,6 +375,8 @@ def is_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, non
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneListIntError(name, arg, size)
         elif can_be_none:
@@ -341,13 +386,16 @@ def is_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, non
         else:
             raise RelaxListIntError(name, arg)
 
+    # Success.
+    return True
 
-def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, none_elements=False):
+
+def is_int_or_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, none_elements=False, raise_error=True):
     """Test if the argument is an integer or a list of integers.
 
     @param arg:                         The argument.
     @type arg:                          anything
-    @param name:                        The plain English name of the argument.
+    @keyword name:                      The plain English name of the argument.
     @type name:                         str
     @keyword size:                      The number of elements required.
     @type size:                         None or int
@@ -357,8 +405,12 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
     @type can_be_empty:                 bool
     @keyword none_elements:             A flag which if True allows the list to contain None.
     @type none_elements:                bool
-    @raise RelaxIntListIntError:        If not an integer or a list of integers.
-    @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None.
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxIntListIntError:        If not an integer or a list of integers (and the raise_error flag is set).
+    @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
     """
 
     # Init.
@@ -366,7 +418,7 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # An integer
     if not isinstance(arg, list):
@@ -400,6 +452,8 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneIntListIntError(name, arg, size)
         elif can_be_none:
@@ -409,13 +463,16 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
         else:
             raise RelaxIntListIntError(name, arg)
 
+    # Success.
+    return True
 
-def is_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of_lists=False):
+
+def is_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, list_of_lists=False, raise_error=True):
     """Test if the argument is a list.
 
     @param arg:                     The argument.
     @type arg:                      anything
-    @param name:                    The plain English name of the argument.
+    @keyword name:                  The plain English name of the argument.
     @type name:                     str
     @keyword size:                  The number of elements required.
     @type size:                     None or int
@@ -425,8 +482,12 @@ def is_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of
     @type can_be_empty:             bool
     @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists of strings.
     @type list_of_lists:            bool
-    @raise RelaxListStrError:       If not a list of strings.
-    @raise RelaxNoneListStrError:   If not a list of strings or None.
+    @keyword raise_error:           A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:              bool
+    @raise RelaxListStrError:       If not a list of strings (and the raise_error flag is set).
+    @raise RelaxNoneListStrError:   If not a list of strings or None (and the raise_error flag is set).
+    @return:                        The answer to the question (if raise_error is not set).
+    @rtype:                         bool
     """
 
     # Init.
@@ -434,7 +495,7 @@ def is_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a list.
     if not isinstance(arg, list):
@@ -452,6 +513,8 @@ def is_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneListError(name, arg, size)
         elif can_be_none:
@@ -461,59 +524,75 @@ def is_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of
         else:
             raise RelaxListError(name, arg)
 
+    # Success.
+    return True
 
-def is_none(arg, name):
+
+def is_none(arg, name, raise_error=True):
     """Test if the argument is None.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
-    @raise RelaxNoneError:      If not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxNoneError:      If not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # Check for None.
     if arg == None:
-        return
+        return True
 
-    # The RelaxError.
-    raise RelaxNoneError(name)
+    # Fail.
+    if not raise_error:
+        return False
+    else:
+        raise RelaxNoneError(name)
 
 
-def is_num(arg, name, can_be_none=False):
+def is_num(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a number.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
-    @raise RelaxNumError:       If not a number.
-    @raise RelaxNoneNumError:   If not a number or not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxNumError:       If not a number (and the raise_error flag is set).
+    @raise RelaxNoneNumError:   If not a number or not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Check for floats and integers (avoiding Booleans).
     if (check_float(arg) or isinstance(arg, int)) and not isinstance(arg, bool):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     if not can_be_none:
         raise RelaxNumError(name, arg)
     else:
         raise RelaxNoneNumError(name, arg)
 
 
-def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+def is_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a list of numbers.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword size:              The number of elements required.
     @type size:                 None or int
@@ -521,8 +600,12 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
     @type can_be_none:          bool
     @keyword can_be_empty:      A flag which if True allows the list to be empty.
     @type can_be_empty:         bool
-    @raise RelaxListError:      If not a list.
-    @raise RelaxListNumError:   If not a list of numbers.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxListError:      If not a list (and the raise_error flag is set).
+    @raise RelaxListNumError:   If not a list of numbers (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # Init.
@@ -530,7 +613,7 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a list.
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
@@ -553,6 +636,8 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneListNumError(name, arg, size)
         elif can_be_none:
@@ -562,13 +647,16 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
         else:
             raise RelaxListNumError(name, arg)
 
+    # Success.
+    return True
 
-def is_num_or_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
+
+def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a tuple of numbers.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword size:              The number of elements required.
     @type size:                 None or int
@@ -576,8 +664,12 @@ def is_num_or_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=Fa
     @type can_be_none:          bool
     @keyword can_be_empty:      A flag which if True allows the list to be empty.
     @type can_be_empty:         bool
-    @raise RelaxTupleError:     If not a tuple.
-    @raise RelaxTupleNumError:  If not a tuple of numbers.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxTupleError:     If not a tuple (and the raise_error flag is set).
+    @raise RelaxTupleNumError:  If not a tuple of numbers (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # Init.
@@ -587,7 +679,7 @@ def is_num_or_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=Fa
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # A number.
     if not isinstance(arg, tuple):
@@ -614,6 +706,8 @@ def is_num_or_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=Fa
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneNumTupleNumError(name, arg, size)
         elif can_be_none:
@@ -623,13 +717,16 @@ def is_num_or_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=Fa
         else:
             raise RelaxNumTupleNumError(name, arg)
 
+    # Success.
+    return True
 
-def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
+
+def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a tuple of numbers.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword size:              The number of elements required.
     @type size:                 None or int
@@ -637,8 +734,12 @@ def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
     @type can_be_none:          bool
     @keyword can_be_empty:      A flag which if True allows the list to be empty.
     @type can_be_empty:         bool
-    @raise RelaxTupleError:     If not a tuple.
-    @raise RelaxTupleNumError:  If not a tuple of numbers.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxTupleError:     If not a tuple (and the raise_error flag is set).
+    @raise RelaxTupleNumError:  If not a tuple of numbers (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # Init.
@@ -646,7 +747,7 @@ def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a tuple.
     if not isinstance(arg, tuple):
@@ -669,6 +770,8 @@ def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneTupleNumError(name, arg, size)
         elif can_be_none:
@@ -678,41 +781,50 @@ def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
         else:
             raise RelaxTupleNumError(name, arg)
 
+    # Success.
+    return True
 
-def is_str(arg, name, can_be_none=False):
+
+def is_str(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a string.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
-    @raise RelaxStrError:       If not an integer.
-    @raise RelaxNoneStrError:   If not an integer or not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxStrError:       If not an integer (and the raise_error flag is set).
+    @raise RelaxNoneStrError:   If not an integer or not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Check for a string.
     if isinstance(arg, str):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     if not can_be_none:
         raise RelaxStrError(name, arg)
     else:
         raise RelaxNoneStrError(name, arg)
 
 
-def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of_lists=False):
+def is_str_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, list_of_lists=False, raise_error=True):
     """Test if the argument is a list of strings.
 
     @param arg:                     The argument.
     @type arg:                      anything
-    @param name:                    The plain English name of the argument.
+    @keyword name:                  The plain English name of the argument.
     @type name:                     str
     @keyword size:                  The number of elements required.
     @type size:                     None or int
@@ -723,8 +835,12 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False, lis
     @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists
                                     of strings.
     @type list_of_lists:            bool
-    @raise RelaxListStrError:       If not a list of strings.
-    @raise RelaxNoneListStrError:   If not a list of strings or None.
+    @keyword raise_error:           A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:              bool
+    @raise RelaxListStrError:       If not a list of strings (and the raise_error flag is set).
+    @raise RelaxNoneListStrError:   If not a list of strings or None (and the raise_error flag is set).
+    @return:                        The answer to the question (if raise_error is not set).
+    @rtype:                         bool
     """
 
     # Init.
@@ -732,7 +848,7 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False, lis
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a list.
     if not isinstance(arg, list):
@@ -764,6 +880,8 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False, lis
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneListStrError(name, arg, size)
         elif can_be_none:
@@ -773,41 +891,50 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False, lis
         else:
             raise RelaxListStrError(name, arg)
 
+    # Success.
+    return True
 
-def is_str_or_inst(arg, name, can_be_none=False):
+
+def is_str_or_inst(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a string.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
-    @raise RelaxStrError:       If not an integer.
-    @raise RelaxNoneStrError:   If not an integer or not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxStrError:       If not an integer (and the raise_error flag is set).
+    @raise RelaxNoneStrError:   If not an integer or not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Check for a string.
     if isinstance(arg, str) or isinstance(arg, file) or isinstance(arg, DummyFileObject):
-        return
+        return True
 
     # Fail.
+    if not raise_error:
+        return False
     if not can_be_none:
         raise RelaxStrFileError(name, arg)
     else:
         raise RelaxNoneStrFileError(name, arg)
 
 
-def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a number, a string, a list of numbers, or a list of strings.
 
     @param arg:                             The argument.
     @type arg:                              anything
-    @param name:                            The plain English name of the argument.
+    @keyword name:                          The plain English name of the argument.
     @type name:                             str
     @keyword size:                          The number of elements required.
     @type size:                             None or int
@@ -815,10 +942,12 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
     @type can_be_none:                      bool
     @keyword can_be_empty:                  A flag which if True allows the list to be empty.
     @type can_be_empty:                     bool
-    @raise RelaxNumStrListNumStrError:      If not a float, a string, or a list of floats or
-                                            strings.
-    @raise RelaxNoneNumStrListNumStrError:  If not a float, a string, a list of floats or strings,
-                                        or None.
+    @keyword raise_error:                   A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                      bool
+    @raise RelaxNumStrListNumStrError:      If not a float, a string, or a list of floats or strings (and the raise_error flag is set).
+    @raise RelaxNoneNumStrListNumStrError:  If not a float, a string, a list of floats or strings, or None (and the raise_error flag is set).
+    @return:                                The answer to the question (if raise_error is not set).
+    @rtype:                                 bool
     """
 
     # Init.
@@ -826,7 +955,7 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # A number or a string.
     if not isinstance(arg, list):
@@ -864,6 +993,8 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneNumStrListNumStrError(name, arg, size)
         elif can_be_none:
@@ -873,13 +1004,16 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
         else:
             raise RelaxNumStrListNumStrError(name, arg)
 
+    # Success.
+    return True
 
-def is_str_or_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+
+def is_str_or_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a string or a list of numbers.
 
     @param arg:                         The argument.
     @type arg:                          anything
-    @param name:                        The plain English name of the argument.
+    @keyword name:                      The plain English name of the argument.
     @type name:                         str
     @keyword size:                      The number of elements required.
     @type size:                         None or int
@@ -887,8 +1021,12 @@ def is_str_or_num_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
     @type can_be_none:                  bool
     @keyword can_be_empty:              A flag which if True allows the list to be empty.
     @type can_be_empty:                 bool
-    @raise RelaxStrListNumError:        If not a string or a list of strings.
-    @raise RelaxNoneStrListNumError:    If not a string, a list of strings, or None.
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxStrListNumError:        If not a string or a list of strings (and the raise_error flag is set).
+    @raise RelaxNoneStrListNumError:    If not a string, a list of strings, or None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
     """
 
     # Init.
@@ -896,7 +1034,7 @@ def is_str_or_num_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # A string.
     if not isinstance(arg, list):
@@ -926,6 +1064,8 @@ def is_str_or_num_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneStrListNumError(name, arg, size)
         elif can_be_none:
@@ -935,13 +1075,16 @@ def is_str_or_num_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
         else:
             raise RelaxStrListNumError(name, arg)
 
+    # Success.
+    return True
 
-def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+
+def is_str_or_str_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a string or a list of strings.
 
     @param arg:                         The argument.
     @type arg:                          anything
-    @param name:                        The plain English name of the argument.
+    @keyword name:                      The plain English name of the argument.
     @type name:                         str
     @keyword size:                      The number of elements required.
     @type size:                         None or int
@@ -949,8 +1092,12 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
     @type can_be_none:                  bool
     @keyword can_be_empty:              A flag which if True allows the list to be empty.
     @type can_be_empty:                 bool
-    @raise RelaxStrListStrError:        If not a string or a list of strings.
-    @raise RelaxNoneStrListStrError:    If not a string, a list of strings, or None.
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxStrListStrError:        If not a string or a list of strings (and the raise_error flag is set).
+    @raise RelaxNoneStrListStrError:    If not a string, a list of strings, or None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
     """
 
     # Init.
@@ -958,7 +1105,7 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # A string.
     if not isinstance(arg, list):
@@ -988,6 +1135,8 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneStrListStrError(name, arg, size)
         elif can_be_none:
@@ -997,13 +1146,16 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
         else:
             raise RelaxStrListStrError(name, arg)
 
+    # Success.
+    return True
 
-def is_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
+
+def is_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a tuple.
 
     @param arg:                 The argument.
     @type arg:                  anything
-    @param name:                The plain English name of the argument.
+    @keyword name:              The plain English name of the argument.
     @type name:                 str
     @keyword size:              The number of elements required.
     @type size:                 None or int
@@ -1011,8 +1163,12 @@ def is_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
     @type can_be_none:          bool
     @keyword can_be_empty:      A flag which if True allows the list to be empty.
     @type can_be_empty:         bool
-    @raise RelaxTupleError:     If not a tuple.
-    @raise RelaxNoneTupleError: If not a tuple or not None.
+    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:          bool
+    @raise RelaxTupleError:     If not a tuple (and the raise_error flag is set).
+    @raise RelaxNoneTupleError: If not a tuple or not None (and the raise_error flag is set).
+    @return:                    The answer to the question (if raise_error is not set).
+    @rtype:                     bool
     """
 
     # Init.
@@ -1020,7 +1176,7 @@ def is_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
-        return
+        return True
 
     # Fail if not a tuple.
     if not isinstance(arg, tuple):
@@ -1038,6 +1194,8 @@ def is_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
     # Fail.
     if fail:
+        if not raise_error:
+            return False
         if can_be_none and size != None:
             raise RelaxNoneTupleError(name, arg, size)
         elif can_be_none:
@@ -1046,3 +1204,6 @@ def is_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
             raise RelaxTupleError(name, arg, size)
         else:
             raise RelaxTupleError(name, arg)
+
+    # Success.
+    return True

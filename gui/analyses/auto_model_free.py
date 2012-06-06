@@ -203,8 +203,7 @@ class Auto_model_free(Base_analysis):
         self.mode_win = Protocol_mode_sel_window()
 
         # Register the method for updating the spin count for the completion of user functions.
-        status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
-        status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+        self.observer_register()
 
         # Execute the base class method to build the panel.
         super(Auto_model_free, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -523,12 +522,11 @@ class Auto_model_free(Base_analysis):
     def delete(self):
         """Unregister the spin count from the user functions."""
 
+        # Unregister the observer methods.
+        self.observer_register(remove=True)
+
         # Clean up the relaxation data list object.
         self.relax_data.delete()
-
-        # Remove.
-        status.observers.gui_uf.unregister(self.data.pipe_name)
-        status.observers.exec_lock.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
@@ -615,6 +613,28 @@ class Auto_model_free(Base_analysis):
 
         # Set the model.
         self.mode.SetValue(str_to_gui(self.mode_win.select))
+
+
+    def observer_register(self, remove=False):
+        """Register and unregister methods with the observer objects.
+
+        @keyword remove:    If set to True, then the methods will be unregistered.
+        @type remove:       False
+        """
+
+        # Register.
+        if not remove:
+            status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
+            status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+
+        # Unregister.
+        else:
+            # The model-free methods.
+            status.observers.gui_uf.unregister(self.data.pipe_name)
+            status.observers.exec_lock.unregister(self.data.pipe_name)
+
+            # The embedded objects methods.
+            self.relax_data.observer_register(remove=True)
 
 
     def results_directory(self, event):
@@ -884,7 +904,7 @@ class Local_tm_list:
 
         # First state that this should not be done.
         msg = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
-        if status.show_gui and not Question(msg, title="Warning - do not change!", size=(400, 180), default=False).ShowModal() == wx.ID_YES:
+        if status.show_gui and not Question(msg, title="Warning - do not change!", size=(420, 210), default=False).ShowModal() == wx.ID_YES:
             return
 
         # Set the model selector window selections.

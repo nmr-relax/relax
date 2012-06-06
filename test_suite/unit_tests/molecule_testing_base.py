@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import copy_residue, create_residue
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxMultiMolIDError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -390,4 +390,4 @@ class Molecule_base_class(UnitTestCase):
         self.setup_data()
 
         # Test for the failure.
-        self.assertRaises(RelaxError, self.molecule_fns.name, mol_id='#Old mol,New mol', name='K')
+        self.assertRaises(RelaxMultiMolIDError, self.molecule_fns.name, mol_id='#Old mol,New mol', name='K')

@@ -12,7 +12,7 @@
 #                                                                             #
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
-# Copyright (C) 2001-2006  Edward d'Auvergne                                  #
+# Copyright (C) 2001-2012  Edward d'Auvergne                                  #
 # Copyright (C) 2006-2012  the relax development team                         #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
@@ -31,11 +31,6 @@
 #                                                                             #
 ###############################################################################
 
-# First of all, store the relax installation path before the site-packages mangle sys.path.
-from status import Status; status = Status()
-import sys
-status.install_path = sys.path[0]
-
 # Dependency checks.
 import dep_check
 
@@ -53,16 +48,13 @@ import sys
 
 # relax modules.
 from info import Info_box
-import generic_fns
-if dep_check.wx_module:
-    import gui
 from multi import Application_callback, load_multiprocessor
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
-from test_suite.test_suite_runner import Test_suite_runner
+from status import Status; status = Status()
 from version import version
 
 # Modify the environmental variables.
@@ -81,12 +73,24 @@ def start(mode=None, profile_flag=False):
     # Normal relax operation.
     relax = Relax()
 
-    # Process the command line arguments.
-    relax.arguments()
-
-    # Override the mode.
+    # Override normal operation.
     if mode:
+        # Override the mode.
         relax.mode = mode
+
+        # Some defaults.
+        relax.script_file = None
+        relax.log_file = None
+        relax.tee_file = None
+        relax.multiprocessor_type = 'uni'
+        relax.n_processors = 1
+
+    # Process the command line arguments.
+    else:
+        relax.arguments()
+
+    # Store some start up info in the status object.
+    status.relax_mode = relax.mode
 
     # Set up the multi-processor elements.
     callbacks = Application_callback(master=relax)
@@ -137,9 +141,6 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Setup the object containing the generic functions.
-        self.generic = generic_fns
-
 
     def run(self):
         """Execute relax.
@@ -157,8 +158,16 @@ class Relax:
 
         # Show the relax info and exit.
         if self.mode == 'info':
+            # Initialise the information box.
             info = Info_box()
+
+            # Print the program intro.
+            print(info.intro_text())
+
+            # Print the system info.
             print(info.sys_info())
+
+            # Stop execution.
             return
 
         # Logging.
@@ -182,6 +191,9 @@ class Relax:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
                 return
 
+            # Only import the module in this mode (to improve program start up speeds).
+            import gui
+
             # Set the GUI flag in the status object.
             status.show_gui = True
 
@@ -191,6 +203,9 @@ class Relax:
 
         # Execute the relax test suite
         elif self.mode == 'test suite':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter.on()
@@ -201,6 +216,9 @@ class Relax:
 
         # Execute the relax system tests.
         elif self.mode == 'system tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter.on()
@@ -211,12 +229,18 @@ class Relax:
 
         # Execute the relax unit tests.
         elif self.mode == 'unit tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Run the tests.
             runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
 
         # Execute the relax GUI tests.
         elif self.mode == 'GUI tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Run the tests.
             runner = Test_suite_runner(self.tests)
             runner.run_gui_tests()

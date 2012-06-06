@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -421,10 +421,10 @@ class Test_mol_res_spin(UnitTestCase):
 
 
     def test_Selection_full_spin_id(self):
-        """Test the Selection object for the single spin identifier '#Ap4Aase:2&:Glu@63&@NH'."""
+        """Test the Selection object for the single spin identifier '#Ap4Aase:2@63'."""
 
         # The Selection object.
-        obj = mol_res_spin.Selection("#Ap4Aase:2&:Glu@63&@NH")
+        obj = mol_res_spin.Selection("#Ap4Aase:2@63")
 
         # Test if various spins are in the selection.
         self.assert_((cdp.mol[0], cdp.mol[0].res[0], cdp.mol[0].res[0].spin[0]) not in obj)
@@ -440,31 +440,17 @@ class Test_mol_res_spin(UnitTestCase):
         """Test that the Selection object has no memory of previous selections."""
 
         # The original Selection object.
-        obj = mol_res_spin.Selection(":1&:Glu@16&@N")
+        obj = mol_res_spin.Selection(":1@16")
 
         # The new Selection object.
-        obj = mol_res_spin.Selection(":13&:Pro")
+        obj = mol_res_spin.Selection(":13")
 
         # Test the highest level object.
         self.assertEqual(obj._union, None)
-        self.assertNotEqual(obj._intersect, None)
+        self.assertEqual(obj._intersect, None)
         self.assertEqual(obj.molecules, [])
-        self.assertEqual(obj.residues, [])
+        self.assertEqual(obj.residues, [13])
         self.assertEqual(obj.spins, [])
-
-        # Test the 1st intersection.
-        self.assertEqual(obj._intersect[0]._union, None)
-        self.assertEqual(obj._intersect[0]._intersect, None)
-        self.assertEqual(obj._intersect[0].molecules, [])
-        self.assertEqual(obj._intersect[0].residues, [13])
-        self.assertEqual(obj._intersect[0].spins, [])
-
-        # Test the 2nd intersection.
-        self.assertEqual(obj._intersect[1]._union, None)
-        self.assertEqual(obj._intersect[1]._intersect, None)
-        self.assertEqual(obj._intersect[1].molecules, [])
-        self.assertEqual(obj._intersect[1].residues, ['Pro'])
-        self.assertEqual(obj._intersect[1].spins, [])
 
 
     def test_count_spins(self):
@@ -661,7 +647,7 @@ class Test_mol_res_spin(UnitTestCase):
         id = mol_res_spin.generate_spin_id_data_array(data, res_num_col=1, res_name_col=2)
 
         # Test the string.
-        self.assertEqual(id, ':1&:GLY')
+        self.assertEqual(id, ':1')
 
 
     def test_generate_spin_id_data_array2(self):
@@ -677,7 +663,7 @@ class Test_mol_res_spin(UnitTestCase):
         id = mol_res_spin.generate_spin_id_data_array(data, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
 
         # Test the string.
-        self.assertEqual(id, ':1&:GLY@234&@NH')
+        self.assertEqual(id, ':1@234')
 
 
     def test_generate_spin_id_data_array3(self):
@@ -693,7 +679,7 @@ class Test_mol_res_spin(UnitTestCase):
         id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=1, res_num_col=None, res_name_col=None, spin_num_col=2, spin_name_col=3)
 
         # Test the string.
-        self.assertEqual(id, '#Ap4Aase@234&@NH')
+        self.assertEqual(id, '#Ap4Aase@234')
 
 
     def test_generate_spin_id_data_array4(self):
@@ -709,7 +695,7 @@ class Test_mol_res_spin(UnitTestCase):
         id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=1, res_num_col=2, res_name_col=3)
 
         # Test the string.
-        self.assertEqual(id, '#Ap4Aase:1&:GLY')
+        self.assertEqual(id, '#Ap4Aase:1')
 
 
     def test_generate_spin_id_data_array5(self):
@@ -725,7 +711,7 @@ class Test_mol_res_spin(UnitTestCase):
         id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
         # Test the string.
-        self.assertEqual(id, '#Ap4Aase:1&:GLY@234&@NH')
+        self.assertEqual(id, '#Ap4Aase:1@234')
 
 
     def test_generate_spin_id_data_array6(self):
@@ -741,7 +727,7 @@ class Test_mol_res_spin(UnitTestCase):
         id = mol_res_spin.generate_spin_id_data_array(data, res_num_col=1, res_name_col=2)
 
         # Test the string.
-        self.assertEqual(id, ':1&:GLY')
+        self.assertEqual(id, ':1')
 
 
     def test_molecule_loop(self):
@@ -1164,8 +1150,8 @@ class Test_mol_res_spin(UnitTestCase):
 
         # Ask for a few spins.
         spin1 = mol_res_spin.return_spin(':1')
-        spin2 = mol_res_spin.return_spin(selection=':2&:Glu')
-        spin3 = mol_res_spin.return_spin(selection=':4&:Pro', pipe='orig')
+        spin2 = mol_res_spin.return_spin(selection=':2')
+        spin3 = mol_res_spin.return_spin(selection=':4', pipe='orig')
         spin4 = mol_res_spin.return_spin(selection='#RNA:-5@N5', pipe='orig')
         spin5 = mol_res_spin.return_spin(selection=':-4@2H', pipe='orig')
 
