@@ -732,10 +732,10 @@ class MoleculeList(list):
         # Loop over the molecules.
         for mol_node in mol_nodes:
             # Get the molecule details and add the molecule to the MoleculeList structure.
-            name = mol_node.getAttribute('name')
+            name = str(mol_node.getAttribute('name'))
             if name == 'None':
                 name = None
-            type = mol_node.getAttribute('type')
+            type = str(mol_node.getAttribute('type'))
             if type == 'None':
                 type = None
             self.add_item(mol_name=name, mol_type=type)
