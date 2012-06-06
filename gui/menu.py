@@ -51,6 +51,7 @@ class Menu:
     MENU_FILE_OPEN = wx.NewId()
     MENU_FILE_SAVE = wx.NewId()
     MENU_FILE_SAVE_AS = wx.NewId()
+    MENU_FILE_EXPORT_BMRB = wx.NewId()
     MENU_FILE_EXIT = wx.NewId()
     MENU_VIEW_CONTROLLER = wx.NewId()
     MENU_VIEW_SPIN_VIEW = wx.NewId()
@@ -90,6 +91,8 @@ class Menu:
         menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.document_save))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE_AS, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.document_save_as))
         menu.AppendSeparator()
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXPORT_BMRB, text="Export for BMRB deposition", icon=fetch_icon('relax.bmrb')))
+        menu.AppendSeparator()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXIT, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
         self.menubar.Append(menu, "&File")
 
@@ -100,6 +103,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.state_load, id=self.MENU_FILE_OPEN)
         self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save, id=self.MENU_FILE_SAVE)
         self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as, id=self.MENU_FILE_SAVE_AS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_export_bmrb, id=self.MENU_FILE_EXPORT_BMRB)
         self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui, id=self.MENU_FILE_EXIT)
 
         # The 'View' menu entries.

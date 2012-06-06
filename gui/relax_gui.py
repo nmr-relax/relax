@@ -205,6 +205,14 @@ class Main(wx.Frame):
             dialog.Show()
 
 
+    def action_export_bmrb(self, event=None):
+        """Export the contents of the current data pipe for BMRB deposition.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+
     def action_state_save(self, event=None):
         """Save the program state.
 
