@@ -29,8 +29,9 @@ import wx
 
 # relax module imports.
 from generic_fns.selection import is_mol_selected, is_res_selected, is_spin_selected
-from generic_fns.mol_res_spin import get_molecule_ids, get_residue_ids, get_spin_ids, molecule_loop, residue_loop, spin_loop
-from generic_fns.pipes import get_pipe
+from generic_fns.mol_res_spin import get_molecule_ids, molecule_loop, residue_loop, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.pipes import cdp_name, get_pipe
+from graphics import fetch_icon
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -45,19 +46,30 @@ class Mol_res_spin_tree(wx.Window):
     """The tree view class."""
 
     # Some IDs for the menu entries.
-    MENU_ROOT_MOLECULE_CREATE = wx.NewId()
-    MENU_ROOT_LOAD_SPINS = wx.NewId()
-    MENU_SPIN_SPIN_DELETE = wx.NewId()
-    MENU_SPIN_SPIN_SELECT = wx.NewId()
-    MENU_SPIN_SPIN_DESELECT = wx.NewId()
-    MENU_RESIDUE_SPIN_ADD = wx.NewId()
-    MENU_RESIDUE_RESIDUE_DELETE = wx.NewId()
-    MENU_RESIDUE_RESIDUE_SELECT = wx.NewId()
-    MENU_RESIDUE_RESIDUE_DESELECT = wx.NewId()
-    MENU_MOLECULE_RESIDUE_CREATE = wx.NewId()
+    MENU_MOLECULE_MOLECULE_COPY = wx.NewId()
     MENU_MOLECULE_MOLECULE_DELETE = wx.NewId()
     MENU_MOLECULE_MOLECULE_DESELECT = wx.NewId()
+    MENU_MOLECULE_MOLECULE_NAME = wx.NewId()
     MENU_MOLECULE_MOLECULE_SELECT = wx.NewId()
+    MENU_MOLECULE_MOLECULE_TYPE = wx.NewId()
+    MENU_MOLECULE_RESIDUE_CREATE = wx.NewId()
+    MENU_RESIDUE_RESIDUE_COPY = wx.NewId()
+    MENU_RESIDUE_RESIDUE_DELETE = wx.NewId()
+    MENU_RESIDUE_RESIDUE_DESELECT = wx.NewId()
+    MENU_RESIDUE_RESIDUE_NAME = wx.NewId()
+    MENU_RESIDUE_RESIDUE_NUMBER = wx.NewId()
+    MENU_RESIDUE_RESIDUE_SELECT = wx.NewId()
+    MENU_RESIDUE_SPIN_ADD = wx.NewId()
+    MENU_RESIDUE_SPIN_CREATE_PSEUDO = wx.NewId()
+    MENU_ROOT_MOLECULE_CREATE = wx.NewId()
+    MENU_ROOT_LOAD_SPINS = wx.NewId()
+    MENU_SPIN_SPIN_COPY = wx.NewId()
+    MENU_SPIN_SPIN_DELETE = wx.NewId()
+    MENU_SPIN_SPIN_DESELECT = wx.NewId()
+    MENU_SPIN_SPIN_ELEMENT = wx.NewId()
+    MENU_SPIN_SPIN_NAME = wx.NewId()
+    MENU_SPIN_SPIN_NUMBER = wx.NewId()
+    MENU_SPIN_SPIN_SELECT = wx.NewId()
 
     def __init__(self, gui, parent=None, id=None):
         """Set up the tree GUI element.
@@ -193,40 +205,18 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.spin_viewer.container.display(info)
 
 
-    def create_molecule(self, event):
+    def action_molecule_molecule_copy(self, event):
         """Wrapper method.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Call the dialog.
-        uf_store['molecule.create'](wx_parent=self.gui.spin_viewer)
+        # Launch the user function wizard.
+        uf_store['molecule.copy'](wx_parent=self.gui.spin_viewer, pipe_from=cdp_name(), mol_from=self.info['id'], pipe_to=cdp_name())
 
 
-    def create_residue(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Call the dialog.
-        uf_store['residue.create'](wx_parent=self.gui.spin_viewer, mol_name=self.info['mol_name'])
-
-
-    def create_spin(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Call the dialog.
-        uf_store['spin.create'](wx_parent=self.gui.spin_viewer, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
-
-
-    def delete_molecule(self, event):
+    def action_molecule_molecule_delete(self, event):
         """Wrapper method.
 
         @param event:   The wx event.
@@ -241,49 +231,8 @@ class Mol_res_spin_tree(wx.Window):
         # Delete the molecule.
         self.gui.interpreter.queue('molecule.delete', gui_to_str(self.info['id']))
 
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
 
-
-    def delete_residue(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to delete this residue?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
-            return
-
-        # Delete the residue.
-        self.gui.interpreter.queue('residue.delete', gui_to_str(self.info['id']))
-
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
-
-
-    def delete_spin(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to delete this spin?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
-            return
-
-        # Delete the spin.
-        self.gui.interpreter.queue('spin.delete', gui_to_str(self.info['id']))
-
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
-
-
-    def deselect_molecule(self, event):
+    def action_molecule_molecule_deselect(self, event):
         """Wrapper method.
 
         @param event:   The wx event.
@@ -298,11 +247,93 @@ class Mol_res_spin_tree(wx.Window):
         # Deselect the molecule.
         self.gui.interpreter.queue('deselect.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
+
+    def action_molecule_molecule_name(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['molecule.name'](wx_parent=self.gui.spin_viewer, mol_id=self.info['id'])
 
 
-    def deselect_residue(self, event):
+    def action_molecule_molecule_type(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the current molecule type
+        mol = return_molecule(self.info['id'])
+        type = None
+        if hasattr(mol, 'type'):
+            type = mol.type
+
+        # Launch the user function wizard.
+        if type == None:
+            uf_store['molecule.type'](wx_parent=self.gui.spin_viewer, mol_id=self.info['id'])
+        else:
+            uf_store['molecule.type'](wx_parent=self.gui.spin_viewer, mol_id=self.info['id'], type=type)
+
+
+    def action_molecule_molecule_select(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to select all spins of this molecule?"
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
+            return
+
+        # Select the molecule.
+        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
+
+
+    def action_molecule_residue_create(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['residue.create'](wx_parent=self.gui.spin_viewer, mol_name=self.info['mol_name'])
+
+
+    def action_residue_residue_copy(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['residue.copy'](wx_parent=self.gui.spin_viewer, pipe_from=cdp_name(), res_from=self.info['id'], pipe_to=cdp_name())
+
+
+    def action_residue_residue_delete(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this residue?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
+            return
+
+        # Delete the residue.
+        self.gui.interpreter.queue('residue.delete', gui_to_str(self.info['id']))
+
+
+    def action_residue_residue_deselect(self, event):
         """Wrapper method.
 
         @param event:   The wx event.
@@ -317,11 +348,106 @@ class Mol_res_spin_tree(wx.Window):
         # Deselect the residue.
         self.gui.interpreter.queue('deselect.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
+
+    def action_residue_residue_name(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['residue.name'](wx_parent=self.gui.spin_viewer, res_id=self.info['id'])
 
 
-    def deselect_spin(self, event):
+    def action_residue_residue_number(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['residue.number'](wx_parent=self.gui.spin_viewer, res_id=self.info['id'])
+
+
+    def action_residue_residue_select(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to select all spins of this residue?"
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
+            return
+
+        # Select the residue.
+        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
+
+
+    def action_residue_spin_add(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['spin.create'](wx_parent=self.gui.spin_viewer, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
+
+
+    def action_residue_spin_create_pseudo(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['spin.create_pseudo'](wx_parent=self.gui.spin_viewer, res_id=self.info['id'])
+
+
+    def action_root_molecule_create(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['molecule.create'](wx_parent=self.gui.spin_viewer)
+
+
+    def action_spin_spin_copy(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['spin.copy'](wx_parent=self.gui.spin_viewer, pipe_from=cdp_name(), spin_from=self.info['id'], pipe_to=cdp_name())
+
+
+    def action_spin_spin_delete(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this spin?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
+            return
+
+        # Delete the spin.
+        self.gui.interpreter.queue('spin.delete', gui_to_str(self.info['id']))
+
+
+    def action_spin_spin_deselect(self, event):
         """Wrapper method.
 
         @param event:   The wx event.
@@ -331,8 +457,55 @@ class Mol_res_spin_tree(wx.Window):
         # Deselect the spin.
         self.gui.interpreter.queue('deselect.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
+
+    def action_spin_spin_element(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the current spin element.
+        spin = return_spin(self.info['id'])
+        element = None
+        if hasattr(spin, 'element'):
+            element = spin.element
+
+        # Launch the user function wizard.
+        uf_store['spin.element'](wx_parent=self.gui.spin_viewer, spin_id=self.info['id'], element=element)
+
+
+    def action_spin_spin_name(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['spin.name'](wx_parent=self.gui.spin_viewer, spin_id=self.info['id'])
+
+
+    def action_spin_spin_number(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user function wizard.
+        uf_store['spin.number'](wx_parent=self.gui.spin_viewer, spin_id=self.info['id'])
+
+
+    def action_spin_spin_select(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Select the spin.
+        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
 
     def get_info(self):
@@ -377,36 +550,47 @@ class Mol_res_spin_tree(wx.Window):
     def menu_molecule(self):
         """The right click molecule menu."""
 
+        # Init the item list.
+        items = []
+
         # The menu.
         menu = wx.Menu()
-        item = build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add residue", icon=paths.icon_16x16.add)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
-        item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="Delete molecule", icon=paths.icon_16x16.remove)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
+
+        # Add some menu items for the spin user functions.
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_COPY, text="Copy the molecule", icon=fetch_icon("oxygen.actions.list-add")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="Delete the molecule", icon=fetch_icon("oxygen.actions.list-remove")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_NAME, text="Name the molecule", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_TYPE, text="Set the molecule type", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add a residue", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+
+        # Add the items and activate them.
+        for item in items:
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
+
+        # Add a separator.
+        menu.AppendSeparator()
 
         # Selection or deselection.
         if self.info['select']:
-            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="Deselect")
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
+            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="Deselect", icon=fetch_icon("relax.molecule_grey"))
         else:
-            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="Select")
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
+            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="Select", icon=fetch_icon("relax.molecule"))
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.create_residue, id=self.MENU_MOLECULE_RESIDUE_CREATE)
-        self.Bind(wx.EVT_MENU, self.delete_molecule, id=self.MENU_MOLECULE_MOLECULE_DELETE)
+        self.Bind(wx.EVT_MENU, self.action_molecule_molecule_copy, id=self.MENU_MOLECULE_MOLECULE_COPY)
+        self.Bind(wx.EVT_MENU, self.action_molecule_molecule_delete, id=self.MENU_MOLECULE_MOLECULE_DELETE)
+        self.Bind(wx.EVT_MENU, self.action_molecule_molecule_name, id=self.MENU_MOLECULE_MOLECULE_NAME)
+        self.Bind(wx.EVT_MENU, self.action_molecule_molecule_type, id=self.MENU_MOLECULE_MOLECULE_TYPE)
+        self.Bind(wx.EVT_MENU, self.action_molecule_residue_create, id=self.MENU_MOLECULE_RESIDUE_CREATE)
         if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_molecule, id=self.MENU_MOLECULE_MOLECULE_DESELECT)
+            self.Bind(wx.EVT_MENU, self.action_molecule_molecule_deselect, id=self.MENU_MOLECULE_MOLECULE_DESELECT)
         else:
-            self.Bind(wx.EVT_MENU, self.select_molecule, id=self.MENU_MOLECULE_MOLECULE_SELECT)
+            self.Bind(wx.EVT_MENU, self.action_molecule_molecule_select, id=self.MENU_MOLECULE_MOLECULE_SELECT)
 
         # Show the menu.
         if status.show_gui:
@@ -417,36 +601,49 @@ class Mol_res_spin_tree(wx.Window):
     def menu_residue(self):
         """The right click molecule menu."""
 
+        # Init the item list.
+        items = []
+
         # The menu.
         menu = wx.Menu()
-        item = build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="Add spin", icon=paths.icon_16x16.add)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
-        item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="Delete residue", icon=paths.icon_16x16.remove)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
+
+        # Add some menu items for the spin user functions.
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_COPY, text="Copy the residue", icon=fetch_icon("oxygen.actions.list-add")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="Delete the residue", icon=fetch_icon("oxygen.actions.list-remove")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_NAME, text="Name the residue", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_NUMBER, text="Number the residue", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="Add a spin", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_CREATE_PSEUDO, text="Create a pseudo-atom", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+
+        # Add the items and activate them.
+        for item in items:
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
+
+        # Add a separator.
+        menu.AppendSeparator()
 
         # Selection or deselection.
         if self.info['select']:
-            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="Deselect")
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
+            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="Deselect", icon=fetch_icon("relax.residue_grey"))
         else:
-            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="Select")
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
+            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="Select", icon=fetch_icon("relax.residue"))
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.create_spin, id=self.MENU_RESIDUE_SPIN_ADD)
-        self.Bind(wx.EVT_MENU, self.delete_residue, id=self.MENU_RESIDUE_RESIDUE_DELETE)
+        self.Bind(wx.EVT_MENU, self.action_residue_residue_copy, id=self.MENU_RESIDUE_RESIDUE_COPY)
+        self.Bind(wx.EVT_MENU, self.action_residue_residue_delete, id=self.MENU_RESIDUE_RESIDUE_DELETE)
+        self.Bind(wx.EVT_MENU, self.action_residue_residue_name, id=self.MENU_RESIDUE_RESIDUE_NAME)
+        self.Bind(wx.EVT_MENU, self.action_residue_residue_number, id=self.MENU_RESIDUE_RESIDUE_NUMBER)
+        self.Bind(wx.EVT_MENU, self.action_residue_spin_add, id=self.MENU_RESIDUE_SPIN_ADD)
+        self.Bind(wx.EVT_MENU, self.action_residue_spin_create_pseudo, id=self.MENU_RESIDUE_SPIN_CREATE_PSEUDO)
         if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_residue, id=self.MENU_RESIDUE_RESIDUE_DESELECT)
+            self.Bind(wx.EVT_MENU, self.action_residue_residue_deselect, id=self.MENU_RESIDUE_RESIDUE_DESELECT)
         else:
-            self.Bind(wx.EVT_MENU, self.select_residue, id=self.MENU_RESIDUE_RESIDUE_SELECT)
+            self.Bind(wx.EVT_MENU, self.action_residue_residue_select, id=self.MENU_RESIDUE_RESIDUE_SELECT)
 
         # Show the menu.
         if status.show_gui:
@@ -457,23 +654,24 @@ class Mol_res_spin_tree(wx.Window):
     def menu_root(self):
         """The right click root menu."""
 
+        # Init the item list.
+        items = []
+
         # The menu.
         menu = wx.Menu()
 
-        # The add molecule entry.
-        item = build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add molecule", icon=paths.icon_16x16.add)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
+        # Add some menu items for the spin user functions.
+        items.append(build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add a molecule", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+        items.append(build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin))
 
-        # The add molecule entry.
-        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
+        # Add the items and activate them.
+        for item in items:
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.create_molecule, id=self.MENU_ROOT_MOLECULE_CREATE)
+        self.Bind(wx.EVT_MENU, self.action_root_molecule_create, id=self.MENU_ROOT_MOLECULE_CREATE)
         self.Bind(wx.EVT_MENU, self.gui.spin_viewer.load_spins_wizard, id=self.MENU_ROOT_LOAD_SPINS)
 
         # Show the menu.
@@ -485,31 +683,47 @@ class Mol_res_spin_tree(wx.Window):
     def menu_spin(self):
         """The right click spin menu."""
 
+        # Init the item list.
+        items = []
+
         # The menu.
         menu = wx.Menu()
-        item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="Delete spin", icon=paths.icon_16x16.remove)
+
+        # Add some menu items for the spin user functions.
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_COPY, text="Copy the spin", icon=fetch_icon("oxygen.actions.list-add")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="Delete the spin", icon=fetch_icon("oxygen.actions.list-remove")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_ELEMENT, text="Set the element type of the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_NAME, text="Name the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_NUMBER, text="Number the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
+
+        # Add the items and activate them.
+        for item in items:
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
+
+        # Add a separator.
+        menu.AppendSeparator()
+
+        # Selection or deselection.
+        if self.info['select']:
+            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="Deselect", icon=fetch_icon("relax.spin_grey"))
+        else:
+            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="Select", icon=fetch_icon("relax.spin"))
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 
-        # Selection or deselection.
-        if self.info['select']:
-            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="Deselect")
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
-        else:
-            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="Select")
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
-
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.delete_spin, id=self.MENU_SPIN_SPIN_DELETE)
+        self.Bind(wx.EVT_MENU, self.action_spin_spin_copy, id=self.MENU_SPIN_SPIN_COPY)
+        self.Bind(wx.EVT_MENU, self.action_spin_spin_delete, id=self.MENU_SPIN_SPIN_DELETE)
+        self.Bind(wx.EVT_MENU, self.action_spin_spin_element, id=self.MENU_SPIN_SPIN_ELEMENT)
+        self.Bind(wx.EVT_MENU, self.action_spin_spin_name, id=self.MENU_SPIN_SPIN_NAME)
+        self.Bind(wx.EVT_MENU, self.action_spin_spin_number, id=self.MENU_SPIN_SPIN_NUMBER)
         if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_spin, id=self.MENU_SPIN_SPIN_DESELECT)
+            self.Bind(wx.EVT_MENU, self.action_spin_spin_deselect, id=self.MENU_SPIN_SPIN_DESELECT)
         else:
-            self.Bind(wx.EVT_MENU, self.select_spin, id=self.MENU_SPIN_SPIN_SELECT)
+            self.Bind(wx.EVT_MENU, self.action_spin_spin_select, id=self.MENU_SPIN_SPIN_SELECT)
 
         # Show the menu.
         if status.show_gui:
@@ -544,17 +758,17 @@ class Mol_res_spin_tree(wx.Window):
         @type mol_id:           str
         """
 
-        # Get a list of residue IDs from the relax data store.
-        res_ids = get_residue_ids(mol_id)
-
         # Find if the molecule has been removed.
         prune_list = []
         for key in self.tree_ids[mol_branch_id].keys():
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
-            # Prune if it has been removed.
-            if info['id'] not in res_ids:
+            # Get the residue.
+            res = return_residue(info['id'])
+
+            # Prune if it has been removed or renamed/renumbered.
+            if res == None or res.name != info['res_name'] or res.num != info['res_num']:
                 self.tree.Delete(key)
                 self.tree_ids[mol_branch_id].pop(key)
 
@@ -570,71 +784,19 @@ class Mol_res_spin_tree(wx.Window):
         @type res_id:           str
         """
 
-        # Get a list of spin IDs from the relax data store.
-        spin_ids = get_spin_ids(res_id)
-
         # Find if the molecule has been removed.
         prune_list = []
         for key in self.tree_ids[mol_branch_id][res_branch_id].keys():
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
-            # Prune if it has been removed.
-            if info['id'] not in spin_ids:
+            # Get the spin.
+            spin = return_spin(info['id'])
+
+            # Prune if it has been removed or renamed/renumbered.
+            if spin == None or spin.name != info['spin_name'] or spin.num != info['spin_num']:
                 self.tree.Delete(key)
                 self.tree_ids[mol_branch_id][res_branch_id].pop(key)
-
-
-    def select_molecule(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to select all spins of this molecule?"
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
-            return
-
-        # Select the molecule.
-        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
-
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
-
-
-    def select_residue(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to select all spins of this residue?"
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
-            return
-
-        # Select the residue.
-        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
-
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
-
-
-    def select_spin(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Select the spin.
-        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
-
-        # Notify all observers that a user function has completed.
-        status.observers.gui_uf.notify()
 
 
     def set_bitmap_mol(self, mol_branch_id, select=True):
@@ -822,8 +984,8 @@ class Mol_res_spin_tree(wx.Window):
             # Get the python data.
             data = self.tree.GetItemPyData(key)
 
-            # Check the res_id for a match and, if so, terminate to speed things up.
-            if res_id == data['id']:
+            # Check the res_id, res name, and res number for a match and, if so, terminate to speed things up.
+            if res_id == data['id'] and res.name == data['res_name'] and res.num == data['res_num']:
                 new_res = False
                 res_branch_id = key
                 break
@@ -898,8 +1060,8 @@ class Mol_res_spin_tree(wx.Window):
             # Get the python data.
             data = self.tree.GetItemPyData(key)
 
-            # Check the spin_id for a match and, if so, terminate to speed things up.
-            if spin_id == data['id']:
+            # Check the spin_id, spin name and spin number for a match and, if so, terminate to speed things up.
+            if spin_id == data['id'] and spin.name == data['spin_name'] and spin.num == data['spin_num']:
                 new_spin = False
                 spin_branch_id = key
                 break
