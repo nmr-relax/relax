@@ -239,7 +239,7 @@ class Sequence:
         # Handle Combo_list elements.
         if self.element_type == 'combo_list':
             # Empty lists.
-            if value == []:
+            if value == [] or value == None:
                 return None
 
         # Non Combo_list elements.
