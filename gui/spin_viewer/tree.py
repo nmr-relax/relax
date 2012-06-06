@@ -557,11 +557,11 @@ class Mol_res_spin_tree(wx.Window):
         menu = wx.Menu()
 
         # Add some menu items for the spin user functions.
-        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_COPY, text="Copy the molecule", icon=fetch_icon("oxygen.actions.list-add")))
-        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="Delete the molecule", icon=fetch_icon("oxygen.actions.list-remove")))
-        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_NAME, text="Name the molecule", icon=fetch_icon("oxygen.actions.edit-rename")))
-        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_TYPE, text="Set the molecule type", icon=fetch_icon("oxygen.actions.edit-rename")))
-        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add a residue", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_COPY, text="&Copy the molecule", icon=fetch_icon("oxygen.actions.list-add")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="De&lete the molecule", icon=fetch_icon("oxygen.actions.list-remove")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_NAME, text="&Name the molecule", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_TYPE, text="Set the molecule &type", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add a &residue", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
 
         # Add the items and activate them.
         for item in items:
@@ -574,9 +574,9 @@ class Mol_res_spin_tree(wx.Window):
 
         # Selection or deselection.
         if self.info['select']:
-            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="Deselect", icon=fetch_icon("relax.molecule_grey"))
+            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="&Deselect", icon=fetch_icon("relax.molecule_grey"))
         else:
-            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="Select", icon=fetch_icon("relax.molecule"))
+            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="&Select", icon=fetch_icon("relax.molecule"))
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
@@ -608,12 +608,12 @@ class Mol_res_spin_tree(wx.Window):
         menu = wx.Menu()
 
         # Add some menu items for the spin user functions.
-        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_COPY, text="Copy the residue", icon=fetch_icon("oxygen.actions.list-add")))
-        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="Delete the residue", icon=fetch_icon("oxygen.actions.list-remove")))
-        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_NAME, text="Name the residue", icon=fetch_icon("oxygen.actions.edit-rename")))
-        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_NUMBER, text="Number the residue", icon=fetch_icon("oxygen.actions.edit-rename")))
-        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="Add a spin", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
-        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_CREATE_PSEUDO, text="Create a pseudo-atom", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_COPY, text="&Copy the residue", icon=fetch_icon("oxygen.actions.list-add")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="De&lete the residue", icon=fetch_icon("oxygen.actions.list-remove")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_NAME, text="&Name the residue", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_NUMBER, text="N&umber the residue", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="&Add a spin", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+        items.append(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_CREATE_PSEUDO, text="Create a &pseudo-atom", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
 
         # Add the items and activate them.
         for item in items:
@@ -626,9 +626,9 @@ class Mol_res_spin_tree(wx.Window):
 
         # Selection or deselection.
         if self.info['select']:
-            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="Deselect", icon=fetch_icon("relax.residue_grey"))
+            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="&Deselect", icon=fetch_icon("relax.residue_grey"))
         else:
-            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="Select", icon=fetch_icon("relax.residue"))
+            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="&Select", icon=fetch_icon("relax.residue"))
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
@@ -661,8 +661,8 @@ class Mol_res_spin_tree(wx.Window):
         menu = wx.Menu()
 
         # Add some menu items for the spin user functions.
-        items.append(build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add a molecule", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
-        items.append(build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin))
+        items.append(build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="&Add a molecule", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
+        items.append(build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="&Load spins", icon=paths.icon_16x16.spin))
 
         # Add the items and activate them.
         for item in items:
@@ -690,11 +690,11 @@ class Mol_res_spin_tree(wx.Window):
         menu = wx.Menu()
 
         # Add some menu items for the spin user functions.
-        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_COPY, text="Copy the spin", icon=fetch_icon("oxygen.actions.list-add")))
-        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="Delete the spin", icon=fetch_icon("oxygen.actions.list-remove")))
-        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_ELEMENT, text="Set the element type of the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
-        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_NAME, text="Name the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
-        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_NUMBER, text="Number the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_COPY, text="&Copy the spin", icon=fetch_icon("oxygen.actions.list-add")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="De&lete the spin", icon=fetch_icon("oxygen.actions.list-remove")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_ELEMENT, text="Set the element &type of the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_NAME, text="&Name the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
+        items.append(build_menu_item(menu, id=self.MENU_SPIN_SPIN_NUMBER, text="N&umber the spin", icon=fetch_icon("oxygen.actions.edit-rename")))
 
         # Add the items and activate them.
         for item in items:
@@ -707,9 +707,9 @@ class Mol_res_spin_tree(wx.Window):
 
         # Selection or deselection.
         if self.info['select']:
-            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="Deselect", icon=fetch_icon("relax.spin_grey"))
+            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="&Deselect", icon=fetch_icon("relax.spin_grey"))
         else:
-            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="Select", icon=fetch_icon("relax.spin"))
+            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="&Select", icon=fetch_icon("relax.spin"))
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
