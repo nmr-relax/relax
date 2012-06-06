@@ -31,6 +31,7 @@ import wx.lib.buttons
 # relax module imports.
 from status import Status; status = Status()
 from generic_fns.spectrum import replicated_flags, replicated_ids
+from graphics import fetch_icon
 
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
@@ -43,6 +44,13 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 class Spectra_list:
     """The GUI element for listing loaded spectral data."""
+
+    # Some IDs for the menu entries.
+    MENU_SPECTRUM_BASEPLANE_RMSD = wx.NewId()
+    MENU_SPECTRUM_DELETE = wx.NewId()
+    MENU_SPECTRUM_INTEGRATION_POINTS = wx.NewId()
+    MENU_SPECTRUM_REPLICATED = wx.NewId()
+    MENU_RELAX_FIT_RELAX_TIME = wx.NewId()
 
     def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, buttons=True):
         """Build the spectral list GUI element.
@@ -122,6 +130,111 @@ class Spectra_list:
         self.button_delete.Enable(enable)
 
 
+    def action_relax_fit_relax_time(self, event):
+        """Launch the relax_fit.relax_time user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current time.
+        time = None
+        if hasattr(cdp, 'relax_times') and id in cdp.relax_times.keys():
+            time = cdp.relax_times[id]
+
+        # Launch the dialog.
+        if time == None:
+            uf_store['relax_fit.relax_time'](spectrum_id=id)
+        else:
+            uf_store['relax_fit.relax_time'](time=time, spectrum_id=id)
+
+
+    def action_spectrum_baseplane_rmsd(self, event):
+        """Launch the spectrum.baseplane_rmsd user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        uf_store['spectrum.baseplane_rmsd'](spectrum_id=id)
+
+
+    def action_spectrum_delete(self, event):
+        """Launch the spectrum.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # No selection.
+        if item == -1:
+            id = None
+
+        # Selected item.
+        else:
+            # The spectrum ID.
+            id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        uf_store['spectrum.delete'](spectrum_id=id)
+
+
+    def action_spectrum_integration_points(self, event):
+        """Launch the spectrum.integration_points user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        uf_store['spectrum.integration_points'](spectrum_id=id)
+
+
+    def action_spectrum_replicated(self, event):
+        """Launch the spectrum.replicated user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current replicates.
+        replicates = replicated_ids(id)
+
+        # Launch the dialog.
+        if replicates == []:
+            uf_store['spectrum.replicated'](spectrum_ids=id)
+        else:
+            uf_store['spectrum.replicated'](spectrum_ids=replicates)
+
+
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
@@ -148,7 +261,7 @@ class Spectra_list:
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_delete, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.data_delete, self.button_delete)
+        self.gui.Bind(wx.EVT_BUTTON, self.action_spectrum_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
@@ -217,29 +330,6 @@ class Spectra_list:
         self.element.Thaw()
 
 
-    def data_delete(self, event):
-        """Launch the spectrum.delete user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The current selection.
-        item = self.element.GetFirstSelected()
-
-        # No selection.
-        if item == -1:
-            id = None
-
-        # Selected item.
-        else:
-            # The spectrum ID.
-            id = gui_to_str(self.element.GetItemText(item))
-
-        # Launch the dialog.
-        uf_store['spectrum.delete'](spectrum_id=id)
-
-
     def delete(self):
         """Unregister the class."""
 
@@ -299,23 +389,27 @@ class Spectra_list:
         if status.exec_lock.locked():
             return
 
-        # New menu entry.
-        if not hasattr(self, 'popup_id_del'):
-            # ID number.
-            self.popup_id_del = wx.NewId()
-
-            # Bind clicks.
-            self.element.Bind(wx.EVT_MENU, self.data_delete, id=self.popup_id_del)
-
         # Initialise the menu.
         menu = wx.Menu()
 
-        # Add the delete entry.
-        menu.AppendItem(build_menu_item(menu, id=self.popup_id_del, text="&Delete", icon=paths.icon_16x16.remove))
+        # Add some menu items for the spin user functions.
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_BASEPLANE_RMSD, text="Set the &baseplane RMSD", icon=fetch_icon("oxygen.actions.edit-rename")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_DELETE, text="&Delete the peak intensities", icon=fetch_icon("oxygen.actions.list-remove")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_INTEGRATION_POINTS, text="Set the number of integration &points", icon=fetch_icon("oxygen.actions.edit-rename")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_REPLICATED, text="Specify which spectra are &replicated", icon=fetch_icon("oxygen.actions.edit-rename")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_FIT_RELAX_TIME, text="Set the relaxation &time", icon=fetch_icon("oxygen.actions.edit-rename")))
+
+        # Bind clicks.
+        self.element.Bind(wx.EVT_MENU, self.action_relax_fit_relax_time, id=self.MENU_RELAX_FIT_RELAX_TIME)
+        self.element.Bind(wx.EVT_MENU, self.action_spectrum_baseplane_rmsd, id=self.MENU_SPECTRUM_BASEPLANE_RMSD)
+        self.element.Bind(wx.EVT_MENU, self.action_spectrum_delete, id=self.MENU_SPECTRUM_DELETE)
+        self.element.Bind(wx.EVT_MENU, self.action_spectrum_integration_points, id=self.MENU_SPECTRUM_INTEGRATION_POINTS)
+        self.element.Bind(wx.EVT_MENU, self.action_spectrum_replicated, id=self.MENU_SPECTRUM_REPLICATED)
 
         # Pop up the menu.
-        self.element.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.element.PopupMenu(menu)
+            menu.Destroy()
 
 
     def resize(self, event):
