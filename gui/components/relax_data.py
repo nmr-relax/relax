@@ -29,6 +29,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+from graphics import fetch_icon
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -42,6 +43,16 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 class Relax_data_list:
     """The GUI element for listing loaded relaxation data."""
+
+    # Some IDs for the menu entries.
+    MENU_RELAX_DATA_DELETE = wx.NewId()
+    MENU_RELAX_DATA_DISPLAY = wx.NewId()
+    MENU_RELAX_DATA_FRQ = wx.NewId()
+    MENU_RELAX_DATA_PEAK_INTENSITY_TYPE = wx.NewId()
+    MENU_RELAX_DATA_TEMP_CALIBRATION = wx.NewId()
+    MENU_RELAX_DATA_TEMP_CONTROL = wx.NewId()
+    MENU_RELAX_DATA_TYPE = wx.NewId()
+
 
     def __init__(self, gui=None, parent=None, box=None, id=None, buttons=True):
         """Build the relaxation data list GUI element.
@@ -118,6 +129,171 @@ class Relax_data_list:
         self.button_delete.Enable(enable)
 
 
+    def action_relax_data_delete(self, event):
+        """Launch the relax_data.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # No selection.
+        if item == -1:
+            id = None
+
+        # Selected item.
+        else:
+            # The spectrum ID.
+            id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        uf_store['relax_data.delete'](ri_id=id)
+
+
+    def action_relax_data_display(self, event):
+        """Launch the relax_data.display user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        uf_store['relax_data.display'](ri_id=id)
+
+
+    def action_relax_data_frq(self, event):
+        """Launch the relax_data.frq user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        if hasattr(cdp, 'frq') and id in cdp.frq.keys():
+            frq = cdp.frq[id]
+
+        # Launch the dialog.
+        if frq == None:
+            uf_store['relax_data.frq'](ri_id=id)
+        else:
+            uf_store['relax_data.frq'](ri_id=id, frq=frq)
+
+
+    def action_relax_data_peak_intensity_type(self, event):
+        """Launch the relax_data.peak_intensity_type user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current type.
+        type = None
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type.keys():
+            type = cdp.exp_info.peak_intensity_type[id]
+
+        # Launch the dialog.
+        if type == None:
+            uf_store['relax_data.peak_intensity_type'](ri_id=id)
+        else:
+            uf_store['relax_data.peak_intensity_type'](ri_id=id, type=type)
+
+
+    def action_relax_data_temp_calibration(self, event):
+        """Launch the relax_data.temp_calibration user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current method.
+        method = None
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration.keys():
+            method = cdp.exp_info.temp_calibration[id]
+
+        # Launch the dialog.
+        if method == None:
+            uf_store['relax_data.temp_calibration'](ri_id=id)
+        else:
+            uf_store['relax_data.temp_calibration'](ri_id=id, method=method)
+
+
+    def action_relax_data_temp_control(self, event):
+        """Launch the relax_data.temp_control user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current method.
+        method = None
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control.keys():
+            method = cdp.exp_info.temp_control[id]
+
+        # Launch the dialog.
+        if method == None:
+            uf_store['relax_data.temp_control'](ri_id=id)
+        else:
+            uf_store['relax_data.temp_control'](ri_id=id, method=method)
+
+
+    def action_relax_data_type(self, event):
+        """Launch the relax_data.type user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current type.
+        type = None
+        if hasattr(cdp, 'ri_type') and id in cdp.ri_type.keys():
+            type = cdp.ri_type[id]
+
+        # Launch the dialog.
+        if type == None:
+            uf_store['relax_data.type'](ri_id=id)
+        else:
+            uf_store['relax_data.type'](ri_id=id, ri_type=type)
+
+
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
@@ -153,7 +329,7 @@ class Relax_data_list:
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_delete, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_delete, self.button_delete)
+        self.gui.Bind(wx.EVT_BUTTON, self.action_relax_data_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
@@ -289,46 +465,31 @@ class Relax_data_list:
         if status.exec_lock.locked():
             return
 
-        # New menu entry.
-        if not hasattr(self, 'popup_id_del'):
-            # ID number.
-            self.popup_id_del = wx.NewId()
-
-            # Bind clicks.
-            self.element.Bind(wx.EVT_MENU, self.relax_data_delete, id=self.popup_id_del)
-
         # Initialise the menu.
         menu = wx.Menu()
 
-        # Add the delete entry.
-        menu.AppendItem(build_menu_item(menu, id=self.popup_id_del, text="&Delete", icon=paths.icon_16x16.remove))
+        # Add some menu items for the spin user functions.
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_DELETE, text="&Delete the relaxation data", icon=fetch_icon("oxygen.actions.list-remove")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_DISPLAY, text="Dis&play the relaxation data", icon=fetch_icon("oxygen.actions.document-preview")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_FRQ, text="Set the relaxation data &frequency", icon=fetch_icon("relax.frq")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_PEAK_INTENSITY_TYPE, text="Set the peak &intensity type", icon=fetch_icon("oxygen.actions.edit-rename")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TEMP_CALIBRATION, text="Set the temperature &calibration", icon=fetch_icon("oxygen.status.weather-clear")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TEMP_CONTROL, text="Set the temperature c&ontrol", icon=fetch_icon("oxygen.status.weather-clear")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TYPE, text="Set the relaxation data &type", icon=fetch_icon("oxygen.actions.edit-rename")))
+
+        # Bind clicks.
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_delete, id=self.MENU_RELAX_DATA_DELETE)
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_display, id=self.MENU_RELAX_DATA_DISPLAY)
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_frq, id=self.MENU_RELAX_DATA_FRQ)
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_peak_intensity_type, id=self.MENU_RELAX_DATA_PEAK_INTENSITY_TYPE)
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_temp_calibration, id=self.MENU_RELAX_DATA_TEMP_CALIBRATION)
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_temp_control, id=self.MENU_RELAX_DATA_TEMP_CONTROL)
+        self.element.Bind(wx.EVT_MENU, self.action_relax_data_type, id=self.MENU_RELAX_DATA_TYPE)
 
         # Pop up the menu.
-        self.element.PopupMenu(menu)
-        menu.Destroy()
-
-
-    def relax_data_delete(self, event):
-        """Launch the relax_data.delete user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The current selection.
-        item = self.element.GetFirstSelected()
-
-        # No selection.
-        if item == -1:
-            id = None
-
-        # Selected item.
-        else:
-            # The spectrum ID.
-            id = gui_to_str(self.element.GetItemText(item))
-
-        # Launch the dialog.
-        uf_store['relax_data.delete'](ri_id=id)
+        if status.show_gui:
+            self.element.PopupMenu(menu)
+            menu.Destroy()
 
 
     def relax_data_read(self, event):
