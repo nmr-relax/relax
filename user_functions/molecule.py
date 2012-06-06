@@ -213,6 +213,7 @@ uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
+    arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the molecule to be renamed."
 )
@@ -261,6 +262,7 @@ uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
+    arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the molecule to type to be overwritten."
 )
