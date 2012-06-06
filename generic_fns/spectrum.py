@@ -1046,6 +1046,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Check the file name.
+    if file == None:
+        raise RelaxError("The file name must be supplied.")
+
     # Test that the intensity measures are identical.
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
