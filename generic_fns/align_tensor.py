@@ -232,8 +232,6 @@ def delete(tensor=None):
     # Test if alignment tensor data exists.
     if tensor and not align_data_exists(tensor):
         raise RelaxNoTensorError('alignment')
-    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0 or not hasattr(cdp, 'align_ids'):
-        raise RelaxNoTensorError('alignment')
 
     # The tensor list.
     if tensor:
@@ -268,12 +266,6 @@ def display(tensor):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Test if alignment tensor data exists.
-    if tensor and not align_data_exists(tensor):
-        raise RelaxNoTensorError('alignment')
-    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0 or not hasattr(cdp, 'align_ids'):
-        raise RelaxNoTensorError('alignment')
 
     # Construct the tensor list.
     tensor_list = []
@@ -488,10 +480,6 @@ def fix(id=None, fixed=True):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Test if alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensors') or not hasattr(cdp, 'align_ids'):
-        raise RelaxNoTensorError('alignment')
 
     # Loop over the tensors.
     for i in range(len(cdp.align_tensors)):
@@ -1005,7 +993,7 @@ def matrix_angles(basis_set=0, tensors=None):
     """
 
     # Test that alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0 or not hasattr(cdp, 'align_ids'):
+    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError('alignment')
 
     # Count the number of tensors.
@@ -1123,13 +1111,6 @@ def reduction(full_tensor=None, red_tensor=None):
     @param red_tensor:  The reduced alignment tensor.
     @type red_tensor:   str
     """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0 or not hasattr(cdp, 'align_ids'):
-        raise RelaxNoTensorError('alignment')
 
     # Tensor information.
     match_full = False
@@ -1880,10 +1861,6 @@ def set_domain(tensor=None, domain=None):
     if not hasattr(cdp, 'domain') or domain not in cdp.domain.keys():
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
-    # Test if alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0 or not hasattr(cdp, 'align_ids'):
-        raise RelaxNoTensorError('alignment')
-
     # Loop over the tensors.
     match = False
     for tensor_cont in cdp.align_tensors:
@@ -1937,7 +1914,7 @@ def svd(basis_set=0, tensors=None):
     """
 
     # Test that alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0 or not hasattr(cdp, 'align_ids'):
+    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError('alignment')
 
     # Count the number of tensors used in the SVD.
