@@ -342,7 +342,7 @@ class Combo_list:
             for i in range(len(value)):
                 # Loop until the proper client data is found.
                 for j in range(self._combo_boxes[i].GetCount()):
-                    if self._combo_boxes[i].GetClientData(j) == value:
+                    if self._combo_boxes[i].GetClientData(j) == value[i]:
                         self._combo_boxes[i].SetSelection(j)
                         break
 
