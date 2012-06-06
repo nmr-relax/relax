@@ -311,7 +311,8 @@ class Value:
             if not found:
                 # Invalid value.
                 if self.read_only:
-                    raise RelaxError("The Value element is read only, cannot set the value '%s'." % value)
+                    if value != None:
+                        raise RelaxError("The Value element is read only, cannot set the value '%s'." % value)
 
                 # Set the unknown value, and remove the selection.
                 else:
