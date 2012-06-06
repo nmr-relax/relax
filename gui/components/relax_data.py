@@ -31,6 +31,7 @@ import wx.lib.buttons
 # relax module imports.
 from graphics import fetch_icon
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
@@ -469,13 +470,13 @@ class Relax_data_list:
         menu = wx.Menu()
 
         # Add some menu items for the spin user functions.
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_DELETE, text="&Delete the relaxation data", icon=fetch_icon("oxygen.actions.list-remove")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_DISPLAY, text="Dis&play the relaxation data", icon=fetch_icon("oxygen.actions.document-preview")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_FRQ, text="Set the relaxation data &frequency", icon=fetch_icon("relax.frq")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_PEAK_INTENSITY_TYPE, text="Set the peak &intensity type", icon=fetch_icon("oxygen.actions.edit-rename")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TEMP_CALIBRATION, text="Set the temperature &calibration", icon=fetch_icon("oxygen.status.weather-clear")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TEMP_CONTROL, text="Set the temperature c&ontrol", icon=fetch_icon("oxygen.status.weather-clear")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TYPE, text="Set the relaxation data &type", icon=fetch_icon("oxygen.actions.edit-rename")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_DELETE, text="&Delete the relaxation data", icon=fetch_icon(uf_info.get_uf('relax_data.delete').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_DISPLAY, text="Dis&play the relaxation data", icon=fetch_icon(uf_info.get_uf('relax_data.display').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_FRQ, text="Set the relaxation data &frequency", icon=fetch_icon(uf_info.get_uf('relax_data.frq').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_PEAK_INTENSITY_TYPE, text="Set the peak &intensity type", icon=fetch_icon(uf_info.get_uf('relax_data.peak_intensity_type').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TEMP_CALIBRATION, text="Set the temperature &calibration", icon=fetch_icon(uf_info.get_uf('relax_data.temp_calibration').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TEMP_CONTROL, text="Set the temperature c&ontrol", icon=fetch_icon(uf_info.get_uf('relax_data.temp_control').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_DATA_TYPE, text="Set the relaxation data &type", icon=fetch_icon(uf_info.get_uf('relax_data.type').gui_icon)))
 
         # Bind clicks.
         self.element.Bind(wx.EVT_MENU, self.action_relax_data_delete, id=self.MENU_RELAX_DATA_DELETE)

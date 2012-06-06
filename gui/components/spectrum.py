@@ -32,6 +32,7 @@ import wx.lib.buttons
 from status import Status; status = Status()
 from generic_fns.spectrum import replicated_flags, replicated_ids
 from graphics import fetch_icon
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
@@ -393,11 +394,11 @@ class Spectra_list:
         menu = wx.Menu()
 
         # Add some menu items for the spin user functions.
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_BASEPLANE_RMSD, text="Set the &baseplane RMSD", icon=fetch_icon("oxygen.actions.edit-rename")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_DELETE, text="&Delete the peak intensities", icon=fetch_icon("oxygen.actions.list-remove")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_INTEGRATION_POINTS, text="Set the number of integration &points", icon=fetch_icon("oxygen.actions.edit-rename")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_REPLICATED, text="Specify which spectra are &replicated", icon=fetch_icon("oxygen.actions.edit-rename")))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_FIT_RELAX_TIME, text="Set the relaxation &time", icon=fetch_icon("oxygen.actions.edit-rename")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_BASEPLANE_RMSD, text="Set the &baseplane RMSD", icon=fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_DELETE, text="&Delete the peak intensities", icon=fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_INTEGRATION_POINTS, text="Set the number of integration &points", icon=fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_REPLICATED, text="Specify which spectra are &replicated", icon=fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon)))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_FIT_RELAX_TIME, text="Set the relaxation &time", icon=fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon)))
 
         # Bind clicks.
         self.element.Bind(wx.EVT_MENU, self.action_relax_fit_relax_time, id=self.MENU_RELAX_FIT_RELAX_TIME)
