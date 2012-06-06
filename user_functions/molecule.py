@@ -268,8 +268,8 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the type of the molecule to be specified.  It can be one of:")
 for i in range(len(ALLOWED_MOL_TYPES)-1):
-    uf.desc[-1].add_list_element("'%s',\n" % ALLOWED_MOL_TYPES[i])
-uf.desc[-1].add_list_element("'%s'.\n" % ALLOWED_MOL_TYPES[-1])
+    uf.desc[-1].add_list_element("'%s'," % ALLOWED_MOL_TYPES[i])
+uf.desc[-1].add_list_element("'%s'." % ALLOWED_MOL_TYPES[-1])
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the molecule 'Ap4Aase' to the 'protein' type, type one of:")
