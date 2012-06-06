@@ -151,6 +151,20 @@ def build_uf_menus(parent=None, menubar=None):
 
 
 
+class Force_true(object):
+    """A special user function arg element which always returns True."""
+
+    def GetValue(self):
+        """Simple method for returning True."""
+
+        return True
+
+
+    def SetValue(self, value):
+        """Dummy method."""
+
+
+
 class Uf_object(object):
     """The object for auto-generating the GUI user functions."""
 
@@ -680,6 +694,10 @@ class Uf_page(Wiz_page):
             # Special arg type:  functions and their arguments!
             elif arg['arg_type'] in ['func', 'func args']:
                 pass
+
+            # Special arg type:  force flags.
+            elif arg['arg_type'] in ['force flag']:
+                self.uf_args[arg['name']] = Force_true()
 
             # Special arg type:  spin IDs.
             elif arg['arg_type'] in ['spin ID']:
