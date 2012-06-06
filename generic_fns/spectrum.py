@@ -1256,6 +1256,10 @@ def replicated_ids(spectrum_id):
                 # Append the replicated ID.
                 repl.append(cdp.replicates[i][j])
 
+    # Nothing.
+    if repl == []:
+        return repl
+
     # Sort the list.
     repl.sort()
 
