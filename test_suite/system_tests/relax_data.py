@@ -145,4 +145,4 @@ class Relax_data(SystemTestCase):
         for i in range(len(ids)):
             self.assertEqual(cdp.ri_ids[i], ids[i])
             self.assertAlmostEqual(cdp.frq[ids[i]], frqs[i])
-            self.assertEqual(cdp.ri_types[ids[i]], types[i])
+            self.assertEqual(cdp.ri_type[ids[i]], types[i])
