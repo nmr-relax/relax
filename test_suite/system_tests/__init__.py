@@ -33,6 +33,7 @@ from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 from test_suite.system_tests.align_tensor import Align_tensor
 from test_suite.system_tests.angles import Angles
 from test_suite.system_tests.bmrb import Bmrb
+from test_suite.system_tests.bruker import Bruker
 from test_suite.system_tests.consistency_tests import Ct
 from test_suite.system_tests.dasha import Dasha
 from test_suite.system_tests.diffusion_tensor import Diffusion_tensor
@@ -44,11 +45,11 @@ from test_suite.system_tests.load_spins import Load_spins
 from test_suite.system_tests.model_elimination import Modelim
 from test_suite.system_tests.model_free import Mf
 from test_suite.system_tests.model_selection import Modsel
+from test_suite.system_tests.mol_res_spin import Mol_res_spin
 from test_suite.system_tests.n_state_model import N_state_model
 from test_suite.system_tests.noe import Noe
 from test_suite.system_tests.noe_restraints import Noe_restraints
 from test_suite.system_tests.palmer import Palmer
-from test_suite.system_tests.pdc import Pdc
 from test_suite.system_tests.peak_lists import Peak_lists
 from test_suite.system_tests.pipes import Pipes
 from test_suite.system_tests.rdc import Rdc
