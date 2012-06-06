@@ -536,6 +536,37 @@ def display(ri_id=None):
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
 
 
+def frq(ri_id=None, frq=None):
+    """Set or reset the frequency associated with the ID.
+
+    @param ri_id:   The relaxation data ID string.
+    @type ri_id:    str
+    @param frq:     The spectrometer proton frequency in Hz.
+    @type frq:      float
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
+
+    # Frequency checks.
+    frq_checks(frq)
+
+    # Initialise if needed.
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+
+    # Set the value.
+    cdp.frq[ri_id] = frq
+
+
 def frq_checks(frq):
     """Perform a number of checks on the given frequency.
 
@@ -1003,6 +1034,38 @@ def temp_control(ri_id=None, method=None):
 
     # Store the method.
     cdp.exp_info.temp_control_setup(ri_id, method)
+
+
+def type(ri_id=None, ri_type=None):
+    """Set or reset the frequency associated with the ID.
+
+    @param ri_id:   The relaxation data ID string.
+    @type ri_id:    str
+    @param ri_type: The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_type:  str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
+
+    # Check if the type is valid.
+    if ri_type not in VALID_TYPES:
+        raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
+
+    # Initialise if needed.
+    if not hasattr(cdp, 'ri_type'):
+        cdp.ri_type = {}
+
+    # Set the type.
+    cdp.ri_type[ri_id] = ri_type
 
 
 def write(ri_id=None, file=None, dir=None, bc=False, force=False):

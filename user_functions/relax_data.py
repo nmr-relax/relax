@@ -187,6 +187,36 @@ uf.wizard_height_desc = 140
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 
 
+# The relax_data.frq user function.
+uf = uf_info.add_uf('relax_data.frq')
+uf.title = "Set the spectrometer proton frequency of the relaxation data in Hz."
+uf.title_short = "Relaxation data frequency setting."
+uf.add_keyarg(
+    name = "ri_id",
+    py_type = "str",
+    desc_short = "relaxation ID string",
+    desc = "The relaxation data ID string of the data to set the frequency of.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = relax_data.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "frq",
+    py_type = "num",
+    desc_short = "frequency in Hz",
+    desc = "The exact proton frequency of the spectrometer in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the relaxation data type to be either set or reset.  The frequency must be the that of the proton in Hertz.  This value must be exact and match that of the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.")
+uf.backend = relax_data.frq
+uf.menu_text = "&frq"
+uf.gui_icon = "relax.frq"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+
+
+
 # The relax_data.peak_intensity_type user function.
 uf = uf_info.add_uf('relax_data.peak_intensity_type')
 uf.title = "Specify the type of peak intensity measurement used - i.e. height or volume."
@@ -443,6 +473,38 @@ uf.menu_text = "temp_contro&l"
 uf.gui_icon = "oxygen.status.weather-clear"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+
+
+# The relax_data.type user function.
+uf = uf_info.add_uf('relax_data.type')
+uf.title = "Set the type of relaxation data."
+uf.title_short = "Relaxation data type setting."
+uf.add_keyarg(
+    name = "ri_id",
+    py_type = "str",
+    desc_short = "relaxation ID string",
+    desc = "The relaxation data ID string of the data to set the frequency of.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = relax_data.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "ri_type",
+    py_type = "str",
+    desc_short = "relaxation type",
+    desc = "The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["R1", "R2", "NOE"],
+    wiz_read_only = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the type associated with the relaxation data to be either set or reset.  This type must be one of 'R1', 'R2', or 'NOE'.")
+uf.backend = relax_data.type
+uf.menu_text = "&type"
+uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+
 
 
 # The relax_data.write user function.
