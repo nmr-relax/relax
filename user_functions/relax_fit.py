@@ -63,7 +63,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.")
 uf.backend = relax_fit_obj._relax_time
 uf.menu_text = "&relax_time"
-uf.gui_icon = "oxygen.actions.edit-rename"
+uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (700, 500)
 
 
