@@ -248,7 +248,7 @@ class Spectra_list:
 
         # Add button.
         self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_add.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22") wx.BITMAP_TYPE_ANY))
+        self.button_add.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22")))
         self.button_add.SetFont(font.normal)
         self.button_add.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_add, 0, 0, 0)
@@ -257,7 +257,7 @@ class Spectra_list:
 
         # Delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
-        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22")))
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_delete, 0, 0, 0)
