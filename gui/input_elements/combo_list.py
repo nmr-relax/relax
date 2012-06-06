@@ -194,7 +194,14 @@ class Combo_list:
 
             # Set the default selection.
             if self._default:
-                self._combo_boxes[-1].SetStringSelection(self._default)
+                # A list.
+                if isinstance(self._default, list):
+                    if index < len(self._default):
+                        self._combo_boxes[-1].SetStringSelection(self._default[index-1])
+
+                # Single value.
+                else:
+                    self._combo_boxes[-1].SetStringSelection(self._default)
 
         # The add button.
         button = None
@@ -390,16 +397,38 @@ class Combo_list:
 
             # Set the default selection.
             if sel == None and self._default != None:
-                # Translate if needed.
-                if self._default in self._choices:
-                    string = self._default
-                elif self._default not in self._data:
-                    string = self._default
-                else:
-                    string = self._choices[self._data.index(self._default)]
+                # A list.
+                if isinstance(self._default, list):
+                    # Add rows as needed.
+                    if len(self._default) > len(self._combo_boxes):
+                        for k in range(len(self._default) - len(self._combo_boxes)):
+                            self._add(None)
 
-                # Set the selection.
-                self._combo_boxes[i].SetStringSelection(string)
+                    # Loop over the defaults.
+                    for k in range(len(self._default)):
+                        # Translate if needed.
+                        if self._default[k] in self._choices:
+                            string = self._default[k]
+                        elif self._default[k] not in self._data:
+                            string = self._default[k]
+                        else:
+                            string = self._choices[self._data.index(self._default[k])]
+
+                        # Set the selection.
+                        self._combo_boxes[i].SetStringSelection(string)
+
+                # Single value.
+                else:
+                    # Translate if needed.
+                    if self._default in self._choices:
+                        string = self._default
+                    elif self._default not in self._data:
+                        string = self._default
+                    else:
+                        string = self._choices[self._data.index(self._default)]
+
+                    # Set the selection.
+                    self._combo_boxes[i].SetStringSelection(string)
 
             # Restore the selection.
             else:
