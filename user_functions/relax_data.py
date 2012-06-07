@@ -420,7 +420,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("For the proper measurement of relaxation data, per-experiment temperature calibration is essential.  This user function is not for inputting standard MeOH/ethylene glycol/etc. calibration of a spectrometer - this temperature setting is of no use when you are running experiments which pump in large amounts of power into the probe head.")
 uf.desc[-1].add_paragraph("The R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol sepectrometer calibration.  However the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.")
-uf.desc[-1].add_paragraph("The per-experiment calibration method used needs to be specified for BMRB data deposition.  The currently allowed methods are:")
+uf.desc[-1].add_paragraph("Specifying the per-experiment calibration method is needed for BMRB data deposition.  The currently allowed methods are:")
 uf.desc[-1].add_list_element("'methanol',")
 uf.desc[-1].add_list_element("'monoethylene glycol',")
 uf.desc[-1].add_list_element("'no calibration applied'.")
@@ -436,7 +436,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-clear.png'
 # The relax_data.temp_control user function.
 uf = uf_info.add_uf('relax_data.temp_control')
 uf.title = "Specify the temperature control method used."
-uf.title_short = "Setting temperature control method."
+uf.title_short = "The temperature control method."
 uf.add_keyarg(
     name = "ri_id",
     py_type = "str",
@@ -464,7 +464,9 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  The currently allowed methods are:")
+uf.desc[-1].add_paragraph("For the proper measurement of relaxation data, explicit temperature control techniques are essential.  A number of factors can cause significant temperature fluctuations between individual relaxation experiments.  This includes the daily temperature cycle of the room housing the spectrometer, different amounts of power for the individual experiments, .  The best methods for eliminating such problems are single scan interleaving and the application of off-resonance temperature compensation")
+uf.desc[-1].add_paragraph("The best methods for eliminating such problems are single scan interleaving and temperature compensation block.  Single scan interleaving is the most powerful technique for averaging the temperature fluctuations not only across different experiments, but also across the entire measurement time.  The application of off-resonance temperature compensation blocks at the start of the experiment is useful for the R2 and will normalise the temperature between the individual experiments, but single scan or single fid interleaving is nevertheless required for normalising the temperature across the entire measurement.")
+uf.desc[-1].add_paragraph("Specifying the temperature control method is needed for BMRB data deposition.  The currently allowed methods are:")
 uf.desc[-1].add_list_element("'single scan interleaving',")
 uf.desc[-1].add_list_element("'temperature compensation block',")
 uf.desc[-1].add_list_element("'single scan interleaving and temperature compensation block',")
@@ -474,8 +476,9 @@ uf.desc[-1].add_list_element("'no temperature control applied'.")
 uf.backend = relax_data.temp_control
 uf.menu_text = "temp_contro&l"
 uf.gui_icon = "oxygen.status.weather-clear"
-uf.wizard_size = (700, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 500
+uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-clear.png'
 
 
 # The relax_data.type user function.
