@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -240,6 +240,10 @@ def write(file=None, dir=None, version='3.1', force=False):
     # Test if the current data pipe exists.
     if not ds.current_pipe:
         raise RelaxNoPipeError
+
+    # Check the file name.
+    if file == None:
+        raise RelaxError("The file name must be specified.")
 
     # The special data pipe name directory.
     if dir == 'pipe_name':
