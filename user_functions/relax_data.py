@@ -24,6 +24,7 @@
 """The relax_data user function definitions."""
 
 # Python module imports.
+from os import sep
 import wx
 
 # relax module imports.
@@ -219,8 +220,8 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 
 # The relax_data.peak_intensity_type user function.
 uf = uf_info.add_uf('relax_data.peak_intensity_type')
-uf.title = "Specify the type of peak intensity measurement used - i.e. height or volume."
-uf.title_short = "Setting peak intensity type."
+uf.title = "Specify if heights or volumes were used to measure the peak intensities."
+uf.title_short = "How were peak intensities measured?"
 uf.add_keyarg(
     name = "ri_id",
     py_type = "str",
@@ -246,8 +247,9 @@ uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  It is us
 uf.backend = relax_data.peak_intensity_type
 uf.menu_text = "peak_&intensity_type"
 uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_size = (700, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+uf.wizard_height_desc = 300
+uf.wizard_size = (800, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
 
 # The relax_data.read user function.
