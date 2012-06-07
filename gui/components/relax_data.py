@@ -80,7 +80,7 @@ class Relax_data_list:
         # GUI variables.
         self.spacing = 5
         self.border = 5
-        self.height_buttons = 40
+        self.button_size = (170, 40)
 
         # First create a panel (to allow for tooltips on the buttons).
         self.panel = wx.Panel(self.parent)
@@ -335,7 +335,7 @@ class Relax_data_list:
         self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
         self.button_add.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_add.SetFont(font.normal)
-        self.button_add.SetSize((80, self.height_buttons))
+        self.button_add.SetMinSize(self.button_size)
         button_sizer.Add(self.button_add, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.action_relax_data_read, self.button_add)
         self.button_add.SetToolTipString("Read relaxation data from a file.")
@@ -344,28 +344,28 @@ class Relax_data_list:
         self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
         self.button_bruker.SetBitmapLabel(wx.Bitmap(fetch_icon('relax.bruker_add', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_bruker.SetFont(font.normal)
-        self.button_bruker.SetSize((80, self.height_buttons))
+        self.button_bruker.SetMinSize(self.button_size)
         button_sizer.Add(self.button_bruker, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.action_bruker_read, self.button_bruker)
         self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
-
-        # Metadata button.
-        self.button_metadata = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " View metadata")
-        self.button_metadata.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.mimetypes.text-x-texinfo', "22x22"), wx.BITMAP_TYPE_ANY))
-        self.button_metadata.SetFont(font.normal)
-        self.button_metadata.SetSize((80, self.height_buttons))
-        button_sizer.Add(self.button_metadata, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.view_metadata, self.button_metadata)
-        self.button_metadata.SetToolTipString("View and edit the relaxation data metadata.")
 
         # Delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
         self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_delete.SetFont(font.normal)
-        self.button_delete.SetSize((80, self.height_buttons))
+        self.button_delete.SetMinSize(self.button_size)
         button_sizer.Add(self.button_delete, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.action_relax_data_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
+
+        # Metadata button.
+        self.button_metadata = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " View metadata")
+        self.button_metadata.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.mimetypes.text-x-texinfo', "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_metadata.SetFont(font.normal)
+        self.button_metadata.SetMinSize(self.button_size)
+        button_sizer.Add(self.button_metadata, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.view_metadata, self.button_metadata)
+        self.button_metadata.SetToolTipString("View and edit the relaxation data metadata.")
 
 
     def build_element(self):
