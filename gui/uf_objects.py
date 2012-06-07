@@ -960,6 +960,13 @@ class Uf_page(Wiz_page):
             interpreter.queue(uf, *args, **kwds)
 
 
+    def on_back(self):
+        """Remove this page from the observers."""
+
+        # Unregister this page with the 'gui_uf' observer.
+        status.observers.gui_uf.unregister(self.name)
+
+
     def on_display(self):
         """Clear and update the data if needed."""
 
