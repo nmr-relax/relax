@@ -180,9 +180,17 @@ uf.title = "Display the BMRB data in NMR-STAR format."
 uf.title_short = "Display the BMRB data."
 uf.add_keyarg(
     name = "version",
+    default = "3.1",
     py_type = "str",
     desc_short = "NMR-STAR dictionary version",
     desc = "The version of the BMRB NMR-STAR format to display.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "2.1",
+        "3.0",
+        "3.1"
+    ],
+    wiz_read_only = True,
     can_be_none = True
 )
 uf.display = True
@@ -548,9 +556,17 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "version",
+    default = "3.1",
     py_type = "str",
     desc_short = "NMR-STAR dictionary version",
     desc = "The NMR-STAR dictionary format version to create.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "2.1",
+        "3.0",
+        "3.1"
+    ],
+    wiz_read_only = True,
     can_be_none = True
 )
 uf.add_keyarg(
