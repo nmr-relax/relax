@@ -513,6 +513,20 @@ def delete(ri_id=None):
         if hasattr(spin, 'ri_data_err') and len(spin.ri_data_err) == 0:
             del spin.ri_data_err
 
+    # Delete the metadata.
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and cdp.exp_info.temp_calibration.has_key(ri_id):
+        del cdp.exp_info.temp_calibration[ri_id]
+        if len(cdp.exp_info.temp_calibration) == 0:
+            del cdp.exp_info.temp_calibration
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and cdp.exp_info.temp_control.has_key(ri_id):
+        del cdp.exp_info.temp_control[ri_id]
+        if len(cdp.exp_info.temp_control) == 0:
+            del cdp.exp_info.temp_control
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and cdp.exp_info.peak_intensity_type.has_key(ri_id):
+        del cdp.exp_info.peak_intensity_type[ri_id]
+        if len(cdp.exp_info.peak_intensity_type) == 0:
+            del cdp.exp_info.peak_intensity_type
+
 
 def display(ri_id=None):
     """Display relaxation data corresponding to the ID.
