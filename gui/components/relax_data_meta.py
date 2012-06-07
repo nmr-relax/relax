@@ -51,7 +51,7 @@ class Relax_data_meta_list:
     MENU_RELAX_DATA_TEMP_CONTROL = wx.NewId()
 
 
-    def __init__(self, parent=None, box=None, id=None):
+    def __init__(self, parent=None, box=None, id=None, stretch=False):
         """Build the relaxation data list GUI element.
 
         @keyword parent:    The parent GUI element that this is to be attached to (the panel object).
@@ -62,10 +62,18 @@ class Relax_data_meta_list:
         @type box:          wx.BoxSizer instance
         @keyword id:        A unique identification string.  This is used to register the update method with the GUI user function observer object.
         @type id:           str
+        @keyword stretch:   A flag which if True will allow the static box to stretch with the window.
+        @type stretch:      bool
         """
 
         # Store the arguments.
         self.parent = parent
+        self.stretch = stretch
+
+        # Stretching.
+        self.proportion = 0
+        if stretch:
+            self.proportion = 1
 
         # GUI variables.
         self.spacing = 5
@@ -73,7 +81,7 @@ class Relax_data_meta_list:
 
         # First create a panel.
         self.panel = wx.Panel(self.parent)
-        box.Add(self.panel, 0, wx.ALL|wx.EXPAND, 0)
+        box.Add(self.panel, self.proportion, wx.ALL|wx.EXPAND, 0)
 
         # Add a sizer to the panel.
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -86,7 +94,7 @@ class Relax_data_meta_list:
         sub_sizer = wx.StaticBoxSizer(self.data_box, wx.VERTICAL)
 
         # Add the sizer to the static box and the static box to the main box.
-        panel_sizer.Add(sub_sizer, 0, wx.ALL|wx.EXPAND, 0)
+        panel_sizer.Add(sub_sizer, self.proportion, wx.ALL|wx.EXPAND, 0)
 
         # Add a border.
         box_centre = add_border(sub_sizer, border=self.border)
@@ -260,12 +268,13 @@ class Relax_data_meta_list:
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
         # Set the minimum height.
-        head = self.height_char + 10
-        centre = (self.height_char + 6) * n
-        foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
-        height = head + centre + foot
-        self.element.SetMinSize((-1, height))
-        self.element.Layout()
+        if not self.stretch:
+            head = self.height_char + 10
+            centre = (self.height_char + 6) * n
+            foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
+            height = head + centre + foot
+            self.element.SetMinSize((-1, height))
+            self.element.Layout()
 
         # Unfreeze.
         self.element.Thaw()
@@ -306,7 +315,7 @@ class Relax_data_meta_list:
         self.element.Bind(wx.EVT_RIGHT_UP, self.on_right_click)   # For wxGTK!
 
         # Add list to sizer.
-        sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
+        sizer.Add(self.element, self.proportion, wx.ALL|wx.EXPAND, 0)
 
 
     def is_complete(self):
