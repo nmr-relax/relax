@@ -24,10 +24,13 @@
 """Package for the different GUI components for packing into sizer boxes."""
 
 
-__all__ = ['conversion',
+__all__ = ['citations',
+           'conversion',
            'grid',
            'menu',
            'molecule',
            'relax_data',
            'relax_data_meta',
+           'scripts',
+           'software',
            'spectrum']
