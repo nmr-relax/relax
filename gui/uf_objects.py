@@ -862,7 +862,7 @@ class Uf_page(Wiz_page):
                     elif type == 'list':
                         # Loop over the list elements.
                         for j in range(len(element)):
-                            text += "    - %s\n\n" % element[j]
+                            text += "    - %s\n" % element[j]
 
                     # Format the item lists.
                     elif type == 'item list':
@@ -870,9 +870,9 @@ class Uf_page(Wiz_page):
                         for j in range(len(element)):
                             # No item.
                             if element[j][0] in [None, '']:
-                                text += "    %s\n\n" % element[j][1]
+                                text += "    %s\n" % element[j][1]
                             else:
-                                text += "    %s:  %s\n\n" % (element[j][0], element[j][1])
+                                text += "    %s:  %s\n" % (element[j][0], element[j][1])
 
                     # The text.
                     text = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)
