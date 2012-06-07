@@ -530,7 +530,9 @@ uf.desc[-1].add_prompt("relax> bmrb.thiol_state('oxidised')")
 uf.desc[-1].add_prompt("relax> bmrb.thiol_state(state='oxidised')")
 uf.backend = exp_info.thiol_state
 uf.menu_text = "&thiol_state"
-uf.wizard_size = (700, 500)
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 600)
+uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
