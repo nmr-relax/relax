@@ -285,6 +285,13 @@ class Wiz_page(wx.Panel):
         """
 
 
+    def on_back(self):
+        """To be over-ridden if an action is to be performed just before moving back to the previous page.
+
+        This method is called when moving back to the previous page of the wizard.
+        """
+
+
     def on_completion(self):
         """To be over-ridden if an action is to be performed just after executing self.on_execute().
 
@@ -618,6 +625,9 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
+        # Execute the page's on_next() method.
+        self._pages[self._current_page].on_back()
+
         # Work back in the sequence.
         self._current_page = self._seq_prev[self._current_page]
 
@@ -632,11 +642,11 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
+        # Execute the page's on_next() method.
+        self._pages[self._current_page].on_next()
+
         # Operations for non-skipped pages.
         if not self._skip_flag[self._current_page]:
-            # Execute the page's on_next() method.
-            self._pages[self._current_page].on_next()
-
             # Execute the page's on_execute() method (via the _apply() method).
             if self._exec_on_next[self._current_page]:
                 self._pages[self._current_page]._apply(event)
