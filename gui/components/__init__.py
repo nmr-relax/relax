@@ -24,7 +24,8 @@
 """Package for the different GUI components for packing into sizer boxes."""
 
 
-__all__ = ['citations',
+__all__ = ['base_list',
+           'citations',
            'conversion',
            'grid',
            'menu',
