@@ -580,17 +580,17 @@ class Relax_data_list:
 
         # The peak intensity type page.
         page = uf_store['relax_data.peak_intensity_type'].create_page(self.wizard, sync=True)
-        self.page_indices['peak_intensity_type'] = self.wizard.add_page(page, apply_button=False)
+        self.page_indices['peak_intensity_type'] = self.wizard.add_page(page, apply_button=True, skip_button=True)
         page.on_display_post = self.wizard_update_int_type
 
         # The temperature calibration page.
         page = uf_store['relax_data.temp_calibration'].create_page(self.wizard, sync=True)
-        self.page_indices['temp_calibration'] = self.wizard.add_page(page, apply_button=False)
+        self.page_indices['temp_calibration'] = self.wizard.add_page(page, apply_button=True, skip_button=True)
         page.on_display_post = self.wizard_update_temp_calibration
 
         # The temperature control page.
         page = uf_store['relax_data.temp_control'].create_page(self.wizard, sync=True)
-        self.page_indices['temp_control'] = self.wizard.add_page(page, apply_button=False)
+        self.page_indices['temp_control'] = self.wizard.add_page(page, apply_button=True)
         page.on_display_post = self.wizard_update_temp_control
 
         # Reset the cursor.
