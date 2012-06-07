@@ -325,6 +325,10 @@ class Relax_data_meta_list:
         @rtype:     bool
         """
 
+        # No relaxation data.
+        if not hasattr(cdp, 'ri_ids'):
+            return True
+
         # The number of IDs.
         n = len(cdp.ri_ids)
 
