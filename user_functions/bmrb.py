@@ -178,6 +178,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 uf = uf_info.add_uf('bmrb.display')
 uf.title = "Display the BMRB data in NMR-STAR format."
 uf.title_short = "Display the BMRB data."
+uf.display = True
 uf.add_keyarg(
     name = "version",
     default = "3.1",
@@ -190,16 +191,16 @@ uf.add_keyarg(
         "3.0",
         "3.1"
     ],
-    wiz_read_only = True,
-    can_be_none = True
+    wiz_read_only = True
 )
-uf.display = True
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will print the BMRB NMR-STAR formatted data to STDOUT.")
 uf.backend = bmrb.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
+uf.wizard_size = (700, 500)
+uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
@@ -566,13 +567,13 @@ uf.add_keyarg(
         "3.0",
         "3.1"
     ],
-    wiz_read_only = True,
-    can_be_none = True
+    wiz_read_only = True
 )
 uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
+    arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the any pre-existing file to be overwritten."
 )
@@ -583,5 +584,6 @@ uf.desc[-1].add_paragraph("In the prompt/script UI modes, to place the BMRB file
 uf.backend = bmrb.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
