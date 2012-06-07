@@ -393,8 +393,8 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 
 # The relax_data.temp_calibration user function.
 uf = uf_info.add_uf('relax_data.temp_calibration')
-uf.title = "Specify the temperature calibration method used."
-uf.title_short = "Setting temperature calibration method."
+uf.title = "Specify the per-experiment temperature calibration method used."
+uf.title_short = "The per-experiment temperature calibration method."
 uf.add_keyarg(
     name = "ri_id",
     py_type = "str",
@@ -407,8 +407,8 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "method",
     py_type = "str",
-    desc_short = "temperature calibration method",
-    desc = "The calibration method.",
+    desc_short = "per-experiment calibration method",
+    desc = "The per-experiment temperature calibration method.",
     wiz_element_type = 'combo',
     wiz_combo_choices = [
         'methanol',
@@ -418,16 +418,19 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is essential for BMRB data deposition.  The currently allowed methods are:")
+uf.desc[-1].add_paragraph("For the proper measurement of relaxation data, per-experiment temperature calibration is essential.  This user function is not for inputting standard MeOH/ethylene glycol/etc. calibration of a spectrometer - this temperature setting is of no use when you are running experiments which pump in large amounts of power into the probe head.")
+uf.desc[-1].add_paragraph("The R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol sepectrometer calibration.  However the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.")
+uf.desc[-1].add_paragraph("The per-experiment calibration method used needs to be specified for BMRB data deposition.  The currently allowed methods are:")
 uf.desc[-1].add_list_element("'methanol',")
 uf.desc[-1].add_list_element("'monoethylene glycol',")
 uf.desc[-1].add_list_element("'no calibration applied'.")
-uf.desc[-1].add_paragraph("Other strings will be accepted if supplied.")
+uf.desc[-1].add_paragraph("Other methods will be accepted if supplied.")
 uf.backend = relax_data.temp_calibration
 uf.menu_text = "&temp_calibration"
 uf.gui_icon = "oxygen.status.weather-clear"
-uf.wizard_size = (900, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 500
+uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-clear.png'
 
 
 # The relax_data.temp_control user function.
