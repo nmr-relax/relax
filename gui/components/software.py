@@ -22,35 +22,26 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the classes for GUI components involving molecules."""
+"""Module containing the software GUI element for listing the software used in the analysis."""
 
 # Python module imports.
 import wx
 import wx.lib.buttons
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_molecules, molecule_loop, return_molecule
-
 from graphics import fetch_icon
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
-from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border
-from gui.string_conv import gui_to_str, str_to_gui
+from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Software:
-    """The GUI element for listing the software info."""
-
-    # Some IDs for the menu entries.
-    MENU_BMRB_THIOL_STATE = wx.NewId()
-    MENU_MOLECULE_NAME = wx.NewId()
-    MENU_MOLECULE_TYPE = wx.NewId()
-
+    """The GUI element for listing the software used in the analysis."""
 
     def __init__(self, parent=None, box=None, id=None, stretch=False, buttons=True):
         """Build the software list GUI element.
@@ -143,7 +134,7 @@ class Software:
 
 
     def add_buttons(self, sizer):
-        """Add the buttons for peak list manipulation.
+        """Add the buttons for manipulating the data.
 
         @param sizer:   The sizer element to pack the buttons into.
         @type sizer:    wx.BoxSizer instance
@@ -173,7 +164,7 @@ class Software:
 
 
     def build_element(self):
-        """Build the molecule listing grid."""
+        """Build the grid."""
 
         # Execution lock, so do nothing.
         if status.exec_lock.locked():
@@ -192,7 +183,7 @@ class Software:
         # Delete the previous data.
         self.element.DeleteAllItems()
 
-        # Expand the number of rows to match the number of molecules, and add the data.
+        # Expand the number of rows to match the number of entries, and add the data.
         n = 0
         if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'software'):
             n = len(cdp.exp_info.software)
@@ -221,13 +212,13 @@ class Software:
 
 
     def init_element(self, sizer):
-        """Initialise the GUI element for the molecule listing.
+        """Initialise the GUI element.
 
         @param sizer:   The sizer element to pack the element into.
         @type sizer:    wx.BoxSizer instance
         """
 
-        # List of molecules.
+        # The list.
         self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
         # Initialise to 1 columns.
