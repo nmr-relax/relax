@@ -179,21 +179,29 @@ class Force_true(object):
 class Uf_object(object):
     """The object for auto-generating the GUI user functions."""
 
-    def __call__(self, event=None, wx_parent=None, wx_wizard_run=True, **kwds):
+    def __call__(self, event=None, wx_parent=None, wx_wizard_sync=None, wx_wizard_run=True, wx_wizard_modal=False, **kwds):
         """Make the GUI user function executable.
 
         All keyword args, apart from 'event', 'wx_parent' and 'wx_wizard_run' will be assumed to be user function arguments and the Uf_page.SetValue() method of the page will be used to set the GUI arg elements to the values supplied.
 
 
-        @keyword event:         The wx event.
-        @type event:            wx event or None
-        @keyword wx_parent:     The parent wx object to associate the user function wizard to.
-        @type wx_parent:        wx object
-        @keyword wx_wizard_run: A flag which if True will call the wizard run() method.
-        @type wx_wizard_run:    bool
-        @return:                The status of the call.  If the call failed, False will be returned.
-        @rtype:                 bool
+        @keyword event:             The wx event.
+        @type event:                wx event or None
+        @keyword wx_parent:         The parent wx object to associate the user function wizard to.
+        @type wx_parent:            wx object
+        @keyword wx_wizard_sync:    A flag which if given will switch between synchronous and asynchronous user function operation.
+        @type wx_wizard_sync:       None or bool
+        @keyword wx_wizard_run:     A flag which if True will call the wizard run() method.
+        @type wx_wizard_run:        bool
+        @keyword wx_wizard_modal:   A flag which if True will cause the wizard run() method to have the modal flag set so that the wizard is modal.
+        @type wx_wizard_modal:      bool
+        @return:                    The status of the call.  If the call failed, False will be returned.
+        @rtype:                     bool
         """
+
+        # Store the sync flag.
+        if wx_wizard_sync != None:
+            self._sync = wx_wizard_sync
 
         # Create a new wizard if needed (checking that the parent of an old wizard is not the same).
         if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()) or self.wizard._pages[0] == None:
@@ -215,7 +223,7 @@ class Uf_object(object):
 
         # Execute the wizard when asked.
         if wx_wizard_run:
-            self.wizard.run()
+            self.wizard.run(modal=wx_wizard_modal)
 
 
     def __init__(self, name, title=None, size=None, height_desc=None, apply_button=True, sync=False):
