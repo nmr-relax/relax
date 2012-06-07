@@ -27,6 +27,7 @@
 __all__ = ['conversion',
            'grid',
            'menu',
+           'molecule',
            'relax_data',
            'relax_data_meta',
            'spectrum']
