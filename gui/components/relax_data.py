@@ -41,6 +41,7 @@ from gui.icons import relax_icons
 from gui.misc import add_border
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from gui.wizard import Wiz_window
 
 
 class Relax_data_list:
@@ -133,17 +134,6 @@ class Relax_data_list:
         self.button_delete.Enable(enable)
 
 
-    def action_bruker_read(self, event):
-        """Launch the bruker.read user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Launch the dialog.
-        uf_store['bruker.read']()
-
-
     def action_relax_data_delete(self, event):
         """Launch the relax_data.delete user function.
 
@@ -232,17 +222,6 @@ class Relax_data_list:
             uf_store['relax_data.peak_intensity_type'](ri_id=id)
         else:
             uf_store['relax_data.peak_intensity_type'](ri_id=id, type=type)
-
-
-    def action_relax_data_read(self, event):
-        """Launch the relax_data.read user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Launch the dialog.
-        uf_store['relax_data.read']()
 
 
     def action_relax_data_temp_calibration(self, event):
@@ -337,7 +316,7 @@ class Relax_data_list:
         self.button_add.SetFont(font.normal)
         self.button_add.SetMinSize(self.button_size)
         button_sizer.Add(self.button_add, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.action_relax_data_read, self.button_add)
+        self.gui.Bind(wx.EVT_BUTTON, self.wizard_relax_data, self.button_add)
         self.button_add.SetToolTipString("Read relaxation data from a file.")
 
         # Bruker button.
@@ -346,7 +325,7 @@ class Relax_data_list:
         self.button_bruker.SetFont(font.normal)
         self.button_bruker.SetMinSize(self.button_size)
         button_sizer.Add(self.button_bruker, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.action_bruker_read, self.button_bruker)
+        self.gui.Bind(wx.EVT_BUTTON, self.wizard_bruker, self.button_bruker)
         self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
 
         # Delete button.
@@ -559,6 +538,120 @@ class Relax_data_list:
 
         # Launch.
         Metadata_window(self.gui)
+
+
+    def wizard_bruker(self, event):
+        """Launch the Bruker Dynamics Centre data reading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The wizard.
+        self.wizard_exec(bruker=True)
+
+
+    def wizard_exec(self, bruker=False):
+        """Launch the Rx peak loading wizard.
+
+        @keyword bruker:    A flag which if True will launch the Bruker Dynamics Centre data reading wizard and if False will launch the relaxation data reading wizard
+        @type bruker:       bool
+        """
+
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
+        # The title.
+        if bruker:
+            title = "The Bruker Dynamics Centre data reading wizard"
+        else:
+            title = "The relaxation data reading wizard"
+
+        # Initialise a wizard.
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title=title)
+        self.page_indices = {}
+
+        # The reading page.
+        if bruker:
+            page = uf_store['bruker.read'].create_page(self.wizard, sync=True)
+        else:
+            page = uf_store['relax_data.read'].create_page(self.wizard, sync=True)
+        self.page_indices['read'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
+
+        # The peak intensity type page.
+        page = uf_store['relax_data.peak_intensity_type'].create_page(self.wizard, sync=True)
+        self.page_indices['peak_intensity_type'] = self.wizard.add_page(page, apply_button=False)
+        page.on_display_post = self.wizard_update_int_type
+
+        # The temperature calibration page.
+        page = uf_store['relax_data.temp_calibration'].create_page(self.wizard, sync=True)
+        self.page_indices['temp_calibration'] = self.wizard.add_page(page, apply_button=False)
+        page.on_display_post = self.wizard_update_temp_calibration
+
+        # The temperature control page.
+        page = uf_store['relax_data.temp_control'].create_page(self.wizard, sync=True)
+        self.page_indices['temp_control'] = self.wizard.add_page(page, apply_button=False)
+        page.on_display_post = self.wizard_update_temp_control
+
+        # Reset the cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+        # Run the wizard.
+        self.wizard.run()
+
+
+    def wizard_relax_data(self, event):
+        """Launch the relaxation data reading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The wizard.
+        self.wizard_exec(bruker=False)
+
+
+    def wizard_update_int_type(self):
+        """Update the relax_data.peak_intensity_type page based on previous data."""
+
+        # The relax_data.peak_intensity_type page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Get the Rx ID.
+        id = page.uf_args['ri_id'].GetValue()
+
+        # Set the ID in the relax_data.peak_intensity_type page.
+        page = self.wizard.get_page(self.page_indices['peak_intensity_type'])
+        page.uf_args['ri_id'].SetValue(value=id)
+
+
+    def wizard_update_temp_calibration(self):
+        """Update the relax_data.temp_calibration page based on previous data."""
+
+        # The relax_data.temp_calibration page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Get the Rx ID.
+        id = page.uf_args['ri_id'].GetValue()
+
+        # Set the ID in the relax_data.temp_calibration page.
+        page = self.wizard.get_page(self.page_indices['temp_calibration'])
+        page.uf_args['ri_id'].SetValue(value=id)
+
+
+    def wizard_update_temp_control(self):
+        """Update the relax_data.temp_control page based on previous data."""
+
+        # The relax_data.temp_control page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Get the Rx ID.
+        id = page.uf_args['ri_id'].GetValue()
+
+        # Set the ID in the relax_data.temp_control page.
+        page = self.wizard.get_page(self.page_indices['temp_control'])
+        page.uf_args['ri_id'].SetValue(value=id)
 
 
 
