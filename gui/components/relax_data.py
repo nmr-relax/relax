@@ -35,7 +35,9 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
+from gui.components.relax_data_meta import Relax_data_meta_list
 from gui.fonts import font
+from gui.icons import relax_icons
 from gui.misc import add_border
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
@@ -126,6 +128,8 @@ class Relax_data_list:
 
         # Call buttons' methods.
         self.button_add.Enable(enable)
+        self.button_bruker.Enable(enable)
+        self.button_metadata.Enable(enable)
         self.button_delete.Enable(enable)
 
 
@@ -345,6 +349,15 @@ class Relax_data_list:
         self.gui.Bind(wx.EVT_BUTTON, self.action_bruker_read, self.button_bruker)
         self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
 
+        # Metadata button.
+        self.button_metadata = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " View metadata")
+        self.button_metadata.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.mimetypes.text-x-texinfo', "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_metadata.SetFont(font.normal)
+        self.button_metadata.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_metadata, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.view_metadata, self.button_metadata)
+        self.button_metadata.SetToolTipString("View and edit the relaxation data metadata.")
+
         # Delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
         self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
@@ -535,3 +548,98 @@ class Relax_data_list:
         # Set the column sizes.
         for i in range(n):
             self.element.SetColumnWidth(i, width)
+
+
+    def view_metadata(self, event=None):
+        """Launch the metadata window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Launch.
+        Metadata_window(self.gui)
+
+
+
+class Metadata_window(wx.Frame):
+    """The relaxation data metadata window."""
+
+    def __init__(self, parent):
+        """Set up the export window.
+
+        @param parent:  The parent object.
+        @type parent:   wx.Frame instance
+        """
+
+        # The window style.
+        style = wx.DEFAULT_FRAME_STYLE
+
+        # Initialise the base class, setting the main GUI window as the parent.
+        super(Metadata_window, self).__init__(parent, -1, style=style)
+
+        # Some default values.
+        self.size_x = 1200
+        self.size_y = 500
+        self.border = 5
+        self.spacer = 10
+
+        # Set up the frame.
+        sizer = self.setup_frame()
+
+        # Add the relaxation data metadata list GUI element, with spacing.
+        sizer.AddSpacer(15)
+        self.relax_data = Relax_data_meta_list(parent=self.main_panel, box=sizer, id='BMRB export', stretch=True)
+
+        # Open the window.
+        if status.show_gui:
+            self.Show()
+
+
+    def handler_close(self, event):
+        """Event handler for the close window action.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Unregister the observers.
+        self.relax_data.observer_register(remove=True)
+
+        # Close the window.
+        event.Skip()
+
+
+    def setup_frame(self):
+        """Set up the relax controller frame.
+        @return:    The sizer object.
+        @rtype:     wx.Sizer instance
+        """
+
+        # Set the frame title.
+        self.SetTitle("Relaxation data metadata")
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
+
+        # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
+
+        # Use a grid sizer for packing the main elements.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.main_panel.SetSizer(main_sizer)
+
+        # Build the central sizer, with borders.
+        sizer = add_border(main_sizer, border=self.border, packing=wx.VERTICAL)
+
+        # Close the window cleanly (unregistering observers).
+        self.Bind(wx.EVT_CLOSE, self.handler_close)
+
+        # Set the default size of the controller.
+        self.SetSize((self.size_x, self.size_y))
+
+        # Centre the frame.
+        self.Centre()
+
+        # Return the central sizer.
+        return sizer
