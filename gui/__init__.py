@@ -122,7 +122,7 @@ class App(wx.App):
         """Build and show the splash screen."""
 
         # The image.
-        bmp = wx.Bitmap(IMAGE_PATH+'start_no_alpha.png', wx.BITMAP_TYPE_ANY)
+        bmp = wx.Bitmap(IMAGE_PATH+'relaxGUI_splash.png', wx.BITMAP_TYPE_ANY)
 
         # The timeout (ms).
         timeout = 2500

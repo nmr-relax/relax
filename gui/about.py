@@ -494,7 +494,7 @@ class About_gui(About_base):
         self.SetTitle("About relax GUI")
 
         # The image.
-        bitmap = wx.Bitmap(IMAGE_PATH+'start.png', wx.BITMAP_TYPE_ANY)
+        bitmap = wx.Bitmap(IMAGE_PATH+'relaxGUI_splash.png', wx.BITMAP_TYPE_ANY)
 
         # Draw it.
         self.dc.DrawBitmap(bitmap, self.border, self.border, True)
