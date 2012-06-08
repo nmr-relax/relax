@@ -28,11 +28,11 @@ import wx
 
 # relax module imports.
 from generic_fns.pipes import cdp_name, pipe_names
+from graphics import WIZARD_IMAGE_PATH, fetch_icon
 from status import Status; status = Status()
 from relax_errors import RelaxNoPipeError
 
 # relax GUI module imports.
-from gui.paths import icon_32x32, WIZARD_IMAGE_PATH
 from gui.icons import relax_icons
 from gui.misc import gui_raise
 from gui.spin_viewer.splitter import Tree_splitter
@@ -270,11 +270,12 @@ class Spin_view_window(wx.Frame):
         """Create the toolbar."""
 
         # Init.
-        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
+        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT|wx.TB_TEXT)
 
         # The spin loading button.
         self.spin_loader_id = wx.NewId()
-        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(icon_32x32.spin_grey, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
+        tooltip = "Load spins from either a sequence file or from a 3D structure file."
+        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
         self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=self.spin_loader_id)
 
         # A separator.
@@ -282,7 +283,8 @@ class Spin_view_window(wx.Frame):
 
         # The refresh button.
         id = wx.NewId()
-        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
+        tooltip = "Refresh the spin view."
+        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
         self.Bind(wx.EVT_TOOL, self.refresh, id=id)
 
         # A separator.
