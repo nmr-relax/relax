@@ -884,25 +884,25 @@ class Uf_page(Wiz_page):
                             else:
                                 text += "    %s:  %s\n" % (element[j][0], element[j][1])
 
-                    # The text.
-                    text = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)
+                    # The text object.
+                    text_obj = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)
 
                     # Format.
                     if type == 'title':
-                        text.SetFont(font.subtitle)
+                        text_obj.SetFont(font.subtitle)
                     elif type == 'paragraph':
-                        text.SetFont(font.normal)
+                        text_obj.SetFont(font.normal)
                     elif type in ['table', 'verbatim']:
-                        text.SetFont(font.modern_small)
+                        text_obj.SetFont(font.modern_small)
                     else:
-                        text.SetFont(font.normal)
+                        text_obj.SetFont(font.normal)
 
-                    # Wrap the paragraphs and lists.
+                    # Wrap the paragraphs and lists (with spacing for scrollbars).
                     if type in ['paragraph', 'list', 'item list']:
-                        text.Wrap(self._main_size)
+                        text_obj.Wrap(self._main_size - 20)
 
                     # The text size.
-                    x, y = text.GetSizeTuple()
+                    x, y = text_obj.GetSizeTuple()
                     tot_y += y
 
                     # The spacing after each element.
@@ -913,25 +913,18 @@ class Uf_page(Wiz_page):
                         tot_y += spacing
 
                     # Append the text objects.
-                    text_elements.append(text)
+                    text_elements.append(text_obj)
                     text_types.append(type)
 
         # Some extra space for who knows what?!
         tot_y += 20
 
-        # Scrolling needed.
+        # Set the panel size - scrolling needed.
         if tot_y > max_y:
-            # Rewrap the text to fit scrollbars in.
-            for i in range(len(text_elements)):
-                if text_types[i] in ['synopsis', 'paragraph', 'list', 'item list']:
-                    text_elements[i].Wrap(self._main_size - 20)
-
-            # Set the panel size.
             panel.SetInitialSize((self._main_size, max_y))
 
-        # No scrolling.
+        # Set the panel size - no scrolling.
         else:
-            # Set the panel size.
             panel.SetInitialSize((self._main_size, tot_y))
 
         # Add the text.
