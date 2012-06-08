@@ -273,11 +273,20 @@ class About_base(wx.Frame):
         self.dc.SetTextForeground(orig_fg)
 
 
-    def draw_title(self, text):
-        """Draw the title."""
+    def draw_title(self, text, alt_font=None):
+        """Draw the title.
+
+        @param text:        The text of the title.
+        @type text:         str
+        @keyword alt_font:  An alternative font.
+        @type alt_font:     wx.Font instance
+        """
 
         # Set the font.
-        self.dc.SetFont(font.roman_title)
+        if alt_font == None:
+            alt_font = font.roman_title
+
+        self.dc.SetFont(alt_font)
 
         # The text extent.
         x, y = self.dc.GetTextExtent(text)

@@ -98,15 +98,15 @@ class About_window(About_base):
 
             # The title.
             if level == TITLE:
-                self.draw_title(text, point_size=18)
+                self.draw_title(text, alt_font=font.roman_font_18)
 
             # The section.
             elif level == SECTION:
-                self.draw_title(text, point_size=14)
+                self.draw_title(text, alt_font=font.roman_font_14)
 
             # The section.
             elif level == SUBSECTION:
-                self.draw_title(text, point_size=12)
+                self.draw_title(text, alt_font=font.roman_font_12)
 
             # Paragraphs.
             elif level == PARAGRAPH:

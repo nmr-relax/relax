@@ -69,6 +69,7 @@ class Font:
         self.roman_font_12 =        wx.Font(12+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
         self.roman_font_14 =        wx.Font(14+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
         self.roman_title =          wx.Font(16+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_font_18 =        wx.Font(18+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
 
 
 # Initialise the class for importing.
