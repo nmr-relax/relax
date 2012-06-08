@@ -1384,7 +1384,7 @@ class Model_free_main:
         # Duplicate all non-sequence specific data.
         for data_name in dir(dp_from):
             # Skip the container objects.
-            if data_name in ['diff_tensor', 'mol', 'structure']:
+            if data_name in ['diff_tensor', 'mol', 'structure', 'exp_info']:
                 continue
 
             # Skip special objects.
