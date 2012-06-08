@@ -43,9 +43,11 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class Base_list(object):
     """The GUI element for listing the software used in the analysis."""
 
-    def __init__(self, parent=None, box=None, id=None, stretch=False, button_placement='default'):
+    def __init__(self, gui=None, parent=None, box=None, id=None, stretch=False, button_placement='default'):
         """Build the base list GUI element.
 
+        @keyword gui:               The main GUI object.
+        @type gui:                  wx.Frame instance
         @keyword parent:            The parent GUI element that this is to be attached to.
         @type parent:               wx object
         @keyword box:               The box sizer to pack this GUI component into.
@@ -59,6 +61,7 @@ class Base_list(object):
         """
 
         # Store the arguments.
+        self.gui = gui
         self.parent = parent
         self.stretch = stretch
 
@@ -66,23 +69,26 @@ class Base_list(object):
         self.title = ""
         self.spacing = 5
         self.border = 5
-        self.height_buttons = 40
         self.observer_base_name = None
         self.columns = []
-        if button_placement != 'default':
-            self.button_placement = button_placement
+        self.button_placement = None
+        self.button_size = (80, 40)
         self.button_info = []
         self.popup_menus = []
 
         # Override these base values.
         self.setup()
 
+        # Button placement second override on initialisation.
+        if button_placement != 'default':
+            self.button_placement = button_placement
+
         # Stretching.
         self.proportion = 0
         if stretch:
             self.proportion = 1
 
-        # First create a panel.
+        # First create a panel (to allow for tooltips on the buttons).
         self.panel = wx.Panel(self.parent)
         box.Add(self.panel, self.proportion, wx.ALL|wx.EXPAND, 0)
 
@@ -127,6 +133,22 @@ class Base_list(object):
         self.observer_register()
 
 
+    def Enable(self, enable=True):
+        """Enable or disable the element.
+
+        @keyword enable:    The flag specifying if the element should be enabled or disabled.
+        @type enable:       bool
+        """
+
+        # Call the buttons' methods.
+        for i in range(len(self.button_info)):
+            # Get the button.
+            button = getattr(self, self.button_info[i]['object'])
+
+            # Call the botton's method.
+            button.Enable(enable)
+
+
     def add_buttons(self, sizer):
         """Add the buttons for manipulating the data.
 
@@ -146,7 +168,7 @@ class Base_list(object):
 
             # Format.
             button.SetFont(font.normal)
-            button.SetSize((80, self.height_buttons))
+            button.SetMinSize(self.button_size)
 
             # Add to the sizer.
             button_sizer.Add(button, 0, 0, 0)
