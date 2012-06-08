@@ -384,8 +384,6 @@ class Export_bmrb_window(wx.Frame):
         @type event:    wx event
         """
 
-        print "update pipes!"
-
         # Change the cursor to busy.
         wx.BeginBusyCursor()
 
