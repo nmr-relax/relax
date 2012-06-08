@@ -475,7 +475,7 @@ class Metadata_window(wx.Frame):
 
         # Add the relaxation data metadata list GUI element, with spacing.
         sizer.AddSpacer(15)
-        self.relax_data = Relax_data_meta_list(parent=self.main_panel, box=sizer, id='BMRB export', stretch=True)
+        self.relax_data = Relax_data_meta_list(parent=self.main_panel, box=sizer, id='BMRB export', proportion=1)
 
         # Open the window.
         if status.show_gui:
