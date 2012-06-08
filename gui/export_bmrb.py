@@ -121,7 +121,7 @@ class Export_bmrb_window(wx.Frame):
         sizer.Add(sub_sizer, 2, wx.ALL|wx.EXPAND, 0)
 
         # Bottom spacing.
-        sizer.AddSpacer(5)
+        sizer.AddSpacer(10)
 
         # Add the buttons.
         self.add_buttons(sizer)
