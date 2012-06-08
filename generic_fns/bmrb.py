@@ -37,6 +37,7 @@ from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 import specific_fns
+from status import Status; status = Status()
 from version import version_full
 
 
@@ -281,3 +282,9 @@ def write(file=None, dir=None, version='3.1', force=False):
 
     # Execute the specific BMRB writing code.
     write_function(file_path, version=version)
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['text', 'BMRB', file_path])
+    status.observers.result_file.notify()
