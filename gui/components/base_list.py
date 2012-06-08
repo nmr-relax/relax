@@ -298,10 +298,12 @@ class Base_list(object):
         # Register.
         if not remove:
             status.observers.gui_uf.register(self.name, self.build_element)
+            status.observers.pipe_alteration.register(self.name, self.build_element)
 
         # Unregister.
         else:
             status.observers.gui_uf.unregister(self.name)
+            status.observers.pipe_alteration.unregister(self.name)
 
 
     def on_right_click(self, event):
