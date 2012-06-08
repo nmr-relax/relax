@@ -351,7 +351,7 @@ class Uf_container(object):
         self.gui_icon = None
         self.wizard_size = (700, 500)
         self.wizard_image = IMAGE_PATH + "relax.gif"
-        self.wizard_height_desc = 220
+        self.wizard_height_desc = 300
         self.wizard_apply_button = True
         self.gui_sync = False
 
