@@ -177,7 +177,7 @@ CONV_LOOP = True
 
 # Create the data pipe.
 pipe_bundle = "mf (%s)" % asctime(localtime())
-name = "origin"
+name = "origin - " + pipe_bundle
 pipe.create(name, 'mf', bundle=pipe_bundle)
 
 # Load the sequence.
