@@ -106,9 +106,9 @@ class Base_list(object):
         # Add buttons to the top.
         if self.button_placement == 'top':
             self.add_buttons(box_centre)
+            box_centre.AddSpacer(self.spacing)
 
         # Initialise the element.
-        box_centre.AddSpacer(self.spacing)
         self.init_element(box_centre)
 
         # Build the element.
@@ -116,6 +116,7 @@ class Base_list(object):
 
         # Add buttons to the bottom.
         if self.button_placement == 'bottom':
+            box_centre.AddSpacer(self.spacing)
             self.add_buttons(box_centre)
 
         # Initialise observer name.
