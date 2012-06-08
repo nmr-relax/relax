@@ -26,8 +26,6 @@
 # Python module imports.
 from re import search
 from string import split
-from textwrap import wrap
-from time import sleep
 import wx
 from wx.lib import scrolledpanel
 
