@@ -823,6 +823,12 @@ class Uf_page(Wiz_page):
         text_elements.append(text)
         text_types.append('title')
 
+        # The text size, then spacing after the title.
+        x, y = text.GetSizeTuple()
+        tot_x += x
+        tot_y += y
+        tot_y += spacing
+
         # The synopsis.
         if self.uf_data.title:
             # The text.
@@ -837,7 +843,7 @@ class Uf_page(Wiz_page):
             tot_y += y
 
             # The spacing after the element.
-            tot_y += spacing * 1.5
+            tot_y += spacing
 
             # Append the text objects.
             text_elements.append(text)
@@ -906,9 +912,9 @@ class Uf_page(Wiz_page):
                     # The spacing after each element.
                     tot_y += spacing
 
-                    # The double spacing before each section (not including the first).
+                    # The 1.5 spacing before each section (not including the first).
                     if i != 0 and type == 'title':
-                        tot_y += spacing * 2
+                        tot_y += spacing
 
                     # Append the text objects.
                     text_elements.append(text)
@@ -931,9 +937,9 @@ class Uf_page(Wiz_page):
 
         # Add the text.
         for i in range(len(text_elements)):
-            # Double spacing before each section (not including the first).
+            # Spacing before each section (not including the first).
             if i > 1 and text_types[i] == 'title':
-                panel_sizer.AddSpacer(spacing * 2)
+                panel_sizer.AddSpacer(spacing)
 
             # The text.
             panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
