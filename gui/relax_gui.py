@@ -42,6 +42,7 @@ from info import Info_box
 from generic_fns import state
 from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
+from relax_errors import RelaxNoPipeError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 import test_suite.test_suite_runner
@@ -52,6 +53,7 @@ from gui.about import About_gui, About_relax
 from gui.analyses import Analysis_controller
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
+from gui.export_bmrb import Export_bmrb_window
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
@@ -210,6 +212,14 @@ class Main(wx.Frame):
         @keyword event: The wx event.
         @type event:    wx event
         """
+
+        # No current data pipe.
+        if not cdp_name():
+            gui_raise(RelaxNoPipeError())
+            return
+
+        # Open the export window.
+        Export_bmrb_window(self)
 
 
     def action_state_save(self, event=None):
