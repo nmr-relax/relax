@@ -141,6 +141,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "year",
     py_type = "int",
+    max = 3000,
     desc_short = "publication year",
     desc = "The publication year."
 )
@@ -357,6 +358,7 @@ uf.desc[-1].add_prompt("relax> bmrb.script(file='full_analysis.py', dir=None, an
 uf.backend = exp_info.script
 uf.menu_text = "&script"
 uf.gui_icon = "oxygen.mimetypes.application-x-desktop"
+uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 800)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
@@ -440,6 +442,7 @@ uf.desc[-1].add_prompt("relax> bmrb.software(\"Sparky\", version=\"3.110\", url=
 uf.backend = exp_info.software
 uf.menu_text = "soft&ware"
 uf.gui_icon = "oxygen.apps.utilities-terminal"
+uf.wizard_height_desc = 450
 uf.wizard_size = (900, 800)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
@@ -479,7 +482,8 @@ uf.desc[-1].add_prompt("relax> bmrb.software_select('Sparky', version='3.113')")
 uf.backend = exp_info.software_select
 uf.menu_text = "software_se&lect"
 uf.gui_icon = "oxygen.apps.utilities-terminal"
-uf.wizard_size = (700, 500)
+uf.wizard_height_desc = 550
+uf.wizard_size = (800, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
