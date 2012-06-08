@@ -36,7 +36,29 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class Software(Base_list):
     """The GUI element for listing the software used in the analysis."""
 
-    def _override(self):
+    def action_bmrb_software(self, event):
+        """Launch the bmrb.software user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        uf_store['bmrb.software'](wx_parent=self.parent)
+
+
+    def action_bmrb_software_select(self, event):
+        """Launch the bmrb.software_select user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        uf_store['bmrb.software_select'](wx_parent=self.parent)
+
+
+    def setup(self):
         """Override the base variables."""
 
         # GUI variables.
@@ -65,28 +87,6 @@ class Software(Base_list):
                 'tooltip': "Select the software used in the analysis."
             }
         ]
-
-
-    def action_bmrb_software(self, event):
-        """Launch the bmrb.software user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Launch the dialog.
-        uf_store['bmrb.software'](wx_parent=self.parent)
-
-
-    def action_bmrb_software_select(self, event):
-        """Launch the bmrb.software_select user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Launch the dialog.
-        uf_store['bmrb.software_select'](wx_parent=self.parent)
 
 
     def update_data(self):

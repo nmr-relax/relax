@@ -73,7 +73,7 @@ class Base_list:
         self.button_info = []
 
         # Override these base values.
-        self._override()
+        self.setup()
 
         # Stretching.
         self.proportion = 0
