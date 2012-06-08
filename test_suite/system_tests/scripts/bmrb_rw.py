@@ -60,6 +60,7 @@ self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='mf')
 self._execute_uf(uf_name='bmrb.read', file=ds.tmpfile, version=ds.version)
 
 # Display tests.
+self._execute_uf(uf_name='bmrb.display', version=ds.version)
 self._execute_uf(uf_name='sequence.display')
 self._execute_uf(uf_name='relax_data.display', ri_id='R1_800')
 
