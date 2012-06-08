@@ -28,16 +28,19 @@
 from os import sep
 import wx
 from wx.lib import buttons
-
+from wx.lib import scrolledpanel
+ 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins
 from generic_fns.pipes import cdp_name
+from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 # relax GUI module imports.
 from gui import paths
 from gui.analyses.elements import Text_ctrl
 from gui.fonts import font
-from gui.misc import add_border
+from gui.misc import add_border, format_table
 from gui.string_conv import int_to_gui, str_to_gui
 from gui.wizard import Wiz_page
 
@@ -465,8 +468,26 @@ class Spectral_error_type_page(Wiz_page):
 
     # Class variables.
     image_path = paths.WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+    title = "Specify the type of error to be used"
+    main_text = "Please specify from where the peak intensity errors will be obtained.  The is required for the execution of the spectrum.error_analysis user function which will be postponed until after clicking on the 'Execute relax' button at the end of the automatic analysis page.  To understand how the errors will be propagated and analysed, the main parts of the spectrum.error_analysis user function description are given below."
     uf_path = ['spectrum', 'error_analysis']
-    height_desc = 450
+
+    def _on_select(self, event):
+        """Handle the radio button switching.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The button.
+        button = event.GetEventObject()
+
+        # RMSD.
+        if button == self.radio_rmsd:
+            self.selection = 'rmsd'
+        elif button == self.radio_repl:
+            self.selection = 'repl'
+
 
     def add_contents(self, sizer):
         """Add the specific GUI elements.
@@ -474,15 +495,6 @@ class Spectral_error_type_page(Wiz_page):
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
         """
-
-        # Intro text.
-        msg = "Please specify from where the peak intensity errors will be obtained.  The execution of the spectrum.error_analysis user function, as described above, will be postponed until after clicking on the 'Execute relax' button at the end of the automatic NOE analysis page."
-        text = wx.StaticText(self, -1, msg)
-        text.Wrap(self._main_size)
-        sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
-
-        # Spacing.
-        sizer.AddStretchSpacer()
 
         # A box sizer for placing the box sizer in.
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -523,18 +535,152 @@ class Spectral_error_type_page(Wiz_page):
         self.selection = 'rmsd'
 
 
-    def _on_select(self, event):
-        """Handle the radio button switching.
+    def add_desc(self, sizer, max_y=520):
+        """Add the description to the dialog.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        @keyword max_y: The maximum height, in number of pixels, for the description.
+        @type max_y:    int
         """
 
-        # The button.
-        button = event.GetEventObject()
+        # Initialise.
+        spacing = 15
 
-        # RMSD.
-        if button == self.radio_rmsd:
-            self.selection = 'rmsd'
-        elif button == self.radio_repl:
-            self.selection = 'repl'
+        # A line with spacing.
+        sizer.AddSpacer(5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
+        sizer.AddSpacer(5)
+
+        # Create a scrolled panel.
+        panel = scrolledpanel.ScrolledPanel(self, -1, name="desc")
+
+        # A sizer for the panel.
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Initialise the text elements.
+        tot_y = 0
+        text_elements = []
+        text_types = []
+
+        # The wrapped text.
+        text = wx.StaticText(panel, -1, self.main_text, style=wx.TE_MULTILINE)
+        text.SetFont(font.normal)
+        text.Wrap(self._main_size - 20)
+        text_elements.append(text)
+        text_types.append('title')
+
+        # The text size, then spacing.
+        x, y = text.GetSizeTuple()
+        tot_y += y
+        tot_y += spacing
+
+        # Get the spectrum.error_analysis user function data object.
+        uf_data = uf_info.get_uf('spectrum.error_analysis')
+
+        # The description sections.
+        if uf_data.desc != None:
+            # Loop over the sections.
+            for i in range(len(uf_data.desc)):
+                # Alias.
+                desc = uf_data.desc[i]
+
+                # Skip the prompt examples.
+                if desc.get_title() == 'Prompt examples':
+                    continue
+
+                # Loop over the text elements.
+                for type, element in desc.element_loop(title=True):
+                    # The text version of the elements.
+                    text = ''
+                    if isinstance(element, str):
+                        text = element
+
+                    # Format the tables.
+                    if type == 'table':
+                        text = format_table(uf_tables.get_table(element))
+
+                    # Format the lists.
+                    elif type == 'list':
+                        # Loop over the list elements.
+                        for j in range(len(element)):
+                            text += "    - %s\n" % element[j]
+
+                    # Format the item lists.
+                    elif type == 'item list':
+                        # Loop over the list elements.
+                        for j in range(len(element)):
+                            # No item.
+                            if element[j][0] in [None, '']:
+                                text += "    %s\n" % element[j][1]
+                            else:
+                                text += "    %s:  %s\n" % (element[j][0], element[j][1])
+
+                    # The text object.
+                    text_obj = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)
+
+                    # Format.
+                    if type == 'title':
+                        text_obj.SetFont(font.subtitle)
+                    elif type == 'paragraph':
+                        text_obj.SetFont(font.normal)
+                    elif type in ['table', 'verbatim']:
+                        text_obj.SetFont(font.modern_small)
+                    else:
+                        text_obj.SetFont(font.normal)
+
+                    # Wrap the paragraphs and lists (with spacing for scrollbars).
+                    if type in ['paragraph', 'list', 'item list']:
+                        text_obj.Wrap(self._main_size - 20)
+
+                    # The text size.
+                    x, y = text_obj.GetSizeTuple()
+                    tot_y += y
+
+                    # The spacing after each element (except the last).
+                    tot_y += spacing
+
+                    # The spacing before each section (not including the first).
+                    if i != 0 and type == 'title':
+                        tot_y += spacing
+
+                    # Append the text objects.
+                    text_elements.append(text_obj)
+                    text_types.append(type)
+
+        # Some extra space for who knows what?!
+        tot_y -= spacing
+        tot_y += 20
+
+        # Set the panel size - scrolling needed.
+        if tot_y > max_y:
+            panel.SetInitialSize((self._main_size, max_y))
+
+        # Set the panel size - no scrolling.
+        else:
+            panel.SetInitialSize((self._main_size, tot_y))
+
+        # Add the text.
+        n = len(text_elements)
+        for i in range(n):
+            # Spacing before each section (not including the first).
+            if i > 1 and text_types[i] == 'title':
+                panel_sizer.AddSpacer(spacing)
+
+            # The text.
+            panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
+
+            # Spacer after all sections (except the end).
+            if i != n - 1:
+                panel_sizer.AddSpacer(spacing)
+
+        # Set up and add the panel to the sizer.
+        panel.SetSizer(panel_sizer)
+        panel.SetAutoLayout(1)
+        panel.SetupScrolling(scroll_x=False, scroll_y=True)
+        sizer.Add(panel, 0, wx.ALL|wx.EXPAND)
+
+        # A line with spacing.
+        sizer.AddSpacer(5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
+        sizer.AddSpacer(5)
