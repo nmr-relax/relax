@@ -170,6 +170,9 @@ class Main(wx.Frame):
         status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
         status.observers.exec_lock.register('gui', self.enable)
 
+        # Assume a script has been run and there is data in the store.
+        self.analysis.load_from_store()
+
 
     def about_gui(self, event=None):
         """The about message for the relax GUI.
@@ -392,8 +395,9 @@ class Main(wx.Frame):
         # Temporary data:  the save file.
         self.save_file = None
 
-        # Add the GUI object to the data store.
-        ds.relax_gui = Gui()
+        # Add the GUI object to the data store, if not present.
+        if not hasattr(ds, 'relax_gui'):
+            ds.relax_gui = Gui()
 
 
     def free_file_format_settings(self, event=None):
