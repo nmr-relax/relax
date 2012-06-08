@@ -811,7 +811,6 @@ class Uf_page(Wiz_page):
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Initialise the text elements.
-        tot_x = 0
         tot_y = 0
         text_elements = []
         text_types = []
@@ -825,7 +824,6 @@ class Uf_page(Wiz_page):
 
         # The text size, then spacing after the title.
         x, y = text.GetSizeTuple()
-        tot_x += x
         tot_y += y
         tot_y += spacing
 
@@ -839,7 +837,6 @@ class Uf_page(Wiz_page):
 
             # The text size.
             x, y = text.GetSizeTuple()
-            tot_x += x
             tot_y += y
 
             # The spacing after the element.
@@ -902,11 +899,10 @@ class Uf_page(Wiz_page):
 
                     # Wrap the paragraphs and lists.
                     if type in ['paragraph', 'list', 'item list']:
-                        text.Wrap(self._main_size - 20)
+                        text.Wrap(self._main_size)
 
                     # The text size.
                     x, y = text.GetSizeTuple()
-                    tot_x += x
                     tot_y += y
 
                     # The spacing after each element.
@@ -920,18 +916,21 @@ class Uf_page(Wiz_page):
                     text_elements.append(text)
                     text_types.append(type)
 
+        # Some extra space for who knows what?!
+        tot_y += 20
+
         # Scrolling needed.
-        if tot_y > max_y-10:
+        if tot_y > max_y:
+            # Rewrap the text to fit scrollbars in.
+            for i in range(len(text_elements)):
+                if text_types[i] in ['synopsis', 'paragraph', 'list', 'item list']:
+                    text_elements[i].Wrap(self._main_size - 20)
+
             # Set the panel size.
             panel.SetInitialSize((self._main_size, max_y))
 
         # No scrolling.
         else:
-            # Rewrap the text.
-            for i in range(len(text_elements)):
-                if text_types[i] in ['synopsis', 'paragraph', 'list', 'item list']:
-                    text_elements[i].Wrap(self._main_size)
-
             # Set the panel size.
             panel.SetInitialSize((self._main_size, tot_y))
 
