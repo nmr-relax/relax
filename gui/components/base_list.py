@@ -39,10 +39,10 @@ from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
-class Base_list:
+class Base_list(object):
     """The GUI element for listing the software used in the analysis."""
 
-    def __init__(self, parent=None, box=None, id=None, stretch=False, button_placement='default', buttons_bottom=True):
+    def __init__(self, parent=None, box=None, id=None, stretch=False, button_placement='default'):
         """Build the base list GUI element.
 
         @keyword parent:            The parent GUI element that this is to be attached to.
