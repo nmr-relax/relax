@@ -80,7 +80,7 @@ uf.desc[-1].add_prompt("relax> sequence.copy(pipe_from='m1', pipe_to='m2')")
 uf.backend = sequence.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'sequence.png'
 
 

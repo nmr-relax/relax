@@ -225,7 +225,7 @@ uf.backend = create_pseudo_spin
 uf.menu_text = "create_p&seudo"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 350
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spin.png'
 
 
@@ -274,8 +274,8 @@ uf.desc.append(id_string_doc)
 uf.backend = display_spin
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 600)
+uf.wizard_height_desc = 550
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spin.png'
 
@@ -321,7 +321,8 @@ uf.desc[-1].add_prompt("relax> spin.element(spin_id='@1', element='C', force=Tru
 uf.backend = set_spin_element
 uf.menu_text = "&element"
 uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_size = (900, 600)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spin.png'
 
 

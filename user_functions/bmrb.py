@@ -171,7 +171,8 @@ uf.desc[-1].add_prompt("relax> bmrb.citation(authors=[[\"Edward\", \"d'Auvergne\
 uf.backend = exp_info.citation
 uf.menu_text = "&citation"
 uf.gui_icon = "oxygen.actions.documentation"
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 180
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
@@ -245,6 +246,7 @@ uf.desc[-1].add_paragraph("This will allow most of the data from a BMRB NMR-STAR
 uf.backend = bmrb.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_height_desc = 300
 uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
@@ -359,7 +361,7 @@ uf.backend = exp_info.script
 uf.menu_text = "&script"
 uf.gui_icon = "oxygen.mimetypes.application-x-desktop"
 uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
@@ -443,7 +445,7 @@ uf.backend = exp_info.software
 uf.menu_text = "soft&ware"
 uf.gui_icon = "oxygen.apps.utilities-terminal"
 uf.wizard_height_desc = 450
-uf.wizard_size = (900, 800)
+uf.wizard_size = (900, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'
 
 
@@ -590,6 +592,7 @@ uf.desc[-1].add_paragraph("In the prompt/script UI modes, to place the BMRB file
 uf.backend = bmrb.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_height_desc = 300
 uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bmrb.png'

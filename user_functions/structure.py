@@ -204,8 +204,8 @@ uf.desc[-1].add_paragraph("To create the tensor PDB representation, a number of 
 uf.backend = generic_fns.structure.geometric.create_diff_tensor_pdb
 uf.menu_text = "&create_diff_tensor_pdb"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 800)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'create_diff_tensor_pdb.png'
 
@@ -551,7 +551,7 @@ uf.backend = generic_fns.structure.main.read_pdb
 uf.menu_text = "read_&pdb"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_pdb.png'
 
 
@@ -736,8 +736,8 @@ uf.desc[-1].add_prompt("relax> structure.superimpose(models=[3, 2], method='fit 
 uf.backend = generic_fns.structure.main.superimpose
 uf.menu_text = "&superimpose"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -771,7 +771,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to translate the internal structural data by the given translation vector.  The translation can be restricted to one specific model.")
 uf.backend = generic_fns.structure.main.translate
 uf.menu_text = "&translate"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (750, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -852,7 +852,7 @@ uf.desc[-1].add_prompt("relax> structure.vectors('H*')")
 uf.backend = generic_fns.structure.main.vectors
 uf.menu_text = "&vectors"
 uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 

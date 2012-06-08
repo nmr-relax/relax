@@ -371,8 +371,8 @@ uf.desc[-1].add_list_element("SelectAtom ':TNS@C*'")
 uf.desc[-1].add_list_element("RadiusAtom 1.5")
 uf.backend = molmol.tensor_pdb
 uf.menu_text = "&tensor_pdb"
-uf.wizard_size = (1000, 700)
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 550
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
 

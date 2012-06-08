@@ -72,6 +72,5 @@ uf.desc[-1].add_paragraph("This user function is used to load all of the data ou
 uf.backend = bruker.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 140
 uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'bruker.png'

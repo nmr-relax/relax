@@ -196,7 +196,7 @@ uf.desc[-1].add_prompt("relax> pcs.corr_plot(None)")
 uf.desc[-1].add_prompt("relax> pcs.corr_plot(format=None)")
 uf.backend = pcs.corr_plot
 uf.menu_text = "corr_&plot"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 uf.wizard_apply_button = False
 
@@ -383,7 +383,8 @@ uf.desc[-1].add_prompt("relax> pcs.read('Tb', 'Tb.txt', spin_id='@H', res_num_co
 uf.backend = pcs.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 250
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 

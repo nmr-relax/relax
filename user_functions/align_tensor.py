@@ -93,7 +93,7 @@ uf.desc[-1].add_prompt("relax> align_tensor.copy(tensor_from='Pf1', tensor_to='O
 uf.backend = align_tensor.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
@@ -146,7 +146,8 @@ uf.desc[-1].add_paragraph("If no tensor is specified, all tensors will be displa
 uf.backend = align_tensor.display
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
-uf.wizard_size = (700, 500)
+uf.wizard_height_desc = 400
+uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
@@ -176,6 +177,7 @@ uf.desc[-1].add_paragraph("If the ID string is left unset, then all alignment te
 uf.backend = align_tensor.fix
 uf.menu_text = "&fix"
 uf.gui_icon = "oxygen.status.object-locked"
+uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
@@ -269,7 +271,8 @@ uf.desc[-1].add_prompt("relax> align_tensor.init('super media', (-8.6322e-05, -5
 uf.desc[-1].add_prompt("relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
 uf.backend = align_tensor.init
 uf.menu_text = "&init"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 420
+uf.wizard_size = (1000, 750)
 uf.gui_icon = "relax.align_tensor"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
@@ -431,5 +434,6 @@ uf.desc[-1].add_paragraph("The SVD values and condition number are dependent upo
 uf.backend = align_tensor.svd
 uf.menu_text = "s&vd"
 uf.gui_icon = "oxygen.categories.applications-education"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'

@@ -94,8 +94,7 @@ uf.desc[-1].add_prompt("relax> residue.copy(pipe_from='m1', res_from=':1', pipe_
 uf.backend = copy_residue
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
-uf.wizard_height_desc = 600
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'residue.png'
 
 
@@ -192,8 +191,8 @@ uf.desc.append(id_string_doc)
 uf.backend = display_residue
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 600)
+uf.wizard_height_desc = 550
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'residue.png'
 

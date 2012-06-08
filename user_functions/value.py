@@ -100,7 +100,7 @@ uf.backend = value.copy
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 500
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 
@@ -131,8 +131,8 @@ uf.desc[-1].add_prompt("relax> value.display('csa')")
 uf.backend = value.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
-uf.wizard_height_desc = 600
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 550
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
@@ -273,8 +273,8 @@ uf.desc[-1].add_prompt("relax> value.read(param='csa', file='csa_value', dir='da
 uf.backend = value.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 250
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 200
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 
@@ -368,8 +368,8 @@ uf.desc[-1].add_prompt("relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'],
 uf.desc[-1].add_prompt("relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')")
 uf.backend = value.set
 uf.menu_text = "&set"
-uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 480
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 
@@ -439,5 +439,5 @@ uf.backend = value.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'

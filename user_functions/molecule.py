@@ -95,7 +95,7 @@ uf.backend = copy_molecule
 uf.menu_text = "&copy"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 600
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'molecule.png'
 
 
@@ -136,7 +136,7 @@ uf.desc[-1].add_prompt("relax> molecule.create('MgF4')")
 uf.backend = create_molecule
 uf.menu_text = "c&reate"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (700, 400)
+uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'molecule.png'
 
 
@@ -281,6 +281,6 @@ uf.desc.append(id_string_doc)
 uf.backend = type_molecule
 uf.menu_text = "&type"
 uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_height_desc = 300
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 600
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'molecule.png'

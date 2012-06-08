@@ -159,4 +159,5 @@ uf.desc[-1].add_prompt("relax> state.save(state='save', force=True)")
 uf.backend = save_state
 uf.menu_text = "&save"
 uf.gui_icon = "oxygen.actions.document-save"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 700)

@@ -93,7 +93,7 @@ uf.backend = frame_order_obj._cone_pdb
 uf.menu_text = "&cone_pdb"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
@@ -116,8 +116,8 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("To display the frame order cone models within Pymol, the two domains need to be associated with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving domain will be rotated to its average position.")
-# Description.
-uf.desc.append(Desc_container())
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:")
 uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')")
 uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')")
@@ -140,8 +140,8 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will set the pivot point for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.")
-# Description.
-uf.desc.append(Desc_container())
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the pivot point, type one of:")
 uf.desc[-1].add_prompt("relax> frame_order.pivot([12.067, 14.313, -3.2675])")
 uf.desc[-1].add_prompt("relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])")
@@ -239,7 +239,7 @@ uf.desc[-1].add_prompt("relax> frame_order.select_model(model='iso cone')")
 uf.backend = frame_order_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
-uf.wizard_height_desc = 600
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 560
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'

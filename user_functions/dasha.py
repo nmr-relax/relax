@@ -78,7 +78,8 @@ uf.desc[-1].add_paragraph("For Levenberg-Marquardt minimisation, the function 'l
 uf.backend = dasha.create
 uf.menu_text = "&create"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (700, 600)
+uf.wizard_height_desc = 400
+uf.wizard_size = (800, 700)
 uf.wizard_apply_button = False
 
 

@@ -75,7 +75,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will clear the Pymol history from memory.")
 uf.backend = pymol_control.pymol_obj.clear_history
 uf.menu_text = "clear_&history"
-uf.wizard_size = (600, 300)
+uf.wizard_size = (600, 350)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
@@ -133,7 +133,8 @@ uf.desc[-1].add_list_element("show sticks, 'sele'")
 uf.desc[-1].add_list_element("color white, 'sele'")
 uf.backend = pymol_control.cone_pdb
 uf.menu_text = "cone_&pdb"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 700)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
@@ -215,8 +216,8 @@ uf.desc[-1].add_prompt("relax> pymol.macro_apply(data_type='s2', style=\"classic
 uf.backend = pymol_control.macro_apply
 uf.menu_text = "&macro_apply"
 uf.gui_icon = "relax.pymol_icon"
-uf.wizard_size = (1000, 750)
 uf.wizard_height_desc = 400
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
 
@@ -360,8 +361,8 @@ uf.desc[-1].add_prompt("relax> pymol.macro_write(data_type='s2', style=\"classic
 uf.backend = pymol_control.macro_write
 uf.menu_text = "macro_&write"
 uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_height_desc = 330
 uf.wizard_size = (1000, 750)
-uf.wizard_height_desc = 350
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
 
@@ -398,8 +399,8 @@ uf.desc[-1].add_list_element("select resn SIM")
 uf.desc[-1].add_list_element("colour cyan, 'sele'")
 uf.backend = pymol_control.tensor_pdb
 uf.menu_text = "&tensor_pdb"
-uf.wizard_size = (1000, 700)
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 550
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
@@ -441,6 +442,6 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_prompt("relax> pymol.view()")
 uf.backend = pymol_control.view
 uf.menu_text = "&view"
-uf.wizard_size = (600, 300)
+uf.wizard_size = (600, 350)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'

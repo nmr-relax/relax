@@ -91,7 +91,7 @@ uf.desc[-1].add_paragraph("This will delete all diffusion tensor data from the c
 uf.backend = diffusion_tensor.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
-uf.wizard_size = (600, 300)
+uf.wizard_size = (600, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'diff_tensor.png'
 
 
@@ -106,8 +106,7 @@ uf.desc[-1].add_paragraph("This will display all of the diffusion tensor informa
 uf.backend = diffusion_tensor.display
 uf.menu_text = "dis&play"
 uf.gui_icon = "oxygen.actions.document-preview"
-uf.wizard_size = (600, 300)
-uf.wizard_height_desc = 140
+uf.wizard_size = (600, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'diff_tensor.png'
 
 
@@ -285,6 +284,6 @@ uf.desc[-1].add_prompt("relax> diffusion_tensor.init((1.340e7, 1.516e7, 1.691e7,
 uf.backend = diffusion_tensor.init
 uf.menu_text = "&init"
 uf.gui_icon = "relax.diff_tensor"
-uf.wizard_size = (1000, 900)
-uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
+uf.wizard_height_desc = 400
 uf.wizard_image = WIZARD_IMAGE_PATH + 'diff_tensor.png'

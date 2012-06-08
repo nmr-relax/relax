@@ -186,7 +186,7 @@ uf.backend = selection.sel_read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 200
-uf.wizard_size = (900, 700)
+uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 
 
@@ -268,4 +268,6 @@ uf.desc[-1].add_prompt("relax> select.spin(spin_id=':5&:CYS')")
 uf.backend = selection.sel_spin
 uf.menu_text = "&spin"
 uf.gui_icon = "relax.spin"
-uf.wizard_size = (700, 550)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'

@@ -144,7 +144,8 @@ uf.desc[-1].add_paragraph("There are four different types of residue within the 
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined from the average pivot-CoM vector.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
 uf.backend = n_state_model_obj._cone_pdb
 uf.menu_text = "&cone_pdb"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 480
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
@@ -163,7 +164,7 @@ uf.desc[-1].add_prompt("relax> n_state_model.elim_no_prob(N=8)")
 uf.backend = n_state_model_obj._elim_no_prob
 uf.menu_text = "&elim_no_prob"
 uf.gui_icon = "oxygen.actions.list-remove"
-uf.wizard_size = (600, 300)
+uf.wizard_size = (700, 400)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
 
@@ -174,6 +175,7 @@ uf.title = "Set the number of states in the N-state model."
 uf.title_short = "Number of states."
 uf.add_keyarg(
     name = "N",
+    default = 1,
     py_type = "int",
     desc_short = "number of states N",
     desc = "The number of states."

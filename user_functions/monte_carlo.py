@@ -91,7 +91,7 @@ uf.backend = monte_carlo.create_data
 uf.menu_text = "&create_data"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 500
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
@@ -107,8 +107,8 @@ uf.desc.append(monte_carlo_desc)
 uf.backend = monte_carlo.error_analysis
 uf.menu_text = "&error_analysis"
 uf.gui_icon = "oxygen.actions.roll-relax-blue"
-uf.wizard_height_desc = 650
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 620
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
@@ -125,8 +125,8 @@ uf.desc.append(monte_carlo_desc)
 uf.backend = monte_carlo.initial_values
 uf.menu_text = "&initial_values"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_height_desc = 650
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 620
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
@@ -142,8 +142,8 @@ uf.desc.append(monte_carlo_desc)
 uf.backend = monte_carlo.off
 uf.menu_text = "o&ff"
 uf.gui_icon = "oxygen.actions.dialog-cancel"
-uf.wizard_height_desc = 650
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 620
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
@@ -159,8 +159,8 @@ uf.desc.append(monte_carlo_desc)
 uf.backend = monte_carlo.on
 uf.menu_text = "o&n"
 uf.gui_icon = "oxygen.actions.dialog-ok"
-uf.wizard_height_desc = 650
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 620
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'
 
@@ -185,7 +185,7 @@ uf.desc.append(monte_carlo_desc)
 uf.backend = monte_carlo.setup
 uf.menu_text = "&setup"
 uf.gui_icon = "oxygen.actions.document-edit"
-uf.wizard_height_desc = 600
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 570
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'monte_carlo.png'

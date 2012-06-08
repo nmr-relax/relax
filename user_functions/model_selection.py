@@ -116,5 +116,6 @@ uf.desc[-1].add_prompt("relax> model_selection(method='AIC', modsel_pipe='mixed'
 uf.backend = model_selection.select
 uf.menu_text = "m&odel_selection"
 uf.gui_icon = "relax.discrepancy_curve"
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 450
+uf.wizard_size = (900, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'discrepancy_curve.png'

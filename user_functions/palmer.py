@@ -148,7 +148,8 @@ uf.desc[-1].add_paragraph("If you would like to use a different Modelfree execut
 uf.backend = palmer.create
 uf.menu_text = "&create"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 230
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'
 
@@ -190,7 +191,7 @@ uf.desc[-1].add_paragraph("If you would like to use a different Modelfree execut
 uf.backend = palmer.execute
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.menu_text = "&execute"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'modelfree4.png'
 

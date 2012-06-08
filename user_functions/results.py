@@ -148,6 +148,6 @@ uf.desc[-1].add_paragraph("The complementary read function will automatically ha
 uf.backend = results.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
-uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False

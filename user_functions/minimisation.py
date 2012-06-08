@@ -362,6 +362,6 @@ uf.desc[-1].add_prompt("relax> minimise('simplex', constraints=True, max_iter=50
 uf.backend = minimise.minimise
 uf.menu_text = "&minimise"
 uf.gui_icon = "relax.minimise"
-uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 900)
+uf.wizard_height_desc = 300
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'

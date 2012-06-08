@@ -176,8 +176,8 @@ uf.desc[-1].add_paragraph("To set up a model-free analysis data pipe with the na
 uf.desc[-1].add_prompt("relax> pipe.create('m5', 'mf')")
 uf.menu_text = "crea&te"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
@@ -193,6 +193,7 @@ uf.desc[-1].add_paragraph("To run the user function, type:")
 uf.desc[-1].add_prompt("relax> pipe.current()")
 uf.menu_text = "c&urrent"
 uf.gui_icon = "oxygen.actions.document-preview"
+uf.wizard_size = (600, 300)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
@@ -231,6 +232,7 @@ uf.desc[-1].add_paragraph("To run the user function, type:")
 uf.desc[-1].add_prompt("relax> pipe.display()")
 uf.menu_text = "di&splay"
 uf.gui_icon = "oxygen.actions.document-preview"
+uf.wizard_size = (600, 300)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
 
 
@@ -265,7 +267,8 @@ uf.desc[-1].add_prompt("relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ell
 uf.desc[-1].add_prompt("relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])")
 uf.menu_text = "&hybridise"
 uf.gui_icon = "relax.pipe_hybrid"
-uf.wizard_size = (800, 800)
+uf.wizard_height_desc = 350
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe_hybrid.png'
 
 
@@ -292,6 +295,6 @@ uf.desc[-1].add_prompt("relax> pipe.switch('ellipsoid')")
 uf.desc[-1].add_prompt("relax> pipe.switch(pipe_name='ellipsoid')")
 uf.menu_text = "&switch"
 uf.gui_icon = "oxygen.actions.system-switch-user"
-uf.wizard_size = (650, 450)
+uf.wizard_size = (700, 500)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe_switch.png'

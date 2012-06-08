@@ -47,5 +47,5 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_prompt("relax> vmd.view()")
 uf.backend = vmd.view
 uf.menu_text = "&view"
-uf.wizard_size = (600, 300)
+uf.wizard_size = (700, 400)
 uf.wizard_apply_button = False

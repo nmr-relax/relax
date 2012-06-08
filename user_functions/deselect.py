@@ -186,7 +186,7 @@ uf.backend = selection.desel_read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 200
-uf.wizard_size = (900, 700)
+uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
 
 
@@ -268,5 +268,6 @@ uf.desc[-1].add_prompt("relax> deselect.spin(spin_id=':12&:MET')")
 uf.backend = selection.desel_spin
 uf.menu_text = "&spin"
 uf.gui_icon = "relax.spin_grey"
-uf.wizard_size = (700, 550)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'

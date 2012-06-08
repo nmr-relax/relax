@@ -207,5 +207,6 @@ uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6
 uf.backend = opendx.main.map
 uf.menu_text = "&map"
 uf.gui_icon = "relax.grid_search"
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 280
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'opendx.png'

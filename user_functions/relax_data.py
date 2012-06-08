@@ -430,8 +430,8 @@ uf.desc[-1].add_paragraph("Other methods will be accepted if supplied.")
 uf.backend = relax_data.temp_calibration
 uf.menu_text = "&temp_calibration"
 uf.gui_icon = "oxygen.status.weather-clear"
-uf.wizard_size = (1000, 800)
-uf.wizard_height_desc = 500
+uf.wizard_height_desc = 550
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-clear.png'
 
 
@@ -478,7 +478,7 @@ uf.desc[-1].add_list_element("'no temperature control applied'.")
 uf.backend = relax_data.temp_control
 uf.menu_text = "temp_contro&l"
 uf.gui_icon = "oxygen.status.weather-clear"
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_height_desc = 500
 uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-clear.png'
 

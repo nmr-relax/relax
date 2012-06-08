@@ -194,7 +194,7 @@ uf.desc[-1].add_paragraph("The spectrum ID identifies the spectrum associated wi
 uf.backend = spectrum.integration_points
 uf.menu_text = "&integration_points"
 uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_size = (800, 600)
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
 
@@ -351,7 +351,7 @@ uf.backend = spectrum.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 140
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
 

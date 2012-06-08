@@ -196,7 +196,7 @@ uf.desc[-1].add_prompt("relax> rdc.corr_plot(None)")
 uf.desc[-1].add_prompt("relax> rdc.corr_plot(format=None)")
 uf.backend = rdc.corr_plot
 uf.menu_text = "corr_&plot"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 uf.wizard_apply_button = False
 
@@ -407,7 +407,8 @@ uf.desc[-1].add_prompt("relax> rdc.read('Tb', 'Tb.txt', spin_id='@N')")
 uf.backend = rdc.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_size = (1000, 800)
+uf.wizard_height_desc = 180
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 

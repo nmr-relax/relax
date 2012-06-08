@@ -41,4 +41,5 @@ uf.desc[-1].add_paragraph("This will display all of the relax, Python, python pa
 uf.backend = sys_info
 uf.menu_text = "s&ys_info"
 uf.gui_icon = "oxygen.actions.help-about"
+uf.wizard_size = (700, 400)
 uf.wizard_apply_button = False

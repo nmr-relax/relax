@@ -113,6 +113,6 @@ uf.desc[-1].add_prompt("relax> paramag.centre(fix=False)")
 uf.backend = paramag.centre
 uf.menu_text = "&centre"
 uf.wizard_height_desc = 400
-uf.wizard_size = (1000, 800)
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
