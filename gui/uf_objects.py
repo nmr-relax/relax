@@ -905,10 +905,10 @@ class Uf_page(Wiz_page):
                     x, y = text_obj.GetSizeTuple()
                     tot_y += y
 
-                    # The spacing after each element.
+                    # The spacing after each element (except the last).
                     tot_y += spacing
 
-                    # The 1.5 spacing before each section (not including the first).
+                    # The spacing before each section (not including the first).
                     if i != 0 and type == 'title':
                         tot_y += spacing
 
@@ -917,6 +917,7 @@ class Uf_page(Wiz_page):
                     text_types.append(type)
 
         # Some extra space for who knows what?!
+        tot_y -= spacing
         tot_y += 20
 
         # Set the panel size - scrolling needed.
@@ -928,7 +929,8 @@ class Uf_page(Wiz_page):
             panel.SetInitialSize((self._main_size, tot_y))
 
         # Add the text.
-        for i in range(len(text_elements)):
+        n = len(text_elements)
+        for i in range(n):
             # Spacing before each section (not including the first).
             if i > 1 and text_types[i] == 'title':
                 panel_sizer.AddSpacer(spacing)
@@ -936,12 +938,9 @@ class Uf_page(Wiz_page):
             # The text.
             panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
 
-            # 1.5 spacing after the synopsis (x0.5 here, x1 below).
-            if i == 0 and text_types[0] == 'synopsis':
-                panel_sizer.AddSpacer(int(spacing * 0.5))
-
-            # Spacer after all sections.
-            panel_sizer.AddSpacer(spacing)
+            # Spacer after all sections (except the end).
+            if i != n - 1:
+                panel_sizer.AddSpacer(spacing)
 
         # Set up and add the panel to the sizer.
         panel.SetSizer(panel_sizer)
