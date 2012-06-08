@@ -166,6 +166,14 @@ class dAuvergne_protocol:
         self.max_iter = max_iter
         self.conv_loop = conv_loop
 
+        # The model-free data pipe names.
+        self.mf_model_pipes = []
+        for i in range(len(self.mf_models)):
+            self.mf_model_pipes.append(self.name_pipe(self.mf_models[i]))
+        self.local_tm_model_pipes = []
+        for i in range(len(self.local_tm_models)):
+            self.local_tm_model_pipes.append(self.name_pipe(self.local_tm_models[i]))
+
         # The diffusion models.
         if isinstance(diff_model, list):
             self.diff_model_list = diff_model
@@ -651,16 +659,19 @@ class dAuvergne_protocol:
             ############################
 
             # All the global diffusion models to be used in the model selection.
-            self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            self.pipes = []
+            for name in models:
+                self.pipes.append(self.name_pipe(name))
 
             # Remove all temporary pipes used in this auto-analysis.
             for name in pipe_names(bundle=self.pipe_bundle):
-                if name in self.pipes + self.mf_models + self.local_tm_models + ['aic', 'previous']:
+                if name in self.pipes + self.mf_model_pipes + self.local_tm_model_pipes + [self.name_pipe('aic'), self.name_pipe('previous')]:
                     self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
             dir_list = listdir(self.results_dir)
-            for name in self.pipes:
+            for name in models:
                 if name not in dir_list:
                     raise RelaxError("The %s model must be optimised first." % name)
 
@@ -699,7 +710,7 @@ class dAuvergne_protocol:
             ##########################
 
             # Fix the diffusion tensor, if it exists.
-            if hasattr(get_pipe('final'), 'diff_tensor'):
+            if hasattr(get_pipe(self.name_pipe('final')), 'diff_tensor'):
                 self.interpreter.fix('diff')
 
             # Simulations.
@@ -781,7 +792,7 @@ class dAuvergne_protocol:
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
-                self.interpreter.diffusion_tensor.copy('previous')
+                self.interpreter.diffusion_tensor.copy(self.name_pipe('previous'))
                 self.interpreter.fix('diff')
 
             # Select the model-free model.
