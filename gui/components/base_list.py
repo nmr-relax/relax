@@ -43,7 +43,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class Base_list(object):
     """The GUI element for listing the software used in the analysis."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, stretch=False, button_placement='default'):
+    def __init__(self, gui=None, parent=None, box=None, id=None, proportion=0, button_placement='default'):
         """Build the base list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -54,8 +54,8 @@ class Base_list(object):
         @type box:                  wx.BoxSizer instance
         @keyword id:                A unique identification string.  This is used to register the update method with the GUI user function observer object.
         @type id:                   str
-        @keyword stretch:           A flag which if True will allow the static box to stretch with the window.
-        @type stretch:              bool
+        @keyword proportion:        The window proportion parameter.
+        @type proportion:           bool
         @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
         @type button_placement:     str or None
         """
@@ -63,7 +63,7 @@ class Base_list(object):
         # Store the arguments.
         self.gui = gui
         self.parent = parent
-        self.stretch = stretch
+        self.proportion = proportion
 
         # Variables to be overridden.
         self.title = ""
@@ -82,11 +82,6 @@ class Base_list(object):
         # Button placement second override on initialisation.
         if button_placement != 'default':
             self.button_placement = button_placement
-
-        # Stretching.
-        self.proportion = 0
-        if stretch:
-            self.proportion = 1
 
         # First create a panel (to allow for tooltips on the buttons).
         self.panel = wx.Panel(self.parent)
@@ -217,7 +212,7 @@ class Base_list(object):
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
         # Set the minimum height.
-        if not self.stretch:
+        if not self.proportion:
             # The number of rows.
             n = self.element.GetItemCount()
 

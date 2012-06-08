@@ -46,7 +46,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, stretch=False, button_placement='default'):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default'):
         """Build the spectral list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -61,8 +61,8 @@ class Spectra_list(Base_list):
         @type id:                   str
         @keyword fn_add:            The function to execute when clicking on the 'Add' button.
         @type fn_add:               func
-        @keyword stretch:           A flag which if True will allow the static box to stretch with the window.
-        @type stretch:              bool
+        @keyword proportion:        The window proportion parameter.
+        @type proportion:           bool
         @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
         @type button_placement:     str or None
         """
@@ -71,7 +71,7 @@ class Spectra_list(Base_list):
         self.fn_add = fn_add
 
         # Initialise the base class.
-        super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, stretch=stretch, button_placement=button_placement)
+        super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
 
 
     def action_relax_fit_relax_time(self, event):

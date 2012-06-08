@@ -88,13 +88,13 @@ class Export_bmrb_window(wx.Frame):
         sizer.AddSpacer(self.main_spacing)
 
         # Add the relaxation data metadata list GUI element.
-        self.relax_data = Relax_data_meta_list(parent=self.main_panel, box=sizer, id='BMRB export', stretch=True)
+        self.relax_data = Relax_data_meta_list(parent=self.main_panel, box=sizer, id='BMRB export', proportion=2)
 
         # Spacing.
         sizer.AddSpacer(self.main_spacing)
 
         # Add the molecule GUI element.
-        self.molecule = Molecule(parent=self.main_panel, box=sizer, id='BMRB export', stretch=True)
+        self.molecule = Molecule(parent=self.main_panel, box=sizer, id='BMRB export', proportion=1)
 
         # Spacing.
         sizer.AddSpacer(self.main_spacing)
@@ -103,22 +103,22 @@ class Export_bmrb_window(wx.Frame):
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add the software GUI element.
-        self.software = Software(parent=self.main_panel, box=sub_sizer, id='BMRB export', stretch=True)
+        self.software = Software(parent=self.main_panel, box=sub_sizer, id='BMRB export', proportion=1)
 
         # Vertical spacing.
         sub_sizer.AddSpacer(self.main_spacing)
 
         # Add the scripts GUI element.
-        self.scripts = Scripts(parent=self.main_panel, box=sub_sizer, id='BMRB export', stretch=True)
+        self.scripts = Scripts(parent=self.main_panel, box=sub_sizer, id='BMRB export', proportion=1)
 
         # Vertical spacing.
         sub_sizer.AddSpacer(self.main_spacing)
 
         # Add the citation GUI element.
-        self.citation = Citations(parent=self.main_panel, box=sub_sizer, id='BMRB export', stretch=True)
+        self.citation = Citations(parent=self.main_panel, box=sub_sizer, id='BMRB export', proportion=1)
 
         # Add the sizer.
-        sizer.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        sizer.Add(sub_sizer, 2, wx.ALL|wx.EXPAND, 0)
 
         # Bottom spacing.
         sizer.AddSpacer(5)
