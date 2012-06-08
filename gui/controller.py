@@ -252,9 +252,9 @@ class Controller(wx.Frame):
         if data == None:
             return
 
-        # Return the pipe name, if it exists, as the key.
-        if hasattr(data, 'pipe_name'):
-            return data.pipe_name
+        # Return the pipe bundle, if it exists, as the key.
+        if hasattr(data, 'pipe_bundle'):
+            return data.pipe_bundle
 
 
     def create_mf(self, sizer):
