@@ -891,6 +891,8 @@ class Uf_page(Wiz_page):
                         text.SetFont(font.normal)
                     elif type in ['table', 'verbatim']:
                         text.SetFont(font.modern_small)
+                    else:
+                        text.SetFont(font.normal)
 
                     # Wrap the paragraphs and lists.
                     if type in ['paragraph', 'list', 'item list']:
