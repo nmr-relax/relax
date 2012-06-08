@@ -72,7 +72,8 @@ class Base_list(object):
         self.observer_base_name = None
         self.columns = []
         self.button_placement = None
-        self.button_size = (80, 40)
+        self.button_size = (120, 40)
+        self.button_spacing = 5
         self.button_info = []
         self.popup_menus = []
 
@@ -177,6 +178,10 @@ class Base_list(object):
 
             # Store as a class object.
             setattr(self, self.button_info[i]['object'], button)
+
+            # Spacing.
+            if self.button_spacing:
+                button_sizer.AddSpacer(self.button_spacing)
 
 
     def build_element(self):

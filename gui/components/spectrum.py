@@ -300,7 +300,6 @@ class Spectra_list(Base_list):
 
         # Button set up.
         self.button_placement = 'top'
-        self.button_size = (80, 40)
         self.button_info = [
             {
                 'object': 'button_add',
