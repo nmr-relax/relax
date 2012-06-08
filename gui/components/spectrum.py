@@ -35,6 +35,7 @@ from graphics import fetch_icon
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
+from gui.components.base_list import Base_list
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border
@@ -42,92 +43,35 @@ from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
-class Spectra_list:
+class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    # Some IDs for the menu entries.
-    MENU_SPECTRUM_BASEPLANE_RMSD = wx.NewId()
-    MENU_SPECTRUM_DELETE = wx.NewId()
-    MENU_SPECTRUM_INTEGRATION_POINTS = wx.NewId()
-    MENU_SPECTRUM_REPLICATED = wx.NewId()
-    MENU_RELAX_FIT_RELAX_TIME = wx.NewId()
-
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, buttons=True):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, stretch=False, button_placement='default'):
         """Build the spectral list GUI element.
 
-        @keyword gui:       The main GUI object.
-        @type gui:          wx.Frame instance
-        @keyword parent:    The parent GUI element that this is to be attached to (the panel object).
-        @type parent:       wx object
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        @keyword box:       The vertical box sizer to pack this GUI component into.
-        @type box:          wx.BoxSizer instance
-        @keyword id:        A unique identification string.  This is used to register the update method with the GUI user function observer object.
-        @type id:           str
-        @keyword fn_add:    The function to execute when clicking on the 'Add' button.
-        @type fn_add:       func
-        @keyword buttons:   A flag which if True will display the buttons at the top.
-        @type buttons:      bool
+        @keyword gui:               The main GUI object.
+        @type gui:                  wx.Frame instance
+        @keyword parent:            The parent GUI element that this is to be attached to (the panel object).
+        @type parent:               wx object
+        @keyword data:              The data storage container.
+        @type data:                 class instance
+        @keyword box:               The vertical box sizer to pack this GUI component into.
+        @type box:                  wx.BoxSizer instance
+        @keyword id:                A unique identification string.  This is used to register the update method with the GUI user function observer object.
+        @type id:                   str
+        @keyword fn_add:            The function to execute when clicking on the 'Add' button.
+        @type fn_add:               func
+        @keyword stretch:           A flag which if True will allow the static box to stretch with the window.
+        @type stretch:              bool
+        @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
+        @type button_placement:     str or None
         """
 
         # Store the arguments.
-        self.gui = gui
-        self.parent = parent
         self.fn_add = fn_add
 
-        # GUI variables.
-        self.spacing = 5
-        self.border = 5
-        self.height_buttons = 40
-
-        # First create a panel (to allow for tooltips on the buttons).
-        self.panel = wx.Panel(self.parent)
-        box.Add(self.panel, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Add a sizer to the panel.
-        panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.panel.SetSizer(panel_sizer)
-
-        # A static box to hold all the widgets, and its sizer.
-        stat_box = wx.StaticBox(self.panel, -1, "Spectra list")
-        stat_box.SetFont(font.subtitle)
-        sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
-
-        # Add the sizer to the static box and the static box to the main box.
-        panel_sizer.Add(sub_sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Add a border.
-        box_centre = add_border(sub_sizer, border=self.border)
-
-        # Add buttons.
-        if buttons:
-            self.add_buttons(box_centre)
-
-        # Initialise the element.
-        box_centre.AddSpacer(self.spacing)
-        self.init_element(box_centre)
-
-        # Build the element.
-        self.build_element()
-
-        # Initialise observer name.
-        self.name = 'spectra list: %s' % id
-
-        # Register the element for updating when a user function completes.
-        self.observer_register()
-
-
-    def Enable(self, enable=True):
-        """Enable or disable the element.
-
-        @keyword enable:    The flag specifying if the element should be enabled or disabled.
-        @type enable:       bool
-        """
-
-        # Call the button's method.
-        self.button_add.Enable(enable)
-        self.button_delete.Enable(enable)
+        # Initialise the base class.
+        super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, stretch=stretch, button_placement=button_placement)
 
 
     def action_relax_fit_relax_time(self, event):
@@ -233,197 +177,6 @@ class Spectra_list:
             uf_store['spectrum.replicated'](spectrum_ids=id)
         else:
             uf_store['spectrum.replicated'](spectrum_ids=replicates)
-
-
-    def add_buttons(self, sizer):
-        """Add the buttons for peak list manipulation.
-
-        @param sizer:   The sizer element to pack the buttons into.
-        @type sizer:    wx.BoxSizer instance
-        """
-
-        # Button Sizer
-        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Add button.
-        self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_add.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22")))
-        self.button_add.SetFont(font.normal)
-        self.button_add.SetSize((80, self.height_buttons))
-        button_sizer.Add(self.button_add, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.fn_add, self.button_add)
-        self.button_add.SetToolTipString("Read a spectral data file.")
-
-        # Delete button.
-        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
-        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22")))
-        self.button_delete.SetFont(font.normal)
-        self.button_delete.SetSize((80, self.height_buttons))
-        button_sizer.Add(self.button_delete, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.action_spectrum_delete, self.button_delete)
-        self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
-
-
-    def build_element(self):
-        """Build the spectra listing GUI element."""
-
-        # Execution lock, so do nothing.
-        if status.exec_lock.locked():
-            return
-
-        # Build the GUI element in a thread safe way.
-        wx.CallAfter(self.build_element_safe)
-
-
-    def build_element_safe(self):
-        """Build the spectra listing GUI element in a thread safe wx.CallAfter call."""
-
-        # First freeze the element, so that the GUI element doesn't update until the end.
-        self.element.Freeze()
-
-        # Initialise the column index for the data.
-        index = 1
-
-        # Delete the rows and columns.
-        self.element.DeleteAllItems()
-        self.element.DeleteAllColumns()
-
-        # Initialise to a single column.
-        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
-
-        # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
-        n = 0
-        if hasattr(cdp, 'spectrum_ids'):
-            # The number of IDs.
-            n = len(cdp.spectrum_ids)
-
-            # Set the IDs.
-            for i in range(n):
-                self.element.InsertStringItem(i, str_to_gui(cdp.spectrum_ids[i]))
-
-        # The NOE spectrum type.
-        if self.noe_spectrum_type(index):
-            index += 1
-
-        # The relaxation times.
-        if self.relax_times(index):
-            index += 1
-
-        # The replicated spectra.
-        if self.replicates(index):
-            index += 1
-
-        # Post a size event to get the scroll panel to update correctly.
-        event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
-        wx.PostEvent(self.parent.GetEventHandler(), event)
-
-        # Size the columns.
-        self.size_cols()
-
-        # Set the minimum height.
-        height = self.height_char * (n + 1) + 50
-        self.element.SetMinSize((-1, height))
-        self.element.Layout()
-
-        # Unfreeze.
-        self.element.Thaw()
-
-
-    def delete(self):
-        """Unregister the class."""
-
-        # Unregister the observer methods.
-        self.observer_register(remove=True)
-
-
-    def init_element(self, sizer):
-        """Initialise the GUI element for the spectra listing.
-
-        @param sizer:   The sizer element to pack the element into.
-        @type sizer:    wx.BoxSizer instance
-        """
-
-        # List of peak list file names and relaxation time.
-        self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
-
-        # Properties.
-        self.element.SetFont(font.normal)
-
-        # Store the base heights.
-        self.height_char = self.element.GetCharHeight()
-
-        # Bind some events.
-        self.element.Bind(wx.EVT_SIZE, self.resize)
-        self.element.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.on_right_click)  # For wxMSW!
-        self.element.Bind(wx.EVT_RIGHT_UP, self.on_right_click)   # For wxGTK!
-
-        # Add list to sizer.
-        sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
-
-
-    def observer_register(self, remove=False):
-        """Register and unregister methods with the observer objects.
-
-        @keyword remove:    If set to True, then the methods will be unregistered.
-        @type remove:       False
-        """
-
-        # Register.
-        if not remove:
-            status.observers.gui_uf.register(self.name, self.build_element)
-
-        # Unregister.
-        else:
-            status.observers.gui_uf.unregister(self.name)
-
-
-    def on_right_click(self, event):
-        """Pop up menu for the right click.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Execution lock, so do nothing.
-        if status.exec_lock.locked():
-            return
-
-        # Initialise the menu.
-        menu = wx.Menu()
-
-        # Add some menu items for the spin user functions.
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_BASEPLANE_RMSD, text="Set the &baseplane RMSD", icon=fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon)))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_DELETE, text="&Delete the peak intensities", icon=fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon)))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_INTEGRATION_POINTS, text="Set the number of integration &points", icon=fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon)))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPECTRUM_REPLICATED, text="Specify which spectra are &replicated", icon=fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon)))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RELAX_FIT_RELAX_TIME, text="Set the relaxation &time", icon=fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon)))
-
-        # Bind clicks.
-        self.element.Bind(wx.EVT_MENU, self.action_relax_fit_relax_time, id=self.MENU_RELAX_FIT_RELAX_TIME)
-        self.element.Bind(wx.EVT_MENU, self.action_spectrum_baseplane_rmsd, id=self.MENU_SPECTRUM_BASEPLANE_RMSD)
-        self.element.Bind(wx.EVT_MENU, self.action_spectrum_delete, id=self.MENU_SPECTRUM_DELETE)
-        self.element.Bind(wx.EVT_MENU, self.action_spectrum_integration_points, id=self.MENU_SPECTRUM_INTEGRATION_POINTS)
-        self.element.Bind(wx.EVT_MENU, self.action_spectrum_replicated, id=self.MENU_SPECTRUM_REPLICATED)
-
-        # Pop up the menu.
-        if status.show_gui:
-            self.element.PopupMenu(menu)
-            menu.Destroy()
-
-
-    def resize(self, event):
-        """Catch the resize to allow the element to be resized.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Set the column sizes.
-        self.size_cols()
-
-        # Continue with the normal resizing.
-        event.Skip()
 
 
     def noe_spectrum_type(self, index):
@@ -535,21 +288,97 @@ class Spectra_list:
         return True
 
 
-    def size_cols(self):
-        """Set the column sizes."""
+    def setup(self):
+        """Override the base variables."""
 
-        # The element size.
-        x, y = self.element.GetSize()
+        # GUI variables.
+        self.title = "Spectra list"
+        self.observer_base_name = "spectra list"
 
-        # Number of columns.
-        n = self.element.GetColumnCount()
+        # The column titles.
+        self.columns = []
 
-        # Set to equal sizes.
-        if n == 0:
-            width = x
-        else:
-            width = int(x / n)
+        # Button set up.
+        self.button_placement = 'top'
+        self.button_size = (80, 40)
+        self.button_info = [
+            {
+                'object': 'button_add',
+                'label': ' Add',
+                'icon': fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"),
+                'method': self.fn_add,
+                'tooltip': "Read a spectral data file."
+            }, {
+                'object': 'button_delete',
+                'label': ' Delete',
+                'icon': fetch_icon('oxygen.actions.list-remove', "22x22"),
+                'method': self.action_spectrum_delete,
+                'tooltip': "Delete loaded relaxation data from the relax data store."
+            }
+        ]
 
-        # Set the column sizes.
-        for i in range(n):
-            self.element.SetColumnWidth(i, width)
+        # The right click popup menu.
+        self.popup_menus = [
+            {
+                'id': wx.NewId(),
+                'text': "Set the &baseplane RMSD",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
+                'method': self.action_relax_fit_relax_time
+            }, {
+                'id': wx.NewId(),
+                'text': "&Delete the peak intensities",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
+                'method': self.action_spectrum_baseplane_rmsd
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the number of integration &points",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
+                'method': self.action_spectrum_delete
+            }, {
+                'id': wx.NewId(),
+                'text': "Specify which spectra are &replicated",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
+                'method': self.action_spectrum_integration_points
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the relaxation &time",
+                'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
+                'method': self.action_spectrum_replicated
+            }
+        ]
+
+
+    def update_data(self):
+        """Method called from self.build_element_safe() to update the list data."""
+
+        # Initialise the column index for the data.
+        index = 1
+
+        # Delete the rows and columns.
+        self.element.DeleteAllItems()
+        self.element.DeleteAllColumns()
+
+        # Initialise to a single column.
+        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
+
+        # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
+        n = 0
+        if hasattr(cdp, 'spectrum_ids'):
+            # The number of IDs.
+            n = len(cdp.spectrum_ids)
+
+            # Set the IDs.
+            for i in range(n):
+                self.element.InsertStringItem(i, str_to_gui(cdp.spectrum_ids[i]))
+
+        # The NOE spectrum type.
+        if self.noe_spectrum_type(index):
+            index += 1
+
+        # The relaxation times.
+        if self.relax_times(index):
+            index += 1
+
+        # The replicated spectra.
+        if self.replicates(index):
+            index += 1

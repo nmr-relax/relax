@@ -241,6 +241,13 @@ class Base_list(object):
         self.element.Thaw()
 
 
+    def delete(self):
+        """Unregister the class."""
+
+        # Unregister the observer methods.
+        self.observer_register(remove=True)
+
+
     def init_element(self, sizer):
         """Initialise the GUI element.
 
