@@ -33,6 +33,7 @@ from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
+from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border
 from gui.string_conv import str_to_gui
@@ -71,6 +72,7 @@ class Base_list(object):
         if button_placement != 'default':
             self.button_placement = button_placement
         self.button_info = []
+        self.popup_menus = []
 
         # Override these base values.
         self.setup()
@@ -89,7 +91,8 @@ class Base_list(object):
         self.panel.SetSizer(panel_sizer)
 
         # A static box to hold all the widgets, and its sizer.
-        self.data_box = wx.StaticBox(self.panel, -1, self.title)
+        self.data_box = wx.StaticBox(self.panel, -1)
+        self.set_box_label()
         self.data_box.SetFont(font.subtitle)
         sub_sizer = wx.StaticBoxSizer(self.data_box, wx.VERTICAL)
 
@@ -175,6 +178,9 @@ class Base_list(object):
         # First freeze the element, so that the GUI element doesn't update until the end.
         self.element.Freeze()
 
+        # Update the label if needed.
+        self.set_box_label()
+
         # Delete the previous data.
         self.element.DeleteAllItems()
 
@@ -190,10 +196,22 @@ class Base_list(object):
 
         # Set the minimum height.
         if not self.stretch:
+            # The number of rows.
+            n = self.element.GetItemCount()
+
+            # Size of the header, plus a bit.
             head = self.height_char + 10
+
+            # Size of the table central element.
             centre = (self.height_char + 6) * n 
+
+            # Size of the scrollbar for the end of the table.
             foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
+
+            # Sum.
             height = head + centre + foot
+
+            # Set the minimum size, and force a redraw.
             self.element.SetMinSize((-1, height))
             self.element.Layout()
 
@@ -223,9 +241,22 @@ class Base_list(object):
 
         # Bind some events.
         self.element.Bind(wx.EVT_SIZE, self.resize)
+        self.element.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.on_right_click)  # For wxMSW!
+        self.element.Bind(wx.EVT_RIGHT_UP, self.on_right_click)   # For wxGTK!
 
         # Add list to sizer.
         sizer.Add(self.element, self.proportion, wx.ALL|wx.EXPAND, 0)
+
+
+    def is_complete(self):
+        """Base method which always returns True.
+
+        @return:    The answer to the question.
+        @rtype:     bool
+        """
+
+        # Assume everything is complete.
+        return True
 
 
     def observer_register(self, remove=False):
@@ -244,6 +275,41 @@ class Base_list(object):
             status.observers.gui_uf.unregister(self.name)
 
 
+    def on_right_click(self, event):
+        """Pop up menu for the right click.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # No popup menus defined.
+        if self.popup_menus == []:
+            return
+
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
+        # Initialise the menu.
+        menu = wx.Menu()
+
+        # Loop over the menu items.
+        for i in range(len(self.popup_menus)):
+            # Alias.
+            info = self.popup_menus[i]
+
+            # Add the menu item.
+            menu.AppendItem(build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon']))
+
+            # Bind clicks.
+            self.element.Bind(wx.EVT_MENU, info['method'], id=info['id'])
+
+        # Pop up the menu.
+        if status.show_gui:
+            self.element.PopupMenu(menu)
+            menu.Destroy()
+
+
     def resize(self, event):
         """Catch the resize to allow the element to be resized.
 
@@ -256,6 +322,13 @@ class Base_list(object):
 
         # Continue with the normal resizing.
         event.Skip()
+
+
+    def set_box_label(self):
+        """Set the label of the StaticBox."""
+
+        # Set the label.
+        self.data_box.SetLabel(self.title)
 
 
     def size_cols(self):
