@@ -591,7 +591,7 @@ class Auto_model_free(Base_analysis):
         wx.BeginBusyCursor()
 
         # Create the wizard.
-        self.vect_wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Load unit vectors from file")
+        self.vect_wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Load unit vectors from file")
 
         # Create the PDB reading page.
         page = uf_store['structure.read_pdb'].create_page(self.vect_wizard)

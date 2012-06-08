@@ -307,7 +307,7 @@ class Auto_noe(Base_analysis):
         wx.BeginBusyCursor()
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Set up the NOE peak intensities")
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Set up the NOE peak intensities")
         self.page_indices = {}
 
         # First check that at least a single spin is named!
