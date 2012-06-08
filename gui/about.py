@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,12 +32,12 @@ import wx.html
 from wx.lib.wordwrap import wordwrap
 
 # relax module imports.
+from graphics import IMAGE_PATH
 from info import Info_box
 from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.icons import relax_icons
-from gui.paths import IMAGE_PATH
 
 
 class About_base(wx.Frame):
@@ -474,30 +474,6 @@ class About_base(wx.Frame):
             self.virt_y = self.max_y
         else:
             self.virt_y = self.dim_y
-
-
-
-class About_gui(About_base):
-    """The about relax GUI dialog."""
-
-    # The background colour.
-    colour1 = 'white'
-
-    # Dimensions.
-    dim_x = 640
-    dim_y = 480
-
-    def build_widget(self):
-        """Build the about dialog."""
-
-        # The title.
-        self.SetTitle("About relax GUI")
-
-        # The image.
-        bitmap = wx.Bitmap(IMAGE_PATH+'relaxGUI_splash.png', wx.BITMAP_TYPE_ANY)
-
-        # Draw it.
-        self.dc.DrawBitmap(bitmap, self.border, self.border, True)
 
 
 

@@ -69,7 +69,6 @@ class Menu:
     MENU_HELP_MAIL = wx.NewId()
     MENU_HELP_REFS = wx.NewId()
     MENU_HELP_GPL = wx.NewId()
-    MENU_HELP_ABOUT_GUI = wx.NewId()
     MENU_HELP_ABOUT = wx.NewId()
 
     def __init__(self, gui):
@@ -159,7 +158,6 @@ class Menu:
         menu.AppendSeparator()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_GPL, text="&Licence", icon=paths.icon_16x16.gnu_head))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT_GUI, text="About relaxG&UI", icon=fetch_icon("relax.relax")))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT, text="About rela&x", icon=fetch_icon("relax.relax")))
         self.menubar.Append(menu, "&Help")
 
@@ -168,7 +166,6 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax, id=self.MENU_HELP_MAIL)
         self.gui.Bind(wx.EVT_MENU, self.gui.references, id=self.MENU_HELP_REFS)
         self.gui.Bind(wx.EVT_MENU, self._licence, id=self.MENU_HELP_GPL)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui, id=self.MENU_HELP_ABOUT_GUI)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax, id=self.MENU_HELP_ABOUT)
 
         # Add the menu bar GUI item to the main frame.

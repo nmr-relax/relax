@@ -49,7 +49,7 @@ import test_suite.test_suite_runner
 from version import version
 
 # relax GUI module imports.
-from gui.about import About_gui, About_relax
+from gui.about import About_relax
 from gui.analyses import Analysis_controller
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
@@ -174,21 +174,6 @@ class Main(wx.Frame):
 
         # Assume a script has been run and there is data in the store.
         self.analysis.load_from_store()
-
-
-    def about_gui(self, event=None):
-        """The about message for the relax GUI.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
-
-        # Build the dialog.
-        dialog = About_gui(None, -1, "")
-
-        # The dialog.
-        if status.show_gui:
-            dialog.Show()
 
 
     def about_relax(self, event=None):
