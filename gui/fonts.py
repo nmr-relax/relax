@@ -58,6 +58,17 @@ class Font:
         self.modern_normal =        wx.Font(10+scale, wx.FONTFAMILY_MODERN,  wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
         self.modern_normal_bold =   wx.Font(10+scale, wx.FONTFAMILY_MODERN,  wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD,   0)
 
+        # Roman fonts.
+        self.roman_smaller =        wx.Font(6+scale,  wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_small =          wx.Font(8+scale,  wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_button =         wx.Font(8+scale,  wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_normal =         wx.Font(10+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_normal_bold =    wx.Font(10+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD,   0)
+        self.roman_normal_italic =  wx.Font(10+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_subtitle =       wx.Font(12+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD,   0)
+        self.roman_font_12 =        wx.Font(12+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_font_14 =        wx.Font(14+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
+        self.roman_title =          wx.Font(16+scale, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0)
 
 
 # Initialise the class for importing.
