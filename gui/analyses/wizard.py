@@ -128,7 +128,7 @@ class Data_pipe_page(Wiz_page):
         name = "%s (%s)" % (self.parent.analysis_type, asctime(localtime()))
 
         # Update the fields.
-        self.pipe_name.SetValue(str_to_gui("origin"))
+        self.pipe_name.SetValue(str_to_gui("origin - %s" % name))
         self.pipe_bundle.SetValue(str_to_gui(name))
 
 
