@@ -630,7 +630,7 @@ uf.menu_text = "read_&xyz"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_xyz.png'
 
 
 # The structure.rotate user function.
