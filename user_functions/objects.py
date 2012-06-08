@@ -307,7 +307,7 @@ class Uf_container(object):
     @type menu_text:            str
     @ivar gui_icon:             The code for the icon to use in the GUI.
     @type gui_icon:             str or None
-    @ivar wizard_size:          The size for the GUI user function wizard.  This defaults to (600, 400) if not supplied.
+    @ivar wizard_size:          The size for the GUI user function wizard.  This defaults to (700, 500) if not supplied.
     @type wizard_size:          tuple of int or None
     @ivar wizard_image:         The 200 pixel wide image to use for the user function wizard.  This should be the path to the bitmap image.  This defaults to the relax Ulysses butterfly image.
     @type wizard_image:         str
@@ -349,7 +349,7 @@ class Uf_container(object):
         self.desc = []
         self.menu_text = ''
         self.gui_icon = None
-        self.wizard_size = (600, 400)
+        self.wizard_size = (700, 500)
         self.wizard_image = IMAGE_PATH + "relax.gif"
         self.wizard_height_desc = 220
         self.wizard_apply_button = True
