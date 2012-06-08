@@ -196,7 +196,7 @@ class Relax:
             status.show_gui = True
 
             # Start the relax GUI wx application.
-            app = gui.App(script=self.script_file)
+            app = gui.App(script_file=self.script_file)
             app.MainLoop()
 
         # Execute the relax test suite

@@ -58,7 +58,7 @@ from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
-from gui.misc import open_file, protected_exec
+from gui.misc import gui_raise, open_file, protected_exec
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
@@ -76,7 +76,7 @@ class Main(wx.Frame):
     min_width = 1000
     min_height = 600
 
-    def __init__(self, parent=None, id=-1, title="", script=None):
+    def __init__(self, parent=None, id=-1, title=""):
         """Initialise the main relax GUI frame."""
 
         # Store the wxPython info for os/machine/version specific hacks.
@@ -169,10 +169,6 @@ class Main(wx.Frame):
         status.observers.pipe_alteration.register('status bar', self.update_status_bar)
         status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
         status.observers.exec_lock.register('gui', self.enable)
-
-        # Run a script.
-        if script:
-            wx.CallAfter(uf_store['script'](script))
 
 
     def about_gui(self, event=None):

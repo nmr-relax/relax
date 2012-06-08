@@ -36,12 +36,14 @@ if dep_check.wx_module:
     import wx
 
 # relax module imports.
+from generic_fns.script import script
+from graphics import IMAGE_PATH
 from relax_errors import RelaxError
 from relax_gui import Main
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from paths import IMAGE_PATH
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 __all__ = ['about',
@@ -69,7 +71,7 @@ __all__ = ['about',
 class App(wx.App):
     """The relax GUI wx application."""
 
-    def __init__(self, script=None, redirect=False, filename=None, useBestVisual=False, clearSigInt=True):
+    def __init__(self, script_file=None, redirect=False, filename=None, useBestVisual=False, clearSigInt=True):
         """Initialise the wx.App.
 
         @keyword redirect:      Should sys.stdout and sys.stderr be redirected? Defaults to True on Windows and Mac, False otherwise. If filename is None then output will be redirected to a window that pops up as needed. (You can control what kind of window is created for the output by resetting the class variable outputWindowClass to a class of your choosing.)
@@ -80,25 +82,26 @@ class App(wx.App):
         @type useBestVisual:    bool
         @keyword clearSigInt:   Should SIGINT be cleared? This allows the app to terminate upon a Ctrl-C in the console like other GUI apps will.
         @type clearSigInt:      bool
-        @keyword script:        The path of a relax script to execute.
-        @type script:           str
+        @keyword script_file:   The path of a relax script to execute.
+        @type script_file:      str
         """
 
-        # Store the script.
-        self.script = script
+        # First run the script before the GUI is built.
+        if script_file:
+            script(script_file)
 
         # Execute the base class method.
         super(App, self).__init__(redirect=redirect, filename=filename, useBestVisual=useBestVisual, clearSigInt=clearSigInt)
 
 
-    def OnInit(self, script_file=None):
+    def OnInit(self):
         """Build the application, showing a splash screen first."""
 
         # Show the splash screen.
         self.show_splash()
 
         # Build the GUI.
-        self.gui = Main(parent=None, id=-1, title="", script=self.script)
+        self.gui = Main(parent=None, id=-1, title="")
 
         # Make it the main application component.
         self.SetTopWindow(self.gui)
