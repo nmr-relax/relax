@@ -24,6 +24,7 @@
 """The BMRB export wizard."""
 
 # Python module imports.
+from time import sleep
 import wx
 
 # relax module imports.
@@ -151,6 +152,12 @@ class Export_bmrb_window(wx.Frame):
 
         # Execute the user function.
         uf_store['bmrb.write'](wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
+
+        # Pretend to do something to trick the user into thinking that the export is happening and taking time!
+        wx.Yield()
+        wx.BeginBusyCursor()
+        sleep(2)
+        wx.EndBusyCursor()
 
         # Close the window.
         self.Close()
