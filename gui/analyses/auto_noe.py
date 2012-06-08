@@ -155,8 +155,9 @@ class Auto_noe(Base_analysis):
         data = Container()
         missing = []
 
-        # The pipe name.
+        # The pipe name and bundle.
         data.pipe_name = self.data.pipe_name
+        data.pipe_bundle = self.data.pipe_bundle
 
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
@@ -522,7 +523,7 @@ class Execute_noe(Execute):
         """Execute the calculation."""
 
         # Execute.
-        NOE_calc(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, save_state=False)
+        NOE_calc(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, file_root=self.data.file_root, results_dir=self.data.save_dir, save_state=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]

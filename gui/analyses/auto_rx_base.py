@@ -160,8 +160,9 @@ class Auto_rx(Base_analysis):
         data = Container()
         missing = []
 
-        # The pipe name.
+        # The pipe name and bundle.
         data.pipe_name = self.data.pipe_name
+        data.pipe_bundle = self.data.pipe_bundle
 
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
@@ -550,7 +551,7 @@ class Execute_rx(Execute):
         """Execute the calculation."""
 
         # Execute.
-        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
+        Relax_fit(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
