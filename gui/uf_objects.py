@@ -816,6 +816,13 @@ class Uf_page(Wiz_page):
         text_elements = []
         text_types = []
 
+        # The user function name.
+        name = "The %s user function" % self.name
+        text = wx.StaticText(panel, -1, name, style=wx.TE_MULTILINE)
+        text.SetFont(font.subtitle)
+        text_elements.append(text)
+        text_types.append('title')
+
         # The synopsis.
         if self.uf_data.title:
             # The text.
