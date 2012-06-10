@@ -213,6 +213,16 @@ def bmrb_read(star, sample_conditions=None):
         # Pack the data.
         pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
+        # Store the temperature calibration and control.
+        if data['temp_calibration']:
+            temp_calibration(ri_id=ri_id, method=data['temp_calibration'])
+        if data['temp_control']:
+            temp_control(ri_id=ri_id, method=data['temp_control'])
+
+        # Peak intensity type.
+        if data['peak_intensity_type']:
+            peak_intensity_type(ri_id=ri_id, type=data['peak_intensity_type'])
+
 
 def bmrb_write(star):
     """Generate the relaxation data saveframes for the NMR-STAR dictionary object.
