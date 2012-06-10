@@ -45,11 +45,11 @@ from warnings import warn
 
 # relax module imports.
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from generic_fns import pipes
-from generic_fns import relax_re
+from generic_fns import exp_info, pipes, relax_re
 from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
+from user_functions.objects import Desc_container
 
 
 ALLOWED_MOL_TYPES = ['protein',
@@ -60,13 +60,10 @@ ALLOWED_MOL_TYPES = ['protein',
 ]
 """The list of allowable molecule types."""
 
-id_string_doc = ["Spin ID string documentation", """
-The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.
-
-If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.
-
-Regular expression can be used to select spins.  For example the string '@H*' will select the protons 'H', 'H2', 'H98'.
-"""]
+id_string_doc = Desc_container("Spin ID string documentation")
+id_string_doc.add_paragraph("The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.")
+id_string_doc.add_paragraph("If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.")
+id_string_doc.add_paragraph("Regular expression can be used to select spins.  For example the string '@H*' will select the protons 'H', 'H2', 'H98'.")
 
 
 
@@ -537,6 +534,29 @@ def bmrb_read(star):
 
             # Commas.
             mol_name = replace(mol_name, ',', ' ')
+
+        # The molecule type.
+        mol_type = data['mol_type']
+        polymer_type = data['polymer_type']
+
+        # Translate from the BMRB notation to relax'.
+        if mol_type == 'polymer':
+            map = {
+                'DNA/RNA hybrid': 'DNA',
+                'polydeoxyribonucleotide': 'DNA',
+                'polypeptide(D)': 'protein',
+                'polypeptide(L)': 'protein',
+                'polyribonucleotide': 'RNA',
+                'polysaccharide(D)': 'organic molecule',
+                'polysaccharide(L)': 'organic molecule'
+            }
+            mol_type = map[polymer_type]
+
+        # Create the molecule.
+        create_molecule(mol_name=mol_name, mol_type=mol_type)
+
+        # The thiol state.
+        exp_info.thiol_state(data['thiol_state'])
 
         # Add the residues.
         for i in range(len(data['res_nums'])):
@@ -2014,7 +2034,7 @@ def parse_token(token, verbosity=False):
                         Each element can be either a single number, a range of numbers (two numbers
                         separated by '-'), or a name.
     @type token:        str
-    @keyword verbosity: A flag which if True will cause a number of print outs to be activated.
+    @keyword verbosity: A flag which if True will cause a number of printouts to be activated.
     @type verbosity:    bool
     @return:            A list of identifying numbers and names.
     @rtype:             list of int and str

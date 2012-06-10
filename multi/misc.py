@@ -276,7 +276,7 @@ class Verbosity(object):
     def set(self, value=0):
         """Set the verbosity level.
 
-        @keyword value:     If given, then the verbosity level will be set.  A value of 0 suppresses all output.  A value of 1 causes the minimal amount of information to be printed.  A value of 2 will switch on a number of debugging print outs.  Values greater than 2 currently do nothing, though this might change in the future.
+        @keyword value:     If given, then the verbosity level will be set.  A value of 0 suppresses all output.  A value of 1 causes the minimal amount of information to be printed.  A value of 2 will switch on a number of debugging printouts.  Values greater than 2 currently do nothing, though this might change in the future.
         @type value:        int
         """
 

@@ -389,7 +389,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
             raise RelaxInvalidSeqError(data, "the error data is missing")
 
 
-def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):
+def write(file, dir=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, force=False):
     """Write the molecule, residue, and/or sequence data.
 
     This calls the relax_io.write_spin_data() function to do most of the work.
@@ -397,24 +397,19 @@ def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res
 
     @param file:                The name of the file to write the data to.
     @type file:                 str
-    @keyword dir:               The directory to contain the file (defaults to the current directory
-                                if None).
+    @keyword dir:               The directory to contain the file (defaults to the current directory if None).
     @type dir:                  str or None
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
     @type sep:                  str or None
-    @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
-                                written.
+    @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be written.
     @type mol_name_flag:        bool
-    @keyword res_num_flag:      A flag which if True will cause the residue number column to be
-                                written.
+    @keyword res_num_flag:      A flag which if True will cause the residue number column to be written.
     @type res_num_flag:         bool
-    @keyword res_name_flag:     A flag which if True will cause the residue name column to be
-                                written.
+    @keyword res_name_flag:     A flag which if True will cause the residue name column to be written.
     @type res_name_flag:        bool
     @keyword spin_name_flag:    A flag which if True will cause the spin name column to be written.
     @type spin_name_flag:       bool
-    @keyword spin_num_flag:     A flag which if True will cause the spin number column to be
-                                written.
+    @keyword spin_num_flag:     A flag which if True will cause the spin number column to be written.
     @keyword force:             A flag which if True will cause an existing file to be overwritten.
     @type force:                bin
     """

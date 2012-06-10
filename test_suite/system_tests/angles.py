@@ -36,7 +36,7 @@ class Angles(SystemTestCase):
         """The user function angles()."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']

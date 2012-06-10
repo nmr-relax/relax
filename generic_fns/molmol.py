@@ -204,19 +204,23 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     return commands
 
 
-def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
     """Execute a Molmol macro.
 
-    @keyword data_type:     The data type to map to the structure.
-    @type data_type:        str
-    @keyword style:         The style of the macro.
-    @type style:            str
-    @keyword colour_start:  The starting colour of the linear gradient.
-    @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_end:    The ending colour of the linear gradient.
-    @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
-    @type colour_list:      str or None
+    @keyword data_type:         The data type to map to the structure.
+    @type data_type:            str
+    @keyword style:             The style of the macro.
+    @type style:                str
+    @keyword colour_start_name: The name of the starting colour of the linear gradient.
+    @type colour_start_name:    str
+    @keyword colour_start_rgb:  The RGB array starting colour of the linear gradient.
+    @type colour_start_rgb:     RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_end_name:   The name of the ending colour of the linear gradient.
+    @type colour_end_name:      str
+    @keyword colour_end_rgb:    The RGB array ending colour of the linear gradient.
+    @type colour_end_rgb:       RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_list:       The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
+    @type colour_list:          str or None
     """
 
     # Test if the current data pipe exists.
@@ -225,6 +229,22 @@ def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=N
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Check the arguments.
+    if colour_start_name != None and colour_start_rgb != None:
+        raise RelaxError("The starting colour name and RGB colour array cannot both be supplied.")
+    if colour_end_name != None and colour_end_rgb != None:
+        raise RelaxError("The ending colour name and RGB colour array cannot both be supplied.")
+
+    # Merge the colour args.
+    if colour_start_name != None:
+        colour_start = colour_start_name
+    else:
+        colour_start = colour_start_rgb
+    if colour_end_name != None:
+        colour_end = colour_end_name
+    else:
+        colour_end = colour_end_rgb
 
     # Create the macro.
     commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
@@ -252,25 +272,29 @@ def macro_run(file=None, dir=None):
         molmol_obj.exec_cmd(command)
 
 
-def macro_write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
+def macro_write(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None, file=None, dir=None, force=False):
     """Create a Molmol macro.
 
-    @keyword data_type:     The data type to map to the structure.
-    @type data_type:        str
-    @keyword style:         The style of the macro.
-    @type style:            str
-    @keyword colour_start:  The starting colour of the linear gradient.
-    @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_end:    The ending colour of the linear gradient.
-    @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
-    @type colour_list:      str or None
-    @keyword file:          The name of the macro file to create.
-    @type file:             str
-    @keyword dir:           The name of the directory to place the macro file into.
-    @type dir:              str
-    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:            bool
+    @keyword data_type:         The data type to map to the structure.
+    @type data_type:            str
+    @keyword style:             The style of the macro.
+    @type style:                str
+    @keyword colour_start_name: The name of the starting colour of the linear gradient.
+    @type colour_start_name:    str
+    @keyword colour_start_rgb:  The RGB array starting colour of the linear gradient.
+    @type colour_start_rgb:     RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_end_name:   The name of the ending colour of the linear gradient.
+    @type colour_end_name:      str
+    @keyword colour_end_rgb:    The RGB array ending colour of the linear gradient.
+    @type colour_end_rgb:       RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_list:       The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
+    @type colour_list:          str or None
+    @keyword file:              The name of the macro file to create.
+    @type file:                 str
+    @keyword dir:               The name of the directory to place the macro file into.
+    @type dir:                  str
+    @keyword force:             Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:                bool
     """
 
     # Test if the current data pipe exists.
@@ -279,6 +303,22 @@ def macro_write(data_type=None, style="classic", colour_start=None, colour_end=N
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Check the arguments.
+    if colour_start_name != None and colour_start_rgb != None:
+        raise RelaxError("The starting colour name and RGB colour array cannot both be supplied.")
+    if colour_end_name != None and colour_end_rgb != None:
+        raise RelaxError("The ending colour name and RGB colour array cannot both be supplied.")
+
+    # Merge the colour args.
+    if colour_start_name != None:
+        colour_start = colour_start_name
+    else:
+        colour_start = colour_start_rgb
+    if colour_end_name != None:
+        colour_end = colour_end_name
+    else:
+        colour_end = colour_end_rgb
 
     # Create the macro.
     commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)

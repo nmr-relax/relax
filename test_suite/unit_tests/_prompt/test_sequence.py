@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.sequence import Sequence
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
@@ -35,8 +35,19 @@ from data_types import DATA_TYPES
 class Test_sequence(Sequence_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.sequence' module."""
 
-    # Instantiate the user function class.
-    sequence_fns = Sequence()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_sequence, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.sequence_fns = self.interpreter.sequence
 
 
     def test_copy_argfail_pipe_from(self):

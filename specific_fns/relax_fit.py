@@ -40,6 +40,8 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 # C modules.
 if C_module_exp_fn:
@@ -52,13 +54,13 @@ class Relax_fit(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Execute the base class __init__ method.
+        super(Relax_fit, self).__init__()
+
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
-        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_name = self._return_data_name_spin
-        self.return_grace_string = self._return_grace_string_spin
         self.return_value = self._return_value_general
         self.set_error = self._set_error_spin
         self.set_param_values = self._set_param_values_spin
@@ -68,11 +70,15 @@ class Relax_fit(API_base, API_common):
         self.sim_return_selected = self._sim_return_selected_spin
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('rx', default=8.0, grace_string='\\qR\\sx\\Q')
-        self.SPIN_PARAMS.add('intensities', grace_string='\\qPeak intensities\\Q')
-        self.SPIN_PARAMS.add('i0', default=10000.0, grace_string='\\qI\\s0\\Q')
-        self.SPIN_PARAMS.add('iinf', default=0.0, grace_string='\\qI\\sinf\\Q')
-        self.SPIN_PARAMS.add('relax_times', grace_string='\\qRelaxation time period (s)\\Q')
+        self.PARAMS.add('intensities', scope='spin', py_type=list, grace_string='\\qPeak intensities\\Q')
+        self.PARAMS.add('relax_times', scope='spin', py_type=list, grace_string='\\qRelaxation time period (s)\\Q')
+        self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
+        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self.PARAMS.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)
+        self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
+
+        # Add the minimisation data.
+        self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
     def _assemble_param_vector(self, spin=None, sim_index=None):
@@ -560,7 +566,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Loop over the data structure names.
-        for name in self.data_names():
+        for name in self.data_names(set='params'):
             # Data structures which are initially empty arrays.
             list_data = [ 'params' ]
             if name in list_data:
@@ -575,90 +581,14 @@ class Relax_fit(API_base, API_common):
                 setattr(data_cont, name, init_data)
 
 
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Return a list of names of data structures.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'params', an array of the parameter names associated with the model.
-            - 'rx', either the R1 or R2 relaxation rate.
-            - 'i0', the initial intensity.
-            - 'iinf', the intensity at infinity.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('params')
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('rx')
-            names.append('i0')
-            names.append('iinf')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            names.append('rx_err')
-            names.append('i0_err')
-            names.append('iinf_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            names.append('rx_sim')
-            names.append('i0_sim')
-            names.append('iinf_sim')
-
-        # Return the names.
-        return names
-
-
-    default_value_doc = ["Relaxation curve fitting default values", """
-        These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R1 and R2 values.
-        ___________________________________________________________________
-        |                        |               |                        |
-        | Data type              | Object name   | Value                  |
-        |________________________|_______________|________________________|
-        |                        |               |                        |
-        | Relaxation rate        | 'rx'          | 8.0                    |
-        |                        |               |                        |
-        | Initial intensity      | 'i0'          | 10000.0                |
-        |                        |               |                        |
-        | Intensity at infinity  | 'iinf'        | 0.0                    |
-        |                        |               |                        |
-        |________________________|_______________|________________________|
-
-        """]
+    default_value_doc = Desc_container("Relaxation curve fitting default values")
+    default_value_doc.add_paragraph("These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R1 and R2 values.")
+    _table = uf_tables.add_table(label="table: curve-fit default values", caption="Relaxation curve fitting default values.")
+    _table.add_headings(["Data type", "Object name", "Value"])
+    _table.add_row(["Relaxation rate", "'rx'", "8.0"])
+    _table.add_row(["Initial intensity", "'i0'", "10000.0"])
+    _table.add_row(["Intensity at infinity", "'iinf'", "0.0"])
+    default_value_doc.add_table(_table.label)
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -748,7 +678,7 @@ class Relax_fit(API_base, API_common):
                 # Get the spin id string.
                 spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
-                # Individual spin print out.
+                # Individual spin printout.
                 if verbosity >= 2:
                     print("\n\n")
 
@@ -916,24 +846,15 @@ class Relax_fit(API_base, API_common):
         return spin.intensities
 
 
-    return_data_name_doc = ["Relaxation curve fitting data type string matching patterns", """
-        ____________________________________________________________
-        |                                   |                      |
-        | Data type                         | Object name          |
-        |___________________________________|______________________|
-        |                                   |                      |
-        | Relaxation rate                   | 'rx'                 |
-        |                                   |                      |
-        | Peak intensities (series)         | 'intensities'        |
-        |                                   |                      |
-        | Initial intensity                 | 'i0'                 |
-        |                                   |                      |
-        | Intensity at infinity             | 'iinf'               |
-        |                                   |                      |
-        | Relaxation period times (series)  | 'relax_times'        |
-        |___________________________________|______________________|
-
-        """]
+    return_data_name_doc = Desc_container("Relaxation curve fitting data type string matching patterns")
+    _table = uf_tables.add_table(label="table: curve-fit data type patterns", caption="Relaxation curve fitting data type string matching patterns.")
+    _table.add_headings(["Data type", "Object name"])
+    _table.add_row(["Relaxation rate", "'rx'"])
+    _table.add_row(["Peak intensities (series)", "'intensities'"])
+    _table.add_row(["Initial intensity", "'i0'"])
+    _table.add_row(["Intensity at infinity", "'iinf'"])
+    _table.add_row(["Relaxation period times (series)", "'relax_times'"])
+    return_data_name_doc.add_table(_table.label)
 
 
     def return_error(self, data_id):
@@ -966,9 +887,8 @@ class Relax_fit(API_base, API_common):
         return None
 
 
-    set_doc = ["Relaxation curve fitting set details", """
-        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.
-        """]
+    set_doc = Desc_container("Relaxation curve fitting set details")
+    set_doc.add_paragraph("Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.")
 
 
     def sim_pack_data(self, data_id, sim_data):

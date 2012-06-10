@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -367,7 +367,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -389,7 +389,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'sphere'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -411,7 +411,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'spheroid'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -899,10 +899,10 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Print out.
-        print cdp.diff_tensor
+        print(cdp.diff_tensor)
 
         # The real data.
         Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
@@ -926,7 +926,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'sphere'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Check the values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
@@ -954,7 +954,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'spheroid'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Check the values.
         self.assertAlmostEqual(cdp.chi2, 0.0)

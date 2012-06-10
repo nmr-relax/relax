@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -40,6 +40,10 @@ def gui_raise(relax_error, raise_flag=False):
     @type raise_flag:       bool
     @raises RelaxError:     This raises all RelaxErrors, if the raise flag is given.
     """
+
+    # Die if running in test mode.
+    if status.test_mode:
+        raise relax_error
 
     # Turn off the busy cursor if needed.
     if wx.IsBusy():

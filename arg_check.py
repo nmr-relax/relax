@@ -35,7 +35,7 @@ except ImportError:
     float128 = float64    # Support for 32-bit numpy versions.
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNoneTupleError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError, RelaxNoneValListValError, RelaxValListValError
 from relax_io import DummyFileObject
 from types import FunctionType, MethodType
 
@@ -212,6 +212,14 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
 
     # Fail if not a list.
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
+        fail = True
+
+    # Fail on empty lists.
+    elif not len(arg):
+        fail = True
+
+    # Fail if not a matrix.
+    elif not isinstance(arg[0], list) and not isinstance(arg[0], ndarray):
         fail = True
 
     # Fail if not the right dimension.
@@ -422,11 +430,8 @@ def is_int_or_int_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
     # An integer
     if not isinstance(arg, list):
-        # Check if it is an integer.
-        try:
-            is_int(arg, name)
-        except:
-            fail = True    # Not an integer.
+        if not is_int(arg, raise_error=False):
+            fail = True
 
     # A list.
     else:
@@ -445,10 +450,8 @@ def is_int_or_int_list(arg, name=None, size=None, can_be_none=False, can_be_empt
                 continue
 
             # Check if it is an integer.
-            try:
-                is_int(arg[i], name)
-            except:
-                fail = True    # Not an integer.
+            if not is_int(arg[i], raise_error=False):
+                fail = True
 
     # Fail.
     if fail:
@@ -683,10 +686,7 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
 
     # A number.
     if not isinstance(arg, tuple):
-        # Check if it is a number.
-        try:
-            is_num(arg, name)
-        except:
+        if not is_num(arg, raise_error=False):
             fail = True
 
     # Other checks.
@@ -701,7 +701,7 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not check_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if not is_num(arg[i], raise_error=False):
                 fail = True
 
     # Fail.
@@ -959,15 +959,9 @@ def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, 
 
     # A number or a string.
     if not isinstance(arg, list):
-        # Check if it is a string.
-        try:
-            is_str(arg, name)
-        except:
-            # Not a string, therefore check if it is a number.
-            try:
-                is_num(arg, name)
-            except:
-                fail = True    # Neither a number or a string.
+        # Check if it is a string or number.
+        if not (is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+            fail = True
 
     # A list.
     else:
@@ -981,15 +975,8 @@ def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, 
 
         # Check the arguments.
         for i in range(len(arg)):
-            # Check if it is a string.
-            try:
-                is_str(arg[i], name)
-            except:
-                # Not a string, therefore check if it is a number.
-                try:
-                    is_num(arg[i], name)
-                except:
-                    fail = True    # Neither a number or a string.
+            if not (is_str(arg[i], raise_error=False) or is_num(arg[i], raise_error=False)):
+                fail = True
 
     # Fail.
     if fail:
@@ -1038,11 +1025,8 @@ def is_str_or_num_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
     # A string.
     if not isinstance(arg, list):
-        # Check if it is a string.
-        try:
-            is_str(arg, name)
-        except:
-            fail = True    # Not a string.
+        if not is_str(arg, raise_error=False):
+            fail = True
 
     # A list.
     else:
@@ -1054,13 +1038,10 @@ def is_str_or_num_list(arg, name=None, size=None, can_be_none=False, can_be_empt
         if not can_be_empty and arg == []:
             fail = True
 
-       # Check the arguments.
+        # Check the arguments.
         for i in range(len(arg)):
-            # Check if it is a number.
-            try:
-                is_num(arg[i], name)
-            except:
-                fail = True    # Not a number.
+            if not is_num(arg[i], raise_error=False):
+                fail = True
 
     # Fail.
     if fail:
@@ -1109,11 +1090,8 @@ def is_str_or_str_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
     # A string.
     if not isinstance(arg, list):
-        # Check if it is a string.
-        try:
-            is_str(arg, name)
-        except:
-            fail = True    # Not a string.
+        if not is_str(arg, raise_error=False):
+            fail = True
 
     # A list.
     else:
@@ -1127,11 +1105,8 @@ def is_str_or_str_list(arg, name=None, size=None, can_be_none=False, can_be_empt
 
        # Check the arguments.
         for i in range(len(arg)):
-            # Check if it is a string.
-            try:
-                is_str(arg[i], name)
-            except:
-                fail = True    # Not a string.
+            if not is_str(arg[i], raise_error=False):
+                fail = True
 
     # Fail.
     if fail:
@@ -1204,6 +1179,73 @@ def is_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, r
             raise RelaxTupleError(name, arg, size)
         else:
             raise RelaxTupleError(name, arg)
+
+    # Success.
+    return True
+
+
+def is_val_or_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
+    """Test if the argument is a value or a list of values.
+
+    @param arg:                             The argument.
+    @type arg:                              anything
+    @keyword name:                          The plain English name of the argument.
+    @type name:                             str
+    @keyword size:                          The number of elements required.
+    @type size:                             None or int
+    @keyword can_be_none:                   A flag specifying if the argument can be none.
+    @type can_be_none:                      bool
+    @keyword can_be_empty:                  A flag which if True allows the list to be empty.
+    @type can_be_empty:                     bool
+    @keyword raise_error:                   A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                      bool
+    @raise RelaxNumStrListNumStrError:      If not a float, a string, or a list of floats or strings (and the raise_error flag is set).
+    @raise RelaxNoneNumStrListNumStrError:  If not a float, a string, a list of floats or strings, or None (and the raise_error flag is set).
+    @return:                                The answer to the question (if raise_error is not set).
+    @rtype:                                 bool
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return True
+
+    # A value.
+    if not isinstance(arg, list):
+        # Check for all types of value.
+        if not (is_bool(arg, raise_error=False) or is_str(arg, raise_error=False) or is_num(arg, raise_error=False)):
+            fail = True
+
+    # A list.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Check the arguments.
+        for i in range(len(arg)):
+            # Check for all types of value.
+            if not (is_bool(arg[i], raise_error=False) or is_str(arg[i], raise_error=False) or is_num(arg[i], raise_error=False)):
+                fail = True
+
+    # Fail.
+    if fail:
+        if not raise_error:
+            return False
+        if can_be_none and size != None:
+            raise RelaxNoneValListValError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneValListValError(name, arg)
+        elif size != None:
+            raise RelaxValListValError(name, arg, size)
+        else:
+            raise RelaxValListValError(name, arg)
 
     # Success.
     return True

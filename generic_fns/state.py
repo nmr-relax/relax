@@ -142,6 +142,9 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
     # Signal a change in the current data pipe.
     status.observers.pipe_alteration.notify()
 
+    # Signal the state loading
+    status.observers.state_load.notify()
+
 
 def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, pickle=False):
     """Function for saving the program state.

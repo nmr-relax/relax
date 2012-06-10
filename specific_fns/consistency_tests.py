@@ -34,6 +34,7 @@ from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
+import specific_fns
 
 
 class Consistency_tests(API_base, API_common):
@@ -42,31 +43,30 @@ class Consistency_tests(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Execute the base class __init__ method.
+        super(Consistency_tests, self).__init__()
+
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.create_mc_data = self._create_mc_relax_data
-        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_name = self._return_data_name_spin
         self.return_error = self._return_error_relax_data
-        self.return_grace_string = self._return_grace_string_spin
-        self.return_units = self._return_units_spin
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
         self.sim_pack_data = self._sim_pack_relax_data
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('j0', grace_string='\\qJ(0)\\Q')
-        self.SPIN_PARAMS.add('f_eta', grace_string='\\qF\\s\\xh\\Q')
-        self.SPIN_PARAMS.add('f_r2', grace_string='\\qF\\sR2\\Q')
-        self.SPIN_PARAMS.add('r', default=NH_BOND_LENGTH, units='Angstrom', grace_string='Bond length')
-        self.SPIN_PARAMS.add('csa', default=N15_CSA, units='ppm', grace_string='\\qCSA\\Q')
-        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
-        self.SPIN_PARAMS.add('proton_type', default='1H')
-        self.SPIN_PARAMS.add('orientation', default=15.7, units='degrees', grace_string='\\q\\xq\\Q')
-        self.SPIN_PARAMS.add('tc', default=13 * 1e-9, units='ns', grace_string='\\q\\xt\\f{}c\\Q')
+        self.PARAMS.add('j0', scope='spin', desc='Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)', py_type=float, grace_string='\\qJ(0)\\Q', err=True, sim=True)
+        self.PARAMS.add('f_eta', scope='spin', desc='Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\s\\xh\\Q', err=True, sim=True)
+        self.PARAMS.add('f_r2', scope='spin', desc='R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\sR2\\Q', err=True, sim=True)
+        self.PARAMS.add('r', scope='spin', default=NH_BOND_LENGTH, units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
+        self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
+        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
+        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
+        self.PARAMS.add('orientation', scope='spin', default=15.7, units='degrees', desc="Angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor", py_type=float, grace_string='\\q\\xq\\Q')
+        self.PARAMS.add('tc', scope='spin', default=13 * 1e-9, units='ns', desc="Correlation time", py_type=float, grace_string='\\q\\xt\\f{}c\\Q')
 
 
     def _set_frq(self, frq=None):
@@ -238,54 +238,6 @@ class Consistency_tests(API_base, API_common):
             if not hasattr(data_cont, name):
                 # Set the attribute.
                 setattr(data_cont, name, None)
-
-
-    def data_names(self, set=None, error_names=False, sim_names=False):
-        """Return a list of all spin container specific consistency testing object names.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'r', bond length.
-            - 'csa', CSA value.
-            - 'heteronuc_type', the heteronucleus type.
-            - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor.
-            - 'tc', correlation time.
-            - 'j0', spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162).
-            - 'f_eta', eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
-            - 'f_r2', R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
-
-
-        @keyword set:           An unused variable.
-        @type set:              ignored
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Values.
-        names.append('r')
-        names.append('csa')
-        names.append('heteronuc_type')
-        names.append('orientation')
-        names.append('tc')
-
-        # Consistency tests values.
-        names.append('j0')
-        names.append('f_eta')
-        names.append('f_r2')
-
-        # Return the names.
-        return names
 
 
     default_value_doc = """

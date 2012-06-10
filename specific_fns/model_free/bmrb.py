@@ -428,10 +428,6 @@ class Bmrb:
 
         # Store the spin specific data in lists for later use.
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
             # Check the data for None (not allowed in BMRB!).
             if res_num == None:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
@@ -450,11 +446,29 @@ class Bmrb:
             res_name_list.append(res_name)
             atom_name_list.append(spin.name)
 
-            # Values.
-            csa_list.append(spin.csa * 1e6)    # In ppm.
-            r_list.append(spin.r)
-            isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
-            element_list.append(spin.element)
+            # CSA values.
+            if hasattr(spin, 'csa'):
+                csa_list.append(spin.csa * 1e6)    # In ppm.
+            else:
+                csa_list.append(None)
+
+            # Bond lengths.
+            if hasattr(spin, 'csa'):
+                r_list.append(spin.r)
+            else:
+                r_list.append(None)
+
+            # The heteronucleus type.
+            if hasattr(spin, 'csa'):
+                isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+            else:
+                isotope_list.append(None)
+
+            # The element.
+            if hasattr(spin, 'element'):
+                element_list.append(spin.element)
+            else:
+                element_list.append(None)
 
             # Diffusion tensor.
             local_tm_list.append(spin.local_tm)

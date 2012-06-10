@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -118,7 +118,7 @@ def install(target, source, env):
     print(cmd)
     system(cmd)
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -179,5 +179,5 @@ def uninstall(target, source, env):
             rmdir(path.join(root, file))
     rmdir(env['RELAX_PATH'])
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")

@@ -86,13 +86,13 @@ class Setup:
         # Get a list of data files.
         self.DATA_FILES = self.get_data_files()
         #for i in range(len(self.DATA_FILES)):
-        #    print self.DATA_FILES[i]
+        #    print(self.DATA_FILES[i])
         #sys.exit(1)
 
         # Get the includes.
         self.INCLUDES = self.get_includes()
         #for i in range(len(self.INCLUDES)):
-        #    print self.INCLUDES[i]
+        #    print(self.INCLUDES[i])
         #sys.exit(1)
 
 

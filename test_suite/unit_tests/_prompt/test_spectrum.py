@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.spectrum import Spectrum
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxIntError, RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 # Unit test imports.
@@ -34,8 +34,19 @@ from data_types import DATA_TYPES
 class Test_spectrum(TestCase):
     """Unit tests for the functions of the 'prompt.spectrum' module."""
 
-    # Instantiate the user function class.
-    spectrum_fns = Spectrum()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_spectrum, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.spectrum_fns = self.interpreter.spectrum
 
 
     def test_baseplane_rmsd_argfail_error(self):

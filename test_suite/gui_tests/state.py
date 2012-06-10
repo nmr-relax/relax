@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,19 +32,26 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
-from gui.misc import int_to_gui, str_to_gui
-from gui.user_functions import deselect, sequence, spin
+from gui.string_conv import int_to_gui, str_to_gui
 from gui.wizard import Wiz_window
 
 
 class State(GuiTestCase):
     """Class for testing various aspects specific to saved states."""
 
+    def test_old_state_loading(self):
+        """Test the loading of an old relax 1.3 save state with GUI information."""
+
+        # Simulate the 'Open relax state' menu entry.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'gui_analyses_1.3.bz2'
+        self.app.gui.state_load(file_name=file)
+
+
     def test_load_state_no_gui(self):
         """Test the loading of a relax save state with no GUI data."""
 
         # Simulate the 'Open relax state' menu entry.
-        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'OMP' + sep + 'final_results_trunc_1.3'
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'OMP' + sep + 'final_results_trunc_1.3_v2'
         self.app.gui.state_load(file_name=file)
 
         # Show the pipe editor.

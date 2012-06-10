@@ -38,7 +38,7 @@ class Main:
 
         # Read the results file to get the relaxation data from.
         pipe.create('data', 'mf')
-        results.read(file='final_results_trunc_1.3', dir=DATA_PATH)
+        results.read(file='final_results_trunc_1.3_v2', dir=DATA_PATH)
 
 
         # MI - Local tm.

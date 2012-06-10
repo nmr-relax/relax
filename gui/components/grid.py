@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,8 @@ from status import Status; status = Status()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.message import error_message
-from gui.misc import add_border, str_to_gui
+from gui.misc import add_border
+from gui.string_conv import str_to_gui
 from gui import paths
 
 

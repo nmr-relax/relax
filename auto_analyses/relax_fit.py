@@ -35,7 +35,7 @@ from status import Status; status = Status()
 
 
 class Relax_fit:
-    def __init__(self, pipe_name=None, file_root='rx', results_dir=None, grid_inc='11', mc_sim_num=500, view_plots=True):
+    def __init__(self, pipe_name=None, pipe_bundle=None, file_root='rx', results_dir=None, grid_inc='11', mc_sim_num=500, view_plots=True):
         """Perform relaxation curve fitting.
 
         To use this auto-analysis, a data pipe with all the required data needs to be set up.  This data pipe should contain the following:
@@ -47,6 +47,8 @@ class Relax_fit:
 
         @keyword pipe_name:     The name of the data pipe containing all of the data for the analysis.
         @type pipe_name:        str
+        @keyword pipe_bundle:   The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:      str
         @keyword file_root:     File root of the output filea.
         @type file_root:        str
         @keyword results_dir:   The directory where results files are saved.
@@ -60,14 +62,15 @@ class Relax_fit:
         """
 
         # Execution lock.
-        status.exec_lock.acquire(pipe_name, mode='auto-analysis')
+        status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
         # Set up the analysis status object.
-        status.init_auto_analysis(pipe_name, type='relax_fit')
-        status.current_analysis = pipe_name
+        status.init_auto_analysis(pipe_bundle, type='relax_fit')
+        status.current_analysis = pipe_bundle
 
         # Store the args.
         self.pipe_name = pipe_name
+        self.pipe_bundle = pipe_bundle
         self.file_root = file_root
         self.results_dir = results_dir
         if self.results_dir:
@@ -94,7 +97,7 @@ class Relax_fit:
         self.run()
 
         # Finish and unlock execution.
-        status.auto_analysis[self.pipe_name].fin = True
+        status.auto_analysis[self.pipe_bundle].fin = True
         status.current_analysis = None
         status.exec_lock.release()
 

@@ -34,7 +34,7 @@ import wx
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
-from generic_fns.pipes import has_pipe
+from generic_fns.pipes import has_bundle, has_pipe
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -45,11 +45,10 @@ from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data, Question
-from gui.misc import gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
+from gui.misc import protected_exec
 from gui import paths
-from gui.user_functions.relax_fit import Relax_time_page
-from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
-from gui.user_functions.spin import Name_page
+from gui.string_conv import gui_to_int, gui_to_str, int_to_gui, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 
 
@@ -62,7 +61,7 @@ class Auto_rx(Base_analysis):
     bitmap = None
     label = None
 
-    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, data_index=None):
         """Build the automatic R1 and R2 analysis GUI frame elements.
 
         @param parent:          The parent wx element.
@@ -83,6 +82,8 @@ class Auto_rx(Base_analysis):
         @type analysis_name:    str
         @keyword pipe_name:     The name of the data pipe associated with this analysis.
         @type pipe_name:        str
+        @keyword pipe_bundle:   The name of the data pipe bundle associated with this analysis.
+        @type pipe_bundle:      str
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """
@@ -97,7 +98,11 @@ class Auto_rx(Base_analysis):
         if data_index == None:
             # First create the data pipe if not already in existence.
             if not has_pipe(pipe_name):
-                self.gui.interpreter.apply('pipe.create', pipe_name, 'relax_fit')
+                self.gui.interpreter.apply('pipe.create', pipe_name=pipe_name, pipe_type='relax_fit', bundle=pipe_bundle)
+
+            # Create the data pipe bundle if needed.
+            if not has_bundle(pipe_bundle):
+                self.gui.interpreter.apply('pipe.bundle', bundle=pipe_bundle, pipe=pipe_name)
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add(self.label)
@@ -105,6 +110,7 @@ class Auto_rx(Base_analysis):
             # Store the analysis and pipe names.
             ds.relax_gui.analyses[data_index].analysis_name = analysis_name
             ds.relax_gui.analyses[data_index].pipe_name = pipe_name
+            ds.relax_gui.analyses[data_index].pipe_bundle = pipe_bundle
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
@@ -154,8 +160,9 @@ class Auto_rx(Base_analysis):
         data = Container()
         missing = []
 
-        # The pipe name.
+        # The pipe name and bundle.
         data.pipe_name = self.data.pipe_name
+        data.pipe_bundle = self.data.pipe_bundle
 
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
@@ -200,7 +207,7 @@ class Auto_rx(Base_analysis):
         self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Display the data pipe.
-        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the frequency selection GUI element.
         self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)), width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -292,21 +299,21 @@ class Auto_rx(Base_analysis):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
-            status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count)
+            status.observers.exec_lock.register(self.data.pipe_bundle, self.activate)
 
         # Unregister.
         else:
             # The model-free methods.
-            status.observers.gui_uf.unregister(self.data.pipe_name)
-            status.observers.exec_lock.unregister(self.data.pipe_name)
+            status.observers.gui_uf.unregister(self.data.pipe_bundle)
+            status.observers.exec_lock.unregister(self.data.pipe_bundle)
 
             # The embedded objects methods.
             self.peak_intensity.observer_register(remove=True)
 
 
     def peak_wizard(self, event):
-        """Launch the NOE peak loading wizard.
+        """Launch the Rx peak loading wizard.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -316,7 +323,7 @@ class Auto_rx(Base_analysis):
         wx.BeginBusyCursor()
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Set up the %s peak intensities" % self.label)
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Set up the %s peak intensities" % self.label)
         self.page_indices = {}
 
         # First check that at least a single spin is named!
@@ -326,38 +333,38 @@ class Auto_rx(Base_analysis):
 
             # Ask about naming spins, and add the spin.name user function page.
             if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
-                page = Name_page(self.wizard, sync=True)
+                page = uf_store['spin.name'].create_page(self.wizard, sync=True)
                 self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
 
 
         # The spectrum.read_intensities page.
-        self.page_intensity = Read_intensities_page(self.wizard, sync=True)
+        self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self.wizard, sync=True)
         self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
 
         # Error type selection page.
-        self.page_error_type = Spectral_error_type_page(self.wizard)
+        self.page_error_type = Spectral_error_type_page(parent=self.wizard, height_desc=520)
         self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
         self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
-        page = Replicated_page(self.wizard, sync=True)
+        page = uf_store['spectrum.replicated'].create_page(self.wizard, sync=True)
         self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
         page.on_init = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
-        page = Baseplane_rmsd_page(self.wizard, sync=True)
+        page = uf_store['spectrum.baseplane_rmsd'].create_page(self.wizard, sync=True)
         self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
         page.on_init = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
-        page = Integration_points_page(self.wizard, sync=True)
+        page = uf_store['spectrum.integration_points'].create_page(self.wizard, sync=True)
         self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_init = self.wizard_update_pts
 
         # The relax_fit.relax_time page.
-        page = Relax_time_page(self.wizard, sync=True)
+        page = uf_store['relax_fit.relax_time'].create_page(self.wizard, sync=True)
         self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
         page.on_init = self.wizard_update_relax_time
 
@@ -454,7 +461,7 @@ class Auto_rx(Base_analysis):
         """
 
         # Go to the spectrum.integration_points page.
-        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
         if int_method != 'height':
             return self.page_indices['pts']
 
@@ -471,7 +478,7 @@ class Auto_rx(Base_analysis):
         """
 
         # Go to the spectrum.integration_points page.
-        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
         if int_method != 'height':
             return self.page_indices['pts']
 
@@ -487,11 +494,11 @@ class Auto_rx(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['pts'])
-        page.spectrum_id.SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_id'].SetValue(id)
 
 
     def wizard_update_repl(self):
@@ -501,11 +508,11 @@ class Auto_rx(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['repl'])
-        page.spectrum_id_boxes[0].SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_ids'].SetValue(value=id, index=0)
 
 
     def wizard_update_rmsd(self):
@@ -515,11 +522,11 @@ class Auto_rx(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.baseplane_rmsd page.
         page = self.wizard.get_page(self.page_indices['rmsd'])
-        page.spectrum_id.SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_id'].SetValue(id)
 
 
     def wizard_update_relax_time(self):
@@ -529,11 +536,11 @@ class Auto_rx(Base_analysis):
         page = self.wizard.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
-        id = page.spectrum_id.GetValue()
+        id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the relax_fit.relax_time page.
         page = self.wizard.get_page(self.page_indices['relax_time'])
-        page.spectrum_id.SetStringSelection(str_to_gui(id))
+        page.uf_args['spectrum_id'].SetValue(id)
 
 
 
@@ -544,7 +551,7 @@ class Execute_rx(Execute):
         """Execute the calculation."""
 
         # Execute.
-        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
+        Relax_fit(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]

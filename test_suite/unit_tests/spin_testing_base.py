@@ -283,9 +283,9 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Create a few new protons.
-        self.spin_fns.create(100, 'H13', res_num=1, mol_name='Old mol')
-        self.spin_fns.create(101, 'H14', res_num=1, mol_name='Old mol')
-        self.spin_fns.create(102, 'H15', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=100, spin_name='H13', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=101, spin_name='H14', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=102, spin_name='H15', res_num=1, mol_name='Old mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -296,7 +296,7 @@ class Spin_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[7].pos = [array([0.0, 0.0, 3.0])]
 
         # Create a pseudo-spin.
-        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
+        self.spin_fns.create_pseudo(spin_name='Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
 
         # Test that the spin numbers are correct.
         self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
@@ -335,8 +335,8 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Create a few new protons.
-        self.spin_fns.create(100, 'H93', res_num=1, mol_name='Old mol')
-        self.spin_fns.create(101, 'H94', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=100, spin_name='H93', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=101, spin_name='H94', res_num=1, mol_name='Old mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -346,7 +346,7 @@ class Spin_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[6].pos = [array([0.0, 2.0, 0.0]), array([0.0, -2.0, 0.0])]
 
         # Create a pseudo-spin.
-        self.spin_fns.create_pseudo('Q10', spin_num=105, members=['@H93', '@H94'], averaging='linear')
+        self.spin_fns.create_pseudo(spin_name='Q10', spin_num=105, members=['@H93', '@H94'], averaging='linear')
 
         # Test that the spin numbers are correct.
         self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
@@ -384,9 +384,9 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Create a few new spins.
-        self.spin_fns.create(1, 'C3', res_num=1, mol_name='Old mol')
-        self.spin_fns.create(2, 'C17', res_num=1, mol_name='Old mol')
-        self.spin_fns.create(-3, 'N7', res_num=6, mol_name='New mol')
+        self.spin_fns.create(spin_num=1, spin_name='C3', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=2, spin_name='C17', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=-3, spin_name='N7', res_num=6, mol_name='New mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -410,10 +410,10 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Create the first spin.
-        self.spin_fns.create(1, 'P1', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(spin_num=1, spin_name='P1', res_num=1, mol_name='Old mol')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3', res_num=1, mol_name='Old mol')
+        self.assertRaises(RelaxError, self.spin_fns.create, spin_num=1, spin_name='P3', res_num=1, mol_name='Old mol')
 
 
     def test_delete_spin_name(self):

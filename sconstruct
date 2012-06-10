@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -366,15 +366,15 @@ class Main:
 
         # Print out.
         print
-        print "#########################"
-        print "# Cleaning up all files #"
-        print "#########################\n\n"
+        print("#########################")
+        print("# Cleaning up all files #")
+        print("#########################\n\n")
 
         # Extensions of files to remove.
         temp_extns = ['so', 'sconsign', 'dll', 'pyd']
 
         # Print out.
-        print "\nRemoving the files ending in " + `temp_extns` + ".\n"
+        print("\nRemoving the files ending in " + `temp_extns` + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -393,8 +393,8 @@ class Main:
             print("Removing the distribution directory 'dist' used to create a Mac OS X app.")
             rmtree('dist')
 
-        # Final print out.
-        print "\n\n\n"
+        # Final printout.
+        print("\n\n\n")
 
 
     def clean_files(self, target, source, env):
@@ -402,15 +402,15 @@ class Main:
 
         # Print out.
         print
-        print "###############################"
-        print "# Cleaning up temporary files #"
-        print "###############################\n\n"
+        print("###############################")
+        print("# Cleaning up temporary files #")
+        print("###############################\n\n")
 
         # Extensions of temporary files.
         temp_extns = ['pyc', 'pyo', 'bak', 'o', 'os', 'obj', 'exp', 'lib']
 
         # Print out.
-        print "\nRemoving the files ending in " + `temp_extns` + ".\n"
+        print("\nRemoving the files ending in " + `temp_extns` + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -422,15 +422,15 @@ class Main:
                         remove(path.join(root, file))
 
         # Remove relax save state files.
-        print "Removing temporary relax save state files (of the form relax_state_xxxxxxxx_xxxxxx.bz2).\n"
+        print("Removing temporary relax save state files (of the form relax_state_xxxxxxxx_xxxxxx.bz2).\n")
         for root, dirs, files in walk(getcwd()):
             # Loop over the files in the current directory.
             for file in files:
                 if search('^relax_state_.*.bz2', file):
                     remove(path.join(root, file))
 
-        # Final print out.
-        print "\n\n\n"
+        # Final printout.
+        print("\n\n\n")
 
 
     def dummy(self, target, source, env):
@@ -569,7 +569,7 @@ class Main:
             string = string + "Building the relaxation curve fitting module " + `str(self.relax_fit_object[0])` + "\n"
             return string
 
-        # Add the print out as an action to take before constructing the first object.
+        # Add the printout as an action to take before constructing the first object.
         env.AddPreAction(nodes[0], Action(self.dummy, print_string))
 
 
@@ -578,18 +578,18 @@ class Main:
 
         # Print out.
         print
-        print "#######################################"
-        print "# Checking the program version number #"
-        print "#######################################\n\n"
-        print "Version number: " + version + "\n"
+        print("#######################################")
+        print("# Checking the program version number #")
+        print("#######################################\n\n")
+        print("Version number: " + version + "\n")
 
         # Test.
         if version == "repository checkout":
             sys.stderr.write("The program version number has not been set.\n\n")
             sys.exit()
 
-        # Final print out.
-        print "\n\n\n"
+        # Final printout.
+        print("\n\n\n")
 
 
 # Execute the main class.

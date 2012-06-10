@@ -94,4 +94,4 @@ for rand_index in range(200):
     # Show the populations.
     for i in range(len(cdp.structure.structural_data)):
         if abs(cdp.probs[i]) > 1e-7:
-            print "%16.10f %s" % (cdp.probs[i], cdp.structure.structural_data[i].mol[0].file_name)
+            print("%16.10f %s" % (cdp.probs[i], cdp.structure.structural_data[i].mol[0].file_name))

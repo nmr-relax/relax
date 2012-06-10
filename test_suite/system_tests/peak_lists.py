@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -45,14 +45,14 @@ class Peak_lists(SystemTestCase):
         """Test catching bug #17276, the duplicated peak list reading failure submitted by Leanne Minall."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
 
 
     def test_ccpn_analysis(self):
         """Test bug #17341 (https://gna.org/bugs/index.php?17341), the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'peak_lists'+sep+'ccpn_analysis.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'peak_lists'+sep+'ccpn_analysis.py')
 
         # Spectrum names.
         names = ['T1A_0010', 'T1A_0020', 'T1A_0030', 'T1A_0050', 'T1A_0070', 'T1A_0100', 'T1A_0150', 'T1A_0200', 'T1A_0300', 'T1A_0400', 'T1A_0600', 'T1A_0800', 'T1A_1000', 'T1A_1200']
@@ -73,7 +73,6 @@ class Peak_lists(SystemTestCase):
 
         # Check the heights.
         for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-            print spin
             # The data.
             if res_num == 1501:
                 index = 0

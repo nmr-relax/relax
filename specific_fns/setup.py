@@ -21,6 +21,7 @@
 ###############################################################################
 
 # relax module imports.
+from generic_fns import pipes
 from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.frame_order import Frame_order
 from specific_fns.hybrid import Hybrid
@@ -44,11 +45,13 @@ relax_fit_obj = Relax_fit()
 
 
 # The function for returning the requested specific function.
-def get_specific_fn(eqi, function_type, raise_error=True):
+def get_specific_fn(eqi, function_type=None, raise_error=True):
     """The function for returning the requested specific function."""
 
     # Initialise.
     function = None
+    if function_type == None:
+        function_type = pipes.get_type()
 
     # Get the class instance corresponding to function_type.
     inst = get_instance(function_type)

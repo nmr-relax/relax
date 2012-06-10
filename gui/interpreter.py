@@ -37,6 +37,7 @@ import wx
 from prompt import interpreter
 from relax_errors import AllRelaxErrors
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.errors import gui_raise
@@ -66,13 +67,13 @@ class Interpreter(object):
             self._instance._interpreter_thread.start()
 
             # Hack to turn off ANSI escape characters in GUI mode.
-            self._instance._interpreter._exec_info.prompt_colour_off()
+            self._instance._interpreter.prompt_colour_off()
 
         # Already instantiated, so return the instance.
         return self._instance
 
 
-    def _get_uf(self, uf):
+    def _get_backend(self, uf):
         """Return the user function object corresponding to the given string.
 
         @param uf:  The name of the user function.
@@ -81,23 +82,11 @@ class Interpreter(object):
         @rtype:     func
         """
 
-        # Handle the user function class.
-        if search('\.', uf):
-            # Split the user function.
-            uf_class, uf_fn = split(uf, '.')
+        # Get the user function info object.
+        info = uf_info.get_uf(uf)
 
-            # Get the user function class.
-            obj = getattr(self._interpreter, uf_class)
-
-            # Get the function.
-            fn = getattr(obj, uf_fn)
-
-        # Simple user function.
-        else:
-            fn = getattr(self._interpreter, uf)
-
-        # Return the user function.
-        return fn
+        # Return the backend.
+        return info.backend
 
 
     def apply(self, uf, *args, **kwds):
@@ -117,8 +106,8 @@ class Interpreter(object):
         if status.debug:
             sys.stdout.write("debug> GUI interpreter:  Applying the %s user function for synchronous execution.\n" % uf)
 
-        # Get the user function.
-        fn = self._get_uf(uf)
+        # Get the user function backend.
+        fn = self._get_backend(uf)
 
         # Execute the user function.
         try:
@@ -170,16 +159,16 @@ class Interpreter(object):
             sys.stdout.write("debug> GUI interpreter:  Flushing.\n")
 
         # Wait a little while to prevent races with the reading of the queue.
-        sleep(0.5)
+        sleep(0.05)
 
         # Loop until empty.
         while not self._interpreter_thread.empty():
             # Wait a bit for the queue to empty.
-            sleep(0.2)
+            sleep(0.05)
 
             # Wait until execution is complete.
             while status.exec_lock.locked():
-                sleep(0.5)
+                sleep(0.1)
 
         # Debugging.
         if status.debug:
@@ -211,7 +200,7 @@ class Interpreter(object):
             sys.stdout.write("debug> GUI interpreter:  Queuing the %s user function for asynchronous execution.\n" % uf)
 
         # Get the user function.
-        fn = self._get_uf(uf)
+        fn = self._get_backend(uf)
 
         # Call the thread's method.
         self._interpreter_thread.queue(fn, *args, **kwds)

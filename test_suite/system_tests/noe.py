@@ -44,7 +44,7 @@ class Noe(SystemTestCase):
         """Test the NOE analysis."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')
 
         # The real data.
         sat = [5050.0, 51643.0, 53663.0]
