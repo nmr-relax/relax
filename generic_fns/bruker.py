@@ -143,9 +143,9 @@ def read(ri_id=None, file=None, dir=None):
             elif search('NOE', row[1]):
                 ri_type = 'NOE'
 
-        # Get the frequency.
+        # Get the frequency, converting to Hz.
         elif row[0] == 'Proton frequency[MHz]:':
-            frq = float(row[1])
+            frq = float(row[1]) * 1e6
 
         # Inside the relaxation data section.
         elif row[0] == 'SECTION:' and row[1] == 'results':
