@@ -248,10 +248,6 @@ def bmrb_write(star):
 
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
         # Skip spins with no relaxation data.
         if not hasattr(spin, 'ri_data'):
             continue
