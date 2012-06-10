@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,41 +21,22 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the Bruker Protein Dynamics Centre user function class."""
+"""Module containing the Bruker Dynamics Center user function class."""
 __docformat__ = 'plaintext'
 
 # relax module imports.
 import arg_check
-from base_class import User_fn_class
-from generic_fns import pdc
+from base_class import User_fn_class, _build_doc
+from generic_fns import bruker
 
 
-class Pdc(User_fn_class):
-    """Class containing the function for reading the Bruker Protein Dynamics Centre (PDC) files."""
+class Bruker(User_fn_class):
+    """Class containing the function for reading the Bruker Dynamics Center (DC) files."""
 
     def read(self, ri_id=None, file=None, dir=None):
-        """Read the Bruker Protein Dynamics Centre (PDC) file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        ri_id:  The relaxation data ID string.
-
-        file:  The name of the PDC file.
-
-        dir:  The directory where the file is located.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function is used to load all of the data out of a Bruker PDC file for subsequent
-        analysis within relax.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pdc.read("
+            text = self._exec_info.ps3 + "bruker.read("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
@@ -67,4 +48,19 @@ class Pdc(User_fn_class):
         arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
-        pdc.read(ri_id=ri_id, file=file, dir=dir)
+        bruker.read(ri_id=ri_id, file=file, dir=dir)
+
+    # The function doc info.
+    read._doc_title = "Read a Bruker Dynamics Center (DC) relaxation data file."
+    read._doc_title_short = "Read a Bruker Dynamics Center file."
+    read._doc_args = [
+        ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
+        ["file", "The name of the Bruker Dynamics Center file containing the relaxation data."],
+        ["dir", "The directory where the file is located."],
+    ]
+    read._doc_desc = """
+        This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.
+        """
+    _build_doc(read)
+
+

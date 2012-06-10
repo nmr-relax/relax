@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,6 +24,7 @@
 __all__ = [ 'align_tensor',
             'angles',
             'bmrb',
+            'bruker',
             'dasha',
             'diffusion_tensor',
             'eliminate',
@@ -41,7 +42,6 @@ __all__ = [ 'align_tensor',
             'palmer',
             'paramag',
             'pcs',
-            'pdc',
             'pipes',
             'pymol_control',
             'rdc',

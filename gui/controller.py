@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,6 +32,7 @@ import wx.stc
 
 # relax module imports.
 from generic_fns.pipes import cdp_name
+from relax_io import SplitIO
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -40,6 +41,7 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, str_to_gui
 from gui.paths import IMAGE_PATH, icon_16x16
+from info import Info_box
 
 
 class Controller(wx.Frame):
@@ -95,9 +97,23 @@ class Controller(wx.Frame):
         self.log_panel = LogCtrl(self.main_panel, self, log_queue=self.log_queue, id=-1)
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
-        # IO redirection.
-        sys.stdout = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stdout, stream=0)
-        sys.stderr = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stderr, stream=1)
+        # IO redirection for STDOUT (with splitting if logging or teeing modes are set).
+        out = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stdout, stream=0)
+        if sys.stdout == sys.__stdout__ or status.relax_mode in ['test suite', 'system tests', 'unit tests', 'GUI tests']:
+            sys.stdout = out
+        else:
+            split_stdout = SplitIO()
+            split_stdout.split(sys.stdout, out)
+            sys.stdout = split_stdout
+
+        # IO redirection for STDERR (with splitting if logging or teeing modes are set).
+        err = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stderr, stream=1)
+        if sys.stderr == sys.__stderr__ or status.relax_mode in ['test suite', 'system tests', 'unit tests', 'GUI tests']:
+            sys.stderr = err
+        else:
+            split_stderr = SplitIO()
+            split_stderr.split(sys.stderr, err)
+            sys.stderr = split_stderr
 
         # Initial update of the controller.
         self.update_controller()
@@ -105,6 +121,10 @@ class Controller(wx.Frame):
         # Create a timer for updating the gauges.
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
+
+        # The relax intro print out, to mimic the prompt/script interface.
+        info = Info_box()
+        print(info.intro_text())
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('controller', self.update_controller)
@@ -286,6 +306,10 @@ class Controller(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # The test suite is running, so disable closing.
+        if self.gui.test_suite_flag:
+            return
 
         # Close the window.
         self.Hide()
@@ -631,6 +655,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         if event.ControlDown() and event.GetKeyCode() == 70:
             self.find_open(event)
 
+        # Select all (Ctrl-A). 
+        if event.ControlDown() and event.GetKeyCode() == 65:
+            event.Skip()
+
         # Find next (Ctrl-G on Mac OS X, F3 on all others).
         if 'darwin' in sys.platform and event.ControlDown() and event.GetKeyCode() == 71:
             self.find_next(event)
@@ -738,6 +766,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.find_dlg = wx.FindReplaceDialog(self, self.find_data, "Find")
             if status.show_gui:
                 self.find_dlg.Show(True)
+
+        # Otherwise show it.
+        else:
+            self.find_dlg.Show()
 
 
     def find_next(self, event):
@@ -1041,6 +1073,16 @@ class Redirect_text(object):
 
         # Call the log control write method one the GUI is responsive.
         wx.CallAfter(self.control.write)
+
+
+    def isatty(self):
+        """Answer that this is not a TTY.
+
+        @return:    False, as this is not a TTY.
+        @rtype:     bool
+        """
+
+        return False
 
 
     def write(self, string):

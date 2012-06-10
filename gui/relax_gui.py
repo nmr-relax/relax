@@ -28,6 +28,8 @@
 import os
 from os import F_OK, access, getcwd, mkdir, sep
 import platform
+from re import search
+from string import split
 import sys
 from textwrap import wrap
 from thread import start_new_thread
@@ -46,6 +48,7 @@ from generic_fns.reset import reset
 from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
+import test_suite.test_suite_runner
 from version import version
 
 # relaxGUI module imports.
@@ -68,7 +71,6 @@ from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
 from gui.user_functions import User_functions; user_functions = User_functions()
-import test_suite
 
 
 class Main(wx.Frame):
@@ -81,16 +83,35 @@ class Main(wx.Frame):
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
+        # Store the wxPython info for os/machine/version specific hacks.
+        status.wx_info = {}
+        status.wx_info["version"] = split(wx.__version__, '.')
+        status.wx_info["minor"] = "%s.%s" % (status.wx_info["version"][0], status.wx_info["version"][1])
+        status.wx_info["os"] = sys.platform
+        status.wx_info["build"] = None
+        if search('gtk2', wx.version()):
+            status.wx_info["build"] = 'gtk'
+        elif search('cocoa', wx.version()):
+            status.wx_info["build"] = 'cocoa'
+        elif search('mac-unicode', wx.version()):
+            status.wx_info["build"] = 'carbon'
+        status.wx_info["full"] = None
+        if status.wx_info["build"]:
+            status.wx_info["full"] = "%s-%s" % (status.wx_info["os"], status.wx_info["build"])
+
+        # Some internal variables.
+        self.test_suite_flag = False
+
         # The main window style.
         style = wx.DEFAULT_FRAME_STYLE
-        if not status.debug:
+        if not status.debug and status.wx_info["os"] != 'darwin':
             style = style | wx.MAXIMIZE
 
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
 
         # Force the main window to start maximised (needed for MS Windows).
-        if not status.debug:
+        if not status.debug and status.wx_info["os"] != 'darwin':
             self.Maximize()
 
         # Set up some standard interface-wide fonts.
@@ -101,7 +122,7 @@ class Main(wx.Frame):
         self.SetIcons(relax_icons)
 
         # Set up the Mac OS X task bar icon.
-        if 'darwin' in sys.platform:
+        if status.wx_info["os"] == 'darwin' and status.wx_info["build"] != 'gtk':
             self.taskbar_icon = Relax_task_bar_icon(self)
 
         # Initialise some variables for the GUI.
@@ -321,7 +342,7 @@ class Main(wx.Frame):
 
         # Ask if the user is sure they would like to exit.
         doexit = wx.ID_YES
-        if status.show_gui:
+        if status.show_gui and not ds.is_empty():
             doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
 
         # Exit.
@@ -417,11 +438,13 @@ class Main(wx.Frame):
         open_file(file)
 
 
-    def run_test_suite(self, event):
+    def run_test_suite(self, event, categories=['system', 'unit', 'gui']):
         """Execute the full test suite.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:           The wx event.
+        @type event:            wx event
+        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
+        @type categories:       list of str
         """
 
         # Ask if this should be done.
@@ -429,8 +452,29 @@ class Main(wx.Frame):
         if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
             return
 
+        # Set the test suite flag.
+        self.test_suite_flag = True
+
         # Change the cursor to waiting.
         wx.BeginBusyCursor()
+
+        # Set a new style to stay on top, refreshing to update the style (needed for Mac OS X and MS Windows).
+        orig_style = self.controller.GetWindowStyle()
+        self.controller.SetWindowStyle(orig_style | wx.STAY_ON_TOP)
+        self.controller.Refresh()
+
+        # Make the relax controller modal so that all other windows are deactivated (to stop users from clicking on things).
+        self.controller.MakeModal(True)
+
+        # Close all open windows.
+        if hasattr(self, 'spin_viewer'):
+            self.spin_viewer.Close()
+        if hasattr(self, 'pipe_editor'):
+            self.pipe_editor.Close()
+        if hasattr(self, 'results_viewer'):
+            self.results_viewer.Close()
+        if hasattr(self, 'relax_prompt'):
+            self.relax_prompt.Close()
 
         # Reset relax.
         reset()
@@ -445,7 +489,7 @@ class Main(wx.Frame):
         status.show_gui = False
 
         # Run the tests.
-        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True)
+        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True, categories=categories)
         runner.run_all_tests()
 
         # Reactive the GUI.
@@ -454,6 +498,47 @@ class Main(wx.Frame):
         # Turn off the busy cursor.
         if wx.IsBusy():
             wx.EndBusyCursor()
+
+        # Restore the controller.
+        self.controller.SetWindowStyle(orig_style)
+        self.controller.MakeModal(False)
+        self.controller.Refresh()
+
+        # Unset the test suite flag.
+        self.test_suite_flag = False
+
+
+    def run_test_suite_gui(self, event):
+        """Execute the GUI tests.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['gui'])
+
+
+    def run_test_suite_sys(self, event):
+        """Execute the system tests.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['system'])
+
+
+    def run_test_suite_unit(self, event):
+        """Execute the unit tests.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['unit'])
 
 
     def show_controller(self, event):
@@ -612,7 +697,7 @@ class Main(wx.Frame):
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
             # The dialog.
-            if status.show_gui and Question(msg, default=True).ShowModal() == wx.ID_NO:
+            if status.show_gui and Question(msg, default=True, size=(400, 150)).ShowModal() == wx.ID_NO:
                 return
 
         # Open the dialog.
@@ -677,6 +762,11 @@ class Main(wx.Frame):
         try:
             wx.BeginBusyCursor()
             state.save_state(self.save_file, verbosity=0, force=True)
+
+            # Sleep a little so the user sees the busy cursor and knows that a save has occurred!
+            sleep(1)
+
+        # Turn off the user feedback.
         finally:
             if wx.IsBusy():
                 wx.EndBusyCursor()
@@ -759,6 +849,11 @@ class Main(wx.Frame):
         self.TB_VIEW_PIPE_EDIT = wx.NewId()
         self.toolbar.AddLabelTool(self.TB_VIEW_PIPE_EDIT, "Data pipe editor", wx.Bitmap(paths.icon_22x22.pipe, wx.BITMAP_TYPE_ANY), shortHelp="Data pipe editor")
         self.Bind(wx.EVT_TOOL, self.show_pipe_editor, id=self.TB_VIEW_PIPE_EDIT)
+
+        # The relax prompt button.
+        self.TB_VIEW_PROMPT = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_VIEW_PROMPT, "relax prompt", wx.Bitmap(paths.icon_22x22.relax_prompt, wx.BITMAP_TYPE_ANY), shortHelp="The relax prompt GUI window")
+        self.Bind(wx.EVT_TOOL, self.show_prompt, id=self.TB_VIEW_PROMPT)
 
         # Build the toolbar.
         self.toolbar.Realize()

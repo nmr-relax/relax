@@ -31,6 +31,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+import arg_check
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
@@ -39,7 +40,7 @@ from maths_fns.mf import Mf
 from multi import Processor_box
 from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
 
 
@@ -1101,7 +1102,14 @@ class Mf_minimise:
 
             # Vectors.
             if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                # Check that this is a single vector!
+                if arg_check.is_num_list(spin.xh_vect[0], raise_error=False):
+                    raise RelaxMultiVectorError(data_store.spin_id)
+
+                # Store the vector.
                 data_store.xh_unit_vectors.append(spin.xh_vect)
+
+            # No vector.
             else:
                 data_store.xh_unit_vectors.append(None)
 
@@ -1273,6 +1281,10 @@ class Mf_minimise:
             # Test if unit vectors exist.
             if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(spin, 'xh_vect'):
                 raise RelaxNoVectorsError
+
+            # Test if multiple unit vectors exist.
+            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(spin, 'xh_vect') and arg_check.is_num_list(spin.xh_vect[0], raise_error=False):
+                raise RelaxMultiVectorError
 
             # Test if the spin type has been set.
             if not hasattr(spin, 'heteronuc_type'):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -232,8 +232,9 @@ class Rx(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
-        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
+        if status.relax_mode != 'gui':
+            self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
+            self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # Check the data pipe.
         self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)

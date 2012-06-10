@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,10 +26,13 @@
 # Python module imports.
 import platform
 from re import split
+import sys
 from textwrap import wrap
 
 # relax module imports.
+import ansi
 import help
+from status import Status; status = Status()
 from string import split, strip
 
 # The width of the text.
@@ -209,11 +212,6 @@ class Basic_class:
 class Exec_info:
     """Container for execution information."""
 
-    # The hard-coded prompts (to change the Python prompt, as well as the function print outs).
-    ps1 = 'relax> '
-    ps2 = 'relax| '
-    ps3 = '\nrelax> '
-
     def __init__(self):
         """Initialise the data of this container.
 
@@ -222,6 +220,35 @@ class Exec_info:
 
         # The user function intro flag.
         self.intro = True
+
+        # The prompts (to change the Python prompt, as well as the function print outs).
+        self.ps1_orig = 'relax> '
+        self.ps2_orig = 'relax| '
+        self.ps3_orig = '\n%s' % self.ps1_orig
+
+        # Coloured text.
+        self.ps1_colour = "%s%s%s" % (ansi.relax_prompt, self.ps1_orig, ansi.end)
+        self.ps2_colour = "%s%s%s" % (ansi.relax_prompt, self.ps2_orig, ansi.end)
+        self.ps3_colour = "\n%s%s%s" % (ansi.relax_prompt, self.ps1_orig, ansi.end)
+
+        # Default to no colours.
+        self.prompt_colour_off()
+
+
+    def prompt_colour_off(self):
+        """Turn the prompt colouring ANSI escape sequences off."""
+
+        sys.ps1 = self.ps1 = self.ps1_orig
+        sys.ps2 = self.ps2 = self.ps2_orig
+        sys.ps3 = self.ps3 = self.ps3_orig
+
+
+    def prompt_colour_on(self):
+        """Turn the prompt colouring ANSI escape sequences off."""
+
+        sys.ps1 = self.ps1 = self.ps1_colour
+        sys.ps2 = self.ps2 = self.ps2_colour
+        sys.ps3 = self.ps3 = self.ps3_colour
 
 
 

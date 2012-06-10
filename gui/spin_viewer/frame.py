@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@
 import wx
 
 # relax module imports.
+from generic_fns import structure
 from generic_fns.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
 from relax_errors import RelaxNoPipeError
@@ -53,11 +54,13 @@ class Spin_view_window(wx.Frame):
         self.gui = kwds.pop('parent')
 
         # Create GUI elements
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        if not status.debug and status.wx_info["os"] != 'darwin':
+            kwds["style"] = kwds["style"] | wx.MAXIMIZE
         wx.Frame.__init__(self, *args, **kwds)
 
         # Force the main window to start maximised (needed for MS Windows).
-        if not status.debug:
+        if not status.debug and status.wx_info["os"] != 'darwin':
             self.Maximize()
 
         # Set up the window icon.
@@ -222,6 +225,12 @@ class Spin_view_window(wx.Frame):
         # The structure.read_pdb page.
         page = structure.Read_pdb_page(self.wizard)
         self.page_indices['structure.read_pdb'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['structure.read_pdb'], self.wizard_page_after_structure_read)
+
+        # The structure.read_xyz page.
+        page = structure.Read_xyz_page(self.wizard)
+        self.page_indices['structure.read_xyz'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['structure.read_xyz'], self.wizard_page_after_structure_read)
 
         # The structure.load_spins page.
         page = structure.Load_spins_page(self.wizard)
@@ -354,13 +363,21 @@ class Spin_view_window(wx.Frame):
         @rtype:     int
         """
 
-        # Go to the spectrum.baseplane_rmsd page.
+        # Go to the sequence.read page.
         if self.page_method.selection == 'sequence':
             return self.page_indices['sequence.read']
 
-        # Go to the spectrum.replicated page.
-        elif self.page_method.selection == 'structure':
+        # Go to the structure.read_pdb page.
+        elif self.page_method.selection == 'new pdb':
             return self.page_indices['structure.read_pdb']
+
+        # Go to the structure.read_xyz page.
+        elif self.page_method.selection == 'new xyz':
+            return self.page_indices['structure.read_xyz']
+
+        # Skip to the structure.load_spins page.
+        elif self.page_method.selection == 'preload':
+            return self.page_indices['structure.load_spins']
 
 
     def wizard_page_after_sequence_read(self):
@@ -372,6 +389,17 @@ class Spin_view_window(wx.Frame):
 
         # Return the index of the terminal page.
         return  self.page_indices['fin']
+
+
+    def wizard_page_after_structure_read(self):
+        """Set the page after the structure.read_* user function pages.
+
+        @return:    The index of the structure.load_spins page.
+        @rtype:     int
+        """
+
+        # Return the index of the terminal page.
+        return  self.page_indices['structure.load_spins']
 
 
 
@@ -409,7 +437,7 @@ class Load_method_page(Wiz_page):
         """
 
         # Intro text.
-        msg = "Please specify which method should be used."
+        msg = "Please specify by which method spins should be loaded into the relax data store:"
         text = wx.StaticText(self, -1, msg)
         text.Wrap(self._main_size)
         sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -431,20 +459,48 @@ class Load_method_page(Wiz_page):
         sizer_radio = wx.BoxSizer(wx.VERTICAL)
         sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
 
+        # Pre-loaded structure exists.
+        self.preload_flag = False
+        if hasattr(cdp, 'structure') and not cdp.structure.empty():
+            self.preload_flag = True
+
+        # The pre-load radio button.
+        if self.preload_flag:
+            # The button.
+            self.radio_preload = wx.RadioButton(self, -1, "From a pre-loaded structure.", style=wx.RB_GROUP)
+            sizer_radio.Add(self.radio_preload, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+            # Spacing.
+            sizer_radio.AddSpacer(20)
+
         # The sequence radio button.
-        self.radio_seq = wx.RadioButton(self, -1, "Sequence file.")
+        if self.preload_flag:
+            style = 0
+        else:
+            style = wx.RB_GROUP
+        self.radio_seq = wx.RadioButton(self, -1, "From a file containing sequence data.", style=style)
         sizer_radio.Add(self.radio_seq, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
         sizer_radio.AddSpacer(20)
 
         # The PDB radio button.
-        self.radio_structure = wx.RadioButton(self, -1, "3D structure file.")
-        sizer_radio.Add(self.radio_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        self.radio_new_pdb = wx.RadioButton(self, -1, "From a new PDB structure file.")
+        sizer_radio.Add(self.radio_new_pdb, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer_radio.AddSpacer(20)
+
+        # The XYZ radio button.
+        self.radio_new_xyz = wx.RadioButton(self, -1, "From a new XYZ structure file.")
+        sizer_radio.Add(self.radio_new_xyz, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Bind the buttons.
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_seq)
-        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_structure)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_new_pdb)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_new_xyz)
+        if self.preload_flag:
+            self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_preload)
 
         # Right side spacing.
         sizer2.AddStretchSpacer(3)
@@ -453,7 +509,10 @@ class Load_method_page(Wiz_page):
         sizer.AddStretchSpacer()
 
         # Set the default selection.
-        self.selection = 'sequence'
+        if self.preload_flag:
+            self.selection = 'preload'
+        else:
+            self.selection = 'sequence'
 
 
     def _on_select(self, event):
@@ -469,5 +528,9 @@ class Load_method_page(Wiz_page):
         # RMSD.
         if button == self.radio_seq:
             self.selection = 'sequence'
-        elif button == self.radio_structure:
-            self.selection = 'structure'
+        elif button == self.radio_new_pdb:
+            self.selection = 'new pdb'
+        elif button == self.radio_new_xyz:
+            self.selection = 'new xyz'
+        elif self.preload_flag and button == self.radio_preload:
+            self.selection = 'preload'

@@ -54,6 +54,8 @@ class I16x16:
         path = ICON_RELAX_PATH + '16x16' + sep
         self.about_relax =              IMAGE_PATH + 'relax_16x16.png'
         self.about_relaxgui =           IMAGE_PATH + 'relax_16x16.png'
+        self.bmrb =                     path + 'bmrb.png'
+        self.bruker =                   path + 'bruker.png'
         self.gnu_head =                 path + 'gnu-head-mini.png'
         self.grace =                    path + 'grace_icon.png'
         self.molecule =                 path + 'molecule.png'
@@ -88,12 +90,14 @@ class I16x16:
         self.document_close =                   path + 'actions'    + sep + 'document-close.png'
         self.document_open =                    path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder =             path + 'actions'    + sep + 'document-open-folder.png'
+        self.document_preview =                 path + 'actions'    + sep + 'document-preview.png'
         self.document_properties =              path + 'actions'    + sep + 'document-properties.png'
         self.document_save =                    path + 'actions'    + sep + 'document-save.png'
         self.document_save_as =                 path + 'actions'    + sep + 'document-save-as.png'
         self.edit_copy =                        path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =                      path + 'actions'    + sep + 'edit-delete.png'
         self.edit_find =                        path + 'actions'    + sep + 'edit-find.png'
+        self.edit_rename =                      path + 'actions'    + sep + 'edit-rename.png'
         self.edit_select_all =                  path + 'actions'    + sep + 'edit-select-all.png'
         self.exit =                             path + 'actions'    + sep + 'system-shutdown.png'
         self.flag_blue =                        path + 'actions'    + sep + 'flag-blue.png'
@@ -146,9 +150,11 @@ class I22x22:
         self.dialog_warning_relax = path + 'status'     + sep + 'dialog-warning-relax-blue.png'
         self.document_open =        path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder = path + 'actions'    + sep + 'document-open-folder.png'
+        self.document_preview =     path + 'actions'    + sep + 'document-preview.png'
         self.edit_copy =            path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
         self.edit_find =            path + 'actions'    + sep + 'edit-find.png'
+        self.edit_rename =          path + 'actions'    + sep + 'edit-rename.png'
         self.edit_select_all =      path + 'actions'    + sep + 'edit-select-all.png'
         self.document_close =       path + 'actions'    + sep + 'document-close.png'
         self.document_properties =  path + 'actions'    + sep + 'document-properties.png'
@@ -173,9 +179,13 @@ class I22x22:
         self.zoom_in =              path + 'actions'    + sep + 'zoom-in.png'
         self.zoom_original =        path + 'actions'    + sep + 'zoom-original.png'
         self.zoom_out =             path + 'actions'    + sep + 'zoom-out.png'
+        self.relax_prompt =         path + 'mimetypes'  + sep + 'application-x-executable-script.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
+        self.bmrb =                     path + 'bmrb.png'
+        self.bruker =                   path + 'bruker.png'
+        self.bruker_add =               path + 'bruker_add.png'
         self.molecule =                 path + 'molecule.png'
         self.molecule_grey =            path + 'molecule_grey.png'
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
@@ -212,6 +222,7 @@ class I32x32:
         self.document_close =                   path + 'actions'    + sep + 'document-close.png'
         self.document_open =                    path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder =             path + 'actions'    + sep + 'document-open-folder.png'
+        self.document_preview =                 path + 'actions'    + sep + 'document-preview.png'
         self.document_properties =              path + 'actions'    + sep + 'document-properties.png'
         self.document_save =                    path + 'actions'    + sep + 'document-save.png'
         self.document_save_as =                 path + 'actions'    + sep + 'document-save-as.png'
@@ -219,6 +230,7 @@ class I32x32:
         self.edit_copy =                        path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =                      path + 'actions'    + sep + 'edit-delete.png'
         self.edit_find =                        path + 'actions'    + sep + 'edit-find.png'
+        self.edit_rename =                      path + 'actions'    + sep + 'edit-rename.png'
         self.edit_select_all =                  path + 'actions'    + sep + 'edit-select-all.png'
         self.go_bottom =                        path + 'actions'    + sep + 'go-bottom.png'
         self.go_top =                           path + 'actions'    + sep + 'go-top.png'
@@ -240,6 +252,8 @@ class I32x32:
 
         # relax icons.
         path = ICON_RELAX_PATH + '32x32' + sep
+        self.bmrb =                     path + 'bmrb.png'
+        self.bruker =                   path + 'bruker.png'
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.spin =                     path + 'spin.png'
         self.spin_grey =                path + 'spin_grey.png'
@@ -267,12 +281,14 @@ class I48x48:
         self.document_close =                   path + 'actions'    + sep + 'document-close.png'
         self.document_open =                    path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder =             path + 'actions'    + sep + 'document-open-folder.png'
+        self.document_preview =                 path + 'actions'    + sep + 'document-preview.png'
         self.document_properties =              path + 'actions'    + sep + 'document-properties.png'
         self.document_save =                    path + 'actions'    + sep + 'document-save.png'
         self.document_save_as =                 path + 'actions'    + sep + 'document-save-as.png'
         self.edit_copy =                        path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =                      path + 'actions'    + sep + 'edit-delete.png'
         self.edit_find =                        path + 'actions'    + sep + 'edit-find.png'
+        self.edit_rename =                      path + 'actions'    + sep + 'edit-rename.png'
         self.edit_select_all =                  path + 'actions'    + sep + 'edit-select-all.png'
         self.forwards =                         path + 'actions'    + sep + 'go-next-view.png'
         self.go_bottom =                        path + 'actions'    + sep + 'go-bottom.png'
@@ -296,12 +312,14 @@ class I48x48:
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
-        self.pipe =                 path + 'pipe.png'
-        self.pipe_hybrid =          path + 'pipe_hybrid.png'
-        self.relax_data =           path + 'fid.png'
-        self.sequence =             path + 'sequence.png'
-        self.structure =            path + 'structure.png'
-        self.value =                path + 'value.png'
+        self.bmrb =                     path + 'bmrb.png'
+        self.bruker =                   path + 'bruker.png'
+        self.pipe =                     path + 'pipe.png'
+        self.pipe_hybrid =              path + 'pipe_hybrid.png'
+        self.relax_data =               path + 'fid.png'
+        self.sequence =                 path + 'sequence.png'
+        self.structure =                path + 'structure.png'
+        self.value =                    path + 'value.png'
 
 
 # Set up all icon classes.

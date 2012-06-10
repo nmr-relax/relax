@@ -407,6 +407,17 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         self.gui.show_tree(None)
 
 
+    def observer_register(self, remove=False):
+        """Register and unregister methods with the observer objects.
+
+        This is a dummy method.
+
+
+        @keyword remove:    If set to True, then the methods will be unregistered.
+        @type remove:       False
+        """
+
+
     def resize(self, event):
         """The spin editor GUI element.
 
@@ -487,7 +498,7 @@ class Spectral_error_type_page(UF_page):
         sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
 
         # The RMSD radio button.
-        self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.")
+        self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.", style=wx.RB_GROUP)
         sizer_radio.Add(self.radio_rmsd, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.

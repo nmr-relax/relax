@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -54,6 +54,11 @@ class Menu:
     MENU_VIEW_PROMPT = wx.NewId()
     MENU_TOOLS_FORMAT = wx.NewId()
     MENU_TOOLS_TEST_SUITE = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_ALL = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_SYS = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_UNIT = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_GUI = wx.NewId()
+    MENU_TOOLS_SYS_INFO = wx.NewId()
     MENU_HELP_MANUAL = wx.NewId()
     MENU_HELP_MAIL = wx.NewId()
     MENU_HELP_REFS = wx.NewId()
@@ -114,12 +119,27 @@ class Menu:
         # The 'Tools' menu entries.
         menu = wx.Menu()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_SYS_INFO, text="System &information", icon=paths.icon_16x16.help_about))
+
+        # The 'Tools->Test suite" sub-menu.
+        test_suite_item = build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script)
+        sub_menu = wx.Menu()
+        test_suite_item.SetSubMenu(sub_menu)
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_ALL, text="&Full test suite", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendSeparator()
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_SYS, text="&System tests", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=paths.icon_16x16.uf_script))
+        menu.AppendItem(test_suite_item)
         self.menubar.Append(menu, "&Tools")
 
         # The 'Tools' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=self.MENU_TOOLS_FORMAT)
-        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE)
+        self.gui.Bind(wx.EVT_MENU, self._sys_info, id=self.MENU_TOOLS_SYS_INFO)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE_ALL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_sys, id=self.MENU_TOOLS_TEST_SUITE_SYS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_unit, id=self.MENU_TOOLS_TEST_SUITE_UNIT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_gui, id=self.MENU_TOOLS_TEST_SUITE_GUI)
 
         # The 'Help' menu entries.
         menu = wx.Menu()
@@ -201,6 +221,20 @@ class Menu:
         self.gui.show_controller(event)
 
 
+    def _sys_info(self, event):
+        """Show the full system information using the sys_info user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The user functions.
+        user_functions = User_functions(self.gui)
+
+        # Launch the user functions.
+        user_functions.sys_info.sys_info()
+
+
     def _user_functions(self):
         """Build the user function sub-menu."""
 
@@ -280,6 +314,12 @@ class Uf_menus:
         self.uf = {}
 
         # Build the user function menus.
+        id = self.add_class(name="bmrb", text="&bmrb", icon=paths.icon_16x16.bmrb)
+        self.add_uf(parent_id=id, name="bmrb.citation", text="&citation", fn=user_functions.bmrb.citation)
+
+        id = self.add_class(name="bruker", text="&bruker", icon=paths.icon_16x16.bruker)
+        self.add_uf(parent_id=id, name="bruker.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.bruker.read)
+
         id = self.add_class(name="deselect", text="&deselect", icon=None)
         self.add_uf(parent_id=id, name="deselect.all", text="&all", icon=None, fn=user_functions.deselect.all)
         self.add_uf(parent_id=id, name="deselect.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.deselect.read)
@@ -384,6 +424,7 @@ class Uf_menus:
         self.add_uf(parent_id=id, name="structure.get_pos", text="&get_pos", icon=None, fn=user_functions.structure.get_pos)
         self.add_uf(parent_id=id, name="structure.load_spins", text="&load_spins", icon=paths.icon_16x16.spin, fn=user_functions.structure.load_spins)
         self.add_uf(parent_id=id, name="structure.read_pdb", text="&read_pdb", icon=paths.icon_16x16.open, fn=user_functions.structure.read_pdb)
+        self.add_uf(parent_id=id, name="structure.read_xyz", text="&read_xyz", icon=paths.icon_16x16.open, fn=user_functions.structure.read_xyz)
         self.add_uf(parent_id=id, name="structure.vectors", text="&vectors", icon=None, fn=user_functions.structure.vectors)
         self.add_uf(parent_id=id, name="structure.write_pdb", text="&write_pdb", icon=paths.icon_16x16.save, fn=user_functions.structure.write_pdb)
 
