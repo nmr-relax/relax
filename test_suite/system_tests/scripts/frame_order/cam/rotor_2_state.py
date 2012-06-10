@@ -43,4 +43,4 @@ class Analysis(Base_script):
 
 
 # Execute the analysis.
-Analysis(self)
+Analysis(self._execute_uf)

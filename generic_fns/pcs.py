@@ -546,7 +546,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             # Append the error.
             spin.pcs_err[align_id] = error
 
-        # Append the data for print out.
+        # Append the data for printout.
         mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)

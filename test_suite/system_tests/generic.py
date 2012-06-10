@@ -38,7 +38,7 @@ class Generic(SystemTestCase):
         """Test nested scripting."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'nested_scripting'+sep+'main.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'nested_scripting'+sep+'main.py')
 
         # Check.
         self.assertEqual(cdp.nest, ['a', 'b', 'c', 'd'])
@@ -83,4 +83,4 @@ class Generic(SystemTestCase):
         """Test the creation of a PDB representation of the distribution of XH bond vectors."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')

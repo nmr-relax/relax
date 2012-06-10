@@ -29,33 +29,17 @@ from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNo
 from specific_fns.api_objects import Param_list
 
 
-class API_base:
+class API_base(object):
     """Base class defining the specific_fns API.
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
 
-    # Class variables.
-    SPIN_PARAMS = Param_list()
-    GLOBAL_PARAMS = Param_list()
+    def __init__(self):
+        """Set up the specific objects."""
 
-    # Add some spin specific objects.
-    SPIN_PARAMS.add('select', desc='The spin selection flag')
-    SPIN_PARAMS.add('fixed', desc='The fixed flag')
-    SPIN_PARAMS.add('chi2', desc='Chi-squared value')
-    SPIN_PARAMS.add('iter', desc='Optimisation iterations')
-    SPIN_PARAMS.add('f_count', desc='Number of function calls')
-    SPIN_PARAMS.add('g_count', desc='Number of gradient calls')
-    SPIN_PARAMS.add('h_count', desc='Number of Hessian calls')
-    SPIN_PARAMS.add('warning', desc='Optimisation warning')
-
-    # Add some global objects.
-    GLOBAL_PARAMS.add('chi2', desc='Chi-squared value')
-    GLOBAL_PARAMS.add('iter', desc='Optimisation iterations')
-    GLOBAL_PARAMS.add('f_count', desc='Number of function calls')
-    GLOBAL_PARAMS.add('g_count', desc='Number of gradient calls')
-    GLOBAL_PARAMS.add('h_count', desc='Number of Hessian calls')
-    GLOBAL_PARAMS.add('warning', desc='Optimisation warning')
+        # Class variables.
+        self.PARAMS = Param_list()
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
@@ -74,7 +58,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('back_calc_ri')
 
 
     def base_data_loop(self):
@@ -88,7 +72,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('base_data_loop')
 
 
     def bmrb_read(self, file_path, version=None, sample_conditions=None):
@@ -99,7 +83,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('bmrb_read')
 
 
     def bmrb_write(self, file_path, version=None):
@@ -112,7 +96,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('bmrb_write')
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -127,7 +111,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('calculate')
 
 
     def create_mc_data(self, data_id=None):
@@ -140,7 +124,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('create_mc_data')
 
 
     def data_init(self, data_cont, sim=False):
@@ -153,14 +137,16 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('data_init')
 
 
-    def data_names(self, set='all', error_names=False, sim_names=False):
+    def data_names(self, set='all', scope=None, error_names=False, sim_names=False):
         """Return a list of names of data structures.
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
         @type set:              str
+        @keyword scope:         The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
+        @type scope:            str or None
         @keyword error_names:   A flag which if True will add the error object names as well.
         @type error_names:      bool
         @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
@@ -169,12 +155,21 @@ class API_base:
         @rtype:                 list of str
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # Initialise.
+        names = []
+
+        # Loop over the parameters.
+        for name in self.PARAMS.loop(set=set, scope=scope, error_names=error_names, sim_names=sim_names):
+            names.append(name)
+
+        # Return the names.
+        return names
 
 
     def data_type(self, param=None):
         """Return the type of data that the parameter should be.
+
+        This basic method will first search for a global parameter and, if not found, then a spin parameter.
 
         @keyword param:     The parameter name.
         @type param:        list of str
@@ -182,8 +177,8 @@ class API_base:
         @rtype:             any type
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # Return the type.
+        return self.PARAMS.get_type(param)
 
 
     # Empty documentation string.
@@ -191,14 +186,17 @@ class API_base:
     def default_value(self, param):
         """Return the default parameter values.
 
+        This basic method will first search for a global parameter and, if not found, then a spin parameter.
+
+
         @param param:   The specific analysis parameter.
         @type param:    str
         @return:        The default value.
         @rtype:         float
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # Return the value.
+        return self.PARAMS.get_default(param)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -211,7 +209,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('deselect')
 
 
     def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
@@ -230,7 +228,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('duplicate_data')
 
 
     # Empty documentation string.
@@ -253,7 +251,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('eliminate')
 
 
     def get_param_names(self, model_info=None):
@@ -266,7 +264,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('get_param_names')
 
 
     def get_param_values(self, model_info=None, sim_index=None):
@@ -281,7 +279,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('get_param_values')
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -302,7 +300,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('grid_search')
 
 
     def has_errors(self):
@@ -313,7 +311,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('has_errors')
 
 
     def is_spin_param(self, name):
@@ -326,7 +324,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('is_spin_param')
 
 
     def map_bounds(self, param, spin_id=None):
@@ -341,7 +339,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('map_bounds')
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -374,7 +372,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('minimise')
 
 
     def model_desc(self, model_info):
@@ -387,7 +385,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('model_desc')
 
 
     def model_loop(self):
@@ -398,7 +396,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('model_loop')
 
 
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
@@ -420,7 +418,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('model_statistics')
 
 
     def model_type(self):
@@ -431,7 +429,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('model_type')
 
 
     def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
@@ -452,7 +450,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('molmol_macro')
 
 
     def num_instances(self):
@@ -463,14 +461,14 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('num_instances')
 
 
     def overfit_deselect(self):
         """Deselect models with insufficient data for minimisation."""
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('overfit_deselect')
 
 
     def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
@@ -491,7 +489,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('pymol_macro')
 
 
     def read_columnar_results(self, file_data, verbosity=1):
@@ -504,7 +502,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('read_columnar_results')
 
 
     def return_conversion_factor(self, param):
@@ -516,8 +514,8 @@ class API_base:
         @rtype:             float
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # Return the factor.
+        return self.PARAMS.get_conv_factor(param)
 
 
     def return_data(self, spin):
@@ -530,11 +528,14 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('return_data')
 
 
     def return_data_desc(self, name):
         """Return a description of the parameter.
+
+        This basic method will first search for a global parameter and, if not found, then a spin parameter.
+
 
         @param name:    The name or description of the parameter.
         @type name:     str
@@ -542,8 +543,8 @@ class API_base:
         @rtype:         str or None
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # Return the description.
+        return self.PARAMS.get_desc(name)
 
 
     # Empty documentation string.
@@ -557,8 +558,12 @@ class API_base:
         @rtype:         str
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # No parameter.
+        if not self.PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return param
 
 
     def return_error(self, data_id):
@@ -571,7 +576,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('return_error')
 
 
     def return_grace_string(self, param):
@@ -586,8 +591,8 @@ class API_base:
         @rtype:         str
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # The string.
+        return self.PARAMS.get_grace_string(param)
 
 
     def return_units(self, param):
@@ -599,8 +604,8 @@ class API_base:
         @rtype:             str
         """
 
-        # Not implemented.
-        raise RelaxImplementError
+        # Return the name.
+        return self.PARAMS.get_units(param)
 
 
     def return_value(self, spin, param, sim=None, bc=False):
@@ -622,7 +627,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('return_value')
 
 
     # Empty documentation string.
@@ -641,7 +646,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('set_error')
 
 
     def set_param_values(self, param=None, value=None, spin_id=None, force=True):
@@ -658,7 +663,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('set_param_values')
 
 
     def set_selected_sim(self, model_info, select_sim):
@@ -671,7 +676,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('set_selected_sim')
 
 
     def set_update(self, param, spin):
@@ -684,14 +689,14 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('set_update')
 
 
     def sim_init_values(self):
         """Initialise the Monte Carlo parameter values."""
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('sim_init_values')
 
 
     def sim_pack_data(self, data_id, sim_data):
@@ -704,7 +709,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('sim_pack_data')
 
 
     def sim_return_chi2(self, model_info, index=None):
@@ -719,7 +724,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('sim_return_chi2')
 
 
     def sim_return_param(self, model_info, index):
@@ -734,7 +739,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('sim_return_param')
 
 
     def sim_return_selected(self, model_info):
@@ -747,7 +752,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('sim_return_selected')
 
 
     def skip_function(self, model_info):
@@ -760,7 +765,7 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('skip_function')
 
 
     def test_grid_ops(self, lower=None, upper=None, inc=None, n=None):
@@ -777,4 +782,4 @@ class API_base:
         """
 
         # Not implemented.
-        raise RelaxImplementError
+        raise RelaxImplementError('test_grid_ops')

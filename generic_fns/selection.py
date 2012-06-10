@@ -32,6 +32,23 @@ from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
+
+
+boolean_doc = Desc_container("Boolean operators")
+boolean_doc.add_paragraph("The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details how the selections will occur for the different boolean operators.")
+table = uf_tables.add_table(label="table: bool operators", caption="Boolean operators and their effects on selections")
+table.add_headings(["Spin system", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
+table.add_row(["Original selection", "0", "1", "1", "1", "1", "0", "1", "0", "1"])
+table.add_row(["New selection", "0", "1", "1", "1", "1", "1", "0", "0", "0"])
+table.add_row(["OR", "0", "1", "1", "1", "1", "1", "1", "0", "1"])
+table.add_row(["NOR", "1", "0", "0", "0", "0", "0", "0", "1", "0"])
+table.add_row(["AND", "0", "1", "1", "1", "1", "0", "0", "0", "0"])
+table.add_row(["NAND", "1", "0", "0", "0", "0", "1", "1", "1", "1"])
+table.add_row(["XOR", "0", "0", "0", "0", "0", "1", "1", "0", "1"])
+table.add_row(["XNOR", "1", "1", "1", "1", "1", "0", "0", "1", "0"])
+boolean_doc.add_table(table.label)
 
 
 def desel_all():

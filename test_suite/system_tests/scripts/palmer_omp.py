@@ -124,7 +124,7 @@ def exec_stage_3():
 
 # Read the results file to get the relaxation data from.
 pipe.create('data', 'mf')
-results.read(file='final_results_trunc_1.3', dir=DATA_PATH)
+results.read(file='final_results_trunc_1.3_v2', dir=DATA_PATH)
 
 # Set the pipe names (also the name of a preset model-free model).
 pipes = ['m1', 'm2', 'm3']

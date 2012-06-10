@@ -86,7 +86,7 @@ class Noe_restraints(SystemTestCase):
         ds.file_name = 'phthalic_acid'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -160,7 +160,7 @@ class Noe_restraints(SystemTestCase):
         ds.file_name = 'pseudo_atoms.dat'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [

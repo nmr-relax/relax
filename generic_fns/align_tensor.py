@@ -257,10 +257,10 @@ def delete(tensor=None):
             del(cdp.align_tensors)
 
 
-def display(tensor):
+def display(tensor=None):
     """Function for displaying the alignment tensor.
 
-    @param tensor:          The alignment tensor identification string.
+    @keyword tensor:        The alignment tensor identification string.
     @type tensor:           str or None
     """
 
@@ -576,6 +576,25 @@ def gdo(A):
 
     # Return the GDO.
     return gdo
+
+
+def get_ids():
+    """Return the list of all alignment tensor IDs.
+
+    @return:        The list of all alignment tensors.
+    @rtype:         list of str
+    """
+
+    # No pipe.
+    if cdp == None:
+        return []
+
+    # No tensor data.
+    if not hasattr(cdp, 'align_ids'):
+        return []
+
+    # The tensor IDs.
+    return cdp.align_ids
 
 
 def get_tensor_index(tensor=None, align_id=None, pipe=None):
@@ -1041,7 +1060,7 @@ def matrix_angles(basis_set=0, tensors=None):
     # Initialise the matrix of angles.
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
-    # Header print out.
+    # Header printout.
     sys.stdout.write("\nData pipe: " + repr(pipes.cdp_name()) + "\n")
     sys.stdout.write("\n5D angles in deg between the vectors ")
     if basis_set == 0:

@@ -25,10 +25,12 @@
 
 # Python module imports.
 import wx
+import wx.grid
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.pipes import cdp_name, delete, get_type, pipe_names, switch
+from generic_fns.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
+from graphics import fetch_icon
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -36,15 +38,16 @@ from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.message import Question
-from gui.misc import add_border, gui_to_str, str_to_gui
+from gui.misc import add_border
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
-from gui.user_functions import User_functions
+from gui.string_conv import gui_to_str, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Pipe_editor(wx.Frame):
     """The pipe editor window object."""
 
-    def __init__(self, gui=None, size_x=800, size_y=500, border=10):
+    def __init__(self, gui=None, size_x=1000, size_y=600, border=10):
         """Set up the relax controller frame.
         
         @keyword gui:       The main GUI object.
@@ -63,9 +66,6 @@ class Pipe_editor(wx.Frame):
 
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
-
-        # Initialise the user functions.
-        self.user_functions = User_functions(self)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -133,6 +133,7 @@ class Pipe_editor(wx.Frame):
 
         # Turn off all buttons.
         if status.exec_lock.locked():
+            wx.CallAfter(self.button_bundle.Enable, False)
             wx.CallAfter(self.button_create.Enable, False)
             wx.CallAfter(self.button_copy.Enable, False)
             wx.CallAfter(self.button_delete.Enable, False)
@@ -141,6 +142,7 @@ class Pipe_editor(wx.Frame):
 
         # Turn on all buttons.
         else:
+            wx.CallAfter(self.button_bundle.Enable, True)
             wx.CallAfter(self.button_create.Enable, True)
             wx.CallAfter(self.button_copy.Enable, True)
             wx.CallAfter(self.button_delete.Enable, True)
@@ -165,31 +167,34 @@ class Pipe_editor(wx.Frame):
         if not self.selected_pipe:
             return
 
-        # The pipe type.
+        # The pipe type and bundle.
         pipe_type = get_type(self.selected_pipe)
+        pipe_bundle = get_bundle(self.selected_pipe)
 
         # Initialise the menu.
         menu = wx.Menu()
+        items = []
+
+        # Menu entry:  add the data pipe to a bundle.
+        if not pipe_bundle:
+            items.append(build_menu_item(menu, parent=self, text="&Add the pipe to a bundle", icon=fetch_icon("relax.pipe_bundle"), fn=self.pipe_bundle))
 
         # Menu entry:  delete the data pipe.
-        item = build_menu_item(menu, parent=self, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
+        items.append(build_menu_item(menu, parent=self, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete))
  
         # Menu entry:  switch to this data pipe.
-        item = build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch)
-        menu.AppendItem(item)
-        if status.exec_lock.locked():
-            item.Enable(False)
+        items.append(build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch))
  
         # Menu entry:  new auto-analysis tab.
-        if self.gui.analysis.page_index_from_pipe(self.selected_pipe) == None and pipe_type in ['noe', 'r1', 'r2', 'mf']:
-            item = build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto)
+        if pipe_bundle and self.gui.analysis.page_index_from_bundle(pipe_bundle) == None and pipe_type in ['noe', 'r1', 'r2', 'mf']:
+            items.append(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto))
+ 
+        # Set up the entries.
+        for item in items:
             menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
- 
+
         # Show the menu.
         if status.show_gui:
             self.PopupMenu(menu)
@@ -208,6 +213,14 @@ class Pipe_editor(wx.Frame):
         # Create a horizontal layout for the buttons.
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+        # The bundle button.
+        self.button_bundle = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Bundle")
+        self.button_bundle.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.pipe_bundle", size="22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_bundle.SetFont(font.normal)
+        self.button_bundle.SetToolTipString("Add a data pipe to a data pipe bundle.")
+        button_sizer.Add(self.button_bundle, 1, wx.ALL|wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_bundle)
 
         # The create button.
         self.button_create = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Create")
@@ -258,16 +271,18 @@ class Pipe_editor(wx.Frame):
         """
 
         # Launch the respective user functions.
-        if event.GetEventObject() == self.button_create:
-            self.user_functions.pipe.create()
+        if event.GetEventObject() == self.button_bundle:
+            uf_store['pipe.bundle'](event, wx_parent=self)
+        elif event.GetEventObject() == self.button_create:
+            uf_store['pipe.create'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_copy:
-            self.user_functions.pipe.copy()
+            uf_store['pipe.copy'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_delete:
-            self.user_functions.pipe.delete()
+            uf_store['pipe.delete'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_hybrid:
-            self.user_functions.pipe.hybrid()
+            uf_store['pipe.hybridise'](event, wx_parent=self)
         elif event.GetEventObject() == self.button_switch:
-            self.user_functions.pipe.switch()
+            uf_store['pipe.switch'](event, wx_parent=self)
 
 
     def add_logo(self, box):
@@ -294,14 +309,15 @@ class Pipe_editor(wx.Frame):
         # Grid of all data pipes.
         self.grid = wx.grid.Grid(self.main_panel, -1)
 
-        # Initialise to a single row and 4 columns.
-        self.grid.CreateGrid(1, 4)
+        # Initialise to a single row and 5 columns.
+        self.grid.CreateGrid(1, 5)
 
         # Set the headers.
         self.grid.SetColLabelValue(0, "Data pipe")
         self.grid.SetColLabelValue(1, "Type")
-        self.grid.SetColLabelValue(2, "Current")
-        self.grid.SetColLabelValue(3, "Analysis tab")
+        self.grid.SetColLabelValue(2, "Bundle")
+        self.grid.SetColLabelValue(3, "Current")
+        self.grid.SetColLabelValue(4, "Analysis tab")
 
         # Properties.
         self.grid.SetDefaultCellFont(font.normal)
@@ -331,6 +347,7 @@ class Pipe_editor(wx.Frame):
 
         # The type.
         type = get_type(self.selected_pipe)
+        bundle = get_bundle(self.selected_pipe)
 
         # The name.
         names = {
@@ -341,7 +358,7 @@ class Pipe_editor(wx.Frame):
         }
 
         # Create a new analysis with the selected data pipe.
-        self.gui.analysis.new_analysis(analysis_type=type, analysis_name=names[type], pipe_name=self.selected_pipe)
+        self.gui.analysis.new_analysis(analysis_type=type, analysis_name=names[type], pipe_name=self.selected_pipe, pipe_bundle=bundle)
 
 
     def handler_close(self, event):
@@ -358,6 +375,17 @@ class Pipe_editor(wx.Frame):
 
         # Close the window.
         self.Hide()
+
+
+    def pipe_bundle(self, event):
+        """Bundle the date pipe.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Bundle the data pipe.
+        uf_store['pipe.bundle'](event, wx_parent=self, pipe=self.selected_pipe)
 
 
     def pipe_delete(self, event):
@@ -411,7 +439,7 @@ class Pipe_editor(wx.Frame):
         x, y = self.grid.GetSize()
 
         # Number of columns.
-        n = 4
+        n = 5
 
         # The width of the current data pipe column.
         width_col_curr = 80
@@ -421,8 +449,8 @@ class Pipe_editor(wx.Frame):
 
         # Set the column sizes.
         for i in range(n):
-            # The cdp column.
-            if i == 2:
+            # The narrower cdp column.
+            if i == 3:
                 self.grid.SetColSize(i, width_col_curr)
 
             # All others.
@@ -472,12 +500,15 @@ class Pipe_editor(wx.Frame):
             # Set the pipe type.
             self.grid.SetCellValue(i, 1, str_to_gui(get_type(pipe_list[i])))
 
+            # Set the pipe bundle.
+            self.grid.SetCellValue(i, 2, str_to_gui(get_bundle(pipe_list[i])))
+
             # Set the current pipe.
             if pipe_list[i] == cdp_name():
-                self.grid.SetCellValue(i, 2, str_to_gui("cdp"))
+                self.grid.SetCellValue(i, 3, str_to_gui("cdp"))
 
             # Set the tab the pipe belongs to.
-            self.grid.SetCellValue(i, 3, str_to_gui(self.gui.analysis.page_name_from_pipe(pipe_list[i])))
+            self.grid.SetCellValue(i, 4, str_to_gui(self.gui.analysis.page_name_from_bundle(get_bundle(pipe_list[i]))))
 
         # Set the grid properties once finalised.
         for i in range(self.grid.GetNumberRows()):

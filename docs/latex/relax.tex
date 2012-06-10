@@ -12,6 +12,7 @@
 % Good looking tables.
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{tabularx}
 
 % Obliterate those painful LaTeX margins!
 \usepackage{vmargin}
@@ -33,6 +34,7 @@
 
 % New commands.
 \newcommand{\example}[1]{\vspace{-1ex} \sloppy{\footnotesize \texttt{#1}}}
+\newcommand{\smallexample}[1]{\vspace{-1ex} \sloppy{\scriptsize \texttt{#1}}}
 \newcommand{\keyword}[1]{\textsf{#1}}
 \newcommand{\quotecmd}[1]{`\texttt{#1}'}
 
@@ -44,6 +46,7 @@
 \setlength{\cftsecnumwidth}{10mm}
 \setlength{\cftsubsecnumwidth}{16mm}
 \setlength{\cftfignumwidth}{12mm}
+\setlength{\cfttabnumwidth}{12mm}
 
 % Maths commands.
 \newcommand{\Par}{{\scriptscriptstyle \parallel}}
@@ -141,7 +144,8 @@
 % List of Tables.
 %%%%%%%%%%%%%%%%%
 
-%\listoftables
+\newpage
+\listoftables
 
 
 % Abbreviations.

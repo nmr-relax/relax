@@ -20,64 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""Package for the prompt based interface."""
 
-__all__ = ['align_tensor',
-           'angles',
-           'base_class',
-           'bmrb',
-           'bruker',
-           'command',
-           'consistency_tests',
-           'dasha',
-           'deselect',
-           'diffusion_tensor',
-           'doc_string',
-           'domain',
-           'dx',
-           'eliminate',
-           'fix',
-           'frame_order',
-           'frq',
-           'gpl',
-           'grace',
-           'help',
-           'interpreter',
-           'jw_mapping',
-           'minimisation',
-           'model_free',
-           'model_selection',
-           'molecule',
-           'molmol',
-           'monte_carlo',
-           'n_state_model',
-           'noe',
-           'palmer',
-           'paramag',
-           'pcs',
-           'pipe',
-           'pymol_control',
-           'rdc',
-           'relax_data',
-           'relax_fit',
-           'reset',
-           'residue',
-           'results',
-           'select',
-           'sequence',
-           'spectrum',
-           'spin',
-           'state',
-           'structure',
-           'sys_info',
-           'tab_completion',
-           'temperature',
-           'value',
-           'view',
-           'vmd']
-
-__doc__ = \
-"""Package for the prompt based interface.
-
-The functions should only contain code for checking the validity of arguments.  If any other code is
-required, this should be placed elsewhere.
-"""
+__all__ = [
+    'command',
+    'doc_string',
+    'gpl',
+    'help',
+    'interpreter',
+    'tab_completion',
+    'uf_docstring',
+    'uf_objects'
+]

@@ -55,7 +55,9 @@ class Status(object):
             self._instance.debug = False
             self._instance.pedantic = False
             self._instance.test_mode = False
+            self._instance.uf_intro = False
             self._instance.show_gui = False
+            self._instance.gui_uf_force_sync = False
             self._instance.install_path = self._instance._det_install_path()
 
             # Set up the singleton.
@@ -158,6 +160,9 @@ class Status(object):
 
         # The observer object for the creation of results files.
         self.observers.result_file = Observer('result_file')
+
+        # The observer object for state loading.
+        self.observers.state_load = Observer('state_load')
 
 
     def init_auto_analysis(self, name, type):

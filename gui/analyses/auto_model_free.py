@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,9 +34,10 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
-from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
-from generic_fns.pipes import has_pipe
+from generic_fns.pipes import has_bundle, has_pipe
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
+from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -49,10 +50,10 @@ from gui.components.relax_data import Relax_data_list
 from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
-from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
+from gui.misc import add_border, protected_exec
 from gui import paths
-from gui.user_functions.structure import Read_pdb_page, Vectors_page
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.string_conv import gui_to_int, gui_to_str, list_to_gui, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 
 
@@ -97,15 +98,15 @@ class About_window(About_base):
 
             # The title.
             if level == TITLE:
-                self.draw_title(text, point_size=18)
+                self.draw_title(text, alt_font=font.roman_font_18)
 
             # The section.
             elif level == SECTION:
-                self.draw_title(text, point_size=14)
+                self.draw_title(text, alt_font=font.roman_font_14)
 
             # The section.
             elif level == SUBSECTION:
-                self.draw_title(text, point_size=12)
+                self.draw_title(text, alt_font=font.roman_font_12)
 
             # Paragraphs.
             elif level == PARAGRAPH:
@@ -136,7 +137,7 @@ class About_window(About_base):
 class Auto_model_free(Base_analysis):
     """The model-free auto-analysis GUI element."""
 
-    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, data_index=None):
         """Build the automatic model-free protocol GUI element.
 
         @param parent:          The parent wx element.
@@ -155,8 +156,10 @@ class Auto_model_free(Base_analysis):
         @type gui:              gui.relax_gui.Main instance
         @keyword analysis_name: The name of the analysis (the name in the tab part of the notebook).
         @type analysis_name:    str
-        @keyword pipe_name:     The name of the data pipe associated with this analysis.
+        @keyword pipe_name:     The name of the original data pipe for this analysis.
         @type pipe_name:        str
+        @keyword pipe_bundle:   The name of the data pipe bundle associated with this analysis.
+        @type pipe_bundle:      str
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """
@@ -171,7 +174,11 @@ class Auto_model_free(Base_analysis):
         if data_index == None:
             # First create the data pipe if not already in existence.
             if not has_pipe(pipe_name):
-                self.gui.interpreter.apply('pipe.create', pipe_name, 'mf')
+                self.gui.interpreter.apply('pipe.create', pipe_name=pipe_name, pipe_type='mf', bundle=pipe_bundle)
+
+            # Create the data pipe bundle if needed.
+            if not has_bundle(pipe_bundle):
+                self.gui.interpreter.apply('pipe.bundle', bundle=pipe_bundle, pipe=pipe_name)
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('model-free')
@@ -179,6 +186,7 @@ class Auto_model_free(Base_analysis):
             # Store the analysis and pipe names.
             ds.relax_gui.analyses[data_index].analysis_name = analysis_name
             ds.relax_gui.analyses[data_index].pipe_name = pipe_name
+            ds.relax_gui.analyses[data_index].pipe_bundle = pipe_bundle
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].grid_inc = None
@@ -209,19 +217,19 @@ class Auto_model_free(Base_analysis):
         super(Auto_model_free, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
 
-    def _about(self, event):
+    def _about(self, event=None):
         """The about window.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
         # Initialise the dialog.
-        dialog = About_window(self)
+        self.about_dialog = About_window(self)
 
         # Show the dialog.
         if status.show_gui:
-            dialog.Show()
+            self.about_dialog.Show()
 
 
     def activate(self):
@@ -322,8 +330,9 @@ class Auto_model_free(Base_analysis):
         data = Container()
         missing = []
 
-        # The pipe name.
+        # The pipe name and bundle.
         data.pipe_name = self.data.pipe_name
+        data.pipe_bundle = self.data.pipe_bundle
 
         # The model-free models (do not change these unless absolutely necessary).
         data.local_tm_models = self.local_tm_model_field.GetValue()
@@ -473,7 +482,7 @@ class Auto_model_free(Base_analysis):
         self.add_title(box, "Setup for model-free analysis")
 
         # Display the data pipe.
-        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
         self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -529,10 +538,10 @@ class Auto_model_free(Base_analysis):
         self.relax_data.delete()
 
 
-    def execute(self, event):
+    def execute(self, event=None):
         """Set up, execute, and process the automatic model-free protocol.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -571,10 +580,10 @@ class Auto_model_free(Base_analysis):
         event.Skip()
 
 
-    def load_unit_vectors(self, event):
+    def load_unit_vectors(self, event=None):
         """Create the wizard for structure.read_pdb and structure.vectors.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -582,14 +591,14 @@ class Auto_model_free(Base_analysis):
         wx.BeginBusyCursor()
 
         # Create the wizard.
-        self.vect_wizard = Wiz_window(parent=self.gui, size_x=800, size_y=600, title="Load unit vectors from file")
+        self.vect_wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Load unit vectors from file")
 
         # Create the PDB reading page.
-        page = Read_pdb_page(self.vect_wizard)
+        page = uf_store['structure.read_pdb'].create_page(self.vect_wizard)
         self.vect_wizard.add_page(page, skip_button=True)
 
         # Create the vector loading page.
-        page = Vectors_page(self.vect_wizard)
+        page = uf_store['structure.vectors'].create_page(self.vect_wizard)
         self.vect_wizard.add_page(page)
 
         # Reset the cursor.
@@ -600,10 +609,10 @@ class Auto_model_free(Base_analysis):
         self.vect_wizard.run()
 
 
-    def mode_dialog(self, event):
+    def mode_dialog(self, event=None):
         """The calculation mode selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -624,23 +633,23 @@ class Auto_model_free(Base_analysis):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
-            status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count)
+            status.observers.exec_lock.register(self.data.pipe_bundle, self.activate)
 
         # Unregister.
         else:
             # The model-free methods.
-            status.observers.gui_uf.unregister(self.data.pipe_name)
-            status.observers.exec_lock.unregister(self.data.pipe_name)
+            status.observers.gui_uf.unregister(self.data.pipe_bundle)
+            status.observers.exec_lock.unregister(self.data.pipe_bundle)
 
             # The embedded objects methods.
             self.relax_data.observer_register(remove=True)
 
 
-    def results_directory(self, event):
+    def results_directory(self, event=None):
         """The results directory selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -710,48 +719,60 @@ class Auto_model_free(Base_analysis):
             self.max_iter.SetValue(int(self.data.max_iter))
 
 
-    def value_set_csa(self, event):
+    def value_set_csa(self, event=None):
         """Set the CSA via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('csa')
+
         # Call the user function.
-        user_functions.value.set(param='csa')
+        uf_store['value.set'](val=val, param='csa')
 
 
-    def value_set_heteronuc_type(self, event):
+    def value_set_heteronuc_type(self, event=None):
         """Set the type of heteronucleus via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('heteronuc_type')
+
         # Call the user function.
-        user_functions.value.set(param='heteronuc_type')
+        uf_store['value.set'](val=val, param='heteronuc_type')
 
 
-    def value_set_proton_type(self, event):
+    def value_set_proton_type(self, event=None):
         """Set the type of proton via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('proton_type')
+
         # Call the user function.
-        user_functions.value.set(param='proton_type')
+        uf_store['value.set'](val=val, param='proton_type')
 
 
-    def value_set_r(self, event):
+    def value_set_r(self, event=None):
         """Set the bond length via the value.set uf.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
+        # Get the default value.
+        val = get_specific_fn('default_value')('r')
+
         # Call the user function.
-        user_functions.value.set(param='r')
+        uf_store['value.set'](val=val, param='r')
 
 
 
@@ -762,7 +783,10 @@ class Execute_mf(Execute):
         """Execute the calculation."""
 
         # Start the protocol.
-        dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, results_dir=self.data.save_dir, diff_model=self.data.global_models, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, diff_tensor_grid_inc=self.data.diff_tensor_grid_inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
+        dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, diff_model=self.data.global_models, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, diff_tensor_grid_inc=self.data.diff_tensor_grid_inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
+
+        # Once completed, change the main pipe of the analysis to the final data pipe.
+        ds.relax_gui.analyses[self.data_index].pipe_name = 'final'
 
 
 
@@ -895,10 +919,10 @@ class Local_tm_list:
         self.field.SetValue(list_to_gui(self.GetValue()))
 
 
-    def modify(self, event):
+    def modify(self, event=None):
         """Modify the model-free model selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1216,10 +1240,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         sizer.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
-    def select_ellipsoid(self, event):
+    def select_ellipsoid(self, event=None):
         """The ellipsoid global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1230,10 +1254,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_final(self, event):
+    def select_final(self, event=None):
         """The final stage of the protocol has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1244,10 +1268,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_full_analysis(self, event):
+    def select_full_analysis(self, event=None):
         """The full analysis has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1258,10 +1282,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_local_tm(self, event):
+    def select_local_tm(self, event=None):
         """The local_tm global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1272,10 +1296,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_prolate(self, event):
+    def select_prolate(self, event=None):
         """The prolate global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1286,10 +1310,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_oblate(self, event):
+    def select_oblate(self, event=None):
         """The oblate global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -1300,10 +1324,10 @@ class Protocol_mode_sel_window(wx.Dialog):
         self.Close()
 
 
-    def select_sphere(self, event):
+    def select_sphere(self, event=None):
         """The sphere global model has been selected.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 

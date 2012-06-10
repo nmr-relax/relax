@@ -592,7 +592,7 @@ class Processor(object):
                 # Get the result.
                 result = self.master_receive_result()
 
-                # Debugging print out.
+                # Debugging printout.
                 if verbosity.level():
                     print('\nIdle set:    %s' % idle_set)
                     print('Running set: %s' % running_set)

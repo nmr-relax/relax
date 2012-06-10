@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,19 +24,34 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.minimisation import Minimisation
-from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneListNumError, RelaxNoneNumError, RelaxNumError, RelaxStrError
+from prompt.interpreter import Interpreter
+from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneListNumError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
+from container import Container
 from data_types import DATA_TYPES
 
 
 class Test_minimisation(Minimisation_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.minimisation' module."""
 
-    # Instantiate the user function class.
-    minimisation_fns = Minimisation()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_minimisation, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Place the user functions into a container.
+        self.minimisation_fns = Container()
+        self.minimisation_fns.calc = self.interpreter.calc
+        self.minimisation_fns.grid_search = self.interpreter.grid_search
+        self.minimisation_fns.minimise = self.interpreter.minimise
 
 
     def test_calc_argfail_verbosity(self):
@@ -117,24 +132,6 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             self.assertRaises(RelaxIntError, self.minimisation_fns.grid_search, verbosity=data[1])
 
 
-    def test_minimise_argfail_args(self):
-        """The test of the arguments of the minimise() user function."""
-
-        # No arguments.
-        self.assertRaises(RelaxNoneError, self.minimisation_fns.minimise)
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data[1])
-            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, 'a', data[1])
-            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, 'a', 'b', data[1])
-
-
     def test_minimise_argfail_bad_keyword(self):
         """The test of a bad keyword argument in the minimise() user function."""
 
@@ -142,6 +139,58 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         for data in DATA_TYPES:
             # The argument test.
             self.assertRaises(RelaxError, self.minimisation_fns.minimise, 'Newton', step_tol=data[1])
+
+
+    def test_minimise_argfail_min_algor(self):
+        """The min_algor arg test of the minimise() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data[1])
+
+
+    def test_minimise_argfail_line_search(self):
+        """The line_search arg test of the minimise() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.minimise, 'Newton', line_search=data[1])
+
+
+    def test_minimise_argfail_hessian_mod(self):
+        """The hessian_mod arg test of the minimise() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.minimise, 'Newton', hessian_mod=data[1])
+
+
+    def test_minimise_argfail_hessian_type(self):
+        """The hessian_type arg test of the minimise() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.minimise, 'Newton', hessian_type=data[1])
 
 
     def test_minimise_argfail_func_tol(self):
@@ -170,8 +219,8 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             self.assertRaises(RelaxNoneNumError, self.minimisation_fns.minimise, 'Newton', grad_tol=data[1])
 
 
-    def test_minimise_argfail_max_iterations(self):
-        """The max_iterations arg test of the minimise() user function."""
+    def test_minimise_argfail_max_iter(self):
+        """The max_iter arg test of the minimise() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -180,7 +229,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.minimise, 'Newton', max_iterations=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.minimise, 'Newton', max_iter=data[1])
 
 
     def test_minimise_argfail_constraints(self):

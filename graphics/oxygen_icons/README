@@ -12,3 +12,13 @@ Y saturation        .       -36
 R hue               .       .
 R lightness         .       -44
 R saturation        .       100
+
+
+For the roll.png icons, the image was transformed to RGB, the colours inverted, and colour balance midtones set to:
+    Cyan - Red = -100
+    Magenta - Green = 10
+    Yellow - Blue = 100
+The colour balance highlights were set to:
+    Cyan - Red = -100
+    Magenta - Green = 0
+    Yellow - Blue = 100

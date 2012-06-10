@@ -89,19 +89,6 @@ class API_common:
         """
 
 
-    def _default_value_spin(self, param):
-        """The default spin parameter values.
-
-        @param param:   The spin parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # The default value.
-        return self.SPIN_PARAMS.get_default(param)
-
-
     def _eliminate_false(self, name, value, model_info, args, sim=None):
         """Dummy method for model elimination.
 
@@ -226,19 +213,6 @@ class API_common:
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 
-    def _return_conversion_factor_spin(self, param):
-        """Return the spin specific parameter conversion factor.
-
-        @param param:       The parameter name.
-        @type param:        str
-        @return:            The spin specific parameter conversion factor.
-        @rtype:             None or float
-        """
-
-        # Return the factor.
-        return self.SPIN_PARAMS.get_conv_factor(param)
-
-
     def _return_no_conversion_factor(self, param):
         """Method for returning 1.0.
 
@@ -249,77 +223,6 @@ class API_common:
         """
 
         return 1.0
-
-
-    def _return_data_desc_spin(self, name):
-        """Return a description of the spin parameter.
-
-        @param name:    The name of the spin specific object.
-        @type name:     str
-        @return:        The object description, or None.
-        @rtype:         str or None
-        """
-
-        # Return the name.
-        return self.SPIN_PARAMS.get_desc(name)
-
-
-    def _return_data_name(self, param):
-        """Return a unique identifying string for the global or spin parameter.
-
-        This first returns a global parameter if it exists, followed by a spin parameter, and None if neither exist.
-
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Global parameter.
-        if self.GLOBAL_PARAMS.contains(param):
-            return param
-
-        # Spin parameter.
-        if self.SPIN_PARAMS.contains(param):
-            return param
-
-        # No matches.
-        return None
-
-
-    def _return_data_name_global(self, param):
-        """Return a unique identifying string for the global parameter.
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # No parameter.
-        if not self.GLOBAL_PARAMS.contains(param):
-            return None
-
-        # Return the name.
-        return param
-
-
-    def _return_data_name_spin(self, param):
-        """Return a unique identifying string for the spin parameter.
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # No parameter.
-        if not self.SPIN_PARAMS.contains(param):
-            return None
-
-        # Return the name.
-        return param
 
 
     def _return_data_relax_data(self, spin):
@@ -359,53 +262,6 @@ class API_common:
 
         # Return the list.
         return error
-
-
-    def _return_grace_string_spin(self, param):
-        """Return the Grace string representing the given spin parameter.
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # The string.
-        return self.SPIN_PARAMS.get_grace_string(param)
-
-
-    def _return_units_spin(self, param):
-        """Return a string representing the spin parameter units.
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The string representation of the units.
-        @rtype:         None or str
-        """
-
-        # No parameter.
-        if not self.SPIN_PARAMS.contains(param):
-            return None
-
-        # Return the name.
-        return self.SPIN_PARAMS.get_units(param)
-
-
-    def _return_units_global(self, param):
-        """Return a string representing the global parameter units.
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The string representation of the units.
-        @rtype:         None or str
-        """
-
-        # No parameter.
-        if not self.GLOBAL_PARAMS.contains(param):
-            return None
-
-        # Return the name.
-        return self.GLOBAL_PARAMS.get_units(param)
 
 
     def _return_value_general(self, spin, param, sim=None, bc=False):
@@ -629,7 +485,7 @@ class API_common:
         # Loop over the parameters.
         for i in range(len(param)):
             # Is the parameter is valid?
-            if not self.SPIN_PARAMS.contains(param[i]):
+            if not self.PARAMS.contains(param[i]):
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
             # Spin loop.

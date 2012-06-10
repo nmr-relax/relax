@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,8 +24,14 @@
 """Package for the different GUI components for packing into sizer boxes."""
 
 
-__all__ = ['conversion',
+__all__ = ['base_list',
+           'citations',
+           'conversion',
            'grid',
            'menu',
+           'molecule',
            'relax_data',
+           'relax_data_meta',
+           'scripts',
+           'software',
            'spectrum']

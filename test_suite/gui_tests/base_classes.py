@@ -24,9 +24,11 @@
 """Base classes for the GUI tests."""
 
 # Python module imports.
+from math import pi    # This is needed for relax scripts as pi is located in the relax prompt namespace.
+from os import sep
 import Queue
 from shutil import rmtree
-from tempfile import mkdtemp
+from tempfile import mktemp, mkdtemp
 from unittest import TestCase
 import wx
 
@@ -37,20 +39,29 @@ import dep_check
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from generic_fns.reset import reset
+from prompt.interpreter import exec_script
+from relax_errors import RelaxError
+from relax_io import delete
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui.wizard import Wiz_window
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class GuiTestCase(TestCase):
-    """The GUI specific test case."""
+    """The GUI test base class."""
 
     def __init__(self, methodName=None):
         """Set up the test case class for the system tests."""
 
         # Execute the TestCase __init__ method.
         super(GuiTestCase, self).__init__(methodName)
+
+        # A string used for classifying skipped tests.
+        self._skip_type = 'gui'
 
         # Get the wx app, if the test suite is launched from the gui.
         self.app = wx.GetApp()
@@ -59,6 +70,82 @@ class GuiTestCase(TestCase):
         self._gui_launch = False
         if self.app != None:
             self._gui_launch = True
+
+
+    def _execute_uf(self, *args, **kargs):
+        """Execute the given user function.
+
+        @keyword uf_name:   The name of the user function.
+        @type uf_name:      str
+        """
+
+        # Checks.
+        if 'uf_name' not in kargs:
+            raise RelaxError("The user function name argument 'uf_name' has not been supplied.")
+
+        # Process the user function name.
+        uf_name = kargs.pop('uf_name')
+
+        # Get the user function data object.
+        uf_data = uf_info.get_uf(uf_name)
+
+        # Convert the args into keyword args.
+        for i in range(len(args)):
+            # The keyword name for this arg.
+            name = uf_data.kargs[i]['name']
+
+            # Check.
+            if name in kargs:
+                raise RelaxError("The argument '%s' clashes with the %s keyword argument of '%s'." % (arg[i], name, kargs[name]))
+
+            # Set the keyword arg.
+            kargs[name] = args[i]
+
+        # Add the keyword args not supplied, using the default value.
+        for i in range(len(uf_data.kargs)):
+            # Alias.
+            arg = uf_data.kargs[i]
+
+            # Already set.
+            if arg['name'] in kargs:
+                continue
+
+            # Set the default.
+            kargs[arg['name']] = arg['default']
+
+        # Merge the file and directory args, as needed.
+        for i in range(len(uf_data.kargs)):
+            # Alias.
+            arg = uf_data.kargs[i]
+
+            # File selection and associated directory arg.
+            if arg['arg_type'] == 'dir' and arg['name'] in kargs:
+                # Find the associated file selection arg name.
+                for j in range(len(uf_data.kargs)):
+                    if uf_data.kargs[j]['arg_type'] == 'file sel':
+                        file_sel_name = uf_data.kargs[j]['name']
+
+                # Prepend the directory to the file, if needed and supplied.
+                if file_sel_name in kargs and kargs[arg['name']]:
+                    kargs[file_sel_name] = kargs[arg['name']] + sep + kargs[file_sel_name]
+
+                # Remove the directory argument.
+                kargs.pop(arg['name'])
+
+        # The user function object.
+        uf = uf_store[uf_name]
+
+        # Force synchronous operation of the user functions.
+        status.gui_uf_force_sync = True
+
+        # Call the GUI user function object with all keyword args, but do not execute the wizard.
+        uf(**kargs)
+
+        # Execute the user function, by mimicking a click on 'ok'.
+        uf.wizard._ok()
+
+        # Restore the synchronous or asynchronous operation of the user functions so the GUI can return to normal.
+        status.gui_uf_force_sync = False
 
 
     def check_exceptions(self):
@@ -77,33 +164,28 @@ class GuiTestCase(TestCase):
             pass
 
 
-    def execute_uf(self, page=None, **kargs):
-        """Execute the given user function.
+    def script_exec(self, script):
+        """Execute a GUI script within the GUI test framework.
 
-        @keyword page:  The user function page.
-        @type page:     Wizard page
+        @param script:  The full path of the script to execute.
+        @type script:   str
         """
 
-        # Create and store a wizard instance to be used in all user function pages (if needed).
-        if not hasattr(self, '_wizard'):
-            self._wizard = Wiz_window(self.app.gui)
+        # The namespace to pass into the script execution environment.
+        space = locals()
 
-        # Initialise the page (adding it to the wizard).
-        uf_page = page(self._wizard)
+        # Place some objects in the local namespace.
+        space.update({'pi': pi})
 
-        # Set all the values.
-        for key in kargs:
-            uf_page.SetValue(key=key, value=kargs[key])
-
-        # Execute the user function.
-        uf_page.on_execute()
-
-        # Flush the interpreter to force synchronous user functions operation.
-        interpreter.flush()
+        # Execute the script.
+        exec_script(script, space)
 
 
     def setUp(self):
         """Set up for all the functional tests."""
+
+        # Create a temporary file for the tests that need it.
+        ds.tmpfile = mktemp()
 
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()
@@ -122,6 +204,9 @@ class GuiTestCase(TestCase):
 
     def tearDown(self):
         """Default tearDown operation - delete temp directories and files and reset relax."""
+
+        # Flush all wx events prior to the clean up operations of this method.  This prevents these events from occurring after the GUI elements have been deleted.
+        wx.Yield()
 
         # Remove the temporary directories.
         if hasattr(ds, 'tmpdir'):
@@ -176,17 +261,6 @@ class GuiTestCase(TestCase):
 
                 # Destroy the Python object part.
                 delattr(self.app.gui, window)
-
-        # Destroy the GUI.
-        if not self._gui_launch and hasattr(self.app, 'gui'):
-            self.app.gui.Destroy()
-
-        # Recreate the GUI data object.
-        ds.relax_gui = Gui()
-
-        # Delete any wizard objects.
-        if hasattr(self, '_wizard'):
-            del self._wizard
 
         # Flush all wx events to make sure the GUI is ready for the next test.
         wx.Yield()

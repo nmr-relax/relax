@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.select import Select
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 # Unit test imports.
@@ -34,8 +34,19 @@ from data_types import DATA_TYPES
 class Test_select(TestCase):
     """Unit tests for the functions of the 'prompt.select' module."""
 
-    # Instantiate the user function class.
-    select_fns = Select()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_select, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.select_fns = self.interpreter.select
 
 
     def test_read_argfail_file(self):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -44,7 +44,7 @@ class Modelim(SystemTestCase):
         """Test the elimination of a model-free model with te = 200 ns."""
 
         # Read a results file.
-        self.interpreter.results.read(file='final_results_trunc_1.3', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        self.interpreter.results.read(file='final_results_trunc_1.3_v2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Set the te value for residue 11 Leu to 200 ns.
         self.interpreter.value.set(200*1e-9, 'te', spin_id=":11")
@@ -63,7 +63,7 @@ class Modelim(SystemTestCase):
         """Test the elimination of a model-free model with the local tm = 51 ns."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
 
         # Checks.
         self.assert_(return_spin(':13').select)

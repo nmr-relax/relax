@@ -521,7 +521,7 @@ class Scientific_data(Base_struct_API):
         @rtype:                 bool
         """
 
-        # Initial print out.
+        # Initial printout.
         if verbosity:
             print("\nScientific Python PDB parser.")
 
@@ -670,15 +670,17 @@ class MolContainer:
     """The empty list-type container for the non-protein and non-RNA molecular information."""
 
 
-    def from_xml(self, mol_node):
+    def from_xml(self, mol_node, file_version=1):
         """Recreate the MolContainer from the XML molecule node.
 
-        @param mol_node:    The molecule XML node.
-        @type mol_node:     xml.dom.minicompat.NodeList instance
+        @param mol_node:        The molecule XML node.
+        @type mol_node:         xml.dom.minicompat.NodeList instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Recreate the current molecule container.
-        xml_to_object(mol_node, self)
+        xml_to_object(mol_node, self, file_version=file_version)
 
         # Re-load the data.
         self.reload_pdb()

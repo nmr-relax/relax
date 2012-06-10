@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -90,12 +90,12 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
 
             # Write out the elements.
             if abs(daeg[i, j]) > epsilon:
-                # Integer print out.
+                # Integer printout.
                 if integer:
                     val = int(daeg[i, j])
                     format = "%4i%s"
 
-                # Float print out.
+                # Float printout.
                 else:
                     val = daeg[i, j]
                     format = "%10.4f%s"
@@ -110,11 +110,11 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
 
             # Write out the zero elements.
             else:
-                # Integer print out.
+                # Integer printout.
                 if integer:
                     format = "%4s%s"
 
-                # Float print out.
+                # Float printout.
                 else:
                     format = "%10s%s"
 

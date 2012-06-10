@@ -39,8 +39,9 @@ from status import Status; status = Status()
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, str_to_gui
+from gui.misc import add_border
 from gui.paths import IMAGE_PATH, icon_16x16
+from gui.string_conv import str_to_gui
 from info import Info_box
 
 
@@ -122,7 +123,7 @@ class Controller(wx.Frame):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
 
-        # The relax intro print out, to mimic the prompt/script interface.
+        # The relax intro printout, to mimic the prompt/script interface.
         info = Info_box()
         print(info.intro_text())
 
@@ -251,9 +252,9 @@ class Controller(wx.Frame):
         if data == None:
             return
 
-        # Return the pipe name, if it exists, as the key.
-        if hasattr(data, 'pipe_name'):
-            return data.pipe_name
+        # Return the pipe bundle, if it exists, as the key.
+        if hasattr(data, 'pipe_bundle'):
+            return data.pipe_bundle
 
 
     def create_mf(self, sizer):
@@ -1092,7 +1093,7 @@ class Redirect_text(object):
         @type string:   str
         """
 
-        # Debugging print out to the terminal.
+        # Debugging printout to the terminal.
         if status.debug or status.test_mode:
             self.orig_io.write(string)
 
