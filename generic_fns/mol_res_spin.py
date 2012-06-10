@@ -45,8 +45,7 @@ from warnings import warn
 
 # relax module imports.
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from generic_fns import pipes
-from generic_fns import relax_re
+from generic_fns import exp_info, pipes, relax_re
 from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
@@ -555,6 +554,9 @@ def bmrb_read(star):
 
         # Create the molecule.
         create_molecule(mol_name=mol_name, mol_type=mol_type)
+
+        # The thiol state.
+        exp_info.thiol_state(data['thiol_state'])
 
         # Add the residues.
         for i in range(len(data['res_nums'])):
