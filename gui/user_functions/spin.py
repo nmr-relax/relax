@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -339,7 +339,8 @@ class Create_page(UF_page, Mol_res_spin):
         # The list of molecule names.
         if cdp_name():
             for mol in molecule_loop():
-                self.mol.Append(str_to_gui(mol.name))
+                if mol.name != None:
+                    self.mol.Append(str_to_gui(mol.name))
 
         # The default molecule.
         if self.defaults.has_key('mol') and self.defaults['mol']:
@@ -356,25 +357,11 @@ class Create_page(UF_page, Mol_res_spin):
     def on_execute(self):
         """Execute the user function."""
 
-        # Get the molecule info.
-        mol_name = str(self.mol.GetValue())
-        if mol_name == '':
-            mol_name = None
-
-        # The residue info.
+        # Get the spin info.
+        mol_name = gui_to_str(self.mol.GetValue())
         res_num, res_name = self._get_res_info()
-
-        # The spin number.
-        spin_num = str(self.spin_num.GetValue())
-        if spin_num == '':
-            spin_num = None
-        else:
-            spin_num = int(spin_num)
-
-        # The spin name.
-        spin_name = str(self.spin_name.GetValue())
-        if spin_num == '':
-            spin_num = None
+        spin_num = gui_to_int(self.spin_num.GetValue())
+        spin_name = gui_to_str(self.spin_name.GetValue())
 
         # Set the name.
         self.execute('spin.create', spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)

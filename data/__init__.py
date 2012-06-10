@@ -69,7 +69,11 @@ class Relax_data_store(dict):
 
         # First initialisation.
         if self.instance is None:
+            # Create a new instance.
             self.instance = dict.__new__(self, *args, **kargs)
+
+            # Add some initial structures.
+            self.instance.relax_gui = Gui()
 
         # Already initialised, so return the instance.
         return self.instance
@@ -171,6 +175,9 @@ class Relax_data_store(dict):
         # Reset the current data pipe.
         __builtin__.cdp = None
 
+        # Re-add the GUI object.
+        self.instance.relax_gui = Gui()
+
         # Signal the change.
         status.observers.reset.notify()
         status.observers.pipe_alteration.notify()
@@ -209,17 +216,25 @@ class Relax_data_store(dict):
             status.observers.pipe_alteration.notify()
 
 
-    def is_empty(self):
+    def is_empty(self, verbosity=False):
         """Method for testing if the relax data store is empty.
 
-        @return:    True if the data store is empty, False otherwise.
-        @rtype:     bool
+        @keyword verbosity: A flag which if True will cause messages to be printed to STDERR.
+        @type verbosity:    bool
+        @return:            True if the data store is empty, False otherwise.
+        @rtype:             bool
         """
 
         # No pipes should exist.
         if not self.keys() == []:
-            stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
+            if verbosity:
+                stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
             return False
+
+        # Objects which should be in here.
+        blacklist = [
+                'relax_gui'
+        ]
 
         # An object has been added to the data store.
         for name in dir(self):
@@ -235,8 +250,13 @@ class Relax_data_store(dict):
             if search("^__", name):
                 continue
 
+            # Blacklisted objects to skip.
+            if name in blacklist:
+                continue
+
             # An object has been added.
-            stderr.write("The relax data store contains the object %s.\n" % name)
+            if verbosity:
+                stderr.write("The relax data store contains the object %s.\n" % name)
             return False
 
         # The data store is empty.
@@ -280,10 +300,6 @@ class Relax_data_store(dict):
         # Get the GUI nodes.
         gui_nodes = relax_node.getElementsByTagName('relax_gui')
         if gui_nodes:
-            # Create the GUI object.
-            self.relax_gui = Gui()
-
-            # Fill its contents.
             self.relax_gui.from_xml(gui_nodes[0])
 
         # Recreate all the data store data structures.

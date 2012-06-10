@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,6 +32,7 @@ from unittest import TestSuite
 from align_tensor import Align_tensor
 from angles import Angles
 from bmrb import Bmrb
+from bruker import Bruker
 from consistency_tests import Ct
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
@@ -43,11 +44,11 @@ from load_spins import Load_spins
 from model_elimination import Modelim
 from model_free import Mf
 from model_selection import Modsel
+from mol_res_spin import Mol_res_spin
 from n_state_model import N_state_model
 from noe import Noe
 from noe_restraints import Noe_restraints
 from palmer import Palmer
-from pdc import Pdc
 from peak_lists import Peak_lists
 from pipes import Pipes
 from rdc import Rdc
@@ -64,7 +65,8 @@ from unit_vectors import Unit_vectors
 
 __all__ = ['align_tensor',
            'angles',
-           'brmb',
+           'bmrb',
+           'bruker',
            'consistency_tests',
            'dasha'
            'diffusion_tensor',
@@ -80,7 +82,6 @@ __all__ = ['align_tensor',
            'noe',
            'noe_restraints',
            'palmer',
-           'pdc',
            'peak_lists'
            'pipes',
            'rdc',
@@ -134,6 +135,7 @@ class System_test_runner:
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Bruker))
             suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
@@ -146,11 +148,11 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Mol_res_spin))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
             suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
-            suite_array.append(TestLoader().loadTestsFromTestCase(Pdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))

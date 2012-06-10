@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from math import modf
 from numpy import array, float64, int32, ones, zeros
 import string
 import sys
@@ -77,6 +78,9 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     # Check if the type is valid.
     if ri_type and ri_type not in VALID_TYPES:
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
+
+    # Frequency checks.
+    frq_checks(frq)
 
     # Initialise the global data for the current pipe if necessary.
     if not hasattr(cdp, 'frq'):
@@ -474,15 +478,40 @@ def delete(ri_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Check the ID.
+    if ri_id == None:
+        raise RelaxError("The relaxation data ID string must be supplied.")
+
     # Test if data exists.
     if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
         raise RelaxNoRiError(ri_id)
 
-    # Loop over the spins.
+    # Pop the ID, and remove it from the frequency and type lists.
+    cdp.ri_ids.pop(cdp.ri_ids.index(ri_id))
+    del cdp.frq[ri_id]
+    del cdp.ri_type[ri_id]
+
+    # Prune empty structures.
+    if len(cdp.ri_ids) == 0:
+        del cdp.ri_ids
+    if len(cdp.frq) == 0:
+        del cdp.frq
+    if len(cdp.ri_type) == 0:
+        del cdp.ri_type
+
+    # Loop over the spins, deleting the relaxation data and errors when present.
     for spin in spin_loop():
-        # Relaxation data and errors.
-        del spin.ri_data[ri_id]
-        del spin.ri_data_err[ri_id]
+        # Data deletion.
+        if hasattr(spin, 'ri_data') and spin.ri_data.has_key(ri_id):
+            del spin.ri_data[ri_id]
+        if hasattr(spin, 'ri_data_err') and spin.ri_data_err.has_key(ri_id):
+            del spin.ri_data_err[ri_id]
+
+        # Prune empty structures.
+        if hasattr(spin, 'ri_data') and len(spin.ri_data) == 0:
+            del spin.ri_data
+        if hasattr(spin, 'ri_data_err') and len(spin.ri_data_err) == 0:
+            del spin.ri_data_err
 
 
 def display(ri_id=None):
@@ -505,6 +534,27 @@ def display(ri_id=None):
 
     # Print the data.
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
+
+
+def frq_checks(frq):
+    """Perform a number of checks on the given frequency.
+
+    @param frq:     The proton frequency value.
+    @type frq:      float or None
+    """
+
+    # No frequency given.
+    if frq == None:
+        return
+
+    # Make sure the precise value has been supplied.
+    frac, integer = modf(frq / 1e6)
+    if frac == 0.0 or frac > 0.99999:
+        warn(RelaxWarning("The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."))
+
+    # Check that Hz have been supplied.
+    if frq < 1e6:
+        warn(RelaxWarning("The proton frequency of %s should be in Hz, but it seems to be in MHz." % frq))
 
 
 def frq_loop():
@@ -793,30 +843,39 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     if ri_type not in VALID_TYPES:
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
+    # Frequency checks.
+    frq_checks(frq)
+
     # Loop over the file data to create the data structures for packing.
     values = []
     errors = []
-    ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
-            id, value, error = data
+            mol_name, res_num, res_name, spin_num, spin_name, value, error = data
         elif data_col:
-            id, value = data
+            mol_name, res_num, res_name, spin_num, spin_name, value = data
             error = None
         else:
-            id, error = data
+            mol_name, res_num, res_name, spin_num, spin_name, error = data
             value = None
 
-        # Pack the spin ID info.
-        ids.append(id)
-
-        # Convert the data.
+        # Store all the info.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin_num)
+        spin_names.append(spin_name)
         values.append(value)
         errors.append(error)
 
     # Pack the data.
-    pack_data(ri_id, ri_type, frq, values, errors, ids)
+    pack_data(ri_id, ri_type, frq, values, errors, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
 def return_data_desc(name):

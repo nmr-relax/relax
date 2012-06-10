@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -516,44 +516,48 @@ class Structure(User_fn_class):
 
 
     def read_xyz(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None):
-        """The XYZ loading function.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.read_xyz("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", read_mol=" + repr(read_mol)
+            text = text + ", set_mol_name=" + repr(set_mol_name)
+            text = text + ", read_model=" + repr(read_model)
+            text = text + ", set_model_num=" + repr(set_model_num)
+            text = text +  ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
+        arg_check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
+        arg_check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
+        arg_check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
 
-        file:  The name of the XYZ file.
-
-        dir:  The directory where the file is located.
-
-        read_mol:  If set, only the given molecule(s) will be read.
-
-        set_mol_name:  Set the names of the read molecules.
-
-        read_model:  If set, only the given model number(s) from the XYZ file will be read.
-
-        set_model_num:  Set the model numbers of the read molecules.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The XYZ files with different models, which defined as an ensemble of the same molecule but with 
-        different atomic positions, can be read into relax. If there are several molecules in one xyz file, 
-        please seperate them into different files and then load them individually. Loading different models
-        and different molecules is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 
-        'read_model', and 'set_model_num'.
+        # Execute the functional code.
+        generic_fns.structure.main.read_xyz(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
 
 
-        The 'set_mol_name' argument is used to name the molecules within the XYZ (within one
-        model).  If not set, then the molecules will be named after the file name, with the molecule
-        number appended if more than one exists.
+    # The function doc info.
+    read_xyz._doc_title = "Reading structures from XYZ files."
+    read_xyz._doc_title_short = "XYZ reading."
+    read_xyz._doc_args = [
+        ["file", "The name of the XYZ file."],
+        ["dir", "The directory where the file is located."],
+        ["read_mol", "If set, only the given molecule(s) will be read.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read."],
+        ["set_mol_name", "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names."],
+        ["read_model", "If set, only the given model number(s) from the PDB file will be read.  This can be a single number or list of numbers."],
+        ["set_model_num", "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers."]]
+    read_xyz._doc_desc = """
+        The XYZ files with different models, which defined as an ensemble of the same molecule but with different atomic positions, can be read into relax. If there are several molecules in one xyz file, please seperate them into different files and then load them individually. Loading different models and different molecules is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and 'set_model_num'.
+
+        The 'set_mol_name' argument is used to name the molecules within the XYZ (within one model).  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
 
         Note that relax will complain if it cannot work out what to do.
-
-
-        Examples
-        ~~~~~~~~
-
+        """
+    read_xyz._doc_examples = """
         To load all structures from the XYZ file 'test.xyz' in the directory '~/xyz', including all
         models and all molecules, type one of:
 
@@ -587,29 +591,7 @@ class Structure(User_fn_class):
         relax> structure.read_xyz('test_4.xyz', set_mol_name='test_4',
                                   set_model_num=4)
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.read_xyz("
-            text = text + "file=" + repr(file)
-            text = text + ", dir=" + repr(dir)
-            text = text + ", read_mol=" + repr(read_mol)
-            text = text + ", set_mol_name=" + repr(set_mol_name)
-            text = text + ", read_model=" + repr(read_model)
-            text = text + ", set_model_num=" + repr(set_model_num)
-            text = text +  ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(file, 'file name')
-        arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
-        arg_check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
-        arg_check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
-        arg_check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
-
-        # Execute the functional code.
-        generic_fns.structure.main.read_xyz(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
+    _build_doc(read_xyz)
 
 
     def rotate(self, R=None, origin=None, model=None, atom_id=None):

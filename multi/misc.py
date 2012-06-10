@@ -28,6 +28,10 @@ This is for internal use only.  To access the multi-processor API, see the __ini
 """
 
 # Python module imports.
+try:
+    import importlib
+except:
+    importlib = None
 import sys
 import traceback, textwrap
 
@@ -45,22 +49,30 @@ def import_module(module_path):
 
     result = None
 
-    # Import the module.
-    module = __import__(module_path, globals(), locals(), [])
+    # Import the module using the new Python 2.7 way.
+    if importlib != None:
+        module = importlib.import_module(module_path)
 
-    # Debugging.
-    verbosity = Verbosity()
-    if verbosity.level() > 2:
-        print('loaded module %s' % module_path)
+        # Return the module as a list.
+        return [module]
 
-    #FIXME: needs more failure checking
-    if module != None:
-        result = [module]
-        components = module_path.split('.')
-        for component in components[1:]:
-            module = getattr(module, component)
-            result.append(module)
-    return result
+    # Import the module using the old way.
+    else:
+        module = __import__(module_path, globals(), locals(), [])
+
+        # Debugging.
+        verbosity = Verbosity()
+        if verbosity.level() > 2:
+            print('loaded module %s' % module_path)
+
+        #FIXME: needs more failure checking
+        if module != None:
+            result = [module]
+            components = module_path.split('.')
+            for component in components[1:]:
+                module = getattr(module, component)
+                result.append(module)
+        return result
 
 
 def raise_unimplemented(method):

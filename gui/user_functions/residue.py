@@ -32,7 +32,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_str, str_to_gui
+from gui.misc import gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
 
@@ -254,7 +254,8 @@ class Create_page(UF_page, Mol_res_spin):
         # The list of molecule names.
         if cdp_name():
             for mol in molecule_loop():
-                self.mol_name.Append(str_to_gui(mol.name))
+                if mol.name != None:
+                    self.mol_name.Append(str_to_gui(mol.name))
 
         # The default molecule.
         if self.defaults.has_key('mol_name') and self.defaults['mol_name']:
@@ -264,22 +265,10 @@ class Create_page(UF_page, Mol_res_spin):
     def on_execute(self):
         """Execute the user function."""
 
-        # The molecule name.
-        mol_name = str(self.mol_name.GetValue())
-        if mol_name == '':
-            mol_name = None
-
-        # The residue number.
-        res_num = str(self.res_num.GetValue())
-        if res_num == '':
-            res_num = None
-        else:
-            res_num = int(res_num)
-
-        # The residue name.
-        res_name = str(self.res_name.GetValue())
-        if res_num == '':
-            res_num = None
+        # Get the spin info.
+        mol_name = gui_to_str(self.mol_name.GetValue())
+        res_num = gui_to_int(self.res_num.GetValue())
+        res_name = gui_to_str(self.res_name.GetValue())
 
         # Set the name.
         self.execute('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)

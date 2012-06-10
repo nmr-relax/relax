@@ -47,9 +47,11 @@ class Rdc(SystemTestCase):
 
         # Load the spins.
         self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+        self.interpreter.sequence.display()
 
         # Load the RDCs.
         self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id_col=1, data_col=2, error_col=3)
+        self.interpreter.sequence.display()
 
         # The RDCs.
         rdcs = [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, 1.33652530397, -1.6021670281]

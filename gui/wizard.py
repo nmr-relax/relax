@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,9 +38,10 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
+from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
+from gui.wizard_elements import Integer, String, String_list, String_list_of_lists
 
 
 class Wiz_page(wx.Panel):
@@ -94,6 +95,9 @@ class Wiz_page(wx.Panel):
 
         # Initilise some variables.
         self.exec_status = False
+
+        # The wizard GUI element storage.
+        self._elements = {}
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
@@ -255,6 +259,60 @@ class Wiz_page(wx.Panel):
             self.sep.SetValue(str_to_gui("white space"))
         else:
             self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
+
+
+    def Clear(self, key):
+        """Special wizard method for clearing the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.
+        @type key:      str
+        """
+
+        # Call the element's method.
+        self._elements[key].Clear()
+
+
+    def GetValue(self, key):
+        """Special wizard method for getting the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.
+        @type key:      str
+        @return:        The value that the specific GUI element's GetValue() method returns.
+        @rtype:         unknown
+        """
+
+        # Call the element's method.
+        return self._elements[key].GetValue()
+
+
+    def ResetChoices(self, key, combo_choices=None, combo_data=None, combo_default=None):
+        """Special wizard method for resetting the list of choices in a ComboBox type element.
+
+        @param key:             The key corresponding to the desired GUI element.
+        @type key:              str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        """
+
+        # Call the element's method.
+        self._elements[key].ResetChoices(combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default)
+
+
+    def SetValue(self, key, value):
+        """Special wizard method for setting the value of the GUI element corresponding to the key.
+
+        @param key:     The key corresponding to the desired GUI element.
+        @type key:      str
+        @param value:   The value that the specific GUI element's SetValue() method expects.
+        @type value:    unknown
+        """
+
+        # Call the element's method.
+        self._elements[key].SetValue(value)
 
 
     def add_artwork(self, sizer):
@@ -521,7 +579,133 @@ class Wiz_page(wx.Panel):
         return combo
 
 
-    def file_selection(self, sizer, desc, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None):
+    def element_int(self, key=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
+        """Set up the integer element and store it.
+
+        @keyword key:       The dictionary key to store the element with.
+        @type key:          str
+        @keyword sizer:     The sizer to put the input field widget into.
+        @type sizer:        wx.Sizer instance
+        @keyword desc:      The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        """
+
+        # Create the element.
+        element = Integer(name=key, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+
+        # Store it.
+        self._elements[key] = element
+
+
+    def element_string(self, key=None, element_type='text', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=False):
+        """Set up the string element and store it.
+
+        @keyword key:           The dictionary key to store the element with.
+        @type key:              str
+        @keyword element_type:  The type of GUI element to create.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
+        @type element_type:     str
+        @keyword sizer:         The sizer to put the input field widget into.
+        @type sizer:            wx.Sizer instance
+        @keyword desc:          The text description.
+        @type desc:             str
+        @keyword combo_choices: The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:    list of str
+        @keyword combo_data:    The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:       list
+        @keyword combo_default: The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:    str or None
+        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
+        @type tooltip:          str
+        @keyword divider:       The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:          None or int
+        @keyword padding:       Spacing to the left and right of the widgets.
+        @type padding:          int
+        @keyword spacer:        The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:           None or int
+        @keyword read_only:     A flag which if True means that the text of the element cannot be edited.
+        @type read_only:        bool
+        """
+
+        # Create the element.
+        element = String(name=key, parent=self, element_type=element_type, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, read_only=read_only)
+
+        # Store it.
+        self._elements[key] = element
+
+
+    def element_string_list(self, key=None, element_type='default', sizer=None, desc=None, combo_choices=None, combo_data=None, combo_default=None, combo_list_size=None, tooltip=None, divider=None, padding=0, spacer=None):
+        """Set up the element and store it.
+
+        @keyword key:               The dictionary key to store the element with.
+        @type key:                  str
+        @keyword element_type:      The type of GUI element to create.  If set to 'default', the wx.TextCtrl element with a button to bring up a dialog with ListCtrl will be used.  If set to 'combo_list', the special gui.components.combo_list.Combo_list element will be used.
+        @type element_type:         str
+        @keyword sizer:             The sizer to put the input field widget into.
+        @type sizer:                wx.Sizer instance
+        @keyword desc:              The text description.
+        @type desc:                 str
+        @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
+        @type combo_choices:        list of str
+        @keyword combo_data:        The data returned by a call to GetValue().  This is only used if the element_type is set to 'combo'.  If supplied, it should be the same length at the combo_choices list.  If not supplied, the combo_choices list will be used for the returned data.
+        @type combo_data:           list
+        @keyword combo_default:     The default value of the ComboBox.  This is only used if the element_type is set to 'combo'.
+        @type combo_default:        str or None
+        @keyword combo_list_size:   The number of initial entries in a Combo_list object.
+        @type combo_list_size:      int or None
+        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
+        @type tooltip:              str
+        @keyword divider:           The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:              None or int
+        @keyword padding:           Spacing to the left and right of the widgets.
+        @type padding:              int
+        @keyword spacer:            The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:               None or int
+        """
+
+        # Create the element.
+        element = String_list(name=key, element_type=element_type, parent=self, sizer=sizer, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_default=combo_default, combo_list_size=combo_list_size, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+
+        # Store it.
+        self._elements[key] = element
+
+
+    def element_string_list_of_lists(self, key=None, titles=None, sizer=None, desc=None, tooltip=None, divider=None, padding=0, spacer=None):
+        """Set up the element and store it.
+
+        @keyword key:       The dictionary key to store the element with.
+        @type key:          str
+        @keyword titles:    The titles of each of the elements of the fixed width second dimension.
+        @type titles:       list of str
+        @keyword sizer:     The sizer to put the input field widget into.
+        @type sizer:        wx.Sizer instance
+        @keyword desc:      The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        """
+
+        # Create the element.
+        element = String_list_of_lists(name=key, titles=titles, parent=self, sizer=sizer, desc=desc, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer)
+
+        # Store it.
+        self._elements[key] = element
+
+
+    def file_selection(self, sizer, desc, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=True):
         """Build the file selection element.
 
         @param sizer:       The sizer to put the input field into.
@@ -542,6 +726,8 @@ class Wiz_page(wx.Panel):
         @type padding:      int
         @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:       None or int
+        @keyword preview:   A flag which if true will allow the file to be previewed.
+        @type preview:      bool
         @return:            The file selection GUI element.
         @rtype:             wx.TextCtrl
         """
@@ -566,7 +752,10 @@ class Wiz_page(wx.Panel):
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
-        field = wx.TextCtrl(self, -1, '')
+        if not hasattr(self, 'file_selection_field'):
+            self.file_selection_field = []
+        self.file_selection_field.append(wx.TextCtrl(self, -1, ''))
+        field = self.file_selection_field[-1]
         field.SetMinSize((-1, self.height_element))
         field.SetFont(font.normal)
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -582,6 +771,22 @@ class Wiz_page(wx.Panel):
         button.SetMinSize((self.height_element, self.height_element))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, obj.select_event, button)
+
+        # File preview.
+        if not hasattr(self, 'file_selection_preview_button'):
+            self.file_selection_preview_button = []
+        if not preview:
+            self.file_selection_preview_button.append(None)
+        else:
+            # A little spacing.
+            sub_sizer.AddSpacer(5)
+
+            # The preview button.
+            self.file_selection_preview_button.append(wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY)))
+            button = self.file_selection_preview_button[-1]
+            button.SetMinSize((self.height_element, self.height_element))
+            sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+            self.Bind(wx.EVT_BUTTON, self.preview_file, button)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -802,7 +1007,7 @@ class Wiz_page(wx.Panel):
     def on_execute(self):
         """To be over-ridden if an action is to be performed just before exiting the page.
 
-        This method is called when terminating the wizard or hitting the apply button. 
+        This method is called when terminating the wizard or hitting the apply button.
         """
 
 
@@ -818,6 +1023,36 @@ class Wiz_page(wx.Panel):
 
         This method is called when moving to the next page of the wizard.
         """
+
+
+    def preview_file(self, event):
+        """Preview a file.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Find the correct button.
+        button = event.GetEventObject()
+        index = None
+        for i in range(len(self.file_selection_preview_button)):
+            if button == self.file_selection_preview_button[i]:
+                index = i
+                break
+
+        # No match.
+        if index == None:
+            return
+
+        # The file name.
+        file = gui_to_str(self.file_selection_field[index].GetValue())
+
+        # No file, so do nothing.
+        if file == None:
+            return
+
+        # Open the file as text.
+        open_file(file, force_text=True)
 
 
     def spin_control(self, sizer, desc, default='', min=0, max=100, tooltip=None, divider=None, padding=0, spacer=None):
@@ -1039,7 +1274,7 @@ class Wiz_window(wx.Dialog):
     TEXT_APPLY = " Apply"
     TEXT_BACK = " Back"
     TEXT_CANCEL = " Cancel"
-    TEXT_FINISH = " Apply"
+    TEXT_FINISH = " Finish"
     TEXT_NEXT = " Next"
     TEXT_OK = " OK"
     TEXT_SKIP = " Skip"
@@ -1366,7 +1601,7 @@ class Wiz_window(wx.Dialog):
         # Return the next page.
         return self._current_page + 1
 
-        
+
     def _ok(self, event):
         """Accept the operation.
 

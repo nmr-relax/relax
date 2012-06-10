@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -68,12 +68,12 @@ SOFTWARE['Sparky'].ref = "Goddard, T. D. and Kneller, D. G., SPARKY 3, Universit
 SOFTWARE['Sparky'].url = "http://www.cgl.ucsf.edu/home/sparky/"
 SOFTWARE['Sparky'].tasks = ["spectral analysis"]
 
-# Protein Dynamics Center software.
-SOFTWARE['PDC'] = Software_store()
-SOFTWARE['PDC'].name = "Protein Dynamics Center"
-SOFTWARE['PDC'].authors = "Bruker BioSpin GmbH"
-SOFTWARE['PDC'].url = "http://www.bruker-biospin.com"
-SOFTWARE['PDC'].tasks = ["relaxation analysis"]
+# Bruker Dynamics Center software.
+SOFTWARE['DC'] = Software_store()
+SOFTWARE['DC'].name = "Bruker Dynamics Center"
+SOFTWARE['DC'].authors = "Bruker BioSpin GmbH"
+SOFTWARE['DC'].url = "http://www.bruker-biospin.com/software_nmr.html"
+SOFTWARE['DC'].tasks = ["relaxation analysis"]
 
 
 def bmrb_write_citations(star):
@@ -313,7 +313,7 @@ def software_select(name, version=None):
     """
 
     # Unknown program.
-    if name not in ['relax', 'NMRPipe', 'Sparky', 'Bruker PDC']:
+    if name not in ['relax', 'NMRPipe', 'Sparky', 'Bruker DC']:
         raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
 
     # Set up the experimental info data container, if needed.
@@ -354,10 +354,10 @@ def software_select(name, version=None):
         software_keys.append('Sparky')
         versions.append(version)
 
-    # Bruker Protein Dynamics Center.
-    elif name == 'Bruker PDC':
+    # Bruker Dynamics Center.
+    elif name == 'Bruker DC':
         # The info.
-        software_keys.append('PDC')
+        software_keys.append('DC')
         versions.append(version)
 
     # Get the info box.

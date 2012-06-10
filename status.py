@@ -24,9 +24,12 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
+from os import F_OK, access
+from os.path import sep
 import platform
 from Queue import Queue
 from re import search
+from string import split
 import sys
 from threading import Lock, RLock
 
@@ -53,13 +56,44 @@ class Status(object):
             self._instance.pedantic = False
             self._instance.test_mode = False
             self._instance.show_gui = False
-            self._instance.install_path = sys.path[0]
+            self._instance.install_path = self._instance._det_install_path()
 
             # Set up the singleton.
             self._instance._setup()
 
         # Already instantiated, so return the instance.
         return self._instance
+
+
+    def _det_install_path(self):
+        """Determine, with a bit of magic, the relax installation path.
+
+        @return:    The relax installation path.  With a Mac OS X app, this will be the path to the 'Resources'.
+        @rtype:     str
+        """
+
+        # The file to search for.
+        file_to_find = 'relax_errors.py'
+
+        # Loop over the system paths, searching for the real path.
+        for path in sys.path:
+            # Found the file, so return the path.
+            if access(path + sep + file_to_find, F_OK):
+                return path
+
+        # Mac OS X application support.
+        for path in sys.path:
+            # Find the Resources folder, where the relax data files are located.
+            if search('Resources', path):
+                # Nasty hack for creating the Resources path.
+                bits = split(path, 'Resources')
+                mac_path = bits[0] + 'Resources'
+
+                # Return the Mac Resources folder path.
+                return mac_path
+
+        # Return the first entry of sys.path as a fallback.
+        return sys.path[0]
 
 
     def _setup(self):
@@ -102,7 +136,7 @@ class Status(object):
         """Set up all the observer objects."""
 
         # A container for all the observers.
-        self.observers = Status_container()
+        self.observers = Observer_container()
 
         # The observer object for status changes in the auto-analyses.
         self.observers.auto_analyses = Observer('auto_analyses')
@@ -441,13 +475,15 @@ class Observer(object):
         @type key:      str
         """
 
-        # Does not exist.
-        if key not in self._keys:
-            raise RelaxError("The key '%s' does not exist." % key)
-
         # Debugging.
         if self._status.debug:
             sys.stdout.write("debug> Observer: '%s' unregistering '%s'.\n" % (self._name, key))
+
+        # Does not exist, so return (allow multiple code paths to unregister methods).
+        if key not in self._keys:
+            if self._status.debug:
+                sys.stdout.write("debug> The key '%s' does not exist.\n" % key)
+            return
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
@@ -549,7 +585,23 @@ class Relax_lock:
 
 
 
-class Status_container:
-    """The generic empty container for the status data."""
+class Observer_container:
+    """The container for holding all the observer objects."""
 
+    def info(self):
+        """Print out info about all the status objects."""
 
+        # Blacklisted objects.
+        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+
+        # Loop over all objects in this container.
+        for name in dir(self):
+            # Skip blacklisted objects.
+            if name in blacklist:
+                continue
+
+            # Get the object.
+            obj = getattr(self, name)
+
+            # An observer object.
+            print("Observer '%s' keys: %s" % (obj._name, obj._keys))
