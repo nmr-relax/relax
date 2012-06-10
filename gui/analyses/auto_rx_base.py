@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -117,8 +117,7 @@ class Auto_rx(Base_analysis):
         self.data_index = data_index
 
         # Register the method for updating the spin count for the completion of user functions.
-        status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
-        status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+        self.observer_register()
 
         # Execute the base class method to build the panel.
         super(Auto_rx, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -235,12 +234,11 @@ class Auto_rx(Base_analysis):
     def delete(self):
         """Unregister the spin count from the user functions."""
 
+        # Unregister the observer methods.
+        self.observer_register(remove=True)
+
         # Clean up the peak intensity object.
         self.peak_intensity.delete()
-
-        # Remove.
-        status.observers.gui_uf.unregister(self.data.pipe_name)
-        status.observers.exec_lock.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
@@ -285,6 +283,28 @@ class Auto_rx(Base_analysis):
         event.Skip()
 
 
+    def observer_register(self, remove=False):
+        """Register and unregister methods with the observer objects.
+
+        @keyword remove:    If set to True, then the methods will be unregistered.
+        @type remove:       False
+        """
+
+        # Register.
+        if not remove:
+            status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
+            status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+
+        # Unregister.
+        else:
+            # The model-free methods.
+            status.observers.gui_uf.unregister(self.data.pipe_name)
+            status.observers.exec_lock.unregister(self.data.pipe_name)
+
+            # The embedded objects methods.
+            self.peak_intensity.observer_register(remove=True)
+
+
     def peak_wizard(self, event):
         """Launch the NOE peak loading wizard.
 
@@ -305,7 +325,7 @@ class Auto_rx(Base_analysis):
             msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
 
             # Ask about naming spins, and add the spin.name user function page.
-            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 220), default=True).ShowModal() == wx.ID_YES:
+            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
                 page = Name_page(self.wizard, sync=True)
                 self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
 

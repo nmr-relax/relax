@@ -50,7 +50,7 @@ spectrum.baseplane_rmsd(error=8500, spectrum_id='sat_ave', spin_id=":114")
 spectrum.error_analysis()
 
 # Deselect unresolved residues.
-deselect.read(file='unresolved')
+deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
 # Calculate the NOEs.
 calc()

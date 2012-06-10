@@ -85,13 +85,17 @@ $ scons binary_dist
 
 
 
-* Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
+* Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  First make sure the mirror directory contains all of the files so that the next command does not accidentally delete files:
+
+$ rsync -av --progress --no-perms --rsh="ssh" bugman@download.gna.org:/upload/relax/ .
+
+Then rsync the entire directory contents to download.gna.org/upload/relax/ using the command:
 
 $ rsync --delete -av --progress --no-perms --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
-* Modify the http://www.nmr-relax.com download page to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
+* Modify the http://www.nmr-relax.com/download.html webpage to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
 
 
 

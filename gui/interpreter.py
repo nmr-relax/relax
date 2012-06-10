@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,6 +64,9 @@ class Interpreter(object):
             # Start the interpreter thread for asynchronous operations.
             self._instance._interpreter_thread = Interpreter_thread()
             self._instance._interpreter_thread.start()
+
+            # Hack to turn off ANSI escape characters in GUI mode.
+            self._instance._interpreter._exec_info.prompt_colour_off()
 
         # Already instantiated, so return the instance.
         return self._instance

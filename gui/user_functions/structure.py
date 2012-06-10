@@ -89,6 +89,14 @@ class Structure(UF_base):
         wizard.run()
 
 
+    def read_xyz(self):
+        """The structure.read_xyz user function."""
+
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.read_xyz', uf_page=Read_xyz_page)
+        wizard.run()
+
+
     def write_pdb(self):
         """The structure.write_pdb user function."""
 
@@ -333,6 +341,51 @@ class Read_pdb_page(UF_page):
 
         # Execute the user function.
         self.execute('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+
+
+
+class Read_xyz_page(UF_page):
+    """The structure.read_xyz() user function page."""
+
+    # Some class variables.
+    #image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'read_xyz.png'
+    uf_path = ['structure', 'read_xyz']
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The XYZ file:", message="XYZ file selection", wildcard="XYZ files (*.xyz)|*.xyz;*.XYZ", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+
+        # The read_mol arg.
+        self.read_mol = self.input_field(sizer, "Read molecule number:", tooltip=self.uf._doc_args_dict['read_mol'])
+
+        # The set_mol_name arg.
+        self.set_mol_name = self.input_field(sizer, "Set the molecule name:", tooltip=self.uf._doc_args_dict['set_mol_name'])
+
+        # The read_model arg.
+        self.read_model = self.input_field(sizer, "Read model number:", tooltip=self.uf._doc_args_dict['read_model'])
+
+        # The set_model_num arg.
+        self.set_model_num = self.input_field(sizer, "Set the model number:", tooltip=self.uf._doc_args_dict['set_model_num'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The args.
+        file = gui_to_str(self.file.GetValue())
+        read_mol = gui_to_int_or_list(self.read_mol.GetValue())
+        set_mol_name = gui_to_str_or_list(self.set_mol_name.GetValue())
+        read_model = gui_to_int_or_list(self.read_model.GetValue())
+        set_model_num = gui_to_int_or_list(self.set_model_num.GetValue())
+
+        # Execute the user function.
+        self.execute('structure.read_xyz', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
 
 
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -47,7 +47,7 @@ from warnings import warn
 
 # relax module imports.
 import generic_fns
-from generic_fns.mol_res_spin import generate_spin_id_data_array
+from generic_fns.mol_res_spin import generate_spin_id_data_array, spin_id_to_data_list
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
 
@@ -550,20 +550,59 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
             # Skip the line.
             continue
 
-        # Generate the spin ID string.
+        # Get the spin data from the ID.
         if spin_id_col:
-            id = line[spin_id_col-1]
-        else:
-            id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+            # Invalid spin ID.
+            if line[spin_id_col-1] == '#':
+                warn(RelaxWarning("Invalid spin ID, skipping the line %s" % line))
+                continue
 
-        # Invalid spin ID.
-        if id == '#':
-            warn(RelaxWarning("Invalid spin ID, skipping the line %s" % line))
-            continue
+            mol_name, res_num, res_name, spin_num, spin_name = spin_id_to_data_list(line[spin_id_col-1])
+
+        # Convert the spin data.
+        else:
+            # The molecule.
+            mol_name = None
+            if mol_name_col != None and line[mol_name_col-1] != 'None':
+                mol_name = line[mol_name_col-1]
+
+            # The residue number, catching bad values.
+            res_num = None
+            if res_num_col != None:
+                try:
+                    if line[res_num_col-1] == 'None':
+                        res_num = None
+                    else:
+                        res_num = int(line[res_num_col-1])
+                except ValueError:
+                    warn(RelaxWarning("Invalid residue number, skipping the line %s" % line))
+                    continue
+
+            # The residue name.
+            res_name = None
+            if res_name_col != None and line[res_name_col-1] != 'None':
+                res_name = line[res_name_col-1]
+
+            # The spin number, catching bad values.
+            spin_num = None
+            if spin_num_col != None:
+                try:
+                    if line[spin_num_col-1] == 'None':
+                        spin_num = None
+                    else:
+                        spin_num = int(line[spin_num_col-1])
+                except ValueError:
+                    warn(RelaxWarning("Invalid spin number, skipping the line %s" % line))
+                    continue
+
+            # The spin name.
+            spin_name = None
+            if spin_name_col != None and line[spin_name_col-1] != 'None':
+                spin_name = line[spin_name_col-1]
 
         # Convert the data.
         value = None
-        if data_col:
+        if data_col != None:
             try:
                 # None.
                 if line[data_col-1] == 'None':
@@ -580,7 +619,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
 
         # Convert the errors.
         error = None
-        if error_col:
+        if error_col != None:
             try:
                 # None.
                 if line[error_col-1] == 'None':
@@ -600,13 +639,13 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
 
         # Yield the data.
         if data_col and error_col:
-            yield [id, value, error]
+            yield mol_name, res_num, res_name, spin_num, spin_name, value, error
         elif data_col:
-            yield [id, value]
+            yield mol_name, res_num, res_name, spin_num, spin_name, value
         elif error_col:
-            yield [id, error]
+            yield mol_name, res_num, res_name, spin_num, spin_name, error
         else:
-            yield id
+            yield mol_name, res_num, res_name, spin_num, spin_name
 
     # Hmmm, no data!
     if missing_data:
@@ -1010,6 +1049,17 @@ class SplitIO:
         # Call the streams' methods.
         self.stream1.flush()
         self.stream2.flush()
+
+
+    def isatty(self):
+        """Check that both streams are TTYs.
+
+        @return:    True, only if both streams are TTYs.
+        @rtype:     bool
+        """
+
+        # Check both streams.
+        return self.stream1.isatty() & self.stream2.isatty()
 
 
     def split(self, stream1, stream2):

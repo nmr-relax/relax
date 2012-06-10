@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,9 +25,11 @@
 
 # Python module imports.
 import inspect
+import sys
 import warnings
 
 # relax module imports.
+import ansi
 from status import Status; status = Status()
 
 
@@ -55,6 +57,15 @@ def format(message, category, filename, lineno, line=None):
             tb = tb_frame + tb
         tb = "Traceback (most recent call last):\n%s" % tb
         message = tb + message
+
+    # Text colouring
+    if ansi.enable_control_chars(stream=2):
+        # Strip the last newline, if it exists.
+        if message[-1] == '\n':
+            message = message[:-1]
+
+        # Reformat.
+        message = "%s%s%s\n" % (ansi.relax_warning, message, ansi.end)
 
     # Return the warning message.
     return message

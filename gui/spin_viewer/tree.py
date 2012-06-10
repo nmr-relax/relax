@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -149,11 +149,18 @@ class Mol_res_spin_tree(wx.Window):
         # Find the item clicked on.
         item, flags = self.tree.HitTest(pos)
 
-        # The python data.
-        self.info = self.tree.GetItemPyData(item)
+        # The python data (with catch for wxPython 2.9 behaviour).
+        if not item.IsOk():
+            self.info = None
+        else:
+            self.info = self.tree.GetItemPyData(item)
+
+        # Bring up the default menu.
+        if self.info == None:
+            self.menu_default()
 
         # Bring up the root menu.
-        if self.info == 'root':
+        elif self.info == 'root':
             self.menu_root()
 
         # Bring up the molecule menu.
@@ -236,8 +243,8 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Ask if this should be done.
-        msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
+        msg = "Are you sure you would like to delete this molecule?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
             return
 
         # Delete the molecule.
@@ -255,8 +262,8 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Ask if this should be done.
-        msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
+        msg = "Are you sure you would like to delete this residue?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
             return
 
         # Delete the residue.
@@ -274,8 +281,8 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Ask if this should be done.
-        msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
+        msg = "Are you sure you would like to delete this spin?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
             return
 
         # Delete the spin.
@@ -353,6 +360,27 @@ class Mol_res_spin_tree(wx.Window):
 
         # Return the associated python data.
         return self.tree.GetItemPyData(item)
+
+
+    def menu_default(self):
+        """The right click root menu."""
+
+        # The menu.
+        menu = wx.Menu()
+
+        # The load spins entry.
+        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.gui.spin_viewer.load_spins_wizard, id=self.MENU_ROOT_LOAD_SPINS)
+
+        # Show the menu.
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_molecule(self):

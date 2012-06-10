@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -99,9 +99,6 @@ class Pipe_editor(wx.Frame):
         self.grid.Bind(wx.EVT_SIZE, self.resize)
         self.Bind(wx.EVT_CLOSE, self.handler_close)
         self.grid.Bind(wx.grid.EVT_GRID_CELL_RIGHT_CLICK, self.menu)
-
-        # Centre the frame.
-        self.Centre()
 
         # Initialise the observer name.
         self.name = 'pipe editor'

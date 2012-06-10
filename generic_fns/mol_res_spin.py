@@ -47,7 +47,7 @@ from warnings import warn
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
 from generic_fns import relax_re
-from relax_errors import RelaxError, RelaxNoSpinError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
 
@@ -1525,16 +1525,12 @@ def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, 
     # Residue data.
     if res_num != None:
         id = id + ":" + str(res_num)
-    if res_num != None and res_name != None:
-        id = id + "&:" + res_name
     elif res_name != None:
         id = id + ":" + res_name
 
     # Spin data.
     if spin_num != None:
         id = id + "@" + str(spin_num)
-    if spin_num != None and spin_name != None:
-        id = id + "&@" + spin_name
     elif spin_name != None:
         id = id + "@" + spin_name
 
@@ -1571,16 +1567,12 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
     # Residue data.
     if res_num_col and data[res_num_col-1] not in [None, 'None']:
         id = id + ":" + str(data[res_num_col-1])
-    if (res_num_col and data[res_num_col-1] not in [None, 'None']) and (res_name_col and data[res_name_col-1]):
-        id = id + "&:" + data[res_name_col-1]
     elif res_name_col and data[res_name_col-1] not in [None, 'None']:
         id = id + ":" + data[res_name_col-1]
 
     # Spin data.
     if spin_num_col and data[spin_num_col-1] not in [None, 'None']:
         id = id + "@" + str(data[spin_num_col-1])
-    if (spin_num_col and data[spin_num_col-1] not in [None, 'None']) and (spin_name_col and data[spin_name_col-1]):
-        id = id + "&@" + data[spin_name_col-1]
     elif spin_name_col and data[spin_name_col-1] not in [None, 'None']:
         id = id + "@" + data[spin_name_col-1]
 
@@ -2205,7 +2197,7 @@ def return_molecule(selection=None, pipe=None):
 
     # No unique identifier.
     if mol_num > 1:
-        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single molecule in the " + repr(pipe) + " data pipe.")
+        raise RelaxMultiMolIDError(selection)
 
     # Return the molecule container.
     return mol_container
@@ -2258,7 +2250,7 @@ def return_residue(selection=None, pipe=None):
 
     # No unique identifier.
     if res_num > 1:
-        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single residue in the " + repr(pipe) + " data pipe.")
+        raise RelaxMultiResIDError(selection)
 
     # Return the residue container.
     return res_container
@@ -2324,7 +2316,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
 
     # No unique identifier.
     if spin_num > 1:
-        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single spin in the " + repr(pipe) + " data pipe.")
+        raise RelaxMultiSpinIDError(selection)
 
     # Return the spin container.
     if full_info:
