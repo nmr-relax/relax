@@ -54,6 +54,9 @@ self._execute_uf(uf_name='bmrb.script', file='noe.py', dir=status.install_path+s
 self._execute_uf(uf_name='bmrb.script', file='relax_fit.py', dir=status.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
 self._execute_uf(uf_name='bmrb.script', file='dauvergne_protocol.py', dir=status.install_path+sep+'sample_scripts'+sep+'model_free', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
+# Display the BMRB output for this pipe.
+self._execute_uf(uf_name='bmrb.display', version=ds.version)
+
 # Write, then read the data to a new data pipe.
 self._execute_uf(uf_name='bmrb.write', file=ds.tmpfile, dir=None, version=ds.version, force=True)
 self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='mf')
