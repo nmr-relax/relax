@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.model_free import Model_free
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.model_free_testing_base import Model_free_base_class
 
@@ -35,8 +35,19 @@ from data_types import DATA_TYPES
 class Test_model_free(Model_free_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.model_free' module."""
 
-    # Instantiate the user function class.
-    model_free_fns = Model_free()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_model_free, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.model_free_fns = self.interpreter.model_free
 
 
     def test_create_model_argfail_model(self):

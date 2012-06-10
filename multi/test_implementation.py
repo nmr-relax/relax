@@ -63,9 +63,9 @@ else:
 
 
 def print_stats(stats, status=0):
-    """Profiling print out function, sorting first by cumulative time."""
+    """Profiling printout function, sorting first by cumulative time."""
 
-    # Sorted print out.
+    # Sorted printout.
     pstats.Stats(stats).sort_stats('cumulative').print_stats()
 
 
@@ -104,7 +104,7 @@ class Main:
         # Execute the calculations, waiting for completion.
         processor_box.processor.run_queue()
 
-        # Final program print out.
+        # Final program printout.
         print("\n\nTotal number of calculations: %s" % self.num)
 
 
@@ -173,7 +173,7 @@ class Test_result_command(Result_command):
         @type memo:         Memo instance
         """
 
-        # Random print out.
+        # Random printout.
         print("%s, %s calculations completed." % (memo.name, self.num))
 
         # Calling a method on the master.
@@ -237,7 +237,7 @@ if not PROFILE:
 
 # Run with profiling.
 else:
-    # Replace the default profiling print out function.
+    # Replace the default profiling printout function.
     profile.Profile.print_stats = print_stats
 
     # Execute with profiling.

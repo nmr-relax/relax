@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2008-2010 Edward d'Auvergne                             #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@ import os
 
 # relax module imports.
 import arg_check
+from status import Status; status = Status()
 
 
 class Lh:

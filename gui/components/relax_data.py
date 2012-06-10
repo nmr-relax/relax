@@ -29,285 +29,26 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+from graphics import fetch_icon
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
+from gui.components.base_list import Base_list
 from gui.components.menu import build_menu_item
+from gui.components.relax_data_meta import Relax_data_meta_list
 from gui.fonts import font
-from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
-from gui import paths
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.icons import relax_icons
+from gui.misc import add_border
+from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from gui.wizard import Wiz_window
 
 
-class Relax_data_list:
+class Relax_data_list(Base_list):
     """The GUI element for listing loaded relaxation data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, buttons=True):
-        """Build the relaxation data list GUI element.
-
-        @keyword gui:       The main GUI object.
-        @type gui:          wx.Frame instance
-        @keyword parent:    The parent GUI element that this is to be attached to (the panel object).
-        @type parent:       wx object
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        @keyword box:       The vertical box sizer to pack this GUI component into.
-        @type box:          wx.BoxSizer instance
-        @keyword id:        A unique identification string.  This is used to register the update method with the GUI user function observer object.
-        @type id:           str
-        @keyword buttons:   A flag which if True will display the buttons at the top.
-        @type buttons:      bool
-        """
-
-        # Store the arguments.
-        self.gui = gui
-        self.parent = parent
-
-        # GUI variables.
-        self.spacing = 5
-        self.border = 5
-        self.height_buttons = 40
-
-        # First create a panel (to allow for tooltips on the buttons).
-        self.panel = wx.Panel(self.parent)
-        box.Add(self.panel, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Add a sizer to the panel.
-        panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.panel.SetSizer(panel_sizer)
-
-        # A static box to hold all the widgets, and its sizer.
-        stat_box = wx.StaticBox(self.panel, -1, "Relaxation data list")
-        stat_box.SetFont(font.subtitle)
-        sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
-
-        # Add the sizer to the static box and the static box to the main box.
-        panel_sizer.Add(sub_sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Add a border.
-        box_centre = add_border(sub_sizer, border=self.border)
-
-        # Add buttons.
-        if buttons:
-            self.add_buttons(box_centre)
-
-        # Initialise the element.
-        box_centre.AddSpacer(self.spacing)
-        self.init_element(box_centre)
-
-        # Build the element.
-        self.build_element()
-
-        # Initialise observer name.
-        self.name = 'relaxation data list: %s' % id
-
-        # Register the element for updating when a user function completes.
-        self.observer_register()
-
-
-    def Enable(self, enable=True):
-        """Enable or disable the element.
-
-        @keyword enable:    The flag specifying if the element should be enabled or disabled.
-        @type enable:       bool
-        """
-
-        # Call buttons' methods.
-        self.button_add.Enable(enable)
-        self.button_delete.Enable(enable)
-
-
-    def add_buttons(self, sizer):
-        """Add the buttons for peak list manipulation.
-
-        @param sizer:   The sizer element to pack the buttons into.
-        @type sizer:    wx.BoxSizer instance
-        """
-
-        # Button Sizer
-        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Add button.
-        self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_add.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
-        self.button_add.SetFont(font.normal)
-        self.button_add.SetSize((80, self.height_buttons))
-        button_sizer.Add(self.button_add, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_add)
-        self.button_add.SetToolTipString("Read relaxation data from a file.")
-
-        # Bruker button.
-        self.button_bruker = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        self.button_bruker.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.bruker_add, wx.BITMAP_TYPE_ANY))
-        self.button_bruker.SetFont(font.normal)
-        self.button_bruker.SetSize((80, self.height_buttons))
-        button_sizer.Add(self.button_bruker, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.bruker_read, self.button_bruker)
-        self.button_bruker.SetToolTipString("Read a Bruker Dynamics Center relaxation data file.")
-
-        # Delete button.
-        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
-        self.button_delete.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
-        self.button_delete.SetFont(font.normal)
-        self.button_delete.SetSize((80, self.height_buttons))
-        button_sizer.Add(self.button_delete, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_delete, self.button_delete)
-        self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
-
-
-    def bruker_read(self, event):
-        """Launch the bruker.read user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Launch the dialog.
-        user_functions.bruker.read()
-
-
-    def build_element(self):
-        """Build the relaxation data listing grid."""
-
-        # Execution lock, so do nothing.
-        if status.exec_lock.locked():
-            return
-
-        # Build the GUI element in a thread safe way.
-        wx.CallAfter(self.build_element_safe)
-
-
-    def build_element_safe(self):
-        """Build the spectra listing GUI element in a thread safe wx.CallAfter call."""
-
-        # First freeze the element, so that the GUI element doesn't update until the end.
-        self.element.Freeze()
-
-        # Delete the previous data.
-        self.element.DeleteAllItems()
-
-        # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
-        n = 0
-        if hasattr(cdp, 'ri_ids'):
-            # The number of IDs.
-            n = len(cdp.ri_ids)
-
-            # Add all the data.
-            for i in range(n):
-                # Set the IDs.
-                id = cdp.ri_ids[i]
-                self.element.InsertStringItem(i, str_to_gui(id))
-
-                # Set the data types.
-                self.element.SetStringItem(i, 1, str_to_gui(cdp.ri_type[id]))
-
-                # Set the frequencies.
-                self.element.SetStringItem(i, 2, float_to_gui(cdp.frq[id]))
-
-        # Size the columns.
-        self.size_cols()
-
-        # Post a size event to get the scroll panel to update correctly.
-        event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
-        wx.PostEvent(self.parent.GetEventHandler(), event)
-
-        # Set the minimum height.
-        head = self.height_char + 10
-        centre = (self.height_char + 6) * n
-        foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
-        height = head + centre + foot
-        self.element.SetMinSize((-1, height))
-        self.element.Layout()
-
-        # Unfreeze.
-        self.element.Thaw()
-
-
-    def delete(self):
-        """Unregister the class."""
-
-        # Unregister the observer methods.
-        self.observer_register(remove=True)
-
-
-    def init_element(self, sizer):
-        """Initialise the GUI element for the relaxation data listing.
-
-        @param sizer:   The sizer element to pack the element into.
-        @type sizer:    wx.BoxSizer instance
-        """
-
-        # List of relaxation data.
-        self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
-
-        # Initialise to 3 columns.
-        self.element.InsertColumn(0, str_to_gui("Relaxation data ID"))
-        self.element.InsertColumn(1, str_to_gui("Data type"))
-        self.element.InsertColumn(2, str_to_gui("Frequency (Hz)"))
-
-        # Properties.
-        self.element.SetFont(font.normal)
-
-        # Store the base heights.
-        self.height_char = self.element.GetCharHeight()
-
-        # Bind some events.
-        self.element.Bind(wx.EVT_SIZE, self.resize)
-        self.element.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.on_right_click)  # For wxMSW!
-        self.element.Bind(wx.EVT_RIGHT_UP, self.on_right_click)   # For wxGTK!
-
-        # Add list to sizer.
-        sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
-
-
-    def observer_register(self, remove=False):
-        """Register and unregister methods with the observer objects.
-
-        @keyword remove:    If set to True, then the methods will be unregistered.
-        @type remove:       False
-        """
-
-        # Register.
-        if not remove:
-            status.observers.gui_uf.register(self.name, self.build_element)
-
-        # Unregister.
-        else:
-            status.observers.gui_uf.unregister(self.name)
-
-
-    def on_right_click(self, event):
-        """Pop up menu for the right click.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Execution lock, so do nothing.
-        if status.exec_lock.locked():
-            return
-
-        # New menu entry.
-        if not hasattr(self, 'popup_id_del'):
-            # ID number.
-            self.popup_id_del = wx.NewId()
-
-            # Bind clicks.
-            self.element.Bind(wx.EVT_MENU, self.relax_data_delete, id=self.popup_id_del)
-
-        # Initialise the menu.
-        menu = wx.Menu()
-
-        # Add the delete entry.
-        menu.AppendItem(build_menu_item(menu, id=self.popup_id_del, text="&Delete", icon=paths.icon_16x16.remove))
-
-        # Pop up the menu.
-        self.element.PopupMenu(menu)
-        menu.Destroy()
-
-
-    def relax_data_delete(self, event):
+    def action_relax_data_delete(self, event):
         """Launch the relax_data.delete user function.
 
         @param event:   The wx event.
@@ -327,49 +68,464 @@ class Relax_data_list:
             id = gui_to_str(self.element.GetItemText(item))
 
         # Launch the dialog.
-        user_functions.relax_data.delete(ri_id=id)
+        uf_store['relax_data.delete'](ri_id=id)
 
 
-    def relax_data_read(self, event):
-        """Launch the relax_data.read user function.
+    def action_relax_data_display(self, event):
+        """Launch the relax_data.display user function.
 
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
 
         # Launch the dialog.
-        user_functions.relax_data.read()
+        uf_store['relax_data.display'](ri_id=id)
 
 
-    def resize(self, event):
-        """Catch the resize to allow the element to be resized.
+    def action_relax_data_frq(self, event):
+        """Launch the relax_data.frq user function.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Set the column sizes.
-        self.size_cols()
+        # The current selection.
+        item = self.element.GetFirstSelected()
 
-        # Continue with the normal resizing.
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        if hasattr(cdp, 'frq') and id in cdp.frq.keys():
+            frq = cdp.frq[id]
+
+        # Launch the dialog.
+        if frq == None:
+            uf_store['relax_data.frq'](ri_id=id)
+        else:
+            uf_store['relax_data.frq'](ri_id=id, frq=frq)
+
+
+    def action_relax_data_peak_intensity_type(self, event):
+        """Launch the relax_data.peak_intensity_type user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current type.
+        type = None
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type.keys():
+            type = cdp.exp_info.peak_intensity_type[id]
+
+        # Launch the dialog.
+        if type == None:
+            uf_store['relax_data.peak_intensity_type'](ri_id=id)
+        else:
+            uf_store['relax_data.peak_intensity_type'](ri_id=id, type=type)
+
+
+    def action_relax_data_temp_calibration(self, event):
+        """Launch the relax_data.temp_calibration user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current method.
+        method = None
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration.keys():
+            method = cdp.exp_info.temp_calibration[id]
+
+        # Launch the dialog.
+        if method == None:
+            uf_store['relax_data.temp_calibration'](ri_id=id)
+        else:
+            uf_store['relax_data.temp_calibration'](ri_id=id, method=method)
+
+
+    def action_relax_data_temp_control(self, event):
+        """Launch the relax_data.temp_control user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current method.
+        method = None
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control.keys():
+            method = cdp.exp_info.temp_control[id]
+
+        # Launch the dialog.
+        if method == None:
+            uf_store['relax_data.temp_control'](ri_id=id)
+        else:
+            uf_store['relax_data.temp_control'](ri_id=id, method=method)
+
+
+    def action_relax_data_type(self, event):
+        """Launch the relax_data.type user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current type.
+        type = None
+        if hasattr(cdp, 'ri_type') and id in cdp.ri_type.keys():
+            type = cdp.ri_type[id]
+
+        # Launch the dialog.
+        if type == None:
+            uf_store['relax_data.type'](ri_id=id)
+        else:
+            uf_store['relax_data.type'](ri_id=id, ri_type=type)
+
+
+    def setup(self):
+        """Override the base variables."""
+
+        # GUI variables.
+        self.title = "Relaxation data list"
+        self.observer_base_name = "relaxation data list"
+
+        # The column titles.
+        self.columns = [
+            "Relaxation data ID",
+            "Data type",
+            "Frequency (Hz)"
+        ]
+
+        # Button set up.
+        self.button_placement = 'top'
+        self.button_size = (170, 40)
+        self.button_info = [
+            {
+                'object': 'button_add',
+                'label': ' Add',
+                'icon': fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"),
+                'method': self.wizard_relax_data,
+                'tooltip': "Read relaxation data from a file."
+            }, {
+                'object': 'button_bruker',
+                'label': ' Add',
+                'icon': fetch_icon('relax.bruker_add', "22x22"),
+                'method': self.wizard_bruker,
+                'tooltip': "Read a Bruker Dynamics Center relaxation data file."
+            }, {
+                'object': 'button_delete',
+                'label': ' Delete',
+                'icon': fetch_icon('oxygen.actions.list-remove', "22x22"),
+                'method': self.action_relax_data_delete,
+                'tooltip': "Delete loaded relaxation data from the relax data store."
+            }, {
+                'object': 'button_metadata',
+                'label': ' View metadata',
+                'icon': fetch_icon('oxygen.mimetypes.text-x-texinfo', "22x22"),
+                'method': self.view_metadata,
+                'tooltip': "View and edit the relaxation data metadata."
+            }
+        ]
+
+        # The right click popup menu.
+        self.popup_menus = [
+            {
+                'id': wx.NewId(),
+                'text': "&Delete the relaxation data",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.delete').gui_icon),
+                'method': self.action_relax_data_delete
+            }, {
+                'id': wx.NewId(),
+                'text': "Dis&play the relaxation data",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.display').gui_icon),
+                'method': self.action_relax_data_display
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the relaxation data &frequency",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.frq').gui_icon),
+                'method': self.action_relax_data_frq
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the peak &intensity type",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.peak_intensity_type').gui_icon),
+                'method': self.action_relax_data_peak_intensity_type
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the temperature &calibration",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.temp_calibration').gui_icon),
+                'method': self.action_relax_data_temp_calibration
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the temperature c&ontrol",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.temp_control').gui_icon),
+                'method': self.action_relax_data_temp_control
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the relaxation data &type",
+                'icon': fetch_icon(uf_info.get_uf('relax_data.type').gui_icon),
+                'method': self.action_relax_data_type
+            }, {
+            }
+        ]
+
+
+    def update_data(self):
+        """Method called from self.build_element_safe() to update the list data."""
+
+        # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
+        n = 0
+        if hasattr(cdp, 'ri_ids'):
+            # The number of IDs.
+            n = len(cdp.ri_ids)
+
+            # Add all the data.
+            for i in range(n):
+                # Set the IDs.
+                id = cdp.ri_ids[i]
+                self.element.InsertStringItem(i, str_to_gui(id))
+
+                # Set the data types.
+                self.element.SetStringItem(i, 1, str_to_gui(cdp.ri_type[id]))
+
+                # Set the frequencies.
+                self.element.SetStringItem(i, 2, float_to_gui(cdp.frq[id]))
+
+
+    def view_metadata(self, event=None):
+        """Launch the metadata window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Launch.
+        Metadata_window(self.gui)
+
+
+    def wizard_bruker(self, event):
+        """Launch the Bruker Dynamics Centre data reading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The wizard.
+        self.wizard_exec(bruker=True)
+
+
+    def wizard_exec(self, bruker=False):
+        """Launch the Rx peak loading wizard.
+
+        @keyword bruker:    A flag which if True will launch the Bruker Dynamics Centre data reading wizard and if False will launch the relaxation data reading wizard
+        @type bruker:       bool
+        """
+
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
+        # The title.
+        if bruker:
+            title = "The Bruker Dynamics Centre data reading wizard"
+        else:
+            title = "The relaxation data reading wizard"
+
+        # Initialise a wizard.
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title=title)
+        self.page_indices = {}
+
+        # The reading page.
+        if bruker:
+            page = uf_store['bruker.read'].create_page(self.wizard, sync=True)
+        else:
+            page = uf_store['relax_data.read'].create_page(self.wizard, sync=True)
+        self.page_indices['read'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
+
+        # The peak intensity type page.
+        page = uf_store['relax_data.peak_intensity_type'].create_page(self.wizard, sync=True)
+        self.page_indices['peak_intensity_type'] = self.wizard.add_page(page, apply_button=True, skip_button=True)
+        page.on_display_post = self.wizard_update_int_type
+
+        # The temperature calibration page.
+        page = uf_store['relax_data.temp_calibration'].create_page(self.wizard, sync=True)
+        self.page_indices['temp_calibration'] = self.wizard.add_page(page, apply_button=True, skip_button=True)
+        page.on_display_post = self.wizard_update_temp_calibration
+
+        # The temperature control page.
+        page = uf_store['relax_data.temp_control'].create_page(self.wizard, sync=True)
+        self.page_indices['temp_control'] = self.wizard.add_page(page, apply_button=True)
+        page.on_display_post = self.wizard_update_temp_control
+
+        # Reset the cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+        # Run the wizard.
+        self.wizard.run()
+
+
+    def wizard_relax_data(self, event):
+        """Launch the relaxation data reading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The wizard.
+        self.wizard_exec(bruker=False)
+
+
+    def wizard_update_int_type(self):
+        """Update the relax_data.peak_intensity_type page based on previous data."""
+
+        # The relax_data.peak_intensity_type page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Get the Rx ID.
+        id = page.uf_args['ri_id'].GetValue()
+
+        # Set the ID in the relax_data.peak_intensity_type page.
+        page = self.wizard.get_page(self.page_indices['peak_intensity_type'])
+        page.uf_args['ri_id'].SetValue(value=id)
+
+
+    def wizard_update_temp_calibration(self):
+        """Update the relax_data.temp_calibration page based on previous data."""
+
+        # The relax_data.temp_calibration page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Get the Rx ID.
+        id = page.uf_args['ri_id'].GetValue()
+
+        # Set the ID in the relax_data.temp_calibration page.
+        page = self.wizard.get_page(self.page_indices['temp_calibration'])
+        page.uf_args['ri_id'].SetValue(value=id)
+
+
+    def wizard_update_temp_control(self):
+        """Update the relax_data.temp_control page based on previous data."""
+
+        # The relax_data.temp_control page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Get the Rx ID.
+        id = page.uf_args['ri_id'].GetValue()
+
+        # Set the ID in the relax_data.temp_control page.
+        page = self.wizard.get_page(self.page_indices['temp_control'])
+        page.uf_args['ri_id'].SetValue(value=id)
+
+
+
+class Metadata_window(wx.Frame):
+    """The relaxation data metadata window."""
+
+    def __init__(self, parent):
+        """Set up the export window.
+
+        @param parent:  The parent object.
+        @type parent:   wx.Frame instance
+        """
+
+        # The window style.
+        style = wx.DEFAULT_FRAME_STYLE
+
+        # Initialise the base class, setting the main GUI window as the parent.
+        super(Metadata_window, self).__init__(parent, -1, style=style)
+
+        # Some default values.
+        self.size_x = 1200
+        self.size_y = 500
+        self.border = 5
+        self.spacer = 10
+
+        # Set up the frame.
+        sizer = self.setup_frame()
+
+        # Add the relaxation data metadata list GUI element, with spacing.
+        sizer.AddSpacer(15)
+        self.relax_data = Relax_data_meta_list(parent=self.main_panel, box=sizer, id='BMRB export', proportion=1)
+
+        # Open the window.
+        if status.show_gui:
+            self.Show()
+
+
+    def handler_close(self, event):
+        """Event handler for the close window action.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Unregister the observers.
+        self.relax_data.observer_register(remove=True)
+
+        # Close the window.
         event.Skip()
 
 
-    def size_cols(self):
-        """Set the column sizes."""
+    def setup_frame(self):
+        """Set up the relax controller frame.
+        @return:    The sizer object.
+        @rtype:     wx.Sizer instance
+        """
 
-        # The element size.
-        x, y = self.element.GetSize()
+        # Set the frame title.
+        self.SetTitle("Relaxation data metadata")
 
-        # Number of columns.
-        n = self.element.GetColumnCount()
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
-        # Set to equal sizes.
-        if n == 0:
-            width = x
-        else:
-            width = int(x / n)
+        # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
 
-        # Set the column sizes.
-        for i in range(n):
-            self.element.SetColumnWidth(i, width)
+        # Use a grid sizer for packing the main elements.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.main_panel.SetSizer(main_sizer)
+
+        # Build the central sizer, with borders.
+        sizer = add_border(main_sizer, border=self.border, packing=wx.VERTICAL)
+
+        # Close the window cleanly (unregistering observers).
+        self.Bind(wx.EVT_CLOSE, self.handler_close)
+
+        # Set the default size of the controller.
+        self.SetSize((self.size_x, self.size_y))
+
+        # Centre the frame.
+        self.Centre()
+
+        # Return the central sizer.
+        return sizer

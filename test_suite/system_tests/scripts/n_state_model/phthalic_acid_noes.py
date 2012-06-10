@@ -11,7 +11,7 @@ from status import Status; status = Status()
 
 # Add a date pipe if one doesn't already exist.
 if not ds.keys():
-    pipe.create('test', 'N-state')
+    self._execute_uf(uf_name='pipe.create', pipe_name='test', pipe_type='N-state')
 
 # NOE restraint file.
 if not hasattr(ds, 'file_name'):
@@ -28,22 +28,22 @@ PSEUDO = [
 ]
 
 # Read the structure.
-structure.read_pdb('gromacs.pdb', dir=DATA_PATH+sep+'structures'+sep+'phthalic_acid')
+self._execute_uf(uf_name='structure.read_pdb', file='gromacs.pdb', dir=DATA_PATH+sep+'structures'+sep+'phthalic_acid')
 
 # Load all protons as the sequence.
-structure.load_spins('@*H*', ave_pos=False)
+self._execute_uf(uf_name='structure.load_spins', spin_id='@*H*', ave_pos=False)
 
 # Create the pseudo-atoms.
 for i in range(len(PSEUDO)):
-    spin.create_pseudo(spin_name=PSEUDO[i][0], res_id=None, members=PSEUDO[i][1], averaging='linear')
+    self._execute_uf(uf_name='spin.create_pseudo', spin_name=PSEUDO[i][0], res_id=None, members=PSEUDO[i][1], averaging='linear')
 
 # Read the NOE restraints.
-noe.read_restraints(file=ds.file_name, dir=DATA_PATH+'noe_restraints')
+self._execute_uf(uf_name='noe.read_restraints', file=ds.file_name, dir=DATA_PATH+'noe_restraints')
 
 # Set the type of N-state model.
-n_state_model.select_model(model='fixed')
+self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Calculate the average NOE potential.
-calc()
+self._execute_uf(uf_name='calc')
 
 

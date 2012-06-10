@@ -33,7 +33,7 @@ from float import floatAsByteArray
 import generic_fns
 from prototype import Prototype
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
-from relax_xml import fill_object_contents, xml_to_object
+from relax_xml import fill_object_contents, object_to_xml, xml_to_object
 import specific_fns
 
 
@@ -83,8 +83,8 @@ class SpinContainer(Prototype):
     def _back_compat_hook(self, file_version=None):
         """Method for converting old spin data structures to the new ones.
 
-        @keyword file_version:  The relax version used to create the XML file.
-        @type file_version:     str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Model-free parameters.
@@ -135,7 +135,6 @@ class SpinContainer(Prototype):
                 self.ri_data_sim[ri_id] = []
                 for j in range(cdp.sim_number):
                     self.ri_data_sim[ri_id].append(self.relax_sim_data[j][i])
-
 
         # Delete the old structures.
         del self.frq
@@ -261,8 +260,8 @@ class SpinList(list):
 
         @param spin_nodes:      The spin XML nodes.
         @type spin_nodes:       xml.dom.minicompat.NodeList instance
-        @keyword file_version:  The relax version used to create the XML file.
-        @type file_version:     str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Test if empty.
@@ -279,7 +278,7 @@ class SpinList(list):
             self.add_item(spin_name=name, spin_num=num)
 
             # Recreate the current spin container.
-            xml_to_object(spin_node, self[-1])
+            xml_to_object(spin_node, self[-1], file_version=file_version)
 
             # Backwards compatibility transformations.
             self[-1]._back_compat_hook(file_version)
@@ -345,13 +344,8 @@ class SpinList(list):
                 # Get the object.
                 object = getattr(self[i], name)
 
-                # Store floats as IEEE-754 byte arrays (for full precision storage).
-                if isinstance(object, float) or isinstance(object, numpy.float64):
-                    sub_element.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(object)))
-
-                # Add the text value to the sub element.
-                text_val = doc.createTextNode(repr(object))
-                sub_element.appendChild(text_val)
+                # Convert to XML.
+                object_to_xml(doc, sub_element, value=object)
 
             # Add all simple python objects within the SpinContainer to the XML element.
             fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + list(self[i].__class__.__dict__.keys()))
@@ -521,8 +515,8 @@ class ResidueList(list):
 
         @param res_nodes:       The residue XML nodes.
         @type res_nodes:        xml.dom.minicompat.NodeList instance
-        @keyword file_version:  The relax version used to create the XML file.
-        @type file_version:     str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Test if empty.
@@ -727,8 +721,8 @@ class MoleculeList(list):
 
         @param mol_nodes:       The molecule XML nodes.
         @type mol_nodes:        xml.dom.minicompat.NodeList instance
-        @keyword file_version:  The relax version used to create the XML file.
-        @type file_version:     str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Test if empty.

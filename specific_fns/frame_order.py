@@ -56,32 +56,37 @@ class Frame_order(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Execute the base class __init__ method.
+        super(Frame_order, self).__init__()
+
         # Place methods into the API.
         self.eliminate = self._eliminate_false
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_name = self._return_data_name
-        self.return_units = self._return_units_global
         self.set_param_values = self._set_param_values_global
 
         # Set up the global parameters.
-        self.GLOBAL_PARAMS.add('ave_pos_alpha', units='rad')
-        self.GLOBAL_PARAMS.add('ave_pos_beta', units='rad')
-        self.GLOBAL_PARAMS.add('ave_pos_gamma', units='rad')
-        self.GLOBAL_PARAMS.add('eigen_alpha', units='rad')
-        self.GLOBAL_PARAMS.add('eigen_beta', units='rad')
-        self.GLOBAL_PARAMS.add('eigen_gamma', units='rad')
-        self.GLOBAL_PARAMS.add('axis_theta', units='rad')
-        self.GLOBAL_PARAMS.add('axis_phi', units='rad')
-        self.GLOBAL_PARAMS.add('cone_theta_x', units='rad')
-        self.GLOBAL_PARAMS.add('cone_theta_y', units='rad')
-        self.GLOBAL_PARAMS.add('cone_theta', units='rad')
-        self.GLOBAL_PARAMS.add('cone_s1')
-        self.GLOBAL_PARAMS.add('cone_sigma_max', units='rad')
+        self.PARAMS.add('ave_pos_alpha', scope='global', units='rad', desc='The average position alpha Euler angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('ave_pos_beta', scope='global', units='rad', desc='The average position beta Euler angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('ave_pos_gamma', scope='global', units='rad', desc='The average position gamma Euler angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('eigen_alpha', scope='global', units='rad', desc='The Eigenframe alpha Euler angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('eigen_beta', scope='global', units='rad', desc='The Eigenframe beta Euler angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('eigen_gamma', scope='global', units='rad', desc='The Eigenframe gamma Euler angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('axis_theta', scope='global', units='rad', desc='The cone axis polar angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('axis_phi', scope='global', units='rad', desc='The cone axis azimuthal angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('cone_theta_x', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the x-axis', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('cone_theta_y', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the y-axis', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('cone_theta', scope='global', units='rad', desc='The isotropic cone opening half-angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('cone_s1', scope='global', units='', desc='The isotropic cone order parameter', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('cone_sigma_max', scope='global', units='rad', desc='The torsion angle', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('params', scope='global', desc='The model parameters', py_type=list)
 
         # Set up the spin parameters.
-        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
-        self.SPIN_PARAMS.add('proton_type', default='1H')
+        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
+        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
+
+        # Add minimisation structures.
+        self.PARAMS.add_min_data(min_stats_global=True)
 
 
     def _assemble_limit_arrays(self):
@@ -920,105 +925,6 @@ class Frame_order(API_base, API_common):
         return red_tensors_bc
 
 
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Function for returning a list of names of data structures.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'params', an array of the parameter names associated with the model.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-        The isotropic cone specific model parameters are:
-
-            - 'axis_theta', the cone axis polar angle (for the isotropic cone model).
-            - 'axis_phi', the cone axis azimuthal angle (for the isotropic cone model).
-            - 'cone_s1', the isotropic cone order parameter.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for the
-                                Frame Order parameter names, or to 'min' for minimisation specific
-                                object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('params')
-
-        # The parameter suffix.
-        if error_names:
-            suffix = '_err'
-        elif sim_names:
-            suffix = '_sim'
-        else:
-            suffix = ''
-
-        # Parameters.
-        if (set == 'all' or set == 'params') and hasattr(cdp, 'model'):
-            # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
-                names.append('ave_pos_alpha%s' % suffix)
-            names.append('ave_pos_beta%s' % suffix)
-            names.append('ave_pos_gamma%s' % suffix)
-
-            # Frame order eigenframe - the full frame.
-            if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                names.append('eigen_alpha%s' % suffix)
-                names.append('eigen_beta%s' % suffix)
-                names.append('eigen_gamma%s' % suffix)
-
-            # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
-                names.append('axis_theta%s' % suffix)
-                names.append('axis_phi%s' % suffix)
-
-            # Cone parameters - pseudo-elliptic cone parameters.
-            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                names.append('cone_theta_x%s' % suffix)
-                names.append('cone_theta_y%s' % suffix)
-
-            # Cone parameters - single isotropic angle or order parameter.
-            elif cdp.model in ['iso cone', 'iso cone, torsionless']:
-                names.append('cone_theta%s' % suffix)
-            elif cdp.model in ['iso cone, free rotor']:
-                names.append('cone_s1%s' % suffix)
-
-            # Cone parameters - torsion angle.
-            if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
-                names.append('cone_sigma_max%s' % suffix)
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Return the names.
-        return names
-
-
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
@@ -1028,9 +934,11 @@ class Frame_order(API_base, API_common):
         @rtype:                 list of str
         """
 
-        # Return the parameter object names.
-        param_names = self.data_names(set='params')
-        return param_names
+        # First update the model, if needed.
+        self._update_model()
+
+        # Return the parameter list object.
+        return cdp.params
 
 
     def get_param_values(self, model_info=None, sim_index=None):
@@ -1469,6 +1377,10 @@ class Frame_order(API_base, API_common):
 
         # Loop over all the data names.
         for object_name in param_names:
+            # Skip non-existent objects.
+            if not hasattr(cdp, object_name):
+                continue
+
             # Name for the simulation object.
             sim_object_name = object_name + '_sim'
 
@@ -1539,6 +1451,10 @@ class Frame_order(API_base, API_common):
 
         # Loop over the parameters.
         for param in param_names:
+            # Skip non-existent objects.
+            if not hasattr(cdp, param):
+                continue
+
             # Return the parameter array.
             if index == inc:
                 return getattr(cdp, param + "_sim")

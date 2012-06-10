@@ -53,7 +53,7 @@ import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
 from status import Status; status = Status()
-from version import version
+import version
 
 # Modify the environmental variables.
 putenv('PDBVIEWER', 'vmd')
@@ -151,7 +151,7 @@ class Relax:
 
         # Show the version number and exit.
         if self.mode == 'version':
-            print(('relax ' + version))
+            print(('relax ' + version.version_full()))
             return
 
         # Show the relax info and exit.
@@ -196,7 +196,7 @@ class Relax:
             status.show_gui = True
 
             # Start the relax GUI wx application.
-            app = gui.App(script=self.script_file)
+            app = gui.App(script_file=self.script_file)
             app.MainLoop()
 
         # Execute the relax test suite

@@ -32,7 +32,7 @@ def get_angle(index, incs=None, deg=False):
 INC = 18
 
 # Load the tensors.
-script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'isotropic_cone_free_rotor_in_frame_tensors_beta101_25.py')
+self._execute_uf(uf_name='script', file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'isotropic_cone_free_rotor_in_frame_tensors_beta101_25.py')
 
 # Data stores.
 ds.chi2 = []
@@ -42,7 +42,7 @@ ds.angles = []
 for i in range(INC):
     # Switch data pipes.
     ds.angles.append(get_angle(i, incs=INC, deg=True))
-    pipe.switch('cone_%s_deg' % ds.angles[-1])
+    self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%s_deg' % ds.angles[-1])
 
     # Data init.
     cdp.ave_pos_beta  = 101.25 / 360.0 * 2.0 * pi
@@ -50,21 +50,21 @@ for i in range(INC):
     cdp.cone_s1 = iso_cone_theta_to_S(get_angle(i, incs=INC, deg=False))
 
     # Select the Frame Order model.
-    frame_order.select_model(model='iso cone, free rotor')
+    self._execute_uf(uf_name='frame_order.select_model', model='iso cone, free rotor')
 
     # Set the reference domain.
-    frame_order.ref_domain('full')
+    self._execute_uf(uf_name='frame_order.ref_domain', ref='full')
 
     # Calculate the chi2.
-    calc()
+    self._execute_uf(uf_name='calc')
     #cdp.chi2b = cdp.chi2
-    #minimise('simplex')
+    #self._execute_uf(uf_name='minimise', min_algor='simplex')
     ds.chi2.append(cdp.chi2)
 
 # Save the program state.
-#state.save("iso_cone_free_rotor_eigenframe", force=True)
+#self._execute_uf(uf_name='state.save', state="iso_cone_free_rotor_eigenframe", force=True)
 
-# Chi2 print out.
-print "\n\n"
+# Chi2 printout.
+print("\n\n")
 for i in range(INC):
     print("Cone %3i deg, chi2: %s" % (ds.angles[i], ds.chi2[i]))

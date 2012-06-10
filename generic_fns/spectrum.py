@@ -120,7 +120,7 @@ class Bruker_import:
                         return
 
                 # Feedback
-                print "Reading BRUKER PDC "+exp_type+" file.\n"
+                print("Reading BRUKER PDC "+exp_type+" file.\n")
 
             # The entries
             if 'SECTION:' in self.entries[line][0]:
@@ -209,7 +209,7 @@ class Bruker_import:
 
         # Print entries
         if not self.UI == 'GUI':
-            print text
+            print(text)
 
         # craete output file
         if self.output_file:
@@ -228,15 +228,15 @@ class Bruker_import:
         # Feedback
         if self.output_file:
             if self.dir:
-                print 'Created BRUKER PDC file '+self.dir+sep+self.output_file
+                print('Created BRUKER PDC file '+self.dir+sep+self.output_file)
                 # The return value
                 self.value = self.dir+sep+self.output_file
             else:
-                print 'Created BRUKER PDC file '+self.output_file
+                print('Created BRUKER PDC file '+self.output_file)
                 # The return value
                 self.value = self.output_file
         else:
-            print 'Created BRUKER PDC file.'
+            print('Created BRUKER PDC file.')
             # Return the dummy file
             self.value = file
 
@@ -643,8 +643,40 @@ def error_analysis():
             # Print out.
             print("Replicated spectra:  No.")
 
+            # No implemented.
+            raise RelaxImplementError
+
             # Set the errors.
-            __errors_repl()
+            __errors_vol_no_repl()
+
+
+def get_ids():
+    """Return a list of all spectrum IDs.
+
+    @return:    The list of spectrum IDs.
+    @rtype:     list of str
+    """
+
+    # No IDs.
+    if not hasattr(cdp, 'spectrum_ids'):
+        return []
+
+    # Return the IDs.
+    return cdp.spectrum_ids
+
+
+def integration_points(N=0, spectrum_id=None, spin_id=None):
+    """Set the number of integration points for the given spectrum.
+
+    @param N:               The number of integration points.
+    @type N:                int
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    @keyword spin_id:       The spin ID string used to restrict the value to.
+    @type spin_id:          None or str
+    """
+
+    raise RelaxImplementError
 
 
 def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, sep=None, spin_id=None):
@@ -1014,6 +1046,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Check the file name.
+    if file == None:
+        raise RelaxError("The file name must be supplied.")
+
     # Test that the intensity measures are identical.
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
@@ -1138,6 +1174,16 @@ def replicated(spectrum_ids=None):
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
 
+    # Test for None.
+    if spectrum_ids == None:
+        warn(RelaxWarning("The spectrum ID list cannot be None."))
+        return
+
+    # Test for more than one element.
+    if len(spectrum_ids) == 1:
+        warn(RelaxWarning("The number of spectrum IDs in the list %s must be greater than one." % spectrum_ids))
+        return
+
     # Initialise.
     if not hasattr(cdp, 'replicates'):
         cdp.replicates = []
@@ -1209,6 +1255,10 @@ def replicated_ids(spectrum_id):
 
                 # Append the replicated ID.
                 repl.append(cdp.replicates[i][j])
+
+    # Nothing.
+    if repl == []:
+        return repl
 
     # Sort the list.
     repl.sort()

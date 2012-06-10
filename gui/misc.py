@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,10 +25,10 @@
 """Miscellaneous functions used throughout the GUI."""
 
 # Python module imports.
-from math import pow
+from copy import deepcopy
 import os
 import platform
-from string import split
+from textwrap import wrap
 import wx
 
 # relax module imports.
@@ -115,269 +115,125 @@ def add_border(box, border=0, packing=wx.VERTICAL, debug=False):
     return sizer_cent
 
 
-def bool_to_gui(bool):
-    """Convert the bool into the GUI string.
+def format_table(table):
+    """Format the text by stripping whitespace.
 
-    @param bool:    The boolean value of True or False.
-    @type bool:     bool
-    @return:        The GUI string.
-    @rtype:         unicode
+    @param table:       The table.
+    @type table:        lists of lists of str
+    @return:            The formatted table.
+    @rtype:             str
     """
 
-    # Convert.
-    return unicode(bool)
+    # Initialise some variables.
+    text = ''
+    num_rows = len(table.cells)
+    num_cols = len(table.headings)
+
+    # The column widths.
+    widths = []
+    for j in range(num_cols):
+        widths.append(len(table.headings[j]))
+    for i in range(num_rows):
+        for j in range(num_cols):
+            # The element is larger than the previous.
+            if len(table.cells[i][j]) > widths[j]:
+                widths[j] = len(table.cells[i][j])
+
+    # The free space for the text.
+    used = 0
+    used += 2    # Start of the table '  '.
+    used += 2    # End of the table '  '.
+    used += 3 * (num_cols - 1)   # Middle of the table '   '.
+    free_space = status.text_width - used
+
+    # The maximal width for all cells.
+    free_width = sum(widths)
+
+    # Column wrapping.
+    if free_width > free_space:
+        # New structures.
+        new_widths = deepcopy(widths)
+        num_cols_wrap = num_cols
+        free_space_wrap = free_space
+        col_wrap = [True] * num_cols
+
+        # Loop.
+        while 1:
+            # The average column width.
+            ave_width = free_space_wrap / num_cols_wrap
+
+            # Rescale.
+            rescale = False
+            for i in range(num_cols):
+                # Remove the column from wrapping if smaller than the average wrapped width.
+                if col_wrap[i] and new_widths[i] < ave_width:
+                    # Recalculate.
+                    free_space_wrap = free_space_wrap - new_widths[i]
+                    num_cols_wrap -= 1
+                    rescale = True
+
+                    # Remove the column from wrapping.
+                    col_wrap[i] = False
+
+            # Done.
+            if not rescale:
+                # Set the column widths.
+                for i in range(num_cols):
+                    if new_widths[i] > ave_width:
+                        new_widths[i] = ave_width
+                break
+
+    # No column wrapping.
+    else:
+        new_widths = widths
+        col_wrap = [False] * num_cols
+
+    # The total table width.
+    total_width = sum(new_widths) + used
+
+    # The header.
+    text += " " + "_" * (total_width - 2) + "\n\n"    # Top rule and black line.
+    text += table_line(text=table.headings, widths=new_widths)    # The headings.
+    text += table_line(widths=new_widths, bottom=True)    # Middle rule.
+
+    # The table contents.
+    for i in range(num_rows):
+        # Column text, with wrapping.
+        col_text = [table.cells[i]]
+        num_lines = 1
+        for j in range(num_cols):
+            if col_wrap[j]:
+                # Wrap.
+                lines = wrap(col_text[0][j], new_widths[j])
+
+                # Count the lines.
+                num_lines = len(lines)
+
+                # Replace the column text.
+                for k in range(num_lines):
+                    # New row of empty text.
+                    if len(col_text) <= k:
+                        col_text.append(['']*num_cols)
+
+                    # Pack the data.
+                    col_text[k][j] = lines[k]
+
+        # Blank line (between rows when asked, and for the first row after the header).
+        if table.spacing or i == 1:
+            text += table_line(widths=new_widths)
+
+        # The contents.
+        for k in range(num_lines):
+            text += table_line(text=col_text[k], widths=new_widths)
 
+    # The bottom.
+    text += table_line(widths=new_widths, bottom=True)    # Bottom rule.
 
-def convert_to_float(string):
-    """Method to convert a string like '1.02*1e-10' to a float variable.
+    # Add a newline.
+    text += '\n'
 
-    @param string:  The number in string form.
-    @type string:   str or unicode
-    @return:        The floating point number.
-    @rtype:         float
-    """
-
-    # Break the number up.
-    entries = split('*')
-
-    # The first part of the number.
-    a = entries[0]
-    a = float(a)
-
-    # The second part of the number.
-    b = entries[1]
-    b = float(b[2:len(b)])
-
-    # Recombine.
-    result = a * pow(10, b)
-
-    # Return the float.
-    return result
-
-
-def float_to_gui(num):
-    """Convert the float into the GUI string.
-
-    @param num:     The number in float or None form.
-    @type num:      float or None
-    @return:        The GUI string.
-    @rtype:         unicode
-    """
-
-    # No input.
-    if num == None:
-        num = ''
-
-    # Convert.
-    return unicode(num)
-
-
-def gui_to_bool(string):
-    """Convert the GUI obtained string to a bool.
-
-    @param string:  The bool in string form.
-    @type string:   str or unicode
-    @return:        The bool.
-    @rtype:         bool
-    """
-
-    # No value.
-    if string in ['', u'', None]:
-        return None
-
-    # Convert.
-    return eval(string)
-
-
-def gui_to_float(string):
-    """Convert the GUI obtained string to an float.
-
-    @param string:  The number in string form.
-    @type string:   str or unicode
-    @return:        The float
-    @rtype:         float or None
-    """
-
-    # No input.
-    if string in ['', u'', None]:
-        return None
-
-    # Already a float.
-    if isinstance(string, float):
-        return string
-
-    # Convert.
-    val = eval(string)
-
-    # An int.
-    if isinstance(val, int):
-        val = float(val)
-
-    # Not a float!
-    if not isinstance(val, float):
-        return string
-
-    # A float.
-    return val
-
-
-def gui_to_int(string):
-    """Convert the GUI obtained string to an int.
-
-    @param string:  The number in string form.
-    @type string:   str or unicode
-    @return:        The integer
-    @rtype:         int or None
-    """
-
-    # No input.
-    if string in ['', u'', None]:
-        return None
-
-    # Already an int.
-    if isinstance(string, int):
-        return string
-
-    # Convert.
-    try:
-        val = eval(string)
-    except:
-        val = None
-
-    # Not an int!
-    if not isinstance(val, int):
-        return string
-
-    # An int.
-    return val
-
-
-def gui_to_int_or_list(string):
-    """Convert the GUI obtained string to a list.
-
-    @param string:  The list in string form.
-    @type string:   str or unicode
-    @return:        The integer or list of integers.
-    @rtype:         int or int list
-    """
-
-    # No value.
-    if string in ['', u'', None]:
-        return None
-
-    # Already an int or list.
-    if isinstance(string, int) or isinstance(string, list):
-        return string
-
-    # Convert.
-    try:
-        val = eval(string)
-
-    # Failure, so return the original value.
-    except NameError:
-        return string
-
-
-    # Return the list.
-    return val
-
-
-def gui_to_list(string):
-    """Convert the GUI obtained string to a list.
-
-    @param string:  The list in string form.
-    @type string:   str or unicode
-    @return:        The list.
-    @rtype:         list
-    """
-
-    # No value.
-    if string in ['', u'', None]:
-        return []
-
-    # Convert.
-    val = eval(string)
-    if not isinstance(val, list):
-        val = [val]
-
-    # Return the list.
-    return val
-
-
-def gui_to_str(string):
-    """Convert the GUI obtained string to a string.
-
-    @param string:  The number in string form.
-    @type string:   str or unicode
-    @return:        The string.
-    @rtype:         str
-    """
-
-    # No value.
-    if string in ['', u'', None]:
-        return None
-
-    # Convert.
-    return str(string)
-
-
-def gui_to_str_or_list(string):
-    """Convert the GUI obtained string to a list.
-
-    @param string:  The list in string form.
-    @type string:   str or unicode
-    @return:        The integer or list of integers.
-    @rtype:         int or int list
-    """
-
-    # No value.
-    if string in ['', u'', None]:
-        return None
-
-    # Try converting to a list.
-    try:
-        val = eval(string)
-
-    # Catch failures, and try as a string.
-    except NameError:
-        return str(string)
-
-    # Return the list.
-    return val
-
-
-def int_to_gui(num):
-    """Convert the int into the GUI string.
-
-    @param num:     The number in int or None form.
-    @type num:      int or None
-    @return:        The GUI string.
-    @rtype:         unicode
-    """
-
-    # No input.
-    if num == None:
-        num = ''
-
-    # Convert.
-    return unicode(num)
-
-
-def list_to_gui(list):
-    """Convert the list into the GUI string.
-
-    @param list:    The Python list.
-    @type list:     list or None
-    @return:        The GUI string.
-    @rtype:         unicode
-    """
-
-    # No input.
-    if list == None:
-        list = ''
-
-    # Convert.
-    return unicode(list)
+    # Return the table text.
+    return text
 
 
 def open_file(file, force_text=False):
@@ -445,18 +301,52 @@ def protected_exec(fn, *args, **kargs):
     return True
 
 
-def str_to_gui(string):
-    """Convert the string into the GUI string.
+def table_line(text=None, widths=None, bottom=False):
+    """Format a line of a table.
 
-    @param string:  The string or None to convert.
-    @type string:   str or None
-    @return:        The GUI string.
-    @rtype:         unicode
+    @keyword text:      The list of table elements.  If not given, an empty line will be be produced.
+    @type text:         list of str or None
+    @keyword widths:    The list of column widths for the table.
+    @type widths:       list of int
+    @keyword botton:    A flag which if True will cause a table bottom line to be produced.
+    @type bottom:       bool
+    @return:            The table line.
+    @rtype:             str
     """
 
-    # No input.
-    if string == None:
-        string = ''
+    # Initialise.
+    if bottom:
+        line = " _"
+    else:
+        line = "  "
 
-    # Convert.
-    return unicode(string)
+    # Loop over the columns.
+    for i in range(len(widths)):
+        # The column separator.
+        if i > 0:
+            if bottom:
+                line += "___"
+            else:
+                line += "   "
+
+        # A bottom line.
+        if bottom:
+            line += "_" * widths[i]
+
+        # Empty line.
+        elif text == None:
+            line += " " * widths[i]
+
+        # The text.
+        else:
+            line += text[i]
+            line += " " * (widths[i] - len(text[i]))
+
+    # Close the line.
+    if bottom:
+        line += "_ \n"
+    else:
+        line += "  \n"
+
+    # Return the text.
+    return line

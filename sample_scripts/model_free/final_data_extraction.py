@@ -250,26 +250,26 @@ try:
 
 # No diffusion in model (local tm model)
 except:
-    print "No diffusion tensor found."
+    print("No diffusion tensor found.")
 
 
 
 ##################################################################################################
 
 
-print ""
-print ""
-print " ---------- done ----------------"
-print ""
-print ""
-print "Grace Plots are in Folder /grace/"
-print ""
-print "Signle Text Files for Relaxation Parameters are in Folder /final_results/"
-print ""
-print "Diffusion Tensor is in current Folder"
-print ""
-print "PyMol Macros are in current Folder - execute in PyMol with Command:"
-print "@rex.pml and @s2.pml"
+print("")
+print("")
+print(" ---------- done ----------------")
+print("")
+print("")
+print("Grace Plots are in Folder /grace/")
+print("")
+print("Signle Text Files for Relaxation Parameters are in Folder /final_results/")
+print("")
+print("Diffusion Tensor is in current Folder")
+print("")
+print("PyMol Macros are in current Folder - execute in PyMol with Command:")
+print("@rex.pml and @s2.pml")
 
 
 

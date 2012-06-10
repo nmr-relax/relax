@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,7 +27,8 @@
 from math import log
 
 # relax module imports.
-from pipes import get_type, has_pipe, pipe_names, switch
+import generic_fns.pipes
+from generic_fns.pipes import get_type, has_pipe, pipe_names, switch
 from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 
@@ -102,7 +103,7 @@ def bic(chi2, k, n):
     return chi2 + k * log(n)
 
 
-def select(method=None, modsel_pipe=None, pipes=None):
+def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
     """Model selection function.
 
     @keyword method:        The model selection method.  This can currently be one of:
@@ -112,9 +113,10 @@ def select(method=None, modsel_pipe=None, pipes=None):
                                 - 'CV', Single-item-out cross-validation.
                             None of the other model selection techniques are currently supported.
     @type method:           str
-    @keyword modsel_pipe:   The name of the new data pipe to be created by copying of the selected
-                            data pipe.
+    @keyword modsel_pipe:   The name of the new data pipe to be created by copying of the selected data pipe.
     @type modsel_pipe:      str
+    @keyword bundle:        The optional data pipe bundle to associate the newly created pipe with.
+    @type bundle:           str or None
     @keyword pipes:         A list of the data pipes to use in the model selection.
     @type pipes:            list of str
     """
@@ -307,3 +309,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Switch to the model selection pipe.
     if modsel_pipe_exists:
         switch(modsel_pipe)
+
+    # Bundle the data pipe.
+    if bundle:
+        generic_fns.pipes.bundle(bundle=bundle, pipe=modsel_pipe)

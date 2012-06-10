@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -194,7 +194,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                print("Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j]))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 
@@ -227,7 +227,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                print("Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j]))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 
@@ -244,7 +244,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_disorder[i, j])
 
 
@@ -261,7 +261,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
 
 
@@ -278,7 +278,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
@@ -295,7 +295,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
 
 
@@ -312,7 +312,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
 
 
@@ -331,7 +331,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -350,7 +350,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -372,7 +372,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], f2_ref[i, j])
 
 
@@ -389,7 +389,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
 
 
@@ -409,7 +409,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
@@ -426,7 +426,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_order_free_rotor[i, j])
 
 
@@ -462,7 +462,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                print("Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j]))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-4)
 
 
@@ -497,7 +497,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                print("Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j]))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 
@@ -532,7 +532,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                print("Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j]))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 
@@ -549,7 +549,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_disorder[i, j])
 
 
@@ -566,7 +566,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
 
 
@@ -583,7 +583,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
@@ -601,7 +601,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_order[i, j], 4)
 
 
@@ -620,7 +620,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -639,7 +639,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -658,7 +658,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s; diff %s." % (i, j, f2b[i, j] - f2a[i, j])
+                print("Element %s, %s; diff %s." % (i, j, f2b[i, j] - f2a[i, j]))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -677,7 +677,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -696,7 +696,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -715,7 +715,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -732,7 +732,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_disorder[i, j])
 
 
@@ -749,7 +749,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
 
 
@@ -766,7 +766,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
@@ -783,7 +783,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2[i, j], self.I_order_free_rotor[i, j])
 
 
@@ -817,7 +817,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 
@@ -851,7 +851,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-2)
 
 
@@ -870,7 +870,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -889,7 +889,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
@@ -922,7 +922,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
+                print("Element %s, %s." % (i, j))
                 self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 

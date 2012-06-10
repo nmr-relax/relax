@@ -23,25 +23,22 @@
 # Module docstring.
 """The spin viewer frame."""
 
-
 # Python module imports.
 import wx
 
 # relax module imports.
-from generic_fns import structure
 from generic_fns.pipes import cdp_name, pipe_names
+from graphics import WIZARD_IMAGE_PATH, fetch_icon
 from status import Status; status = Status()
 from relax_errors import RelaxNoPipeError
 
 # relax GUI module imports.
-from gui.paths import icon_32x32, WIZARD_IMAGE_PATH
-from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
-from gui.menu import Uf_menus
-from gui.misc import gui_raise, gui_to_str, str_to_gui
+from gui.misc import gui_raise
 from gui.spin_viewer.splitter import Tree_splitter
-from gui.user_functions import User_functions, sequence, structure; user_functions = User_functions()
+from gui.string_conv import gui_to_str, str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
+from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
 
 
 class Spin_view_window(wx.Frame):
@@ -116,11 +113,8 @@ class Spin_view_window(wx.Frame):
         if status.show_gui:
             self.SetMenuBar(self.menubar)
 
-        # The user function menu entry.
-        menu = wx.Menu()
-        uf_menus = Uf_menus(parent=self, menu=menu)
-        title = "&User functions"
-        self.menubar.Append(menu, title)
+        # The user function menus.
+        self.menu_uf_ids = build_uf_menus(parent=self, menubar=self.menubar)
 
 
     def Show(self, show=True):
@@ -149,7 +143,7 @@ class Spin_view_window(wx.Frame):
     def refresh(self, event=None):
         """Event handler for the refresh action (thread safe).
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -177,10 +171,10 @@ class Spin_view_window(wx.Frame):
             wx.EndBusyCursor()
 
 
-    def handler_close(self, event):
+    def handler_close(self, event=None):
         """Event handler for the close window action.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -193,10 +187,10 @@ class Spin_view_window(wx.Frame):
         self.Hide()
 
 
-    def load_spins_wizard(self, event):
+    def load_spins_wizard(self, event=None):
         """The spin loading wizard.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -209,7 +203,7 @@ class Spin_view_window(wx.Frame):
         wx.BeginBusyCursor()
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self, size_x=800, size_y=700, title="Load spins")
+        self.wizard = Wiz_window(parent=self, size_x=1000, size_y=800, title="Load spins")
         self.page_indices = {}
 
         # The loading method page.
@@ -218,22 +212,22 @@ class Spin_view_window(wx.Frame):
         self.wizard.set_seq_next_fn(self.page_indices['method'], self.wizard_page_after_load_method)
 
         # The sequence.read page.
-        page = sequence.Read_page(self.wizard)
+        page = uf_store['sequence.read'].create_page(self.wizard)
         self.page_indices['sequence.read'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['sequence.read'], self.wizard_page_after_sequence_read)
 
         # The structure.read_pdb page.
-        page = structure.Read_pdb_page(self.wizard)
+        page = uf_store['structure.read_pdb'].create_page(self.wizard)
         self.page_indices['structure.read_pdb'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['structure.read_pdb'], self.wizard_page_after_structure_read)
 
         # The structure.read_xyz page.
-        page = structure.Read_xyz_page(self.wizard)
+        page = uf_store['structure.read_xyz'].create_page(self.wizard)
         self.page_indices['structure.read_xyz'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['structure.read_xyz'], self.wizard_page_after_structure_read)
 
         # The structure.load_spins page.
-        page = structure.Load_spins_page(self.wizard)
+        page = uf_store['structure.load_spins'].create_page(self.wizard)
         self.page_indices['structure.load_spins'] = self.wizard.add_page(page)
 
         # The termination page.
@@ -276,11 +270,12 @@ class Spin_view_window(wx.Frame):
         """Create the toolbar."""
 
         # Init.
-        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
+        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT|wx.TB_TEXT)
 
         # The spin loading button.
         self.spin_loader_id = wx.NewId()
-        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(icon_32x32.spin_grey, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
+        tooltip = "Load spins from either a sequence file or from a 3D structure file."
+        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
         self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=self.spin_loader_id)
 
         # A separator.
@@ -288,7 +283,8 @@ class Spin_view_window(wx.Frame):
 
         # The refresh button.
         id = wx.NewId()
-        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
+        tooltip = "Refresh the spin view."
+        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
         self.Bind(wx.EVT_TOOL, self.refresh, id=id)
 
         # A separator.
@@ -310,7 +306,7 @@ class Spin_view_window(wx.Frame):
     def update_pipes(self, event=None):
         """Update the spin view data pipe selector.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -515,10 +511,10 @@ class Load_method_page(Wiz_page):
             self.selection = 'sequence'
 
 
-    def _on_select(self, event):
+    def _on_select(self, event=None):
         """Handle the radio button switching.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 

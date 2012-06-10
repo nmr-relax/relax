@@ -72,7 +72,7 @@ def display():
     ds.to_xml(sys.stdout)
 
 
-def read(file='results', directory=None):
+def read(file='results', dir=None):
     """Function for reading the data out of a file."""
 
     # Test if the current data pipe exists.
@@ -83,7 +83,7 @@ def read(file='results', directory=None):
         raise RelaxError("The current data pipe is not empty.")
 
     # Get the full file path, for later use.
-    file_path = get_file_path(file_name=file, dir=directory)
+    file_path = get_file_path(file_name=file, dir=dir)
 
     # Open the file.
     file = open_read_file(file_name=file_path)
@@ -117,18 +117,18 @@ def read(file='results', directory=None):
         raise RelaxError("The format of the results file " + repr(file_path) + " cannot be determined.")
 
 
-def write(file="results", directory=None, force=False, compress_type=1, verbosity=1):
+def write(file="results", dir=None, force=False, compress_type=1, verbosity=1):
     """Create the results file."""
 
     # Test if the current data pipe exists.
     pipes.test()
 
     # The special data pipe name directory.
-    if directory == 'pipe_name':
-        directory = pipes.cdp_name()
+    if dir == 'pipe_name':
+        dir = pipes.cdp_name()
 
     # Open the file for writing.
-    results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
+    results_file = open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type, verbosity=verbosity)
 
     # Write the results.
     ds.to_xml(results_file, pipes=pipes.cdp_name())

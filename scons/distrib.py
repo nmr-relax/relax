@@ -69,7 +69,7 @@ def gpg_sign(target, source, env):
         # Run the 'gpg' command.
         system("gpg --detach-sign --default-key " + key + " " + path.pardir + path.sep + file)
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")
 
 
@@ -166,5 +166,5 @@ def package(target, source, env):
         # Close the archive.
         archive.close()
 
-    # Final print out.
+    # Final printout.
     print("\n\n\n")

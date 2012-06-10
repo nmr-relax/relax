@@ -48,44 +48,13 @@ class Ct(SystemTestCase):
     def test_calc(self):
         """The consistency testing calculation test."""
 
-        # Data directory.
-        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests_calc_test.py')
 
-        # The data.
-        ri_ids = ['NOE_600', 'R1_600', 'R2_600']
-        ri_type = ['NOE', 'R1', 'R2']
-        frq = [600e6]*3
-        data_paths = [dir + 'noe.dat', dir + 'R1.dat', dir + 'R2.dat']
-
-        # Correct consistency functions values:
+        # Correct consistency functions values.
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
         f_eta = [0.20413244790407614, 0.18898977395296815]
         f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
-
-        # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
-
-        # Read the data.
-        for i in xrange(len(ri_ids)):
-            self.interpreter.relax_data.read(ri_id=ri_ids[i], ri_type=ri_type[i], frq=frq[i], file=data_paths[i], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-
-        # Set r, csa, heteronucleus type, and proton type.
-        self.interpreter.value.set(NH_BOND_LENGTH, 'r')
-        self.interpreter.value.set(N15_CSA, 'csa')
-        self.interpreter.value.set('15N', 'heteronuc_type')
-        self.interpreter.value.set('1H', 'proton_type')
-
-        # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
-        self.interpreter.value.set(15.7, 'orientation')
-
-        # Set the approximate correlation time.
-        self.interpreter.value.set(13 * 1e-9, 'tc')
-
-        # Select the frequency.
-        self.interpreter.consistency_tests.set_frq(frq=600.0 * 1e6)
-
-        # Try the consistency testing.
-        self.interpreter.calc()
 
         # Loop over residues.
         index = 0
@@ -106,23 +75,17 @@ class Ct(SystemTestCase):
     def test_set_value(self):
         """The user function value.set()."""
 
-        # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
-
-        # Try to set the values.
-        bond_length = NH_BOND_LENGTH
-        csa = N15_CSA
-        self.interpreter.value.set(bond_length, 'r')
-        self.interpreter.value.set(csa, 'csa')
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests_set_value.py')
 
         # Loop over residues.
         for res in residue_loop():
-            self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
-            self.assertEqual(res.spin[0].csa, N15_CSA)
+            self.assertAlmostEqual(res.spin[0].r, NH_BOND_LENGTH)
+            self.assertAlmostEqual(res.spin[0].csa, N15_CSA)
 
 
     def test_consistency(self):
         """Test a complete consistency tests run using a script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')

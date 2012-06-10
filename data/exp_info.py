@@ -149,10 +149,6 @@ class ExpInfo(Element):
         if not hasattr(self, "peak_intensity_type"):
             self.peak_intensity_type = {}
 
-        # Find if the type has already been set.
-        if ri_id in self.peak_intensity_type.keys():
-            raise RelaxError("The peak intensity type for the '%s' relaxation data ID string has already been set.")
-
         # Set the type.
         self.peak_intensity_type[ri_id] = type
 
@@ -163,10 +159,6 @@ class ExpInfo(Element):
         @param state:   The thiol state of the molecule.
         @type state:    str
         """
-
-        # Check.
-        if hasattr(self, "thiol_state"):
-            raise RelaxError("The thiol state has already been specified")
 
         # Set the attribute.
         self.thiol_state = state
@@ -292,10 +284,6 @@ class ExpInfo(Element):
         if not hasattr(self, "temp_calibration"):
             self.temp_calibration = {}
 
-        # Find if the method has already been set.
-        if ri_id in self.temp_calibration.keys():
-            raise RelaxError("The temperature calibration method for the '%s' relaxation data ID string has already been set.")
-
         # Set the method.
         self.temp_calibration[ri_id] = method
 
@@ -312,10 +300,6 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "temp_control"):
             self.temp_control = {}
-
-        # Find if the method has already been set.
-        if ri_id in self.temp_control.keys():
-            raise RelaxError("The temperature control method for the '%s' relaxation data ID string has already been set.")
 
         # Set the method.
         self.temp_control[ri_id] = method

@@ -70,6 +70,60 @@ class Mf(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
+    def check_read_results_1_3(self):
+        """Common code for the test_read_results_1_3*() tests."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+
+        # Read the equivalent 1.2 results file for the checks.
+        self.interpreter.pipe.create('1.2', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.2', dir=path)
+
+        # Get the two data pipes.
+        pipe_12 = pipes.get_pipe('1.2')
+        pipe_13 = pipes.get_pipe('1.3')
+
+        # Test that the objects in the base pipes are the same.
+        print("Comparison of the objects of the base data pipe:")
+        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
+
+        # Test that the diffusion tensor data is the same.
+        print("Comparison of the objects of the diffusion tensor:")
+        self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
+
+        # Test the number of molecules.
+        self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
+
+        # Loop over the molecules.
+        for i in xrange(len(pipe_12.mol)):
+            # Test the objects.
+            print("Comparison of the objects of the molecule:")
+            self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
+
+            # Test the number of residues.
+            self.assertEqual(len(pipe_12.mol[i].res), len(pipe_13.mol[i].res))
+
+            # Loop over the residues.
+            for j in xrange(len(pipe_12.mol[i].res)):
+                # Ok, really don't need to do a full comparison of all 162 residues for this test!
+                if j > 10:
+                    break
+
+                # Test the objects.
+                print("Comparison of the objects of the residue:")
+                self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
+
+                # Test the number of spins.
+                self.assertEqual(len(pipe_12.mol[i].res[j].spin), len(pipe_13.mol[i].res[j].spin))
+
+                # Loop over the spins.
+                for k in xrange(len(pipe_12.mol[i].res[j].spin)):
+                    # Test the objects.
+                    print("Comparison of the objects of the spin:")
+                    self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
+
+
     def mesg_opt_debug(self, spin):
         """Method for returning a string to help debug the minimisation.
 
@@ -175,28 +229,28 @@ class Mf(SystemTestCase):
         """Test catching bug #14872, the unicode string selection failure as submitted by Olivier Serve."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14872_unicode_selection.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14872_unicode_selection.py')
 
 
     def test_bug_14941_local_tm_global_selection(self):
         """Test catching bug #14941, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection.py')
 
 
     def test_bug_15050(self):
         """Test catching bug #15050, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by Tiago Pais (https://gna.org/users/tpais)."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
 
 
     def test_bugs_12582_12591_12607(self):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bugs_12582_12591_12607.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bugs_12582_12591_12607.py')
 
         # Test for bug #12607 (S2 changes because it is in the grid search when it should not be).
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
@@ -206,14 +260,14 @@ class Mf(SystemTestCase):
         """Test catching bug #18790, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
 
 
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'create_m4.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'create_m4.py')
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -227,7 +281,7 @@ class Mf(SystemTestCase):
         ds.tmpdir = mkdtemp()
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'dauvergne_protocol.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'dauvergne_protocol.py')
 
         # Check the diffusion tensor.
         self.assertEqual(cdp.diff_tensor.type, 'sphere')
@@ -260,7 +314,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.proton_type, '1H')
             self.assertEqual(spin.heteronuc_type, '15N')
             self.assertEqual(spin.attached_proton, None)
-            self.assertEqual(spin.nucleus, None)
             self.assertAlmostEqual(spin.r, 1.02 * 1e-10)
             self.assertAlmostEqual(spin.csa, -172e-6)
 
@@ -295,21 +348,21 @@ class Mf(SystemTestCase):
         """Back-calculate relaxation data."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'generate_ri.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'generate_ri.py')
 
 
     def test_latex_table(self):
         """Test the creation of a LaTeX table of model-free results, mimicking the latex_mf_table.py sample script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'latex_mf_table.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'latex_mf_table.py')
 
 
     def test_local_tm_10_S2_0_8_te_40(self):
         """Test the optimisation of the test set {tm=10, S2=0.8, te=40}."""
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # The proton frequencies in MHz.
         frq = ['400', '500', '600', '700', '800', '900', '1000']
@@ -337,7 +390,7 @@ class Mf(SystemTestCase):
         """Test the optimisation of the test set {tm=10, S2=0.8, te=40}."""
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # The proton frequencies in MHz.
         frq = ['400', '500', '600', '700', '800', '900', '1000']
@@ -365,7 +418,7 @@ class Mf(SystemTestCase):
         """Test the optimisation of the test set {tm=10, S2=0.8, te=40}."""
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # Load the relaxation data.
         self.interpreter.relax_data.read('R2_700',  'R2',  700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
@@ -399,7 +452,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
     def test_m0_grid_vs_m1(self):
@@ -410,7 +463,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
     def test_m0_grid_vs_m2(self):
@@ -421,7 +474,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
     def test_m0_grid_vs_m3(self):
@@ -432,7 +485,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
     def test_m0_grid_vs_m4(self):
@@ -443,7 +496,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
     def test_m1_grid(self):
@@ -454,7 +507,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm1_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm1_grid.py')
 
 
     def test_m2_grid(self):
@@ -465,7 +518,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
 
 
     def test_m2_grid_vs_m4(self):
@@ -476,7 +529,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
 
 
     def test_m3_grid(self):
@@ -487,7 +540,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm3_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm3_grid.py')
 
 
     def test_m4_grid(self):
@@ -498,7 +551,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm4_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm4_grid.py')
 
 
     def test_m5_grid(self):
@@ -509,7 +562,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm5_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm5_grid.py')
 
 
     def test_m6_grid(self):
@@ -520,7 +573,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm6_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm6_grid.py')
 
 
     def test_m7_grid(self):
@@ -531,7 +584,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm7_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm7_grid.py')
 
 
     def test_m8_grid(self):
@@ -542,7 +595,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm8_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm8_grid.py')
 
 
     def test_m9_grid(self):
@@ -553,14 +606,14 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm9_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm9_grid.py')
 
 
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'omp_model_free.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'omp_model_free.py')
 
         # Alias the final data pipe.
         dp = pipes.get_pipe('final')
@@ -576,7 +629,7 @@ class Mf(SystemTestCase):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opendx_s2_te_rex.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opendx_s2_te_rex.py')
 
 
     def test_opendx_theta_phi_da(self):
@@ -656,7 +709,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -892,7 +945,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1077,7 +1130,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1146,7 +1199,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1288,7 +1341,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1430,7 +1483,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1604,7 +1657,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1673,7 +1726,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
@@ -1740,7 +1793,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
         self.interpreter.grid_search(inc=11)
@@ -1814,7 +1867,7 @@ class Mf(SystemTestCase):
         # Read the results.
         self.interpreter.results.read(file='results_1.2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
-        # Debugging print out.
+        # Debugging printout.
         print(cdp)
 
         # The spin specific data.
@@ -1890,7 +1943,7 @@ class Mf(SystemTestCase):
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Debugging print out.
+            # Debugging printout.
             print(res)
             print(spin)
 
@@ -1910,7 +1963,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.heteronuc_type, '15N')
             self.assertEqual(spin.proton_type, '1H')
             self.assertEqual(spin.attached_proton, None)
-            self.assertEqual(spin.nucleus, None)
 
             # Model-free tests.
             self.assertEqual(spin.model, model[j])
@@ -1955,7 +2007,7 @@ class Mf(SystemTestCase):
         # Read the results.
         self.interpreter.results.read(file='pse4_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
-        # Debugging print out.
+        # Debugging printout.
         print(cdp)
 
         # The spin specific data.
@@ -2042,7 +2094,7 @@ class Mf(SystemTestCase):
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Debugging print out.
+            # Debugging printout.
             print(res)
             print(spin)
 
@@ -2102,7 +2154,7 @@ class Mf(SystemTestCase):
         # Read the results.
         self.interpreter.results.read(file='tem1_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
-        # Debugging print out.
+        # Debugging printout.
         print(cdp)
 
         # The spin specific data.
@@ -2187,7 +2239,7 @@ class Mf(SystemTestCase):
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Debugging print out.
+            # Debugging printout.
             print(res)
             print(spin)
 
@@ -2230,7 +2282,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            print ri_data
             if not ri_data[i].keys():
                 self.assertEqual(spin.ri_data, {})
                 self.assertEqual(spin.ri_data_err, {})
@@ -2240,63 +2291,77 @@ class Mf(SystemTestCase):
                     self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[i][ri_id])
 
 
-    def test_read_results_1_3(self):
-        """Read a relax 1.3 model-free results file using the user function results.read()."""
+    def test_read_results_1_3_v1(self):
+        """Read a 1.3 model-free results file (relax XML version 1)."""
 
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
         self.interpreter.pipe.create('1.3', 'mf')
-        self.interpreter.results.read(file='final_results_trunc_1.3', dir=path)
+        self.interpreter.results.read(file='final_results_trunc_1.3_v1', dir=path)
 
-        # Read the equivalent 1.2 results file for the checks.
-        self.interpreter.pipe.create('1.2', 'mf')
-        self.interpreter.results.read(file='final_results_trunc_1.2', dir=path)
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
-        # Get the two data pipes.
-        pipe_12 = pipes.get_pipe('1.2')
-        pipe_13 = pipes.get_pipe('1.3')
 
-        # Test that the objects in the base pipes are the same.
-        print("Comparison of the objects of the base data pipe:")
-        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
+    def test_read_results_1_3_pre_py273_v1(self):
+        """Read a 1.3 model-free results file (pre-Python 2.7.3, relax XML version 1)."""
 
-        # Test that the diffusion tensor data is the same.
-        print("Comparison of the objects of the diffusion tensor:")
-        self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
-        # Test the number of molecules.
-        self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_pre_py2.7.3_v1', dir=path)
 
-        # Loop over the molecules.
-        for i in xrange(len(pipe_12.mol)):
-            # Test the objects.
-            print("Comparison of the objects of the molecule:")
-            self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
-            # Test the number of residues.
-            self.assertEqual(len(pipe_12.mol[i].res), len(pipe_13.mol[i].res))
 
-            # Loop over the residues.
-            for j in xrange(len(pipe_12.mol[i].res)):
-                # Ok, really don't need to do a full comparison of all 162 residues for this test!
-                if j > 10:
-                    break
+    def test_read_results_1_3_v2(self):
+        """Read a 1.3 model-free results file (relax XML version 2)."""
 
-                # Test the objects.
-                print("Comparison of the objects of the residue:")
-                self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
-                # Test the number of spins.
-                self.assertEqual(len(pipe_12.mol[i].res[j].spin), len(pipe_13.mol[i].res[j].spin))
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_v2', dir=path)
 
-                # Loop over the spins.
-                for k in xrange(len(pipe_12.mol[i].res[j].spin)):
-                    # Test the objects.
-                    print("Comparison of the objects of the spin:")
-                    self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
+
+    def test_read_results_1_3_v2_broken(self):
+        """Read a 1.3 model-free results file (relax XML version 2) with corrupted floats.
+
+        The floats are deliberately mangled to test the IEEE-754 reading.
+        """
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_v2_broken', dir=path)
+
+        # The shared part of the test.
+        self.check_read_results_1_3()
+
+
+    def test_read_results_1_3_pre_py273_v2(self):
+        """Read a 1.3 model-free results file (pre-Python 2.7.3, relax XML version 2)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+
+        # Read the results file.
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
+
+        # The shared part of the test.
+        self.check_read_results_1_3()
 
 
     def test_select_m4(self):
@@ -2373,7 +2438,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
     def test_tm1_grid(self):
@@ -2384,7 +2449,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm1_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm1_grid.py')
 
 
     def test_tm2_grid(self):
@@ -2395,7 +2460,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
 
 
     def test_tm3_grid(self):
@@ -2406,7 +2471,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm3_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm3_grid.py')
 
 
     def test_tm4_grid(self):
@@ -2417,7 +2482,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm4_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm4_grid.py')
 
 
     def test_tm5_grid(self):
@@ -2428,7 +2493,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm5_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm5_grid.py')
 
 
     def test_tm6_grid(self):
@@ -2439,7 +2504,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm6_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm6_grid.py')
 
 
     def test_tm7_grid(self):
@@ -2450,7 +2515,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm7_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm7_grid.py')
 
 
     def test_tm8_grid(self):
@@ -2461,7 +2526,7 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm8_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm8_grid.py')
 
 
     def test_tm9_grid(self):
@@ -2472,14 +2537,14 @@ class Mf(SystemTestCase):
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm9_grid.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm9_grid.py')
 
 
     def test_tylers_peptide(self):
         """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'tylers_peptide.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'tylers_peptide.py')
 
 
     def test_write_results(self):
@@ -2504,9 +2569,9 @@ class Mf(SystemTestCase):
         # Read the 1.3 results file, extract the data, then close it again.
         a, b, c = platform.python_version_tuple()
         if dep_check.xml_type == 'internal' and int(a) >= 2 and int(b) >= 7 and int(c) >= 3:
-            file = open_read_file(file_name='final_results_trunc_1.3_new', dir=path)
+            file = open_read_file(file_name='final_results_trunc_1.3_v2', dir=path)
         else:
-            file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
+            file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
         true_lines = file.readlines()
         file.close()
 

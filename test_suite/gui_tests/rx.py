@@ -33,8 +33,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.misc import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
-from gui.user_functions import deselect, sequence, spin
+from gui.string_conv import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
 from gui.wizard import Wiz_window
 
 
@@ -97,10 +96,10 @@ class Rx(GuiTestCase):
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name, pipe_bundle = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
 
         # Alias the analysis.
         analysis = self.app.gui.analysis.get_page_from_name("R1 relaxation")
@@ -112,32 +111,14 @@ class Rx(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window(self.app.gui)
-        seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
-        seq_read.file.SetValue(str_to_gui(file))
-        seq_read.mol_name_col.SetValue(int_to_gui(None))
-        seq_read.res_name_col.SetValue(int_to_gui(2))
-        seq_read.res_num_col.SetValue(int_to_gui(1))
-        seq_read.spin_name_col.SetValue(int_to_gui(None))
-        seq_read.spin_num_col.SetValue(int_to_gui(None))
-        seq_read.on_execute()
+        self._execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_name_col=2, res_num_col=1, spin_name_col=None, spin_num_col=None)
 
         # Unresolved spins.
-        deselect_read = deselect.Read_page(wizard)
-        deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
-        deselect_read.mol_name_col.SetValue(int_to_gui(None))
-        deselect_read.res_name_col.SetValue(int_to_gui(None))
-        deselect_read.res_num_col.SetValue(int_to_gui(1))
-        deselect_read.spin_name_col.SetValue(int_to_gui(None))
-        deselect_read.spin_num_col.SetValue(int_to_gui(None))
-        deselect_read.change_all.SetValue(bool_to_gui(True))
-        deselect_read.on_execute()
+        self._execute_uf(uf_name='deselect.read', file=data_path+'unresolved', mol_name_col=None, res_name_col=None, res_num_col=1, spin_name_col=None, spin_num_col=None, change_all=True)
 
         # Name the spins.
-        page = spin.Name_page(wizard)
-        page.name.SetValue(str_to_gui('N'))
-        page.on_execute()
+        self._execute_uf(uf_name='spin.name', name='N')
 
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
         interpreter.flush()
@@ -187,9 +168,9 @@ class Rx(GuiTestCase):
 
             # The spectrum.
             page = analysis.wizard.get_page(analysis.page_indices['read'])
-            page.file.SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
-            page.spectrum_id.SetValue(str_to_gui(names[i]))
-            page.proton.SetValue(str_to_gui('HN'))
+            page.uf_args['file'].SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
+            page.uf_args['spectrum_id'].SetValue(str_to_gui(names[i]))
+            page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
@@ -204,14 +185,14 @@ class Rx(GuiTestCase):
             # Replicated spectra:
             if names[i] in replicated.keys():
                 page = analysis.wizard.get_page(analysis.page_indices['repl'])
-                page.spectrum_id_boxes[1].SetStringSelection(str_to_gui(replicated[names[i]]))
+                page.uf_args['spectrum_ids'].SetValue(value=replicated[names[i]], index=1)
 
             # Go to the next page.
             analysis.wizard._go_next(None)
 
             # Set the delay time.
             page = analysis.wizard.get_page(analysis.page_indices['relax_time'])
-            page.time.SetValue(float_to_gui(ncyc[i]*time))
+            page.uf_args['time'].SetValue(float_to_gui(ncyc[i]*time))
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)

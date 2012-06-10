@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,29 +33,24 @@ from data.exp_info import ExpInfo
 import dep_check
 from generic_fns import exp_info
 from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_residue, return_spin
+from generic_fns.pipes import cdp_name
 from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 import specific_fns
+from status import Status; status = Status()
 from version import version_full
 
 
 def display(version='3.1'):
-    """Display the results in the BMRB NMR-STAR format."""
+    """Display the results in the BMRB NMR-STAR format.
 
-    # Test if bmrblib is installed.
-    if not dep_check.bmrblib_module:
-        raise RelaxNoModuleInstallError('BMRB library', 'bmrblib')
+    @keyword version:   The NMR-STAR version to create.  This can be either '2.1', '3.0', or '3.1'.
+    @type version:      str
+    """
 
-    # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
-
-    # Specific results writing function.
-    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
-
-    # Write the results.
-    write_function(sys.stdout, version=version)
+    # Call the write() function with stdout.
+    write(file=sys.stdout, version=version)
 
 
 def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_nums=None, res_names=None, mol_names=None):
@@ -191,13 +186,13 @@ def num_spins(data):
     return N
 
 
-def read(file=None, directory=None, version=None, sample_conditions=None):
+def read(file=None, dir=None, version=None, sample_conditions=None):
     """Read the contents of a BMRB NMR-STAR formatted file.
 
     @keyword file:              The name of the BMRB STAR formatted file.
     @type file:                 str
-    @keyword directory:         The directory where the file is located.
-    @type directory:            None or str
+    @keyword dir:               The directory where the file is located.
+    @type dir:                  None or str
     @keyword version:           The BMRB version to force the reading.
     @type version:              None or str
     @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
@@ -209,57 +204,75 @@ def read(file=None, directory=None, version=None, sample_conditions=None):
         raise RelaxNoModuleInstallError('BMRB library', 'bmrblib')
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
+    pipe_name = cdp_name()
+    if not pipe_name:
         raise RelaxNoPipeError
 
     # Make sure that the data pipe is empty.
-    if not ds[ds.current_pipe].is_empty():
+    if not ds[pipe_name].is_empty():
         raise RelaxError("The current data pipe is not empty.")
 
     # Get the full file path.
-    file_path = get_file_path(file_name=file, dir=directory)
+    file_path = get_file_path(file_name=file, dir=dir)
 
     # Fail if the file does not exist.
     if not access(file_path, F_OK):
         raise RelaxFileError(file_path)
 
     # Specific results reading function.
-    read_function = specific_fns.setup.get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
+    read_function = specific_fns.setup.get_specific_fn('bmrb_read', ds[pipe_name].pipe_type)
 
     # Read the results.
     read_function(file_path, version=version, sample_conditions=sample_conditions)
 
 
-def write(file=None, directory=None, version='3.1', force=False):
-    """Create a BMRB NMR-STAR formatted file."""
+def write(file=None, dir=None, version='3.1', force=False):
+    """Create a BMRB NMR-STAR formatted file.
+
+    @keyword file:      The name of the file to create or a file object.
+    @type file:         str or file object
+    @keyword dir:       The optional directory to place the file into.  If set to 'pipe_name', then it will be placed in a directory with the same name as the current data pipe.
+    @type dir:          str or None
+    @keyword version:   The NMR-STAR version to create.  This can be either '2.1', '3.0', or '3.1'.
+    @type version:      str
+    @keyword force:     A flag which if True will allow a currently existing file to be overwritten.
+    @type force:        bool
+    """
 
     # Test if bmrblib is installed.
     if not dep_check.bmrblib_module:
         raise RelaxNoModuleInstallError('BMRB library', 'bmrblib')
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
+    pipe_name = cdp_name()
+    if not pipe_name:
         raise RelaxNoPipeError
 
-    # The special data pipe name directory.
-    if directory == 'pipe_name':
-        directory = ds.current_pipe
+    # Check the file name.
+    if file == None:
+        raise RelaxError("The file name must be specified.")
+
+    # A file object.
+    if isinstance(file, str):
+        # The special data pipe name directory.
+        if dir == 'pipe_name':
+            dir = pipe_name
+
+        # Get the full file path.
+        file = get_file_path(file, dir)
+
+        # Fail if the file already exists and the force flag is False.
+        if access(file, F_OK) and not force:
+            raise RelaxFileOverwriteError(file, 'force flag')
+
+        # Print out.
+        print("Opening the file '%s' for writing." % file)
+
+        # Create the directories.
+        mkdir_nofail(dir, verbosity=0)
 
     # Specific results writing function.
-    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
-
-    # Get the full file path.
-    file_path = get_file_path(file, directory)
-
-    # Fail if the file already exists and the force flag is False.
-    if access(file_path, F_OK) and not force:
-        raise RelaxFileOverwriteError(file_path, 'force flag')
-
-    # Print out.
-    print("Opening the file '%s' for writing." % file_path)
-
-    # Create the directories.
-    mkdir_nofail(directory, verbosity=0)
+    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[pipe_name].pipe_type)
 
     # Get the info box.
     info = Info_box()
@@ -270,10 +283,17 @@ def write(file=None, directory=None, version='3.1', force=False):
         bib = info.bib[key]
 
         # Add.
-        cdp.exp_info.add_citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(doi=False, url=False), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, issue=bib.number, page_first=bib.page_first, page_last=bib.page_last, year=bib.year)
+        exp_info.citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(doi=False, url=False), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, issue=bib.number, page_first=bib.page_first, page_last=bib.page_last, year=bib.year)
 
     # Add the relax software package.
-    cdp.exp_info.software_setup(name=exp_info.SOFTWARE['relax'].name, version=version_full(), vendor_name=exp_info.SOFTWARE['relax'].authors, url=exp_info.SOFTWARE['relax'].url, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.SOFTWARE['relax'].tasks)
+    exp_info.software(name=exp_info.SOFTWARE['relax'].name, version=version_full(), vendor_name=exp_info.SOFTWARE['relax'].authors, url=exp_info.SOFTWARE['relax'].url, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.SOFTWARE['relax'].tasks)
 
     # Execute the specific BMRB writing code.
-    write_function(file_path, version=version)
+    write_function(file, version=version)
+
+    # Add the file to the results file list.
+    if isinstance(file, str):
+        if not hasattr(cdp, 'result_files'):
+            cdp.result_files = []
+        cdp.result_files.append(['text', 'BMRB', file])
+        status.observers.result_file.notify()

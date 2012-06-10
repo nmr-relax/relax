@@ -213,6 +213,16 @@ def bmrb_read(star, sample_conditions=None):
         # Pack the data.
         pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
+        # Store the temperature calibration and control.
+        if data['temp_calibration']:
+            temp_calibration(ri_id=ri_id, method=data['temp_calibration'])
+        if data['temp_control']:
+            temp_control(ri_id=ri_id, method=data['temp_control'])
+
+        # Peak intensity type.
+        if data['peak_intensity_type']:
+            peak_intensity_type(ri_id=ri_id, type=data['peak_intensity_type'])
+
 
 def bmrb_write(star):
     """Generate the relaxation data saveframes for the NMR-STAR dictionary object.
@@ -248,10 +258,6 @@ def bmrb_write(star):
 
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
         # Skip spins with no relaxation data.
         if not hasattr(spin, 'ri_data'):
             continue
@@ -275,10 +281,17 @@ def bmrb_write(star):
         # The attached atom info.
         if hasattr(spin, 'attached_atom'):
             attached_atom_name_list.append(str(spin.attached_atom))
-        else:
+        elif hasattr(spin, 'attached_proton'):
             attached_atom_name_list.append(str(spin.attached_proton))
-        attached_element_list.append(element_from_isotope(spin.proton_type))
-        attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+        else:
+            attached_atom_name_list.append(None)
+
+        if hasattr(spin, 'proton_type'):
+            attached_element_list.append(element_from_isotope(spin.proton_type))
+            attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+        else:
+            attached_element_list.append(None)
+            attached_isotope_list.append(None)
 
         # The relaxation data.
         used_index = -ones(len(cdp.ri_ids))
@@ -513,6 +526,20 @@ def delete(ri_id=None):
         if hasattr(spin, 'ri_data_err') and len(spin.ri_data_err) == 0:
             del spin.ri_data_err
 
+    # Delete the metadata.
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and cdp.exp_info.temp_calibration.has_key(ri_id):
+        del cdp.exp_info.temp_calibration[ri_id]
+        if len(cdp.exp_info.temp_calibration) == 0:
+            del cdp.exp_info.temp_calibration
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and cdp.exp_info.temp_control.has_key(ri_id):
+        del cdp.exp_info.temp_control[ri_id]
+        if len(cdp.exp_info.temp_control) == 0:
+            del cdp.exp_info.temp_control
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and cdp.exp_info.peak_intensity_type.has_key(ri_id):
+        del cdp.exp_info.peak_intensity_type[ri_id]
+        if len(cdp.exp_info.peak_intensity_type) == 0:
+            del cdp.exp_info.peak_intensity_type
+
 
 def display(ri_id=None):
     """Display relaxation data corresponding to the ID.
@@ -534,6 +561,37 @@ def display(ri_id=None):
 
     # Print the data.
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
+
+
+def frq(ri_id=None, frq=None):
+    """Set or reset the frequency associated with the ID.
+
+    @param ri_id:   The relaxation data ID string.
+    @type ri_id:    str
+    @param frq:     The spectrometer proton frequency in Hz.
+    @type frq:      float
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
+
+    # Frequency checks.
+    frq_checks(frq)
+
+    # Initialise if needed.
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+
+    # Set the value.
+    cdp.frq[ri_id] = frq
 
 
 def frq_checks(frq):
@@ -626,6 +684,25 @@ def get_data_names(global_flag=False, sim_names=False):
 
     # Return the list of names.
     return names
+
+
+def get_ids():
+    """Return the list of all relaxation data IDs.
+
+    @return:        The list of all relaxation data IDs.
+    @rtype:         list of str
+    """
+
+    # No pipe.
+    if cdp == None:
+        return []
+
+    # No relaxation data.
+    if not hasattr(cdp, 'ri_ids'):
+        return []
+
+    # The relaxation data IDs.
+    return cdp.ri_ids
 
 
 def num_frq():
@@ -984,6 +1061,38 @@ def temp_control(ri_id=None, method=None):
 
     # Store the method.
     cdp.exp_info.temp_control_setup(ri_id, method)
+
+
+def type(ri_id=None, ri_type=None):
+    """Set or reset the frequency associated with the ID.
+
+    @param ri_id:   The relaxation data ID string.
+    @type ri_id:    str
+    @param ri_type: The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_type:  str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
+
+    # Check if the type is valid.
+    if ri_type not in VALID_TYPES:
+        raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
+
+    # Initialise if needed.
+    if not hasattr(cdp, 'ri_type'):
+        cdp.ri_type = {}
+
+    # Set the type.
+    cdp.ri_type[ri_id] = ri_type
 
 
 def write(ri_id=None, file=None, dir=None, bc=False, force=False):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -948,15 +948,17 @@ class AlignTensorList(ListType):
         self.append(AlignTensorData(name))
 
 
-    def from_xml(self, align_tensor_super_node):
+    def from_xml(self, align_tensor_super_node, file_version=1):
         """Recreate the alignment tensor data structure from the XML alignment tensor node.
 
         @param align_tensor_super_node:     The alignment tensor XML nodes.
         @type align_tensor_super_node:      xml.dom.minicompat.Element instance
+        @keyword file_version:              The relax XML version of the XML file.
+        @type file_version:                 int
         """
 
         # Recreate all the alignment tensor data structures.
-        xml_to_object(align_tensor_super_node, self, blacklist=['align_tensor'])
+        xml_to_object(align_tensor_super_node, self, file_version=file_version, blacklist=['align_tensor'])
 
         # Get the individual tensors.
         align_tensor_nodes = align_tensor_super_node.getElementsByTagName('align_tensor')
@@ -967,7 +969,7 @@ class AlignTensorList(ListType):
             self.add_item(align_tensor_node.getAttribute('name'))
 
             # Recreate all the other data structures.
-            xml_to_object(align_tensor_node, self[-1])
+            xml_to_object(align_tensor_node, self[-1], file_version=file_version)
 
 
     def names(self):

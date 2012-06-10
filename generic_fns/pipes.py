@@ -43,7 +43,7 @@ PIPE_DESC = {
     'jw':  'Reduced spectral density mapping',
     'hybrid':  'Special hybrid pipe',
     'mf':  'Model-free analysis',
-    'N-state':  'N-state model of domain motions',
+    'N-state':  'N-state model or ensemble analysis',
     'noe':  'Steady state NOE calculation',
     'relax_fit':  'Relaxation curve fitting'
 }
@@ -52,7 +52,45 @@ for name in VALID_TYPES:
     PIPE_DESC_LIST.append(PIPE_DESC[name])
 
 
-def copy(pipe_from=None, pipe_to=None):
+def bundle(bundle=None, pipe=None):
+    """Add the data pipe to the given bundle, created the bundle as needed.
+
+    @keyword bundle:    The name of the data pipe bundle.
+    @type bundle:       str
+    @keyword pipe:      The name of the data pipe to add to the bundle.
+    @type pipe:         str
+    """
+
+    # Check that the data pipe exists.
+    test(pipe)
+
+    # Check that the pipe is not in another bundle.
+    for key in ds.pipe_bundles.keys():
+        if pipe in ds.pipe_bundles[key]:
+            raise RelaxError("The data pipe is already within the '%s' bundle." % key)
+
+    # Create a new bundle if needed.
+    if bundle not in ds.pipe_bundles.keys():
+        ds.pipe_bundles[bundle] = []
+
+    # Add the pipe to the bundle.
+    ds.pipe_bundles[bundle].append(pipe)
+
+    # Notify observers that something has occurred.
+    status.observers.pipe_alteration.notify()
+
+
+def bundle_names():
+    """Return the list of all data pipe bundles.
+
+    @return:        The list of data pipe bundles.
+    @rtype:         list of str
+    """
+
+    return list(ds.pipe_bundles.keys())
+
+
+def copy(pipe_from=None, pipe_to=None, bundle_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
     If the 'pipe_from' argument is None then the current data pipe is assumed as the source.  The
@@ -62,11 +100,17 @@ def copy(pipe_from=None, pipe_to=None):
     @type pipe_from:    str
     @param pipe_to:     The name of the target data pipe to copy the data to.
     @type pipe_to:      str
+    @keyword bundle_to: The optional data pipe bundle to associate the new data pipe with.
+    @type bundle_to:    str or None
     """
 
     # Test if the pipe already exists.
     if pipe_to in list(ds.keys()):
         raise RelaxPipeError(pipe_to)
+
+    # Both pipe arguments cannot be None.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
     # Acquire the pipe lock (data modifying function), and make sure it is finally released.
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
@@ -78,6 +122,10 @@ def copy(pipe_from=None, pipe_to=None):
         # Copy the data.
         ds[pipe_to] = ds[pipe_from].__clone__()
 
+        # Bundle the pipe.
+        if bundle_to:
+            bundle(bundle=bundle_to, pipe=pipe_to)
+
     # Release the lock.
     finally:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
@@ -86,7 +134,7 @@ def copy(pipe_from=None, pipe_to=None):
     status.observers.pipe_alteration.notify()
 
 
-def create(pipe_name=None, pipe_type=None, switch=True):
+def create(pipe_name=None, pipe_type=None, bundle=None, switch=True):
     """Create a new data pipe.
 
     The current data pipe will be changed to this new data pipe.
@@ -105,6 +153,8 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         'relax_disp':  Relaxation dispersion,
         'relax_fit':  Relaxation curve fitting,
     @type pipe_type:    str
+    @keyword bundle:    The optional data pipe bundle to associate the data pipe with.
+    @type bundle:       str or None
     @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe will remain as is.
     @type switch:       bool
     """
@@ -125,7 +175,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Add the data pipe.
-        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
+        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, bundle=bundle, switch=switch)
 
     # Release the lock.
     finally:
@@ -140,6 +190,12 @@ def cdp_name():
     """
 
     return ds.current_pipe
+
+
+def current():
+    """Print the name of the current data pipe."""
+
+    print(cdp_name())
 
 
 def delete(pipe_name=None):
@@ -166,6 +222,16 @@ def delete(pipe_name=None):
 
         # Loop over the pipes.
         for pipe in pipes:
+            # Clean up the pipe bundle, if needed.
+            bundle = get_bundle(pipe)
+            if bundle:
+                # Remove the pipe from the bundle, if needed.
+                ds.pipe_bundles[bundle].remove(pipe)
+
+                # Clean up the bundle.
+                if ds.pipe_bundles[bundle] == []:
+                    ds.pipe_bundles.pop(bundle)
+
             # Delete the data pipe.
             del ds[pipe]
 
@@ -189,7 +255,7 @@ def display():
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Heading.
-        print(("%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Current")))
+        print(("%-20s%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Bundle", "Current")))
 
         # Loop over the data pipes.
         for pipe_name in ds:
@@ -199,11 +265,29 @@ def display():
                 current = '*'
 
             # Print out.
-            print("%-20s%-20s%-20s" % ("'"+pipe_name+"'", get_type(pipe_name), current))
+            print("%-20s%-20s%-20s%-20s" % (repr(pipe_name), get_type(pipe_name), repr(get_bundle(pipe_name)), current))
 
     # Release the lock.
     finally:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
+
+
+def get_bundle(pipe=None):
+    """Return the name of the bundle that the given pipe belongs to.
+
+    @keyword pipe:      The name of the data pipe to find the bundle of.
+    @type pipe:         str
+    @return:            The name of the bundle that the pipe is located in.
+    @rtype:             str or None
+    """
+
+    # Check that the data pipe exists.
+    test(pipe)
+
+    # Find and return the bundle.
+    for key in ds.pipe_bundles.keys():
+        if pipe in ds.pipe_bundles[key]:
+            return key
 
 
 def get_pipe(name=None):
@@ -243,6 +327,22 @@ def get_type(name=None):
     pipe = get_pipe(name)
 
     return pipe.pipe_type
+
+
+def has_bundle(bundle=None):
+    """Determine if the relax data store contains the data pipe bundle.
+
+    @keyword bundle:    The name of the data pipe bundle.
+    @type bundle:       str
+    @return:            The answer to the question.
+    @rtype:             bool
+    """
+
+    # Is the bundle in the keys.
+    if bundle in ds.pipe_bundles.keys():
+        return True
+    else:
+        return False
 
 
 def has_pipe(name):
@@ -288,14 +388,31 @@ def pipe_loop(name=False):
         status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
-def pipe_names():
+def pipe_names(bundle=None):
     """Return the list of all data pipes.
 
-    @return:        The list of data pipes.
-    @rtype:         list of str
+    @keyword bundle:    If supplied, the pipe names will be restricted to those of the bundle.
+    @type bundle:       str or None
+    @return:            The list of data pipes.
+    @rtype:             list of str
     """
 
-    return list(ds.keys())
+    # Initialise.
+    names = []
+    pipes = ds.keys()
+    pipes.sort()
+
+    # Loop over the pipes.
+    for pipe in pipes:
+        # The bundle restriction.
+        if bundle and get_bundle(pipe) != bundle:
+            continue
+
+        # Add the pipe.
+        names.append(pipe)
+
+    # Return the pipe list.
+    return names
 
 
 def switch(pipe_name=None):
