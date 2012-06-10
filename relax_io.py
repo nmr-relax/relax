@@ -47,7 +47,6 @@ from warnings import warn
 
 # relax module imports.
 import generic_fns
-from generic_fns.mol_res_spin import generate_spin_id_data_array, spin_id_to_data_list
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
 
@@ -557,7 +556,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
                 warn(RelaxWarning("Invalid spin ID, skipping the line %s" % line))
                 continue
 
-            mol_name, res_num, res_name, spin_num, spin_name = spin_id_to_data_list(line[spin_id_col-1])
+            mol_name, res_num, res_name, spin_num, spin_name = generic_fns.mol_res_spin.spin_id_to_data_list(line[spin_id_col-1])
 
         # Convert the spin data.
         else:
@@ -723,7 +722,7 @@ def test_binary(binary):
         raise RelaxNoInPathError(binary)
 
 
-def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, data_length=20, data_format=None, error=None, error_name=None, error_length=20, error_format=None):
+def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None):
     """Generator function for reading the spin specific data from file.
 
     Description
@@ -758,18 +757,10 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
     @type data:             list or list of lists
     @keyword data_name:     A name corresponding to the data argument.  If the data argument is a list of lists, then this must also be a list with the same length as the second dimension of the data arg.
     @type data_name:        str or list of str
-    @keyword data_length:   The length of the data columns.
-    @type data_length:      int
-    @keyword data_format:   The optional python formatting string for the data columns, e.g. "%-30s".
-    @type data_format:      None or str
     @keyword error:         A list of the errors to write out.  The first dimension corresponds to the spins.  A second dimension can also be given if multiple data sets across multiple columns are desired.  These will be inter-dispersed between the data columns, if the data is given.  If the data arg is not None, then this must have the same dimensions as that object.
     @type error:            list or list of lists
     @keyword error_name:    A name corresponding to the error argument.  If the error argument is a list of lists, then this must also be a list with the same length at the second dimension of the error arg.
     @type error_name:       str or list of str
-    @keyword error_length:  The length of the error columns.
-    @type error_length:     int
-    @keyword error_format:  The optional python formatting string for the error columns, e.g. "%-30s".
-    @type error_format:     None or str
     """
 
     # Data argument tests.
@@ -840,106 +831,61 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
     args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
     arg_names = ['spin_id', 'mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']
 
-    # No special separator character.
-    if sep == None:
-        sep = ''
-
-    # Open the file.
-    file = open_write_file(file_name=file, dir=dir, force=force)
-
-    # The spin ID column lengths.
-    len_args = [10] * 6
-    for i in range(len(args)):
-        # Different separator.
-        if sep:
-            len_args[i] = 0
-            continue
-
-        # Minimum width of the header name lengths.
-        if args[i] and len(arg_names[i]) > len_args[i]:
-            len_args[i] = len(arg_names[i]) + 2
-
-        # Minimum width of the spin ID data.
-        for spin_index in range(N):
-            if args[i] and len(repr(args[i][spin_index])) > len_args[i]:
-                len_args[i] = len(repr(args[i][spin_index])) + 1
-
-    # Data and error formatting strings.
-    if sep:
-        data_length = ''
-    data_head_format = "%%-%ss" % data_length
-    if not data_format:
-        data_format = "%%%ss" % data_length
-    error_head_format = "%%-%ss" % error_length
-    if not error_format:
-        error_format = "%%%ss" % error_length
-
-
-    # Header.
-    #########
 
     # Init.
-    file.write("\n")
-    prefix = '# '
-    shift = -2
+    file_data = [[]]
 
-    # The spin ID info.
+    # Headers - the spin ID info.
     for i in range(len(args)):
         if args[i]:
-            file.write(("%s%%-%ss%s" % (prefix, len_args[i]+shift, sep)) % arg_names[i])
-            prefix = ' '
-            shift = 0
+            file_data[-1].append(arg_names[i])
 
-    # The data.
+    # Headers - the data.
     if data:
         # List of lists.
         if isinstance(data[0], list):
             # Loop over the list.
             for i in range(len(data[0])):
                 # The data.
-                file.write((prefix+data_head_format+sep) % data_name[i])
+                file_data[-1].append(data_name[i])
 
                 # The error.
                 if error:
-                    file.write((prefix+error_head_format+sep) % error_name[i])
+                    file_data[-1].append(error_name[i])
 
         # Simple list.
         else:
             # The data.
-            file.write((prefix+data_head_format+sep) % data_name)
+            file_data[-1].append(data_name)
 
             # The error.
             if error:
-                file.write((prefix+error_head_format+sep) % error_name)
+                file_data[-1].append(error_name)
 
-    # Only errors.
+    # Headers - only errors.
     elif error:
         # List of lists.
         if isinstance(error[0], list):
             for i in range(len(error[0])):
-                file.write((prefix+error_head_format+sep) % error_name[i])
+                file_data[-1].append(error_name[i])
 
         # Simple list.
         else:
-            file.write((prefix+error_head_format+sep) % error_name)
-
-    # Terminate the line.
-    file.write("\n")
+            file_data[-1].append(error_name)
 
 
     # Spin specific data.
-    #####################
-
-    # Loop over the spins.
     for spin_index in range(N):
-        # The prefix.
-        prefix = ''
+        # Append a new data row.
+        file_data.append([])
 
         # The spin ID info.
         for i in range(len(args)):
             if args[i]:
-                file.write(("%s%%-%ss%s" % (prefix, len_args[i], sep)) % args[i][spin_index])
-                prefix = ' '
+                value = args[i][spin_index]
+                if not isinstance(value, str):
+                    value = repr(value)
+                file_data[-1].append(value)
 
         # The data.
         if data:
@@ -948,34 +894,100 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
                 # Loop over the list.
                 for i in range(len(data[0])):
                     # The data.
-                    file.write((prefix+data_format+sep) % data[spin_index][i])
+                    file_data[-1].append(repr(data[spin_index][i]))
 
                     # The error.
                     if error:
-                        file.write((prefix+error_format+sep) % error[spin_index][i])
+                        file_data[-1].append(repr(error[spin_index][i]))
 
             # Simple list.
             else:
                 # The data.
-                file.write((prefix+data_format+sep) % data[spin_index])
+                file_data[-1].append(repr(data[spin_index]))
 
                 # The error.
                 if error:
-                    file.write((prefix+error_format+sep) % error[spin_index])
+                    file_data[-1].append(repr(error[spin_index]))
 
         # Only errors.
         elif error:
             # List of lists.
             if isinstance(error[0], list):
                 for i in range(len(error[0])):
-                    file.write((prefix+error_format+sep) % error[spin_index][i])
+                    file_data[-1].append(repr(error[spin_index][i]))
 
             # Simple list.
             else:
-                file.write((prefix+error_format+sep) % error[spin_index])
+                file_data[-1].append(repr(error[spin_index]))
 
-        # End of the line.
-        file.write("\n")
+    # No data to write, so do nothing!
+    if file_data == [[]]:
+        return
+
+    # Open the file for writing.
+    file = open_write_file(file_name=file, dir=dir, force=force)
+
+    # The number of rows and columns.
+    num_rows = len(file_data)
+    num_cols = len(file_data[0])
+
+    # Pretty whitespace formatting.
+    if sep == None:
+        # Determine the maximum column widths for nice whitespace formatting.
+        widths = []
+        for j in range(num_cols):
+            if j == 0:
+                widths.append(len(file_data[0][j]) + 2)
+            else:
+                widths.append(len(file_data[0][j]))
+        for i in range(num_rows):
+            for j in range(num_cols):
+                size = len(file_data[i][j])
+                if size > widths[j]:
+                    widths[j] = size
+
+        # Convert to format strings.
+        formats = []
+        for j in range(num_cols):
+            formats.append("%%-%ss" % (widths[j] + 4))
+
+        # The headings.
+        file.write(formats[0] % ("# " + file_data[0][0]))
+        for j in range(1, num_cols):
+            file.write(formats[j] % file_data[0][j])
+        file.write('\n')
+
+        # The data.
+        for i in range(1, num_rows):
+            # The row.
+            for j in range(num_cols):
+                file.write(formats[j] % file_data[i][j])
+            file.write('\n')
+
+    # Non-whitespace formatting.
+    else:
+        # The headings.
+        file.write('#')
+        for j in range(num_cols):
+            # The column separator.
+            if j > 0:
+                file.write(sep)
+
+            # The heading.
+            file.write(file_data[0][j])
+        file.write('\n')
+
+        # The data.
+        for i in range(1, num_rows):
+            # The row.
+            for j in range(num_cols):
+                # The column separator.
+                if j > 0:
+                    file.write(sep)
+
+                # The heading.
+                file.write(file_data[i][j])
+            file.write('\n')
 
 
 

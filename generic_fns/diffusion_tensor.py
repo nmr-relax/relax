@@ -42,6 +42,8 @@ from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.rotation_matrix import R_to_euler_zyz
 from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 
 def bmrb_read(star):
@@ -166,10 +168,6 @@ def bmrb_write(star):
 
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
         # Check the data for None (not allowed in BMRB!).
         if res_num == None:
             raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
@@ -189,10 +187,17 @@ def bmrb_write(star):
         # The attached atom info.
         if hasattr(spin, 'attached_atom'):
             attached_atom_name_list.append(str(spin.attached_atom))
-        else:
+        elif hasattr(spin, 'attached_proton'):
             attached_atom_name_list.append(str(spin.attached_proton))
-        attached_element_list.append(element_from_isotope(spin.proton_type))
-        attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+        else:
+            attached_atom_name_list.append(None)
+
+        if hasattr(spin, 'proton_type'):
+            attached_element_list.append(element_from_isotope(spin.proton_type))
+            attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+        else:
+            attached_element_list.append(None)
+            attached_isotope_list.append(None)
 
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
@@ -336,43 +341,25 @@ def default_value(param):
         return 0.0
 
 # User function documentation.
-__default_value_prompt_doc__ = ["Diffusion tensor parameter default values", """
-        ________________________________________________________________________
-        |                        |                    |                        |
-        | Data type              | Object name        | Value                  |
-        |________________________|____________________|________________________|
-        |                        |                    |                        |
-        | tm                     | 'tm'               | 10 * 1e-9              |
-        |                        |                    |                        |
-        | Diso                   | 'Diso'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Da                     | 'Da'               | 0.0                    |
-        |                        |                    |                        |
-        | Dr                     | 'Dr'               | 0.0                    |
-        |                        |                    |                        |
-        | Dx                     | 'Dx'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dy                     | 'Dy'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dz                     | 'Dz'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dper                   | 'Dper'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dratio                 | 'Dratio'           | 1.0                    |
-        |                        |                    |                        |
-        | alpha                  | 'alpha'            | 0.0                    |
-        |                        |                    |                        |
-        | beta                   | 'beta'             | 0.0                    |
-        |                        |                    |                        |
-        | gamma                  | 'gamma'            | 0.0                    |
-        |                        |                    |                        |
-        | theta                  | 'theta'            | 0.0                    |
-        |                        |                    |                        |
-        | phi                    | 'phi'              | 0.0                    |
-        |________________________|____________________|________________________|
-"""]
+__default_value_doc__ = Desc_container("Diffusion tensor parameter default values")
+table = uf_tables.add_table(label="table: diff default values", caption="Diffusion tensor parameter default values.")
+table.add_headings(["Data type", "Object name", "Value"])
+table.add_row(["tm", "'tm'", "10 * 1e-9"])
+table.add_row(["Diso", "'Diso'", "1.666 * 1e7"])
+table.add_row(["Da", "'Da'", "0.0"])
+table.add_row(["Dr", "'Dr'", "0.0"])
+table.add_row(["Dx", "'Dx'", "1.666 * 1e7"])
+table.add_row(["Dy", "'Dy'", "1.666 * 1e7"])
+table.add_row(["Dz", "'Dz'", "1.666 * 1e7"])
+table.add_row(["Dpar", "'Dpar'", "1.666 * 1e7"])
+table.add_row(["Dper", "'Dper'", "1.666 * 1e7"])
+table.add_row(["Dratio", "'Dratio'", "1.0"])
+table.add_row(["alpha", "'alpha'", "0.0"])
+table.add_row(["beta", "'beta'", "0.0"])
+table.add_row(["gamma", "'gamma'", "0.0"])
+table.add_row(["theta", "'theta'", "0.0"])
+table.add_row(["phi", "'phi'", "0.0"])
+__default_value_doc__.add_table(table.label)
 
 
 def delete():
@@ -1039,54 +1026,25 @@ def return_data_name(name):
         return 'phi'
 
 # User function documentation.
-__return_data_name_prompt_doc__ = ["Diffusion tensor parameter string matching patterns", """
-        ____________________________________________________________________________________________
-        |                                                        |              |                  |
-        | Data type                                              | Object name  | Patterns         |
-        |________________________________________________________|______________|__________________|
-        |                                                        |              |                  |
-        | Global correlation time - tm                           | 'tm'         | '^tm$'           |
-        |                                                        |              |                  |
-        | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
-        |                                                        |              |                  |
-        | Anisotropic component of the diffusion tensor - Da     | 'Da'         | '[Dd]a'          |
-        |                                                        |              |                  |
-        | Rhombic component of the diffusion tensor - Dr         | 'Dr'         | '[Dd]r$'         |
-        |                                                        |              |                  |
-        | Eigenvalue associated with the x-axis of the diffusion | 'Dx'         | '[Dd]x'          |
-        | diffusion tensor - Dx                                  |              |                  |
-        |                                                        |              |                  |
-        | Eigenvalue associated with the y-axis of the diffusion | 'Dy'         | '[Dd]y'          |
-        | diffusion tensor - Dy                                  |              |                  |
-        |                                                        |              |                  |
-        | Eigenvalue associated with the z-axis of the diffusion | 'Dz'         | '[Dd]z'          |
-        | diffusion tensor - Dz                                  |              |                  |
-        |                                                        |              |                  |
-        | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
-        | the spheroid diffusion tensor - Dpar                   |              |                  |
-        |                                                        |              |                  |
-        | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
-        | of the spheroid diffusion tensor - Dper                |              |                  |
-        |                                                        |              |                  |
-        | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
-        | the spheroid diffusion tensor - Dratio                 |              |                  |
-        |                                                        |              |                  |
-        | The first Euler angle of the ellipsoid diffusion       | 'alpha'      | '^a$' or 'alpha' |
-        | tensor - alpha                                         |              |                  |
-        |                                                        |              |                  |
-        | The second Euler angle of the ellipsoid diffusion      | 'beta'       | '^b$' or 'beta'  |
-        | tensor - beta                                          |              |                  |
-        |                                                        |              |                  |
-        | The third Euler angle of the ellipsoid diffusion       | 'gamma'      | '^g$' or 'gamma' |
-        | tensor - gamma                                         |              |                  |
-        |                                                        |              |                  |
-        | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
-        | spheroid diffusion tensor - theta                      |              |                  |
-        |                                                        |              |                  |
-        | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
-        | spheroid diffusion tensor - phi                        |              |                  |
-        |________________________________________________________|______________|__________________|
-"""]
+__return_data_name_doc__ = Desc_container("Diffusion tensor parameter string matching patterns")
+table = uf_tables.add_table(label="table: diff data type patterns", caption="Diffusion tensor parameter string matching patterns.")
+table.add_headings(["Data type", "Object name", "Patterns"])
+table.add_row(["Global correlation time - tm", "'tm'", "'^tm$'"])
+table.add_row(["Isotropic component of the diffusion tensor - Diso", "'Diso'", "'[Dd]iso'"])
+table.add_row(["Anisotropic component of the diffusion tensor - Da", "'Da'", "'[Dd]a'"])
+table.add_row(["Rhombic component of the diffusion tensor - Dr", "'Dr'", "'[Dd]r$'"])
+table.add_row(["Eigenvalue associated with the x-axis of the diffusion tensor - Dx", "'Dx'", "'[Dd]x'"])
+table.add_row(["Eigenvalue associated with the y-axis of the diffusion tensor - Dy", "'Dy'", "'[Dd]y'"])
+table.add_row(["Eigenvalue associated with the z-axis of the diffusion tensor - Dz", "'Dz'", "'[Dd]z'"])
+table.add_row(["Diffusion coefficient parallel to the major axis of  the spheroid diffusion tensor - Dpar", "'Dpar'", "'[Dd]par'"])
+table.add_row(["Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor - Dper", "'Dper'", "'[Dd]per'"])
+table.add_row(["Ratio of the parallel and perpendicular components of the spheroid diffusion tensor - Dratio", "'Dratio'", "'[Dd]ratio'"])
+table.add_row(["The first Euler angle of the ellipsoid diffusion tensor - alpha", "'alpha'", "'^a$' or 'alpha'"])
+table.add_row(["The second Euler angle of the ellipsoid diffusion tensor - beta", "'beta'", "'^b$' or 'beta'"])
+table.add_row(["The third Euler angle of the ellipsoid diffusion tensor - gamma", "'gamma'", "'^g$' or 'gamma'"])
+table.add_row(["The polar angle defining the major axis of the spheroid diffusion tensor - theta", "'theta'", "'theta'"])
+table.add_row(["The azimuthal angle defining the major axis of the spheroid diffusion tensor - phi", "'phi'", "'phi'"])
+__return_data_name_doc__.add_table(table.label)
 
 
 def return_eigenvalues():
@@ -1553,32 +1511,24 @@ def set(value=None, param=None):
         fold_angles()
 
 # User function documentation.
-__set_prompt_doc__ = ["Diffusion tensor set details", """
-        If the diffusion tensor has not been setup, use the more powerful function 'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used to initialise a diffusion tensor.
-
-        The units of the parameters are:
-
-            Inverse seconds for tm.
-            Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-            Unitless for Dratio and Dr.
-            Radians for all angles (alpha, beta, gamma, theta, phi).
-
-        When setting a diffusion tensor parameter, the residue number has no effect.  As the internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da, theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying geometric parameters must be done in the following way.  If a single geometric parameter is supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx, Dy, and Dx, it is not possible to determine how to use the currently set values together with the supplied value to calculate the new internal parameters.  For spheroidal diffusion, when supplying multiple geometric parameters, the set must belong to one of
-
-            {tm, Da},
-            {Diso, Da},
-            {tm, Dratio},
-            {Dpar, Dper},
-            {Diso, Dratio},
-
-        where either theta, phi, or both orientational parameters can be additionally supplied.  For ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must belong to one of
-
-            {tm, Da, Dr},
-            {Diso, Da, Dr},
-            {Dx, Dy, Dz},
-
-        where any number of the orientational parameters, alpha, beta, or gamma can be additionally supplied.
-"""]
+__set_doc__ = Desc_container("Diffusion tensor set details")
+__set_doc__.add_paragraph("If the diffusion tensor has not been setup, use the more powerful function 'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used to initialise a diffusion tensor.")
+__set_doc__.add_paragraph("The units of the parameters are:")
+__set_doc__.add_list_element("Inverse seconds for tm.")
+__set_doc__.add_list_element("Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.")
+__set_doc__.add_list_element("Unitless for Dratio and Dr.")
+__set_doc__.add_list_element("Radians for all angles (alpha, beta, gamma, theta, phi).")
+__set_doc__.add_paragraph("When setting a diffusion tensor parameter, the residue number has no effect.  As the internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da, theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying geometric parameters must be done in the following way.  If a single geometric parameter is supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx, Dy, and Dx, it is not possible to determine how to use the currently set values together with the supplied value to calculate the new internal parameters.  For spheroidal diffusion, when supplying multiple geometric parameters, the set must belong to one of")
+__set_doc__.add_list_element("{tm, Da},")
+__set_doc__.add_list_element("{Diso, Da},")
+__set_doc__.add_list_element("{tm, Dratio},")
+__set_doc__.add_list_element("{Dpar, Dper},")
+__set_doc__.add_list_element("{Diso, Dratio},")
+__set_doc__.add_paragraph("where either theta, phi, or both orientational parameters can be additionally supplied.  For ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must belong to one of")
+__set_doc__.add_list_element("{tm, Da, Dr},")
+__set_doc__.add_list_element("{Diso, Da, Dr},")
+__set_doc__.add_list_element("{Dx, Dy, Dz},")
+__set_doc__.add_paragraph("where any number of the orientational parameters, alpha, beta, or gamma can be additionally supplied.")
 
 
 def sphere(params=None, time_scale=None, param_types=None):

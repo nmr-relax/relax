@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,7 +39,7 @@ from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
 from status import Status; status = Status()
-from version import version
+import version
 
 
 __all__ = [ 'align_tensor',
@@ -73,6 +73,7 @@ class Relax_data_store(dict):
             self.instance = dict.__new__(self, *args, **kargs)
 
             # Add some initial structures.
+            self.instance.pipe_bundles = {}
             self.instance.relax_gui = Gui()
 
         # Already initialised, so return the instance.
@@ -175,6 +176,9 @@ class Relax_data_store(dict):
         # Reset the current data pipe.
         __builtin__.cdp = None
 
+        # Recreate the pipe bundle object.
+        self.instance.pipe_bundles = {}
+
         # Re-add the GUI object.
         self.instance.relax_gui = Gui()
 
@@ -183,7 +187,7 @@ class Relax_data_store(dict):
         status.observers.pipe_alteration.notify()
 
 
-    def add(self, pipe_name, pipe_type, switch=True):
+    def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.
 
         This method should be used rather than importing the PipeContainer class and using the statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is the name of the data pipe.
@@ -192,6 +196,8 @@ class Relax_data_store(dict):
         @type pipe_name:    str
         @param pipe_type:   The data pipe type.
         @type pipe_type:    str
+        @keyword bundle:    The optional data pipe bundle to associate the data pipe with.
+        @type bundle:       str or None
         @keyword switch:    A flag which if True will cause the new data pipe to be set to the current data pipe.
         @type switch:       bool
         """
@@ -205,6 +211,15 @@ class Relax_data_store(dict):
 
         # Add the data pipe type string to the container.
         self[pipe_name].pipe_type = pipe_type
+
+        # The pipe bundle.
+        if bundle:
+            # A new bundle.
+            if bundle not in self.pipe_bundles.keys():
+                self.pipe_bundles[bundle] = []
+
+            # Add the pipe to the bundle.
+            self.pipe_bundles[bundle].append(pipe_name)
 
         # Change the current data pipe.
         if switch:
@@ -233,6 +248,7 @@ class Relax_data_store(dict):
 
         # Objects which should be in here.
         blacklist = [
+                'pipe_bundles',
                 'relax_gui'
         ]
 
@@ -295,15 +311,19 @@ class Relax_data_store(dict):
         relax_node = doc.childNodes[0]
 
         # Get the relax version of the XML file.
-        file_version = str(relax_node.getAttribute('version'))
+        file_version = relax_node.getAttribute('file_version')
+        if file_version == '':
+            file_version = 1
+        else:
+            file_version = int(file_version)
 
         # Get the GUI nodes.
         gui_nodes = relax_node.getElementsByTagName('relax_gui')
         if gui_nodes:
-            self.relax_gui.from_xml(gui_nodes[0])
+            self.relax_gui.from_xml(gui_nodes[0], file_version=file_version)
 
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, blacklist=['pipe', 'relax_gui'])
+        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
@@ -330,7 +350,7 @@ class Relax_data_store(dict):
                 raise RelaxError("The data pipe '%s' is not empty." % pipe_to)
 
             # Load the data.
-            self[pipe_to].from_xml(pipe_nodes[0], dir=dir)
+            self[pipe_to].from_xml(pipe_nodes[0], dir=dir, file_version=file_version)
 
         # Load the state.
         else:
@@ -397,13 +417,21 @@ class Relax_data_store(dict):
 
         # Create the top level element, including the relax URL.
         top_element = xmldoc.createElementNS('http://www.nmr-relax.com', 'relax')
+        top_element.setAttribute("xmlns", "http://www.nmr-relax.com")
 
         # Append the element.
         xmldoc.appendChild(top_element)
 
         # Set the relax version number, and add a creation time.
-        top_element.setAttribute('version', version)
+        top_element.setAttribute('version', version.version)
         top_element.setAttribute('time', asctime())
+        top_element.setAttribute('file_version', "2")
+        rev = version.revision()
+        if rev:
+            top_element.setAttribute('revision', rev)
+        url = version.url()
+        if url:
+            top_element.setAttribute('url', url)
 
         # Add all objects in the data store base object to the XML element.
         if all:

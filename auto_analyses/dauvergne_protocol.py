@@ -27,7 +27,6 @@ from string import lower
 from time import sleep
 
 # relax module imports.
-from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from float import floatAsByteArray
 from info import Info_box; info = Info_box()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_index_loop, spin_loop
@@ -36,6 +35,7 @@ from generic_fns import selection
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from relax_io import DummyFileObject
+from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()
 
 
@@ -120,10 +120,13 @@ class dAuvergne_protocol:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, diff_tensor_grid_inc={'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, diff_tensor_grid_inc={'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
         @keyword pipe_name:             The name of the data pipe containing the sequence info.  This data pipe should have all values set including the CSA value, the bond length, the heteronucleus name and proton name.  It should also have all relaxation data loaded.
+        @type pipe_name:                str
+        @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:              str
         @keyword results_dir:           The directory, where files are saved in.
         @type results_dir:              str
         @keyword diff_model:            The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.  If all or a subset of these are supplied as a list, then these will be automatically looped over and calculated.
@@ -149,10 +152,11 @@ class dAuvergne_protocol:
         """
 
         # Execution lock.
-        status.exec_lock.acquire(pipe_name, mode='auto-analysis')
+        status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
         # Store the args.
         self.pipe_name = pipe_name
+        self.pipe_bundle = pipe_bundle
         self.mf_models = mf_models
         self.local_tm_models = local_tm_models
         self.grid_inc = grid_inc
@@ -161,6 +165,14 @@ class dAuvergne_protocol:
         self.mc_sim_num = mc_sim_num
         self.max_iter = max_iter
         self.conv_loop = conv_loop
+
+        # The model-free data pipe names.
+        self.mf_model_pipes = []
+        for i in range(len(self.mf_models)):
+            self.mf_model_pipes.append(self.name_pipe(self.mf_models[i]))
+        self.local_tm_model_pipes = []
+        for i in range(len(self.local_tm_models)):
+            self.local_tm_model_pipes.append(self.name_pipe(self.local_tm_models[i]))
 
         # The diffusion models.
         if isinstance(diff_model, list):
@@ -202,7 +214,7 @@ class dAuvergne_protocol:
                 sleep(1)
 
                 # Set the global model name.
-                status.auto_analysis[self.pipe_name].diff_model = self.diff_model
+                status.auto_analysis[self.pipe_bundle].diff_model = self.diff_model
 
                 # Initialise the convergence data structures.
                 self.conv_data = Container()
@@ -225,13 +237,17 @@ class dAuvergne_protocol:
         # Clean up.
         finally:
             # Finish and unlock execution.
-            status.auto_analysis[self.pipe_name].fin = True
+            status.auto_analysis[self.pipe_bundle].fin = True
             status.current_analysis = None
             status.exec_lock.release()
 
 
     def check_vars(self):
         """Check that the user has set the variables correctly."""
+
+        # The pipe bundle.
+        if not isinstance(self.pipe_bundle, str):
+            raise RelaxError("The pipe bundle name '%s' is invalid." % self.pipe_bundle)
 
         # The diff model.
         valid_models = ['local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', 'final']
@@ -442,13 +458,13 @@ class dAuvergne_protocol:
             break
 
 
-        # Final print out.
+        # Final printout.
         ##################
 
         print("\nConvergence:")
         if converged:
             # Update the status.
-            status.auto_analysis[self.pipe_name].convergence = True
+            status.auto_analysis[self.pipe_bundle].convergence = True
 
             # Print out.
             print("    [ Yes ]")
@@ -536,7 +552,7 @@ class dAuvergne_protocol:
             self.multi_model(local_tm=True)
 
             # Model selection.
-            self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
+            self.model_selection(modsel_pipe=self.name_pipe('aic'), dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -556,7 +572,7 @@ class dAuvergne_protocol:
             while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=self.diff_model)
-                status.auto_analysis[self.pipe_name].round = self.round
+                status.auto_analysis[self.pipe_bundle].round = self.round
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
@@ -564,12 +580,12 @@ class dAuvergne_protocol:
                     self.base_dir = self.results_dir+self.diff_model+sep+'init'+sep
 
                     # Run name.
-                    name = self.diff_model
+                    name = self.name_pipe(self.diff_model)
 
                     # Create the data pipe (deleting the old one if it exists).
                     if has_pipe(name):
                         self.interpreter.pipe.delete(name)
-                    self.interpreter.pipe.create(name, 'mf')
+                    self.interpreter.pipe.create(name, 'mf', bundle=self.pipe_bundle)
 
                     # Load the local tm diffusion model MI results.
                     self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
@@ -594,7 +610,7 @@ class dAuvergne_protocol:
                     # Minimise just the diffusion tensor.
                     self.interpreter.fix('all_spins')
                     self.interpreter.grid_search(inc=inc)
-                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
+                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
 
                     # Write the results.
                     self.interpreter.results.write(file='results', dir=self.base_dir, force=True)
@@ -612,13 +628,13 @@ class dAuvergne_protocol:
                     self.multi_model()
 
                     # Model selection.
-                    self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
+                    self.model_selection(modsel_pipe=self.name_pipe('aic'), dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
                     self.interpreter.fix('all', fixed=False)
 
                     # Minimise all parameters.
-                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
+                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
@@ -632,7 +648,7 @@ class dAuvergne_protocol:
                         break
 
             # Unset the status.
-            status.auto_analysis[self.pipe_name].round = None
+            status.auto_analysis[self.pipe_bundle].round = None
 
 
         # Final run.
@@ -643,21 +659,24 @@ class dAuvergne_protocol:
             ############################
 
             # All the global diffusion models to be used in the model selection.
-            self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            self.pipes = []
+            for name in models:
+                self.pipes.append(self.name_pipe(name))
 
             # Remove all temporary pipes used in this auto-analysis.
-            for name in pipe_names():
-                if name in self.pipes + self.mf_models + self.local_tm_models + ['aic', 'previous']:
+            for name in pipe_names(bundle=self.pipe_bundle):
+                if name in self.pipes + self.mf_model_pipes + self.local_tm_model_pipes + [self.name_pipe('aic'), self.name_pipe('previous')]:
                     self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
             dir_list = listdir(self.results_dir)
-            for name in self.pipes:
+            for name in models:
                 if name not in dir_list:
                     raise RelaxError("The %s model must be optimised first." % name)
 
             # Create the local_tm data pipe.
-            self.interpreter.pipe.create('local_tm', 'mf')
+            self.interpreter.pipe.create(self.name_pipe('local_tm'), 'mf', bundle=self.pipe_bundle)
 
             # Load the local tm diffusion model MI results.
             self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
@@ -678,27 +697,27 @@ class dAuvergne_protocol:
                     raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
                 # Create the data pipe.
-                self.interpreter.pipe.create(model, 'mf')
+                self.interpreter.pipe.create(self.name_pipe(model), 'mf', bundle=self.pipe_bundle)
 
                 # Load the diffusion model results.
                 self.interpreter.results.read(file='results', dir=self.results_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
-            self.model_selection(modsel_pipe='final', write_flag=False)
+            self.model_selection(modsel_pipe=self.name_pipe('final'), write_flag=False)
 
 
             # Monte Carlo simulations.
             ##########################
 
             # Fix the diffusion tensor, if it exists.
-            if hasattr(get_pipe('final'), 'diff_tensor'):
+            if hasattr(get_pipe(self.name_pipe('final')), 'diff_tensor'):
                 self.interpreter.fix('diff')
 
             # Simulations.
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
+            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
             self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
 
@@ -721,9 +740,9 @@ class dAuvergne_protocol:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-        if has_pipe('previous'):
-            self.interpreter.pipe.delete('previous')
-        self.interpreter.pipe.create('previous', 'mf')
+        if has_pipe(self.name_pipe('previous')):
+            self.interpreter.pipe.delete(self.name_pipe('previous'))
+        self.interpreter.pipe.create(self.name_pipe('previous'), 'mf', bundle=self.pipe_bundle)
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
@@ -740,7 +759,7 @@ class dAuvergne_protocol:
         # Model selection (delete the model selection pipe if it already exists).
         if has_pipe(modsel_pipe):
             self.interpreter.pipe.delete(modsel_pipe)
-        self.interpreter.model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
+        self.interpreter.model_selection(method='AIC', modsel_pipe=modsel_pipe, bundle=self.pipe_bundle, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
@@ -752,71 +771,89 @@ class dAuvergne_protocol:
 
         # Set the data pipe names (also the names of preset model-free models).
         if local_tm:
+            models = self.local_tm_models
             self.pipes = self.local_tm_models
         else:
-            self.pipes = self.mf_models
+            models = self.mf_models
+        self.pipes = []
+        for i in range(len(models)):
+            self.pipes.append(self.name_pipe(models[i]))
 
         # Loop over the data pipes.
-        for name in self.pipes:
+        for i in range(len(models)):
             # Place the model name into the status container.
-            status.auto_analysis[self.pipe_name].current_model = name
+            status.auto_analysis[self.pipe_bundle].current_model = models[i]
 
             # Create the data pipe (by copying).
-            if has_pipe(name):
-                self.interpreter.pipe.delete(name)
-            self.interpreter.pipe.copy(self.pipe_name, name)
-            self.interpreter.pipe.switch(name)
+            if has_pipe(self.pipes[i]):
+                self.interpreter.pipe.delete(self.pipes[i])
+            self.interpreter.pipe.copy(self.pipe_name, self.pipes[i], bundle_to=self.pipe_bundle)
+            self.interpreter.pipe.switch(self.pipes[i])
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
-                self.interpreter.diffusion_tensor.copy('previous')
+                self.interpreter.diffusion_tensor.copy(self.name_pipe('previous'))
                 self.interpreter.fix('diff')
 
             # Select the model-free model.
-            self.interpreter.model_free.select_model(model=name)
+            self.interpreter.model_free.select_model(model=models[i])
 
             # Minimise.
             self.interpreter.grid_search(inc=self.grid_inc)
-            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
+            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
 
             # Model elimination.
             self.interpreter.eliminate()
 
             # Write the results.
-            dir = self.base_dir + name
+            dir = self.base_dir + models[i]
             self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # Unset the status.
-        status.auto_analysis[self.pipe_name].current_model = None
+        status.auto_analysis[self.pipe_bundle].current_model = None
+
+
+    def name_pipe(self, prefix):
+        """Generate a unique name for the data pipe.
+
+        @param prefix:  The prefix of the data pipe name.
+        @type prefix:   str
+        """
+
+        # The unique pipe name.
+        name = "%s - %s" % (prefix, self.pipe_bundle)
+
+        # Return the name.
+        return name
 
 
     def status_setup(self):
         """Initialise the status object."""
 
         # Initialise the status object for this auto-analysis.
-        status.init_auto_analysis(self.pipe_name, type='dauvergne_protocol')
-        status.current_analysis = self.pipe_name
+        status.init_auto_analysis(self.pipe_bundle, type='dauvergne_protocol')
+        status.current_analysis = self.pipe_bundle
 
         # The global diffusion model.
-        status.auto_analysis[self.pipe_name].diff_model = None
+        status.auto_analysis[self.pipe_bundle].diff_model = None
 
         # The round of optimisation, i.e. the global iteration.
-        status.auto_analysis[self.pipe_name].round = None
+        status.auto_analysis[self.pipe_bundle].round = None
 
         # The list of model-free local tm models for optimisation, i.e. the global iteration.
-        status.auto_analysis[self.pipe_name].local_tm_models = self.local_tm_models
+        status.auto_analysis[self.pipe_bundle].local_tm_models = self.local_tm_models
 
         # The list of model-free models for optimisation, i.e. the global iteration.
-        status.auto_analysis[self.pipe_name].mf_models = self.mf_models
+        status.auto_analysis[self.pipe_bundle].mf_models = self.mf_models
 
         # The current model-free model.
-        status.auto_analysis[self.pipe_name].current_model = None
+        status.auto_analysis[self.pipe_bundle].current_model = None
 
         # The maximum number of iterations of the global model.
-        status.auto_analysis[self.pipe_name].max_iter = self.max_iter
+        status.auto_analysis[self.pipe_bundle].max_iter = self.max_iter
 
         # The convergence of the global model.
-        status.auto_analysis[self.pipe_name].convergence = False
+        status.auto_analysis[self.pipe_bundle].convergence = False
 
 
     def write_results(self):

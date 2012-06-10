@@ -56,7 +56,7 @@ class Main:
             print(command)
             system(command)
 
-        # End print out.
+        # End printout.
         print("\nDone")
         print(("\n"*4))
 

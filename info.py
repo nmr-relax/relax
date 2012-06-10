@@ -174,7 +174,7 @@ class Info_box(object):
                 arch[i] = row[1][:-1]
             arch.sort()
 
-            # The full file type print out.
+            # The full file type printout.
             if arch == ['Mach-O 64-bit executable x86_64', 'Mach-O executable i386', 'Mach-O executable ppc']:
                 file_type = '3-way exec (i386, ppc, x86_64)'
             elif arch == ['Mach-O 64-bit bundle x86_64', 'Mach-O bundle i386', 'Mach-O bundle ppc']:
@@ -195,7 +195,7 @@ class Info_box(object):
                 arch[i] = row[1][:-1]
             arch.sort()
 
-            # The full file type print out.
+            # The full file type printout.
             if arch == ['Mach-O executable i386', 'Mach-O executable ppc']:
                 file_type = '2-way exec (i386, ppc)'
             elif arch == ['Mach-O bundle i386', 'Mach-O bundle ppc']:

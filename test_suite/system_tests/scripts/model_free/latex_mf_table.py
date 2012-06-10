@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -58,7 +58,7 @@ class Latex:
         pipe.create('latex', 'mf')
 
         # Load the model-free results.
-        results.read(file='final_results_trunc_1.3', dir=DATA_PATH)
+        results.read(file='final_results_trunc_1.3_v2', dir=DATA_PATH)
 
         # Open the file.
         self.file = open_write_file('devnull')

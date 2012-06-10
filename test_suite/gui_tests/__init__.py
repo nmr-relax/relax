@@ -24,22 +24,35 @@
 """The relax GUI tests."""
 
 # Python module imports.
-from relax_errors import RelaxError
+from re import search
 from string import split
 from unittest import TestSuite
 
+# relax module imports.
+from relax_errors import RelaxError
+
 # relax GUI test module imports.
 from bmrb import Bmrb
+from consistency_tests import Ct
+from dead_uf_pages import Dead_uf_pages
+from frame_order import Frame_order
+from jw_mapping import Jw_mapping
 from model_free import Mf
+from n_state_model import N_state_model
 from noe import Noe
+from pipes import Pipes
 from rx import Rx
 from state import State
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
 __all__ = ['bmrb',
+           'consistency_tests',
+           'jw_mapping',
            'model_free',
+           'n_state_model',
            'noe',
+           'pipes',
            'rx',
            'state']
 
@@ -64,27 +77,47 @@ class GUI_test_runner:
 
         # Specific tests.
         for test in tests:
-            # Split.
-            row = split(test, '.')
+            # The entire test class.
+            if not search('\.', test):
+                # Check that the class exists.
+                if test not in globals():
+                    raise RelaxError("The GUI test class '%s' does not exist." % test)
 
-            # Check.
-            if len(row) != 2:
-                raise RelaxError("The test '%s' is not in the correct format.  It should consist of the test case class, a dot, and the specific test." % test)
+                # The uninstantiated class object.
+                obj = globals()[test]
 
-            # Unpack.
-            class_name, test_name = row
+                # Add the tests.
+                suite_array.append(TestLoader().loadTestsFromTestCase(obj))
 
-            # Get the class object.
-            obj = globals()[class_name]
+            # Single system test.
+            else:
+                # Split.
+                row = split(test, '.')
 
-            # Add the test.
-            suite_array.append(TestLoader().loadTestsFromNames([test_name], obj))
+                # Check.
+                if len(row) != 2:
+                    raise RelaxError("The GUI test '%s' is not in the correct format.  It should consist of the test case class, a dot, and the specific test." % test)
+
+                # Unpack.
+                class_name, test_name = row
+
+                # Get the class object.
+                obj = globals()[class_name]
+
+                # Add the test.
+                suite_array.append(TestLoader().loadTestsFromNames([test_name], obj))
 
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Dead_uf_pages))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Jw_mapping))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
+            suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
 

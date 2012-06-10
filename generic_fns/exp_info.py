@@ -26,6 +26,7 @@
 # relax module imports.
 from info import Info_box
 from data.exp_info import ExpInfo
+from generic_fns import pipes
 from relax_errors import RelaxError
 from relax_io import open_read_file
 from version import version_full
@@ -83,6 +84,9 @@ def bmrb_write_citations(star):
     @type star:         NMR_STAR instance
     """
 
+    # Test if the current pipe exists.
+    pipes.test()
+
     # Loop over the citations.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
         for citations in cdp.exp_info.citations:
@@ -112,6 +116,9 @@ def bmrb_write_methods(star):
     @rtype:             tuple of list of int and list of str
     """
 
+    # Test if the current pipe exists.
+    pipes.test()
+
     # The scripts.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'scripts'):
         for script in cdp.exp_info.scripts:
@@ -136,6 +143,9 @@ def bmrb_write_software(star):
     @return:            A list BMRB software IDs and a list of software labels.
     @rtype:             tuple of list of int and list of str
     """
+
+    # Test if the current pipe exists.
+    pipes.test()
 
     # Loop over the software.
     software_ids = []
@@ -197,6 +207,9 @@ def citation(cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation
     @type year:                 int
     """
 
+    # Test if the current pipe exists.
+    pipes.test()
+
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):
         cdp.exp_info = ExpInfo()
@@ -223,6 +236,9 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
     @keyword universal_solution:    A model-free specific flag specifying if the universal solution was sought after.
     @type universal_solution:       bool
     """
+
+    # Test if the current pipe exists.
+    pipes.test()
 
     # Check.
     allowed = ['frame order',
@@ -295,6 +311,9 @@ def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None,
     @type tasks:            list of str
     """
 
+    # Test if the current pipe exists.
+    pipes.test()
+
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):
         cdp.exp_info = ExpInfo()
@@ -311,6 +330,9 @@ def software_select(name, version=None):
     @keyword version:   The program version.
     @type version:      None or str
     """
+
+    # Test if the current pipe exists.
+    pipes.test()
 
     # Unknown program.
     if name not in ['relax', 'NMRPipe', 'Sparky', 'Bruker DC']:
@@ -382,6 +404,9 @@ def thiol_state(state=None):
     @keyword state:         The thiol state of the molecule.
     @type state:            str
     """
+
+    # Test if the current pipe exists.
+    pipes.test()
 
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):

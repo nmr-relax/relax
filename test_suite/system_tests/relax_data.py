@@ -128,3 +128,21 @@ class Relax_data(SystemTestCase):
         for spin in spin_loop():
             self.assert_(not hasattr(spin, 'ri_data'))
             self.assert_(not hasattr(spin, 'ri_data_err'))
+
+
+    def test_reset(self):
+        """Test the relax_data.frq and relax_data.type user functions to reset the data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_data_reset.py')
+
+        # The data, as it should be.
+        ids = ['R1_900', 'R2_900', 'NOE_900', 'R1_500', 'R2_500', 'NOE_500']
+        frqs = [900100000, 900100000, 900100000, 400100000, 500*1e6, 500*1e6]
+        types = ['R1', 'R2', 'R2', 'R1', 'R2', 'R2']
+
+        # Checks.
+        for i in range(len(ids)):
+            self.assertEqual(cdp.ri_ids[i], ids[i])
+            self.assertAlmostEqual(cdp.frq[ids[i]], frqs[i])
+            self.assertEqual(cdp.ri_type[ids[i]], types[i])

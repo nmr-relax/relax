@@ -35,10 +35,7 @@ from status import Status; status = Status()
 # Generic string printed out for function classes.
 ##################################################
 
-relax_class_help = """
-This is a python class which contains user functions.  To list these functions, either place a
-period at the end of class name and hit the tab key, or type 'dir(class_name)'.
-"""
+relax_class_help = "This is a python class which contains user functions.  To list these functions, either place a period at the end of class name and hit the tab key, or type 'dir(class_name)'."
 
 
 # Helper classes.
@@ -66,12 +63,26 @@ For assistance in using a function, simply type 'help(function)'.  All functions
 
 
     def __call__(self, *args, **kwds):
+        """Make the object executable."""
+
+        # Catch strange callings of the object.
         if len(args) != 1 or isinstance(args[0], str):
             print((self.text))
             return
-        if hasattr(args[0], '__relax_help__'):
-            sys.stdout.write(args[0].__relax_help__ + "\n")
+
+        # Alias the object.
+        obj = args[0]
+
+        # Automatically create the user function docstring help text, storing it so it only needs to be built once.
+        if not hasattr(obj, '__relax_help__') and hasattr(obj, '_build_doc'):
+            obj.__relax_help__ = obj._build_doc()
+
+        # The relax help system.
+        if hasattr(obj, '__relax_help__'):
+            pydoc.pager(obj.__relax_help__)
             return
+
+        # Default to the normal Python help system.
         return pydoc.help(*args, **kwds)
 
 

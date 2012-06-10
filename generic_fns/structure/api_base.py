@@ -36,7 +36,7 @@ from types import MethodType
 from warnings import warn
 
 # relax module import.
-from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from float import floatAsByteArray, packBytesAsPyFloat
 from generic_fns.structure.superimpose import kabsch
 from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
@@ -258,21 +258,22 @@ class Base_struct_API:
             return False
 
 
-    def from_xml(self, str_node, dir=None, id=None):
+    def from_xml(self, str_node, dir=None, id=None, file_version=1):
         """Recreate the structural object from the XML structural object node.
 
-        @param str_node:    The structural object XML node.
-        @type str_node:     xml.dom.minicompat.Element instance
-        @keyword dir:       The name of the directory containing the results file.
-        @type dir:          str
-        @keyword id:        The specific structural object ID string.  This can be 'scientific',
-                            'internal', etc.
-        @type id:           str
+        @param str_node:        The structural object XML node.
+        @type str_node:         xml.dom.minicompat.Element instance
+        @keyword dir:           The name of the directory containing the results file.
+        @type dir:              str
+        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
+        @type id:               str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Recreate the model / molecule data structure.
         model_nodes = str_node.getElementsByTagName('model')
-        self.structural_data.from_xml(model_nodes, id=id)
+        self.structural_data.from_xml(model_nodes, id=id, file_version=file_version)
 
         # The displacement structure.
         disp_nodes = str_node.getElementsByTagName('displacements')
@@ -281,7 +282,7 @@ class Base_struct_API:
             self.displacements = Displacements()
 
             # Recreate the molecule data structures for the current model.
-            self.displacements.from_xml(disp_nodes[0])
+            self.displacements.from_xml(disp_nodes[0], file_version=file_version)
 
 
     def get_model(self, model):
@@ -985,16 +986,17 @@ class Displacements:
         self._rotation_angle[model_from][model_to] = angle
 
 
-    def from_xml(self, str_node, dir=None, id=None):
+    def from_xml(self, str_node, dir=None, id=None, file_version=1):
         """Recreate the structural object from the XML structural object node.
 
-        @param str_node:    The structural object XML node.
-        @type str_node:     xml.dom.minicompat.Element instance
-        @keyword dir:       The name of the directory containing the results file.
-        @type dir:          str
-        @keyword id:        The specific structural object ID string.  This can be 'scientific',
-                            'internal', etc.
-        @type id:           str
+        @param str_node:        The structural object XML node.
+        @type str_node:         xml.dom.minicompat.Element instance
+        @keyword dir:           The name of the directory containing the results file.
+        @type dir:              str
+        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
+        @type id:               str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Get the pairs of displacements.
@@ -1018,27 +1020,20 @@ class Displacements:
             if not self._rotation_angle.has_key(model_from):
                 self._rotation_angle[model_from] = {}
 
-            # Loop over the nodes of the element
-            for node in pair_node.childNodes:
-                # Skip empty nodes.
-                if node.localName == None:
-                    continue
+            # A temporary container to place the Python objects into.
+            cont = ModelContainer()
 
-                # The name of the python object to recreate.
-                name = '_%s' % node.localName
+            # Recreate the Python objects.
+            xml_to_object(pair_node, cont, file_version=file_version)
 
-                # IEEE-754 floats (for full precision restoration).
-                ieee_array = node.getAttribute('ieee_754_byte_array')
-                if ieee_array:
-                    val = packBytesAsPyFloat(eval(ieee_array))
+            # Repackage the data.
+            for name in ['translation_vector', 'translation_distance', 'rotation_matrix', 'rotation_axis', 'rotation_angle']:
+                # The objects.
+                obj = getattr(self, '_'+name)
+                obj_temp = getattr(cont, name)
 
-                # Get the node contents.
-                else:
-                    val = node_value_to_python(node.childNodes[0])
-
-                # Store the value.
-                obj = getattr(self, name)
-                obj[model_from][model_to] = val
+                # Store.
+                obj[model_from][model_to] = obj_temp
 
 
     def to_xml(self, doc, element):
@@ -1083,13 +1078,8 @@ class Displacements:
                     # Get the sub-object.
                     subobj = getattr(self, obj_names[i])[model_from][model_to]
 
-                    # Store floats as IEEE-754 byte arrays (for full precision storage).
-                    if isinstance(subobj, float) or isinstance(subobj, float64):
-                        sub_elem.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(subobj)))
-
-                    # Add the text value to the sub element.
-                    text_val = doc.createTextNode(repr(subobj))
-                    sub_elem.appendChild(text_val)
+                    # Add the value to the sub element.
+                    object_to_xml(doc, sub_elem, value=subobj)
 
 
 
@@ -1155,14 +1145,15 @@ class ModelList(list):
         return False
 
 
-    def from_xml(self, model_nodes, id=None):
+    def from_xml(self, model_nodes, id=None, file_version=1):
         """Recreate a model list data structure from the XML model nodes.
 
-        @param model_nodes: The model XML nodes.
-        @type model_nodes:  xml.dom.minicompat.NodeList instance
-        @keyword id:        The specific structural object ID string.  This can be 'scientific',
-                            'internal', etc.
-        @type id:           str
+        @param model_nodes:     The model XML nodes.
+        @type model_nodes:      xml.dom.minicompat.NodeList instance
+        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
+        @type id:               str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Test if empty.
@@ -1181,7 +1172,7 @@ class ModelList(list):
             mol_nodes = model_node.getElementsByTagName('mol_cont')
 
             # Recreate the molecule data structures for the current model.
-            self[-1].mol.from_xml(mol_nodes, id=id)
+            self[-1].mol.from_xml(mol_nodes, id=id, file_version=file_version)
 
 
     def to_xml(self, doc, element):
@@ -1359,14 +1350,15 @@ class MolList(list):
         return False
 
 
-    def from_xml(self, mol_nodes, id=None):
+    def from_xml(self, mol_nodes, id=None, file_version=1):
         """Recreate a molecule list data structure from the XML molecule nodes.
 
-        @param mol_nodes:    The molecule XML nodes.
-        @type mol_nodes:     xml.dom.minicompat.NodeList instance
-        @keyword id:        The specific structural object ID string.  This can be 'scientific',
-                            'internal', etc.
-        @type id:           str
+        @param mol_nodes:       The molecule XML nodes.
+        @type mol_nodes:        xml.dom.minicompat.NodeList instance
+        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
+        @type id:               str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Test if empty.
@@ -1393,7 +1385,7 @@ class MolList(list):
             self.add_item(mol_name=name, mol_cont=mol_cont)
 
             # Execute the specific MolContainer from_xml() method.
-            self[-1].from_xml(mol_node)
+            self[-1].from_xml(mol_node, file_version=file_version)
 
 
     def to_xml(self, doc, element):

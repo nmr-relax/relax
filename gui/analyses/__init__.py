@@ -34,6 +34,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 import dep_check
 from generic_fns import pipes
+from generic_fns.reset import reset
 from relax_errors import RelaxError
 from status import Status; status = Status()
 
@@ -90,6 +91,9 @@ class Analysis_controller:
 
         # Register the deletion of all analyses for the reset status observer.
         status.observers.reset.register('gui analyses', self.post_reset)
+
+        # Register state loading.
+        status.observers.state_load.register('gui analyses', self.load_from_store)
 
 
     def analysis_data_loop(self):
@@ -198,7 +202,7 @@ class Analysis_controller:
     def delete_analysis(self, index):
         """Delete the analysis tab and data store corresponding to the index.
 
-        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then print outs at each stage will occur to allow the following of the code and observer object notifications.
+        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then printouts at each stage will occur to allow the following of the code and observer object notifications.
 
 
         @param index:   The index of the analysis to delete.
@@ -254,8 +258,8 @@ class Analysis_controller:
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
 
-        # Store the pipe name.
-        pipe_name = ds.relax_gui.analyses[index].pipe_name
+        # Store the pipe bundle.
+        pipe_bundle = ds.relax_gui.analyses[index].pipe_bundle
 
         # Delete the data store object.
         if status.debug:
@@ -263,10 +267,11 @@ class Analysis_controller:
         ds.relax_gui.analyses.pop(index)
 
         # Delete all data pipes associated with the analysis.
-        if pipes.has_pipe(pipe_name):
-            if status.debug:
-                print("debug> %s:  Deleting the data pipe '%s'." % (full_name, pipe_name))
-            pipes.delete(pipe_name)
+        for pipe in pipes.pipe_names():
+            if pipes.get_bundle(pipe) == pipe_bundle:
+                if status.debug:
+                    print("debug> %s:  Deleting the data pipe '%s' from the '%s' bundle." % (full_name, pipe, pipe_bundle))
+                pipes.delete(pipe)
 
 
     def get_page_from_name(self, name):
@@ -318,6 +323,14 @@ class Analysis_controller:
                 analysis_name = 'R2 relaxation'
             elif ds.relax_gui.analyses[i].analysis_type == 'model-free':
                 analysis_name = 'Model-free'
+
+            # Compatibility with old save files.
+            if not hasattr(ds.relax_gui.analyses[i], 'pipe_bundle'):
+                # First alias the pipe name as the bundle name.
+                ds.relax_gui.analyses[i].pipe_bundle = ds.relax_gui.analyses[i].pipe_name
+
+                # Then bundle the associated pipe into a bundle with the same name.
+                self.gui.interpreter.apply('pipe.bundle', pipe=ds.relax_gui.analyses[i].pipe_name, bundle=ds.relax_gui.analyses[i].pipe_name)
 
             # Set up the analysis.
             self._switch_flag = False
@@ -383,6 +396,9 @@ class Analysis_controller:
         # Delete.
         self.delete_all()
 
+        # Reset relax.
+        reset()
+
 
     def menu_new(self, event):
         """Launch a wizard to select the new analysis.
@@ -404,22 +420,26 @@ class Analysis_controller:
             return
 
         # Unpack the data.
-        analysis_type, analysis_name, pipe_name = data
+        analysis_type, analysis_name, pipe_name, pipe_bundle = data
 
         # Initialise the new analysis.
-        self.new_analysis(analysis_type, analysis_name, pipe_name)
+        self.new_analysis(analysis_type, analysis_name, pipe_name, pipe_bundle)
 
         # Delete the wizard data.
         del self.new_wizard
 
 
-    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):
+    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None, index=None):
         """Initialise a new analysis.
 
         @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
         @type analysis_type:    str
         @keyword analysis_name: The name of the analysis to initialise.
         @type analysis_name:    str
+        @keyword pipe_name:     The name of the original data pipe to create for the analysis.
+        @type pipe_name:        str
+        @keyword pipe_bundle:   The name of the data pipe bundle to associate with this analysis.
+        @type pipe_bundle:      str
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
         """
@@ -466,7 +486,7 @@ class Analysis_controller:
             raise RelaxError("The analysis '%s' is unknown." % analysis_type)
 
         # Initialise the class.
-        analysis = classes[analysis_type](parent=self.notebook, id=-1, gui=self.gui, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index)
+        analysis = classes[analysis_type](parent=self.notebook, id=-1, gui=self.gui, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, data_index=index)
 
         # Failure.
         if not analysis.init_flag:
@@ -532,7 +552,7 @@ class Analysis_controller:
         self._current = event.GetSelection()
 
         # Handel calls to the reset user function!
-        if not hasattr(ds, 'relax_gui'):
+        if ds.is_empty():
             return
 
         # Switch to the major data pipe of that page if not the current one.
@@ -546,11 +566,11 @@ class Analysis_controller:
         status.observers.gui_analysis.notify()
 
 
-    def page_index_from_pipe(self, pipe):
-        """Find the page holding the data pipe and return its page index.
+    def page_index_from_bundle(self, bundle):
+        """Find the analysis associated with the data pipe bundle and return its page index.
 
-        @param pipe:    The data pipe to find the page of.
-        @type pipe:     str
+        @param bundle:  The data pipe bundle to find the page of.
+        @type bundle:   str
         @return:        The page index.
         @rtype:         int or None
         """
@@ -559,7 +579,7 @@ class Analysis_controller:
         index = None
         for i in range(self._num_analyses):
             # Matching page.
-            if ds.relax_gui.analyses[i].pipe_name == pipe:
+            if ds.relax_gui.analyses[i].pipe_bundle == bundle:
                 index = i
                 break
 
@@ -567,17 +587,17 @@ class Analysis_controller:
         return index
 
 
-    def page_name_from_pipe(self, pipe):
-        """Find the page holding the data pipe and return its name.
+    def page_name_from_bundle(self, bundle):
+        """Find the analysis associated with the bundle and return its name.
 
-        @param pipe:    The data pipe to find the page of.
-        @type pipe:     str
+        @param bundle:  The data pipe bundle to find the page of.
+        @type bundle:   str
         @return:        The page name.
         @rtype:         str or None
         """
 
         # Find the index.
-        index = self.page_index_from_pipe(pipe)
+        index = self.page_index_from_bundle(bundle)
 
         # No matching page.
         if index == None:
@@ -590,10 +610,10 @@ class Analysis_controller:
     def pipe_deletion(self):
         """Remove analysis tabs for which the associated data pipe has been deleted."""
 
-        # Loop over the analyses, noting which no longer have a data pipe.
+        # Loop over the analyses, noting which no longer have an associated data pipe bundle.
         del_list = []
         for i in range(self._num_analyses):
-            if not pipes.has_pipe(ds.relax_gui.analyses[i].pipe_name):
+            if not pipes.has_bundle(ds.relax_gui.analyses[i].pipe_bundle):
                 del_list.append(i)
 
         # Reverse the order of the list so the removal works correctly.
@@ -615,8 +635,12 @@ class Analysis_controller:
         if pipe == None:
             pipe = pipes.cdp_name()
 
+        # No pipes to switch to.
+        if pipe == None:
+            return
+
         # Find the page.
-        index = self.page_index_from_pipe(pipe)
+        index = self.page_index_from_bundle(pipes.get_bundle(pipe))
 
         # No matching page.
         if index == None:
@@ -636,6 +660,21 @@ class Analysis_controller:
     def post_reset(self):
         """Post relax data store reset event handler."""
 
+        # Debugging set up.
+        if status.debug:
+            fn_name = sys._getframe().f_code.co_name
+            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
+            class_name = self.__class__.__name__
+            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
+            print("\n\n")
+            print("debug> %s:  Deleting all analyses." % full_name)
+
+        # Unregister all observer objects prior to analysis deletion.  This is to prevent queued wx events being sent to dead or non-existent objects.
+        if status.debug:
+            print("debug> %s:  Unregistering all methods with the observer objects." % full_name)
+        for i in range(self._num_analyses):
+            self._analyses[i].observer_register(remove=True)
+
         # Delete all tabs.
         while self._num_analyses:
             # The index of the tab to remove.
@@ -651,8 +690,8 @@ class Analysis_controller:
             # Decrement the number of analyses.
             self._num_analyses -= 1
 
-            # Set the initial state.
-            self.set_init_state()
+        # Set the initial state.
+        self.set_init_state()
 
 
     def set_init_state(self):

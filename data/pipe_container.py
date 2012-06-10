@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -103,8 +103,8 @@ class PipeContainer(Prototype):
     def _back_compat_hook(self, file_version=None):
         """Method for converting old data structures to the new ones.
 
-        @keyword file_version:  The relax version used to create the XML file.
-        @type file_version:     str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Relaxation data.
@@ -167,8 +167,8 @@ class PipeContainer(Prototype):
 
         @param pipe_node:       The data pipe XML node.
         @type pipe_node:        xml.dom.minidom.Element instance
-        @keyword file_version:  The relax version used to create the XML file.
-        @type file_version:     str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         @keyword dir:           The name of the directory containing the results file (needed for loading external files).
         @type dir:              str
         """
@@ -179,7 +179,7 @@ class PipeContainer(Prototype):
 
         # Get the global data node, and fill the contents of the pipe.
         global_node = pipe_node.getElementsByTagName('global')[0]
-        xml_to_object(global_node, self)
+        xml_to_object(global_node, self, file_version=file_version)
 
         # Backwards compatibility transformations.
         self._back_compat_hook(file_version)
@@ -196,7 +196,7 @@ class PipeContainer(Prototype):
             self.exp_info = ExpInfo()
 
             # Fill its contents.
-            self.exp_info.from_xml(exp_info_nodes[0])
+            self.exp_info.from_xml(exp_info_nodes[0], file_version=file_version)
 
         # Get the diffusion tensor data nodes and, if they exist, fill the contents.
         diff_tensor_nodes = pipe_node.getElementsByTagName('diff_tensor')
@@ -205,7 +205,7 @@ class PipeContainer(Prototype):
             self.diff_tensor = DiffTensorData()
 
             # Fill its contents.
-            self.diff_tensor.from_xml(diff_tensor_nodes[0])
+            self.diff_tensor.from_xml(diff_tensor_nodes[0], file_version=file_version)
 
         # Get the alignment tensor data nodes and, if they exist, fill the contents.
         align_tensor_nodes = pipe_node.getElementsByTagName('align_tensors')
@@ -214,7 +214,7 @@ class PipeContainer(Prototype):
             self.align_tensors = AlignTensorList()
 
             # Fill its contents.
-            self.align_tensors.from_xml(align_tensor_nodes[0])
+            self.align_tensors.from_xml(align_tensor_nodes[0], file_version=file_version)
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = pipe_node.getElementsByTagName('mol')
@@ -238,7 +238,7 @@ class PipeContainer(Prototype):
 
             # Fill its contents.
             if not fail:
-                self.structure.from_xml(str_nodes[0], dir=dir, id=parser)
+                self.structure.from_xml(str_nodes[0], dir=dir, id=parser, file_version=file_version)
 
 
     def is_empty(self):

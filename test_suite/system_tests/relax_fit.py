@@ -92,7 +92,7 @@ class Relax_fit(SystemTestCase):
         """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
 
         # Open the intensities.agr file.
         file = open(ds.tmpdir + sep + 'intensities.agr')
@@ -118,7 +118,7 @@ class Relax_fit(SystemTestCase):
         """Test for zero errors in Grace plots, replicating bug #18789."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'bug_18789_no_grace_errors.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'bug_18789_no_grace_errors.py')
 
         # Open the Grace file.
         file = open(ds.tmpdir + sep + 'rx.agr')
@@ -147,7 +147,7 @@ class Relax_fit(SystemTestCase):
         ds.int_type = 'height'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
 
         # Check the curve-fitting results.
         self.check_curve_fitting()
@@ -160,7 +160,7 @@ class Relax_fit(SystemTestCase):
         ds.int_type = 'point sum'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
 
         # Check the curve-fitting results.
         self.check_curve_fitting()
