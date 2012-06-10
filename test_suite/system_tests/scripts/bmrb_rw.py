@@ -54,7 +54,9 @@ self._execute_uf(uf_name='bmrb.script', file='noe.py', dir=status.install_path+s
 self._execute_uf(uf_name='bmrb.script', file='relax_fit.py', dir=status.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
 self._execute_uf(uf_name='bmrb.script', file='dauvergne_protocol.py', dir=status.install_path+sep+'sample_scripts'+sep+'model_free', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
-# Display the BMRB output for this pipe.
+# Display tests for this data pipe.
+self._execute_uf(uf_name='sequence.display')
+self._execute_uf(uf_name='relax_data.display', ri_id='R1_800')
 self._execute_uf(uf_name='bmrb.display', version=ds.version)
 
 # Write, then read the data to a new data pipe.
@@ -62,10 +64,10 @@ self._execute_uf(uf_name='bmrb.write', file=ds.tmpfile, dir=None, version=ds.ver
 self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='mf')
 self._execute_uf(uf_name='bmrb.read', file=ds.tmpfile, version=ds.version)
 
-# Display tests.
-self._execute_uf(uf_name='bmrb.display', version=ds.version)
+# Display tests for the recreated data pipe.
 self._execute_uf(uf_name='sequence.display')
 self._execute_uf(uf_name='relax_data.display', ri_id='R1_800')
+self._execute_uf(uf_name='bmrb.display', version=ds.version)
 
 # Save the program state.
 self._execute_uf(uf_name='state.save', state=state_file, force=True)
