@@ -536,6 +536,26 @@ def bmrb_read(star):
             # Commas.
             mol_name = replace(mol_name, ',', ' ')
 
+        # The molecule type.
+        mol_type = data['mol_type']
+        polymer_type = data['polymer_type']
+
+        # Translate from the BMRB notation to relax'.
+        if mol_type == 'polymer':
+            map = {
+                'DNA/RNA hybrid': 'DNA',
+                'polydeoxyribonucleotide': 'DNA',
+                'polypeptide(D)': 'protein',
+                'polypeptide(L)': 'protein',
+                'polyribonucleotide': 'RNA',
+                'polysaccharide(D)': 'organic molecule',
+                'polysaccharide(L)': 'organic molecule'
+            }
+            mol_type = map[polymer_type]
+
+        # Create the molecule.
+        create_molecule(mol_name=mol_name, mol_type=mol_type)
+
         # Add the residues.
         for i in range(len(data['res_nums'])):
             create_residue(data['res_nums'][i], data['res_names'][i], mol_name=mol_name)
