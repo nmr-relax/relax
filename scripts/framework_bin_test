@@ -38,7 +38,7 @@ if len(argv) != 1:
         print("Usage:\nframework_bin_test [-v]\n")
         exit(1)
 
-# Initial print out.
+# Initial printout.
 cwd = getcwd()
 print("Checking binary objects in %s" % cwd)
 
@@ -89,7 +89,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
                 arch[i] = row[1][:-1]
             arch.sort()
 
-            # The full file type print out.
+            # The full file type printout.
             if arch == ['Mach-O 64-bit executable x86_64', 'Mach-O executable i386', 'Mach-O executable ppc']:
                 part_type = '%s [i386, ppc, x86_64]' % file_type
                 full_type = '%s exec [i386, ppc, x86_64]' % file_type
@@ -116,7 +116,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
                 arch[i] = row[1][:-1]
             arch.sort()
 
-            # The full file type print out.
+            # The full file type printout.
             if arch == ['Mach-O executable i386', 'Mach-O executable ppc']:
                 part_type = '%s [i386, ppc]' % file_type
                 full_type = '%s exec [i386, ppc]' % file_type
@@ -146,7 +146,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
         if part_type not in bin_info:
             bin_info.append(part_type)
 
-        # Store the data for error print outs.
+        # Store the data for error printouts.
         full_info.append("    %-40s %s" % (full_type, path.relpath(name, cwd)))
 
     # Print outs.

@@ -51,10 +51,10 @@ chi2 = []
 # Loop over the different data sets.
 for round in range(len(files)):
     # Reset relax.
-    reset()
+    self._execute_uf(uf_name='reset')
 
     # Load the tensors.
-    script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+files[round])
+    self._execute_uf(uf_name='script', file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+files[round])
 
     # New set of chi2 values.
     chi2.append([])
@@ -62,12 +62,12 @@ for round in range(len(files)):
     # Loop over the cones.
     for i in range(INC):
         # Switch data pipes.
-        pipe.switch('cone_%s_deg' % get_angle(i, incs=INC, deg=True))
+        self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%s_deg' % get_angle(i, incs=INC, deg=True))
 
         # Data init.
         for j in range(len(params)):
             # The value.
-            val = globals()[params[j]][round]
+            val = locals()[params[j]][round]
 
             # The incremented angle.
             if val == 'var':
@@ -78,24 +78,24 @@ for round in range(len(files)):
             setattr(cdp, 'orig_' + params[j], val)
 
         # Select the Frame Order model.
-        frame_order.select_model(model='pseudo-ellipse, free rotor')
+        self._execute_uf(uf_name='frame_order.select_model', model='pseudo-ellipse, free rotor')
 
         # Set the reference domain.
-        frame_order.ref_domain('full')
+        self._execute_uf(uf_name='frame_order.ref_domain', ref='full')
 
         # Calculate the chi2.
-        calc()
+        self._execute_uf(uf_name='calc')
         #cdp.chi2b = cdp.chi2
-        #minimise('simplex')
+        #self._execute_uf(uf_name='minimise', min_algor='simplex')
         chi2[round].append(cdp.chi2)
 
     # Save the program state.
-    #state.save("pseudo_ellipse_free_rotor%s" % round, force=True)
+    #self._execute_uf(uf_name='state.save', state="pseudo_ellipse_free_rotor%s" % round, force=True)
 
-# Chi2 print out.
+# Chi2 printout.
 ds.chi2 = chi2
-print "\n\n"
+print("\n\n")
 for round in range(len(files)):
-    print "\n\nFile: %s\n" % files[round]
+    print("\n\nFile: %s\n" % files[round])
     for i in range(INC):
         print("Cone %3i deg, chi2: %s" % (get_angle(i, incs=INC, deg=True), chi2[round][i]))

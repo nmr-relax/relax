@@ -110,6 +110,42 @@ def display(param=None):
     write_data(param, sys.stdout)
 
 
+def get_parameters():
+    """Return a list of the parameters associated with the current data pipe.
+
+    @return:    The list of parameters.
+    @rtype:     list of str
+    """
+
+    # No data pipes.
+    if cdp == None:
+        return []
+
+    # Get the specific functions.
+    data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+    return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+
+    # Loop over the parameters.
+    params = []
+    for name in (data_names(set='params') + data_names(set='generic')):
+        # Get the description.
+        desc = return_data_desc(name)
+
+        # No description.
+        if not desc:
+            text = name
+
+        # The text.
+        else:
+            text = "'%s':  %s" % (name, desc)
+
+        # Append the data as a list.
+        params.append((text, name))
+
+    # Return the data.
+    return params
+
+
 def partition_params(val, param):
     """Function for sorting and partitioning the parameters and their values.
 
@@ -291,7 +327,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         set_fn(val=value, error=error, param=param, spin_id=id)
 
-        # Append the data for print out.
+        # Append the data for printout.
         mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)
@@ -350,6 +386,10 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
         raise RelaxError("The combination of a single value '%s' without specifying the parameter name is invalid." % val)
     if isinstance(val, list) and isinstance(param, str):
         raise RelaxError("Invalid combination:  When multiple values '%s' are specified, either no parameters or a list of parameters must by supplied rather than the single parameter '%s'." % (val, param))
+
+    # Value array and parameter array of equal length.
+    if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
+        raise RelaxError("Both the value array and parameter array must be of equal length.")
 
     # Get the parameter list if needed.
     if param == None:

@@ -7,24 +7,24 @@ from status import Status; status = Status()
 
 
 # Create the data pipe.
-pipe.create(pipe_name='rigid', pipe_type='frame order')
+self._execute_uf(uf_name='pipe.create', pipe_name='rigid', pipe_type='frame order')
 
 # Load the tensors.
-script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors_rigid_rand_rot.py')
+self._execute_uf(uf_name='script', file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors_rigid_rand_rot.py')
 
 # The tensor reductions.
 for i in range(10):
-    align_tensor.reduction(full_tensor='a '+repr(i), red_tensor='b '+repr(i))
+    self._execute_uf(uf_name='align_tensor.reduction', full_tensor='a '+repr(i), red_tensor='b '+repr(i))
 
 # Select the model.
-frame_order.select_model('rigid')
+self._execute_uf(uf_name='frame_order.select_model', model='rigid')
 
 # Set the reference domain.
-frame_order.ref_domain('a')
+self._execute_uf(uf_name='frame_order.ref_domain', ref='a')
 
 # Optimise.
-grid_search(inc=6)
-minimise('simplex', constraints=False)
+self._execute_uf(uf_name='grid_search', inc=6)
+self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False)
 
 # Write the results.
-results.write('devnull', dir=None, force=True)
+self._execute_uf(uf_name='results.write', file='devnull', dir=None, force=True)

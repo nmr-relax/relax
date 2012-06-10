@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.n_state_model import N_state_model
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
@@ -35,8 +35,19 @@ from data_types import DATA_TYPES
 class Test_n_state_model(N_state_model_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.n_state_model' module."""
 
-    # Instantiate the user function class.
-    n_state_model_fns = N_state_model()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_n_state_model, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.n_state_model_fns = self.interpreter.n_state_model
 
 
     def test_CoM_argfail_pivot_point(self):

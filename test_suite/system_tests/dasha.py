@@ -57,7 +57,7 @@ class Dasha(SystemTestCase):
             return
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
 
         # Check the global data.
         self.assertEqual(len(cdp.ri_ids), 3)
@@ -73,7 +73,6 @@ class Dasha(SystemTestCase):
         proton_type = [None, None, None, None]
         heteronuc_type = ['15N', '15N', '15N', '15N']
         attached_proton = [None, None, None, None]
-        nucleus = [None, None, None, None]
         model = ['m3', 'm3', 'm3', 'm3']
         equation = ['mf_orig', 'mf_orig', 'mf_orig', 'mf_orig']
         params = [['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex']]
@@ -107,7 +106,6 @@ class Dasha(SystemTestCase):
             self.assertEqual(spin.proton_type, proton_type[i])
             self.assertEqual(spin.heteronuc_type, heteronuc_type[i])
             self.assertEqual(spin.attached_proton, attached_proton[i])
-            self.assertEqual(spin.nucleus, nucleus[i])
             self.assertEqual(spin.model, model[i])
             self.assertEqual(spin.equation, equation[i])
             self.assertEqual(spin.params, params[i])

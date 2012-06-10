@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,10 +24,11 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.eliminate import Eliminate
-from relax_errors import RelaxNoneFunctionError, RelaxTupleError
+from prompt.interpreter import Interpreter
+from relax_errors import RelaxNoneFunctionError, RelaxNoneTupleError
 
 # Unit test imports.
+from container import Container
 from data_types import DATA_TYPES
 
 
@@ -40,8 +41,20 @@ def dummy_function():
 class Test_eliminate(TestCase):
     """Unit tests for the functions of the 'prompt.eliminate' module."""
 
-    # Instantiate the user function class.
-    eliminate_fns = Eliminate()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_eliminate, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Place the user functions into a container.
+        self.eliminate_fns = Container()
+        self.eliminate_fns.eliminate = self.interpreter.eliminate
 
 
     def test_eliminate_function(self):
@@ -67,4 +80,4 @@ class Test_eliminate(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxTupleError, self.eliminate_fns.eliminate, function=dummy_function, args=data[1])
+            self.assertRaises(RelaxNoneTupleError, self.eliminate_fns.eliminate, function=dummy_function, args=data[1])

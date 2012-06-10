@@ -294,11 +294,11 @@ class Align_tensor_base_class(UnitTestCase):
         dp = pipes.get_pipe('orig')
 
         # Initialise the 5 tensors.
-        self.align_tensor_fns.init(tensor='1', params=(1, 0, 0, 0, 0))
-        self.align_tensor_fns.init(tensor='2', params=(0, 1, 0, 0, 0))
-        self.align_tensor_fns.init(tensor='3', params=(0, 0, 1, 0, 0))
-        self.align_tensor_fns.init(tensor='4', params=(0, 0, 0, 1, 0))
-        self.align_tensor_fns.init(tensor='5', params=(0, 0, 0, 0, 1))
+        self.align_tensor_fns.init(tensor='1', params=(1, 0, 0, 0, 0), param_types=0)
+        self.align_tensor_fns.init(tensor='2', params=(0, 1, 0, 0, 0), param_types=0)
+        self.align_tensor_fns.init(tensor='3', params=(0, 0, 1, 0, 0), param_types=0)
+        self.align_tensor_fns.init(tensor='4', params=(0, 0, 0, 1, 0), param_types=0)
+        self.align_tensor_fns.init(tensor='5', params=(0, 0, 0, 0, 1), param_types=0)
 
         # SVD.
         self.align_tensor_fns.svd()

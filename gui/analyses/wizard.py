@@ -32,7 +32,8 @@ from wx.lib import buttons
 # relax GUI module imports.
 from gui import paths
 from gui.fonts import font
-from gui.misc import gui_to_str, str_to_gui
+from gui.input_elements.value import Value
+from gui.string_conv import gui_to_str, str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
 
 
@@ -61,7 +62,7 @@ class Analysis_wizard:
         self.wizard.add_page(self.new_page, apply_button=False)
 
         # Add the data pipe name panel.
-        self.pipe_page = Data_pipe_page(self.wizard)
+        self.pipe_page = Data_pipe_page(self.wizard, height_desc=400)
         self.wizard.add_page(self.pipe_page, apply_button=False)
 
         # Reset the cursor.
@@ -88,9 +89,10 @@ class Analysis_wizard:
         analysis_type = gui_to_str(self.wizard.analysis_type)
         analysis_name = gui_to_str(self.new_page.analysis_name.GetValue())
         pipe_name = gui_to_str(self.pipe_page.pipe_name.GetValue())
+        pipe_bundle = gui_to_str(self.pipe_page.pipe_bundle.GetValue())
 
         # Return it.
-        return analysis_type, analysis_name, pipe_name
+        return analysis_type, analysis_name, pipe_name, pipe_bundle
 
 
 
@@ -99,8 +101,8 @@ class Data_pipe_page(Wiz_page):
 
     # Class variables.
     image_path = paths.WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'Select the name of the data pipe to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Simple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data.'
-    title = 'Data pipe name'
+    main_text = 'Select the name of the data pipe used at the start of the analysis and the name of the data pipe bundle to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Data pipe bundles are simple groupings of the pipes within the data store and each analysis tab is coupled to a specific bundle.\n\nSimple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data, all grouped together within a single bundle.\n\nThe initialisation of a new analysis will call the pipe.create user function with the pipe name and pipe bundle as given below.'
+    title = 'Data pipe set up'
 
     def add_contents(self, sizer):
         """Add the specific GUI elements (dummy method).
@@ -110,7 +112,10 @@ class Data_pipe_page(Wiz_page):
         """
 
         # The pipe name input.
-        self.pipe_name = self.input_field(sizer, "The data pipe name:")
+        self.pipe_name = Value(name='pipe_name', parent=self, value_type='str', sizer=sizer, desc="The starting data pipe for the analysis:", divider=self._div_left, height_element=self.height_element)
+
+        # The pipe bundle input.
+        self.pipe_bundle = Value(name='pipe_bundle', parent=self, value_type='str', sizer=sizer, desc="The data pipe bundle:", divider=self._div_left, height_element=self.height_element)
 
         # Spacing.
         sizer.AddStretchSpacer(3)
@@ -119,11 +124,12 @@ class Data_pipe_page(Wiz_page):
     def on_display(self):
         """Update the pipe name."""
 
-        # Generate a name for the data pipe based on the type and time.
+        # Generate a name for the data pipe bundle based on the type and time.
         name = "%s (%s)" % (self.parent.analysis_type, asctime(localtime()))
 
-        # Update the field.
-        self.pipe_name.SetValue(str_to_gui(name))
+        # Update the fields.
+        self.pipe_name.SetValue(str_to_gui("origin - %s" % name))
+        self.pipe_bundle.SetValue(str_to_gui(name))
 
 
 
@@ -257,7 +263,7 @@ class New_analysis_page(Wiz_page):
         sizer.AddStretchSpacer(2)
 
         # Add the analysis name field.
-        self.analysis_name = self.input_field(sizer, "The name of the new analysis:", tooltip='The name of the analysis can be changed to any text.')
+        self.analysis_name = Value(name='analysis_name', parent=self, value_type='str', sizer=sizer, desc="The name of the new analysis:", tooltip='The name of the analysis can be changed to any text.', divider=self._div_left, height_element=self.height_element)
 
 
     def create_button(self, id=-1, box=None, size=None, bmp=None, text='', tooltip='', fn=None, disabled=False):

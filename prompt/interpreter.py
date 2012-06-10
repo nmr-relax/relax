@@ -29,78 +29,41 @@ import dep_check
 # Python module imports.
 import ansi
 from code import InteractiveConsole, softspace
+from math import pi
 from os import F_OK, access, chdir, getcwd, path
-import platform
 from re import search
 if dep_check.readline_module:
     import readline
 if dep_check.runpy_module:
     import runpy
+from string import split
 import sys
 
-# Python modules accessible on the command prompt.
-from math import pi
-
-# RelaxError system.
-from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
-
-# Auxiliary modules.
-from base_class import Exec_info
-from command import Ls, Lh, Ll, system
-from help import _Helper, _Helper_python
+# relax module imports.
 from info import Info_box
+from prompt.command import Ls, Lh, Ll, system
+from prompt.gpl import GPL
+from prompt.help import _Helper, _Helper_python
 if dep_check.readline_module:
-    from tab_completion import Tab_completion
+    from prompt.tab_completion import Tab_completion
+from prompt.uf_objects import Class_container, Uf_object
+from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
-# User functions.
-from angles import Angles
-from dx import OpenDX
-from eliminate import Eliminate
-from fix import Fix
-from gpl import GPL
-from reset import Reset
-from minimisation import Minimisation
-from model_selection import Modsel
-from sys_info import Sys_info
-from temperature import Temp
 
-# User classes.
-from align_tensor import Align_tensor
-from bmrb import BMRB
-from bruker import Bruker
-from consistency_tests import Consistency_tests
-from dasha import Dasha
-from diffusion_tensor import Diffusion_tensor
-from frame_order import Frame_order
-from frq import Frq
-from grace import Grace
-from jw_mapping import Jw_mapping
-from model_free import Model_free
-from molmol import Molmol
-from molecule import Molecule
-from monte_carlo import Monte_carlo
-from n_state_model import N_state_model
-from noe import Noe
-from palmer import Palmer
-from residue import Residue
-from structure import Structure
-from paramag import Paramag
-from pcs import PCS
-from pymol_control import Pymol
-from rdc import RDC
-from relax_data import Relax_data
-from relax_fit import Relax_fit
-from results import Results
-from pipe import Pipe
-from select import Select
-from sequence import Sequence
-from spectrum import Spectrum
-from spin import Spin
-from state import State
-from deselect import Deselect
-from value import Value
-from vmd import Vmd
+# Module variables.
+###################
+
+# The prompts (to change the Python prompt, as well as the function printouts).
+PS1_ORIG = 'relax> '
+PS2_ORIG = 'relax| '
+PS3_ORIG = '\n%s' % PS1_ORIG
+
+# Coloured text.
+PS1_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
+PS2_COLOUR = "%s%s%s" % (ansi.relax_prompt, PS2_ORIG, ansi.end)
+PS3_COLOUR = "\n%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
 
 
 class Interpreter:
@@ -128,26 +91,54 @@ class Interpreter:
         info = Info_box()
         self.__intro_string = info.intro_text()
 
-        # Initialise the execution information container (info that can change during execution).
-        self._exec_info = Exec_info()
-
-        # The prompts (change the Python prompt, as well as the function print outs).
+        # The prompts (change the Python prompt, as well as the function printouts).
         if ansi.enable_control_chars(stream=1):
-            self._exec_info.prompt_colour_on()
+            self.prompt_colour_on()
         else:
-            self._exec_info.prompt_colour_off()
-
-        # The function intro flag (store in the execution information container).
-        self._exec_info.intro = False
+            self.prompt_colour_off()
 
         # Set up the interpreter objects.
         self._locals = self._setup()
 
 
+    def _execute_uf(self, *args, **kargs):
+        """Private method for executing the given user function.
+
+        @keyword uf_name:   The name of the user function.
+        @type uf_name:      str
+        """
+
+        # Checks.
+        if 'uf_name' not in kargs:
+            raise RelaxError("The user function name argument 'uf_name' has not been supplied.")
+
+        # Process the user function name.
+        uf_name = kargs.pop('uf_name')
+
+        # Split up the name.
+        if search('\.', uf_name):
+            class_name, uf_name = split(uf_name, '.')
+        else:
+            class_name = None
+
+        # Get the class object.
+        if class_name:
+            class_obj = self._locals[class_name]
+
+        # Get the user function.
+        if class_name:
+            uf = getattr(class_obj, uf_name)
+        else:
+            uf = self._locals[uf_name]
+
+        # Call the user function.
+        uf(*args, **kargs)
+
+
     def _setup(self):
         """Set up all the interpreter objects.
 
-        All objects are initialised and placed in a dictionary.  These will be later placed in different namespaces such as the run() method local namespace.
+        All objects are initialised and placed in a dictionary.  These will be later placed in different namespaces such as the run() method local namespace.  All the user functions and classes will be auto-generated.
 
         @return:    The dictionary of interpreter objects.
         @rtype:     dict
@@ -156,7 +147,7 @@ class Interpreter:
         # Initialise the dictionary.
         objects = {}
 
-        # Python modules.
+        # Python objects.
         objects['pi'] = pi
 
         # Import the functions emulating system commands.
@@ -165,88 +156,59 @@ class Interpreter:
         objects['ls'] = Ls()
         objects['system'] = system
 
-        # Place functions in the local namespace.
+        # The GPL license.
         objects['gpl'] = objects['GPL'] = GPL()
-
-        # Initialise the user functions (those not in user function classes)
-        angles = Angles(self._exec_info)
-        eliminate = Eliminate(self._exec_info)
-        fix = Fix(self._exec_info)
-        reset = Reset(self._exec_info)
-        minimisation = Minimisation(self._exec_info)
-        modsel = Modsel(self._exec_info)
-        opendx = OpenDX(self._exec_info)
-        sys_info = Sys_info(self._exec_info)
-        temp = Temp(self._exec_info)
-
-        # Place the user functions in the local namespace.
-        objects['angle_diff_frame'] = angles.angle_diff_frame
-        objects['calc'] = minimisation.calc
-        objects['eliminate'] = eliminate.eliminate
-        objects['fix'] = fix.fix
-        objects['grid_search'] = minimisation.grid_search
-        objects['reset'] = reset.reset
-        objects['minimise'] = minimisation.minimise
-        objects['model_selection'] = modsel.model_selection
-        objects['sys_info'] = sys_info.sys_info
-        objects['temperature'] = temp.set
-
-        # Place the user classes in the local namespace.
-        objects['align_tensor'] = Align_tensor(self._exec_info)
-        objects['bmrb'] = BMRB(self._exec_info)
-        objects['bruker'] = Bruker(self._exec_info)
-        objects['consistency_tests'] = Consistency_tests(self._exec_info)
-        objects['dasha'] = Dasha(self._exec_info)
-        objects['deselect'] = Deselect(self._exec_info)
-        objects['diffusion_tensor'] = Diffusion_tensor(self._exec_info)
-        objects['frame_order'] = Frame_order(self._exec_info)
-        objects['dx'] = OpenDX(self._exec_info)
-        objects['frq'] = Frq(self._exec_info)
-        objects['grace'] = Grace(self._exec_info)
-        objects['jw_mapping'] = Jw_mapping(self._exec_info)
-        objects['model_free'] = Model_free(self._exec_info)
-        objects['molmol'] = Molmol(self._exec_info)
-        objects['molecule'] = Molecule(self._exec_info)
-        objects['monte_carlo'] = Monte_carlo(self._exec_info)
-        objects['n_state_model'] = N_state_model(self._exec_info)
-        objects['noe'] = Noe(self._exec_info)
-        objects['palmer'] = Palmer(self._exec_info)
-        objects['paramag'] = Paramag(self._exec_info)
-        objects['pcs'] = PCS(self._exec_info)
-        objects['pymol'] = Pymol(self._exec_info)
-        objects['rdc'] = RDC(self._exec_info)
-        objects['relax_data'] = Relax_data(self._exec_info)
-        objects['relax_fit'] = Relax_fit(self._exec_info)
-        objects['residue'] = Residue(self._exec_info)
-        objects['results'] = Results(self._exec_info)
-        objects['pipe'] = Pipe(self._exec_info)
-        objects['select'] = Select(self._exec_info)
-        objects['sequence'] = Sequence(self._exec_info)
-        objects['spectrum'] = Spectrum(self._exec_info)
-        objects['spin'] = Spin(self._exec_info)
-        objects['state'] = State(self._exec_info)
-        objects['structure'] = Structure(self._exec_info)
-        objects['value'] = Value(self._exec_info)
-        objects['vmd'] = Vmd(self._exec_info)
 
         # Builtin interpreter functions.
         objects['intro_off'] = self.off
         objects['intro_on'] = self.on
         objects['exit'] = objects['bye'] = objects['quit'] = objects['q'] = _Exit()
-        objects['script'] = self.script
 
         # Modify the help system.
         objects['help_python'] = _Helper_python()
         objects['help'] = _Helper()
+
+        # Add the user function classes.
+        for name, data in uf_info.class_loop():
+            # Generate a new container.
+            obj = Class_container(name, data.title)
+
+            # Add the object to the local namespace.
+            objects[name] = obj
+
+        # Add the user functions.
+        self._uf_dict = {}
+        for name, data in uf_info.uf_loop():
+            # Split up the name.
+            if search('\.', name):
+                class_name, uf_name = split(name, '.')
+            else:
+                class_name = None
+
+            # Generate a new container.
+            obj = Uf_object(name, title=data.title, kargs=data.kargs, backend=data.backend, desc=data.desc)
+
+            # Get the class object.
+            if class_name:
+                class_obj = objects[class_name]
+
+            # Add the object to the local namespace or user function class.
+            if class_name:
+                setattr(class_obj, uf_name, obj)
+            else:
+                objects[name] = obj
+
+            # Store the user functions by full text name (for faster retrieval).
+            self._uf_dict[name] = obj
 
         # Return the dictionary.
         return objects
 
 
     def off(self, verbose=True):
-        """Turn the function introductions off."""
+        """Turn the user function introductions off."""
 
-        self._exec_info.intro = False
+        status.uf_intro = False
 
         # Print out.
         if verbose:
@@ -254,9 +216,9 @@ class Interpreter:
 
 
     def on(self, verbose=True):
-        """Turn the function introductions on."""
+        """Turn the user function introductions on."""
 
-        self._exec_info.intro = True
+        status.uf_intro = True
 
         # Print out.
         if verbose:
@@ -264,11 +226,27 @@ class Interpreter:
 
 
     def populate_self(self):
-        """Place all user functions and other special objects into self."""
+        """Place all special objects into self."""
 
         # Add the interpreter objects to the class namespace.
         for name in self._locals.keys():
             setattr(self, name, self._locals[name])
+
+
+    def prompt_colour_off(self):
+        """Turn the prompt colouring ANSI escape sequences off."""
+
+        sys.ps1 = status.ps1 = PS1_ORIG
+        sys.ps2 = status.ps2 = PS2_ORIG
+        sys.ps3 = status.ps3 = PS3_ORIG
+
+
+    def prompt_colour_on(self):
+        """Turn the prompt colouring ANSI escape sequences off."""
+
+        sys.ps1 = status.ps1 = PS1_COLOUR
+        sys.ps2 = status.ps2 = PS2_COLOUR
+        sys.ps3 = status.ps3 = PS3_COLOUR
 
 
     def run(self, script_file=None):
@@ -295,8 +273,8 @@ class Interpreter:
 
         # Execute the script file if given.
         if script_file:
-            # Turn on the function intro flag.
-            self._exec_info.intro = True
+            # Turn on the user function intro flag.
+            status.uf_intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
@@ -305,40 +283,6 @@ class Interpreter:
         else:
             prompt(intro=self.__intro_string, local=locals())
 
-
-    def script(self, file=None, quit=False):
-        """Function for executing a script file."""
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "script("
-            text = text + "file=" + repr(file)
-            text = text + ", quit=" + repr(quit) + ")"
-            print(text)
-
-        # File argument.
-        if file == None:
-            raise RelaxNoneError('file')
-        elif not isinstance(file, str):
-            raise RelaxStrError('file', file)
-
-        # Test if the script file exists.
-        if not access(file, F_OK):
-            raise RelaxError("The script file '" + file + "' does not exist.")
-
-        # Quit argument.
-        if not isinstance(quit, int) or (quit != False and quit != True):
-            raise RelaxBinError('quit', quit)
-
-        # Turn on the function intro flag.
-        orig_intro_state = self._exec_info.intro
-        self._exec_info.intro = True
-
-        # Execute the script.
-        run_script(local=self._locals, script_file=file, quit=quit)
-
-        # Return the function intro flag to the original value.
-        self._exec_info.intro = orig_intro_state
 
 
 class _Exit:

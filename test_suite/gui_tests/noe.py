@@ -33,8 +33,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.misc import int_to_gui, str_to_gui
-from gui.user_functions import deselect, sequence, spin
+from gui.string_conv import int_to_gui, str_to_gui
 from gui.wizard import Wiz_window
 
 
@@ -58,10 +57,10 @@ class Noe(GuiTestCase):
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name, pipe_bundle = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
 
         # Alias the analysis.
         analysis = self.app.gui.analysis.get_page_from_name("Steady-state NOE")
@@ -73,26 +72,14 @@ class Noe(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window(self.app.gui)
-        seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
-        seq_read.file.SetValue(str_to_gui(file))
-        seq_read.mol_name_col.SetValue(int_to_gui(None))
-        seq_read.res_name_col.SetValue(int_to_gui(2))
-        seq_read.res_num_col.SetValue(int_to_gui(1))
-        seq_read.spin_name_col.SetValue(int_to_gui(None))
-        seq_read.spin_num_col.SetValue(int_to_gui(None))
-        seq_read.on_execute()
+        self._execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_name_col=2, res_num_col=1, spin_name_col=None, spin_num_col=None)
 
         # Unresolved spins.
-        deselect_spin = deselect.Spin_page(wizard)
-        deselect_spin.spin_id.SetValue(str_to_gui(":3"))
-        deselect_spin.on_execute()
+        self._execute_uf(uf_name='deselect.spin', spin_id=":3")
 
         # Name the spins.
-        page = spin.Name_page(wizard)
-        page.name.SetValue(str_to_gui('N'))
-        page.on_execute()
+        self._execute_uf(uf_name='spin.name', name="N")
 
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
         interpreter.flush()
@@ -104,7 +91,7 @@ class Noe(GuiTestCase):
             status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
         ]
         errors = [3600, 3000]
-        types = [1, 0]
+        types = ['ref', 'sat']
 
         # Loop over the 2 spectra.
         for i in range(2):
@@ -113,9 +100,9 @@ class Noe(GuiTestCase):
 
             # The spectrum.
             page = analysis.wizard.get_page(analysis.page_indices['read'])
-            page.file.SetValue(str_to_gui(files[i]))
-            page.spectrum_id.SetValue(str_to_gui(ids[i]))
-            page.proton.SetValue(str_to_gui('HN'))
+            page.uf_args['file'].SetValue(str_to_gui(files[i]))
+            page.uf_args['spectrum_id'].SetValue(str_to_gui(ids[i]))
+            page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Move down 2 pages.
             analysis.wizard._go_next(None)
@@ -123,14 +110,14 @@ class Noe(GuiTestCase):
 
             # Set the errors.
             page = analysis.wizard.get_page(analysis.page_indices['rmsd'])
-            page.error.SetValue(int_to_gui(errors[i]))
+            page.uf_args['error'].SetValue(int_to_gui(errors[i]))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
 
             # Set the type.
             page = analysis.wizard.get_page(analysis.page_indices['spectrum_type'])
-            page.spectrum_type.SetSelection(types[i])
+            page.uf_args['spectrum_type'].SetValue(types[i])
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)

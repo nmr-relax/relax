@@ -20,7 +20,7 @@ pipes = ['m4', 'm5']
 
 # Loop over the data pipe names.
 for name in pipes:
-    print "\n\n# " + name + " #"
+    print("\n\n# " + name + " #")
 
     # Create the data pipe.
     pipe.create(name, 'mf')

@@ -44,7 +44,7 @@ pipe.create('lactose', 'N-state')
 files = listdir(getcwd())
 num = 1
 for file in files:
-    print file
+    print(file)
     if search('.pdb$', file):
         structure.read_pdb(file=file, parser='internal', set_model_num=num, set_mol_name='conf')
         num += 1
@@ -158,4 +158,4 @@ align_tensor.display()
 # Show the populations.
 for i in range(len(cdp.structure.structural_data)):
     if abs(cdp.probs[i]) > 1e-7:
-        print "%16.10f %s" % (cdp.probs[i], cdp.structure.structural_data[i].mol[0].file_name)
+        print("%16.10f %s" % (cdp.probs[i], cdp.structure.structural_data[i].mol[0].file_name))

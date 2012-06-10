@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.relax_data import Relax_data
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
@@ -35,8 +35,19 @@ from data_types import DATA_TYPES
 class Test_relax_data(Relax_data_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.relax_data' module."""
 
-    # Instantiate the user function class.
-    relax_data_fns = Relax_data()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_relax_data, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.relax_data_fns = self.interpreter.relax_data
 
 
     def test_back_calc_argfail_ri_id(self):

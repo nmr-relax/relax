@@ -11,38 +11,38 @@ from status import Status; status = Status()
 str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
 # The data pipe.
-pipe.create('rdc_back_calc', 'N-state')
+self._execute_uf(uf_name='pipe.create', pipe_name='rdc_back_calc', pipe_type='N-state')
 
 # Load the structures.
-structure.read_pdb('trunc_ubi_pcs.pdb', dir=str_path)
+self._execute_uf(uf_name='structure.read_pdb', file='trunc_ubi_pcs.pdb', dir=str_path)
 
 # Load the spins.
-structure.load_spins('@N')
+self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
 
 # Set the heteronucleus type.
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
-value.set(NH_BOND_LENGTH_RDC, 'r')
+self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type')
+self._execute_uf(uf_name='value.set', val='1H', param='proton_type')
+self._execute_uf(uf_name='value.set', val=NH_BOND_LENGTH_RDC, param='r')
 
 # Load the bond vectors.
-structure.vectors('H', '@N')
+self._execute_uf(uf_name='structure.vectors', attached='H', spin_id='@N')
 
 # The dipolar constant.
 const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
 
 # The tensor.
 tensor = 'A'
-align_tensor.init(tensor, (4.724/const,  11.856/const, 0, 0, 0), param_types=2)
+self._execute_uf(uf_name='align_tensor.init', tensor=tensor, params=(4.724/const,  11.856/const, 0, 0, 0), param_types=2)
 
 # The temperature.
-temperature(id=tensor, temp=298)
+self._execute_uf(uf_name='temperature', id=tensor, temp=298)
 
 # The frequency.
-frq.set(id=tensor, frq=900.0 * 1e6)
+self._execute_uf(uf_name='frq.set', id=tensor, frq=900.0 * 1e6)
 
 # One state model.
-n_state_model.select_model('fixed')
-n_state_model.number_of_states(N=1)
+self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
+self._execute_uf(uf_name='n_state_model.number_of_states', N=1)
 
 # Set the RDC data.
 rdcs = [-1.390, -6.270, -9.650]
@@ -53,4 +53,4 @@ for spin in spin_loop():
     i += 1
 
 # Back calc.
-rdc.back_calc(tensor)
+self._execute_uf(uf_name='rdc.back_calc', align_id=tensor)

@@ -72,6 +72,12 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
     @type remap:            None or func
     """
 
+    # Check the args.
+    if inc <= 1:
+        raise RelaxError("The increment value needs to be greater than 1.")
+    if axis_incs <= 1:
+        raise RelaxError("The axis increment value needs to be greater than 1.")
+
     # Space type.
     if string.lower(map_type) == "iso3d":
         if len(params) != 3:

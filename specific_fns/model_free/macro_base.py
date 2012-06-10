@@ -31,85 +31,33 @@ from re import search
 from colour import linear_gradient
 from generic_fns.mol_res_spin import spin_loop
 from relax_errors import RelaxFault, RelaxStyleError, RelaxUnknownDataTypeError
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 
 
 class Macro:
     """The base class for the model-free analysis Molmol and PyMOL macro creation."""
 
-    classic_style_doc = ["Model-free classic style", """
-        Creator:  Edward d'Auvergne
-
-        Argument string:  "classic"
-
-        Description:  The classic style draws the backbone of a protein in a cylindrical bond style.  Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected residues are shown as black lines.
-
-        Supported data types:
-        ____________________________________________________________________________________________
-        |                |             |                                                           |
-        | Data type      | String      | Description                                               |
-        |________________|_____________|___________________________________________________________|
-        |                |             |                                                           |
-        | S2.            | 's2'        | The standard model-free order parameter, equal to S2f.S2s |
-        |                |             | for the two timescale models.  The default colour         |
-        |                |             | gradient starts at 'yellow' and ends at 'red'.            |
-        |                |             |                                                           |
-        | S2f.           | 's2f'       | The order parameter of the faster of two internal         |
-        |                |             | motions.  Residues which are described by model-free      |
-        |                |             | models m1 to m4, the single timescale models, are         |
-        |                |             | illustrated as white neon bonds.  The default colour      |
-        |                |             | gradient is the same as that for the S2 data type.        |
-        |                |             |                                                           |
-        | S2s.           | 's2s'       | The order parameter of the slower of two internal         |
-        |                |             | motions.  This functions exactly as S2f except that S2s   |
-        |                |             | is plotted instead.                                       |
-        |                |             |                                                           |
-        | Amplitude of   | 'amp_fast'  | Model independent display of the amplite of fast motions. |
-        | fast motions.  |             | For residues described by model-free models m5 to m8, the |
-        |                |             | value plotted is that of S2f.  However, for residues      |
-        |                |             | described by models m1 to m4, what is shown is dependent  |
-        |                |             | on the timescale of the motions.  This is because these   |
-        |                |             | single timescale models can, at times, be perfect         |
-        |                |             | approximations to the more complex two timescale models.  |
-        |                |             | Hence if te is less than 200 ps, S2 is plotted. Otherwise |
-        |                |             | the peptide bond is coloured white.  The default colour   |
-        |                |             | gradient  is the same as that for S2.                     |
-        |                |             |                                                           |
-        | Amplitude of   | 'amp_slow'  | Model independent display of the amplite of slow motions, |
-        | slow motions.  |             | arbitrarily defined as motions slower than 200 ps.  For   |
-        |                |             | residues described by model-free models m5 to m8, the     |
-        |                |             | order parameter S2 is plotted if ts > 200 ps.  For models |
-        |                |             | m1 to m4, S2 is plotted if te > 200 ps.  The default      |
-        |                |             | colour gradient is the same as that for S2.               |
-        |                |             |                                                           |
-        | te.            | 'te'        | The correlation time, te.  The default colour gradient    |
-        |                |             | starts at 'turquoise' and ends at 'blue'.                 |
-        |                |             |                                                           |
-        | tf.            | 'tf'        | The correlation time, tf.  The default colour gradient is |
-        |                |             | the same as that of te.                                   |
-        |                |             |                                                           |
-        | ts.            | 'ts'        | The correlation time, ts.  The default colour gradient    |
-        |                |             | starts at 'blue' and ends at 'black'.                     |
-        |                |             |                                                           |
-        | Timescale of   | 'time_fast' | Model independent display of the timescale of fast        |
-        | fast motions   |             | motions.  For models m5 to m8, only the parameter tf is   |
-        |                |             | plotted.  For models m2 and m4, the parameter te is       |
-        |                |             | plotted only if it is less than 200 ps.  All other        |
-        |                |             | residues are assumed to have a correlation time of zero.  |
-        |                |             | The default colour gradient is the same as that of te.    |
-        |                |             |                                                           |
-        | Timescale of   | 'time_slow' | Model independent display of the timescale of slow        |
-        | slow motions   |             | motions.  For models m5 to m8, only the parameter ts is   |
-        |                |             | plotted.  For models m2 and m4, the parameter te is       |
-        |                |             | plotted only if it is greater than 200 ps.  All other     |
-        |                |             | residues are coloured white.  The default colour gradient |
-        |                |             | is the same as that of ts.                                |
-        |                |             |                                                           |
-        | Chemical       | 'rex'       | The chemical exchange, Rex.  Residues which experience no |
-        | exchange       |             | chemical exchange are coloured white.  The default colour |
-        |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
-        |________________|_____________|___________________________________________________________|
-        """]
+    classic_style_doc = Desc_container("Model-free classic style")
+    classic_style_doc.add_paragraph("Creator:  Edward d'Auvergne")
+    classic_style_doc.add_paragraph("Argument string:  \"classic\"")
+    classic_style_doc.add_paragraph("Description:  The classic style draws the backbone of a protein in a cylindrical bond style.  Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected residues are shown as black lines.")
+    classic_style_doc.add_paragraph("Supported data types:")
+    table = uf_tables.add_table(label="table: model-free macro classic style", caption="The model-free classic style for mapping model spin specific data onto 3D molecular structures using either PyMOL or Molmol.", caption_short="The model-free classic style for PyMOL and Molmol data mapping.")
+    table.add_headings(["Data type", "String", "Description"])
+    table.add_row(["S2.", "'s2'", "The standard model-free order parameter, equal to S2f.S2s for the two timescale models.  The default colour gradient starts at 'yellow' and ends at 'red'."])
+    table.add_row(["S2f.", "'s2f'", "The order parameter of the faster of two internal motions.  Residues which are described by model-free models m1 to m4, the single timescale models, are illustrated as white neon bonds.  The default colour gradient is the same as that for the S2 data type."])
+    table.add_row(["S2s.", "'s2s'", "The order parameter of the slower of two internal motions.  This functions exactly as S2f except that S2s is plotted instead."])
+    table.add_row(["Amplitude of fast motions.", "'amp_fast'", "Model independent display of the amplite of fast motions.  For residues described by model-free models m5 to m8, the value plotted is that of S2f.  However, for residues described by models m1 to m4, what is shown is dependent on the timescale of the motions.  This is because these single timescale models can, at times, be perfect approximations to the more complex two timescale models.  Hence if te is less than 200 ps, S2 is plotted.  Otherwise the peptide bond is coloured white.  The default colour gradient  is the same as that for S2."])
+    table.add_row(["Amplitude of slow motions.", "'amp_slow'", "Model independent display of the amplite of slow motions, arbitrarily defined as motions slower than 200 ps.  For residues described by model-free models m5 to m8, the order parameter S2 is plotted if ts > 200 ps.  For models m1 to m4, S2 is plotted if te > 200 ps.  The default colour gradient is the same as that for S2."])
+    table.add_row(["te.", "'te'", "The correlation time, te.  The default colour gradient starts at 'turquoise' and ends at 'blue'."])
+    table.add_row(["tf.", "'tf'", "The correlation time, tf.  The default colour gradient is the same as that of te."])
+    table.add_row(["ts.", "'ts'", "The correlation time, ts.  The default colour gradient starts at 'blue' and ends at 'black'."])
+    table.add_row(["Timescale of fast motions", "'time_fast'", "Model independent display of the timescale of fast motions.  For models m5 to m8, only the parameter tf is plotted.  For models m2 and m4, the parameter te is plotted only if it is less than 200 ps.  All other residues are assumed to have a correlation time of zero.  The default colour gradient is the same as that of te."])
+    table.add_row(["Timescale of slow motions", "'time_slow'", "Model independent display of the timescale of slow motions.  For models m5 to m8, only the parameter ts is plotted.  For models m2 and m4, the parameter te is plotted only if it is greater than 200 ps.  All other residues are coloured white.  The default colour gradient is the same as that of ts."])
+    table.add_row(["Chemical exchange", "'rex'", "The chemical exchange, Rex.  Residues which experience no chemical exchange are coloured white.  The default colour gradient starts at 'yellow' and finishes at 'red'."])
+    classic_style_doc.add_table(table.label)
 
     def classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """The classic macro style.

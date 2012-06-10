@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,7 @@
 
 # relax module imports.
 from generic_fns import align_tensor
-from prompt.align_tensor import Align_tensor
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxTupleNumError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
@@ -33,8 +33,20 @@ from data_types import DATA_TYPES
 class Test_align_tensor(Align_tensor_base_class):
     """Unit tests for the functions of the 'prompt.align_tensor' module."""
 
-    # Instantiate the user function class.
-    align_tensor_fns = Align_tensor()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_align_tensor, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.align_tensor_fns = self.interpreter.align_tensor
+
 
     def test_copy_argfail_tensor_from(self):
         """Failure of the tensor_from arg of the align_tensor.copy() user function."""

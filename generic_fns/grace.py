@@ -232,11 +232,12 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 point = data[0][index][-1]
 
                 # Conversion factors.
-                x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type)
-                if x_err[j]:
+                if x_data_type != 'spin':
+                    x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type)
+                if x_err[j] and x_data_type != 'spin':
                     x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type)
                 y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type)
-                if y_err[j]:
+                if y_err[j] and y_data_type != 'spin':
                     y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type)
 
                 # Append the data.
@@ -280,6 +281,50 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
 
     # Return the data.
     return new_data, set_labels, graph_type
+
+
+def get_data_types():
+    """Get all of the data types to plot for the current data pipe.
+
+    @return:    A list of lists of all the allowable data type descriptions and their values.
+    @rtype:     list of list of str
+    """
+
+    # Get the specific functions (return an empty list if a RelaxError occurs).
+    try:
+        data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+    except:
+        return []
+
+    # The data names, if they exist.
+    names = data_names(set='params')
+
+    # Initialise the list and then add the sequence data.
+    data = []
+    data.append(["Spin sequence", 'spin'])
+
+    # Loop over the parameters.
+    for name in (data_names(set='params') + data_names(set='generic')):
+        # Get the description.
+        try:
+            desc = return_data_desc(name)
+        except:
+            return []
+
+        # No description.
+        if not desc:
+            text = name
+
+        # The text.
+        else:
+            text = "'%s':  %s" % (name, desc)
+
+        # Append the description.
+        data.append([text, name])
+
+    # Return the data.
+    return data
 
 
 def view(file=None, dir=None, grace_exe='xmgrace'):

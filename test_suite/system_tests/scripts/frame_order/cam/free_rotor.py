@@ -15,8 +15,11 @@ DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_
 
 
 class Analysis:
-    def __init__(self):
+    def __init__(self, exec_fn):
         """Execute the frame order analysis."""
+
+        # Alias the user function executor method.
+        self._execute_uf = exec_fn
 
         # Optimise.
         self.optimisation()
@@ -43,50 +46,50 @@ class Analysis:
         PATH_C_DOM = PATH_N_DOM+sep+'free_rotor'+sep
 
         # Create the data pipe.
-        pipe.create(pipe_name='frame order', pipe_type='frame order')
+        self._execute_uf(uf_name='pipe.create', pipe_name='frame order', pipe_type='frame order')
 
         # Load the tensors.
-        script(PATH_N_DOM + 'tensors.py')
-        script(PATH_C_DOM + 'tensors.py')
+        self._execute_uf(uf_name='script', file=PATH_N_DOM + 'tensors.py')
+        self._execute_uf(uf_name='script', file=PATH_C_DOM + 'tensors.py')
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
         red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
         for i in range(len(full)):
-            align_tensor.set_domain(tensor=full[i], domain='N')
-            align_tensor.set_domain(tensor=red[i], domain='C')
-            align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
+            self._execute_uf(uf_name='align_tensor.set_domain', tensor=full[i], domain='N')
+            self._execute_uf(uf_name='align_tensor.set_domain', tensor=red[i], domain='C')
+            self._execute_uf(uf_name='align_tensor.reduction', full_tensor=full[i], red_tensor=red[i])
 
         # Select the model.
-        frame_order.select_model('free rotor')
+        self._execute_uf(uf_name='frame_order.select_model', model='free rotor')
 
         # Set the reference domain.
-        frame_order.ref_domain('N')
+        self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
         # Optimise.
-        grid_search(inc=11)
-        minimise('simplex', constraints=False)
+        self._execute_uf(uf_name='grid_search', inc=11)
+        self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False)
 
         # Test Monte Carlo simulations.
-        monte_carlo.setup(number=3)
-        monte_carlo.create_data()
-        monte_carlo.initial_values()
-        minimise('simplex', constraints=False)
-        eliminate()
-        monte_carlo.error_analysis()
+        self._execute_uf(uf_name='monte_carlo.setup', number=3)
+        self._execute_uf(uf_name='monte_carlo.create_data')
+        self._execute_uf(uf_name='monte_carlo.initial_values')
+        self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False)
+        self._execute_uf(uf_name='eliminate')
+        self._execute_uf(uf_name='monte_carlo.error_analysis')
 
         # Write the results.
-        results.write('devnull', dir=None, force=True)
+        self._execute_uf(uf_name='results.write', file='devnull', dir=None, force=True)
 
 
     def original_structure(self):
         """Load the original structure into a dedicated data pipe."""
 
         # Create a special data pipe for the original rigid body position.
-        pipe.create(pipe_name='orig pos', pipe_type='frame order')
+        self._execute_uf(uf_name='pipe.create', pipe_name='orig pos', pipe_type='frame order')
 
         # Load the structure.
-        structure.read_pdb(DATA_PATH+'1J7P_1st_NH.pdb')
+        self._execute_uf(uf_name='structure.read_pdb', file=DATA_PATH+'1J7P_1st_NH.pdb')
 
         # Store the centre of mass.
         cdp.CoM = centre_of_mass()
@@ -96,20 +99,20 @@ class Analysis:
         """Transform the domain to the average position."""
 
         # Create a special data pipe for the average rigid body position.
-        pipe.create(pipe_name='ave pos', pipe_type='frame order')
+        self._execute_uf(uf_name='pipe.create', pipe_name='ave pos', pipe_type='frame order')
 
         # Load the structure.
-        structure.read_pdb(DATA_PATH+'1J7P_1st_NH_rot.pdb')
+        self._execute_uf(uf_name='structure.read_pdb', file=DATA_PATH+'1J7P_1st_NH_rot.pdb')
 
         # Rotate all atoms.
-        structure.rotate(R=R, origin=pivot)
+        self._execute_uf(uf_name='structure.rotate', R=R, origin=pivot)
 
         # Write out the new PDB.
-        structure.write_pdb('devnull')
+        self._execute_uf(uf_name='structure.write_pdb', file='devnull')
 
         # Store the centre of mass.
         cdp.CoM = centre_of_mass()
 
 
 # Execute the analysis.
-Analysis()
+Analysis(self._execute_uf)

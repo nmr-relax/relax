@@ -153,7 +153,7 @@ analysis = Stereochem_analysis(
 # Execute all stages.
 for i in range(1, 6):
     # Set the stage.
-    print "\n\n\nStage %i\n\n" % i
+    print("\n\n\nStage %i\n\n" % i)
     analysis.stage = i
 
     # Execute the stage.

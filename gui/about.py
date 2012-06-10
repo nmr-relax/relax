@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,12 +32,13 @@ import wx.html
 from wx.lib.wordwrap import wordwrap
 
 # relax module imports.
+from graphics import IMAGE_PATH
 from info import Info_box
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.fonts import font
 from gui.icons import relax_icons
-from gui.paths import IMAGE_PATH
 
 
 class About_base(wx.Frame):
@@ -224,15 +225,11 @@ class About_base(wx.Frame):
             self.cursor_type = 'normal'
 
 
-    def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN, pos_x=0, carriage_ret=False, centre=False):
+    def draw_url(self, url_text=None, pos_x=0, carriage_ret=False, centre=False):
         """Draw a URL as a hyperlink.
 
         @keyword url_text:      The text of the url.
         @type url_text:         str
-        @keyword point_size:    The size of the text in points.
-        @type point_size:       int
-        @keyword family:        The font family.
-        @type family:           int
         @keyword pos_x:         The starting x position for the text.
         @type pos_x:            int
         @keyword carriage_ret:  A flag which if True will cause a carriage return, by shifting the offset by y.
@@ -246,8 +243,7 @@ class About_base(wx.Frame):
         orig_fg = deepcopy(self.dc.GetTextForeground())
 
         # Set the font.
-        font = wx.Font(pointSize=point_size, family=family, style=wx.NORMAL, weight=wx.NORMAL)
-        self.dc.SetFont(font)
+        self.dc.SetFont(font.roman_normal)
         self.dc.SetTextForeground('#0017aa')
 
         # The text extent.
@@ -277,12 +273,20 @@ class About_base(wx.Frame):
         self.dc.SetTextForeground(orig_fg)
 
 
-    def draw_title(self, text, point_size=14, family=wx.FONTFAMILY_ROMAN):
-        """Draw the title."""
+    def draw_title(self, text, alt_font=None):
+        """Draw the title.
+
+        @param text:        The text of the title.
+        @type text:         str
+        @keyword alt_font:  An alternative font.
+        @type alt_font:     wx.Font instance
+        """
 
         # Set the font.
-        font = wx.Font(point_size, family, wx.NORMAL, wx.NORMAL)
-        self.dc.SetFont(font)
+        if alt_font == None:
+            alt_font = font.roman_title
+
+        self.dc.SetFont(alt_font)
 
         # The text extent.
         x, y = self.dc.GetTextExtent(text)
@@ -294,7 +298,7 @@ class About_base(wx.Frame):
         self.offset(y)
 
 
-    def draw_wrapped_text(self, text, point_size=10, family=wx.FONTFAMILY_ROMAN, spacer=10):
+    def draw_wrapped_text(self, text, spacer=10):
         """Generic method for drawing wrapped text in the relax about widget.
 
         @param text:        The text to wrap and draw.
@@ -304,8 +308,7 @@ class About_base(wx.Frame):
         """
 
         # Set the font.
-        font = wx.Font(point_size, family, wx.NORMAL, wx.NORMAL)
-        self.dc.SetFont(font)
+        self.dc.SetFont(font.roman_normal)
 
         # Wrap the text.
         width = self.dim_x - 2*self.border
@@ -328,7 +331,7 @@ class About_base(wx.Frame):
             for i in range(len(text_elements)):
                 # URL text.
                 if url[i]:
-                    self.draw_url(point_size=point_size, family=family, url_text=text_elements[i], pos_x=pos_x)
+                    self.draw_url(url_text=text_elements[i], pos_x=pos_x)
 
                 # Add the text.
                 else:
@@ -477,30 +480,6 @@ class About_base(wx.Frame):
 
 
 
-class About_gui(About_base):
-    """The about relax GUI dialog."""
-
-    # The background colour.
-    colour1 = 'white'
-
-    # Dimensions.
-    dim_x = 640
-    dim_y = 480
-
-    def build_widget(self):
-        """Build the about dialog."""
-
-        # The title.
-        self.SetTitle("About relax GUI")
-
-        # The image.
-        bitmap = wx.Bitmap(IMAGE_PATH+'start.png', wx.BITMAP_TYPE_ANY)
-
-        # Draw it.
-        self.dc.DrawBitmap(bitmap, self.border, self.border, True)
-
-
-
 class About_relax(About_base):
     """The about relax dialog."""
 
@@ -553,8 +532,7 @@ class About_relax(About_base):
         """Draw the copyright statements."""
 
         # Set the font.
-        font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
-        self.dc.SetFont(font)
+        self.dc.SetFont(font.roman_normal)
 
         # The text extent.
         x1, y1 = self.dc.GetTextExtent(self.info.copyright[0])
@@ -578,8 +556,7 @@ class About_relax(About_base):
         """Draw the relax description text."""
 
         # Set the font.
-        font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
-        self.dc.SetFont(font)
+        self.dc.SetFont(font.roman_font_12)
 
         # The text extent.
         x, y = self.dc.GetTextExtent(self.info.desc)

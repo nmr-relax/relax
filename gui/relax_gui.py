@@ -25,18 +25,15 @@
 """Main module for the relax graphical user interface."""
 
 # Python module imports.
-import os
-from os import F_OK, access, getcwd, mkdir, sep
+from os import F_OK, access, getcwd, sep
 import platform
 from re import search
 from string import split
 import sys
 from textwrap import wrap
-from thread import start_new_thread
 from time import sleep
 import webbrowser
 import wx
-from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -45,32 +42,33 @@ from info import Info_box
 from generic_fns import state
 from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
-from relax_errors import RelaxError
+from relax_errors import RelaxNoPipeError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 import test_suite.test_suite_runner
 from version import version
 
-# relaxGUI module imports.
-from gui.about import About_gui, About_relax
+# relax GUI module imports.
+from gui.about import About_relax
 from gui.analyses import Analysis_controller
-from gui.base_classes import Container
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
+from gui.export_bmrb import Export_bmrb_window
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
-from gui.misc import gui_to_str, open_file, protected_exec
+from gui.misc import gui_raise, open_file, protected_exec
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
-from gui.settings import Free_file_format, load_sequence
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.components.free_file_format import Free_file_format_window
+from gui.string_conv import gui_to_str
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class Main(wx.Frame):
@@ -80,7 +78,7 @@ class Main(wx.Frame):
     min_width = 1000
     min_height = 600
 
-    def __init__(self, parent=None, id=-1, title="", script=None):
+    def __init__(self, parent=None, id=-1, title=""):
         """Initialise the main relax GUI frame."""
 
         # Store the wxPython info for os/machine/version specific hacks.
@@ -122,8 +120,8 @@ class Main(wx.Frame):
         self.SetIcons(relax_icons)
 
         # Set up the Mac OS X task bar icon.
-        if status.wx_info["os"] == 'darwin' and status.wx_info["build"] != 'gtk':
-            self.taskbar_icon = Relax_task_bar_icon(self)
+        #if status.wx_info["os"] == 'darwin' and status.wx_info["build"] != 'gtk':
+        #    self.taskbar_icon = Relax_task_bar_icon(self)
 
         # Initialise some variables for the GUI.
         self.launch_dir = getcwd()
@@ -147,7 +145,7 @@ class Main(wx.Frame):
         self.menu = Menu(self)
 
         # Build the toolbar.
-        self.toolbar()
+        self.build_toolbar()
 
         # Build the controller, but don't show it.
         self.controller = Controller(self)
@@ -174,30 +172,14 @@ class Main(wx.Frame):
         status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
         status.observers.exec_lock.register('gui', self.enable)
 
-        # Run a script.
-        if script:
-            wx.CallAfter(user_functions.script.script_exec, script)
+        # Assume a script has been run and there is data in the store.
+        self.analysis.load_from_store()
 
 
-    def about_gui(self, event):
-        """The about message for the relax GUI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build the dialog.
-        dialog = About_gui(None, -1, "")
-
-        # The dialog.
-        if status.show_gui:
-            dialog.Show()
-
-
-    def about_relax(self, event):
+    def about_relax(self, event=None):
         """The about message for relax.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -209,10 +191,26 @@ class Main(wx.Frame):
             dialog.Show()
 
 
-    def action_state_save(self, event):
+    def action_export_bmrb(self, event=None):
+        """Export the contents of the current data pipe for BMRB deposition.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # No current data pipe.
+        if not cdp_name():
+            gui_raise(RelaxNoPipeError())
+            return
+
+        # Open the export window.
+        Export_bmrb_window(self)
+
+
+    def action_state_save(self, event=None):
         """Save the program state.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -225,10 +223,10 @@ class Main(wx.Frame):
         self.state_save()
 
 
-    def action_state_save_as(self, event):
+    def action_state_save_as(self, event=None):
         """Save the program state with file name selection.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
         """
 
@@ -270,525 +268,7 @@ class Main(wx.Frame):
         self.Refresh()
 
 
-    def close_windows(self):
-        """Throw a warning to close all of the non-essential windows when execution is locked.
-
-        This is to speed up the calculations by avoiding window updates.
-        """
-
-        # Init the window list.
-        win_list = []
-
-        # Is the spin viewer window open?
-        if hasattr(self, 'spin_viewer') and self.spin_viewer.IsShown():
-            win_list.append('The spin viewer window')
-
-        # Is the pipe editor window open?
-        if hasattr(self, 'pipe_editor') and self.pipe_editor.IsShown():
-            win_list.append('The data pipe editor window')
-
-        # Is the results viewer window open?
-        if hasattr(self, 'results_viewer') and self.results_viewer.IsShown():
-            win_list.append('The results viewer window')
-
-        # The windows are not open, so quit.
-        if not len(win_list):
-            return
-
-        # The text.
-        text = "The following windows are currently open:\n\n"
-        for win in win_list:
-            text = "%s\t%s.\n" % (text, win)
-        text = text + "\nClosing these will significantly speed up the calculations."
-
-        # Display the error message dialog.
-        dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-        if status.show_gui:
-            dlg.ShowModal()
-
-        # Otherwise output to stderr.
-        else:
-            sys.stderr.write(text)
-
-
-    def contact_relax(self, event):
-        """Write an email to the relax mailing-list using the standard mailing program."""
-        webbrowser.open_new('mailto:relax-users@gna.org')
-
-
-    def enable(self):
-        """Enable and disable certain parts of the main window with the execution lock."""
-
-        # Flag for enabling or disabling the elements.
-        enable = False
-        if not status.exec_lock.locked():
-            enable = True
-
-        # The toolbar.
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_NEW, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE_ALL, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_OPEN, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE_AS, enable)
-
-
-    def exit_gui(self, event=None):
-        """Catch the main window closure and perform the exit procedure.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if the user is sure they would like to exit.
-        doexit = wx.ID_YES
-        if status.show_gui and not ds.is_empty():
-            doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
-
-        # Exit.
-        if doexit == wx.ID_YES:
-            # Restore the IO streams.
-            io_streams_restore(verbosity=0)
-
-            # The relax information box.
-            info = Info_box()
-
-            # The width of the printout.
-            if platform.uname()[0] in ['Windows', 'Microsoft']:
-                width = 80
-            else:
-                width = 100
-
-            # A print out.
-            text = "\n\nThank you for citing:\n"
-            text = text + "\n\nrelaxGUI\n========\n\n"
-            for line in wrap(info.bib['Bieri11'].cite_short(), width):
-                text = text + line + '\n'
-            text = text + "\n\n\nrelax\n=====\n\n"
-            for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), width):
-                text = text + line + '\n'
-            text = text + '\n'
-            for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
-                text = text + line + '\n'
-            text = text + '\n'
-            sys.stdout.write(text)
-
-            # Remove the Mac OS X task bar icon.
-            if hasattr(self, 'taskbar_icon'):
-                self.taskbar_icon.Destroy()
-
-            # End application.
-            wx.Exit()
-
-
-    def init_data(self):
-        """Initialise the data used by the GUI interface."""
-
-        # Temporary data:  the save file.
-        self.save_file = None
-
-        # Add the GUI object to the data store.
-        ds.relax_gui = Gui()
-
-
-    def free_file_format_settings(self, event):
-        """Open the free file format settings window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build the window.
-        win = Free_file_format()
-
-        # Show the window.
-        if status.show_gui:
-            win.Show()
-
-
-    def references(self, event):
-        """Display the references relevant for relax.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build and show the references window.
-        self.references = References(self)
-        if status.show_gui:
-            self.references.Show()
-
-
-    def relax_manual(self, event):
-        """Display the relax manual.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The PDF manual.
-        file = status.install_path + sep+"docs"+sep+"relax.pdf"
-
-        # Test if it exists.
-        if not access(file, F_OK):
-            error_message("The relax manual '%s' cannot be found.  Please compile using the scons program." % file)
-            return
-
-        # Open the relax PDF manual using the native PDF reader.
-        open_file(file)
-
-
-    def run_test_suite(self, event, categories=['system', 'unit', 'gui']):
-        """Execute the full test suite.
-
-        @param event:           The wx event.
-        @type event:            wx event
-        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
-        @type categories:       list of str
-        """
-
-        # Ask if this should be done.
-        msg = "In running the test suite, relax will be reset and all data lost.  Are you sure you would like to run the test suite?"
-        if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
-            return
-
-        # Set the test suite flag.
-        self.test_suite_flag = True
-
-        # Change the cursor to waiting.
-        wx.BeginBusyCursor()
-
-        # Set a new style to stay on top, refreshing to update the style (needed for Mac OS X and MS Windows).
-        orig_style = self.controller.GetWindowStyle()
-        self.controller.SetWindowStyle(orig_style | wx.STAY_ON_TOP)
-        self.controller.Refresh()
-
-        # Make the relax controller modal so that all other windows are deactivated (to stop users from clicking on things).
-        self.controller.MakeModal(True)
-
-        # Close all open windows.
-        if hasattr(self, 'spin_viewer'):
-            self.spin_viewer.Close()
-        if hasattr(self, 'pipe_editor'):
-            self.pipe_editor.Close()
-        if hasattr(self, 'results_viewer'):
-            self.results_viewer.Close()
-        if hasattr(self, 'relax_prompt'):
-            self.relax_prompt.Close()
-
-        # Reset relax.
-        reset()
-
-        # Show the relax controller.
-        self.show_controller(event)
-
-        # Yield
-        wx.GetApp().Yield(True)
-
-        # Prevent all new GUI elements from being shown.
-        status.show_gui = False
-
-        # Run the tests.
-        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True, categories=categories)
-        runner.run_all_tests()
-
-        # Reactive the GUI.
-        status.show_gui = True
-
-        # Turn off the busy cursor.
-        if wx.IsBusy():
-            wx.EndBusyCursor()
-
-        # Restore the controller.
-        self.controller.SetWindowStyle(orig_style)
-        self.controller.MakeModal(False)
-        self.controller.Refresh()
-
-        # Unset the test suite flag.
-        self.test_suite_flag = False
-
-
-    def run_test_suite_gui(self, event):
-        """Execute the GUI tests.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Forward the call.
-        self.run_test_suite(event, categories=['gui'])
-
-
-    def run_test_suite_sys(self, event):
-        """Execute the system tests.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Forward the call.
-        self.run_test_suite(event, categories=['system'])
-
-
-    def run_test_suite_unit(self, event):
-        """Execute the unit tests.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Forward the call.
-        self.run_test_suite(event, categories=['unit'])
-
-
-    def show_controller(self, event):
-        """Display the relax controller window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Bring the window to the front.
-        if self.controller.IsShown():
-            self.controller.Raise()
-            return
-
-        # Open the window.
-        if status.show_gui:
-            self.controller.Show()
-
-
-    def show_pipe_editor(self, event):
-        """Display the data pipe editor window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Throw a warning if the execution lock is on.
-        if status.exec_lock.locked():
-            dlg = wx.MessageDialog(self, "Leaving the pipe editor window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            if status.show_gui:
-                dlg.ShowModal()
-
-        # Build the pipe editor if needed.
-        if not hasattr(self, 'pipe_editor'):
-            self.pipe_editor = Pipe_editor(gui=self)
-
-        # Bring the window to the front.
-        if self.pipe_editor.IsShown():
-            self.pipe_editor.Raise()
-            return
-
-        # Open the window.
-        if status.show_gui and not self.pipe_editor.IsShown():
-            self.pipe_editor.Show()
-
-
-    def show_prompt(self, event):
-        """Display the relax prompt window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build the relax prompt if needed.
-        if not hasattr(self, 'relax_prompt'):
-            self.relax_prompt = Prompt(None, -1, "", parent=self)
-
-        # Bring the window to the front.
-        if self.relax_prompt.IsShown():
-            self.relax_prompt.Raise()
-            return
-
-        # Open the window.
-        if status.show_gui:
-            self.relax_prompt.Show()
-
-
-    def show_results_viewer(self, event=None):
-        """Display the analysis results.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Show the results viewer in a thread safe way.
-        wx.CallAfter(self.show_results_viewer_safe, warn=True)
-
-
-    def show_results_viewer_safe(self, warn=False):
-        """Display the analysis results in a thread safe wx.CallAfter call.
-
-        @keyword warn:  A flag which if True will cause a message dialog to appear warning about keeping the window open with the execution lock.
-        @type warn:     bool
-        """
-
-        # Throw a warning if the execution lock is on.
-        if warn and status.exec_lock.locked():
-            dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            if status.show_gui:
-                wx.CallAfter(dlg.ShowModal)
-
-        # Create the results viewer window if needed.
-        if not hasattr(self, 'results_viewer'):
-            self.results_viewer = Results_viewer(self)
-
-        # Bring the window to the front.
-        if self.results_viewer.IsShown():
-            self.results_viewer.Raise()
-            return
-
-        # Open the window.
-        if status.show_gui and not self.results_viewer.IsShown():
-            self.results_viewer.Show()
-
-
-    def show_results_viewer_no_warn(self):
-        """Display the analysis results."""
-
-        # Show the results viewer in a thread safe way with no warning dialog.
-        wx.CallAfter(self.show_results_viewer_safe, warn=False)
-
-
-    def show_tree(self, event):
-        """Display the molecule, residue, and spin tree window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Throw a warning if the execution lock is on.
-        if status.exec_lock.locked():
-            dlg = wx.MessageDialog(self, "Leaving the spin viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            if status.show_gui:
-                dlg.ShowModal()
-
-        # Build the spin view window.
-        if not hasattr(self, 'spin_viewer'):
-            self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
-
-        # Bring the window to the front.
-        if self.spin_viewer.IsShown():
-            self.spin_viewer.Raise()
-            return
-
-        # Open the window (the GUI flag check is inside the Show method).
-        if status.show_gui and not self.spin_viewer.IsShown():
-            self.spin_viewer.Show()
-
-
-    def state_load(self, event=None, file_name=None):
-        """Load the program state.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        @keyword file_name: The name of the file to load (for dialogless operation).
-        @type file_name:    str
-        """
-
-        # Execution lock.
-        if status.exec_lock.locked():
-            return
-
-        # Warning.
-        if not self.analysis.init_state:
-            # The message.
-            msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
-
-            # The dialog.
-            if status.show_gui and Question(msg, default=True, size=(400, 150)).ShowModal() == wx.ID_NO:
-                return
-
-        # Open the dialog.
-        if not file_name:
-            dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_OPEN)
-
-            # Show the dialog and catch if no file has been selected.
-            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
-                # Don't do anything.
-                return
-
-            # The file.
-            file_name = gui_to_str(dialog.get_file())
-
-        # Yield to allow the cursor to be changed.
-        wx.Yield()
-
-        # Change the cursor to waiting, and freeze the GUI.
-        wx.BeginBusyCursor()
-        self.Freeze()
-
-        # Make sure the GUI returns to normal if a failure occurs.
-        try:
-            # Delete the current tabs.
-            self.analysis.delete_all()
-
-            # Reset the relax data store.
-            reset()
-
-            # The new save file name.
-            self.save_file = file_name
-
-            # Load the relax state.
-            if protected_exec(state.load_state, file_name, verbosity=0):
-                # Reconstruct the analyses.
-                self.analysis.load_from_store()
-
-                # Update the core of the GUI to match the new data store.
-                self.sync_ds(upload=False)
-
-            # File loading failure.
-            else:
-                # Reinitialise the GUI data store structure.
-                self.init_data()
-
-        # Reset the cursor, and thaw the GUI.
-        finally:
-            self.Thaw()
-
-            # Turn off the busy cursor.
-            if wx.IsBusy():
-                wx.EndBusyCursor()
-
-
-    def state_save(self):
-        """Save the program state."""
-
-        # Update the data store to match the GUI.
-        self.sync_ds(upload=True)
-
-        # Save the relax state (with save user feedback).
-        try:
-            wx.BeginBusyCursor()
-            state.save_state(self.save_file, verbosity=0, force=True)
-
-            # Sleep a little so the user sees the busy cursor and knows that a save has occurred!
-            sleep(1)
-
-        # Turn off the user feedback.
-        finally:
-            if wx.IsBusy():
-                wx.EndBusyCursor()
-
-
-    def sync_ds(self, upload=False):
-        """Synchronise the GUI and the relax data store, both ways.
-
-        This method allows the GUI information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the GUI.
-
-        @keyword upload:    A flag which if True will cause the GUI to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the GUI.
-        @type upload:       bool
-        """
-
-        # Loop over each analysis.
-        for page in self.analysis.analysis_loop():
-            # Execute the analysis page specific update methods.
-            if hasattr(page, 'sync_ds'):
-                page.sync_ds(upload)
-
-
-    def toolbar(self):
+    def build_toolbar(self):
         """Create the toolbar."""
 
         # Init.
@@ -857,6 +337,527 @@ class Main(wx.Frame):
 
         # Build the toolbar.
         self.toolbar.Realize()
+
+
+    def close_windows(self):
+        """Throw a warning to close all of the non-essential windows when execution is locked.
+
+        This is to speed up the calculations by avoiding window updates.
+        """
+
+        # Init the window list.
+        win_list = []
+
+        # Is the spin viewer window open?
+        if hasattr(self, 'spin_viewer') and self.spin_viewer.IsShown():
+            win_list.append('The spin viewer window')
+
+        # Is the pipe editor window open?
+        if hasattr(self, 'pipe_editor') and self.pipe_editor.IsShown():
+            win_list.append('The data pipe editor window')
+
+        # Is the results viewer window open?
+        if hasattr(self, 'results_viewer') and self.results_viewer.IsShown():
+            win_list.append('The results viewer window')
+
+        # The windows are not open, so quit.
+        if not len(win_list):
+            return
+
+        # The text.
+        text = "The following windows are currently open:\n\n"
+        for win in win_list:
+            text = "%s\t%s.\n" % (text, win)
+        text = text + "\nClosing these will significantly speed up the calculations."
+
+        # Display the error message dialog.
+        dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+        if status.show_gui:
+            dlg.ShowModal()
+
+        # Otherwise output to stderr.
+        else:
+            sys.stderr.write(text)
+
+
+    def contact_relax(self, event=None):
+        """Write an email to the relax mailing-list using the standard mailing program.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        webbrowser.open_new('mailto:relax-users@gna.org')
+
+
+    def enable(self):
+        """Enable and disable certain parts of the main window with the execution lock."""
+
+        # Flag for enabling or disabling the elements.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # The toolbar.
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_NEW, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE_ALL, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_OPEN, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE_AS, enable)
+
+
+    def exit_gui(self, event=None):
+        """Catch the main window closure and perform the exit procedure.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if the user is sure they would like to exit.
+        doexit = wx.ID_YES
+        if status.show_gui and not ds.is_empty():
+            doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
+
+        # Exit.
+        if doexit == wx.ID_YES:
+            # Restore the IO streams.
+            io_streams_restore(verbosity=0)
+
+            # The relax information box.
+            info = Info_box()
+
+            # The width of the printout.
+            if platform.uname()[0] in ['Windows', 'Microsoft']:
+                width = 80
+            else:
+                width = 100
+
+            # A printout.
+            text = "\n\nThank you for citing:\n"
+            text = text + "\n\nrelaxGUI\n========\n\n"
+            for line in wrap(info.bib['Bieri11'].cite_short(), width):
+                text = text + line + '\n'
+            text = text + "\n\n\nrelax\n=====\n\n"
+            for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), width):
+                text = text + line + '\n'
+            text = text + '\n'
+            for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
+                text = text + line + '\n'
+            text = text + '\n'
+            sys.stdout.write(text)
+
+            # Remove the Mac OS X task bar icon.
+            if hasattr(self, 'taskbar_icon'):
+                self.taskbar_icon.Destroy()
+
+            # End application.
+            wx.Exit()
+
+
+    def init_data(self):
+        """Initialise the data used by the GUI interface."""
+
+        # Temporary data:  the save file.
+        self.save_file = None
+
+        # Add the GUI object to the data store, if not present.
+        if not hasattr(ds, 'relax_gui'):
+            ds.relax_gui = Gui()
+
+
+    def free_file_format_settings(self, event=None):
+        """Open the free file format settings window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Build the window.
+        win = Free_file_format_window()
+
+        # Show the window.
+        if status.show_gui:
+            win.Show()
+
+
+    def references(self, event=None):
+        """Display the references relevant for relax.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Build and show the references window.
+        self.references = References(self)
+        if status.show_gui:
+            self.references.Show()
+
+
+    def relax_manual(self, event=None):
+        """Display the relax manual.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The PDF manual.
+        file = status.install_path + sep+"docs"+sep+"relax.pdf"
+
+        # Test if it exists.
+        if not access(file, F_OK):
+            error_message("The relax manual '%s' cannot be found.  Please compile using the scons program." % file)
+            return
+
+        # Open the relax PDF manual using the native PDF reader.
+        open_file(file)
+
+
+    def run_test_suite(self, event=None, categories=['system', 'unit', 'gui']):
+        """Execute the full test suite.
+
+        @keyword event:         The wx event.
+        @type event:            wx event
+        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
+        @type categories:       list of str
+        """
+
+        # Ask if this should be done.
+        msg = "In running the test suite, relax will be reset and all data lost.  Are you sure you would like to run the test suite?"
+        if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
+            return
+
+        # Set the test suite flag.
+        self.test_suite_flag = True
+
+        # Change the cursor to waiting.
+        wx.BeginBusyCursor()
+
+        # Set a new style to stay on top, refreshing to update the style (needed for Mac OS X and MS Windows).
+        orig_style = self.controller.GetWindowStyle()
+        self.controller.SetWindowStyle(orig_style | wx.STAY_ON_TOP)
+        self.controller.Refresh()
+
+        # Make the relax controller modal so that all other windows are deactivated (to stop users from clicking on things).
+        self.controller.MakeModal(True)
+
+        # Close all open windows.
+        if hasattr(self, 'spin_viewer'):
+            self.spin_viewer.Close()
+        if hasattr(self, 'pipe_editor'):
+            self.pipe_editor.Close()
+        if hasattr(self, 'results_viewer'):
+            self.results_viewer.Close()
+        if hasattr(self, 'relax_prompt'):
+            self.relax_prompt.Close()
+
+        # Reset relax.
+        reset()
+
+        # Show the relax controller.
+        self.show_controller(event)
+
+        # Yield
+        wx.GetApp().Yield(True)
+
+        # Prevent all new GUI elements from being shown.
+        status.show_gui = False
+
+        # Run the tests.
+        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True, categories=categories)
+        runner.run_all_tests()
+
+        # Reactive the GUI.
+        status.show_gui = True
+
+        # Turn off the busy cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+        # Restore the controller.
+        self.controller.SetWindowStyle(orig_style)
+        self.controller.MakeModal(False)
+        self.controller.Refresh()
+
+        # Unset the test suite flag.
+        self.test_suite_flag = False
+
+
+    def run_test_suite_gui(self, event=None):
+        """Execute the GUI tests.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['gui'])
+
+
+    def run_test_suite_sys(self, event=None):
+        """Execute the system tests.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['system'])
+
+
+    def run_test_suite_unit(self, event=None):
+        """Execute the unit tests.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['unit'])
+
+
+    def show_controller(self, event=None):
+        """Display the relax controller window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Bring the window to the front.
+        if self.controller.IsShown():
+            self.controller.Raise()
+            return
+
+        # Open the window.
+        if status.show_gui:
+            self.controller.Show()
+
+
+    def show_pipe_editor(self, event=None):
+        """Display the data pipe editor window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the pipe editor window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            if status.show_gui:
+                dlg.ShowModal()
+
+        # Build the pipe editor if needed.
+        if not hasattr(self, 'pipe_editor'):
+            self.pipe_editor = Pipe_editor(gui=self)
+
+        # Bring the window to the front.
+        if self.pipe_editor.IsShown():
+            self.pipe_editor.Raise()
+            return
+
+        # Open the window.
+        if status.show_gui and not self.pipe_editor.IsShown():
+            self.pipe_editor.Show()
+
+
+    def show_prompt(self, event=None):
+        """Display the relax prompt window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Build the relax prompt if needed.
+        if not hasattr(self, 'relax_prompt'):
+            self.relax_prompt = Prompt(None, -1, "", parent=self)
+
+        # Bring the window to the front.
+        if self.relax_prompt.IsShown():
+            self.relax_prompt.Raise()
+            return
+
+        # Open the window.
+        if status.show_gui:
+            self.relax_prompt.Show()
+
+
+    def show_results_viewer(self, event=None):
+        """Display the analysis results.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Show the results viewer in a thread safe way.
+        wx.CallAfter(self.show_results_viewer_safe, warn=True)
+
+
+    def show_results_viewer_safe(self, warn=False):
+        """Display the analysis results in a thread safe wx.CallAfter call.
+
+        @keyword warn:  A flag which if True will cause a message dialog to appear warning about keeping the window open with the execution lock.
+        @type warn:     bool
+        """
+
+        # Throw a warning if the execution lock is on.
+        if warn and status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            if status.show_gui:
+                wx.CallAfter(dlg.ShowModal)
+
+        # Create the results viewer window if needed.
+        if not hasattr(self, 'results_viewer'):
+            self.results_viewer = Results_viewer(self)
+
+        # Bring the window to the front.
+        if self.results_viewer.IsShown():
+            self.results_viewer.Raise()
+            return
+
+        # Open the window.
+        if status.show_gui and not self.results_viewer.IsShown():
+            self.results_viewer.Show()
+
+
+    def show_results_viewer_no_warn(self):
+        """Display the analysis results."""
+
+        # Show the results viewer in a thread safe way with no warning dialog.
+        wx.CallAfter(self.show_results_viewer_safe, warn=False)
+
+
+    def show_tree(self, event=None):
+        """Display the molecule, residue, and spin tree window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the spin viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            if status.show_gui:
+                dlg.ShowModal()
+
+        # Build the spin view window.
+        if not hasattr(self, 'spin_viewer'):
+            self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
+
+        # Bring the window to the front.
+        if self.spin_viewer.IsShown():
+            self.spin_viewer.Raise()
+            return
+
+        # Open the window (the GUI flag check is inside the Show method).
+        if status.show_gui and not self.spin_viewer.IsShown():
+            self.spin_viewer.Show()
+
+
+    def state_load(self, event=None, file_name=None):
+        """Load the program state.
+
+        @keyword event:     The wx event.
+        @type event:        wx event
+        @keyword file_name: The name of the file to load (for dialogless operation).
+        @type file_name:    str
+        """
+
+        # Execution lock.
+        if status.exec_lock.locked():
+            return
+
+        # Warning.
+        if not self.analysis.init_state or not ds.is_empty():
+            # The message.
+            msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
+
+            # The dialog.
+            if status.show_gui and Question(msg, default=True, size=(400, 150)).ShowModal() == wx.ID_NO:
+                return
+
+        # Open the dialog.
+        if not file_name:
+            dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_OPEN)
+
+            # Show the dialog and catch if no file has been selected.
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
+                return
+
+            # The file.
+            file_name = gui_to_str(dialog.get_file())
+
+        # Yield to allow the cursor to be changed.
+        wx.Yield()
+
+        # Change the cursor to waiting, and freeze the GUI.
+        wx.BeginBusyCursor()
+        self.Freeze()
+
+        # Make sure the GUI returns to normal if a failure occurs.
+        try:
+            # Delete the current tabs.
+            self.analysis.delete_all()
+
+            # Reset the relax data store.
+            reset()
+
+            # The new save file name.
+            self.save_file = file_name
+
+            # Load the relax state.
+            if protected_exec(state.load_state, file_name, verbosity=0):
+                # Update the core of the GUI to match the new data store.
+                self.sync_ds(upload=False)
+
+            # File loading failure.
+            else:
+                # Reinitialise the GUI data store structure.
+                self.init_data()
+
+        # Reset the cursor, and thaw the GUI.
+        finally:
+            self.Thaw()
+
+            # Turn off the busy cursor.
+            if wx.IsBusy():
+                wx.EndBusyCursor()
+
+
+    def state_save(self):
+        """Save the program state."""
+
+        # Update the data store to match the GUI.
+        self.sync_ds(upload=True)
+
+        # Save the relax state (with save user feedback).
+        try:
+            wx.BeginBusyCursor()
+            state.save_state(self.save_file, verbosity=0, force=True)
+
+            # Sleep a little so the user sees the busy cursor and knows that a save has occurred!
+            sleep(1)
+
+        # Turn off the user feedback.
+        finally:
+            if wx.IsBusy():
+                wx.EndBusyCursor()
+
+
+    def sync_ds(self, upload=False):
+        """Synchronise the GUI and the relax data store, both ways.
+
+        This method allows the GUI information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the GUI.
+
+        @keyword upload:    A flag which if True will cause the GUI to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the GUI.
+        @type upload:       bool
+        """
+
+        # Loop over each analysis.
+        for page in self.analysis.analysis_loop():
+            # Execute the analysis page specific update methods.
+            if hasattr(page, 'sync_ds'):
+                page.sync_ds(upload)
 
 
     def update_status_bar(self):

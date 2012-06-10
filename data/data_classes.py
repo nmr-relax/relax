@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -85,15 +85,17 @@ class Element(object):
         return text
 
 
-    def from_xml(self, super_node):
+    def from_xml(self, super_node, file_version=1):
         """Recreate the element data structure from the XML element node.
 
-        @param super_node:    The element XML node.
-        @type super_node:     xml.dom.minicompat.Element instance
+        @param super_node:      The element XML node.
+        @type super_node:       xml.dom.minicompat.Element instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Recreate all the other data structures.
-        xml_to_object(super_node, self)
+        xml_to_object(super_node, self, file_version=file_version)
 
 
     def is_empty(self):
@@ -184,15 +186,17 @@ class RelaxListType(ListType):
         self.blacklist = []
 
 
-    def from_xml(self, super_node):
+    def from_xml(self, super_node, file_version=1):
         """Recreate the data structure from the XML node.
 
-        @param super_node:     The XML nodes.
-        @type super_node:      xml.dom.minicompat.Element instance
+        @param super_node:      The XML nodes.
+        @type super_node:       xml.dom.minicompat.Element instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
         """
 
         # Recreate all the data structures.
-        xml_to_object(super_node, self, blacklist=self.blacklist)
+        xml_to_object(super_node, self, file_version=file_version, blacklist=self.blacklist)
 
         # Get the individual elements.
         nodes = super_node.getElementsByTagName(self.element_name)
@@ -203,7 +207,7 @@ class RelaxListType(ListType):
             self.add_item(node.getAttribute('name'))
 
             # Recreate all the other data structures.
-            xml_to_object(node, self[-1])
+            xml_to_object(node, self[-1], file_version=file_version)
 
 
     def to_xml(self, doc, element):

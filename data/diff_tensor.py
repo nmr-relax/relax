@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -940,18 +940,20 @@ class DiffTensorData(Element):
                         self.__dict__[target+'_sim'][i] = value
 
 
-    def from_xml(self, diff_tensor_node):
+    def from_xml(self, diff_tensor_node, file_version=1):
         """Recreate the diffusion tensor data structure from the XML diffusion tensor node.
 
         @param diff_tensor_node:    The diffusion tensor XML node.
         @type diff_tensor_node:     xml.dom.minicompat.Element instance
+        @keyword file_version:      The relax XML version of the XML file.
+        @type file_version:         int
         """
 
         # First set the diffusion type.  Doing this first is essential for the proper reconstruction of the object.
         setattr(self, 'type', str(diff_tensor_node.getAttribute('type')))
 
         # Recreate all the other data structures.
-        xml_to_object(diff_tensor_node, self)
+        xml_to_object(diff_tensor_node, self, file_version=file_version)
 
 
     def to_xml(self, doc, element):

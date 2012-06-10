@@ -40,6 +40,8 @@ from minfx.generic import generic_minimise
 import specific_fns
 from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 
 
@@ -667,7 +669,7 @@ class Model_free_main:
             raise RelaxNoSequenceError
 
         # Get all data structure names.
-        names = self.data_names()
+        names = self.data_names(scope='spin')
 
         # Loop over the spins.
         for spin in spin_loop():
@@ -1217,7 +1219,7 @@ class Model_free_main:
         """
 
         # Get the data names.
-        data_names = self.data_names()
+        data_names = self.data_names(scope='spin')
 
         # Loop over the data structure names.
         for name in data_names:
@@ -1236,126 +1238,6 @@ class Model_free_main:
             # If the name is not in 'data_cont', add it.
             if not hasattr(data_cont, name):
                 setattr(data_cont, name, init_data)
-
-
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Return a list of all spin container specific model-free object names.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'model', the model-free model name.
-            - 'equation', the model-free equation type.
-            - 'params', an array of the model-free parameter names associated with the model.
-            - 's2', S2.
-            - 's2f', S2f.
-            - 's2s', S2s.
-            - 'local_tm', local tm.
-            - 'te', te.
-            - 'tf', tf.
-            - 'ts', ts.
-            - 'rex', Rex.
-            - 'r', bond length.
-            - 'csa', CSA value.
-            - 'nucleus', the heteronucleus type.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for
-                                model-free parameter names, or to 'min' for minimisation specific
-                                object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('select')
-            names.append('fixed')
-            names.append('proton_type')
-            names.append('heteronuc_type')
-            names.append('attached_proton')
-            names.append('nucleus')
-            names.append('model')
-            names.append('equation')
-            names.append('params')
-            names.append('xh_vect')
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('s2')
-            names.append('s2f')
-            names.append('s2s')
-            names.append('local_tm')
-            names.append('te')
-            names.append('tf')
-            names.append('ts')
-            names.append('rex')
-            names.append('r')
-            names.append('csa')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Relaxation data.
-        if set == 'all':
-            names = names + relax_data.get_data_names()
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            names.append('s2_err')
-            names.append('s2f_err')
-            names.append('s2s_err')
-            names.append('local_tm_err')
-            names.append('te_err')
-            names.append('tf_err')
-            names.append('ts_err')
-            names.append('rex_err')
-            names.append('r_err')
-            names.append('csa_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            names.append('s2_sim')
-            names.append('s2f_sim')
-            names.append('s2s_sim')
-            names.append('local_tm_sim')
-            names.append('te_sim')
-            names.append('tf_sim')
-            names.append('ts_sim')
-            names.append('rex_sim')
-            names.append('r_sim')
-            names.append('csa_sim')
-
-        # Relaxation data simulation values.
-        if sim_names and set == 'all':
-            names = names + relax_data.get_data_names(sim_names=True)
-
-        # Return the names.
-        return names
 
 
     def data_type(self, param=None):
@@ -1402,34 +1284,20 @@ class Model_free_main:
             return types[param]
 
 
-    default_value_doc = ["Model-free default values", """
-        _______________________________________________________________________________________
-        |                                       |                    |                        |
-        | Data type                             | Object name        | Value                  |
-        |_______________________________________|____________________|________________________|
-        |                                       |                    |                        |
-        | Local tm                              | 'local_tm'         | 10 * 1e-9              |
-        |                                       |                    |                        |
-        | Order parameters S2, S2f, and S2s     | 's2', 's2f', 's2s' | 0.8                    |
-        |                                       |                    |                        |
-        | Correlation time te                   | 'te'               | 100 * 1e-12            |
-        |                                       |                    |                        |
-        | Correlation time tf                   | 'tf'               | 10 * 1e-12             |
-        |                                       |                    |                        |
-        | Correlation time ts                   | 'ts'               | 1000 * 1e-12           |
-        |                                       |                    |                        |
-        | Chemical exchange relaxation          | 'rex'              | 0.0                    |
-        |                                       |                    |                        |
-        | Bond length                           | 'r'                | 1.02 * 1e-10           |
-        |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -172 * 1e-6            |
-        |                                       |                    |                        |
-        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                  |
-        |                                       |                    |                        |
-        | Proton type                           | 'proton_type'      | '1H'                   |
-        |_______________________________________|____________________|________________________|
-
-        """]
+    default_value_doc = Desc_container("Model-free default values")
+    _table = uf_tables.add_table(label="table: mf default values", caption="Model-free default values.")
+    _table.add_headings(["Data type", "Object name", "Value"])
+    _table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
+    _table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
+    _table.add_row(["Correlation time te", "'te'", "100 * 1e-12"])
+    _table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
+    _table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
+    _table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
+    _table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
+    _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
+    _table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
+    _table.add_row(["Proton type", "'proton_type'", "'1H'"])
+    default_value_doc.add_table(_table.label)
 
     def default_value(self, param):
         """The default model-free parameter values.
@@ -1446,7 +1314,7 @@ class Model_free_main:
             return diff_val
 
         # Model-free parameter.
-        return self.SPIN_PARAMS.get_default(param)
+        return self.PARAMS.get_default(param)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -1516,7 +1384,7 @@ class Model_free_main:
         # Duplicate all non-sequence specific data.
         for data_name in dir(dp_from):
             # Skip the container objects.
-            if data_name in ['diff_tensor', 'mol', 'structure']:
+            if data_name in ['diff_tensor', 'mol', 'structure', 'exp_info']:
                 continue
 
             # Skip special objects.
@@ -1628,23 +1496,17 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    eliminate_doc = [["Local tm model elimination rule", """
-        The local tm, in some cases, may exceed the value expected for a global correlation time. Generally the tm value will be stuck at the upper limit defined for the parameter.  These models are eliminated using the rule:
-
-            tm >= c
-
-        The default value of c is 50 ns, although this can be overridden by supplying the value (in seconds) as the first element of the args tuple.
-        """],
-        ["Internal correlation times {te, tf, ts} model elimination rules", """
-        These parameters may experience the same problem as the local tm in that the model fails and the parameter value is stuck at the upper limit.  These parameters are constrained using the formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:
-
-            te, tf, ts >= c . tm
-
-        The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.
-        """],
-        ["Arguments", """
-        The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
-        """]]
+    eliminate_doc = []
+    eliminate_doc.append(Desc_container("Local tm model elimination rule"))
+    eliminate_doc[-1].add_paragraph("The local tm, in some cases, may exceed the value expected for a global correlation time. Generally the tm value will be stuck at the upper limit defined for the parameter.  These models are eliminated using the rule:")
+    eliminate_doc[-1].add_verbatim("    tm >= c")
+    eliminate_doc[-1].add_paragraph("The default value of c is 50 ns, although this can be overridden by supplying the value (in seconds) as the first element of the args tuple.")
+    eliminate_doc.append(Desc_container("Internal correlation times {te, tf, ts} model elimination rules"))
+    eliminate_doc[-1].add_paragraph("These parameters may experience the same problem as the local tm in that the model fails and the parameter value is stuck at the upper limit.  These parameters are constrained using the formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:")
+    eliminate_doc[-1].add_verbatim("    te, tf, ts >= c . tm.")
+    eliminate_doc[-1].add_paragraph("The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.")
+    eliminate_doc.append(Desc_container("Arguments"))
+    eliminate_doc[-1].add_paragraph("The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).")
 
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model-free model elimination, parameter by parameter.
@@ -2076,87 +1938,32 @@ class Model_free_main:
                 spin.select = False
 
 
-    def return_data_desc(self, name):
-        """Return a description of the spin specific object.
-
-        @param name:    The name of the spin specific object.
-        @type name:     str
-        @return:        The object description, or None.
-        @rtype:         str or None
-        """
-
-        # Spin parameter.
-        if self.SPIN_PARAMS.contains(name):
-            return self.SPIN_PARAMS.get_desc(name)
-
-        # Otherwise try the relaxation data specific objects.
-        return relax_data.return_data_desc(name)
-
-
-    return_data_name_doc = ["Model-free data type string matching patterns", """
-        _____________________________________________
-        |                        |                  |
-        | Data type              | Object name      |
-        |________________________|__________________|
-        |                        |                  |
-        | Local tm               | 'local_tm'       |
-        |                        |                  |
-        | Order parameter S2     | 's2'             |
-        |                        |                  |
-        | Order parameter S2f    | 's2f'            |
-        |                        |                  |
-        | Order parameter S2s    | 's2s'            |
-        |                        |                  |
-        | Correlation time te    | 'te'             |
-        |                        |                  |
-        | Correlation time tf    | 'tf'             |
-        |                        |                  |
-        | Correlation time ts    | 'ts'             |
-        |                        |                  |
-        | Chemical exchange      | 'rex'            |
-        |                        |                  |
-        | Bond length            | 'r'              |
-        |                        |                  |
-        | CSA                    | 'csa'            |
-        |                        |                  |
-        | Heteronucleus type     | 'heteronuc_type' |
-        |                        |                  |
-        | Proton type            | 'proton_type'    |
-        |________________________|__________________|
-
-        """]
-
-    def return_data_name(self, param):
-        """Return a unique identifying string for the model-free parameter.
-
-        @param param:   The model-free parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Diffusion tensor parameters.
-        diff_obj = diffusion_tensor.return_data_name(param)
-        if diff_obj:
-            return param
-
-        # Spin parameter.
-        if self.SPIN_PARAMS.contains(param):
-            return param
+    return_data_name_doc = Desc_container("Model-free data type string matching patterns")
+    _table = uf_tables.add_table(label="table: mf data type patterns", caption="Model-free data type string matching patterns.")
+    _table.add_headings(["Data type", "Object name"])
+    _table.add_row(["Local tm", "'local_tm'"])
+    _table.add_row(["Order parameter S2", "'s2'"])
+    _table.add_row(["Order parameter S2f", "'s2f'"])
+    _table.add_row(["Order parameter S2s", "'s2s'"])
+    _table.add_row(["Correlation time te", "'te'"])
+    _table.add_row(["Correlation time tf", "'tf'"])
+    _table.add_row(["Correlation time ts", "'ts'"])
+    _table.add_row(["Chemical exchange", "'rex'"])
+    _table.add_row(["Bond length", "'r'"])
+    _table.add_row(["CSA", "'csa'"])
+    _table.add_row(["Heteronucleus type", "'heteronuc_type'"])
+    _table.add_row(["Proton type", "'proton_type'"])
+    return_data_name_doc.add_table(_table.label)
 
 
-    set_doc = ["Model-free set details", """
-        Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.
-
-        Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
-
-            value = rex / (2.0 * pi * frequency) ** 2
-
-        where:
-            rex is the chemical exchange value for the current frequency.
-            pi is in the namespace of relax, ie just type 'pi'.
-            frequency is the proton frequency corresponding to the data.
-        """]
+    set_doc = Desc_container("Model-free set details")
+    set_doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.")
+    set_doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:")
+    set_doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
+    set_doc.add_paragraph("where:")
+    set_doc.add_list_element("rex is the chemical exchange value for the current frequency.")
+    set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
+    set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
 
 
     def set_error(self, model_info, index, error):
@@ -2177,7 +1984,7 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Get the parameter object names.
-        param_names = self.data_names(set='params')
+        param_names = self.data_names(set='params', scope='spin')
 
 
         # Diffusion tensor parameter errors.
@@ -2312,8 +2119,8 @@ class Model_free_main:
             obj_name = self.return_data_name(mf_params[i])
 
             # Check if it is a model-free parameter.
-            if obj_name not in self.data_names(set='params') and obj_name not in self.data_names(set='generic'):
-                raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params'), self.data_names(set='generic')))
+            if obj_name not in self.data_names(set='params', scope='spin') and obj_name not in self.data_names(set='generic', scope='spin'):
+                raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params', scope='spin'), self.data_names(set='generic', scope='spin')))
 
             # Set the parameter.
             for spin in spin_loop(spin_id):
@@ -2379,10 +2186,10 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Get the parameter object names.
-        param_names = self.data_names(set='params')
+        param_names = self.data_names(set='params', scope='spin')
 
         # Get the minimisation statistic object names.
-        min_names = self.data_names(set='min')
+        min_names = self.data_names(set='min', scope='spin')
 
         # List of diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -2568,7 +2375,7 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Get the parameter object names.
-        param_names = self.data_names(set='params')
+        param_names = self.data_names(set='params', scope='spin')
 
 
         # Diffusion tensor parameters.
