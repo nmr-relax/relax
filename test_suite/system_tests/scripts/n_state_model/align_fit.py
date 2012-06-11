@@ -45,7 +45,7 @@ self._execute_uf('1H', 'proton_type', spin_id="@N", uf_name='value.set')
 
 # RDCs.
 if ds.mode in ['rdc', 'all']:
-    self._execute_uf(uf_name='rdc.read', align_id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
+    self._execute_uf(uf_name='rdc.read', align_id='synth', file=rdc_file, dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
 
 # PCSs.
 if ds.mode in ['pcs', 'all']:
