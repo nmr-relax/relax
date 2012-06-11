@@ -32,6 +32,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from data.rdc import Rdc
 from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
@@ -39,7 +40,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id,
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
-from relax_io import open_write_file, read_spin_data, write_spin_data
+from relax_io import extract_data, open_write_file, strip, write_data
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -409,7 +410,7 @@ def q_factors(spin_id=None):
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
+def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id1_col=None, spin_id2_col=None, data_col=None, error_col=None, sep=None, neg_g_corr=False):
     """Read the RDC data from file.
 
     @keyword align_id:      The alignment tensor ID string.
@@ -421,26 +422,16 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
     @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.
-    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
-    @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
-    @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
-    @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
-    @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
-    @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
-    @type spin_num_col:     int or None
+    @keyword spin_id1_col:  The column containing the spin ID strings of the first spin.
+    @type spin_id1_col:     int
+    @keyword spin_id2_col:  The column containing the spin ID strings of the second spin.
+    @type spin_id2_col:     int
     @keyword data_col:      The column containing the RDC data in Hz.
     @type data_col:         int or None
     @keyword error_col:     The column containing the RDC errors.
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
-    @type spin_id:          None or str
     @keyword neg_g_corr:    A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If True, a sign inversion will be applied to all RDC values to be loaded.
     @type neg_g_corr:       bool
     """
@@ -456,7 +447,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
 
-    # Store the data type as global data (need for the conversion of spin data).
+    # Store the data type as global data (need for the conversion of RDC data).
     if not hasattr(cdp, 'rdc_data_types'):
         cdp.rdc_data_types = {}
     if not cdp.rdc_data_types.has_key(align_id):
@@ -465,42 +456,56 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     # Spin specific data.
     #####################
 
+    # Initialise the RDC data store object.
+    if not hasattr(cdp, 'rdc'):
+        cdp.rdc = Rdc()
+
+    # Extract the data from the file.
+    file_data = extract_data(file, dir, sep=sep)
+
     # Loop over the RDC data.
-    mol_names = []
-    res_nums = []
-    res_names = []
-    spin_nums = []
-    spin_names = []
-    values = []
-    errors = []
-    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+    data = []
+    for line in file_data:
         # Unpack.
         if data_col and error_col:
-            mol_name, res_num, res_name, spin_num, spin_name, value, error = data
+            spin_id1, spin_id2, value, error = line
         elif data_col:
-            mol_name, res_num, res_name, spin_num, spin_name, value = data
+            spin_id1, spin_id2, value = line
             error = None
         else:
-            mol_name, res_num, res_name, spin_num, spin_name, error = data
+            spin_id1, spin_id2, error = line
             value = None
+
+        # Convert and check the value.
+        if value != None:
+            try:
+                value = float(value)
+            except ValueError:
+                warn(RelaxWarning("The data value of the line '%s' is invalid." % line))
+                continue
+
+        # Convert and check the error.
+        if error != None:
+            try:
+                error = float(error)
+            except ValueError:
+                warn(RelaxWarning("The error value of the line '%s' is invalid." % line))
+                continue
 
         # Test the error value (cannot be 0.0).
         if error == 0.0:
             raise RelaxError("An invalid error value of zero has been encountered.")
 
-        # Get the corresponding spin container.
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-        spin = return_spin(id)
+        # Check the spin IDs.
+        spin = return_spin(spin_id1)
         if spin == None:
-            warn(RelaxNoSpinWarning(id))
-            continue
+            raise RelaxNoSpinWarning(spin_id1)
+        spin = return_spin(spin_id2)
+        if spin == None:
+            raise RelaxNoSpinWarning(spin_id2)
 
-        # Add the data.
+        # Convert the data.
         if data_col:
-            # Initialise.
-            if not hasattr(spin, 'rdc'):
-                spin.rdc = {}
-
             # Data conversion.
             value = convert(value, align_id, to_intern=True)
 
@@ -508,39 +513,26 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             if neg_g_corr and value != None:
                 value = -value
 
-            # Append the value.
-            spin.rdc[align_id] = value
-
-        # Add the error.
+        # Convert the error.
         if error_col:
-            # Initialise.
-            if not hasattr(spin, 'rdc_err'):
-                spin.rdc_err = {}
-
             # Data conversion.
             error = convert(error, align_id, to_intern=True)
 
-            # Append the error.
-            spin.rdc_err[align_id] = error
+        # Store the data.
+        cdp.rdc.add(align_id=align_id, spin_id1=spin_id1, spin_id2=spin_id2, rdc=value, error=error)
 
         # Append the data for printout.
-        mol_names.append(mol_name)
-        res_nums.append(res_num)
-        res_names.append(res_name)
-        spin_nums.append(spin_num)
-        spin_names.append(spin_name)
-        values.append(value)
-        errors.append(error)
+        data.append([spin_id1, spin_id2, repr(value), repr(error)])
 
     # Print out.
-    write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+    write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
 
     # Global (non-spin specific) data.
     ##################################
 
     # No data, so return.
-    if not len(values):
+    if not len(data):
         return
 
     # Initialise.
