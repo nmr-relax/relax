@@ -28,8 +28,10 @@ from re import match
 
 # relax module imports.
 import generic_fns
+from generic_fns.mol_res_spin import return_spin
 from prototype import Prototype
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
+from relax_warnings import RelaxNoSpinWarning
 from relax_xml import fill_object_contents, object_to_xml, xml_to_object
 import specific_fns
 
@@ -136,6 +138,14 @@ class InteratomList(list):
         @keyword spin_id2:  The spin ID string of the first atom.
         @type spin_id2:     str
         """
+
+        # Check that the spin IDs exist.
+        spin = return_spin(spin_id1)
+        if spin == None:
+            raise RelaxNoSpinWarning(spin_id1)
+        spin = return_spin(spin_id2)
+        if spin == None:
+            raise RelaxNoSpinWarning(spin_id2)
 
         # Check if the two spin ID have already been added.
         for i in range(len(self)):
