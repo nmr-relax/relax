@@ -51,7 +51,7 @@ class Scripts(Base_list):
         """Override the base variables."""
 
         # GUI variables.
-        self.title = "Scripts used"
+        self.title = "Scripts"
         self.observer_base_name = "scripts"
         self.button_placement = 'bottom'
 

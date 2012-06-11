@@ -62,7 +62,7 @@ class Software(Base_list):
         """Override the base variables."""
 
         # GUI variables.
-        self.title = "Software used"
+        self.title = "Software"
         self.observer_base_name = "software"
         self.button_placement = 'bottom'
 
