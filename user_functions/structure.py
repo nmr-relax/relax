@@ -777,22 +777,24 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.vectors user function.
 uf = uf_info.add_uf('structure.vectors')
-uf.title = "Extract and store the bond vectors from the loaded structures in the spin container."
+uf.title = "Extract and store the bond vectors from the loaded structures in the corresponding interatomic data container."
 uf.title_short = "Bond vector extraction."
 uf.add_keyarg(
-    name = "attached",
-    default = "H",
-    py_type = "str",
-    desc_short = "attached atom",
-    desc = "The name of the second atom which attached to the spin of interest.  Regular expression is allowed, for example 'H*'."
-)
-uf.add_keyarg(
-    name = "spin_id",
+    name = "spin_id1",
     default = "@N",
     py_type = "str",
     arg_type = "spin ID",
-    desc_short = "spin ID string",
-    desc = "The spin identification string for restricting the loading of vectors to certain spins.",
+    desc_short = "first spin ID string",
+    desc = "The spin identification string for the first spin or atom of the pair.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id2",
+    default = "@H",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "second spin ID string",
+    desc = "The spin identification string for the second spin or atom of the pair.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -825,30 +827,27 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("For a number of types of analysis, bond vectors or unit bond vectors are required for the calculations.  This user function allows these vectors to be extracted from the loaded structures.  The bond vector will be that from the atom associated with the spin system loaded in relax to the specified attached atom.  For example if the attached atom is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H' vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will be searched for and all 'N-Ca' bond vectors will be extracted.")
+uf.desc[-1].add_paragraph("For a number of types of analysis, bond vectors or unit bond vectors are required for the calculations.  This user function allows these vectors to be extracted from the loaded structures.  The bond vector will be stored in a special interatomic data container associated with two spin systems already loaded into the relax data store.")
 uf.desc[-1].add_paragraph("The extraction of vectors can occur in a number of ways.  For example if an NMR structure with N models is loaded or if multiple molecules, from any source, of the same compound are loaded as different models, there are three options for extracting the bond vector.  Firstly the bond vector of a single model can be extracted by setting the model number. Secondly the bond vectors from all models can be extracted if the model number is not set and the average vector flag is not set.  Thirdly, if the model number is not set and the average vector flag is set, then a single vector which is the average for all models will be calculated.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To extract the XH vectors of the backbone amide nitrogens where in the PDB file the backbone nitrogen is called 'N' and the attached atom is called 'H', assuming multiple types of spin have already been loaded, type one of:")
-uf.desc[-1].add_prompt("relax> structure.vectors(spin_id='@N')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H', spin_id='@N')")
-uf.desc[-1].add_prompt("relax> structure.vectors(attached='H', spin_id='@N')")
-uf.desc[-1].add_paragraph("If the attached atom is called 'HN', type:")
-uf.desc[-1].add_prompt("relax> structure.vectors(attached='HN', spin_id='@N')")
+uf.desc[-1].add_paragraph("To extract the XH vectors of the backbone amide nitrogens where in the PDB file the backbone nitrogen is called 'N' and the attached proton is called 'H', assuming all H and N spins have already been loaded, type one of:")
+uf.desc[-1].add_prompt("relax> structure.vectors('@N', '@H')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@N', spin_id2='@H')")
+uf.desc[-1].add_paragraph("If the attached proton is called 'HN', type:")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@N', spin_id2='@HN')")
 uf.desc[-1].add_paragraph("For the 'CA' spin bonded to the 'HA' proton, type:")
-uf.desc[-1].add_prompt("relax> structure.vectors(attached='HA', spin_id='@CA')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@HA', spin_id2='@CA')")
 uf.desc[-1].add_paragraph("If you are working with RNA, you can use the residue name identifier to calculate the vectors for each residue separately.  For example to calculate the vectors for all possible spins in the bases, type:")
-uf.desc[-1].add_prompt("relax> structure.vectors('H2', spin_id=':A')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H8', spin_id=':A')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H1', spin_id=':G')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H8', spin_id=':G')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H5', spin_id=':C')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H6', spin_id=':C')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H3', spin_id=':U')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H5', spin_id=':U')")
-uf.desc[-1].add_prompt("relax> structure.vectors('H6', spin_id=':U')")
-uf.desc[-1].add_paragraph("Alternatively, assuming the desired spins have been loaded, regular expression can be used:")
-uf.desc[-1].add_prompt("relax> structure.vectors('H*')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H2', spin_id2=':A')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H8', spin_id2=':A')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H1', spin_id2=':G')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H8', spin_id2=':G')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H5', spin_id2=':C')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H6', spin_id2=':C')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H3', spin_id2=':U')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H5', spin_id2=':U')")
+uf.desc[-1].add_prompt("relax> structure.vectors(spin_id1='@H6', spin_id2=':U')")
 uf.backend = generic_fns.structure.main.vectors
 uf.menu_text = "&vectors"
 uf.wizard_height_desc = 400
