@@ -63,15 +63,17 @@ def error_message(msg, caption=''):
 class Missing_data(wx.Dialog):
     """Message box GUI element for when a setup is incomplete or there is missing data."""
 
-    def __init__(self, missing=[]):
+    def __init__(self, missing=[], parent=None):
         """Set up the dialog.
 
         @keyword missing:   The list of missing data types.
         @type missing:      list of str
+        @keyword parent:    The parent wx element.
+        @type parent:       wx object
         """
 
         # Initialise the base class.
-        wx.Dialog.__init__(self, None, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.STAY_ON_TOP)
+        wx.Dialog.__init__(self, parent, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.STAY_ON_TOP)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
