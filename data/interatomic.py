@@ -89,9 +89,9 @@ class InteratomContainer(Prototype):
         """
 
         # Check the IDs in both directions.
-        if spin_id1 == self[i].spin_id1 and spin_id2 == self[i].spin_id2:
+        if spin_id1 == self.spin_id1 and spin_id2 == self.spin_id2:
             return True
-        elif spin_id1 == self[i].spin_id2 and spin_id2 == self[i].spin_id1:
+        elif spin_id1 == self.spin_id2 and spin_id2 == self.spin_id1:
             return True
         else:
             return False
