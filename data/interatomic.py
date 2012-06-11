@@ -139,8 +139,7 @@ class InteratomList(list):
 
         # Check if the two spin ID have already been added.
         for i in range(len(self)):
-            # Check the IDs in both directions.
-            if (spin_id1 == self[i].spin_id1 and spin_id2 == self[i].spin_id2) or (spin_id1 == self[i].spin_id2 and spin_id2 == self[i].spin_id1):
+            if self.id_match(spin_id1, spin_id2):
                 raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
         # Append a new InteratomContainer.
@@ -184,6 +183,24 @@ class InteratomList(list):
 
             # Recreate the current container.
             xml_to_object(interatom_node, self[-1], file_version=file_version)
+
+
+    def id_match(self, spin_id1, spin_id2):
+        """Test if the two spin IDs match the current container (both ways).
+
+        @param spin_id1:    The spin ID string of the first atom.
+        @type spin_id1:     str
+        @param spin_id2:    The spin ID string of the first atom.
+        @type spin_id2:     str
+        """
+
+        # Check the IDs in both directions.
+        if spin_id1 == self[i].spin_id1 and spin_id2 == self[i].spin_id2:
+            return True
+        elif spin_id1 == self[i].spin_id2 and spin_id2 == self[i].spin_id1:
+            return True
+        else:
+            return False
 
 
     def to_xml(self, doc, element):
