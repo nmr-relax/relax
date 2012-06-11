@@ -52,7 +52,7 @@ def create_interatom(spin_id1=None, spin_id2=None):
     cdp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
 
 
-def return_container(spin_id1=None, spin_id2=None, pipe=None):
+def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
     """Return the interatomic data container for the two spins.
 
     @keyword spin_id1:  The spin ID string of the first atom.
