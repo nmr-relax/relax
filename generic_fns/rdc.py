@@ -462,22 +462,36 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     # Loop over the RDC data.
     data = []
     for line in file_data:
+        # Invalid columns.
+        if spin_id1_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no first spin ID column can be found." % line))
+            continue
+        if spin_id2_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no second spin ID column can be found." % line))
+            continue
+        if data_col and data_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no data column can be found." % line))
+            continue
+        if error_col and error_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no error column can be found." % line))
+            continue
+
         # Unpack.
-        if data_col and error_col:
-            spin_id1, spin_id2, value, error = line
-        elif data_col:
-            spin_id1, spin_id2, value = line
-            error = None
-        else:
-            spin_id1, spin_id2, error = line
-            value = None
+        spin_id1 = line[spin_id1_col-1]
+        spin_id2 = line[spin_id2_col-1]
+        value = None
+        if data_col:
+            value = line[data_col-1]
+        error = None
+        if error_col:
+            error = line[error_col-1]
 
         # Convert and check the value.
         if value != None:
             try:
                 value = float(value)
             except ValueError:
-                warn(RelaxWarning("The data value of the line '%s' is invalid." % line))
+                warn(RelaxWarning("The RDC value of the line %s is invalid." % line))
                 continue
 
         # Convert and check the error.
@@ -485,8 +499,16 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             try:
                 error = float(error)
             except ValueError:
-                warn(RelaxWarning("The error value of the line '%s' is invalid." % line))
+                warn(RelaxWarning("The error value of the line %s is invalid." % line))
                 continue
+
+        # Check the spin IDs.
+        if not return_spin(spin_id1):
+            warn(RelaxWarning("The spin ID '%s' cannot be found in the current data pipe, skipping the data %s." % (spin_id1, line)))
+            continue
+        if not return_spin(spin_id2):
+            warn(RelaxWarning("The spin ID '%s' cannot be found in the current data pipe, skipping the data %s." % (spin_id2, line)))
+            continue
 
         # Test the error value (cannot be 0.0).
         if error == 0.0:
@@ -530,18 +552,14 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         # Append the data for printout.
         data.append([spin_id1, spin_id2, repr(value), repr(error)])
 
+    # No data, so fail hard!
+    if not len(data):
+        raise RelaxError("No RDC data could be extracted.")
+
     # Print out.
     write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
-
-    # Global (non-spin specific) data.
-    ##################################
-
-    # No data, so return.
-    if not len(data):
-        return
-
-    # Initialise.
+    # Initialise some global structures.
     if not hasattr(cdp, 'align_ids'):
         cdp.align_ids = []
     if not hasattr(cdp, 'rdc_ids'):
