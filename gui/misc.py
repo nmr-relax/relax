@@ -158,7 +158,7 @@ def format_table(table):
         col_wrap = [True] * num_cols
 
         # Loop.
-        while 1:
+        while True:
             # The average column width.
             ave_width = free_space_wrap / num_cols_wrap
 
