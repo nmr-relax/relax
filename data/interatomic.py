@@ -139,7 +139,7 @@ class InteratomList(list):
 
         # Check if the two spin ID have already been added.
         for i in range(len(self)):
-            if self.id_match(spin_id1, spin_id2):
+            if self[i].id_match(spin_id1, spin_id2):
                 raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
         # Append a new InteratomContainer.
