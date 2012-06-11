@@ -25,6 +25,8 @@
 
 # relax module imports.
 from generic_fns import pipes
+from generic_fns.mol_res_spin import return_spin
+from relax_warnings import RelaxNoSpinWarning
 
 
 def create_interatom(spin_id1=None, spin_id2=None):
@@ -37,6 +39,14 @@ def create_interatom(spin_id1=None, spin_id2=None):
     @return:            The newly created interatomic data container.
     @rtype:             data.interatomic.InteratomContainer instance
     """
+
+    # Check that the spin IDs exist.
+    spin = return_spin(spin_id1)
+    if spin == None:
+        raise RelaxNoSpinWarning(spin_id1)
+    spin = return_spin(spin_id2)
+    if spin == None:
+        raise RelaxNoSpinWarning(spin_id2)
 
     # Add the data.
     cdp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
