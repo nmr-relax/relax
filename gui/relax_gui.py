@@ -582,6 +582,9 @@ class Main(wx.Frame):
         # Unset the test suite flag.
         self.test_suite_flag = False
 
+        # Set the controller main gauge to 100%.
+        wx.CallAfter(self.controller.main_gauge.SetValue, 100)
+
 
     def run_test_suite_gui(self, event=None):
         """Execute the GUI tests.
