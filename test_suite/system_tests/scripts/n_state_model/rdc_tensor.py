@@ -32,7 +32,7 @@ self._execute_uf('15N', 'heteronuc_type', uf_name='value.set')
 self._execute_uf('1H', 'proton_type', uf_name='value.set')
 
 # RDCs.
-self._execute_uf(uf_name='rdc.read', align_id=tag, file='rdc_dy', dir=DATA_PATH, res_num_col=1, spin_name_col=2, data_col=3, error_col=4, neg_g_corr=True)
+self._execute_uf(uf_name='rdc.read', align_id=tag, file='rdc_dy', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, neg_g_corr=True)
 
 # Set up the model.
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
