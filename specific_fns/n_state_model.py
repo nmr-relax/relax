@@ -807,7 +807,7 @@ class N_state_model(API_base, API_common):
                     spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Increment the spin index if it contains data.
-                if hasattr(spin, 'pcs') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
+                if hasattr(spin, 'pcs') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
                     data_index = data_index + 1
 
             # Interatomic data container loop.
