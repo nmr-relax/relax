@@ -135,6 +135,8 @@ class InteratomList(list):
         @type spin_id1:     str
         @keyword spin_id2:  The spin ID string of the first atom.
         @type spin_id2:     str
+        @return:            The new interatomic data container.
+        @rtype:             InteratomContainer instance
         """
 
         # Check if the two spin ID have already been added.
@@ -143,7 +145,11 @@ class InteratomList(list):
                 raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
         # Append a new InteratomContainer.
-        self.append(InteratomContainer(spin_id1, spin_id2))
+        cont = InteratomContainer(spin_id1, spin_id2)
+        self.append(cont)
+
+        # Return the container.
+        return cont
 
 
     def is_empty(self):

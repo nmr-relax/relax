@@ -48,8 +48,8 @@ def create_interatom(spin_id1=None, spin_id2=None):
     if spin == None:
         raise RelaxNoSpinWarning(spin_id2)
 
-    # Add the data.
-    cdp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
+    # Add and return the data.
+    return cdp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
 
 
 def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
