@@ -23,11 +23,18 @@
 # Module docstring.
 """The interatomic data containers."""
 
+# Python module imports.
+from re import match
+
 # relax module imports.
-from relax_errors import RelaxError
+import generic_fns
+from prototype import Prototype
+from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
+from relax_xml import fill_object_contents, object_to_xml, xml_to_object
+import specific_fns
 
 
-class InteratomContainer(object):
+class InteratomContainer(Prototype):
     """Class containing the interatomic data."""
 
     def __init__(self, spin_id1=None, spin_id2=None):
