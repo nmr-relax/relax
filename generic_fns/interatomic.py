@@ -52,6 +52,25 @@ def create_interatom(spin_id1=None, spin_id2=None):
     return cdp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
 
 
+def interatomic_loop(pipe=None):
+    """Generator function for looping over all the interatomic data containers.
+
+    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Loop over the containers, yielding them.
+    for i in range(len(dp.interatomic)):
+        yield dp.interatomic[i]
+
+
 def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
     """Return the interatomic data container for the two spins.
 
