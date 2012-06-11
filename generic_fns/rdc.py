@@ -35,6 +35,7 @@ from warnings import warn
 from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
+from generic_fns.interatomic import create_interatom, return_interatom
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
@@ -492,11 +493,11 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the interatomic data container.
-        interatom = interatomic.return_container(spin_id1, spin_id2)
+        interatom = return_interatom(spin_id1, spin_id2)
 
         # Create the container if needed.
         if interatom == None:
-            interatom = interatomic.create_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+            interatom = create_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
 
         # Convert and add the data.
         if data_col:
