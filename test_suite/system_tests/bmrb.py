@@ -72,7 +72,7 @@ class Bmrb(SystemTestCase):
         if version == '3.0':
             blacklist_spin = blacklist_spin + ['r', 'local_tm', 'local_tm_err']
         blacklist_diff = []
-        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['ri_ids', 'frq', 'ri_type'] + ['result_files']
+        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'interatomic', 'sim_number', 'sim_state'] + ['ri_ids', 'frq', 'ri_type'] + ['result_files']
 
         # The data pipes.
         old_pipe = ds[old_pipe_name]
