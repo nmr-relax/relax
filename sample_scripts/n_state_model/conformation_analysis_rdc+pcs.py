@@ -74,8 +74,8 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
 # Load the RDCs and PCSs.
 for i in xrange(len(align_list)):
     # The RDC.
-    rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir='../../../align_data', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+3, error_col=None)
-    rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir='../../../align_data', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+3)
+    rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir='../../../align_data', spin_id1_col=1, spin_id1_col=2, data_col=i+3, error_col=None)
+    rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir='../../../align_data', spin_id1_col=1, spin_id1_col=2, data_col=None, error_col=i+3)
     rdc.display(align_id=align_list[i])
 
     # The PCS.
