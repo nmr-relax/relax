@@ -32,7 +32,6 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from data.rdc import Rdc
 from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
@@ -41,7 +40,7 @@ from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from relax_io import extract_data, open_write_file, strip, write_data
-from relax_warnings import RelaxWarning, RelaxNoSpinWarning
+from relax_warnings import RelaxWarning
 
 
 def back_calc(align_id=None):
@@ -456,10 +455,6 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     # Spin specific data.
     #####################
 
-    # Initialise the RDC data store object.
-    if not hasattr(cdp, 'rdc'):
-        cdp.rdc = Rdc()
-
     # Extract the data from the file.
     file_data = extract_data(file, dir, sep=sep)
 
@@ -496,15 +491,14 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         if error == 0.0:
             raise RelaxError("An invalid error value of zero has been encountered.")
 
-        # Check the spin IDs.
-        spin = return_spin(spin_id1)
-        if spin == None:
-            raise RelaxNoSpinWarning(spin_id1)
-        spin = return_spin(spin_id2)
-        if spin == None:
-            raise RelaxNoSpinWarning(spin_id2)
+        # Get the interatomic data container.
+        interatom = interatomic.return_container(spin_id1, spin_id2)
 
-        # Convert the data.
+        # Create the container if needed.
+        if interatom == None:
+            interatom = interatomic.create_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+
+        # Convert and add the data.
         if data_col:
             # Data conversion.
             value = convert(value, align_id, to_intern=True)
@@ -513,13 +507,24 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             if neg_g_corr and value != None:
                 value = -value
 
-        # Convert the error.
+            # Initialise.
+            if not hasattr(interatom, 'rdc'):
+                interatom.rdc = {}
+
+            # Add the value.
+            interatom.rdc[align_id] = value
+
+        # Convert and add the error.
         if error_col:
             # Data conversion.
             error = convert(error, align_id, to_intern=True)
 
-        # Store the data.
-        cdp.rdc.add(align_id=align_id, spin_id1=spin_id1, spin_id2=spin_id2, rdc=value, error=error)
+            # Initialise.
+            if not hasattr(interatom, 'rdc_err'):
+                interatom.rdc_err = {}
+
+            # Append the error.
+            interatom.rdc_err[align_id] = error
 
         # Append the data for printout.
         data.append([spin_id1, spin_id2, repr(value), repr(error)])
