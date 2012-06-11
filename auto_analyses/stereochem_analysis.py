@@ -79,7 +79,7 @@ from status import Status; status = Status()
 class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
-    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
+    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id1_col=None, rdc_spin_id2_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
         """Set up for the stereochemistry analysis.
 
         @keyword stage:             Stage of analysis (see the module docstring above for the options).  
@@ -108,18 +108,10 @@ class Stereochem_analysis:
         @type rdc_name:             str
         @keyword rdc_file:          The name of the RDC file.
         @type rdc_file:             str
-        @keyword rdc_spin_id_col:   The spin ID column of the RDC file.
-        @type rdc_spin_id_col:      None or int
-        @keyword rdc_mol_name_col:  The molecule name column of the RDC file.
-        @type rdc_mol_name_col:     None or int
-        @keyword rdc_res_num_col:   The residue number column of the RDC file.
-        @type rdc_res_num_col:      None or int
-        @keyword rdc_res_name_col:  The residue name column of the RDC file.
-        @type rdc_res_name_col:     None or int
-        @keyword rdc_spin_num_col:  The spin number column of the RDC file.
-        @type rdc_spin_num_col:     None or int
-        @keyword rdc_spin_name_col: The spin name column of the RDC file.
-        @type rdc_spin_name_col:    None or int
+        @keyword rdc_spin_id1_col:  The spin ID column of the first spin in the RDC file.
+        @type rdc_spin_id1_col:     None or int
+        @keyword rdc_spin_id2_col:  The spin ID column of the second spin in the RDC file.
+        @type rdc_spin_id2_col:     None or int
         @keyword rdc_data_col:      The data column of the RDC file.
         @type rdc_data_col:         int
         @keyword rdc_error_col:     The error column of the RDC file.
@@ -161,12 +153,8 @@ class Stereochem_analysis:
         self.noe_norm = noe_norm
         self.rdc_name = rdc_name
         self.rdc_file = rdc_file
-        self.rdc_spin_id_col = rdc_spin_id_col
-        self.rdc_mol_name_col = rdc_mol_name_col
-        self.rdc_res_num_col = rdc_res_num_col
-        self.rdc_res_name_col = rdc_res_name_col
-        self.rdc_spin_num_col = rdc_spin_num_col
-        self.rdc_spin_name_col = rdc_spin_name_col
+        self.rdc_spin_id1_col = rdc_spin_id1_col
+        self.rdc_spin_id2_col = rdc_spin_id2_col
         self.rdc_data_col = rdc_data_col
         self.rdc_error_col = rdc_error_col
         self.bond_length = bond_length
@@ -654,7 +642,7 @@ class Stereochem_analysis:
             self.interpreter.sequence.display()
 
             # Read the RDC data.
-            self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id_col=self.rdc_spin_id_col, mol_name_col=self.rdc_mol_name_col, res_num_col=self.rdc_res_num_col, res_name_col=self.rdc_res_name_col, spin_num_col=self.rdc_spin_num_col, spin_name_col=self.rdc_spin_name_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
+            self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id1_col=self.rdc_spin_id1_col, spin_id2_col=self.rdc_spin_id2_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
 
             # Set the values needed to calculate the dipolar constant.
             self.interpreter.value.set(self.bond_length, "r", spin_id="@H*")
