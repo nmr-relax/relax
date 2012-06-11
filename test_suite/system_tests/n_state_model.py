@@ -139,6 +139,41 @@ class N_state_model(SystemTestCase):
         for i in range(3):
             self.assertAlmostEqual(cdp.chi[i, i] * 1e32, cdp.chi_ref[i] * 1e32, 2)
 
+    def test_absolute_rdc(self):
+        """Test the fitting of signless RDCs."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'absolute_rdcs.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+
+        # The signless RDC data.
+        rdcs = [5.59633342475, 13.31357940769, 7.03826972130, 3.39286328073, 2.09118060289, 11.44314950665, 9.06351706695, 2.33713806872, 5.81432510092, 13.10212128419, 2.52845064335, 4.70528375938, 4.07965480340, 6.28030444828, 4.69179757106, 2.34216201798, 3.89567105101, 5.51427513007, 0.72184322202, 3.81502890358, 10.88354253947, 1.66151988717, 4.29930397984, 4.46950447650, 6.99742077188, 2.27879506276, 3.64303288709, 6.83945430255, 3.19585334782]
+
+        # Back calc.
+        self.interpreter.rdc.back_calc('abs')
+
+        # Check the spin data.
+        i = 0
+        for spin in spin_loop():
+            # No PCS.
+            if not hasattr(spin, 'rdc'):
+                continue
+
+            # Check the loaded and back-calculated absolute values.
+            self.assertAlmostEqual(spin.rdc['abs'], abs(rdcs[i]))
+            self.assertAlmostEqual(spin.rdc_bc['abs'], abs(rdcs[i]))
+
+            # Increment the spin index.
+            i += 1
+
 
     def test_align_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
