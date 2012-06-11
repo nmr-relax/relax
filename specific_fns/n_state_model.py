@@ -39,6 +39,7 @@ import arg_check
 from float import isNaN, isInf
 import generic_fns
 from generic_fns.align_tensor import all_tensors_fixed, get_tensor_object, num_tensors, return_tensor
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
 from generic_fns.structure.cones import Iso_cone
@@ -245,8 +246,8 @@ class N_state_model(API_base, API_common):
         list = []
 
         # RDC search.
-        for spin in spin_loop():
-            if hasattr(spin, 'rdc'):
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
                 list.append('rdc')
                 break
 
@@ -805,18 +806,20 @@ class N_state_model(API_base, API_common):
                     # Add the back calculated PCS (in ppm).
                     spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
 
-                # Spins with RDC data.
-                if rdc_flag and hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
+                # Increment the spin index if it contains data.
+                if hasattr(spin, 'pcs') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
+                    data_index = data_index + 1
+
+            # Interatomic data container loop.
+            for interatom in interatomic_loop():
+                # Containers with RDC data.
+                if rdc_flag and hasattr(interatom, 'rdc'):
                     # Initialise the data structure if necessary.
-                    if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = {}
+                    if not hasattr(interatom, 'rdc_bc'):
+                        interatom.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[align_id] = model.Dij_theta[i, data_index]
-
-                # Increment the spin index if it contains data.
-                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
-                    data_index = data_index + 1
+                    interatom.rdc_bc[align_id] = model.Dij_theta[i, data_index]
 
 
     def _minimise_setup_atomic_pos(self):
@@ -836,7 +839,7 @@ class N_state_model(API_base, API_common):
                 continue
 
             # Only use spins with alignment/paramagnetic data.
-            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc') and not hasattr(spin, 'pre'):
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'pre'):
                 continue
 
             # The position list.
