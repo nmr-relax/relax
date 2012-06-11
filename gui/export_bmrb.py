@@ -27,6 +27,7 @@
 import wx
 
 # relax module imports.
+from generic_fns.mol_res_spin import molecule_loop
 from generic_fns.pipes import cdp_name, pipe_names, switch
 from graphics import IMAGE_PATH, fetch_icon
 from status import Status; status = Status()
@@ -37,6 +38,7 @@ from gui.components.molecule import Molecule
 from gui.components.relax_data_meta import Relax_data_meta_list
 from gui.components.scripts import Scripts
 from gui.components.software import Software
+from gui.message import Missing_data
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.input_elements.value import Value
@@ -148,6 +150,14 @@ class Export_bmrb_window(wx.Frame):
         @keyword event: The wx event.
         @type event:    wx event
         """
+
+        # Checks.
+        missing = self.is_complete()
+
+        # Missing data.
+        if len(missing):
+            Missing_data(missing, parent=self)
+            return
 
         # Execute the user function.
         uf_store['bmrb.write'](wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
@@ -315,6 +325,52 @@ class Export_bmrb_window(wx.Frame):
 
         # Close the window.
         event.Skip()
+
+
+    def is_complete(self):
+        """Determine if the data input is complete.
+
+        @return:    A list of all the missing components.
+        @rtype:     list of str
+        """
+
+        # Initialise.
+        missing = []
+
+        # Relaxation data metadata.
+        if hasattr(cdp, 'ri_ids'):
+            # Loop over the data.
+            for i in range(len(cdp.ri_ids)):
+                # Check the peak intensity types.
+                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type') or not cdp.ri_ids[i] in cdp.exp_info.peak_intensity_type.keys():
+                    missing.append("The peak intensity type for the relaxation data ID '%s'." % cdp.ri_ids[i])
+
+                # Check the temperature calibration methods.
+                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration') or not cdp.ri_ids[i] in cdp.exp_info.temp_calibration.keys():
+                    missing.append("The temperature calibration method for the relaxation data ID '%s'." % cdp.ri_ids[i])
+
+                # Check the temperature control methods.
+                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control') or not cdp.ri_ids[i] in cdp.exp_info.temp_control.keys():
+                    missing.append("The temperature control method for the relaxation data ID '%s'." % cdp.ri_ids[i])
+
+
+        # Loop over the molecules.
+        for mol, mol_id in molecule_loop(return_id=True):
+            # No name.
+            if mol.name == None:
+                missing.append("The name of the molecule for %s." % mol_id)
+                continue
+
+            # No molecule type.
+            if not hasattr(mol, 'type') or mol.type == None:
+                missing.append("The type of the molecule %s." % mol_id)
+
+            # No thiol state.
+            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'thiol_state'):
+                missing.append("The thiol state of the molecule %s." % mol_id)
+
+        # Return the list of missing data.
+        return missing
 
 
     def observer_register(self, remove=False):
