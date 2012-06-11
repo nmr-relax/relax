@@ -27,6 +27,21 @@
 from generic_fns import pipes
 
 
+def create_interatom(spin_id1=None, spin_id2=None):
+    """Create and return the interatomic data container for the two spins.
+
+    @keyword spin_id1:  The spin ID string of the first atom.
+    @type spin_id1:     str
+    @keyword spin_id2:  The spin ID string of the first atom.
+    @type spin_id2:     str
+    @return:            The newly created interatomic data container.
+    @rtype:             data.interatomic.InteratomContainer instance
+    """
+
+    # Add the data.
+    cdp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
+
+
 def return_container(spin_id1=None, spin_id2=None, pipe=None):
     """Return the interatomic data container for the two spins.
 
@@ -46,10 +61,6 @@ def return_container(spin_id1=None, spin_id2=None, pipe=None):
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
-
-    # No interatomic data.
-    if not hasattr(dp, 'interatomic'):
-        return None
 
     # Loop over the data.
     for i in range(len(dp.interatomic)):
