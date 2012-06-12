@@ -346,7 +346,7 @@ uf.add_keyarg(
     default = False,
     py_type = "bool",
     desc_short = "negative gyromagnetic ratio correction",
-    desc = "A flag which is used to correct for the negative gyromagnetic ratio of 15N."
+    desc = "A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If set to True, all RDC values will be inverted prior to being stored in the relax data store."
 )
 # Description.
 uf.desc.append(Desc_container())
