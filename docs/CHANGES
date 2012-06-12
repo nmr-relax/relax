@@ -1,3 +1,660 @@
+Version 2.0.0
+(12 June 2012, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.0.0
+
+    Features:
+        * A complete restructuring of the user functions - all user functions are automatically generated within all user interfaces (UIs) including the prompt and script UI, and the graphical UI (GUI).
+        * The user functions now have special definitions in the 'user_functions' directory making it very simple to add or modify user functions.
+        * Big improvements to the help system in the prompt UI mode.  This is now automatically generated when accessed by the user.  Bold font is now used for section titles and keyword arguments, the user function class documentation has been expanded and is now related to the functionality, the user function representation printout is cleaner, and the text is now wrapped for better display on all operating systems.
+        * Automatic creation of the "Alphabetical listing of user functions" chapter of the relax manual from the user function definitions.
+        * The analysis specific API of the specific_fns directory has been redesigned to extensively use the parameter list objects.  Many API base methods will now automatically work with the parameter list object, removing the need for a analysis specific implementation.
+        * The GUI test suite has been significantly expanded.  The system test relax scripts can now be used as GUI tests - the user functions are executed through the self._execute_uf() method which allows execution within all UIs, testing out the different code paths.
+        * The specific and GUI tests can now be executed by group.  For example all the model-free system tests can be run with '$ relax -s Mf'.  This is very useful for relax development.
+        * The XML formatted results and save files has been redesigned (it has improved, is more accurate, is easier to read in Python version 2.7.3 and above, and contains more metadata) and is now at version 2.
+        * The printouts of spin specific data has improved with the addition of an automatic column width algorithm.
+        * The addition of a new concept called data pipe bundles - related data pipes can now be grouped together into bundles.  For example in the dauvergne_protocol model-free auto-analysis, all internally generated data pipes are grouped together in the same bundle.
+        * Each GUI analysis tab is now associated with a unique data pipe bundle rather than a dedicated data pipe.  This allows for better data pipe handling.
+        * Improved BMRB support.  The 'File->Export for BMRB deposition' menu has been added to the GUI which opens a special BMRB export window.
+        * More metadata is now read from the NMR-STAR files into the relax data store.
+        * The bmrb.display user function is now operational.
+        * Big redesign of the Spectral_error_type_page wizard page used in the auto NOE and Rx analyses - this now includes the full description of the spectrum.error_analysis user function, so that the user has easy access to a description of how peak intensity errors and handled.
+        * Mac OS X font size and text layout improvements in the GUI.
+        * Improvements to the spacing at the top and bottom of the list GUI elements - this includes a spacing before the bottom buttons.
+        * The relaxation data 'Add' button in the model-free GUI analysis tab is now a multi-page wizard which allows all of the relaxation data metadata to be input.
+        * The model-free GUI analysis tab now has a 'View metadata' button for opening a window displaying all metadata associated with the relaxation data.
+        * The model-free GUI analysis tab now has a button for loading relaxation data from Bruker Dynamics Centre files.
+
+
+    Changes:
+        * Improved the robustness of the bmrb.write user function for missing data - this is in the generic_fns.diffusion_tensor.bmrb_write() function, and is for missing atomic information required for the Tensor_list saveframe.
+        * The bmrb.read user function is now reading in all of the relaxation data metadata into the data store.
+        * Improved the robustness of the bmrb.write user function for missing data - this is in the generic_fns.relax_data.bmrb_write() function, and is for missing atomic information related to relaxation data.
+        * The bmrb.read user function is now extracting the thiol state of the molecule.
+        * BMRB improvements - the molecule type is now read from the entity record and stored in relax.
+        * Added more display tests for the BMRB system test script.
+        * BMRB output improvements - deselected spins are no longer skipped and the model-free BMRB output is also more robust to missing data.
+        * More extensive testing of the bmrb user functions.
+        * Added a call to the bmrb.display user function in the bmrb_rw.py test suite script.
+        * Shifted the GUI user function page _format_table() and _table_line() methods into the misc module.  These are now the gui.misc.format_table() and gui.misc.table_line() functions, allowing the code to be used in other parts of the GUI.
+        * Decreased the size of all the GUI auto-analysis wizards to fit in a 1024x768 screen.
+        * Created a small molecule wizard graphic for the structure.read_xyz user function.
+        * Refinement of all of the GUI user function wizard sizes.
+        * The default GUI user function description minimum height has been increased to 300 px - removing a lot of scrolled descriptions automatically.
+        * Increased the default size of the GUI user functions.
+        * Spacing and layout improvements for the GUI user function descriptions.
+        * The dauvergne_protocol sample script initial pipe name has been modified to include the pipe bundle.
+        * The GUI now sends the pipe bundle name into the relax_fit and noe auto-analyses.
+        * The relax_fit and noe auto-analyses now centre around the pipe bundle rather than data pipe name.
+        * The about dialog now used the gui.fonts module - this allows the fonts to scale to a decent size on Mac OS X, so that the text is readable.
+        * Added a set of roman fonts to the gui.fonts module - this will be used by the about dialogs.
+        * Font size improvements for Mac OS X - the fonts are now roughly the same size as on GNU/Linux and MS Windows.  An operating system specific font scaling is now used, with the Mac OS X fonts each being increased by 2 pixels.
+        * The dauvergne_protocol auto-analysis now adds the pipe bundle name to all created pipes as a suffix.  This is to uniquely identify the data pipes, and to allow more than one model-free analysis to be executed per relax instance (useful for the GUI).
+        * The analysis wizard now suggests the starting data pipe to be named 'origin - ' + pipe_bundle - this allows unique data pipe names for each analysis.
+        * Temporarily disabled the Mac OS X task bar icon as it is currently horribly broken in wxPython 2.8 and 2.9.
+        * Renamed the GUI toolbar() method to build_toolbar(), as the toolbar object is also called 'toolbar'!
+        * Updated the relaxGUI splash screen copyright notice.
+        * Improved the button size and spacing in the list GUI elements.
+        * The bmrb.write user function now adds the file to the cdp.result_files list and notifies observers.
+        * Converted all of the list GUI element 'stretch' args to 'proportion' - instead of a flag, this is now the direct window proportion parameter used in the wx.Sizer.Add() methods.  This has been changed in the BMRB export window so that the central molecule list GUI element is half the size of the others.
+        * Created the BMRB export window - this includes the following elements:  A title with description and BMRB icons; the data pipe selection element; the relaxation data meta data GUI element; the molecule list GUI element; the software list GUI element; the script list GUI element; the citation list GUI element; buttons for previewing, exporting, and cancelling.
+        * The action_export_bmrb() method now opens the BMRB export window.
+        * The base list objects are now updated when pipe changes occur.
+        * Created a 100x100 version of the BMRB logo - this will be used for the export window.
+        * The spin viewer window now uses graphics.fetch_icon() and shows the button text in the toolbar.
+        * Added the mimetypes/text-x-texinfo.png Oxygen icons.  This is for the relaxation data metadata button.
+        * Merged the spectrum list GUI element into the base list element.
+        * Merged the relaxation data list GUI element with the base list element.  The base list element now has a delete() method, though I'm not sure if it is ever used.  Now all list GUI elements are derived from the Base_list class.  This will simplify changing or improving all of these elements.
+        * The base list element now has an Enable() method which simply enables or disables all buttons (as is done in the relaxation data list).  The button size is now specified as a (x, y) tuple.  And the GUI object can now be passed into the elements, as this is needed for the relaxation data metadata window.
+        * Large simplifications of the relaxation data metadata list GUI element by using the Base_list class.
+        * Modified the molecule list GUI element to use the Base_list base class.  The base list GUI element has also been updated to support popup menus and to change the StaticBox label upon updates.  The base is_complete() method has also been added to always return True.
+        * Small updates to the base list GUI element.
+        * Created a GUI element for listing and setting the citations relevant for the analysis - this will be used in the BMRB export window.
+        * Created a GUI element for listing and setting the scripts used in the analysis - this will be used in the BMRB export window.
+        * The GUI user functions now have a subtitle at the top stating the name of the user function - this is to reinforce the user function naming system to the user, and also to clearly identify which window belongs to which user function.
+        * Split the software GUI element into the base_list base GUI listing element - this base class will be useful for abstracting many of the list GUI element methods.
+        * Created a GUI element for listing and setting the software used in the analysis - this will be used in the BMRB export window.
+        * Created a GUI element for listing and setting molecule attributes - this will be used in the BMRB export window.
+        * The lists in the GUI user function descriptions are no longer separated by blank lines - this allows long lists to fit much better into the wizard windows.
+        * More improvements for the bmrb user function definitions.
+        * The GUI user function objects can now be called with the wx_wizard_sync and wx_wizard_modal args.  This is used to force the user function to operate synchronous or asynchronous mode, or to force the user function wizard to be modal.  This will allow a number of hacks to be avoided throughout the GUI.
+        * Added a check to the bmrb.write user function to see if the file name has been supplied.  This results in a nicer message for the GUI.
+        * The bmrb.display and bmrb.write user functions now have the version defaulting to 3.1.  The choices are now also restricted to 2.1, 3.0, and 3.1.
+        * The user function wizard pages now have an on_back() method which unregisters the observer.  This is needed as going back previously did not unregister the observer the object, hence going forwards after going back would fail.
+        * The wizard now has an on_back() method available to perform actions when going back.  The on_next() method has been fixed in that it is called even when the page is skipped.
+        * Activated the apply and skip buttons in the relaxation data GUI element data reading wizards.
+        * The relaxation data 'Add' and Bruker 'Add' buttons now launch wizards whereby the first page is the original relax_data.read or bruker.read user functions, but then this is followed by the relax_data.peak_intensity_type, relax_data.temp_calibration and relax_data.temp_control user functions.  This allows the metadata to be set up prior to the model-free calculations.
+        * The relax_data.delete user function now removes all of the metadata associated with the ID.
+        * Changes to the relaxation data GUI element button layout.  The buttons are now all of the same width, and the metadata button is now last.
+        * The relaxation data GUI element now has a button for opening the relaxation data metadata element.  This 'View metadata' button will launch the new Metadata_window wx.Frame.  This window contains the relaxation data metadata GUI element stretched to fit the window.
+        * The relaxation data metadata list GUI element now can stretch to fill the parent, if asked.  This will be used when the list is embedded within a window by itself.
+        * Created a GUI element for displaying and editing the relaxation data metadata.  This is very similar to the relaxation data list GUI element, and it will be used in the BMRB export.
+        * Refinement of the relax_data.peak_intensity_type user function definition.
+        * Big expansion and improvements of the relax_data.temp_control user function definition.  There are also a few edits of the relax_data.temp_calibration definition.
+        * Created a 200x200 pixel version of the status.weather-clear Oxygen icon.  This is for the relax_data.temp_calibration and relax_data.temp_control user function wizards.
+        * Big expansion and improvements of the relax_data.temp_calibration user function definition.
+        * Improvements for the Force_true object for the 'force flag' user function argument types.  This invisible GUI element can now have its value set.  The SetValue() method will internally store the value, and GetValue() will then return this value.  The initial value is True.  This allows the BMRB GUI tests to pass again.
+        * The spin.name and spin.element user functions in the BMRB system and GUI tests now use the force flag set to False.  This is to try to replicate the old behaviour of the test and to allow it to pass again.
+        * The BMRB icons now also have transparent backgrounds.
+        * Made the background of the BMRB wizard graphic transparent - this just looks better.
+        * Created a menu entry called 'File->Export for BMRB deposition'.
+        * The spectrum and relaxation data list GUI elements now use graphics.fetch_icon for all icons.
+        * Renamed some of the methods in the relaxation data list GUI element.
+        * The spectrum and relaxation data list GUI elements now use the user function definitions for icons.
+        * Changed the relax_fit.relax_time icon to the actions.chronometer Oxygen icon.
+        * Added the chronometer.png Oxygen icon.
+        * Large expansion of the pop up menu for the spectral list GUI element.  This now includes most of the spectrum and relax_fit user functions.
+        * Added accelerator keys for all of the spin viewer window tree pop up menus.
+        * Large expansion of the pop up menu for the relaxation data list GUI element.  This now includes most of the relax_data user functions.
+        * Implemented the relax_data.frq and relax_data.type user function definitions and backends.
+        * Created the Relax_data.test_reset() system test for testing relax_data.frq and relax_data.type.
+        * Big reworking of the spin viewer window tree element.  Many new pop up menu entries have been added covering almost all of the molecule, residue, and spin user functions.  The methods bound to the pop up menu entries have all been renamed to 'action_'+type+'_'+user function name.  And the residue and spin changes checking has been fixed to include checks for the naming and numbering.
+        * Set the force flag args for a few spin and residue user functions to the 'force flag' arg type.
+        * The molecule.name and molecule.type user function force args are now of the 'force flag' arg type.  This hides the arg in the GUI.
+        * Added support for the user function arg type 'force flag' to the GUI user functions.  This arg type will, in the GUI, always return True.  This is because a user clicking on 'Ok' or 'Apply' is essentially saying that this operation should be performed.  The special Force_true class was created for these arguments which simply ignores SetValue() calls and always returns True from GetValue() calls.
+        * Formatting fixes for the molecule.create user function definition.
+        * The relax save and results XML files now include subversion details in the <relax> tag.  This indicates the repository version and the URL, allowing for better debugging.
+        * The 'relax --version' print out now includes the full subversion info, if it is a checked out copy.
+        * Improvement for the model-free auto-analysis in the GUI.  After execution, the main data pipe of the analysis tab is now set to the 'final' data pipe generated by the dauvergne_protocol.  This means that when switching between analysis tabs, that going back to the model-free tab will make the 'final' data pipe the current one, rather than the data pipe used to initialise the analysis.
+        * Better handling of the GUI wizard termination.  The _handler_close() method is now handling the close events and together with the _ok() method,both now execute the current page's on_next() method.  This means that on_next() is called for all avenues for exiting the wizard.  This allows the user function pages to unregister themselves with the observer objects.
+        * The wizard window _cancel() method now calls the current page's on_next() method.  This allows the page to clean itself up.
+        * The GUI analysis pipe_deletion() method now works with pipe bundles instead of pipe themselves.  This is because the analysis tabs are now associated with the bundles rather than pipes.
+        * The 'bundle' arg is now functional in the model_selection user function back end.
+        * Added the 'bundle_to' arg to the pipe.copy user function back end.  This arg is now functional.
+        * The dauverge_protocol auto-analysis now uses the new 'bundle' user function args.  This is used in the pipe copying to place the newly created pipe and in the model selection, both so that all pipes created during the analysis are located within the pipe bundle reserved for that analysis.
+        * The GUI user function window titles are now set to the 'title_short' value.  This is because the long title can be far too long for a GUI window title!
+        * The long title or synopsis is now added to the GUI user function description text as italic text.
+        * Added the 'bundle' arg to the model_selection user function specification.
+        * Improvements to the 'bundle' arg specification of the pipe.create user function.
+        * Added the new 'bundle_to' arg to the pipe.copy user function.  This will be used to associated a newly copied data pipe with a pipe bundle.
+        * Added some backwards compatibility code for old GUI state files missing pipe bundles.
+        * Created a GUI test for loading an old relax 1.3 save state containing GUI analyses.
+        * Updated the dauvergne_protocol auto-analysis to spawn all pipes into the named bundle.
+        * The generic_fns.pipes.pipe_names() function now can restrict the list of names to a specific bundle.
+        * The pipe editor window now handles the pipe bundling concept.  There is a new button for the pipe.bundle user function, a new column showing the pipe bundles, and the pop up menu allows pipes to be associated with bundles if not already bundled.
+        * The pipe.bundle user function back end now notifies all the pipe_alteration observers of the change.  This is required for proper GUI interaction.
+        * Refinements to the pipe.create user function definitions.
+        * The GUI analysis tabs now work with data pipe bundles rather than the original data pipe.  The analysis wizard now uses the unique name for the new data pipe bundle field, and the starting data pipe defaults to 'origin'.  The analysis pages show the bundle name rather than associated data pipe.
+        * The pipe.delete user function is now cleaning up the data pipe bundles as needed.  The deleted data pipe name is removed from any bundle it is in, and empty bundles are eliminated.
+        * Implemented the generic_fns.pipes.has_bundle() function for determining if a bundle exists.
+        * Modified the pipe.display user function backend to show the pipe bundles.  This required the addition of the generic_fns.pipes.get_bundle() function.
+        * Implemented the pipe.bundle user function, including the full description and the back end.
+        * The data store is_empty() method works again - the pipe_bundles structure is now blacklisted.
+        * Shifted the pipe bundle graphic and created a wizard PNG file for the GUI user function.
+        * Created icons for the pipe bundle concept.
+        * Implemented the generic_fns.pipes.bundle_names() function for returning a list of all pipe bundles.
+        * The pipe.create user function now creates pipe bundles in the back end.  The new ds.pipe_bundles dictionary is used to hold lists of pipes associated with the pipe bundle name as the dictionary keys.  The 'bundle' arg is passed into the ds.add() method for storage.
+        * Added the 'bundle' keyword arg to the pipe.create user function definition.
+        * Preparation for the implementation of pipe bundle concept - addition of system and GUI tests.  This new pipe bundling concept is simply a way of grouping data pipes together.  This will be useful for:  grouping and categorisation of data pipes when multiple analyses are performed, the model-free dauvergne_protocol auto-analysis will place all the data pipes it creates into one bundle, for the GUI mode analyses will be linked to pipe bundles rather than data pipes.  This will allow switching data pipes to activate the correct analysis.
+        * The 'verbatim' user function description elements are now properly formatted in the GUI.  These elements now use the font.modern_small formatting to have fixed-width characters.
+        * Table formatting improvements for the GUI user function descriptions.
+        * Improved the whitespace formatting of the spin data write out of relax_io.write_spin_data().  Now the column sizes are dynamically changed to match the data being written out.  This is to fix the ugly write outs for when the name of the molecule is very long.
+        * Replaced all mention of 'arguments' from the user function docstrings with human readable text.
+        * The state.load user function will now recreate the GUI tabs.  For this, the new state_load observer object has been created.  The GUI analysis load_from_store() is registered with this object.  And to prevent fatal racing in the GUI, the state.load user function operation is now synchronous.  The state.load and state.save file arg defaults are now also set to 'state.bz2'.
+        * Removed a printout in the API documentation compilation.
+        * All of the user_function.object.Table instances in the specific code descriptions are now private.  This hides them from the specific API, and allows the unit tests to pass.
+        * Removed the vertical lines in the tables of the prompt UI help strings.  The tables now look much more professional.
+        * The GUI user functions now use the new Desc_container and Table user function classes.  The descriptions for the user function wizard pages are now being taken from the new user_functions.objects.Desc_container objects, lists of which are the user function definition 'desc' objects.  The tables via the user_functions.objects.Table object is being formatted as in the prompt user function help text, though without vertical lines.  The lists and itemised lists are currently formatted the same as in the prompt UI.
+        * The Desc_container.element_loop() method can now yield the title too, if asked.
+        * Better spacing in the list of tables section of the PDF user manual.
+        * Complete rewrite of the docs.latex.fetch_docstrings module.  This is a significant simplification for the creating of the user function documentation within the user manual.  Some of the long list of changes include:  The file docs/latex/fetch_docstrings.py is no longer an executable script and now operates solely as a Python module; all of the original docstring section parsing code has been eliminated; the searching for user functions in the prompt UI namespace has been replaced; the new user function definitions are directly used and the documentation for each user function section generated via the self.build_*() methods; the complicated ascii table parsing and rebuilding into a LaTeX table has been eliminated; the self.write_*() methods have been created for building the various sections of the user function documentation (paragraphs, verbatim text, prompt examples, lists, itemised lists, and tables); tables are no longer duplicated, triplicated, etc. and instead a reference to the first instance of  the table is inserted - this is a significant space saver as one of the copies of the multi-page X11 colour table is removed.
+        * Renamed the Uf_tables.add_table() 'title' arg to 'caption', and added the new 'caption_short' arg.  The name change is fairly logical, as this is a caption.  The 'caption_short' arg will be used for the list of tables in the LaTeX user manual.
+        * The Molmol colour table is no longer a LaTeX longtable in the user manual.
+        * The prompt UI table creation is now using the Table.spacing variable for adding empty lines between rows.
+        * The Monte Carlo description now uses an itemised list for the listing of the steps involved.
+        * The prompt UI help string construction code is now handling the new Uf_tables singleton.
+        * Added a check to Uf_tables.get_table() to make sure that the table corresponding to the label exists.
+        * Added a check to Desc_container.add_table() to make sure the label is a string.
+        * All of the user function documentation tables now use the new Uf_tables singleton structure.  The special properties for the colour module tables (longtables and now spacing) have been added as well.
+        * Created a new way of defining and inputting tables into the user function descriptions.  This introduces the user_functions.objects.Table for holding all the table data and metadata, and the user_functions.data.Uf_tables singleton object for holding all the tables.  This design will allow more metadata (for example using longtables in the LaTeX user manual) to be specified.  The singleton collection of tables with unique labels will also allow the elimination of duplicated tables in the PDF and HTML user manuals.  The new table title metadata will also be used for the table headings in the user manuals.
+        * Converted a number of add_verbatim() calls to add_item_list_element() with items of None.  This allows for proper formatting and indentation of equations.  In the future, a possible add_equation() method might be added to provide text and LaTeX representations of equations in the user function documentation.
+        * Itemised lists without items are now supported in the prompt help strings.  This is to mimic the LaTeX behaviour to allow lists with no 'bullets'.
+        * Shifted the prompt examples to the end of the description for the value.display user function.
+        * Converted all of the user functions to use the Desc_container class design.  All of the user function descriptions, prompt examples, and additional documentation scattered around the relax sources have been merged into the Uf_info.desc list of Desc_container objects.
+        * The 'prompt_examples' and 'additional' user function structures are no longer passed into the prompt objects.
+        * Removed the 'prompt_examples' and 'additional' variables from the Uf_info containers.  These have been superseded by the Desc_container objects.
+        * Prompt examples are now followed by 2 newlines in the prompt help strings.  This restores much of the original formatting for these examples.
+        * Added support for no spacing in tables for the prompt help strings.  The Desc_container.add_table_titles() method now accepts and stores the 'spacing' arg.  This is passed all the way into the prompt help system to format the tables with.
+        * Added a check in the prompt help _build_doc() method for the user function description.  This should, together with the _build_doc() unit tests, help to uncover all unconverted user function 'desc' variables.
+        * Created an algorithm for wrapping table columns to fit within status.text_width.  This is for the prompt user function docstring tables.  The columns are now dynamically wrapped so that the table will not be wider than the given width.  For example the value.set user function description table would normally have a total width of 238 characters, but this now fits within one screen of text under all operating systems.
+        * Created two unit tests for the _build_doc() methods of the prompt user function objects.  This is for the prompt user function class objects and the user function objects themselves.  The _build_doc() methods are used to generate the prompt help strings.
+        * Converted all of the OpenDX user functions to the new Desc_container design.  This tests out the use of 'additional' outside documentation.
+        * Improved the user function class prompt help string.  The user function list now uses bold text, and the user function title is also now given.
+        * The prompt help string for user function classes now includes info about the member user functions.
+        * The Uf_info.uf_loop() method can now restrict the looping over a given user function class.
+        * Large improvements to the prompt help strings for the user function classes.  These are now formatted with section using bold text.
+        * The user function default args prompt help string text is now wrapped.
+        * Removed the starting newline from the user function prompt help string.
+        * Converted the calc, grid_search and minimise user function descriptions to use Desc_container.
+        * Tables in the user function descriptions are now formatted for the prompt help strings.  This is for the Desc_container objects.  The list of lists are now converted to the text format originally used for the user function docstrings.
+        * Converted all of the alignment tensor user functions to the new Desc_container design.
+        * Itemised lists and verbatim text are now formatted properly for the prompt help strings.
+        * Converted align_tensor.init to the Desc_container object design to test itemised lists.
+        * The Desc_container object now supports itemised lists.
+        * Lists are now formatted for the prompt user function help strings from the Desc_container objects.
+        * Converted the align_tensor.display user function to the new Desc_container design.  This is to test out the list generation.
+        * The Desc_container.add_list_element() method now groups list elements together.
+        * Converted the prompt user function objects to use the new Desc_container objects for the help strings.
+        * Started to redesign the user function definition descriptions.  The desc object has been converted into a list which will contain instances of the new Desc_container class.  This class will hold the description information as blocks of text, including unformatted paragraphs, verbatim text, lists, tables, and relax prompt examples.  The object has a number of methods used for inputting all of the information, as well as extracting it.  The information in the Desc_container object is not formatted, for example tables will be stored as lists of lists.  This will remove the need for parsing list, tables, verbatim text, etc. by the docs.latex.fetch_docstrings module.  But these will need to be recreated for the prompt help strings, for the GUI user function descriptions, and for the user manual.
+        * Converted the align_tensor.copy user function description to the new design.  This is a test for the implementation of the description abstraction through the Desc_container objects.  The 'desc', 'additional', and 'prompt examples' will all be merged into one 'desc'structure.
+        * Converted a few user functions to use the special "spin ID" arg type.
+        * Converted the structure.vectors spin_id arg to the special "spin ID" type.  This is to improve vector loading in the GUI.
+        * Increased the size of the unit vector loading wizard in the model-free analysis.  This now matches the structure.read_pdb user function size and allows it to fit.
+        * The min length is now handled much better in the Combo_list GUI input element.
+        * The GUI user function object create_wizard() method now returns True upon success.  This is needed for calls to these objects.
+        * The GUI user functions now called by the results viewer window now have the parent set to this window.
+        * The GUI user function page update_args() method now has a docstring and returns True when successful.
+        * Rearranged the spin.name args and converted the spin ID to the special spin ID type.
+        * Prevention of multiple RelaxErrors from the user functions.  The update_args() method returns False if an error occurred on updating the list of choices for an arg.  This is now caught by all parts of the code where it is called, preventing further execution.
+        * Improvements to the structure.load_spins user function definition.  The spin_id arg now uses the special 'spin ID' arg type for the spin ID GUI input element.
+        * A number of improvements for the spin ID GUI input element.  This includes:  the use of SetValue() for strings not in the list of choices; defaulting the choices to ['@N', '@C', '@H', '@O', '@P'] if not supplied; a tooltip white space fix; and removal of the None element in the list of choices, as this is not a read only box.
+        * Increased the size of the spin loading wizard to match that of structure.read_pdb.
+        * The Value GUI input element UpdateChoices() method now handles non-selection strings in the ComboBox.  The SetStringSelection() method is now only used when the combo default is one of the choices, and SetValue() when not in the list of choices.
+        * Decreased the amount of waiting time in the GUI interpreter flush() method.  This will allow speed ups in certain parts of relax (for example some GUI tests).
+        * The GUI test _execute_uf() base method now allows the wizard run() method to be executed.  This gives a better work out of the user functions and matches more closely to what a user will experience.
+        * Deleted a ton of now unused and useless code from gui.analyses.results_analysis.
+        * Print statement conversions to function calls for Python 3.x.  All non-debugging print statements are now function calls.  The debugging printouts have been deleted.
+        * Complete redesign and creation of the 2nd version of the relax XML format for save and results files.  This is a BIG set of changes!  It includes the following:  the XML files now have the new 'file_version' attribute within the 'relax' XML element, this is now set to '2', and if unset it is assumed that the file version should be 1; the file_version integer value is now propagated through all of the from_xml() methods so it can be passed into the data.relax_xml.xml_to_object() function - this prevents a mixture of v1 and v2being assumed for different parts of the XML; an XML namespace fix - the xmlns="http://www.nmr-relax.com" attribute is now finally visible; the data.relax_xml.object_to_xml() function has been added for creating the new relax XML syntax - this will handle and convert many more basic Python object types into IEEE-754 byte arrays, for example lists and dictionaries of floats, or numpy vectors and matrices, and this function is now used throughout the code base for converting Python objects to XML; the data.relax_xml.xml_to_object() function has been expanded to match the functionality of data.relax_xml.object_to_xml(); the Python object XML elements now have the 'type' attribute indicating the Python object type - this is important for the processing of the file, especially for handling all types of numpy structures; the Python object value is now stored in a sub XML element called '<value>' - if it is a float, or is a simple type which contains floats, then the sub XML element <ieee_754_byte_array> is created for storing a full precision version of the floats; the v1 and v2 of the format together with the pre- and post-Python 2.7.3 XML toprettyxml() changes are now represented as test_suite/shared_data/model_free/OMP/final_results_trunc_1.3*.bz2 files, and a 5th file is added to test the IEEE-754 conversions by corrupting many of the floats.
+        * The arg_check.is_float_matrix() function can now handle empty lists.
+        * Deleted the NOE data_names() specific analysis method.  This should operate through the base methods now.
+        * Spelling fix - converted the noun 'print out' to 'printout'.
+        * Added minimisation parameters to the N-state model specific analysis parameter list.
+        * Updated the OMP model-free results file in the test suite shared data directories for recent changes.  The ordering of model-free parameters is slightly different now.
+        * The 'select' global param can have a corresponding MC simulation structure.
+        * The specific API data_names() method now accepts the 'scope' argument.  This is used to differentiate global verses spin parameters.
+        * Lots of improvements for the specification of the model-free global and spin parameters.
+        * The specific API param list base_loop() and loop() methods now match against the parameter scope.  This allows for the differentiation of global from spin parameters.
+        * Improvements and fixes for the minimisation parameters in the specific API param list object.
+        * The specific API param list get_desc() method now skips the error and sim structures.
+        * Removed a number of specific API methods from the model-free analysis.  These are now provided by the base class.
+        * Large reworking of the specific analysis API.  Many specific methods relating to parameters have been shifted into the API base class.  These include: data_names(), data_type(), default_value(), return_conversion_factor(), return_data_desc(), return_data_name(), return_grace_string(), return_units().  These are now essentially provided by the parameter list object.  All of the global and spin parameter lists have now also been merged into the single 'self.PARAMS' structure.
+        * The py_type is now set for the minimisation parameters.
+        * Renamed 'param_set' to 'set' in the specific API param list object.
+        * Split the specific API parameter object loop() method into two.  The new base_loop() method loops over the parameter names according to set, whereas the loop() method now supports and returns the error and simulation parameter names as well, if set.
+        * The specific API param list object now sets up a number of spin params and min params.  The spin 'select' and 'fixed' parameters are set up in the __init__() method, whereas the add_min_data() method will be used to add minimisation parameters.
+        * Added the 'scope' arg to the specific API param list add() method.  This will be used to merge the GLOBAL_PARAMS and SPIN_PARAMS lists into one.
+        * Created the specific API param list loop() method for looping over parameter names.
+        * All the get_*() methods of the specific API parameter list objects now call self.check_param().  This new check_param() method raises a RelaxError if the parameter is unknown.
+        * The parameter set 'params' or 'generic' can now be specified in the specific API parameter lists.
+        * The GUI tests _execute_uf() base method now simulates a click on the 'ok' button.  This gives the user function wizards a much deeper work out.
+        * Renamed the Python type arg from 'type' to 'py_type'.
+        * Added the 'min_stats' flag to the specific API parameter list objects.  This indicates if the minimisation statistics are part of the parameter set.  This is a flag to the __init__() method, as it applies to the entire parameter list.
+        * Expanded the specific API parameter list object to include the Python type and error and sim flags.  This includes the addition of the get_err(), get_sim(), and get_type() methods.
+        * Created the Dead_uf_pages.test_mol_create() GUI test demonstrating a failure in the user functions.  This mimics a click on the 'ok' buttons, showing a problem with running a GUI user function twice.
+        * The relax GUI state_load() method now checks if the data store is empty.  Previously a warning was only giving is analysis tabs are loaded.  Now the warning occurs whenever there is data in the relax data store.
+        * Eliminated all of the wizard GUI input methods.  These are now all covered by the gui.input_elements package, so are no longer needed.  The analysis wizard had to be converted to using the package, but the methods are now no longer used.
+        * Converted the spin_id_element() wizard method into the gui.input_elements.spin_id.Spin_id GUI element.
+        * The gui.string_conv.list_to_gui() function can now handle numpy arrays.
+        * The structure.rotate R arg now defaults to the identity matrix.  This is simply for the GUI.
+        * The frame order system tests are now being run as GUI tests as well.
+        * Converted all of the frame order system test scripts to be executable as GUI tests.
+        * GUI test scripts are now executed via prompt.interpreter.exec_script().  This allows the preservation of imports within the scripts.  The old execfile() method was causing the 'globals' to be overwritten, hence imports in the scripts are not visible inside methods or classes.
+        * The GUI auto-generated user function SetValue() method now skips function and function arg arguments.  These are not supported in the GUI.
+        * Loosened the checking conditions for the test_set_value() J(w) mapping system (and GUI) test.  Just like the consistency testing, the GUI string conversions to and from floats introduces a slight truncation.
+        * The consistency testing test_set_value() system (and GUI) test has been made less strict.  The conversion of the bond length and CSA values to GUI strings and back to floats causes a slight numerical truncation.
+        * The specific analysis API base return_data_desc() now has a basic implementation.  This will search through the global and then spin parameters objects, returning whatever is found.
+        * The specific analysis API base method calls to RelaxImplementError now send in the function name.  This allows for better identification of what needs to be implemented.
+        * The specific analysis base API default_value() method is now functional.  Rather than raising a RelaxImplementError, this method now searches in the global parameters then the spin parameters for a default value.
+        * Shifted out the interpreter components of the J(w) mapping tests into scripts.  This allows the tests to work in the GUI test framework.
+        * Converted the consistency tests script to the new _execute_uf() design.  This allows it to work with the GUI for the GUI tests.
+        * The jw_mapping system tests are now run as GUI tests.
+        * The user function intro string echoing has been turned back on for the GUI.  The removal of the need for the prompt UI interface for the GUI user functions removed the intro print outs.  These have been reimplemented within the GUI code now.
+        * Renamed the status.prompt_intro flag to status.uf_intro.  This is because the flag will be used in all UIs.
+        * The sequence.write user function back end now defaults to True for all sequence columns.
+        * The grid_search user function inc argument cannot be None.
+        * Converted all of the prompt unit tests to the new auto-generated user function design.
+        * Updated the model-free auto-analysis GUI test to pass.  Changes include opening and closing the about dialog, loading the sequence via the spin viewer window - testing this GUI element for the first time and the use of the methods behind the specific value.set buttons.
+        * The model-free GUI auto-analysis 'About' dialog is now stored as a class instance variable.  This allows it to be manipulated remotely, for example by the GUI tests.
+        * The GUI user functions are now going straight to the back end rather than through the prompt.  The GUI user functions were previously passing through the prompt UI user functions for argument checking, which then passed on to the back end.  Now the prompt is bypassed, and the back end is being directly called.  This should speed up the user functions, and specifically the GUI tests.
+        * The prompt UI versions of the auto-generated user functions are now stored in self._uf_dict.  This is a dictionary whereby the keys are the full user function names as text.  This is designed for speed, so that the user function object can be retrieved much faster.
+        * All the wizard method 'event' arguments have been converted to keyword arguments.  This is for better remote control, for example by the GUI tests.
+        * All the model-free GUI auto-analysis method 'event' arguments have been converted to keyword arguments.  This is for better remote control, for example by the GUI tests.
+        * Converted many GUI functions expecting a wx.Event to have the event as an optional argument.  These are now keyword arguments defaulting to None.  This allows remote control of GUI elements, which is needed for the GUI tests.
+        * Removed the reinitialisation of the relax data store GUI object in the GUI test tearDown() method.  This is not needed as it is done by the data store reset anyway.
+        * Removed a time.sleep() call which slows down the GUI tests by a significant amount.  This adds 0.5 seconds per user function which display info.  For example this is 8 seconds for just the Bmrb GUI tests!  This delay is not necessary, so has been eliminated.
+        * The user function docstrings are now created when the help system is invoked.  This prevents all user function docstrings from being built at the start, or any time the interpreter class is instantiated.  Instead the docstrings are created on demand.  Therefore for most relax usage, the docstrings for most user functions will be rarely built.  This decreases start times of ~6 seconds down to ~0.06 seconds!
+        * The GUI tests are now recycling the GUI user function wizards and pages as well.  This required a number of modifications; the user function object wizard creation has been shifted into the create_wizard() method; the status.gui_uf_force_sync flag has been introduced to force synchronous operation of the GUI user functions; the wx_wizard_run keyword arg has been added to the user function object to prevent the automatic running of the wizard; the GUI test tearDown() base method no longer destroys the GUI or wizards, as they are needed in subsequent tests.
+        * Removed the useless GUI interpreter flush() call in the GUI tests base _execute_uf() call.  This is not needed as the GUI user function calls are synchronous.  This cuts the GUI test running time down by about 1/4!
+        * The wizards for the individual user function pages are now recycled.  This should speed up the GUI (and the GUI tests massively).  Closing the wizard calls the Close() rather than Destroy() method, so the wizards are still in memory.  A new call to an old GUI user function object will simply call SetValue() for all keyword arg GUI elements, hence reset the element.  The Wizard GUI object has been modified to only add the buttons if they do not currently exist.  Without this, a new set of buttons is added each time the user function wizard appears.
+        * The GUI base class now has access to math.pi.  This is necessary as the system test scripts are run in this namespace rather than the interpreter namespace in which pi is defined.
+        * The Combo_list GUI input element can now handle values typed out by the user.  This affects both the GetValue() and SetValue() methods.
+        * The value.set user function 'param' argument can now be manually set by the user rather than selected.  A number of N-state model parameters require this.
+        * Better handling of empty data in the Sequence.GetValue() method.
+        * The non-supplied user function arguments in the GUI tests are now set to the default.  This is for the _execute_uf() base method, and is essential for the free file format where the column arguments must, in many cases, be set to None.
+        * Updates to the N-state model specific code.  The default_value() and return_data_desc() methods are now defined, and the data_names() method returns a few parameter names.
+        * The Sequence.GetValue() method now properly handles the Combo_list and single values.
+        * The Combo_list.GetValue() method now returns a proper list of values rather than the string representation.
+        * The Value GUI input element UpdateChoices() method now restores the current selection.  This matches the Combo_list GUI element changes.
+        * Renamed all of the ResetChoices() GUI methods to UpdateChoices().  This is because they are for updating a list while retaining the current selection.
+        * The Combo_list GUI input element ResetChoices() method now remembers the current selection.  This allows the selection to be restored when the element is updated, rather than resetting to the default value.
+        * The GUI test _execute_uf() base method now handles non-keyword arguments, by converting them to keyword arguments.
+        * All system test scripts are now executed through the base script_exec() method.  This allows them to be run in the GUI tests as well.
+        * The execute_uf() method is now private.
+        * Added all of the N-state model system tests as GUI tests.
+        * Modified the GUI tests so that they can operate in the same way as the system tests.  Now entire test suite classes can be executed in isolation by typing, for example: "$ relax --gui-test N_state_model".
+        * Converted all of the N-state model scripts to use the new self._execute_uf() interface.
+        * Added some error checking for the system test class execution.  This is for better user feedback for when the user supplied class does not exist.
+        * Entire classes of system tests can now executed.  Rather than running the entire system test suite or individual tests, the system tests can now be run by class.  For example to execute all of the N-state model system tests, just type: "$ relax -s N_state_model".
+        * Eliminated the self._test_dir test class variable.  The system and GUI tests will now use the same script path.
+        * Modified and renamed the self._execute_uf() method so that it will work with the system test scripts.  The file and directory arguments are now merged, as required by the GUI user function pages.
+        * Converted the bmrb_rw.py system test script to use the new prompt self._execute_uf() method.  The GUI test framework will need slight modification to use this script directly still.
+        * Created a special private method for the prompt/script UIs for executing user functions.  This self._execute_uf() method will be used for the sharing of scripts in the system and GUI tests.
+        * Re-factored the system and GUI tests for code sharing.  The GUI tests now can inherit tests from the system tests.  This is done for the BMRB system tests,both of which now run as GUI tests.  For this, a test class specific script_exec() method has been added.  For the system tests, it passes the system tests script into the interpreter.  For the GUI tests, it executes the script using the function locals so that the GUI test execute_uf() method is accessible.
+        * Created a pair of Python object to GUI string and reverse conversion functions.
+        * Spun out the GUI sting conversion functions from the gui.misc module into the new string_conv module.  This set of functions is now large and diverse enough to justify a separate module, as the remaining three functions of gui.misc have nothing to do with GUI strings.
+        * The Sequence GUI element now better handles single values in the GetValue() method.
+        * The specific_fns get_specific_fn() function now determines the data pipe type, if not supplied.
+        * Improved the value.set user function definitions.
+        * The model-free GUI auto-analysis now sets the default value for the parameter buttons.  The CSA, bond length, proton and heteronucleus type buttons now launch the GUI user function with the default value set.
+        * The Sequence GUI input element can now handle single values passed into SetValue().
+        * The user function page is now updated prior to setting any argument values.  This is necessary for when a value from a pre-defined list is to be selected.  Without the update,the list will be blank and the selection will not work.
+        * The user function GUI objects can now be called with their argument values.  This allows the argument to be set upon page creation.
+        * The auto-generated file and dir selection dialogs now have wildcards and styles.  This is provided through the new 'wiz_filesel_wildcard', 'wiz_filesel_style' and 'wiz_dirsel_style' user function argument arguments which are then passed on to the file and dir selection GUI elements.  All user functions dealing with files and directories have been updated.
+        * Updated the model-free auto-analysis GUI test for the new user function design.
+        * The Value GUI element as a ComboBox can now handle input values which are not in the list.  This allows user functions with the 'wiz_combo_choices' argument argument set and the 'wiz_read_only' arg arg of False to function.  This is for the user to select from a list of pre-defined defaults, or input their own value.
+        * The GUI tests base execute_uf() method now runs all user functions in synchronous mode.  In combination with the previous gui_raise() change, this allows the GUI tests to actually fail when a RelaxError occurs.
+        * The gui_raise() function now simply re-raises the RelaxError when in test mode.  This allows the GUI test to properly fail.
+        * Removed all of the dir user function arguments in the BMRB GUI test.  These need to be part of the file argument, as the file and dir arguments are merged into one GUI file selection element.
+        * The Combo_list GUI input element SetValue() method now handles single values and lists.  This is required for the GUI tests.
+        * The ComboBox data values are now set to the choices in the __init__() method if not given.  This is required by the GUI tests, as the ResetChoices() method which does the same thing has not been called.
+        * Shifted the combo_list GUI element into the gui.input_elements package.
+        * The NOE auto-analysis GUI test has been converted to the new auto-generated user function design.
+        * The NOE auto-analysis peak loading wizard has been converted to the new auto-generated user function design.
+        * The prompt-based interpreter no longer sets the status.prompt_intro flag in the __init__() method.  This flag is now set by the instantiation of the singleton status object.  This prevents multiple calls to the Interpreter.__init__() method overwriting this flag.  This fixes problems in the GUI tests.
+        * The GUI tests base class execute_uf() method will now try to set all keyword arguments.  This allows the user functions with free file format keyword arguments to be operational.
+        * The Combo_list GUI element now handles the wiz_combo_list_min user function argument argument.  If not enough elements are set, Combo_list.GetValue() will return None.  This is caught by the auto-generated GUI user functions on_execute() method, preventing the execution of the user function.
+        * The spectrum.replicated user function back end now checks for lists of None or of 1 element.
+        * Renamed the user function argument argument wiz_combo_list_size to wiz_combo_list_min.  This will be used by the Combo_list object to ensure a minimum length.
+        * The Rx auto-analysis peak loading wizard has been converted to the new auto-generated user function design.
+        * Individual elements of the Sequence and Combo_list GUI element can now be set via the SetValue() method.  The Sequence.SetValue() method now accepts the index arg, and this is passed onto the Combo_list.SetValue() method.  The individual elements of the Sequence element still cannot be set via the index.
+        * The free file format object can now be remotely controlled in the auto-generated user functions.  This allows the test suite to set these values.  For this, a special Free_file_format.SetValue()method was created, and the user function SetValue() method will call this when needed.
+        * Removed the desc_short arguments to the Sequence* GUI input element classes.  These do not exist.
+        * The GUI test base execute_uf() method now only sets an argument if the argument has a corresponding GUI element.
+        * Missing import causing all GUI tests to fail.
+        * Edited all the module docstrings in the user_functions package.
+        * Split up the gui.wizard_elements into a number of modules in the new gui.input_elements package.
+        * The user function GUI page arguments are now updated after execution of the user function.  This allows ComboBox lists to be dynamically updated, and is useful for when the user clicks on 'Apply'.
+        * Created the Free_file_format.GetValue() method for returning a dictionary of arguments.  This abstracts the GUI element's input fields.
+        * Redesigned the set up of the user function arguments in the GUI pages.  The wizard element_*() methods have been removed as these were pointless wrappers.  The Uf_page add_contents() method now builds the argument GUI elements and stores them in the self.uf_args dictionary.  The wizard methods Clear(), GetValue(), ResetChoices() and SetValue() have been shifted into the Uf_page class as these are only for the auto-generated user functions.
+        * More independence for the wizard_elements - the height of the element must now be passed in as an argument.
+        * Started to make the wizard_elements module classes independent of the wizard.  The references to parent._div_left have been eliminated, this is now expected to be passed in by the parent which has that variable as the divider argument.
+        * Converted the Interpreter.script() method into a proper user function.  This pseudo user function was no longer functional after the auto-generation changes.
+        * Redesigned the prompt help system for the auto-generated user functions.  The documentation is closer to the style in the relax manual, including 'Synopsis' and 'Default' sections (i.e. see http://www.nmr-relax.com/manual/value_set.html).
+        * The _build_doc() method now returns the documentation.
+        * Eliminated the build_doc() function as this is no longer used.  The new auto-generated user functions use a variant of this function as the _build_doc() method.
+        * The uf_docstring functions are no longer private.
+        * Renamed the 'base_class' module to 'uf_docstring'.  This module now only contains functions relating to the auto-generated user function docstrings.
+        * Shifted the prompt.base_class._strip_lead() function to relax_string.strip_lead().
+        * Renamed the 'doc_builder' module to 'relax_string'.  This will be used to hold more string related functions used throughout relax.
+        * The status.text_width variable is now used to wrap the user function docstrings.  This is for the prompt help system.
+        * Shifted the prompt ps1, ps2 and ps3 variables into the 'interpreter' module.  This is the only place they are used, so they are better there.
+        * Eliminated the defunct User_fn_class base class.
+        * The Sequence GUI elements now default to not being read-only.
+        * The frq user function class submenu mnemonic is now 'f', conforming to the other user function classes.
+        * Improved the keyboard mnemonics for the user function sub-menus.  There are no longer any clashing letters.
+        * The user function menu has been split in half as it was far too long.
+        * The spin viewer window is now using the new build_uf_menu() function for its menus.
+        * Shifted the user function menu creation into gui.uf_objects.build_uf_menus().  This will allow the code to be reused by the spin viewer window.
+        * The GUI user function storage object now populated itself.  This singleton object is no longer populated from the main GUI object, shifting the auto_generate()method code into the singleton instantiation.  The user function __call__() method not extracts the main window GUI object for use as the parent of the wizards, if a parent is not supplied.
+        * Removed the dependence on the old GUI user function system.  Now the GUI user function storage object is used throughout.
+        * The user function GUI objects can now be called with the 'parent' keyword argument.  This allows a window other than the main relax window to be the parent, preventing the main window from always coming to the front.
+        * Converted all of the GUI code to use the auto-generated user function design and storage object.
+        * The Uf_page.create_page() method now accepts the 'sync' argument for deciding user function operation.
+        * Shifted the user function page creation into the Uf_object.create_page() method.  This will be useful for the creation of the special wizards which are composed of many user function pages strung together.  In this case, the __call__() method which creates and packs the page into a Wiz_window instance can be bypassed.
+        * The Spectral_error_type_page class now inherits from Wiz_page as UF_page has been eliminated.
+        * Eliminated the gui.uf_pages package.  This removes a lot of code and many modules!  This has all been rendered useless by the auto-generated user functions.
+        * Eliminated the old user function menu system.  The auto-generated menu system is now complete, so the old system is now of no use.
+        * Improved the argument description by making it more readable.
+        * Renamed the 'user_functions' module to 'uf_objects'.  This is due to a name clash with the 'user_functions' package.
+        * Renamed the auto-generation user function module from 'objects' to 'user_functions'.
+        * Clean up of the prompt.interpreter module.  This includes the merging of the _auto_generate() method into _setup() and  the clean up of the imports.
+        * Created RelaxValListValError and RelaxNoneValListValError for the arg_check.is_val_or_list() function.
+        * The prompt UI can now handle the user function argument type of 'val_or_list'.
+        * Eliminated the try logic in the arg_check is_*() functions as the raise_error flag can now be used instead.
+        * Created the arg_check.is_val_or_list() function for the value.set user function.  The value argument of this user function is now classified as a 'val_or_list' object, hence this is_val_or_list() replaces the use of is_str_or_num_or_str_num_list().
+        * Clean up of the prompt package __init__ module.
+        * Converted the vmd user functions to the auto-generation design.
+        * Eliminated the view user function as this is ancient dead code.  This user function has essentially remained the same as when it was introduced at r788 back in the 0.3 relax line in October 2003!  It has never actually performed any function and has somehow managed to survive in the source tree unnoticed.
+        * Converted the value user functions to the auto-generation design.
+        * The auto-generated GUI user functions can now handle the 'val_list' argument type.  This is needed for the value.set user function whereby the 'value' argument can be almost anything,either as a single float, int, str, None, etc or as a list.
+        * Converted the temperature user function to the auto-generation design.
+        * Converted the sys_info user function to the auto-generation design.
+        * Converted the structure user functions to the auto-generation design.
+        * Float and int numpy arrays and matrices are now supported for GUI user function arguments.
+        * Converted the spin user functions to the auto-generation design.
+        * The can_be_none value is now propagated into the Combo_list GUI element.
+        * The can_be_none argument is now propagated and stored in the Sequence and Sequence_2D GUI elements.  Some debugging print outs have also been removed.
+        * Converted the spectrum user functions to the auto-generation design.
+        * Added the spectrum.integration_points user function back end so that the auto-generated class can work.  This raises a RelaxImplementError as this is not implemented, but allows the front end to be accessible.
+        * Renamed the results.read and results.write user function 'directory' argument to 'dir'.  This in both the front and back ends.
+        * Shifted the free_file_format GUI element into its own class.  The wizard page free_file_format() method for generating the GUI element has been shifted into the components.free_file_format.Free_file_format class.
+        * Redesigned the free file format window.  The settings module has been renamed to components.free_file_format, as it simply contains the free file format window.  This renaming is in preparation for shifting all of the free file format code into this module to create a special GUI element object for it, rather than being part of the wizard page code base.  The Base_window code has been merged into the Free_file_format_window code, as no other windows use it any more.
+        * Eliminated the ancient unused load_sequence() GUI element.  This was part of the settings menu in the original version of the GUI, but now has no purpose.
+        * Converted the sequence user functions to the auto-generation design.
+        * The model_selection user function now defaults to AIC.
+        * Converted the results user functions to the auto-generation design.
+        * The reset user function is now called in synchronous mode in the GUI.
+        * The user function 'gui_sync' attribute is now passed all the way into the GUI user function objects.
+        * The Uf_container now has the 'gui_sync' variable for switching between asynchronous and synchronous operation.
+        * Converted the reset user function to the auto-generation design.  A fast and dirty wizard graphic was also added for the user function.
+        * Converted the residue user functions to the auto-generation design.
+        * Created an icon for the relax_fit user function class.
+        * Converted the relax_fit user functions to the auto-generation design.
+        * Converted the rdc user functions to the auto-generation design.
+        * Removed the old __docformat__ module variable.
+        * Converted the pcs user functions to the auto-generation design.
+        * Read only arguments as combo boxes can now be set to None, if allowed, in the GUI user functions.  The empty string and None are prepended to the combo box choices and data respectively.
+        * Improved the titles of the Sequence and Sequence_2D GUI element for the user functions.  The 'desc_short' user function argument property is now used to create the title rather than the 'name' value.
+        * The Sequence and Sequence_2D GUI elements can now handle fixed sized sequences.  When the 'dim' Uf_container.add_keyarg() argument is set, then the 'Add' and 'Delete all' buttons are turned off, the ListCtrl sizes are pre-made, and their SetValue() methods no longer append to the list.  This will allow for better user editing of points, vectors, and matrices.
+        * Converted the 'size' user function argument argument to 'dim'.  The name 'dim' better reflects what this is.
+        * Absorbed the user function argument argument 'dim' into 'size'.  This is only used by one user function, structure.rotate, which has not been converted to the auto-generation design yet.  The size argument is perfectly suitable for specifying the matrix dimensions.
+        * The Sequence and Sequence_2D wizard page GUI element buttons now have a tooltip.
+        * The paramag user functions are now using the align_tensor icons and wizard graphics.
+        * Converted the paramag.centre user function to the auto-generation design.
+        * The n_state_model user function menus now use icons.
+        * Created a set of basic icons for the N-state model user functions.
+        * Improved the PyMOL ray-traced n_state_model wizard graphic by ray-tracing to 1000x1400 and shrinking.
+        * Created a wizard graphic for the n_state_model user functions.
+        * Converted the n_state_model user functions to the auto-generation design.  Some of the documentation was updated as it was incorrect.
+        * The integer user function GUI elements which can be None now are simply set to a wx.TextCtrl.  The wx.SpinCtrl used previously was incorrect, as a wx.SpinCtrl only handles integers, always defaulting to the minimum of the control.  Therefore the can_be_none user function argument argument is now propagated into the wizard page Value, Sequence and Sequence_2D elements (though they are not functional in the Sequence* classes yet).
+        * The wx.SpinCtrl used in the Value wizard page element is now fail-safe.  The code now catches min and max values of None, and does not set the initial value so that a default value of None does not break the wx element.
+        * The min and max arguments now default to 0 and 1000 for the Uf_container.add_keyarg() method.
+        * Improved the frame_order relax icons.
+        * Increased the content of icons in the auto-generated user function menus.
+        * Improved the relax noe icons by modifying the wizard SVG file.
+        * Converted the noe user functions to the auto-generation design.  The noe wizard graphic has been converted into icons for the menus.
+        * Created the generic_fns.spectrum.get_ids() function for returning all current spectrum IDs.  This will be used by the noe.read_intensities user function.
+        * Increased the icon content in the auto-generated user function menu.
+        * Added the archive-extract Oxygen icon.
+        * Added the document-edit Oxygen icons.
+        * Added all sizes of the dialog-ok and dialog-ok-apply Oxygen icons.
+        * The user function arguments can now have minimum and maximum values for integers specified.  The min and max arguments can now be given,and these are then propagated all the way to the GUI elements.  For the Sequence and Sequence_2D elements this has no effect yet as they do not implement wx.SpinCtrl elements.
+        * Eliminated the 'prune' argument to the monte_carlo.error_analysis user function.  This will never be used again, and might tempt some users into changing the value and damaging their analysis!
+        * Created a wizard graphic for the monte_carlo user functions from the oxygen 'actions/roll' icon.
+        * Converted the monte_carlo user functions to the auto-generation design.
+        * Added the 'roll' Oxygen icon and a blue coloured version for use in the monte_carlo menus.
+        * Created an icon representing frequency.  This is being used by a number of user functions and classes.
+        * Created an icons for the jw_mapping user function class.
+        * The model-free user function class now has a menu icon.
+        * Converted the molecule user functions to the auto-generation design.
+        * Created a basic icon set for the model-free theory.
+        * The failure of the user function page on_display() method now prevents the wizard from being displayed.
+        * The Uf_page.on_display() method now gracefully handles RelaxErrors from the user function argument iterators.  This now catches the error and uses gui_raise to report to the user.
+        * The Uf_container object can now have the 'desc' variable set multiple times.  This allows for molecule user functions where the generic_fns.mol_res_spin.ALLOWED_MOL_TYPES list values are appended to the description.
+        * Big improvements for the Combo_list GUI element.  The client data is now set and returned instead of the string values, allowing for more descriptive choices.  The SetValue() method has been implemented.  And floats and ints are now supported as data types.
+        * Converted the model_free user functions to the auto-generation design.
+        * The consistency_tests.set_frq and jw_mapping.set_frq have been synchronised.  These perform exactly the same purpose, and have been made almost identical.
+        * Improved the jw_mapping.set_frq wizard page size.
+        * Refinement of the jw_mapping.set_frq user function.  The wizard page now shows a read only ComboBox of the allowed spectrometer frequencies, so that the user does not need to input the exact value.  The descriptions have also been improved.
+        * Created the generic_fns.frq.get_values() function for returning a list of unique spectrometer frqs.
+        * Improved the relax_data.read user function docs to stress the importance of frequency.
+        * Converted the jw_mapping user functions to the auto-generation design.
+        * Improvements for the consistency_tests.set_frq user function descriptions.
+        * The select.spin and deselect.spin user function arguments spin_id can be None.
+        * Removed the leading whitespace from the colour module documentation variables.
+        * All leading whitespace is stripped from the docs before creating the auto-generated user function description.  The detection of the end of the table has also been simplified, as stripping the whitespace broke the logic.
+        * The simple Value wizard page element default for an integer is now a wx.SpinCtrl.  If the element_type argument is set to 'default' and the data type is integer, then a wx.SpinCtrl will be used.
+        * The align_tensor.init param_types argument is now a ComboBox with the choices in the GUI.
+        * The generic_fns.grace.get_data_types() function is even more fail proof.  The return_data_desc() call was sometimes raising a RelaxError when not implemented for certain analyses.
+        * Converted the grace user functions to the auto-generation design.  This required created the generic_fns.grace.get_data_types() function for returning the data type descriptions and values for the current data pipe.  This is to replace the code in the old grace user function update_parameters() method so that the data type fields are updated according to the analysis.
+        * The Value.SetValue() method can handle default values when the list is empty.
+        * For the Value wizard page element, the default can be the string or data for a ComboBox now.  If the default is a data value, then this is translated to the string.  This allows the default in the user function data objects to be either the string or data value, removing a source of coding errors.
+        * Converted the frq user functions to the auto-generation design.
+        * Created icons and wizard graphics for the frame_order user functions.
+        * Converted the frame_order user functions to the auto-generation design.
+        * Added error checking to the Uf_container to eliminate typo coding mistakes.  This checks that a variable is not set twice (copy and paste error).
+        * Converted the fix user function to the auto-generation design.  The object-locked and object-unlocked Oxygen icons have been combined to create a wizard graphic for this user function.
+        * Created wizard graphics for the eliminate user function.
+        * Converted the eliminate user function to the auto-generation design.
+        * Function arguments are now ignored as well in the auto-generated GUI user functions.
+        * Created icons and wizard graphics for the auto-generated dx user functions.
+        * Converted the dx user functions to the auto-generation design.  Some of the checks at the prompt level had to be shifted into the back end, where they belong.
+        * The Value wizard page GUI element can now be set to a wx.SpinCtrl.  This is only allowed for integers.
+        * The default file name is now passed all the way into the RelaxFileDialog.  This is for the auto-generated GUI user functions.
+        * Improvements to the Selector_dir wizard page GUI element.  The icon is now for a directory open and not file open, the tooltip is also fixed, and the default value is now passed all the way through.
+        * The auto-generated user functions and classes are now always alphabetically sorted.  The Uf_object.add_class() and Uf_object.add_uf() method now sort the lists at the end.  The data objects are stored in dictionaries to avoid sorting issues.
+        * Created wizard graphics for the select and deselect user function classes.  The spin and spin_grey icons are used for the menus.
+        * Converted the select and deselect user functions to the auto-generation design.  The boolean_doc variable has been shifted from the deleted prompt.select module into the generic_fns.selection module, where it belongs.
+        * The new icon fetching system is now being used for the relax icons in the menus.
+        * The relax Ulysses butterfly icons are now in the icon directory and in all sizes.  The 16x16 icon has also been improved.
+        * Shifted all the gui/images graphics into the graphics/misc directory.  This finally brings in all of the graphics into one place.
+        * Set the state user function class menu icon to the relax icon.
+        * Converted the molmol user function to the auto-generation design.  For this process, the molmol.macro_apply and molmol.macro_write user function colour_start and colour_end arguments had to be split, just as in the pymol user functions.  They previously accepted both a Molmol or X11 colour name or an RGB colour array but are now separate arguments.
+        * Converted the pymol_control user function to the auto-generation design.  For this process, the pymol.macro_apply and pymol.macro_write user function colour_start and colour_end arguments had to be split.  They previously accepted both a Molmol or X11 colour name or an RGB colour array.  Now there are separate arguments for the colour name and RGB colour array.
+        * The Sequence based wizard page GUI elements now return None if the field is empty.  This was previously returning [] or () to the auto-generated user functions when they were expecting None.
+        * The auto-generated user function menu is now correctly sorted.
+        * Converted the model_selection user function to the auto-generation design.
+        * Added graphics for the model_selection user function.
+        * Created icons and wizard graphics for the calc and minimise user functions.
+        * Created icons for the grid_search user function.
+        * Eliminated the wiz_combo_default and combo_default arguments from the GUI auto-generated user functions.  These are now provided by the 'default' argument.
+        * Eliminated the 'wiz_combo_default' user function argument argument.  This argument is duplicative of the 'default' argument.
+        * The default value of the user function arguments is now set in the wizard page elements.  This is for the auto-generated user functions.
+        * Converted the calc, grid_search and minimise user functions to the auto-generation design.  The minimise user function required a lot of work, as the minimise(*args, *kargs) construct is incompatible with the auto-generation design.  As this is hardly used in the field, everything has been converted to specific keyword arguments.  This will have a side benefit of being easier to understand for a user.  The back end was modified accordingly.
+        * The 'additional' sections are now shown before the 'examples' section in the prompt help system.
+        * The user functions without a base class are now supported in the prompt, script, and GUI modes.  This is for the auto-generated user functions not stored in a user function class object.
+        * The 'num_or_num_list' and 'num_or_num_tuple' argument types are now supported in the GUI.  These are for the auto-generated GUI user functions.  The 'num_or_num_tuple' argument type is used for the diffusion_tensor.init user function, for example.
+        * Improvements for the diffusion_tensor.init user function data setup.
+        * Converted the diffusion_tensor user functions to the auto-generation design.  The icons and wizard graphics for these user functions has also been created.
+        * Created icons and wizard graphics for the palmer user functions.
+        * Converted the palmer user functions to the auto-generation design.
+        * The auto-generated user function additional documentation is now used by the prompt UI.  The data was not being passed into the prompt user function objects.
+        * The additional documentation for the auto-generated user functions is now properly processed in the GUI.
+        * Converted the dasha user functions to the auto-generation design.
+        * Added support for the directory selection wizard page element for the auto-generated user functions.  This uses the new Selector_dir GUI element.
+        * Converted the consistency_tests user functions to the auto-generation design.
+        * Converted the angles user functions to the auto-generation design.
+        * Converted the bruker user functions to the auto-generation design.
+        * Converted all of the state user functions to the auto-generation design.
+        * List of lists types are now properly handed by the auto-generated user function in prompt/scripts.
+        * Significantly increased the number of icons used in the auto-generated user function menus.
+        * Added icons and wizard graphics for the align_tensor user functions.
+        * Converted all of the relax_data user functions to the auto-generation design.
+        * The buttons of the Selector_file wizard page element now have better tooltips.  The open button now has a tooltip related to opening.  The preview button has the "Preview" tooltip rather than the element_file_sel tooltip, so that the user knows what the button does.
+        * The wizard description height is now functional in the auto-generated user functions.  The height_desc argument was being overwritten by the base class Wiz_page.__init__() method.
+        * Added support for the free format file settings GUI element to the auto-generated user functions.  The normal argument elements are suppressed if the arg_type arg is set to 'free format', and the free format element will then be added to the end.  The 'data_col' argument is searched for to see if the data elements should be activated.
+        * Created the generic_fns.relax_data.get_ids() function for returning all relaxation data IDs.  This is needed for the auto-generated user functions in the GUI.
+        * The user function argument type of 'num' is now handled as a float in the auto-generated GUI elements.
+        * The wizard height_desc variable can now be set in the auto-generated user functions.  This is via the wizard_height_desc variable.
+        * The user function data object add_class() and add_uf() methods now check for uniqueness.  This is to catch coding errors whereby the user function class or name has been duplicated.
+        * Removed the now useless 'user_functions.functions' module.
+        * The Bmrb.test_bmrb_rw GUI test is now complete and fully uses the new auto-generated user functions.  This test will only pass once all the relevant user functions are converted to the auto-generation design.
+        * The 2D sequence arguments of the auto-generated GUI user functions now matches the normal sequence elements.  The String_list_of_lists_window has been converted to Sequence_window_2D which inherits from Sequence_window.  All Python types and sequences supported by the Sequence GUI element are now supported by the Sequence_2D element (which is the old String_list_of_lists).
+        * Converted all of the align_tensor user functions to the auto-generation design.
+        * Merged all of the sequence wizard page GUI elements into one.  This is to significantly simplify the code.
+        * Added GUI conversion functions for tuples.
+        * Better checking of the contents of the GUI element by Value.GetValue().
+        * Merged the Base_value, Float, Integer, and String wizard elements together into the single Value class.  This simplifies the code, as the differences between them was very minor.
+        * Floats and tuples of numbers are now supported by the user function GUI argument elements.
+        * The align_tensor.display user function backend argument is now a keyword argument.  This is for supporting the auto-generated user functions.
+        * Created the align_tensor.get_ids() method for use in the GUI wizards.  This will be required for the auto-generated user function GUI front ends.
+        * The pipe.copy pipe_from wizard element is now read only.
+        * The user function intro is now printed out before the argument checking.  This is for better user feedback.
+        * The pipe editor window now uses the auto-generated pipe user function GUI objects.
+        * The user function backend and title values are now enforced.  If these are not set, a RelaxError is thrown.  This should avoid fatal coding accidents.
+        * Converted all of the brmb user functions to the new user function design.
+        * All of the exp_info user functions now check for the presence of the cdp.  This allows for better user feedback.
+        * The default list element now defaults to read only, whereas the Combo_list object defaults to not read only.
+        * The List objects can now handle bad user input.
+        * The wiz_read_only flag now defaults to None, to allow the GUI elements to decide the best option.
+        * The read_only flag now is fully functional in the String_list wizard page element.
+        * The wiz_read_only user function flag is now propagated into the String_list GUI elements.
+        * The Combo_list GUI element can now handle an initial size of None, converting this to 1.
+        * The list wizard GUI elements no longer show empty lists.
+        * The Base_value class can now accept the element_type argument value of 'default'.  This will then use the TextCtrl.
+        * The add_keyarg() wiz_element_type argument default is now 'default' to be able to handle all element types.  The previous default of 'text' for a TextCtrl was causing failures with certain wizard GUI elements.
+        * The relax controller is now shown for the auto-generated GUI user functions if 'display' is set.  This is the 'display' variable in the user function data store.  This allows all the user functions which print to STDOUT to pop up the controller in front of the user, so they see the result.
+        * The user function data structure now accepts the 'display' boolean variable.  This is used to indicate that a user function would like to display some output to STDOUT.
+        * All of the user function argument arguments are now handled by the add_keyarg() method.
+        * All of the argument checking types are now supported for the auto-generated user functions.  This covers every type of arg_check.is_*() function used in relax.
+        * Boolean argument types are now supported by the auto-generated GUI user functions.  The Selector_bool object and element_bool() wizard page method have been written for this.
+        * The can_be_none user function argument argument is now used.  This is needed for proper argument checking in the auto-generated user functions.
+        * The wizard page GetValue() method now returns None if the corresponding key is missing.  This is needed for the directory arguments as these are not shown in the GUI.
+        * Improvements to the element_file_sel() wizard page method.
+        * Created the special Selector_file wizard element object.  This is modelled on the file_selector() wizard page method.
+        * Created the element_dir_sel() and element_file_sel() wizard page methods.  This will require the selector objects to be written.
+        * The auto-generated GUI user functions objects now support the special UI types.  This includes the file and dir selection dialogs, and skipping the dir arguments.
+        * The arg_type argument for the auto-generated user functions is now accepted.  This will be used to allow special UI elements to be used for the argument, for example a file selection dialog.
+        * Integers and string list of lists are now accepted by the auto-generated GUI user functions.
+        * Expanded the wizard page element_int() method to accept all the arguments of element_string().  All these arguments will be handled properly by the Integer class as this derives from Base_value.
+        * The list_titles argument is now accepted for the auto-generated user functions.  This is for a list of lists, and are the titles for the lists.
+        * The auto-generated Uf_page.add_contents() method now raises a RelaxError if the Python type is unknown.
+        * The menu_text variable now defaults to '' so that the GUI does not die if this is not set.
+        * Removed the wiz_desc arguments from the pipe user functions.
+        * Eliminated the wiz_desc argument in the auto-generated user functions.  Now the desc_short argument will be used instead for the GUI user function elements.
+        * The desc_short rather than wiz_desc argument is now used for the GUI elements.  This is for the auto-generated user functions.
+        * The wiz_desc argument is no longer compulsory for the auto-generated user functions.  This will eventually be merged with the desc_short argument anyway.
+        * The GUI test execute_uf() base method now operates with the auto-generated user functions.
+        * Advancements for the auto-generated GUI user functions.  String list GUI elements are now supported.  The wizard element are now updated on display, allowing for example the current set of data pipes to be displayed in the ComboBoxes of the pipe user functions.
+        * The List and Combo_list class now have ResetChoices() methods.  This allows these elements to fit with the auto-generated GUI user functions.
+        * Big set of changes enabling the auto-generation of the GUI user function front ends.  This will create user function objects which are bound to the menu items, and the user function page objects automatically from the user_function data object.  The pipe user functions have been updated to supply the needed data, and additional arguments have been added to the Uf_container.add_keyarg() method.  The Uf_container object can now accept additional wizard related variables.
+        * The graphics package image variables are now imported into the paths module.  This is for backwards compatibility with the old user function pages.
+        * Shifted a number of the image path variables from the gui.paths module to the graphics package.
+        * The user function GUI menu item is now being auto-generated.  This will require future work to support user functions not within a user function class.
+        * The graphics.fetch_icon() function now returns None if no icon is specified.
+        * Created the graphics.fetch_icon() function for a better API for the icon paths.  This will eventually replace the gui.paths module.
+        * The graphics directory has been converted into a Python package.  This will be used to store special functions related to graphics manipulation, retrieval, etc.
+        * Renamed the gui.user_functions package to gui.uf_pages to avoid import clashes.  This package was clashing with the base user_functions package, breaking imports everywhere.
+        * Started to write the auto-generated user function GUI menu.
+        * Created methods for returning user function and class data objects from the user function data object.  These are called get_class() and get_uf().
+        * The auto-generated prompt user function front end objects are now executable.  The uf.backend variable is now the executable Python object.  The pipe user function class has been updated for the uf.backend change.
+        * Implemented the missing back end of the pipe.current user function!
+        * Expanded and fixed the argument checking for the prompt auto-generated user function front ends.
+        * The auto-generated prompt user function front ends now convert arguments to keyword arguments.  This is important as a keyword argument can be supplied without the keyword in Python.
+        * Removed the last reference to the eliminated Exec_info prompt object.
+        * Clean up of the prompt intro strings for the auto-generated user functions.
+        * The prompt intro strings are now created for the auto-generated user functions.
+        * Absorbed the Exec_info prompt object into the relax status singleton and eliminated it.  The prompt strings are now prompt.base_class module variables, and the current ones are stored in the status object.  The user function intro flag is now stored in status.prompt_intro.  The prompt_colour_on() and prompt_colour_off() methods are now methods of the interpreter class.  Now that the Exec_info class no longer exists, the Basic_class class has also no purpose and has been eliminated.
+        * The prompt help system now uses bold text for the title line and all subtitles.  The subtitle underlines are now not used, but the ability to underline is retained.
+        * The relax prompt help system is now being passed through pydoc.pager to page the text.  This system will be used by the auto-generated user functions.
+        * The documentation for the auto-generated user functions is now being created.  This is stored in the __relax_help__ string, and mimics the old system, reusing many of the base functions.  All the user function data required for the prompt interface is now being passed in to the object.
+        * Renamed the private _args variable to the non-private kargs.
+        * The user function object now has a __repr__ method to give better feedback to the user.
+        * Primitive auto-generation of the user functions.  This simply creates an object for the user function, but it is not callable yet or uses any of the user function data.
+        * Modified the pipe user function class description.
+        * The __description__ attribute from the old help system is now supported in the auto-generated classes.
+        * The new auto-generated user function classes now fit into the prompt help system.
+        * Documented the prompt-based help system _Helper.__call__() method.
+        * The auto-generated user class object now accepts the desc argument and stores it for use in the help system.
+        * Added a __repr__ method to the user function class objects for presenting a better message to users.
+        * Added the prompt.objects module which contains the user function auto-generation objects.
+        * The interpreter now auto-generates the user function classes.
+        * Modified the Class_container class to be more like the Uf_container class.
+        * Added two iterator methods for looping over the user functions and classes.  These are class_loop() and uf_loop().
+        * The user function container arguments variable is now private and modifiable.  It needs to be modifiable so the __init__ method can initialise it.
+        * Clean up of the pipe module (removal of useless imports and syntax fixes).
+        * The pipe module is now imported in the __init__ module to set up the data structures.
+        * The user function data object is now imported into the interpreter.
+        * Added the desc_short argument to the add_keyarg() user function container method.  This argument is used in RelaxErrors for when incorrect parameter are supplied.
+        * Converted the entire of the 'pipe' module to populate the user function data structure.
+        * Big improvements to the user function data container.  The changes are:  More attributes are now accepted; now only allowed attributes can be modified, to prevent programming errors; docstring improvements; and more keyword argument data can be input.
+        * Shifted a check from the pipe.create front end to the back end.  Tests do not belong in the front end!  And this is not compatible with the new user function design.
+        * Removed the pipe user function class import and instantiation from the interpreter object.  This will be re-introduced later with a new auto-generation architecture, taking the info from the user_function data object.
+        * Shifted the pipe module from the prompt to user_functions package.  This is in preparation for the full conversion of this user function class into the new auto-generation design.
+        * Added a unit test for the contents of the user_function package.
+        * The unit test _user_functions package is now actually a package.
+        * Created a unit test package for the user_function package.
+        * Shifted the Uf_info singleton into the new user_functions.data module.  This will avoid a lot of circular imports.
+        * Created a module for setting up all of the user function data.  This is just a test, so probably will not be permanent.
+        * Created the Uf_info singleton class for holding all of user function data.
+        * Created a number of special objects for the user function data storage.
+        * Created the user_functions package.
+
+
+    Bugfixes:
+        * Fixes for the bmrb.write backend - the generic_fns.exp_info module should be used rather than the cdp.  The abstraction via the generic_fns.exp_info module is needed to make sure all the relevant current data pipe structures are set up.
+        * Fix for the bmrb.display user function - this user function never worked as pystarlib expects a file path as a string, but a modification of pystarlib fixes this.
+        * Fix for the model-free about dialog - the fonts for the different titles can now be set.  The new font.roman_font_18 has been added, and the about dialog draw_title() method now takes the alt_font arg for specifying an alternative font.
+        * Bug fix for the model-free specific analysis duplicate_data() method - the cdp.exp_info should be skipped.  This was not picked up before as this structure is normally non-existent during the analysis.
+        * Fix for the Bruker system tests - the NMR proton frequency is in Hz, not MHz.
+        * Fix for the GUI for when a script is launched from the command line - the analysis tabs are now updated at the end of the __init__() method, and the ds.relax_gui data store object is no longer overwritten if it already exists.
+        * Bug fix for running a script when launching the GUI.  This was completely failing but now the script is executed prior to the launching of the GUI.
+        * Bug fix for the generic_fns.spectrum.replicated_ids() function for when no replicates exist.  This will now return an empty list instead of an error being raised.
+        * Fix for the spectrum.read user function - a RelaxError is now raised if the file name is not given.  This is important for the GUI to prevent unintelligible errors to be presented to the user.
+        * Fix for the experimental information in the relax data store - the information can now be reset.
+        * Bug fix - the 'relax --version' print out now works from any directory.  This was only working if relax was being run from the installation directory!
+        * Fix for the prompt and script UI user function intro printouts.  This text is no longer passed through the format_text() function which has problems with newline characters.
+        * Fixes for the GUI tests tearDown() method.  All wx events are now flushed before the deletion of GUI elements.
+        * The pipe.delete user function now operates synchronously in the GUI to avoid the GUI blowing up!
+        * The user function pages are now registered and unregistered with the 'gui_uf' observer object.  This allows the ComboBox args to be properly updated with asynchronous user function calls.  The old update method suffered from racing and hence often updated before the user function had executed.  Now the on_display() method registers the GUI user function page update_args() method, and the on_next() method unregisters it, allowing the observer to update the page only when it is visible to the user.
+        * Fix for the GUI tests - the ds.tmpfile string is now being created by the base setUp() method.  This is needed to stop files from being created within the relax directory tree.
+        * Bug fix for the model-free specific analysis - the Dr diffusion tensor parameter is now defined.
+        * Fix for the arg_check.is_float_matrix() function for rank-1 arrays.  The function failed on lists of Python values, for example a list of bools.  An additional check has been added to make sure that the list elements are also lists.
+        * The delete all analysis method now does what it warns and resets relax at the end.
+        * Fix for the model-free GUI auto-analysis test under certain conditions.  The spin viewer window was loading the spins asynchronously, but the subsequent relaxation data loading was synchronous.  If a previous GUI test failed this would often trigger a racing condition.
+        * Mac OS X bug fix for the non-read only ComboBox GUI input elements.  This is for the Value and Combo_list GUI input elements.  The problem was two-fold.  First the convert_to_gui() call was required to convert the value to a unicode string, as a normal string will be not be set via the ComboBox.SetValue() method.  Secondly old selections need to be turned off.  On other operating systems, the SetValue() call will reset this - but not on Macs.
+        * Mac OS X bug fixes for the GUI ComboBox input elements.  The ComboBox.GetClientData() method on Mac OS X fails if the ComboBox.GetSelection() method returns -1 (or wx.NOT_FOUND).
+        * Bug fix for all of the specific analysis code.  The SPIN_PARAM and GLOBAL_PARAM structures are now initialised within the __init__() methods rather than being class variables.  This bug was only uncovered by the auto-generated user functions.  The problem with them being class variables of the base class is that the objects are then the same for all specific analyses.
+        * Fixed the N-state model description so that it is no longer about domain motions.  This stands out in the GUI when creating data pipes!
+        * The GUI user function on_execute() method no longer shows the controller in test suite mode.  The controller Raise() method was being called at the end of the method, without checking status.show_gui.
+        * Fix for the pipe editor - this window is now the parent for the user functions it calls.  Therefore the pipe editor no longer disappears behind the main relax window.
+        * Fix for two of the arg_check.is_*() fns - the individual elements were incorrectly checked.
+        * Bug fix for the Combo_list.GetValue() method - it can now handle no user input cleanly.
+        * Fix for the Analysis_controller.on_page_changed() method for reset events.  The relax data store now always has a ds.relax_gui object!
+        * Fix for the post_reset() method of the Analysis_controller object.  This unregisters all the analyses from the observer objects, and calls the set_init_state() method only once all analysis pages are deleted.  This in combination with the synchronous reset user function calling prevents the GUI from blowing up!
+        * Fix for the gui.misc.gui_to_tuple() function.  This was failing in many cases, especially where the value is not a tuple to start with.
+
+
+
 Version 1.3.16
 (11 May 2012, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.16
