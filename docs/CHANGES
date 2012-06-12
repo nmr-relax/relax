@@ -26,6 +26,11 @@ http://svn.gna.org/svn/relax/tags/2.0.0
 
 
     Changes:
+        * Spun out the automatic column width formatting code from relax_io.write_spin_data() to write_data().
+        * Used some colour for the relax GUI terminating print out asking for citations.
+        * The completion of the test suite in the GUI mode now sets the controller main gauge to 100%.
+        * Added checks to the BMRB export to make sure all necessary data has been input.  If not, then the Missing_data dialog will be presented to the user to explain what is required.
+        * The Missing_data dialog can now have the parent wx element specified.  This is needed when launched from a child window such as the BMRB export window.
         * Improved the robustness of the bmrb.write user function for missing data - this is in the generic_fns.diffusion_tensor.bmrb_write() function, and is for missing atomic information required for the Tensor_list saveframe.
         * The bmrb.read user function is now reading in all of the relaxation data metadata into the data store.
         * Improved the robustness of the bmrb.write user function for missing data - this is in the generic_fns.relax_data.bmrb_write() function, and is for missing atomic information related to relaxation data.
@@ -618,6 +623,12 @@ http://svn.gna.org/svn/relax/tags/2.0.0
         * Created the Uf_info singleton class for holding all of user function data.
         * Created a number of special objects for the user function data storage.
         * Created the user_functions package.
+        * Added checks for the proton frq for the relax_data.read and relax_data.back_calc user functions - if the frequency is not exact or is less than 1 MHz, warnings are now given to the user.
+        * Made the bond vector extraction print out from structure.vectors more informative.
+        * Created a sample script for BMRB data deposition.
+        * The relax data store is_empty() method now only prints to STDERR if the verbosity flag is set.
+        * Changed the behaviour of the generate_spin_id() and generate_spin_id_data_array() functions.  This is a large change affecting many parts of the code base.  The problem that this solves is the incorrect usage of the '&' character in spin IDs, tripping up on the powerful Selection object of Chris MacRaild.  For example, the spin ID ':2&:Glu' cannot be correctly handled.  This actually matches all residues with the number 2, and all residues with the name 'Glu'.
+        * The scons 'clean' target now removes *.pyo files as well.
 
 
     Bugfixes:
@@ -652,6 +663,13 @@ http://svn.gna.org/svn/relax/tags/2.0.0
         * Fix for the Analysis_controller.on_page_changed() method for reset events.  The relax data store now always has a ds.relax_gui object!
         * Fix for the post_reset() method of the Analysis_controller object.  This unregisters all the analyses from the observer objects, and calls the set_init_state() method only once all analysis pages are deleted.  This in combination with the synchronous reset user function calling prevents the GUI from blowing up!
         * Fix for the gui.misc.gui_to_tuple() function.  This was failing in many cases, especially where the value is not a tuple to start with.
+        * Bug fix for the bruker.read user function for reading Bruker Dynamics Centre files - the spectrometer frequency needs to be converted from MHz to Hz.
+        * Bug fix for the loading of the molecule name and type from relax state or results files.  The str() builtin function is now used to convert the string from unicode to a normal string.  This is needed as u'My mol' != 'My mol', breaking a number of tests.
+        * The relax_data.delete user function is now finally properly implemented (bug #19785, https://gna.org/bugs/?19785).
+        * The model-free minimisation is now checking for multiple vectors per spin, and raises a RelaxError.
+        * Fix for the relax controller SplitIO() setup for logging and teeing modes.  The SplitIO() usage is now disabled for the test suite.  This prevents a doubling of the print outs in the GUI tests.  The problem was introduced at r15843 with the accommodation for the logging and teeing modes with the GUI.
+        * Created a system test Mol_res_spin.test_residue_delete() demonstrating a failure of the user function - deleting the first residue removes the entire sequence.
+        * Fixes for most of the structure user functions - the pipe check is now performed at the start.
 
 
 
