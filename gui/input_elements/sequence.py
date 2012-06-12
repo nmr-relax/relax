@@ -24,6 +24,7 @@
 """Module containing a set of special GUI elements to be used in the relax wizards."""
 
 # Python module imports.
+from string import upper
 import wx
 import wx.lib.mixins.listctrl
 
@@ -360,6 +361,23 @@ class Sequence:
 
         # Destroy the window.
         del win
+
+
+
+class Sequence_list_ctrl(wx.ListCtrl, wx.lib.mixins.listctrl.TextEditMixin, wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin):
+    """The string list ListCtrl object."""
+
+    def __init__(self, parent):
+        """Initialise the control.
+
+        @param parent:  The parent window.
+        @type parent:   wx.Frame instance
+        """
+
+        # Execute the parent __init__() methods.
+        wx.ListCtrl.__init__(self, parent, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT|wx.LC_HRULES|wx.LC_VRULES)
+        wx.lib.mixins.listctrl.TextEditMixin.__init__(self)
+        wx.lib.mixins.listctrl.ListCtrlAutoWidthMixin.__init__(self)
 
 
 
