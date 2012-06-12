@@ -399,7 +399,8 @@ def pipe_names(bundle=None):
 
     # Initialise.
     names = []
-    pipes = sorted(ds.keys())
+    pipes = ds.keys()
+    pipes.sort()
 
     # Loop over the pipes.
     for pipe in pipes:
