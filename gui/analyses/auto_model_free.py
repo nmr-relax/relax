@@ -25,6 +25,7 @@
 """Module for the automatic model-free protocol frame."""
 
 # Python module imports.
+from math import ceil
 from os import sep
 import sys
 import wx
@@ -125,9 +126,18 @@ class About_window(About_base):
                 if i < len(dauvergne_protocol.doc) and dauvergne_protocol.doc[i+1][0] == PARAGRAPH:
                     self.offset(10)
 
+        # Add space to the bottom.
+        self.offset(self.border)
+
+        # Round the offset up to the nearest factor of 20 (needed for scrolling for at least GTK+).
+        y = self.offset()
+        self.offset(-y)
+        y = int(ceil(y/20.) * 20)
+        self.offset(y)
+
         # Resize the window.
         dim_x = self.dim_x
-        virt_y = self.offset() + self.border
+        virt_y = self.offset()
         self.SetSize((dim_x, self.dim_y))
         self.window.SetVirtualSize((dim_x, virt_y))
         self.window.EnableScrolling(x_scrolling=False, y_scrolling=True)
