@@ -166,18 +166,22 @@ class About_base(wx.Frame):
 
         # Debugging lines.
         if status.debug:
+            # Set the font.
+            self.dc.SetFont(wx.Font(8, wx.FONTFAMILY_SCRIPT, wx.NORMAL, wx.NORMAL))
+
+            # The virtual size.
+            self.dc.DrawText("Virt size: %sx%s" % (self.virt_x, self.virt_y), 2, 2)
+
             # Cross.
             self.dc.DrawLine(0, 0, self.virt_x, self.virt_y)
             self.dc.DrawLine(self.virt_x, 0, 0, self.virt_y)
 
-            # Lines every 200 pixels.
-            num = self.virt_y / 200
-            for i in range(num):
-                pos = i * 200
+            # Lines every 100 pixels.
+            num = self.virt_y / 100
+            for i in range(num+1):
+                pos = i * 100
                 self.dc.DrawLine(0, pos, self.virt_x, pos) 
-                self.dc.SetFont(wx.Font(8, wx.FONTFAMILY_SCRIPT, wx.NORMAL, wx.NORMAL))
                 self.dc.DrawText(str(pos), self.virt_x-40, pos-10)
-
 
         # Build the rest of the about widget.
         self.build_widget()
