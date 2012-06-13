@@ -115,6 +115,28 @@ def add_border(box, border=0, packing=wx.VERTICAL, debug=False):
     return sizer_cent
 
 
+def bitmap_setup(path):
+    """Build and return the bitmap, handling transparency for all operating systems.
+
+    This function is required to handle alpha in bitmap on MS Windows so that regions with partial transparency are not blended into the default dark grey colour of Windows' windows.
+
+    @param path:    The absolute path to the bitmap image.
+    @type path:     str
+    @return:        The processed bitmap object.
+    @rtype:         wx.Bitmap instance
+    """
+
+    # Create the bitmap object.
+    bitmap = wx.Bitmap(path, wx.BITMAP_TYPE_ANY)
+
+    # Unset the mask if an alpha mask is detected.
+    if bitmap.HasAlpha():
+        bitmap.SetMaskColour(None)
+
+    # Return the bitmap object.
+    return bitmap
+
+
 def format_table(table):
     """Format the text by stripping whitespace.
 

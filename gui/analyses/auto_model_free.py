@@ -51,7 +51,7 @@ from gui.components.relax_data import Relax_data_list
 from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
-from gui.misc import add_border, protected_exec
+from gui.misc import add_border, bitmap_setup, protected_exec
 from gui import paths
 from gui.string_conv import gui_to_int, gui_to_str, list_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
@@ -447,7 +447,7 @@ class Auto_model_free(Base_analysis):
         # Add the model-free bitmap picture.
         for i in range(len(bitmaps)):
             # The bitmap.
-            bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
+            bitmap = wx.StaticBitmap(self, -1, bitmap_setup(bitmaps[i]))
 
             # Add it.
             left_box.Add(bitmap, 0, wx.ALL, 0)

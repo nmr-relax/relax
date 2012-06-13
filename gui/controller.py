@@ -39,7 +39,7 @@ from status import Status; status = Status()
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border
+from gui.misc import add_border, bitmap_setup
 from gui.paths import IMAGE_PATH, icon_16x16
 from gui.string_conv import str_to_gui
 from info import Info_box
@@ -185,7 +185,7 @@ class Controller(wx.Frame):
         """
 
         # The logo.
-        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, bitmap_setup(IMAGE_PATH+'relax.gif'))
 
         # Add the relax logo.
         sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)

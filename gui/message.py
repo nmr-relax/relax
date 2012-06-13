@@ -34,6 +34,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.fonts import font
 from gui.icons import relax_icons
+from gui.misc import bitmap_setup
 from gui.paths import IMAGE_PATH, icon_22x22, icon_48x48
 import gui
 
@@ -92,7 +93,7 @@ class Missing_data(wx.Dialog):
         sizer = gui.misc.add_border(main_sizer, border=10, packing=wx.HORIZONTAL)
 
         # Add the graphic.
-        bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(icon_48x48.user_busy, wx.BITMAP_TYPE_ANY))
+        bitmap = wx.StaticBitmap(self, -1, bitmap_setup(icon_48x48.user_busy))
         sizer.Add(bitmap)
 
         # Spacing.
@@ -182,7 +183,7 @@ class Question(wx.Dialog):
         sizer = gui.misc.add_border(main_sizer, border=self.border, packing=wx.HORIZONTAL)
 
         # Add the graphic.
-        bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(icon_48x48.dialog_warning_relax, wx.BITMAP_TYPE_ANY))
+        bitmap = wx.StaticBitmap(self, -1, bitmap_setup(icon_48x48.dialog_warning_relax))
         sizer.Add(bitmap)
 
         # Spacing.
