@@ -129,10 +129,11 @@ class About_window(About_base):
         # Add space to the bottom.
         self.offset(self.border)
 
-        # Round the offset up to the nearest factor of 20 (needed for scrolling for at least GTK+).
+        # Round the offset up to the nearest factor of the scroll inc (needed for all scrolling).
+        scroll_x, scroll_y = self.window.GetScrollPixelsPerUnit()
         y = self.offset()
         self.offset(-y)
-        y = int(ceil(y/20.) * 20)
+        y = int(ceil(y/float(scroll_y)) * scroll_y)
         self.offset(y)
 
         # Resize the window.
