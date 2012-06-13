@@ -95,13 +95,11 @@ class About_base(wx.Frame):
         # Set the window size.
         self.SetSize((self.virt_x, self.dim_y))
 
-        # Set the window virtual size.
-        self.window.SetVirtualSize((self.virt_x, self.virt_y))
-
         # Add y scrolling, if needed.
         self.window.SetScrollRate(0, self.SCROLL_RATE)
 
-        # Create the buffered device context.
+        # Create the buffered device context twice (to determine the real virtual size!).
+        self.create_buffered_dc()
         self.create_buffered_dc()
 
         # Add HTML content.
@@ -185,6 +183,10 @@ class About_base(wx.Frame):
 
         # Build the rest of the about widget.
         self.build_widget()
+
+        # Re-calculate the virtual size, and reset the offset.
+        self.virt_y = self.offset()
+        self.offset(-self.virt_y)
 
         # Finish.
         self.dc.EndDrawing()
@@ -530,6 +532,9 @@ class About_relax(About_base):
         self.SetSize((dim_x, dim_y))
         self.window.SetVirtualSize((dim_x, dim_y))
         self.window.EnableScrolling(x_scrolling=False, y_scrolling=False)
+
+        # Add space to the bottom.
+        self.offset(self.border)
 
 
     def draw_copyright(self):
