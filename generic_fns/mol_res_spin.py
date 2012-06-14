@@ -2363,7 +2363,41 @@ def return_residue(selection=None, pipe=None, indices=False):
         return res_container
 
 
-def return_spin(selection=None, pipe=None, full_info=False):
+def return_spin(spin_id=None, pipe=None, full_info=False):
+    """Return the spin data container corresponding to the given spin ID string.
+
+    @keyword spin_id:   The unique spin ID string.
+    @type spin_id:      str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
+    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # No spin ID, so switch to selection matching.
+    if not dp.mol.lookup_table.has_key(spin_id):
+        return return_spin_from_selection(selection=spin_id, pipe=pipe, full_info=full_info)
+
+    # The indices from the look up table.
+    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
+
+    # Return the data.
+    if full_info:
+        return dp.mol[mol_index].name, dp.mol[mol_index].res[res_index].num, dp.mol[mol_index].res[res_index].name, dp.mol[mol_index].res[res_index].spin[spin_index]
+    else:
+        return dp.mol[mol_index].res[res_index].spin[spin_index]
+
+
+def return_spin_from_selection(selection=None, pipe=None, full_info=False):
     """Function for returning the spin data container of the given selection.
 
     If more than one selection is given, then the boolean AND operation will be used to pull out the spin.
@@ -2430,41 +2464,6 @@ def return_spin(selection=None, pipe=None, full_info=False):
         return mol_container.name, res_container.num, res_container.name, spin_container
     else:
         return spin_container
-
-
-def return_spin_from_id(spin_id=None, pipe=None, full_info=False):
-    """Return the spin data container corresponding to the given spin ID string.
-
-    @keyword spin_id:   The unique spin ID string.
-    @type spin_id:      str
-    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
-    @type pipe:         str
-    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
-    @type full_info:    boolean
-    @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
-    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
-    """
-
-    # The data pipe.
-    if pipe == None:
-        pipe = pipes.cdp_name()
-
-    # Get the data pipe.
-    dp = pipes.get_pipe(pipe)
-
-    # No spin ID, so switch to selection matching.
-    if not dp.mol.lookup_table.has_key(spin_id):
-        return return_spin_from_selection(selection=spin_id, pipe=pipe, full_info=full_info)
-
-    # The indices from the look up table.
-    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
-
-    # Return the data.
-    if full_info:
-        return dp.mol[mol_index].name, dp.mol[mol_index].res[res_index].num, dp.mol[mol_index].res[res_index].name, dp.mol[mol_index].res[res_index].spin[spin_index]
-    else:
-        return dp.mol[mol_index].res[res_index].spin[spin_index]
-
 
 
 def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):

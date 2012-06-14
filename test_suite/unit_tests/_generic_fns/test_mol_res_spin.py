@@ -1150,10 +1150,10 @@ class Test_mol_res_spin(UnitTestCase):
 
         # Ask for a few spins.
         spin1 = mol_res_spin.return_spin(':1')
-        spin2 = mol_res_spin.return_spin(selection=':2')
-        spin3 = mol_res_spin.return_spin(selection=':4', pipe='orig')
-        spin4 = mol_res_spin.return_spin(selection='#RNA:-5@N5', pipe='orig')
-        spin5 = mol_res_spin.return_spin(selection=':-4@2H', pipe='orig')
+        spin2 = mol_res_spin.return_spin(spin_id=':2')
+        spin3 = mol_res_spin.return_spin(spin_id=':4', pipe='orig')
+        spin4 = mol_res_spin.return_spin(spin_id='#RNA:-5@N5', pipe='orig')
+        spin5 = mol_res_spin.return_spin(spin_id=':-4@2H', pipe='orig')
 
         # Test the data of spin 1.
         self.assertNotEqual(spin1, None)
@@ -1188,7 +1188,7 @@ class Test_mol_res_spin(UnitTestCase):
         """
 
         # Try to get a spin from a missing data pipe.
-        self.assertRaises(RelaxNoPipeError, mol_res_spin.return_spin, selection=':2', pipe='new')
+        self.assertRaises(RelaxNoPipeError, mol_res_spin.return_spin, spin_id=':2', pipe='new')
 
 
     def test_spin_loop(self):
