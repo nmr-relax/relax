@@ -665,6 +665,9 @@ class MoleculeList(list):
         # Add the initial molecule container at index 0.
         self.append(MoleculeContainer())
 
+        # Create a special lookup table for fast spin access.
+        self.lookup_table = {}
+
 
     def __repr__(self):
         """The string representation of the object.
