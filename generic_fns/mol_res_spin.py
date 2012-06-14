@@ -2340,13 +2340,13 @@ def return_residue(selection=None, pipe=None, indices=False):
         mol_index = i
 
         # Loop over the residues.
-        for j in range(len(cdp.mol[i].res)):
+        for j in range(len(dp.mol[i].res)):
             # Skip the residue if there is no match to the selection.
-            if cdp.mol[i].res[j] not in select_obj:
+            if dp.mol[i].res[j] not in select_obj:
                 continue
 
             # Store the residue container and index.
-            res_container = cdp.mol[i].res[j]
+            res_container = dp.mol[i].res[j]
             res_index = j
 
             # Increment the residue number counter.
