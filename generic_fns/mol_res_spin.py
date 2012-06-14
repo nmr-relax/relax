@@ -1150,12 +1150,20 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
-        # Create the molecule and residue if they do not exist.
-        if not return_molecule(generate_spin_id(mol_name=mol_name)):
+        # Create the molecule if it does not exist.
+        mol_index = index_molecule(mol_name)
+        if mol_index == None:
             create_molecule(mol_name=mol_name)
-        res_cont = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
-        if res_cont == None:
-            res_cont = create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
+            mol_index = len(cdp.mol) - 1
+
+        # Create the residue if it does not exist.
+        res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=mol_index)
+        if res_index == None:
+            create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
+            res_index = len(cdp.mol[mol_index].res) - 1
+
+        # Alias the residue.
+        res_cont = cdp.mol[mol_index].res[res_index]
 
         # Rename the spin, if only a single one exists and it is empty.
         if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():
@@ -1167,6 +1175,13 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         else:
             res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
             spin_cont = res_cont.spin[-1]
+
+        # The spin index and id.
+        spin_index = len(res_cont.spin) - 1
+        spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
+        # Add the spin ID and indices to the lookup table.
+        cdp.mol.lookup_table[spin_id] = [mol_index, res_index, spin_index]
 
     # Release the lock.
     finally:
@@ -1706,6 +1721,64 @@ def get_spin_ids(selection=None):
 
     # Return the IDs.
     return spin_ids
+
+
+def index_molecule(mol_name=None):
+    """Return the index of the molecule of the given name.
+
+    @keyword mol_name:  The name of the molecule.
+    @type mol_name:     str
+    @return:            The index of the molecule, if it exists.
+    @rtype:             int or None
+    """
+
+    # Loop over the molecules.
+    i = 0
+    for mol in cdp.mol:
+        # A match.
+        if mol.name == mol_name:
+            return i
+
+        # Increment the index.
+        i += 1
+
+    # Nothing found.
+    return None
+
+
+def index_residue(res_num=None, res_name=None, mol_index=None):
+    """Return the index of the residue.
+
+    @keyword res_num:   The number of the residue.
+    @type res_num:      int
+    @keyword res_name:  The name of the residue.
+    @type res_name:     str
+    @keyword mol_index: The index of the molecule.
+    @type mol_index:    str
+    @return:            The index of the residue, if it exists.
+    @rtype:             int or None
+    """
+
+    # Single unnamed residue.
+    if len(cdp.mol[mol_index].res) == 1 and res_num == cdp.mol[mol_index].res[0].num and res_name == cdp.mol[mol_index].res[0].name:
+        return 0
+
+    # Loop over the residues.
+    i = 0
+    for res in cdp.mol[mol_index].res:
+        # A unique number match.
+        if res_num != None and res.num == res_num:
+            return i
+
+        # Match names, if no number is given.
+        if res_num == None and res_name != None and res.name == res_name:
+            return i
+
+        # Increment the index.
+        i += 1
+
+    # Nothing found.
+    return None
 
 
 def last_residue_num(selection=None):
