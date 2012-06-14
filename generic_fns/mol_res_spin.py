@@ -2452,9 +2452,9 @@ def return_spin_from_id(spin_id=None, pipe=None, full_info=False):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # No spin ID.
+    # No spin ID, so switch to selection matching.
     if not dp.mol.lookup_table.has_key(spin_id):
-        raise RelaxError("The spin ID '%s' cannot be found in the look up table." % spin_id)
+        return return_spin_from_selection(selection=spin_id, pipe=pipe, full_info=full_info)
 
     # The indices from the look up table.
     mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
