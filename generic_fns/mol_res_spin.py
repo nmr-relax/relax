@@ -1055,11 +1055,13 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
         # Get the residue container to add the spin to.
         if res_id:
-            res_to_cont = return_residue(res_id)
+            res_to_cont, mol_index, res_index = return_residue(res_id, indices=True)
             if res_to_cont == None:
                 raise RelaxError("The residue in " + repr(res_id) + " does not exist in the current data pipe.")
         else:
             res_to_cont = cdp.mol[0].res[0]
+            mol_index = 0
+            res_index = 0
 
         # Check the averaging technique.
         if averaging not in ['linear']:
@@ -1108,6 +1110,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         # Add the spin.
         res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
         spin = res_to_cont.spin[-1]
+        spin_index = len(res_to_cont.spin) - 1
 
         # Set the pseudo-atom spin container attributes.
         spin.averaging = averaging
@@ -1121,6 +1124,10 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
                 spin.pos = ave
             else:
                 spin.pos = ave[0]
+
+        # Add the spin ID and indices to the lookup table.
+        spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=spin.num, spin_name=spin.name)
+        cdp.mol.lookup_table[spin_id] = [mol_index, res_index, spin_index]
 
     # Release the lock.
     finally:
@@ -2296,14 +2303,14 @@ def return_molecule(selection=None, pipe=None):
     return mol_container
 
 
-def return_residue(selection=None, pipe=None):
+def return_residue(selection=None, pipe=None, indices=False):
     """Function for returning the residue data container of the given selection.
 
     @param selection:   The residue selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
     @type pipe:         str
-    @return:            The residue specific data container.
+    @return:            The residue specific data container, and the molecule and residue indices if asked.
     @rtype:             instance of the ResidueContainer class.
     """
 
@@ -2324,19 +2331,23 @@ def return_residue(selection=None, pipe=None):
     res = None
     res_num = 0
     res_container = None
-    for mol in dp.mol:
+    for i in range(len(dp.mol)):
         # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
+        if dp.mol[i] not in select_obj:
             continue
 
+        # Store the molecule index.
+        mol_index = i
+
         # Loop over the residues.
-        for res in mol.res:
+        for j in range(len(cdp.mol[i].res)):
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if cdp.mol[i].res[j] not in select_obj:
                 continue
 
-            # Store the residue container.
-            res_container = res
+            # Store the residue container and index.
+            res_container = cdp.mol[i].res[j]
+            res_index = j
 
             # Increment the residue number counter.
             res_num = res_num + 1
@@ -2346,7 +2357,10 @@ def return_residue(selection=None, pipe=None):
         raise RelaxMultiResIDError(selection)
 
     # Return the residue container.
-    return res_container
+    if indices:
+        return res_container, mol_index, res_index
+    else:
+        return res_container
 
 
 def return_spin(selection=None, pipe=None, full_info=False):
