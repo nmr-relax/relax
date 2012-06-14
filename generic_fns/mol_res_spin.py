@@ -2432,29 +2432,38 @@ def return_spin(selection=None, pipe=None, full_info=False):
         return spin_container
 
 
-def return_spin_from_id(spin_id=None, full_info=False):
+def return_spin_from_id(spin_id=None, pipe=None, full_info=False):
     """Return the spin data container corresponding to the given spin ID string.
 
     @keyword spin_id:   The unique spin ID string.
     @type spin_id:      str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
     @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
     @type full_info:    boolean
     @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
     @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
     """
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # No spin ID.
-    if not cdp.mol.lookup_table.has_key(spin_id):
+    if not dp.mol.lookup_table.has_key(spin_id):
         raise RelaxError("The spin ID '%s' cannot be found in the look up table." % spin_id)
 
     # The indices from the look up table.
-    mol_index, res_index, spin_index = cdp.mol.lookup_table[spin_id]
+    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
 
     # Return the data.
     if full_info:
-        return cdp.mol[mol_index].name, cdp.mol[mol_index].res[res_index].num, cdp.mol[mol_index].res[res_index].name, cdp.mol[mol_index].res[res_index].spin[spin_index]
+        return dp.mol[mol_index].name, dp.mol[mol_index].res[res_index].num, dp.mol[mol_index].res[res_index].name, dp.mol[mol_index].res[res_index].spin[spin_index]
     else:
-        return cdp.mol[mol_index].res[res_index].spin[spin_index]
+        return dp.mol[mol_index].res[res_index].spin[spin_index]
 
 
 
