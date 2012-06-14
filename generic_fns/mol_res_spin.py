@@ -2375,7 +2375,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
     @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
     @type full_info:    boolean
     @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
-    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the tuple (SpinContainer, str, int, str).
+    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
     """
 
     # Handle Unicode.
@@ -2430,6 +2430,32 @@ def return_spin(selection=None, pipe=None, full_info=False):
         return mol_container.name, res_container.num, res_container.name, spin_container
     else:
         return spin_container
+
+
+def return_spin_from_id(spin_id=None, full_info=False):
+    """Return the spin data container corresponding to the given spin ID string.
+
+    @keyword spin_id:   The unique spin ID string.
+    @type spin_id:      str
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
+    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
+    """
+
+    # No spin ID.
+    if not cdp.mol.lookup_table.has_key(spin_id):
+        raise RelaxError("The spin ID '%s' cannot be found in the look up table." % spin_id)
+
+    # The indices from the look up table.
+    mol_index, res_index, spin_index = cdp.mol.lookup_table[spin_id]
+
+    # Return the data.
+    if full_info:
+        return cdp.mol[mol_index].name, cdp.mol[mol_index].res[res_index].num, cdp.mol[mol_index].res[res_index].name, cdp.mol[mol_index].res[res_index].spin[spin_index]
+    else:
+        return cdp.mol[mol_index].res[res_index].spin[spin_index]
+
 
 
 def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
