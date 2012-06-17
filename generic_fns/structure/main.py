@@ -683,13 +683,13 @@ def translate(T=None, model=None, atom_id=None):
     cdp.structure.translate(T=T, model=model, atom_id=atom_id)
 
 
-def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
     """Extract the bond vectors from the loaded structures and store them in the spin container.
 
-    @keyword attached:      The name of the atom attached to the spin, as given in the structural file.  Regular expression can be used, for example 'H*'.  This uses relax rather than Python regular expression (i.e. shell like syntax).
-    @type attached:         str
-    @keyword spin_id:       The spin identifier string.
-    @type spin_id:          str
+    @keyword spin_id1:      The spin identifier string of the first spin of the pair.
+    @type spin_id1:         str
+    @keyword spin_id2:      The spin identifier string of the second spin of the pair.
+    @type spin_id2:         str
     @keyword model:         The model to extract the vector from.  If None, all vectors will be extracted.
     @type model:            str
     @keyword verbosity:     The higher the value, the more information is printed to screen.
@@ -733,23 +733,6 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         if unit:
             print("Calculating the unit vectors.")
 
-    # Determine if the attached atom is a proton.
-    proton = False
-    if relax_re.search('.*H.*', attached) or relax_re.search(attached, 'H'):
-        proton = True
-    if verbosity:
-        if proton:
-            print("The attached atom is a proton.")
-        else:
-            print("The attached atom is not a proton.")
-        print('')
-
-    # Set the variable name in which the vectors will be stored.
-    if proton:
-        object_name = 'xh_vect'
-    else:
-        object_name = 'bond_vect'
-
     # Loop over the spins.
     no_vectors = True
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
@@ -766,8 +749,8 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             continue
 
         # The bond vector already exists.
-        if hasattr(spin, object_name):
-            obj = getattr(spin, object_name)
+        if hasattr(spin, 'vector'):
+            obj = getattr(spin, 'vector')
             if obj != None:
                 warn(RelaxWarning("The bond vector for the spin " + repr(id) + " already exists."))
                 continue
@@ -824,7 +807,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             vector = vector[0]
 
         # Set the vector.
-        setattr(spin, object_name, vector)
+        setattr(spin, 'vector', vector)
 
         # We have a vector!
         no_vectors = False
