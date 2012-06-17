@@ -181,10 +181,10 @@ uf.add_keyarg(
     desc = "The spin identification string for the second spin of the dipolar relaxation pair."
 )
 uf.add_keyarg(
-    name = "dist",
+    name = "ave_dist",
     default = NH_BOND_LENGTH,
     py_type = "float",
-    desc_short = "interatomic distance (meters)",
+    desc_short = "averaged interatomic distance (meters)",
     desc = "The r^-3 averaged distance between the two spins to be used in the magnetic dipole constant."
 )
 uf.add_keyarg(
@@ -198,17 +198,17 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("To analyse relaxation data, the relaxation mechanism and related parameters needs to be defined.  This user function allows pairs of spins which are coupled via the magnetic dipole-dipole interaction to be defined.  Hence the dipolar relaxation mechanism between the two spins is to be considered active.")
 uf.desc[-1].add_paragraph("For an orientational dependent analysis, such as model-free analysis with the spheroidal and ellipsoidal global diffusion tensors, the two spins should already possess positional information.  This information will be used by this user function to calculate unit vectors between the two spins.  Without positional information, no vectors can be calculated and an orientational dependent analysis will not be possible.")
-uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these distances must be explicitly defined.")
+uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly defined.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up the protein 15N heteronuclear relaxation mechanism, type on of the following:")
 uf.desc[-1].add_prompt("relax> relax_data.dipole_pair('@N', '@H', 1.02 * 1e-10, True)")
-uf.desc[-1].add_prompt("relax> relax_data.dipole_pair(spin_id1='@N', spin_id2='@H', dist=1.02 * 1e-10, direct_bond=True)")
+uf.desc[-1].add_prompt("relax> relax_data.dipole_pair(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10, direct_bond=True)")
 uf.backend = relax_data.dipole_pair
 uf.menu_text = "dipole_&pair"
 uf.wizard_height_desc = 350
 uf.wizard_size = (900, 700)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
 
 
 # The relax_data.display user function.
