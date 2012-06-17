@@ -35,6 +35,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import bmrb
+from generic_fns.interatomic import create_interatom, return_interatom
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
@@ -539,6 +540,33 @@ def delete(ri_id=None):
         del cdp.exp_info.peak_intensity_type[ri_id]
         if len(cdp.exp_info.peak_intensity_type) == 0:
             del cdp.exp_info.peak_intensity_type
+
+
+def dipole_pair(spin_id1=None, spin_id2=None, ave_dist=None, direct_bond=False):
+    """Set up the magnetic dipole-dipole interaction.
+
+    @keyword spin_id1:      The spin identifier string of the first spin of the pair.
+    @type spin_id1:         str
+    @keyword spin_id2:      The spin identifier string of the second spin of the pair.
+    @type spin_id2:         str
+    @keyword dist:          The r^-3 averaged interatomic distance.
+    @type dist:             float
+    @keyword direct_bond:   A flag specifying if the two spins are directly bonded.
+    @type direct_bond:      bool
+    """
+
+    # Loop over both spin selections.
+    for spin, id1 in spin_loop(spin_id1, return_id=True):
+        for spin, id2 in spin_loop(spin_id2, return_id=True):
+            # Get the interatomic data container.
+            interatom = return_interatom(id1, id2)
+
+            # Create the container if needed.
+            if interatom == None:
+                interatom = create_interatom(spin_id1=id1, spin_id2=id2)
+
+            # Store the averaged distance.
+            interatom.r = ave_dist
 
 
 def display(ri_id=None):
