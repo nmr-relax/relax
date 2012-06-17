@@ -38,7 +38,7 @@ from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.message import Question
-from gui.misc import add_border
+from gui.misc import add_border, bitmap_setup
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
@@ -293,7 +293,7 @@ class Pipe_editor(wx.Frame):
         """
 
         # The pipe logo.
-        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(WIZARD_IMAGE_PATH+'pipe_200x90.png', wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, bitmap_setup(WIZARD_IMAGE_PATH+'pipe_200x90.png'))
 
         # Pack the logo.
         box.Add(logo, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)

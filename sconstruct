@@ -31,6 +31,7 @@ from os import getcwd, path, remove, sep, walk
 import platform
 from re import search
 from shutil import rmtree
+from subprocess import PIPE, Popen
 import sys
 
 # Scons modules.
@@ -165,7 +166,7 @@ LATEX_DIR = 'docs' + sep + 'latex' + sep
 class Main:
     def __init__(self):
         """Initialise the main building targets.
-        
+
         This function sets up the Scons build Environments, sets custom Builders, sets the build
         targets, and sets the build dependancies.
         """
@@ -433,6 +434,32 @@ class Main:
         print("\n\n\n")
 
 
+    def det_arch(self):
+        """Nasty hack to make Scons behave properly with cross-compilation on Mac OS X!
+
+        @return:    The list of CPU architects to cross compile.
+        @rtype:     list of str
+        """
+
+        # The list of archectures to try.
+        archs = ['i386', 'ppc', 'x86_64']
+        allowed = []
+
+        # Loop over each arch and test it.
+        for arch in archs:
+            # Run gcc.
+            pipe = Popen('gcc -arch %s' % arch, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+
+            # Loop over the error lines.
+            for line in pipe.stderr.readlines():
+                # Successful arch.
+                if search("no input files", line):
+                    allowed.append(arch)
+
+        # Return the list.
+        return allowed
+
+
     def dummy(self, target, source, env):
         """Dummy function which returns zero."""
 
@@ -510,13 +537,16 @@ class Main:
         # Relaxation curve fitting build environment.
         env = Environment()
 
+        # Determine the build architectures.
+        archs = self.det_arch()
+
         # C flags.
         if SYSTEM == 'Windows':
             cflags = '/nologo /I\"' + py_include_minpath + '\" /I\"' + numpy_path + '\"'
         else:
             cflags = '-I' + py_include_fullpath + ' -I' + numpy_path
         if env['PLATFORM'] == 'darwin':
-            for arch in ['i386', 'ppc', 'x86_64']:
+            for arch in archs:
                 cflags += ' -arch %s' % arch
 
         # Python library path.
@@ -538,7 +568,7 @@ class Main:
             ]
 
             # Force all architectures.
-            for arch in ['i386', 'ppc', 'x86_64']:
+            for arch in archs:
                 lnflags.append('-arch')
                 lnflags.append(arch)
 

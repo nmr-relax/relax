@@ -1055,11 +1055,13 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
         # Get the residue container to add the spin to.
         if res_id:
-            res_to_cont = return_residue(res_id)
+            res_to_cont, mol_index, res_index = return_residue(res_id, indices=True)
             if res_to_cont == None:
                 raise RelaxError("The residue in " + repr(res_id) + " does not exist in the current data pipe.")
         else:
             res_to_cont = cdp.mol[0].res[0]
+            mol_index = 0
+            res_index = 0
 
         # Check the averaging technique.
         if averaging not in ['linear']:
@@ -1108,6 +1110,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         # Add the spin.
         res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
         spin = res_to_cont.spin[-1]
+        spin_index = len(res_to_cont.spin) - 1
 
         # Set the pseudo-atom spin container attributes.
         spin.averaging = averaging
@@ -1121,6 +1124,10 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
                 spin.pos = ave
             else:
                 spin.pos = ave[0]
+
+        # Add the spin ID and indices to the lookup table.
+        spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=spin.num, spin_name=spin.name)
+        cdp.mol.lookup_table[spin_id] = [mol_index, res_index, spin_index]
 
     # Release the lock.
     finally:
@@ -1150,12 +1157,20 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
-        # Create the molecule and residue if they do not exist.
-        if not return_molecule(generate_spin_id(mol_name=mol_name)):
+        # Create the molecule if it does not exist.
+        mol_index = index_molecule(mol_name)
+        if mol_index == None:
             create_molecule(mol_name=mol_name)
-        res_cont = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
-        if res_cont == None:
-            res_cont = create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
+            mol_index = len(cdp.mol) - 1
+
+        # Create the residue if it does not exist.
+        res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=mol_index)
+        if res_index == None:
+            create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
+            res_index = len(cdp.mol[mol_index].res) - 1
+
+        # Alias the residue.
+        res_cont = cdp.mol[mol_index].res[res_index]
 
         # Rename the spin, if only a single one exists and it is empty.
         if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():
@@ -1167,6 +1182,13 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         else:
             res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
             spin_cont = res_cont.spin[-1]
+
+        # The spin index and id.
+        spin_index = len(res_cont.spin) - 1
+        spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
+        # Add the spin ID and indices to the lookup table.
+        cdp.mol.lookup_table[spin_id] = [mol_index, res_index, spin_index]
 
     # Release the lock.
     finally:
@@ -1708,6 +1730,64 @@ def get_spin_ids(selection=None):
     return spin_ids
 
 
+def index_molecule(mol_name=None):
+    """Return the index of the molecule of the given name.
+
+    @keyword mol_name:  The name of the molecule.
+    @type mol_name:     str
+    @return:            The index of the molecule, if it exists.
+    @rtype:             int or None
+    """
+
+    # Loop over the molecules.
+    i = 0
+    for mol in cdp.mol:
+        # A match.
+        if mol.name == mol_name:
+            return i
+
+        # Increment the index.
+        i += 1
+
+    # Nothing found.
+    return None
+
+
+def index_residue(res_num=None, res_name=None, mol_index=None):
+    """Return the index of the residue.
+
+    @keyword res_num:   The number of the residue.
+    @type res_num:      int
+    @keyword res_name:  The name of the residue.
+    @type res_name:     str
+    @keyword mol_index: The index of the molecule.
+    @type mol_index:    str
+    @return:            The index of the residue, if it exists.
+    @rtype:             int or None
+    """
+
+    # Single unnamed residue.
+    if len(cdp.mol[mol_index].res) == 1 and res_num == cdp.mol[mol_index].res[0].num and res_name == cdp.mol[mol_index].res[0].name:
+        return 0
+
+    # Loop over the residues.
+    i = 0
+    for res in cdp.mol[mol_index].res:
+        # A unique number match.
+        if res_num != None and res.num == res_num:
+            return i
+
+        # Match names, if no number is given.
+        if res_num == None and res_name != None and res.name == res_name:
+            return i
+
+        # Increment the index.
+        i += 1
+
+    # Nothing found.
+    return None
+
+
 def last_residue_num(selection=None):
     """Determine the last residue number.
 
@@ -2223,14 +2303,14 @@ def return_molecule(selection=None, pipe=None):
     return mol_container
 
 
-def return_residue(selection=None, pipe=None):
+def return_residue(selection=None, pipe=None, indices=False):
     """Function for returning the residue data container of the given selection.
 
     @param selection:   The residue selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
     @type pipe:         str
-    @return:            The residue specific data container.
+    @return:            The residue specific data container, and the molecule and residue indices if asked.
     @rtype:             instance of the ResidueContainer class.
     """
 
@@ -2251,19 +2331,23 @@ def return_residue(selection=None, pipe=None):
     res = None
     res_num = 0
     res_container = None
-    for mol in dp.mol:
+    for i in range(len(dp.mol)):
         # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
+        if dp.mol[i] not in select_obj:
             continue
 
+        # Store the molecule index.
+        mol_index = i
+
         # Loop over the residues.
-        for res in mol.res:
+        for j in range(len(dp.mol[i].res)):
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if dp.mol[i].res[j] not in select_obj:
                 continue
 
-            # Store the residue container.
-            res_container = res
+            # Store the residue container and index.
+            res_container = dp.mol[i].res[j]
+            res_index = j
 
             # Increment the residue number counter.
             res_num = res_num + 1
@@ -2273,10 +2357,47 @@ def return_residue(selection=None, pipe=None):
         raise RelaxMultiResIDError(selection)
 
     # Return the residue container.
-    return res_container
+    if indices:
+        return res_container, mol_index, res_index
+    else:
+        return res_container
 
 
-def return_spin(selection=None, pipe=None, full_info=False):
+def return_spin(spin_id=None, pipe=None, full_info=False):
+    """Return the spin data container corresponding to the given spin ID string.
+
+    @keyword spin_id:   The unique spin ID string.
+    @type spin_id:      str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
+    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # No spin ID, so switch to selection matching.
+    if not dp.mol.lookup_table.has_key(spin_id):
+        return return_spin_from_selection(selection=spin_id, pipe=pipe, full_info=full_info)
+
+    # The indices from the look up table.
+    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
+
+    # Return the data.
+    if full_info:
+        return dp.mol[mol_index].name, dp.mol[mol_index].res[res_index].num, dp.mol[mol_index].res[res_index].name, dp.mol[mol_index].res[res_index].spin[spin_index]
+    else:
+        return dp.mol[mol_index].res[res_index].spin[spin_index]
+
+
+def return_spin_from_selection(selection=None, pipe=None, full_info=False):
     """Function for returning the spin data container of the given selection.
 
     If more than one selection is given, then the boolean AND operation will be used to pull out the spin.
@@ -2288,7 +2409,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
     @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
     @type full_info:    boolean
     @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
-    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the tuple (SpinContainer, str, int, str).
+    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
     """
 
     # Handle Unicode.

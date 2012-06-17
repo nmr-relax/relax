@@ -95,13 +95,11 @@ class About_base(wx.Frame):
         # Set the window size.
         self.SetSize((self.virt_x, self.dim_y))
 
-        # Set the window virtual size.
-        self.window.SetVirtualSize((self.virt_x, self.virt_y))
-
         # Add y scrolling, if needed.
         self.window.SetScrollRate(0, self.SCROLL_RATE)
 
-        # Create the buffered device context.
+        # Create the buffered device context twice (to determine the real virtual size!).
+        self.create_buffered_dc()
         self.create_buffered_dc()
 
         # Add HTML content.
@@ -166,21 +164,29 @@ class About_base(wx.Frame):
 
         # Debugging lines.
         if status.debug:
+            # Set the font.
+            self.dc.SetFont(wx.Font(8, wx.FONTFAMILY_SCRIPT, wx.NORMAL, wx.NORMAL))
+
+            # The virtual size.
+            self.dc.DrawText("Virt size: %sx%s" % (self.virt_x, self.virt_y), 2, 2)
+
             # Cross.
             self.dc.DrawLine(0, 0, self.virt_x, self.virt_y)
             self.dc.DrawLine(self.virt_x, 0, 0, self.virt_y)
 
-            # Lines every 200 pixels.
-            num = self.virt_y / 200
-            for i in range(num):
-                pos = i * 200
+            # Lines every 100 pixels.
+            num = self.virt_y / 100
+            for i in range(num+1):
+                pos = i * 100
                 self.dc.DrawLine(0, pos, self.virt_x, pos) 
-                self.dc.SetFont(wx.Font(8, wx.FONTFAMILY_SCRIPT, wx.NORMAL, wx.NORMAL))
                 self.dc.DrawText(str(pos), self.virt_x-40, pos-10)
-
 
         # Build the rest of the about widget.
         self.build_widget()
+
+        # Re-calculate the virtual size, and reset the offset.
+        self.virt_y = self.offset()
+        self.offset(-self.virt_y)
 
         # Finish.
         self.dc.EndDrawing()
@@ -352,13 +358,13 @@ class About_base(wx.Frame):
         @type event:    wx event
         """
 
-        ## Create the device context.
-        #wx.BufferedPaintDC(self.window, self.buffer, wx.BUFFER_VIRTUAL_AREA)
-
         # Temporary fix for wxPython 2.9.3.1 suggested by Robin Dunn at http://groups.google.com/group/wxpython-users/browse_thread/thread/7dff3f5d7ca24985.
         dc = wx.PaintDC(self.window)
         self.window.PrepareDC(dc)
         dc.DrawBitmap(self.buffer, 0, 0)
+
+        # Create the device context.
+        wx.BufferedPaintDC(self.window, self.buffer, wx.BUFFER_VIRTUAL_AREA)
 
 
     def offset(self, val=0):
@@ -526,6 +532,9 @@ class About_relax(About_base):
         self.SetSize((dim_x, dim_y))
         self.window.SetVirtualSize((dim_x, dim_y))
         self.window.EnableScrolling(x_scrolling=False, y_scrolling=False)
+
+        # Add space to the bottom.
+        self.offset(self.border)
 
 
     def draw_copyright(self):

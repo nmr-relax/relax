@@ -61,7 +61,7 @@ from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
-from gui.misc import gui_raise, open_file, protected_exec
+from gui.misc import bitmap_setup, gui_raise, open_file, protected_exec
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
@@ -257,7 +257,7 @@ class Main(wx.Frame):
         self.SetSizer(sizer)
 
         # The relax icon.
-        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
+        image = wx.StaticBitmap(self, -1, bitmap_setup(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png'))
 
         # Add the icon to the main spacer with spacing.
         sizer.AddStretchSpacer()
