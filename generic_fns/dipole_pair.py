@@ -53,12 +53,19 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False):
             if direct_bond and hasattr(cdp, 'structure') and not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
                 continue
 
-            # No interatomic data container should exist.
-            if return_interatom(id1, id2):
+            # Get the interatomic data object, if it exists.
+            interatom = return_interatom(id1, id2)
+
+            # Check that this has not already been set up.
+            if hasattr(interatom, 'dipole_pair') and interatom.dipole_pair:
                 raise RelaxError("The magnetic dipole-dipole interaction already exists between the spins '%s' and '%s'." % (id1, id2))
 
-            # Create the container.
-            create_interatom(spin_id1=id1, spin_id2=id2)
+            # Create the container if needed.
+            if not interatom:
+                interatom = create_interatom(spin_id1=id1, spin_id2=id2)
+
+            # Set a flag indicating that a dipole-dipole interaction is present.
+            interatom.dipole_pair = True
 
             # Store the IDs for the print out.
             ids.append([repr(id1), repr(id2)])
