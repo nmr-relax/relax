@@ -200,3 +200,31 @@ uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_height_desc = 350
 uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
+
+
+# The dipole_pair.unit_vectors user function.
+uf = uf_info.add_uf('dipole_pair.unit_vectors')
+uf.title = "Calculate the unit vectors between the magnetic dipole-dipole interactions."
+uf.title_short = "Magnetic dipole-dipole unit vector calculation."
+uf.add_keyarg(
+    name = "ave",
+    default = True,
+    py_type = "bool",
+    desc_short = "average vector flag",
+    desc = "A flag which if True will cause the bond vectors from all models to be averaged.  If vectors from only one model is extracted, this will have no effect."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("For an orientational dependent analysis, such as model-free analysis with the spheroidal and ellipsoidal global diffusion tensors or any analysis using RDCs, the unit vectors between the two dipoles must be calculated prior to starting the analysis.  For the unit vector extraction, the two interacting spins should already possess positional information, and the interaction defined via the dipole_pair.define user function.  This information will be used to calculate unit vectors between the two spins.  Without positional information, no vectors can be calculated and an orientational dependent analysis will not be possible.")
+uf.desc[-1].add_paragraph("The number of unit vectors per interaction will be defined by the number of positions each spin possesses together with the averaging flag.  If both spins have N positions loaded, the number of positions N for both must match.  In this case, as well as when one spin has N positions and the other a single position, then N unit vectors will be calculated.  This is unless the averaging flag is set, in which case an averaged unit vector of unit length will be calculated.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To calculate the  the N-H distance for protein the 15N heteronuclear relaxation mechanism, type on of the following:")
+uf.desc[-1].add_prompt("relax> dipole_pair.unit_vectors('@N', '@H', 1.02 * 1e-10)")
+uf.desc[-1].add_prompt("relax> dipole_pair.unit_vectors(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)")
+uf.backend = dipole_pair.unit_vectors
+uf.menu_text = "&unit_vectors"
+uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_height_desc = 350
+uf.wizard_size = (900, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
