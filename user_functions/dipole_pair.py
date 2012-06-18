@@ -52,7 +52,7 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "first spin ID string",
-    desc = "The spin identification string for the first spin of the dipolar pair."
+    desc = "The spin identification string for the first spin of the dipole pair."
 )
 uf.add_keyarg(
     name = "spin_id2",
@@ -60,7 +60,7 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "second spin ID string",
-    desc = "The spin identification string for the second spin of the dipolar pair."
+    desc = "The spin identification string for the second spin of the dipole pair."
 )
 uf.add_keyarg(
     name = "direct_bond",
@@ -86,17 +86,88 @@ uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
 
 
+# The dipole_pair.read_dist user function.
+uf = uf_info.add_uf('dipole_pair.read_dist')
+uf.title = "Load the r^-3 averaged distances for the magnetic dipole-dipole interactions."
+uf.title_short = "Magnetic dipole-dipole distance loading."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the file containing the averaged distance data.",
+    wiz_filesel_style = wx.FD_OPEN
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id1_col",
+    default = 1,
+    py_type = "int",
+    min = 1,
+    desc_short = "first spin ID column",
+    desc = "The spin ID string column for the first spin."
+)
+uf.add_keyarg(
+    name = "spin_id2_col",
+    default = 2,
+    py_type = "int",
+    min = 1,
+    desc_short = "second spin ID column",
+    desc = "The spin ID string column for the second spin."
+)
+uf.add_keyarg(
+    name = "data_col",
+    default = 3,
+    py_type = "int",
+    min = 1,
+    desc_short = "data column",
+    desc = "The averaged distance data column."
+)
+uf.add_keyarg(
+    name = "sep",
+    py_type = "str",
+    desc_short = "column separator",
+    desc = "The column separator (the default is white space).",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["white space", ",", ";", ":"],
+    wiz_combo_data = [None, ",", ";", ":"],
+    wiz_read_only = False,
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the r^-3 averaged interatomic distances to be read from a file.  This is useful in the case when the dipole-dipole distances vary, replacing the need to call the dipole_pair.set_dist user function many times.  The format of the file should be columnar, with the two spin ID strings in two separate columns and the averaged distances in another.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To load the distances from the fifth column of the 'distances' file, and where the spin IDs are in the first and second columns, type one of the following:")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist('distances', 1, 2, 5")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', spin_id1_col=1, spin_id2_col=2, data_col=5")
+uf.backend = dipole_pair.read_dist
+uf.menu_text = "&read_dist"
+uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_height_desc = 350
+uf.wizard_size = (900, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
+
+
 # The dipole_pair.set_dist user function.
 uf = uf_info.add_uf('dipole_pair.set_dist')
-uf.title = "Define the pairs of spins involved in magnetic dipole-dipole relaxation interactions."
-uf.title_short = "Magnetic dipole-dipole interaction setup."
+uf.title = "Set the r^-3 averaged distances for the magnetic dipole-dipole interactions."
+uf.title_short = "Magnetic dipole-dipole distance setup."
 uf.add_keyarg(
     name = "spin_id1",
     default = "@N",
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "first spin ID string",
-    desc = "The spin identification string for the first spin of the dipolar relaxation pair."
+    desc = "The spin identification string for the first spin of the dipole pair."
 )
 uf.add_keyarg(
     name = "spin_id2",
@@ -104,7 +175,7 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "second spin ID string",
-    desc = "The spin identification string for the second spin of the dipolar relaxation pair."
+    desc = "The spin identification string for the second spin of the dipole pair."
 )
 uf.add_keyarg(
     name = "ave_dist",
