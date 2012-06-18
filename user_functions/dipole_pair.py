@@ -39,12 +39,12 @@ from user_functions.objects import Desc_container
 uf_class = uf_info.add_class('dipole_pair')
 uf_class.title = "Class for manipulating magnetic dipole-dipole interactions."
 uf_class.menu_text = "&dipole_pair"
-uf_class.gui_icon = "relax.fid"
+uf_class.gui_icon = "relax.dipole_pair"
 
 
 # The dipole_pair.define user function.
 uf = uf_info.add_uf('dipole_pair.define')
-uf.title = "Define the pairs of spins involved in magnetic dipole-dipole relaxation interactions."
+uf.title = "Define the pairs of spins involved in magnetic dipole-dipole interactions."
 uf.title_short = "Magnetic dipole-dipole interaction setup."
 uf.add_keyarg(
     name = "spin_id1",
@@ -52,7 +52,7 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "first spin ID string",
-    desc = "The spin identification string for the first spin of the dipolar relaxation pair."
+    desc = "The spin identification string for the first spin of the dipolar pair."
 )
 uf.add_keyarg(
     name = "spin_id2",
@@ -60,20 +60,19 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "second spin ID string",
-    desc = "The spin identification string for the second spin of the dipolar relaxation pair."
+    desc = "The spin identification string for the second spin of the dipolar pair."
 )
 uf.add_keyarg(
     name = "direct_bond",
     default = True,
     py_type = "bool",
     desc_short = "directly bonded atoms flag",
-    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simply the set up of the main heteronuclear relaxation mechanism."
+    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simply the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("To analyse relaxation data, the relaxation mechanism and related parameters needs to be defined.  This user function allows pairs of spins which are coupled via the magnetic dipole-dipole interaction to be defined.  Hence the dipolar relaxation mechanism between the two spins is to be considered active.")
-uf.desc[-1].add_paragraph("For an orientational dependent analysis, such as model-free analysis with the spheroidal and ellipsoidal global diffusion tensors, the two spins should already possess positional information.  This information will be used by this user function to calculate unit vectors between the two spins.  Without positional information, no vectors can be calculated and an orientational dependent analysis will not be possible.")
-uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly defined.")
+uf.desc[-1].add_paragraph("To analyse relaxation or residual dipolar coupling (RDC) data, pairs of spins which are coupled via the magnetic dipole-dipole interaction need to be specified.  This must process the use of the other user functions in this class.")
+uf.desc[-1].add_paragraph("For analyses which use relaxation data, specifying the dipole-dipole interaction will indicate that there is a dipolar relaxation mechanism operating between the two spins.  For RDC dependent analyses, this indicates that a residual dipolar coupling is expected between the two spins.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To define the protein 15N heteronuclear relaxation mechanism, type on of the following:")
@@ -81,6 +80,7 @@ uf.desc[-1].add_prompt("relax> dipole_pair.define('@N', '@H', True)")
 uf.desc[-1].add_prompt("relax> dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)")
 uf.backend = dipole_pair.define
 uf.menu_text = "&define"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 350
 uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
@@ -125,6 +125,7 @@ uf.desc[-1].add_prompt("relax> dipole_pair.set_dist('@N', '@H', 1.02 * 1e-10)")
 uf.desc[-1].add_prompt("relax> dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)")
 uf.backend = dipole_pair.set_dist
 uf.menu_text = "&set_dist"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_height_desc = 350
 uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
