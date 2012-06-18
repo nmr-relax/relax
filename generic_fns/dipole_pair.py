@@ -30,7 +30,7 @@ import sys
 from generic_fns.interatomic import create_interatom, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import Selection, return_spin, spin_loop
 from relax_errors import RelaxError
-from relax_io import write_data
+from relax_io import extract_data, write_data
 
 
 
@@ -72,6 +72,75 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False):
 
     # Print out.
     write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
+
+
+def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_col=None, sep=None):
+    """Set up the magnetic dipole-dipole interaction.
+
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
+    @type dir:              str or None
+    @keyword spin_id1_col:  The column containing the spin ID strings of the first spin.
+    @type spin_id1_col:     int
+    @keyword spin_id2_col:  The column containing the spin ID strings of the second spin.
+    @type spin_id2_col:     int
+    @keyword data_col:      The column containing the averaged distances in meters.
+    @type data_col:         int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Extract the data from the file.
+    file_data = extract_data(file, dir, sep=sep)
+
+    # Loop over the RDC data.
+    data = []
+    for line in file_data:
+        # Invalid columns.
+        if spin_id1_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no first spin ID column can be found." % line))
+            continue
+        if spin_id2_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no second spin ID column can be found." % line))
+            continue
+        if data_col and data_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no data column can be found." % line))
+            continue
+
+        # Unpack.
+        spin_id1 = line[spin_id1_col-1]
+        spin_id2 = line[spin_id2_col-1]
+        ave_dist = None
+        if data_col:
+            ave_dist = line[data_col-1]
+
+        # Convert and check the value.
+        if ave_dist != None:
+            try:
+                ave_dist = float(ave_dist)
+            except ValueError:
+                warn(RelaxWarning("The averaged distance of '%s' from the line %s is invalid." % (ave_dist, line)))
+                continue
+
+        # Get the interatomic data container.
+        interatom = return_interatom(spin_id1, spin_id2)
+
+        # Store the averaged distance.
+        interatom.r = ave_dist
+
+        # Store the data for the print out.
+        data.append([repr(interatom.spin_id1), repr(interatom.spin_id2), repr(ave_dist)])
+
+    # Print out.
+    write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
 
 
 def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
