@@ -558,6 +558,10 @@ def dipole_pair(spin_id1=None, spin_id2=None, ave_dist=None, direct_bond=False):
     # Loop over both spin selections.
     for spin, id1 in spin_loop(spin_id1, return_id=True):
         for spin, id2 in spin_loop(spin_id2, return_id=True):
+            # Directly bonded atoms.
+            if direct_bond and hasattr(cdp, 'structure') and not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
+                continue
+
             # Get the interatomic data container.
             interatom = return_interatom(id1, id2)
 
