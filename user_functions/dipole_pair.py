@@ -71,7 +71,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("To analyse relaxation or residual dipolar coupling (RDC) data, pairs of spins which are coupled via the magnetic dipole-dipole interaction need to be specified.  This must process the use of the other user functions in this class.")
+uf.desc[-1].add_paragraph("To analyse relaxation or residual dipolar coupling (RDC) data, pairs of spins which are coupled via the magnetic dipole-dipole interaction need to be specified.  This must proceed the use of the other user functions in this class.  An interatomic data object will be created, if it is not already present, and this will be used to store all subsequently loaded dipole-dipole data.")
 uf.desc[-1].add_paragraph("For analyses which use relaxation data, specifying the dipole-dipole interaction will indicate that there is a dipolar relaxation mechanism operating between the two spins.  For RDC dependent analyses, this indicates that a residual dipolar coupling is expected between the two spins.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
