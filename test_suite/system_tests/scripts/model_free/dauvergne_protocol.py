@@ -204,7 +204,7 @@ relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500*1e6, file='noe.500.out',
 # Define the magnetic dipole-dipole relaxation interaction.
 dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
 dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
-dipole_pair.vectors(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.unit_vectors()
 
 # Define the chemical shift relaxation interaction.
 value.set(-172 * 1e-6, 'csa')
