@@ -160,57 +160,6 @@ uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 
 
-# The relax_data.dipole_pair user function.
-uf = uf_info.add_uf('relax_data.dipole_pair')
-uf.title = "Define the pairs of spins involved in magnetic dipole-dipole relaxation interactions."
-uf.title_short = "Magnetic dipole-dipole interaction setup."
-uf.add_keyarg(
-    name = "spin_id1",
-    default = "@N",
-    py_type = "str",
-    arg_type = "spin ID",
-    desc_short = "first spin ID string",
-    desc = "The spin identification string for the first spin of the dipolar relaxation pair."
-)
-uf.add_keyarg(
-    name = "spin_id2",
-    default = "@H",
-    py_type = "str",
-    arg_type = "spin ID",
-    desc_short = "second spin ID string",
-    desc = "The spin identification string for the second spin of the dipolar relaxation pair."
-)
-uf.add_keyarg(
-    name = "ave_dist",
-    default = NH_BOND_LENGTH,
-    py_type = "float",
-    desc_short = "averaged interatomic distance (meters)",
-    desc = "The r^-3 averaged distance between the two spins to be used in the magnetic dipole constant."
-)
-uf.add_keyarg(
-    name = "direct_bond",
-    default = True,
-    py_type = "bool",
-    desc_short = "directly bonded atoms flag",
-    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simply the set up of the main heteronuclear relaxation mechanism."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("To analyse relaxation data, the relaxation mechanism and related parameters needs to be defined.  This user function allows pairs of spins which are coupled via the magnetic dipole-dipole interaction to be defined.  Hence the dipolar relaxation mechanism between the two spins is to be considered active.")
-uf.desc[-1].add_paragraph("For an orientational dependent analysis, such as model-free analysis with the spheroidal and ellipsoidal global diffusion tensors, the two spins should already possess positional information.  This information will be used by this user function to calculate unit vectors between the two spins.  Without positional information, no vectors can be calculated and an orientational dependent analysis will not be possible.")
-uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly defined.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To set up the protein 15N heteronuclear relaxation mechanism, type on of the following:")
-uf.desc[-1].add_prompt("relax> relax_data.dipole_pair('@N', '@H', 1.02 * 1e-10, True)")
-uf.desc[-1].add_prompt("relax> relax_data.dipole_pair(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10, direct_bond=True)")
-uf.backend = relax_data.dipole_pair
-uf.menu_text = "dipole_&pair"
-uf.wizard_height_desc = 350
-uf.wizard_size = (900, 700)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
-
-
 # The relax_data.display user function.
 uf = uf_info.add_uf('relax_data.display')
 uf.title = "Display the data corresponding to the relaxation data ID string."
