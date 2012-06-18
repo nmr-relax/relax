@@ -24,13 +24,19 @@
 """Module for the manipulation of relaxation data."""
 
 # Python module imports.
+from numpy import float64, zeros
+from numpy.linalg import norm
 import sys
+from warnings import warn
 
 # relax module imports.
+from arg_check import is_float
 from generic_fns.interatomic import create_interatom, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import Selection, return_spin, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError
 from relax_io import extract_data, write_data
+from relax_warnings import RelaxZeroVectorWarning
 
 
 
@@ -177,3 +183,112 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
 
     # Print out.
     write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
+
+
+def unit_vectors(ave=True):
+    """Extract the bond vectors from the loaded structures and store them in the spin container.
+
+    @keyword ave:           A flag which if True will cause the average of all vectors to be calculated.
+    @type ave:              bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Print out.
+    if ave:
+        print("Averaging all vectors.")
+
+    # Loop over the interatomic data containers.
+    no_vectors = True
+    for interatom in interatomic_loop():
+        # Get the spin info.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
+
+        # No positional information.
+        if not hasattr(spin1, 'pos'):
+            continue
+        if not hasattr(spin2, 'pos'):
+            continue
+
+        # Both single positions.
+        if is_float(spin1.pos[0]) and is_float(spin2.pos[0]):
+            # The vector.
+            vector_list = [spin2.pos - spin1.pos]
+
+        # A single and multiple position pair.
+        elif is_float(spin1.pos[0]) or is_float(spin2.pos[0]):
+            # The first spin has multiple positions.
+            if is_float(spin2.pos[0]):
+                vector_list = []
+                for i in range(len(spin1.pos)):
+                    vector_list.append(spin2.pos - spin1.pos[i])
+
+            # The second spin has multiple positions.
+            else:
+                vector_list = []
+                for i in range(len(spin2.pos)):
+                    vector_list.append(spin2.pos[i] - spin1.pos)
+
+        # Both spins have multiple positions.
+        else:
+            # Non-matching number of positions.
+            if len(spin1.pos) != len(spin2.pos):
+                raise RelaxError("The spin '%s' consists of %s positions whereas the spin '%s' consists of %s - these numbers must match." % (interatom.spin_id1, len(spin1.pos), interatom.spin_id1, len(spin1.pos)))
+
+            # Calculate all vectors.
+            vector_list = []
+            for i in range(len(spin1.pos)):
+                vector_list.append(spin2.pos[i] - spin1.pos[i])
+
+        # Average.
+        if ave:
+            ave_vector = zeros(3, float64)
+            for i in range(len(vector_list)):
+                ave_vector += vector_list[i]
+            vector_list = [ave_vector / len(vector_list)]
+
+        # Unit vectors.
+        for i in range(len(vector_list)):
+            # Normalisation factor.
+            norm_factor = norm(vector_list[i])
+
+            # Test for zero length.
+            if norm_factor == 0.0:
+                warn(RelaxZeroVectorWarning(id))
+
+            # Calculate the normalised vector.
+            else:
+                vector_list[i] = vector_list[i] / norm_factor
+
+        # Convert to a single vector if needed.
+        if len(vector_list) == 1:
+            vector_list = vector_list[0]
+
+        # Store the unit vector(s).
+        setattr(interatom, 'vector', vector_list)
+
+        # We have a vector!
+        no_vectors = False
+
+        # Print out.
+        num = 1
+        if not is_float(vector_list[0]):
+            num = len(vector_list)
+        plural = 's'
+        if num == 1:
+            plural = ''
+        if spin1.name:
+            spin1_str = spin1.name
+        else:
+            spin1_str = spin1.num
+        if spin2.name:
+            spin2_str = spin2.name
+        else:
+            spin2_str = spin2.num
+        print("Calculated %s %s-%s unit vector%s between the spins '%s' and '%s'." % (num, spin1_str, spin2_str, plural, interatom.spin_id1, interatom.spin_id2))
+
+    # Right, catch the problem of missing vectors to prevent massive user confusion!
+    if no_vectors:
+        raise RelaxError("No vectors could be extracted.")
