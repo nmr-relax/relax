@@ -35,6 +35,7 @@ import arg_check
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
+from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi import Processor_box
@@ -1485,7 +1486,7 @@ class Mf_minimise:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the model-free model has been setup, and that the heteronucleus and attached proton type have been set.
+        # Test if the model-free model has been setup, and that the nuclear isotope types have been set.
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
@@ -1495,13 +1496,9 @@ class Mf_minimise:
             if not spin.model:
                 raise RelaxNoModelError
 
-            # Test if the spin type has been set.
-            if not hasattr(spin, 'heteronuc_type'):
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
                 raise RelaxSpinTypeError
-
-            # Test if the type attached proton has been set.
-            if not hasattr(spin, 'proton_type'):
-                raise RelaxProtonTypeError
 
         # Reset the minimisation statistics.
         if sim_index == None and min_algor != 'back_calc':
@@ -1543,14 +1540,18 @@ class Mf_minimise:
                 raise RelaxNoPdbError
 
             # Test if unit vectors exist.
-            for spin in spin_loop():
+            for spin, spin_id in spin_loop(return_id=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
 
-                # Unit vector.
-                if not hasattr(spin, 'xh_vect'):
-                    raise RelaxNoVectorsError
+                # Get the interatomic data container.
+                interatoms = return_interatom(spin_id)
+
+                # Unit vectors.
+                for i in range(len(interatoms)):
+                    if not hasattr(interatoms[i], 'vector'):
+                        raise RelaxNoVectorsError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
         if data_store.model_type == 'diff':
@@ -1571,8 +1572,8 @@ class Mf_minimise:
             elif data_store.model_type == 'all':
                 print("The diffusion tensor parameters together with the model-free parameters for all spins will be used.")
 
-        # Test if the CSA and bond length values have been set.
-        for spin in spin_loop():
+        # Test if the CSA and interatomic distances have been set.
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -1581,9 +1582,14 @@ class Mf_minimise:
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError("CSA")
 
-            # Bond length value.
-            if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError("bond length")
+            # Get the interatomic data container.
+            interatoms = return_interatom(spin_id)
+
+            # Interatomic distances.
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not hasattr(interatoms[i], 'r') or interatoms[i].r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=interatoms[i].spin_id1, spin_id2=interatoms[i].spin_id2)
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
