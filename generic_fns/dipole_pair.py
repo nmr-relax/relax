@@ -39,7 +39,6 @@ from relax_io import extract_data, write_data
 from relax_warnings import RelaxZeroVectorWarning
 
 
-
 def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
     """Set up the magnetic dipole-dipole interaction.
 
