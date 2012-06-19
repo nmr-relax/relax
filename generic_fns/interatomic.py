@@ -26,6 +26,7 @@
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
+from relax_errors import RelaxError
 from relax_warnings import RelaxNoSpinWarning
 
 
@@ -76,13 +77,17 @@ def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
 
     @keyword spin_id1:  The spin ID string of the first atom.
     @type spin_id1:     str
-    @keyword spin_id2:  The spin ID string of the first atom.
-    @type spin_id2:     str
+    @keyword spin_id2:  The spin ID string of the optional second atom.
+    @type spin_id2:     str or None
     @keyword pipe:      The data pipe holding the container.  Defaults to the current data pipe.
     @type pipe:         str or None
-    @return:            The interatomic data container, if it exists.
-    @rtype:             data.interatomic.InteratomContainer instance or None
+    @return:            The list of matching interatomic data containers, if any exist.
+    @rtype:             list of data.interatomic.InteratomContainer instances
     """
+
+    # Check.
+    if spin_id1 == None:
+        raise RelaxError("The first spin ID must be supplied.")
 
     # The data pipe.
     if pipe == None:
@@ -91,10 +96,20 @@ def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # Loop over the data.
-    for i in range(len(dp.interatomic)):
-        if dp.interatomic[i].id_match(spin_id1, spin_id2):
-            return dp.interatomic[i]
+    # Initialise.
+    interatoms = []
 
-    # No container found.
-    return None
+    # Precise match.
+    if spin_id1 != None and spin_id2 != None:
+        for i in range(len(dp.interatomic)):
+            if dp.interatomic[i].id_match(spin_id1, spin_id2):
+                interatoms.append(dp.interatomic[i])
+
+    # Single spin.
+    else:
+        for i in range(len(dp.interatomic)):
+            if dp.interatomic[i].spin_id1 == spin_id1 or  dp.interatomic[i].spin_id2 == spin_id1:
+                interatoms.append(dp.interatomic[i])
+
+    # Return the list of containers.
+    return interatoms
