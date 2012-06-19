@@ -33,7 +33,9 @@ import sys
 
 # relax module imports.
 import generic_fns
-from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
+from generic_fns import dipole_pair
+from generic_fns.interatomic import return_interatom
+from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxInvalidDataError
 
@@ -147,6 +149,10 @@ class Results:
             res_name = spin_line[col['name']]
             spin_num = None
             spin_name = None
+            if search('N', spin_line[col['nucleus']]):
+                spin_name = 'N'
+            if search('C', spin_line[col['nucleus']]):
+                spin_name = 'C'
 
         # The spin info.
         else:
@@ -168,38 +174,6 @@ class Results:
             generic_fns.selection.sel_spin(spin_id)
         else:
             generic_fns.selection.desel_spin(spin_id)
-
-
-    def _get_spin_id(self, spin_line, col, verbosity=1):
-        """Get the spin identification string corresponding to spin_line.
-
-        @param spin_line:   The line of data for a single spin.
-        @type spin_line:    list of str
-        @param col:         The column indices.
-        @type col:          dict of int
-        @keyword verbosity: A variable specifying the amount of information to print.  The higher
-                            the value, the greater the verbosity.
-        @type verbosity:    int
-        """
-
-        # The spin info (for relax 1.2).
-        if 'num' in col:
-            mol_name = None
-            res_num = int(spin_line[col['num']])
-            res_name = spin_line[col['name']]
-            spin_num = None
-            spin_name = None
-
-        # The spin info.
-        else:
-            mol_name = spin_line[col['mol_name']]
-            res_num = int(spin_line[col['res_num']])
-            res_name = spin_line[col['res_name']]
-            spin_num = int(spin_line[col['spin_num']])
-            spin_name = spin_line[col['spin_name']]
-
-        # Return the spin container.
-        return generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
 
     def _load_model_free_data(self, spin_line, col, data_set, spin, spin_id, verbosity=1):
@@ -252,6 +226,9 @@ class Results:
         # The model type.
         model_type = spin_line[col['param_set']]
 
+        # Get the interatomic data container.
+        interatom = return_interatom(spin_id)
+
         # Values.
         if data_set == 'value':
             # S2.
@@ -302,12 +279,6 @@ class Results:
             except ValueError:
                 spin.rex = None
 
-            # Bond length.
-            try:
-                spin.r = float(spin_line[col['r']]) * self.return_conversion_factor('r')
-            except ValueError:
-                spin.r = None
-
             # CSA.
             try:
                 spin.csa = float(spin_line[col['csa']]) * self.return_conversion_factor('csa')
@@ -337,6 +308,12 @@ class Results:
                     spin.warning = None
                 else:
                     spin.warning = replace(spin_line[col['warn']], '_', ' ')
+
+            # Interatomic distances.
+            try:
+                interatom[0].r = float(spin_line[col['r']]) * 1e-10
+            except ValueError:
+                interatom[0].r = None
 
         # Errors.
         if data_set == 'error':
@@ -388,18 +365,11 @@ class Results:
             except ValueError:
                 spin.rex_err = None
 
-            # Bond length.
-            try:
-                spin.r_err = float(spin_line[col['r']]) * self.return_conversion_factor('r')
-            except ValueError:
-                spin.r_err = None
-
             # CSA.
             try:
                 spin.csa_err = float(spin_line[col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 spin.csa_err = None
-
 
         # Construct the simulation data structures.
         if data_set == 'sim_0':
@@ -479,12 +449,6 @@ class Results:
                 spin.rex_sim.append(float(spin_line[col['rex']]) * self.return_conversion_factor('rex'))
             except ValueError:
                 spin.rex_sim.append(None)
-
-            # Bond length.
-            try:
-                spin.r_sim.append(float(spin_line[col['r']]) * self.return_conversion_factor('r'))
-            except ValueError:
-                spin.r_sim.append(None)
 
             # CSA.
             try:
@@ -701,21 +665,53 @@ class Results:
             # The data set.
             data_set = file_line[col['data_set']]
 
+            # The spin info (for relax 1.2).
+            if 'num' in col:
+                mol_name = None
+                res_num = int(file_line[col['num']])
+                res_name = file_line[col['name']]
+                spin_num = None
+                spin_name = None
+                if search('N', file_line[col['nucleus']]):
+                    spin_name = 'N'
+                if search('C', file_line[col['nucleus']]):
+                    spin_name = 'C'
+
+            # The spin info.
+            else:
+                mol_name = file_line[col['mol_name']]
+                res_num = int(file_line[col['res_num']])
+                res_name = file_line[col['res_name']]
+                spin_num = int(file_line[col['spin_num']])
+                spin_name = file_line[col['spin_name']]
+
+            # Create the spin ID.
+            spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
+
             # Get the spin container.
-            spin_id = self._get_spin_id(file_line, col, verbosity)
             spin = return_spin(spin_id)
+
+            # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
+            if data_set == 'value':
+                h_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
+                spin_id2 = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
+                dipole_pair.define(spin_id, spin_id2, verbose=False)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
             if len(file_line) == 4:
                 continue
 
-            # Set the heteronucleus and proton types (absent from the 1.2 results file).
+            # Set the nuclear isotope types and spin names (absent from the 1.2 results file).
             if data_set == 'value':
                 if file_line[col['nucleus']] != 'None':
                     if search('N', file_line[col['nucleus']]):
                         spin.isotope = '15N'
+                        if spin.name == None:
+                            spin.name = 'N'
                     elif search('C', file_line[col['nucleus']]):
                         spin.isotope = '13C'
+                        if spin.name == None:
+                            spin.name = 'C'
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
@@ -734,6 +730,7 @@ class Results:
 
                 # Selected simulations.
                 all_select_sim[-1].append(bool(file_line[col['select']]))
+                all_select_sim[-1].append(None)
 
                 # Initial printout for the simulation.
                 if verbosity:
@@ -768,7 +765,7 @@ class Results:
 
             # XH vector, heteronucleus, and proton.
             if data_set == 'value':
-                self._set_xh_vect(file_line, col, spin, spin_id=spin_id, verbosity=verbosity)
+                self._set_xh_vect(file_line, col, spin, spin_id1=spin_id, spin_id2=spin_id2, verbosity=verbosity)
 
             # Relaxation data.
             self._load_relax_data(file_line, col, data_set, spin, verbosity)
@@ -1080,7 +1077,7 @@ class Results:
             generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
-    def _set_xh_vect(self, spin_line, col, spin, spin_id=None, verbosity=1):
+    def _set_xh_vect(self, spin_line, col, spin, spin_id1=None, spin_id2=None, verbosity=1):
         """Set the XH unit vector and the attached proton name.
 
         @param spin_line:   The line of data for a single spin.
@@ -1089,19 +1086,18 @@ class Results:
         @type col:          dict of int
         @param spin:        The spin container.
         @type spin:         SpinContainer instance
-        @keyword spin_id:   The spin ID string.
-        @type spin_id:      str
+        @keyword spin_id1:  The ID string of the first spin.
+        @type spin_id1:     str
+        @keyword spin_id2:  The ID string of the second spin.
+        @type spin_id2:     str
         @keyword verbosity: A variable specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
         """
 
-        # First create a proton spin container.
-        h_spin = create_spin(mol_name=spin_line[col['mol_name']], res_num=spin_line[col['res_num']], res_name=spin_line[col['res_name']], spin_name='H')
-        h_id = generate_spin_id(mol_name=spin_line[col['mol_name']], res_num=spin_line[col['res_num']], res_name=spin_line[col['res_name']], spin_name='H')
-
-        # Then set up a dipole interaction between the two.
-        dipole_pair.define(spin_id, h_id)
-        interatom = return_interatom(spin_id1=spin_i1, spin_id2=h_id)
+        # Get the interatomic data container.
+        interatom = return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+        if len(interatom) != 1:
+            raise RelaxError("Only one interatomic interaction is allowed.")
 
         # The vector.
         vector = eval(spin_line[col['xh_vect']])
@@ -1113,7 +1109,7 @@ class Results:
                 raise RelaxError("The XH unit vector " + spin_line[col['xh_vect']] + " is invalid.")
 
             # Set the vector.
-            interatom.vector = vector
+            interatom[0].vector = vector
 
         # The attached proton name.
         spin.attached_proton = spin_line[col['pdb_proton']]
