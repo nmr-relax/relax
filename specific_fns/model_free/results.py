@@ -713,10 +713,9 @@ class Results:
             if data_set == 'value':
                 if file_line[col['nucleus']] != 'None':
                     if search('N', file_line[col['nucleus']]):
-                        generic_fns.value.set(val='15N', param='heteronuc_type', spin_id=spin_id, reset=False)
+                        spin.isotope = '15N'
                     elif search('C', file_line[col['nucleus']]):
-                        generic_fns.value.set(val='13C', param='heteronuc_type', spin_id=spin_id, reset=False)
-                    generic_fns.value.set(val='1H', param='proton_type', spin_id=spin_id, reset=False)
+                        spin.isotope = '13C'
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
@@ -769,7 +768,7 @@ class Results:
 
             # XH vector, heteronucleus, and proton.
             if data_set == 'value':
-                self._set_xh_vect(file_line, col, spin, verbosity)
+                self._set_xh_vect(file_line, col, spin, spin_id=spin_id, verbosity=verbosity)
 
             # Relaxation data.
             self._load_relax_data(file_line, col, data_set, spin, verbosity)
@@ -1081,7 +1080,7 @@ class Results:
             generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
-    def _set_xh_vect(self, spin_line, col, spin, verbosity=1):
+    def _set_xh_vect(self, spin_line, col, spin, spin_id=None, verbosity=1):
         """Set the XH unit vector and the attached proton name.
 
         @param spin_line:   The line of data for a single spin.
@@ -1090,22 +1089,31 @@ class Results:
         @type col:          dict of int
         @param spin:        The spin container.
         @type spin:         SpinContainer instance
-        @keyword verbosity: A variable specifying the amount of information to print.  The higher
-                            the value, the greater the verbosity.
+        @keyword spin_id:   The spin ID string.
+        @type spin_id:      str
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
         """
 
+        # First create a proton spin container.
+        h_spin = create_spin(mol_name=spin_line[col['mol_name']], res_num=spin_line[col['res_num']], res_name=spin_line[col['res_name']], spin_name='H')
+        h_id = generate_spin_id(mol_name=spin_line[col['mol_name']], res_num=spin_line[col['res_num']], res_name=spin_line[col['res_name']], spin_name='H')
+
+        # Then set up a dipole interaction between the two.
+        dipole_pair.define(spin_id, h_id)
+        interatom = return_interatom(spin_id1=spin_i1, spin_id2=h_id)
+
         # The vector.
-        xh_vect = eval(spin_line[col['xh_vect']])
-        if xh_vect:
+        vector = eval(spin_line[col['xh_vect']])
+        if vector:
             # numpy array format.
             try:
-                xh_vect = array(xh_vect, float64)
+                vector = array(vector, float64)
             except:
                 raise RelaxError("The XH unit vector " + spin_line[col['xh_vect']] + " is invalid.")
 
             # Set the vector.
-            spin.xh_vect = xh_vect
+            interatom.vector = vector
 
         # The attached proton name.
         spin.attached_proton = spin_line[col['pdb_proton']]

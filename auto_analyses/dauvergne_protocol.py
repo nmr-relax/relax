@@ -288,13 +288,17 @@ class dAuvergne_protocol:
             if not spin.select:
                 continue
 
-            # Test if the CSA value has been set.
-            if not hasattr(spin, 'csa') or spin.csa == None:
-                raise RelaxNoValueError("CSA", spin_id=spin_id)
-
             # Test if the isotope type has been set.
             if not hasattr(spin, 'isotope') or spin.isotope == None:
                 raise RelaxNoValueError("nuclear isotope type", spin_id=spin_id)
+
+            # Skip spins with no relaxation data.
+            if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+                continue
+
+            # Test if the CSA value has been set.
+            if not hasattr(spin, 'csa') or spin.csa == None:
+                raise RelaxNoValueError("CSA", spin_id=spin_id)
 
         # Interatomic vars.
         for interatom in interatomic_loop():

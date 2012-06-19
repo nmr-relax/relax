@@ -416,7 +416,7 @@ class Model_free_main:
                     elif spin.params[k] == 'rex':
                         scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
 
-                    # Bond length.
+                    # Interatomic distances.
                     elif spin.params[k] == 'r':
                         scaling_matrix[i, i] = 1e-10
 
@@ -449,10 +449,18 @@ class Model_free_main:
         # Get the spin container.
         spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
-        # Missing structural data.
-        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid') and (not hasattr(spin, 'xh_vect') or spin.xh_vect == None):
-            warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-            return
+        # Missing interatomic vectors.
+        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+            interatoms = interatomic.return_interatom(spin_id)
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check the unit vectors.
+                if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                    warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
+                    return
 
         # Get the relaxation value from the minimise function.
         value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_id, ri_type, frq))
@@ -629,7 +637,7 @@ class Model_free_main:
                     invalid_param = 1
                 rex = 1
 
-            # Bond length.
+            # Interatomic distances.
             elif params[i] == 'r':
                 if r:
                     invalid_param = 1
@@ -697,6 +705,10 @@ class Model_free_main:
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = False
         for spin in spin_loop():
+            # No relaxation data.
+            if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+                continue
+
             # No params.
             if not hasattr(spin, 'params') or not spin.params:
                 continue
@@ -1253,14 +1265,10 @@ class Model_free_main:
         types = {
             'select':           bool,
             'fixed':            bool,
-            'proton_type':      str,
-            'heteronuc_type':   str,
-            'attached_proton':  str,
             'nucleus':          str,
             'model':            str,
             'equation':         str,
             'params':           [str],
-            'xh_vect':          [float],
             's2':               float,
             's2f':              float,
             's2s':              float,
@@ -1269,7 +1277,6 @@ class Model_free_main:
             'tf':               float,
             'ts':               float,
             'rex':              float,
-            'r':                float,
             'csa':              float,
             'chi2':             float,
             'iter':             int,
@@ -1293,10 +1300,7 @@ class Model_free_main:
     _table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
     _table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
     _table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
-    _table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
     _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
-    _table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
-    _table.add_row(["Proton type", "'proton_type'", "'1H'"])
     default_value_doc.add_table(_table.label)
 
     def default_value(self, param):
@@ -1700,7 +1704,7 @@ class Model_free_main:
         elif param == 'rex':
             return [0.0, 30.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2]
 
-        # Bond length.
+        # Interatomic distances.
         elif param == 'r':
             return [1.0 * 1e-10, 1.1 * 1e-10]
 
@@ -1952,7 +1956,7 @@ class Model_free_main:
 
             # No relaxation mechanism.
             if not dipole_relax and not hasattr(spin, 'csa') or spin.csa == None:
-                warn(RelaxDeselectWarning(spin_id, 'no relaxation mechanism found'))
+                warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
                 spin.select = False
 
             # The number of relaxation data points.
@@ -1978,12 +1982,15 @@ class Model_free_main:
                 spin.select = False
 
             # Test for structural data if required.
-            elif need_vect and not hasattr(spin, 'xh_vect'):
-                warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-                spin.select = False
-            elif need_vect and spin.xh_vect == None:
-                warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-                spin.select = False
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check the unit vectors.
+                if need_vect and not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                    warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
+                    spin.select = False
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
@@ -1997,10 +2004,7 @@ class Model_free_main:
     _table.add_row(["Correlation time tf", "'tf'"])
     _table.add_row(["Correlation time ts", "'ts'"])
     _table.add_row(["Chemical exchange", "'rex'"])
-    _table.add_row(["Bond length", "'r'"])
     _table.add_row(["CSA", "'csa'"])
-    _table.add_row(["Heteronucleus type", "'heteronuc_type'"])
-    _table.add_row(["Proton type", "'proton_type'"])
     return_data_name_doc.add_table(_table.label)
 
 

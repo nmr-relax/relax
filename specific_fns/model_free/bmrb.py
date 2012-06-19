@@ -267,7 +267,7 @@ class Bmrb:
                         iso_num = iso_table[data['atom_types'][i]]
 
                     # Set the type.
-                    setattr(spin, 'heteronuc_type', str(iso_num) + data['atom_types'][i])
+                    setattr(spin, 'isotope', str(iso_num) + data['atom_types'][i])
 
 
     def _sf_csa_read(self, star):
@@ -435,7 +435,7 @@ class Bmrb:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
             if spin.name == None:
                 raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
-            if spin.heteronuc_type == None:
+            if spin.isotope == None:
                 raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
             if not hasattr(spin, 'element') or spin.element == None:
                 raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)
@@ -452,15 +452,25 @@ class Bmrb:
             else:
                 csa_list.append(None)
 
-            # Bond lengths.
-            if hasattr(spin, 'csa'):
-                r_list.append(spin.r)
-            else:
-                r_list.append(None)
+            # Interatomic distances.
+            interatoms = return_interatom(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
 
-            # The heteronucleus type.
-            if hasattr(spin, 'csa'):
-                isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+                # Add the interatomic distance.
+                if hasattr(interatoms[i], 'r'):
+                    r_list.append(interatoms[i].r)
+                else:
+                    r_list.append(None)
+
+                # Stop adding.
+                break
+
+            # The nuclear isotope.
+            if hasattr(spin, 'isotope'):
+                isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
             else:
                 isotope_list.append(None)
 

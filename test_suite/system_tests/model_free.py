@@ -34,6 +34,7 @@ from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns import pipes
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
@@ -291,12 +292,21 @@ class Mf(SystemTestCase):
         # The global minimisation info.
         self.assertAlmostEqual(cdp.chi2, 4e-19)
 
-        # The spin ID info.
-        mol_names = ["sphere_mol1"] * 9
-        res_names = ["GLY"] * 9
-        res_nums = range(1, 10)
-        spin_names = ["N"] * 9
-        spin_nums = numpy.array(range(9)) * 2 + 1
+        # The spin info.
+        mol_names = ["sphere_mol1"] * 18
+        res_names = ["GLY"] * 18
+        res_nums = []
+        for i in range(1, 10):
+            res_nums.append(i)
+            res_nums.append(i)
+        spin_names = ["N", "H"] * 9
+        spin_nums = range(1, 19)
+        isotopes = ["15N", "1H"] * 9
+        csa = [-172e-6, None] * 9
+        select = [True, False] * 9
+        fixed = [False, None] * 9
+        s2 = [0.8, None] * 9
+        te = [20e-12, None] * 9
 
         # Check the spin data.
         i = 0
@@ -309,13 +319,13 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.num,  spin_nums[i])
 
             # The data.
-            self.assertEqual(spin.select, True)
-            self.assertEqual(spin.fixed, False)
-            self.assertEqual(spin.proton_type, '1H')
-            self.assertEqual(spin.heteronuc_type, '15N')
-            self.assertEqual(spin.attached_proton, None)
-            self.assertAlmostEqual(spin.r, 1.02 * 1e-10)
-            self.assertAlmostEqual(spin.csa, -172e-6)
+            self.assertEqual(spin.select, select[i])
+            self.assertEqual(spin.fixed, fixed[i])
+            self.assertEqual(spin.isotope, isotopes[i])
+            if csa[i] == None:
+                self.assertEqual(spin.csa, None)
+            else:
+                self.assertAlmostEqual(spin.csa, csa[i])
 
             # The model-free data.
             self.assertEqual(spin.model, 'm2')
@@ -323,11 +333,17 @@ class Mf(SystemTestCase):
             self.assertEqual(len(spin.params), 2)
             self.assertEqual(spin.params[0], 's2')
             self.assertEqual(spin.params[1], 'te')
-            self.assertAlmostEqual(spin.s2, 0.8)
+            if s2[i] == None:
+                self.assertEqual(spin.s2, None)
+            else:
+                self.assertAlmostEqual(spin.s2, 0.8)
             self.assertEqual(spin.s2f, None)
             self.assertEqual(spin.s2s, None)
             self.assertEqual(spin.local_tm, None)
-            self.assertAlmostEqual(spin.te, 20e-12)
+            if te[i] == None:
+                self.assertEqual(spin.te, None)
+            else:
+                self.assertAlmostEqual(spin.te, 20e-12)
             self.assertEqual(spin.tf, None)
             self.assertEqual(spin.ts, None)
             self.assertEqual(spin.rex, None)
@@ -342,6 +358,11 @@ class Mf(SystemTestCase):
 
             # Increment the index.
             i += 1
+
+        # Check the interatomic data.
+        i = 0
+        for interatom in interatomic_loop():
+            self.assertAlmostEqual(interatom.r, 1.02 * 1e-10)
 
 
     def test_generate_ri(self):
