@@ -78,9 +78,9 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
                         pair = True
 
                     # Same residue, so skip.
-                    if pair and res_num1 != None and res_num1 == res_num2:
+                    if pair and res_num1 != None and res_num1 != res_num2:
                         continue
-                    elif pair and res_num1 == None and res_name1 == res_name2:
+                    elif pair and res_num1 == None and res_name1 != res_name2:
                         continue
 
             # Get the interatomic data object, if it exists.
