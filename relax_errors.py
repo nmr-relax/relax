@@ -293,12 +293,7 @@ class RelaxNucleusError(BaseError):
 # Spin type not set.
 class RelaxSpinTypeError(BaseError):
     def __init__(self):
-        self.text = "The spin type has not yet been set.  Please use the value.set user function to set the heteronucleus type."
-
-# Proton type not set.
-class RelaxProtonTypeError(BaseError):
-    def __init__(self):
-        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set user function to set the proton type."
+        self.text = "The nuclear isotope type has not yet been set.  Please use the spin.isotope user function to set the type."
 
 
 # Argument errors.
