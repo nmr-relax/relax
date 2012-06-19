@@ -670,6 +670,10 @@ class MoleculeContainer(Prototype):
                     del spin.attached_proton
                 if hasattr(spin, 'r'):
                     del spin.r
+                if hasattr(spin, 'r_err'):
+                    del spin.r_err
+                if hasattr(spin, 'r_sim'):
+                    del spin.r_sim
                 if hasattr(spin, 'xh_vect'):
                     del spin.xh_vect
 
