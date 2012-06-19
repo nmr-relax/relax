@@ -1078,7 +1078,7 @@ class Results:
 
 
     def _set_xh_vect(self, spin_line, col, spin, spin_id1=None, spin_id2=None, verbosity=1):
-        """Set the XH unit vector and the attached proton name.
+        """Set the unit vectors.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
@@ -1110,11 +1110,6 @@ class Results:
 
             # Set the vector.
             interatom[0].vector = vector
-
-        # The attached proton name.
-        spin.attached_proton = spin_line[col['pdb_proton']]
-        if spin.attached_proton == 'None':
-            spin.attached_proton = None
 
 
     def read_columnar_results(self, file_data, verbosity=1):
