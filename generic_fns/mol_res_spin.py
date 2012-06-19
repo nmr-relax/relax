@@ -1571,10 +1571,10 @@ def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, 
         id = id + ":" + res_name
 
     # Spin data.
-    if spin_num != None:
-        id = id + "@" + str(spin_num)
-    elif spin_name != None:
+    if spin_name != None:
         id = id + "@" + spin_name
+    elif spin_num != None:
+        id = id + "@" + str(spin_num)
 
     # Return the spin id string.
     return id
