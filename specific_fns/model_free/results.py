@@ -125,12 +125,7 @@ class Results:
             cdp.diff_tensor.fixed = diff_fixed
 
         # Set the spin specific fixed flags.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Set the fixed flag.
+        for spin, id in spin_loop(return_id=True):
             if mf_fixed != None:
                 spin.fixed = mf_fixed
 
@@ -700,6 +695,7 @@ class Results:
             if data_set == 'value':
                 h_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
                 h_spin.select = False
+                h_spin.isotope = '1H'
                 spin_id2 = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
                 dipole_pair.define(spin_id, spin_id2, verbose=False)
 
