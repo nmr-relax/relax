@@ -87,7 +87,7 @@ class Mf(SystemTestCase):
 
         # Test that the objects in the base pipes are the same.
         print("Comparison of the objects of the base data pipe:")
-        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
+        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'interatomic', 'diff_tensor'])
 
         # Test that the diffusion tensor data is the same.
         print("Comparison of the objects of the diffusion tensor:")
@@ -123,6 +123,12 @@ class Mf(SystemTestCase):
                     # Test the objects.
                     print("Comparison of the objects of the spin:")
                     self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
+
+        # Loop over the interatomic data containers.
+        for i in xrange(len(pipe_12.interatomic)):
+            # Test the objects.
+            print("Comparison of the objects of the molecule:")
+            self.object_comparison(obj1=pipe_12.interatomic[i], obj2=pipe_13.interatomic[i])
 
 
     def mesg_opt_debug(self, spin):
