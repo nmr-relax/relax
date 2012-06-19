@@ -27,7 +27,7 @@
 from types import IntType, NoneType
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_id_to_data_list, spin_loop
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_id_to_data_list, spin_loop
 import pipes
 from relax_errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import open_write_file, read_spin_data, write_spin_data
@@ -54,7 +54,12 @@ def attach_protons():
 
     # Create all protons (this must be done out of the spin loop, as it affects the looping!).
     for i in range(len(mol_names)):
+        # Create the spin container.
         create_spin(spin_name='H', res_name=res_names[i], res_num=res_nums[i], mol_name=mol_names[i])
+
+    # Set the element and spin type.
+    set_spin_element(spin_id='@H', element='H')
+    set_spin_isotope(spin_id='@H', isotope='1H')
 
 
 def copy(pipe_from=None, pipe_to=None, preserve_select=False, verbose=True):
