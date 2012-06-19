@@ -207,7 +207,7 @@ dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 dipole_pair.unit_vectors()
 
 # Define the chemical shift relaxation interaction.
-value.set(-172 * 1e-6, 'csa')
+value.set(-172 * 1e-6, 'csa', spin_id='@N')
 
 # Set the spin information.
 spin.isotope('15N', spin_id='@N')
