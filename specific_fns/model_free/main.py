@@ -34,7 +34,7 @@ import arg_check
 from data.diff_tensor import DiffTensorSimList
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, interatomic, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 import specific_fns
@@ -1487,12 +1487,31 @@ class Model_free_main:
         model_type = self._determine_model_type()
 
         # Sequence specific data.
+        spin, spin_id = return_spin_from_index(model_info, pipe=pipe_from, return_spin_id=True)
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Get the spin container indices.
             mol_index, res_index, spin_index = convert_from_global_index(global_index=model_info, pipe=pipe_from)
 
             # Duplicate the spin specific data.
-            dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(dp_from.mol[mol_index].res[res_index].spin[spin_index])
+            dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(spin)
+
+            # Duplicate the relaxation active spins which have not been copied yet.
+            interatoms = interatomic.return_interatom(spin_id)
+            for interatom in interatoms:
+                # No relaxation mechanism.
+                if not interatom.dipole_pair:
+                    continue
+
+                # The interacting spin.
+                if spin_id != interatom.spin_id1:
+                    spin_id2 = interatom.spin_id1
+                else:
+                    spin_id2 = interatom.spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Duplicate the spin specific data.
+                mol_index, res_index, spin_index = return_spin_indices(spin_id2)
+                dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(spin2)
 
         # Other data types.
         else:
