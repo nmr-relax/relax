@@ -285,6 +285,14 @@ uf = uf_info.add_uf('spin.element')
 uf.title = "Set the element type of the spin."
 uf.title_short = "Spin element setting."
 uf.add_keyarg(
+    name = "element",
+    py_type = "str",
+    desc_short = "IUPAC element name",
+    desc = "The IUPAC element name.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["N", "C", "H", "O", "P"]
+)
+uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
@@ -292,14 +300,6 @@ uf.add_keyarg(
     wiz_element_type = 'combo',
     wiz_combo_iter = get_spin_ids,
     can_be_none = True
-)
-uf.add_keyarg(
-    name = "element",
-    py_type = "str",
-    desc_short = "IUPAC element name",
-    desc = "The IUPAC element name.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["N", "C", "H", "O", "P"]
 )
 uf.add_keyarg(
     name = "force",
