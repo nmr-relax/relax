@@ -177,7 +177,7 @@ def interatomic_loop(pipe=None):
 
 
 def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
-    """Return the interatomic data container for the two spins.
+    """Return the list of interatomic data containers for the two spins.
 
     @keyword spin_id1:  The spin ID string of the first atom.
     @type spin_id1:     str
