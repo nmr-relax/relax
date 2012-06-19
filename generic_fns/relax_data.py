@@ -448,6 +448,10 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
             spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
             spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
+            # No data or errors.
+            if not hasattr(spin_from, 'ri_data') and not hasattr(spin_from, 'ri_data_err'):
+                continue
+
             # Initialise the spin data if necessary.
             if not hasattr(spin_to, 'ri_data'):
                 spin_to.ri_data = {}
