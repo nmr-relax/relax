@@ -1330,7 +1330,7 @@ class Mf_minimise:
                 raise RelaxNoValueError("CSA")
 
             # Test the interatomic data.
-            interatoms = interatomic.return_interatom(spin_id)
+            interatoms = return_interatom(spin_id)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
