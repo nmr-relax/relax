@@ -50,6 +50,9 @@ class InteratomContainer(Prototype):
         self.spin_id1 = spin_id1
         self.spin_id2 = spin_id2
 
+        # Class variable defaults.
+        self.dipole_pair = False
+
 
     def __repr__(self):
         """The string representation of the object.
