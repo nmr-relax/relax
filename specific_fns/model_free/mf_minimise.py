@@ -1411,9 +1411,9 @@ class Mf_minimise:
 
                 # The data.
                 if sim_index == None:
-                    r = [spin.r]
+                    r = [interatoms[i].r]
                 else:
-                    r = [spin.r_sim[sim_index]]
+                    r = [interatoms[i].r_sim[sim_index]]
 
                 # Vectors.
                 if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
