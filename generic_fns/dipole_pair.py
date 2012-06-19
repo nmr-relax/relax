@@ -62,15 +62,24 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
                 continue
 
             # Get the interatomic data object, if it exists.
-            interatom = return_interatom(id1, id2)
-
-            # Check that this has not already been set up.
-            if hasattr(interatom, 'dipole_pair') and interatom.dipole_pair:
-                raise RelaxError("The magnetic dipole-dipole interaction already exists between the spins '%s' and '%s'." % (id1, id2))
+            interatoms = return_interatom(id1, id2)
 
             # Create the container if needed.
-            if not interatom:
+            if not len(interatoms):
                 interatom = create_interatom(spin_id1=id1, spin_id2=id2)
+
+            # Check the single container and alias it.
+            else:
+                # The check.
+                if len(interatoms) > 1:
+                    raise RelaxError("Multiple interatomic data containers found.")
+
+                # Alias.
+                interatom = interatoms[0]
+
+            # Check that this has not already been set up.
+            if interatom.dipole_pair:
+                raise RelaxError("The magnetic dipole-dipole interaction already exists between the spins '%s' and '%s'." % (id1, id2))
 
             # Set a flag indicating that a dipole-dipole interaction is present.
             interatom.dipole_pair = True
