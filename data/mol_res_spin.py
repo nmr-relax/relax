@@ -644,6 +644,7 @@ class MoleculeContainer(Prototype):
 
                     # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
                     h_spin = generic_fns.mol_res_spin.create_spin(mol_name=self.name, res_num=res.num, res_name=res.name, spin_name='H')
+                    h_spin.select = False
                     spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=self.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
                     spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=self.name, res_num=res.num, res_name=res.name, spin_name='H')
                     generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False)
