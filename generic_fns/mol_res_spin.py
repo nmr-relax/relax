@@ -2679,13 +2679,49 @@ def set_spin_element(spin_id=None, element=None, force=False):
     if element not in valid_names:
         raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
 
-
     # Set the element name for the matching spins.
     for spin, id in spin_loop(spin_id, return_id=True):
         if hasattr(spin, 'element') and spin.element and not force:
             warn(RelaxWarning("The element type of the spin '%s' is already set.  Set the force flag to True to rename." % id))
         else:
             spin.element = element
+
+
+def set_spin_isotope(spin_id=None, isotope=None, force=False):
+    """Set the nuclear isotope type of the spins.
+
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @keyword isotope:   The nuclear isotope type.
+    @type isotope:      str
+    @keyword force:     A flag which if True will cause the isotope type to be changed.
+    @type force:        bool
+    """
+
+    # Types currently supported in relax.
+    supported_types = [
+        '1H',
+        '2H',
+        '13C',
+        '14N',
+        '15N',
+        '17O',
+        '19F',
+        '23Na',
+        '31P',
+        '113Cd'
+    ]
+
+    # Check.
+    if isotope not in supported_types:
+        raise(RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope))
+
+    # Set the isotope type for the matching spins.
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if hasattr(spin, 'isotope') and spin.isotope and not force:
+            warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
+        else:
+            spin.isotope = isotope
 
 
 def spin_id_to_data_list(id):
