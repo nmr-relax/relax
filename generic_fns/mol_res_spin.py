@@ -2511,6 +2511,66 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
         spin_num = spin_num + 1
 
 
+def return_spin_indices(spin_id=None, pipe=None):
+    """Return the molecule, residue and spin indices corresponding to the given spin ID string.
+
+    @keyword spin_id:   The unique spin ID string.
+    @type spin_id:      str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The molecule, residue and spin indices.
+    @rtype:             list of int
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # No spin ID, so switch to selection matching.
+    if not dp.mol.lookup_table.has_key(spin_id):
+        # Parse the selection string.
+        select_obj = Selection(selection)
+
+        # Loop over the molecules.
+        for i in range(len(dp.mol)):
+            # Skip the molecule if there is no match to the selection.
+            if dp.mol[i] not in select_obj:
+                continue
+
+            # The molecule index.
+            mol_index = i
+
+            # Loop over the residues.
+            for j in range(len(dp.mol[i].res)):
+                # Skip the residue if there is no match to the selection.
+                if dp.mol[i].res[j] not in select_obj:
+                    continue
+
+                # The residue index.
+                res_index = j
+
+                # Loop over the spins.
+                for k in range(len(dp.mol[i].res[j].spin)):
+                    # Skip the spin if there is no match to the selection.
+                    if dp.mol[i].res[j].spin[k] not in select_obj:
+                        continue
+
+                    # The spin index.
+                    spin_index = k
+
+                    # Found the spin, so terminate.
+                    break
+
+    # The indices from the look up table.
+    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
+
+    # Return the data.
+    return mol_index, res_index, spin_index
+
+
 def return_single_molecule_info(molecule_token):
     """Return the single molecule name corresponding to the molecule token.
 
