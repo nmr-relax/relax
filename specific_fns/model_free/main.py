@@ -1988,9 +1988,10 @@ class Model_free_main:
                     continue
 
                 # Check the unit vectors.
-                if need_vect and not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
-                    warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-                    spin.select = False
+                if need_vect:
+                    if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                        warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
+                        spin.select = False
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
