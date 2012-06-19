@@ -90,13 +90,9 @@ class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_comm
         self.PARAMS.add('phi', scope='global', default=diffusion_tensor.default_value('phi'), py_type=float, set='params', err=True, sim=True)
 
         # Set up the spin parameters.
-        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton spin type', py_type=str)
-        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus spin type', py_type=str)
-        self.PARAMS.add('attached_proton', scope='spin', default='H', desc='The name of the attached proton', py_type=str)
         self.PARAMS.add('model', scope='spin', desc='The model', py_type=str)
         self.PARAMS.add('equation', scope='spin', desc='The model equation', py_type=str)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
-        self.PARAMS.add('xh_vect', scope='spin', desc='XH bond vector', py_type=list)
         self.PARAMS.add('s2', scope='spin', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', py_type=float, set='params', grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
         self.PARAMS.add('s2f', scope='spin', default=0.8, desc='S2f, the faster motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
         self.PARAMS.add('s2s', scope='spin', default=0.8, desc='S2s, the slower motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)

@@ -75,10 +75,7 @@ class N_state_model(API_base, API_common):
         self.test_grid_ops = self._test_grid_ops_general
 
         # Set up the spin parameters.
-        self.PARAMS.add('r', scope='spin', units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
         self.PARAMS.add('csa', scope='spin', units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
-        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
-        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)

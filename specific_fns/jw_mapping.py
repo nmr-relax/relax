@@ -62,10 +62,7 @@ class Jw_mapping(API_base, API_common):
         self.PARAMS.add('j0', scope='spin', string='J(0)', desc='Spectral density value at 0 MHz', py_type=float, set='params', grace_string='\\qJ(0)\\Q', err=True, sim=True)
         self.PARAMS.add('jwx', scope='spin', string='J(wX)', desc='Spectral density value at the frequency of the heteronucleus', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sX\\N)\\Q', err=True, sim=True)
         self.PARAMS.add('jwh', scope='spin', string='J(wH)', desc='Spectral density value at the frequency of the proton', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sH\\N)\\Q', err=True, sim=True)
-        self.PARAMS.add('r', scope='spin', default=NH_BOND_LENGTH, units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
         self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
-        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
-        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
 
 
     def _set_frq(self, frq=None):
