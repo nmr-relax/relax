@@ -224,13 +224,13 @@ class PipeContainer(Prototype):
             # Fill its contents.
             self.align_tensors.from_xml(align_tensor_nodes[0], file_version=file_version)
 
+        # Recreate the interatomic data structure (this needs to be before the 'mol' structure as the backward compatibility hooks can create interatomic data containers!).
+        interatom_nodes = pipe_node.getElementsByTagName('interatomic')
+        self.interatomic.from_xml(interatom_nodes, file_version=file_version)
+
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = pipe_node.getElementsByTagName('mol')
         self.mol.from_xml(mol_nodes, file_version=file_version)
-
-        # Recreate the interatomic data structure.
-        interatom_nodes = pipe_node.getElementsByTagName('interatomic')
-        self.interatomic.from_xml(interatom_nodes, file_version=file_version)
 
         # Get the structural object nodes and, if they exist, fill the contents.
         str_nodes = pipe_node.getElementsByTagName('structure')
