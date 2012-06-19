@@ -651,6 +651,25 @@ class RelaxSpinsNotLoadedError(BaseError):
         self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins user function."
 
 
+# Interatomic data errors.
+##########################
+
+# No interatomic data.
+class RelaxNoInteratomError(BaseError):
+    def __init__(self, pipe=None):
+        if pipe == None:
+            self.text = "The interatomic data does not exist."
+        else:
+            self.text = "The interatomic data for the data pipe " + repr(pipe) + " does not exist."
+
+# The interatomic data already exists.
+class RelaxInteratomError(BaseError):
+    def __init__(self, pipe=None):
+        if pipe == None:
+            self.text = "The interatomic data already exists."
+        else:
+            self.text = "The interatomic data for the data pipe " + repr(pipe) + " already exists."
+
 
 
 # Spectral data errors.
