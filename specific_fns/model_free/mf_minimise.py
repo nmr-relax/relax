@@ -1055,7 +1055,7 @@ class Mf_minimise:
                 data_store.r = [interatoms[i].r]
                 data_store.gh = [return_gyromagnetic_ratio(spin2.isotope)]
                 if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                    data_store.xh_unit_vectors = [interatoms[i].vectors]
+                    data_store.xh_unit_vectors = [interatoms[i].vector]
                 else:
                     data_store.xh_unit_vectors = [None]
 
@@ -1718,6 +1718,12 @@ class Mf_minimise:
 
                 # Skip spins missing relaxation data or errors.
                 if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
+                    continue
+
+            # Skip spins missing the dipolar interaction.
+            if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm'):
+                interatoms = return_interatom(data_store.spin_id)
+                if not len(interatoms):
                     continue
 
             # Parameter vector and diagonal scaling.
