@@ -864,8 +864,13 @@ class RelaxValueError(BaseError):
 
 # No data value.
 class RelaxNoValueError(BaseError):
-    def __init__(self, name):
-        self.text = "The " + repr(name) + " value has not yet been set."
+    def __init__(self, name, spin_id=None, spin_id2=None):
+        if spin_id2 != None:
+            self.text = "The %s value has not yet been set for spins '%s' and '%s'." % (name, spin_id, spin_id2)
+        elif spin_id != None:
+            self.text = "The %s value has not yet been set for spin '%s'." % (name, spin_id)
+        else:
+            self.text = "The " + repr(name) + " value has not yet been set."
 
 # Unknown data type.
 class RelaxUnknownDataTypeError(BaseError):
