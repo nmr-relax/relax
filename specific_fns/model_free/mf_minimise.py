@@ -36,7 +36,7 @@ from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.interatomic import interatomic_loop, return_interatom
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi import Processor_box
 from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
@@ -979,7 +979,7 @@ class Mf_minimise:
         return A, b
 
 
-    def _minimise_data_setup(self, data_store, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
+    def _minimise_data_setup(self, data_store, min_algor, num_data_sets, min_options, spin=None, spin_id=None, sim_index=None):
         """Set up all the data required for minimisation.
 
         @param data_store:      A data storage container.
@@ -992,6 +992,8 @@ class Mf_minimise:
         @type min_options:      list
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
+        @keyword spin_id:       The spin ID string.
+        @type spin_id:          str
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         @return:                An insane tuple.  The full tuple is (ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_types, num_params, xh_unit_vectors, diff_type, diff_params)
@@ -1023,12 +1025,11 @@ class Mf_minimise:
 
         # Set up the data for the back_calc function.
         if min_algor == 'back_calc':
-            # The data.
+            # The spin data.
             data_store.ri_data = [0.0]
             data_store.ri_data_err = [0.000001]
             data_store.equations = [spin.equation]
             data_store.param_types = [spin.params]
-            data_store.r = [spin.r]
             data_store.csa = [spin.csa]
             data_store.num_frq = [1]
             data_store.frq = [[min_options[3]]]
@@ -1036,12 +1037,29 @@ class Mf_minimise:
             data_store.remap_table = [[0]]
             data_store.noe_r1_table = [[None]]
             data_store.ri_types = [[min_options[2]]]
-            data_store.gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
-            data_store.gh = [return_gyromagnetic_ratio(spin.proton_type)]
-            if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                data_store.xh_unit_vectors = [spin.xh_vect]
-            else:
-                data_store.xh_unit_vectors = [None]
+            data_store.gx = [return_gyromagnetic_ratio(spin.isotope)]
+
+            # The interatomic data.
+            interatoms = return_interatom(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # The data.
+                data_store.r = [interatoms[i].r]
+                data_store.gh = [return_gyromagnetic_ratio(spin2.isotope)]
+                if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                    data_store.xh_unit_vectors = [interatoms[i].vectors]
+                else:
+                    data_store.xh_unit_vectors = [None]
 
             # Count the number of model-free parameters for the spin index.
             data_store.num_params = [len(spin.params)]
@@ -1084,18 +1102,36 @@ class Mf_minimise:
             data_store.frq.append(data[5])
             data_store.remap_table.append(data[6])
             data_store.noe_r1_table.append(data[7])
-
-            # Repackage the data.
-            data_store.equations.append(spin.equation)
-            data_store.param_types.append(spin.params)
-            data_store.gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
-            data_store.gh.append(return_gyromagnetic_ratio(spin.proton_type))
             if sim_index == None or data_store.model_type == 'diff':
-                data_store.r.append(spin.r)
                 data_store.csa.append(spin.csa)
             else:
-                data_store.r.append(spin.r_sim[sim_index])
                 data_store.csa.append(spin.csa_sim[sim_index])
+
+            # Repackage the spin data.
+            data_store.equations.append(spin.equation)
+            data_store.param_types.append(spin.params)
+            data_store.gx.append(return_gyromagnetic_ratio(spin.isotope))
+
+            # Repackage the interatomic data.
+            interatoms = return_interatom(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # The data.
+                data_store.gh.append(return_gyromagnetic_ratio(spin2.isotope))
+                if sim_index == None or data_store.model_type == 'diff':
+                    data_store.r.append(interatoms[i].r)
+                else:
+                    data_store.r.append(interatoms[i].r_sim[sim_index])
 
             # Model-free parameter values.
             if data_store.model_type == 'local_tm':
@@ -1550,6 +1586,11 @@ class Mf_minimise:
 
                 # Unit vectors.
                 for i in range(len(interatoms)):
+                    # No relaxation mechanism.
+                    if not interatoms[i].dipole_pair:
+                        continue
+
+                    # Check for the vectors.
                     if not hasattr(interatoms[i], 'vector'):
                         raise RelaxNoVectorsError
 
@@ -1586,10 +1627,22 @@ class Mf_minimise:
             interatoms = return_interatom(spin_id)
 
             # Interatomic distances.
+            count = 0
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check for the distances.
                 if not hasattr(interatoms[i], 'r') or interatoms[i].r == None:
                     raise RelaxNoValueError("interatomic distance", spin_id=interatoms[i].spin_id1, spin_id2=interatoms[i].spin_id2)
+
+                # Count the number of interactions.
+                count += 1
+            
+            # Too many interactions.
+            if count > 1:
+                raise RelaxError("The spin '%s' has %s dipolar relaxation interactions defined, but only a maximum of one is currently supported." % (spin_id, count))
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
@@ -1672,7 +1725,7 @@ class Mf_minimise:
                 opt_params.A, opt_params.b = None, None
 
             # Get the data for minimisation.
-            self._minimise_data_setup(data_store, min_algor, num_data_sets, opt_params.min_options, spin=spin, sim_index=sim_index)
+            self._minimise_data_setup(data_store, min_algor, num_data_sets, opt_params.min_options, spin=spin, spin_id=data_store.spin_id, sim_index=sim_index)
 
             # Setup the minimisation algorithm when constraints are present.
             if constraints and not match('^[Gg]rid', min_algor):
