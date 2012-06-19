@@ -979,7 +979,7 @@ class Mf_minimise:
         return A, b
 
 
-    def _minimise_data_setup(self, data_store, min_algor, num_data_sets, min_options, spin=None, spin_id=None, sim_index=None):
+    def _minimise_data_setup(self, data_store, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
         @param data_store:      A data storage container.
@@ -992,8 +992,6 @@ class Mf_minimise:
         @type min_options:      list
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
-        @keyword spin_id:       The spin ID string.
-        @type spin_id:          str
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         @return:                An insane tuple.  The full tuple is (ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_types, num_params, xh_unit_vectors, diff_type, diff_params)
@@ -1113,14 +1111,14 @@ class Mf_minimise:
             data_store.gx.append(return_gyromagnetic_ratio(spin.isotope))
 
             # Repackage the interatomic data.
-            interatoms = return_interatom(spin_id)
+            interatoms = return_interatom(data_store.spin_id)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
                     continue
 
                 # The surrounding spins.
-                if spin_id != interatoms[i].spin_id1:
+                if data_store.spin_id != interatoms[i].spin_id1:
                     spin_id2 = interatoms[i].spin_id1
                 else:
                     spin_id2 = interatoms[i].spin_id2
@@ -1725,7 +1723,7 @@ class Mf_minimise:
                 opt_params.A, opt_params.b = None, None
 
             # Get the data for minimisation.
-            self._minimise_data_setup(data_store, min_algor, num_data_sets, opt_params.min_options, spin=spin, spin_id=data_store.spin_id, sim_index=sim_index)
+            self._minimise_data_setup(data_store, min_algor, num_data_sets, opt_params.min_options, spin=spin, sim_index=sim_index)
 
             # Setup the minimisation algorithm when constraints are present.
             if constraints and not match('^[Gg]rid', min_algor):

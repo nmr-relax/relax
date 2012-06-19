@@ -33,7 +33,7 @@ from warnings import warn
 import arg_check
 from data.diff_tensor import DiffTensorSimList
 from float import isNaN, isInf
-from generic_fns import diffusion_tensor, pipes, relax_data, sequence
+from generic_fns import diffusion_tensor, interatomic, pipes, relax_data, sequence
 from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
@@ -1384,7 +1384,7 @@ class Model_free_main:
         # Duplicate all non-sequence specific data.
         for data_name in dir(dp_from):
             # Skip the container objects.
-            if data_name in ['diff_tensor', 'mol', 'structure', 'exp_info']:
+            if data_name in ['diff_tensor', 'mol', 'interatomic', 'structure', 'exp_info']:
                 continue
 
             # Skip special objects.
@@ -1477,6 +1477,10 @@ class Model_free_main:
         # Duplicate the sequence data if it doesn't exist.
         if dp_to.mol.is_empty():
             sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, preserve_select=True, verbose=verbose)
+
+        # Duplicate the interatomic data if it doesn't exist.
+        if dp_to.interatomic.is_empty():
+            interatomic.copy(pipe_from=pipe_from, pipe_to=pipe_to, verbose=verbose)
 
         # Determine the model type of the original data pipe.
         pipes.switch(pipe_from)
