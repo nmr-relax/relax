@@ -126,6 +126,11 @@ class Results:
 
         # Set the spin specific fixed flags.
         for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Set the fixed flag.
             if mf_fixed != None:
                 spin.fixed = mf_fixed
 
