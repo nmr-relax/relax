@@ -694,6 +694,7 @@ class Results:
             # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
             if data_set == 'value':
                 h_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
+                h_spin.select = False
                 spin_id2 = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
                 dipole_pair.define(spin_id, spin_id2, verbose=False)
 
@@ -730,7 +731,6 @@ class Results:
 
                 # Selected simulations.
                 all_select_sim[-1].append(bool(file_line[col['select']]))
-                all_select_sim[-1].append(None)
 
                 # Initial printout for the simulation.
                 if verbosity:
