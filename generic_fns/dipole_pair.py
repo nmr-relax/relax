@@ -86,8 +86,28 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
             # Store the IDs for the print out.
             ids.append([repr(id1), repr(id2)])
 
+    # No matches, so fail!
+    if not len(ids):
+        # Find the problem.
+        count1 = 0
+        count2 = 0
+        for spin in spin_loop(spin_id1):
+            count1 += 1
+        for spin in spin_loop(spin_id2):
+            count2 += 1
+
+        # Report the problem.
+        if count1 == 0 and count2 == 0:
+            raise RelaxError("Both spin IDs '%s' and '%s' match no spins." % (spin_id1, spin_id2))
+        elif count1 == 0:
+            raise RelaxError("The spin ID '%s' matches no spins." % spin_id1)
+        elif count2 == 0:
+            raise RelaxError("The spin ID '%s' matches no spins." % spin_id2)
+        else:
+            raise RelaxError("Unknown error.")
+
     # Print out.
-    if verbose and len(ids):
+    if verbose:
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
 
 
@@ -156,6 +176,10 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
         # Store the data for the print out.
         data.append([repr(interatom.spin_id1), repr(interatom.spin_id2), repr(ave_dist)])
 
+    # No data, so fail!
+    if not len(data):
+        raise RelaxError("No data could be extracted from the file.")
+
     # Print out.
     write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
 
@@ -191,6 +215,10 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
 
         # Store the data for the print out.
         data.append([repr(interatom.spin_id1), repr(interatom.spin_id2), repr(ave_dist)])
+
+    # No data, so fail!
+    if not len(data):
+        raise RelaxError("No data could be set.")
 
     # Print out.
     write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
