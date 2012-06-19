@@ -40,7 +40,7 @@ from relax_warnings import RelaxZeroVectorWarning
 
 
 
-def define(spin_id1=None, spin_id2=None, direct_bond=False):
+def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
     """Set up the magnetic dipole-dipole interaction.
 
     @keyword spin_id1:      The spin identifier string of the first spin of the pair.
@@ -49,6 +49,8 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False):
     @type spin_id2:         str
     @keyword direct_bond:   A flag specifying if the two spins are directly bonded.
     @type direct_bond:      bool
+    @keyword verbose:       A flag which if True will result in print outs of the created interatomoic data containers.
+    @type verbose:          bool
     """
 
     # Loop over both spin selections.
@@ -77,7 +79,8 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False):
             ids.append([repr(id1), repr(id2)])
 
     # Print out.
-    write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
+    if verbose and len(ids):
+        write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
 
 
 def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_col=None, sep=None):
