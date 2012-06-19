@@ -48,17 +48,40 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
     @type spin_id2:         str
     @keyword direct_bond:   A flag specifying if the two spins are directly bonded.
     @type direct_bond:      bool
-    @keyword verbose:       A flag which if True will result in print outs of the created interatomoic data containers.
+    @keyword verbose:       A flag which if True will result in printouts of the created interatomoic data containers.
     @type verbose:          bool
     """
 
     # Loop over both spin selections.
     ids = []
-    for spin, id1 in spin_loop(spin_id1, return_id=True):
-        for spin, id2 in spin_loop(spin_id2, return_id=True):
+    for spin1, mol_name1, res_num1, res_name1, id1 in spin_loop(spin_id1, full_info=True, return_id=True):
+        for spin2, mol_name2, res_num2, res_name2, id2 in spin_loop(spin_id2, full_info=True, return_id=True):
             # Directly bonded atoms.
-            if direct_bond and hasattr(cdp, 'structure') and not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
-                continue
+            if direct_bond:
+                # From structural info.
+                if hasattr(cdp, 'structure') and not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
+                    continue
+
+                # From the residue info.
+                elif not hasattr(cdp, 'structure'):
+                    # No element info.
+                    if not hasattr(spin1, 'element'):
+                        raise RelaxError("The spin '%s' does not have the element type set." % id1)
+                    if not hasattr(spin2, 'element'):
+                        raise RelaxError("The spin '%s' does not have the element type set." % id2)
+
+                    # Backbone NH and CH pairs.
+                    pair = False
+                    if (spin1.element == 'N' and spin2.element == 'H') or (spin2.element == 'N' and spin1.element == 'H'):
+                        pair = True
+                    elif (spin1.element == 'C' and spin2.element == 'H') or (spin2.element == 'C' and spin1.element == 'H'):
+                        pair = True
+
+                    # Same residue, so skip.
+                    if pair and res_num1 != None and res_num1 == res_num2:
+                        continue
+                    elif pair and res_num1 == None and res_name1 == res_name2:
+                        continue
 
             # Get the interatomic data object, if it exists.
             interatoms = return_interatom(id1, id2)
@@ -83,7 +106,7 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
             # Set a flag indicating that a dipole-dipole interaction is present.
             interatom.dipole_pair = True
 
-            # Store the IDs for the print out.
+            # Store the IDs for the printout.
             ids.append([repr(id1), repr(id2)])
 
     # No matches, so fail!
@@ -173,7 +196,7 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
         # Store the averaged distance.
         interatom.r = ave_dist
 
-        # Store the data for the print out.
+        # Store the data for the printout.
         data.append([repr(interatom.spin_id1), repr(interatom.spin_id2), repr(ave_dist)])
 
     # No data, so fail!
@@ -213,7 +236,7 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
         # Store the averaged distance.
         interatom.r = ave_dist
 
-        # Store the data for the print out.
+        # Store the data for the printout.
         data.append([repr(interatom.spin_id1), repr(interatom.spin_id2), repr(ave_dist)])
 
     # No data, so fail!
