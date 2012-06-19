@@ -69,7 +69,7 @@ class InteratomContainer(Prototype):
         text = text + "Objects:\n"
         for name in dir(self):
             # Skip the SpinContainer methods.
-            if name == 'is_empty':
+            if name in ['id_match', 'is_empty']:
                 continue
 
             # Skip special objects.
