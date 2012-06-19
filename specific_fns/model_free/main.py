@@ -1930,6 +1930,31 @@ class Model_free_main:
             if not spin.select:
                 continue
 
+            # The interatomic data.
+            interatoms = interatomic.return_interatom(spin_id)
+
+            # Loop over the interatomic data.
+            dipole_relax = False
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Dipolar relaxation flag.
+                dipole_relax = False
+
+            # No relaxation mechanism.
+            if not dipole_relax and not hasattr(spin, 'csa') or spin.csa == None:
+                warn(RelaxDeselectWarning(spin_id, 'no relaxation mechanism found'))
+                spin.select = False
+
             # The number of relaxation data points.
             data_points = 0
             if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
