@@ -41,7 +41,7 @@ from generic_fns import pipes
 from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
-from relax_io import read_spin_data
+from relax_io import read_spin_data, write_data
 from relax_warnings import RelaxWarning
 import specific_fns
 
@@ -828,6 +828,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
         select_obj = Selection(spin_id)
 
     # Loop over the spin data.
+    data = []
     for i in range(N):
         # Get the corresponding spin container.
         mol_names, res_nums, res_names, spins = return_spin(spin_ids[i], full_info=True, multi=True)
@@ -841,8 +842,6 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
                 if spin in select_obj:
                     new_spins.append(spin)
             spins = new_spins
-
-        # Create spin IDs for all remaining spins (for the error message).
 
         # Check that only a singe spin is present.
         if len(spins) > 1:
@@ -865,6 +864,12 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             # Update all data structures.
             spin.ri_data[ri_id] = values[i]
             spin.ri_data_err[ri_id] = errors[i]
+
+            # Append the data for printing out.
+            data.append([spin_ids[i], repr(values[i]), repr(errors[i])])
+
+    # Print out.
+    write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
 
 
 def peak_intensity_type(ri_id=None, type=None):
