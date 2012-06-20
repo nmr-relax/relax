@@ -2440,6 +2440,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
     mol_names = []
     res_nums = []
     res_names = []
+    spin_ids = []
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
@@ -2466,9 +2467,12 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
                 # Increment the spin number counter.
                 spin_num = spin_num + 1
 
+                # Generate as store the spin ID.
+                spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+
     # No unique identifier.
     if not multi and spin_num > 1:
-        raise RelaxMultiSpinIDError(selection)
+        raise RelaxMultiSpinIDError(selection, spin_ids)
 
     # Return the spin container.
     if full_info and multi:
