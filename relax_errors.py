@@ -95,6 +95,35 @@ def save_state():
     file.close()
 
 
+def list_to_text(data):
+    """Convert the given Python list to a text representation.
+
+    @param data:    The list of Python objects.
+    @type data:     list
+    @return:        The English text version of the list.
+    @rtype:         str
+    """
+
+    # Initialise.
+    text = ''
+
+    # Loop over the elements, adding the to the list.
+    for i in range(len(data)):
+        # Add the text.
+        text += repr(data[i])
+
+        # Comma separators.
+        if i < len(data) - 2:
+            text += ', '
+
+        # Last separator.
+        if i == len(data) - 2:
+            text += ' and '
+
+    # Return the text.
+    return text
+
+
 # Base class for all errors.
 ############################
 
@@ -615,11 +644,11 @@ class RelaxMultiResIDError(BaseError):
 class RelaxMultiSpinIDError(BaseError):
     def __init__(self, id, id_list=None):
         if id_list != None and id == '':
-            self.text = "The empty spin ID corresponds to multiple spins - %s." % id_list
+            self.text = "The empty spin ID corresponds to multiple spins, including %s." % list_to_text(id_list)
         elif id_list == None and id == '':
             self.text = "The empty spin ID corresponds to more than a single spin in the current data pipe."
         elif id_list != None:
-            self.text = "The spin ID '%s' corresponds to multiple spins - %s." % (id, id_list)
+            self.text = "The spin ID '%s' corresponds to multiple spins, including %s." % (id, list_to_text(id_list))
         else:
             self.text = "The spin ID '%s' corresponds to more than a single spin in the current data pipe." % id
 
