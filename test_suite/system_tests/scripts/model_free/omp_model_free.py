@@ -204,11 +204,21 @@ class Main:
                 diffusion_tensor.copy('sphere_init')
                 fix('diff')
 
+            # Set the spin element types.
+            spin.element('N', spin_id='@N')
+            spin.element('H', spin_id='@H')
+
+            # Define the magnetic dipole-dipole relaxation interaction.
+            dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+            dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+            dipole_pair.unit_vectors()
+
             # Set all the necessary values.
-            value.set(BOND_LENGTH, 'r')
             value.set(CSA, 'csa')
-            value.set(HETNUC, 'heteronuc_type')
-            value.set(PROTON, 'proton_type')
+
+            # Set the spin information.
+            spin.isotope('15N', spin_id='@N')
+            spin.isotope('1H', spin_id='@H')
 
             # Select the model-free model.
             model_free.select_model(model=name)

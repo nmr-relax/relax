@@ -667,8 +667,9 @@ class Mf(SystemTestCase):
 
         # Read the PDF file and set the vectors.
         self.interpreter.structure.read_pdb(file='pdb', dir=path, read_model=1)
+
+        # Load all N spins.
         self.interpreter.structure.load_spins('@N')
-        self.interpreter.structure.vectors(attached='H')
 
         # Read the relaxation data.
         self.interpreter.relax_data.read('R1_600',  'R1',  600.0*1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
@@ -678,18 +679,28 @@ class Mf(SystemTestCase):
         self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
         self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
-        # Setup other values.
+        # Set up the diffusion tensor.
         self.interpreter.diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
-        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
+
+        # Define the magnetic dipole-dipole relaxation interaction.
+        self.interpreter.structure.load_spins('@H')
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+        self.interpreter.dipole_pair.unit_vectors()
+
+        # Set up the spin parameters.
+        self.interpreter.value.set(N15_CSA, 'csa')
         self.interpreter.value.set([0.8, 50 * 1e-12, 0.0], ['s2', 'te', 'rex'])
-        self.interpreter.value.set('15N', 'heteronuc_type')
-        self.interpreter.value.set('1H', 'proton_type')
+
+        # Set the spin information.
+        self.interpreter.spin.isotope('15N', spin_id='@N')
+        self.interpreter.spin.isotope('1H', spin_id='@H')
 
         # Select the model.
         self.interpreter.model_free.select_model(model='m4')
 
         # Map the space.
-        self.interpreter.dx.map(params=['theta', 'phi', 'Da'], spin_id=':2', inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file_prefix='devnull')
+        self.interpreter.dx.map(params=['theta', 'phi', 'Da'], spin_id='#pdb_mol1:2@N', inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file_prefix='devnull')
 
 
     def test_opendx_tm_s2_te(self):
@@ -709,16 +720,28 @@ class Mf(SystemTestCase):
         self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
         self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
-        # Setup other values.
-        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
-        self.interpreter.value.set('15N', 'heteronuc_type')
-        self.interpreter.value.set('1H', 'proton_type')
+        # Name the spins.
+        self.interpreter.spin.name('N')
+
+        # Create all attached protons.
+        self.interpreter.sequence.attach_protons()
+
+        # Define the magnetic dipole-dipole relaxation interaction.
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+        # Set up the CSA value.
+        self.interpreter.value.set(N15_CSA, 'csa')
+
+        # Set the spin information.
+        self.interpreter.spin.isotope('15N', spin_id='@N')
+        self.interpreter.spin.isotope('1H', spin_id='@H')
 
         # Select the model.
         self.interpreter.model_free.select_model(model='tm2')
 
         # Map the space.
-        self.interpreter.dx.map(params=['local_tm', 's2', 'te'], spin_id=':2', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
+        self.interpreter.dx.map(params=['local_tm', 's2', 'te'], spin_id=':2@N', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
 
 
     def test_opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -2052,7 +2075,6 @@ class Mf(SystemTestCase):
         tf = [None, None]
         ts = [None, 598.8142249659868e-12]
         rex = [None, None]
-        r = [None, 1.0200000000000001e-10]
         csa = [None, -0.00017199999999999998]
         ri_ids = ['R1_800', 'NOE_800', 'R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
         ri_type_list = ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
@@ -2070,6 +2092,9 @@ class Mf(SystemTestCase):
             frq[ri_ids[i]] = frq_list[i]
             ri_data[1][ri_ids[i]] = ri_data_list[1][i]
             ri_data_err[1][ri_ids[i]] = ri_data_err_list[1][i]
+
+        # The interatomic data.
+        r = [None, 1.0200000000000001e-10]
 
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
@@ -2120,6 +2145,7 @@ class Mf(SystemTestCase):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
+            h_spin = cdp.mol[0].res[i].spin[1]
 
             # Debugging printout.
             print(res)
@@ -2129,16 +2155,16 @@ class Mf(SystemTestCase):
             self.assertEqual(res.num, num[i])
             self.assertEqual(res.name, name[i])
             self.assertEqual(spin.num, None)
-            self.assertEqual(spin.name, None)
+            self.assertEqual(spin.name, 'N')
             self.assertEqual(spin.select, select[i])
             self.assertEqual(spin.fixed, False)
+            self.assertEqual(h_spin.num, None)
+            self.assertEqual(h_spin.name, 'H')
+            self.assertEqual(h_spin.select, False)
 
             # Structural info.
-            self.assertEqual(spin.heteronuc_type, '15N')
-            self.assertEqual(spin.proton_type, '1H')
-            self.assertEqual(spin.attached_proton, 'H')
-            #FIXME
-            #self.assertEqual(spin.nucleus, 'N')
+            self.assertEqual(spin.isotope, '15N')
+            self.assertEqual(h_spin.isotope, '1H')
 
             # Model-free tests.
             self.assertEqual(spin.model, model[i])
@@ -2152,7 +2178,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.tf, tf[i])
             self.assertEqual(spin.ts, ts[i])
             self.assertEqual(spin.rex, rex[i])
-            self.assertEqual(spin.r, r[i])
             self.assertEqual(spin.csa, csa[i])
             for j in range(3):
                 self.assertEqual(spin.s2s_sim[j], s2s_sim[i][j])
@@ -2173,6 +2198,10 @@ class Mf(SystemTestCase):
                 for ri_id in ri_ids:
                     self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
                     self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[i][ri_id])
+
+        # The interatomic data tests.
+        for i in range(len(cdp.interatomic)):
+            self.assertEqual(cdp.interatomic[i].r, r[i])
 
 
     def test_read_results_1_2_tem1(self):
@@ -2198,7 +2227,6 @@ class Mf(SystemTestCase):
         tf = [None, None, None, None, None, None, None, None]
         ts = [None, None, None, 2385.912514843546*1e-12, None, None, None, None]
         rex = [None, None, None, None, None, None, None, None]
-        r = [None, None, None, 1.0200000000000001e-10, 1.0200000000000001e-10, 1.0200000000000001e-10, None, 1.0200000000000001e-10]
         csa = [None, None, None, -0.00017199999999999998, -0.00017199999999999998, -0.00017199999999999998, None, -0.00017199999999999998]
         ri_ids = ['R1_800', 'R2_800', 'R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
         ri_type_list = ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
@@ -2241,6 +2269,9 @@ class Mf(SystemTestCase):
         g_count = [None, None, None, 60, 14, 6, None, 6]
         h_count = [None, None, None, 55, 10, 3, None, 3]
 
+        # The interatomic data.
+        r = [None, None, None, 1.0200000000000001e-10, 1.0200000000000001e-10, 1.0200000000000001e-10, None, 1.0200000000000001e-10]
+
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
         self.assertEqual(cdp.hybrid_pipes, [])
@@ -2265,6 +2296,7 @@ class Mf(SystemTestCase):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
+            h_spin = cdp.mol[0].res[i].spin[1]
 
             # Debugging printout.
             print(res)
@@ -2274,16 +2306,16 @@ class Mf(SystemTestCase):
             self.assertEqual(res.num, num[i])
             self.assertEqual(res.name, name[i])
             self.assertEqual(spin.num, None)
-            self.assertEqual(spin.name, None)
+            self.assertEqual(spin.name, 'N')
             self.assertEqual(spin.select, select[i])
             self.assertEqual(spin.fixed, False)
+            self.assertEqual(h_spin.num, None)
+            self.assertEqual(h_spin.name, 'H')
+            self.assertEqual(h_spin.select, False)
 
             # Structural info.
-            self.assertEqual(spin.heteronuc_type, '15N')
-            self.assertEqual(spin.proton_type, '1H')
-            self.assertEqual(spin.attached_proton, 'H')
-            #FIXME
-            #self.assertEqual(spin.nucleus, 'N')
+            self.assertEqual(spin.isotope, '15N')
+            self.assertEqual(h_spin.isotope, '1H')
 
             # Model-free tests.
             self.assertEqual(spin.model, model[i])
@@ -2297,7 +2329,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.tf, tf[i])
             self.assertEqual(spin.ts, ts[i])
             self.assertEqual(spin.rex, rex[i])
-            self.assertEqual(spin.r, r[i])
             self.assertEqual(spin.csa, csa[i])
 
             # Minimisation statistic tests.
@@ -2316,6 +2347,10 @@ class Mf(SystemTestCase):
                 for ri_id in ri_ids:
                     self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
                     self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[i][ri_id])
+
+        # The interatomic data tests.
+        for i in range(len(cdp.interatomic)):
+            self.assertEqual(cdp.interatomic[i].r, r[i])
 
 
     def test_read_results_1_3_v1(self):

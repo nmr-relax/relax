@@ -37,22 +37,26 @@ pipe.create('test', 'mf')
 # Load a PDB file.
 structure.read_pdb('Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures')
 
-# Load the backbone amide nitrogen spins from the structure.
+# Load the spins from the structure.
 structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@H')
 
-# Set the spin name and then load the NH vectors.
-structure.vectors(spin_id='@N', attached='H*', ave=False)
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+dipole_pair.unit_vectors()
 
 # Set the diffusion tensor in the PDB frame (Dxx, Dyy, Dzz, Dxy, Dxz, Dyz).
 diffusion_tensor.init((1.340e7, 1.516e7, 1.691e7, 0.000e7, 0.000e7, 0.000e7), param_types=3)
 
 # Set the required values.
 value.set(val=-172e-6, param='csa')
-value.set(val=1.02e-10, param='r')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
 value.set(val=0.8, param='s2')
 value.set(val=20e-12, param='te')
+
+# Set the spin information.
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
 
 # Select model-free model m2.
 model_free.select_model(model='m2')

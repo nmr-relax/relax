@@ -28,14 +28,27 @@ relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.0*1e6, file='r1.500.out'
 relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
-# Setup other values.
+# Initialise the diffusion tensor.
 diffusion_tensor.init(10e-9, fixed=True)
-value.set(1.02 * 1e-10, 'r')
+
+# Name the spins.
+spin.name('N')
+spin.element('N')
+
+# Create all attached protons.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+# Set up the CSA value.
 value.set(-160 * 1e-6, 'csa')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
 value.display('csa')
-value.write('proton_type', file='devnull')
+
+# Set the spin information.
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
 
 # Select the model-free model.
 model_free.select_model(model='m4')
