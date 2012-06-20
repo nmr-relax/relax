@@ -613,9 +613,13 @@ class RelaxMultiResIDError(BaseError):
 
 # Multiple spins matching the ID.
 class RelaxMultiSpinIDError(BaseError):
-    def __init__(self, id):
-        if id == '':
+    def __init__(self, id, id_list=None):
+        if id_list != None and id == '':
+            self.text = "The empty spin ID corresponds to multiple spins - %s." % id_list
+        elif id_list == None and id == '':
             self.text = "The empty spin ID corresponds to more than a single spin in the current data pipe."
+        elif id_list != None:
+            self.text = "The spin ID '%s' corresponds to multiple spins - %s." % (id, id_list)
         else:
             self.text = "The spin ID '%s' corresponds to more than a single spin in the current data pipe." % id
 
