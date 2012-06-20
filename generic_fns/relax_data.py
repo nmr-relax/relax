@@ -36,11 +36,11 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import bmrb
 from generic_fns.interatomic import create_interatom, return_interatom
-from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
-from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
+from relax_errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import read_spin_data
 from relax_warnings import RelaxWarning
 import specific_fns
@@ -735,7 +735,7 @@ def num_frq():
     return count
 
 
-def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
+def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, spin_id=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
     The values, errors, and spin_ids arguments must be lists of equal length or None.  Each element i corresponds to a unique spin.
@@ -822,22 +822,49 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     if gen_seq:
         bmrb.generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
 
+    # The selection object.
+    select_obj = None
+    if spin_id:
+        select_obj = Selection(spin_id)
+
     # Loop over the spin data.
     for i in range(N):
         # Get the corresponding spin container.
-        spin = return_spin(spin_ids[i])
-        if spin == None:
+        mol_names, res_nums, res_names, spins = return_spin(spin_ids[i], full_info=True, multi=True)
+        if spins in [None, []]:
             raise RelaxNoSpinError(spin_ids[i])
 
-        # Initialise the spin data if necessary.
-        if not hasattr(spin, 'ri_data') or spin.ri_data == None:
-            spin.ri_data = {}
-        if not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None:
-            spin.ri_data_err = {}
+        # Remove non-matching spins.
+        if select_obj:
+            new_spins = []
+            for spin in spins:
+                if spin in select_obj:
+                    new_spins.append(spin)
+            spins = new_spins
 
-        # Update all data structures.
-        spin.ri_data[ri_id] = values[i]
-        spin.ri_data_err[ri_id] = errors[i]
+        # Create spin IDs for all remaining spins (for the error message).
+
+        # Check that only a singe spin is present.
+        if len(spins) > 1:
+            raise RelaxMultiSpinIDError(spin_ids[i])
+        if len(spins) == 0:
+            raise RelaxNoSpinError(spin_ids[i])
+
+        # Loop over the spins.
+        for spin in spins:
+            # No match to the selection.
+            if select_obj and spin not in select_obj:
+                continue
+
+            # Initialise the spin data if necessary.
+            if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+                spin.ri_data = {}
+            if not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None:
+                spin.ri_data_err = {}
+
+            # Update all data structures.
+            spin.ri_data[ri_id] = values[i]
+            spin.ri_data_err[ri_id] = errors[i]
 
 
 def peak_intensity_type(ri_id=None, type=None):
@@ -936,7 +963,7 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     res_names = []
     spin_nums = []
     spin_names = []
-    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep):
         # Unpack.
         if data_col and error_col:
             mol_name, res_num, res_name, spin_num, spin_name, value, error = data
@@ -957,7 +984,7 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
         errors.append(error)
 
     # Pack the data.
-    pack_data(ri_id, ri_type, frq, values, errors, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
+    pack_data(ri_id, ri_type, frq, values, errors, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, spin_id=spin_id)
 
 
 def return_data_desc(name):
