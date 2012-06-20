@@ -2459,7 +2459,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
 
                 # Store all data.
                 mol_names.append(mol.name)
-                res_nums.append(res.nums)
+                res_nums.append(res.num)
                 res_names.append(res.name)
                 spins.append(spin)
 
