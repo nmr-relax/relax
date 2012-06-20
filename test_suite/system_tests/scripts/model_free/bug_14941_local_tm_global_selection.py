@@ -22,6 +22,8 @@ path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'
 # Local tm data.
 pipe.create(pipe_name='local_tm', pipe_type='mf')
 results.read(file='local_tm_trunc', dir=path)
+spin.element('N', '@N')
+spin.element('H', '@H')
 
 # Sphere data.
 pipe.create(pipe_name='sphere', pipe_type='mf')

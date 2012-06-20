@@ -396,7 +396,7 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         for i in range(len(frq)):
-            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
             self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
             self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
