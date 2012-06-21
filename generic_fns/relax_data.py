@@ -838,19 +838,30 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
         # Remove non-matching spins.
         if select_obj:
             new_spins = []
-            for spin in spins:
-                if spin in select_obj:
-                    new_spins.append(spin)
-            spins = new_spins
+            new_ids = []
+            for j in range(len(spins)):
+                if spins[j] in select_obj:
+                    new_spins.append(spins[j])
+                    new_ids.append(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=spins[j].num, spin_name=spins[j].name))
+            new_id = new_ids[0]
+
+        # Aliases for normal operation.
+        else:
+            new_spins = spins
+            new_id = spin_ids[i]
+            new_ids = None
 
         # Check that only a singe spin is present.
-        if len(spins) > 1:
-            raise RelaxMultiSpinIDError(spin_ids[i])
-        if len(spins) == 0:
+        if len(new_spins) > 1:
+            if new_ids:
+                raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
+            else:
+                raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
+        if len(new_spins) == 0:
             raise RelaxNoSpinError(spin_ids[i])
 
         # Loop over the spins.
-        for spin in spins:
+        for spin in new_spins:
             # No match to the selection.
             if select_obj and spin not in select_obj:
                 continue
@@ -866,7 +877,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             spin.ri_data_err[ri_id] = errors[i]
 
             # Append the data for printing out.
-            data.append([spin_ids[i], repr(values[i]), repr(errors[i])])
+            data.append([new_id, repr(values[i]), repr(errors[i])])
 
     # Print out.
     write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
