@@ -2551,7 +2551,7 @@ def return_spin_indices(spin_id=None, pipe=None):
     # No spin ID, so switch to selection matching.
     if not dp.mol.lookup_table.has_key(spin_id):
         # Parse the selection string.
-        select_obj = Selection(selection)
+        select_obj = Selection(spin_id)
 
         # Loop over the molecules.
         for i in range(len(dp.mol)):
@@ -2584,7 +2584,8 @@ def return_spin_indices(spin_id=None, pipe=None):
                     break
 
     # The indices from the look up table.
-    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
+    else:
+        mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
 
     # Return the data.
     return mol_index, res_index, spin_index
