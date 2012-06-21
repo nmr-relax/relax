@@ -131,6 +131,7 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
 
     # Print out.
     if verbose:
+        print("Magnetic dipole-dipole interactions are now defined for the following spins:\n")
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
 
 
@@ -204,6 +205,7 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
         raise RelaxError("No data could be extracted from the file.")
 
     # Print out.
+    print("The following averaged distances have been read:\n")
     write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
 
 
@@ -244,6 +246,7 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
         raise RelaxError("No data could be set.")
 
     # Print out.
+    print("The following averaged distances have been set:\n")
     write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
 
 
@@ -260,9 +263,12 @@ def unit_vectors(ave=True):
     # Print out.
     if ave:
         print("Averaging all vectors.")
+    else:
+        print("No averaging of the vectors.")
 
     # Loop over the interatomic data containers.
     no_vectors = True
+    pos_info = False
     for interatom in interatomic_loop():
         # Get the spin info.
         spin1 = return_spin(interatom.spin_id1)
@@ -273,6 +279,9 @@ def unit_vectors(ave=True):
             continue
         if not hasattr(spin2, 'pos'):
             continue
+
+        # Positional information flag.
+        pos_info = True
 
         # Both single positions.
         if is_float(spin1.pos[0]) and is_float(spin2.pos[0]):
@@ -350,6 +359,10 @@ def unit_vectors(ave=True):
         else:
             spin2_str = spin2.num
         print("Calculated %s %s-%s unit vector%s between the spins '%s' and '%s'." % (num, spin1_str, spin2_str, plural, interatom.spin_id1, interatom.spin_id2))
+
+    # Catch the problem of no positional information being present.
+    if not pos_info:
+        raise RelaxError("Positional information could not be found for any spins.")
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:
