@@ -1230,11 +1230,8 @@ class Model_free_main:
         @type sim:          bool
         """
 
-        # Get the data names.
-        data_names = self.data_names(scope='spin')
-
         # Loop over the data structure names.
-        for name in data_names:
+        for name in self.PARAMS.loop(scope='spin'):
             # Blacklisted data structures.
             if name in ['ri_data', 'ri_data_bc', 'ri_data_err']:
                 continue
@@ -1244,8 +1241,12 @@ class Model_free_main:
             if name in list_data:
                 init_data = []
 
-            # Set everything else initially to None.
+            # Set everything else initially to None or False.
             init_data = None
+            if self.PARAMS.get_type(name) == bool:
+                init_data = False
+                if name == 'select':
+                    init_data = True
 
             # If the name is not in 'data_cont', add it.
             if not hasattr(data_cont, name):
