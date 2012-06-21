@@ -310,7 +310,7 @@ class Mf(SystemTestCase):
         isotopes = ["15N", "1H"] * 9
         csa = [-172e-6, None] * 9
         select = [True, False] * 9
-        fixed = [False, None] * 9
+        fixed = [False, False] * 9
         s2 = [0.8, None] * 9
         te = [20e-12, None] * 9
 
@@ -397,8 +397,8 @@ class Mf(SystemTestCase):
         # Load the relaxation data.
         for i in range(len(frq)):
             self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
-            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
@@ -424,9 +424,9 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         for i in range(len(frq)):
-            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
@@ -448,15 +448,15 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # Load the relaxation data.
-        self.interpreter.relax_data.read('R2_700',  'R2',  700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE_500', 'NOE', 500*1e6, 'noe.500.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1_500',  'R1',  500*1e6, 'r1.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1_900',  'R1',  900*1e6, 'r1.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE_900', 'NOE', 900*1e6, 'noe.900.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2_900',  'R2',  900*1e6, 'r2.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1_700',  'R1',  700*1e6, 'r1.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE_700', 'NOE', 700*1e6, 'noe.700.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2_500',  'R2',  500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_700',  'R2',  700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500*1e6, 'noe.500.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('R1_500',  'R1',  500*1e6, 'r1.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('R1_900',  'R1',  900*1e6, 'r1.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('NOE_900', 'NOE', 900*1e6, 'noe.900.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('R2_900',  'R2',  900*1e6, 'r2.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('R1_700',  'R1',  700*1e6, 'r1.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('NOE_700', 'NOE', 700*1e6, 'noe.700.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
+        self.interpreter.relax_data.read('R2_500',  'R2',  500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4, spin_id='@N')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
@@ -720,8 +720,9 @@ class Mf(SystemTestCase):
         self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
         self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
-        # Name the spins.
+        # Name the spins and set the element type.
         self.interpreter.spin.name('N')
+        self.interpreter.spin.element('N')
 
         # Create all attached protons.
         self.interpreter.sequence.attach_protons()
@@ -1992,6 +1993,9 @@ class Mf(SystemTestCase):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
+            h_spin = None
+            if len(cdp.mol[0].res[i].spin) > 1:
+                h_spin = cdp.mol[0].res[i].spin[1]
 
             # Debugging printout.
             print(res)
@@ -2001,18 +2005,24 @@ class Mf(SystemTestCase):
             self.assertEqual(res.num, num[i])
             self.assertEqual(res.name, 'XXX')
             self.assertEqual(spin.num, None)
-            self.assertEqual(spin.name, None)
+            if select[i]:
+                self.assertEqual(spin.name, 'N')
+                self.assertEqual(spin.fixed, False)
+            else:
+                self.assertEqual(spin.name, None)
             self.assertEqual(spin.select, select[i])
-            self.assertEqual(spin.fixed, False)
+            if h_spin:
+                self.assertEqual(h_spin.num, None)
+                self.assertEqual(h_spin.name, 'H')
+                self.assertEqual(h_spin.select, False)
 
             # Skip deselected spins.
             if not select[i]:
                 continue
 
-            # Structural info.
-            self.assertEqual(spin.heteronuc_type, '15N')
-            self.assertEqual(spin.proton_type, '1H')
-            self.assertEqual(spin.attached_proton, None)
+            # Nuclear isotope info.
+            self.assertEqual(spin.isotope, '15N')
+            self.assertEqual(h_spin.isotope, '1H')
 
             # Model-free tests.
             self.assertEqual(spin.model, model[j])
@@ -2030,7 +2040,6 @@ class Mf(SystemTestCase):
             if rex[j] != None:
                 rex[j] = rex[j]/(2.0*pi*500000000.0)**2
             self.assertEqual(spin.rex, rex[j])
-            self.assertEqual(spin.r, 1.0200000000000001e-10)
             self.assertEqual(spin.csa, -0.00016999999999999999)
 
             # Minimisation statistic tests.
@@ -2049,6 +2058,10 @@ class Mf(SystemTestCase):
 
             # Secondary index.
             j = j + 1
+
+        # The interatomic data tests.
+        for i in range(len(cdp.interatomic)):
+            self.assertEqual(cdp.interatomic[i].r, 1.0200000000000001e-10)
 
 
     def test_read_results_1_2_pse4(self):
@@ -2162,7 +2175,7 @@ class Mf(SystemTestCase):
             self.assertEqual(h_spin.name, 'H')
             self.assertEqual(h_spin.select, False)
 
-            # Structural info.
+            # Nuclear isotope info.
             self.assertEqual(spin.isotope, '15N')
             self.assertEqual(h_spin.isotope, '1H')
 
@@ -2313,7 +2326,7 @@ class Mf(SystemTestCase):
             self.assertEqual(h_spin.name, 'H')
             self.assertEqual(h_spin.select, False)
 
-            # Structural info.
+            # Nuclear isotope info.
             self.assertEqual(spin.isotope, '15N')
             self.assertEqual(h_spin.isotope, '1H')
 
@@ -2443,22 +2456,6 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['s2', 'te', 'rex'])
 
 
-    def test_set_bond_length(self):
-        """Setting the bond length through the user function value.set()."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
-
-        # Read the sequence.
-        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
-
-        # Set the CSA value.
-        self.interpreter.value.set(NH_BOND_LENGTH, 'r')
-
-        # Test the value.
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
-
-
     def test_set_csa(self):
         """Setting the CSA value through the user function value.set()."""
 
@@ -2473,23 +2470,6 @@ class Mf(SystemTestCase):
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
-
-
-    def test_set_csa_bond_length(self):
-        """Setting both the CSA value and bond length through the user function value.set()."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
-
-        # Read the sequence.
-        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
-
-        # Set the CSA value and bond length simultaneously.
-        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
-
-        # Test the values.
-        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
 
 
     def test_tm0_grid(self):
