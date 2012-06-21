@@ -1127,7 +1127,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
         # Add the spin ID and indices to the lookup table.
         spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=spin.num, spin_name=spin.name)
-        cdp.mol.lookup_table[spin_id] = [mol_index, res_index, spin_index]
+        cdp.mol._lookup_table[spin_id] = [mol_index, res_index, spin_index]
 
     # Release the lock.
     finally:
@@ -1188,7 +1188,7 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
         # Add the spin ID and indices to the lookup table.
-        cdp.mol.lookup_table[spin_id] = [mol_index, res_index, spin_index]
+        cdp.mol._lookup_table[spin_id] = [mol_index, res_index, spin_index]
 
     # Release the lock.
     finally:
@@ -2384,11 +2384,11 @@ def return_spin(spin_id=None, pipe=None, full_info=False):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so switch to selection matching.
-    if not dp.mol.lookup_table.has_key(spin_id):
+    if not dp.mol._lookup_table.has_key(spin_id):
         return return_spin_from_selection(selection=spin_id, pipe=pipe, full_info=full_info)
 
     # The indices from the look up table.
-    mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
+    mol_index, res_index, spin_index = dp.mol._lookup_table[spin_id]
 
     # Return the data.
     if full_info:
@@ -2530,7 +2530,7 @@ def return_spin_indices(spin_id=None, pipe=None):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so switch to selection matching.
-    if not dp.mol.lookup_table.has_key(spin_id):
+    if not dp.mol._lookup_table.has_key(spin_id):
         # Parse the selection string.
         select_obj = Selection(spin_id)
 
@@ -2566,7 +2566,7 @@ def return_spin_indices(spin_id=None, pipe=None):
 
     # The indices from the look up table.
     else:
-        mol_index, res_index, spin_index = dp.mol.lookup_table[spin_id]
+        mol_index, res_index, spin_index = dp.mol._lookup_table[spin_id]
 
     # Return the data.
     return mol_index, res_index, spin_index
