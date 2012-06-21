@@ -817,10 +817,6 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     cdp.ri_type[ri_id] = ri_type
     cdp.frq[ri_id] = frq
 
-    # Generate the sequence.
-    if gen_seq:
-        bmrb.generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
-
     # Loop over the spin data.
     for i in range(N):
         # Get the corresponding spin container.
