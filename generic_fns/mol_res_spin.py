@@ -2481,8 +2481,10 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
         return mol_names[0], res_nums[0], res_names[0], spins[0]
     elif multi:
         return spins
-    else:
+    elif len(spins):
         return spins[0]
+    else:
+        return None
 
 
 def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
