@@ -126,6 +126,9 @@ class Results:
 
         # Set the spin specific fixed flags.
         for spin, id in spin_loop(return_id=True):
+            if not spin.select:
+                continue
+
             if mf_fixed != None:
                 spin.fixed = mf_fixed
 
@@ -149,9 +152,9 @@ class Results:
             res_name = spin_line[col['name']]
             spin_num = None
             spin_name = None
-            if search('N', spin_line[col['nucleus']]):
+            if col['nucleus'] < len(spin_line) and search('N', spin_line[col['nucleus']]):
                 spin_name = 'N'
-            if search('C', spin_line[col['nucleus']]):
+            if col['nucleus'] < len(spin_line) and search('C', spin_line[col['nucleus']]):
                 spin_name = 'C'
 
         # The spin info.
@@ -672,9 +675,9 @@ class Results:
                 res_name = file_line[col['name']]
                 spin_num = None
                 spin_name = None
-                if search('N', file_line[col['nucleus']]):
+                if col['nucleus'] < len(file_line) and search('N', file_line[col['nucleus']]):
                     spin_name = 'N'
-                if search('C', file_line[col['nucleus']]):
+                if col['nucleus'] < len(file_line) and search('C', file_line[col['nucleus']]):
                     spin_name = 'C'
 
             # The spin info.
@@ -692,9 +695,10 @@ class Results:
             spin = return_spin(spin_id)
 
             # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
-            if data_set == 'value':
+            if data_set == 'value' and spin_name:
                 h_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
                 h_spin.select = False
+                h_spin.element = 'H'
                 h_spin.isotope = '1H'
                 spin_id2 = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
                 dipole_pair.define(spin_id, spin_id2, verbose=False)
