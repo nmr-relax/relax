@@ -26,6 +26,7 @@
 # Python module imports.
 from copy import deepcopy
 from re import search
+import sys
 
 # relax module imports.
 from generic_fns import pipes
