@@ -288,14 +288,14 @@ def unit_vectors(ave=True):
         pos_info = True
 
         # Both single positions.
-        if is_float(spin1.pos[0]) and is_float(spin2.pos[0]):
+        if is_float(spin1.pos[0], raise_error=False) and is_float(spin2.pos[0], raise_error=False):
             # The vector.
             vector_list = [spin2.pos - spin1.pos]
 
         # A single and multiple position pair.
-        elif is_float(spin1.pos[0]) or is_float(spin2.pos[0]):
+        elif is_float(spin1.pos[0], raise_error=False) or is_float(spin2.pos[0], raise_error=False):
             # The first spin has multiple positions.
-            if is_float(spin2.pos[0]):
+            if is_float(spin2.pos[0], raise_error=False):
                 vector_list = []
                 for i in range(len(spin1.pos)):
                     vector_list.append(spin2.pos - spin1.pos[i])
@@ -349,7 +349,7 @@ def unit_vectors(ave=True):
 
         # Print out.
         num = 1
-        if not is_float(vector_list[0]):
+        if not is_float(vector_list[0], raise_error=False):
             num = len(vector_list)
         plural = 's'
         if num == 1:
