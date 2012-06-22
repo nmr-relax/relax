@@ -27,7 +27,7 @@ from warnings import warn
 # relax module imports.
 from api_base import API_base
 from api_common import API_common
-from generic_fns.interatomic import interatomic_loop, return_interatom
+from generic_fns.interatomic import return_interatom
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
@@ -83,7 +83,7 @@ class Jw_mapping(API_base, API_common):
 
         # Create the data structure if it doesn't exist.
         if not hasattr(cdp, 'jw_frq'):
-           cdp.jw_frq = {}
+            cdp.jw_frq = {}
 
         # Set the frequency.
         cdp.jw_frq = frq
@@ -108,7 +108,7 @@ class Jw_mapping(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the CSA and bond length values have been set.
+        # Test if the spin data has been set.
         for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
