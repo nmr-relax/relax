@@ -279,10 +279,20 @@ class Bmrb:
 
         # Get the entities.
         for data in star.chem_shift_anisotropy.loop():
+            # The number of spins.
+            N = bmrb.num_spins(data)
+
+            # No data in the saveframe.
+            if N == 0:
+                continue
+
+            # The molecule names.
+            mol_names = bmrb.molecule_names(data, N)
+
             # Loop over the spins.
             for i in range(len(data['data_ids'])):
                 # Generate a spin ID.
-                spin_id = mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+                spin_id = mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
                 # Obtain the spin.
                 spin = mol_res_spin.return_spin(spin_id)

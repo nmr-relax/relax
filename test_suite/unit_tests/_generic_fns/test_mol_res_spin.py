@@ -71,6 +71,9 @@ class Test_mol_res_spin(UnitTestCase):
         cdp.mol[1].res[0].spin[0].select = 0
         cdp.mol[1].res[1].spin[1].select = 0
 
+        # Update the metadata.
+        mol_res_spin.metadata_update()
+
 
     def test_Selection_boolean_and(self):
         """Test the Selection object for boolean '&' mol-res-spin selections."""
@@ -1149,11 +1152,11 @@ class Test_mol_res_spin(UnitTestCase):
         """
 
         # Ask for a few spins.
-        spin1 = mol_res_spin.return_spin(':1')
-        spin2 = mol_res_spin.return_spin(spin_id=':2')
-        spin3 = mol_res_spin.return_spin(spin_id=':4', pipe='orig')
+        spin1 = mol_res_spin.return_spin('#Ap4Aase:1')
+        spin2 = mol_res_spin.return_spin(spin_id='#Ap4Aase:2')
+        spin3 = mol_res_spin.return_spin(spin_id='#Ap4Aase:4', pipe='orig')
         spin4 = mol_res_spin.return_spin(spin_id='#RNA:-5@N5', pipe='orig')
-        spin5 = mol_res_spin.return_spin(spin_id=':-4@2H', pipe='orig')
+        spin5 = mol_res_spin.return_spin(spin_id='#RNA:-4@2H', pipe='orig')
 
         # Test the data of spin 1.
         self.assertNotEqual(spin1, None)
