@@ -27,6 +27,7 @@ from warnings import warn
 # relax module imports.
 from api_base import API_base
 from api_common import API_common
+from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
@@ -108,33 +109,47 @@ class Jw_mapping(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Test if the CSA and bond length values have been set.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
+
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
+                raise RelaxSpinTypeError
 
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError("CSA")
 
-            # Test if the bond length has been set.
-            if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError("bond length")
+            # Test the interatomic data.
+            interatoms = return_interatom(id)
+            for interatom in interatoms:
+                # No relaxation mechanism.
+                if not interatom.dipole_pair:
+                    continue
 
-            # Test if the spin type has been set.
-            if not hasattr(spin, 'heteronuc_type'):
-                raise RelaxSpinTypeError
+                # The interacting spin.
+                if id != interatom.spin_id1:
+                    spin_id2 = interatom.spin_id1
+                else:
+                    spin_id2 = interatom.spin_id2
+                spin2 = return_spin(spin_id2)
 
-            # Test if the type attached proton has been set.
-            if not hasattr(spin, 'proton_type'):
-                raise RelaxProtonTypeError
+                # Test if the nuclear isotope type has been set.
+                if not hasattr(spin2, 'isotope'):
+                    raise RelaxSpinTypeError
+
+                # Test if the interatomic distance has been set.
+                if not hasattr(interatom, 'r') or interatom.r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
 
         # Frequency index.
         if cdp.jw_frq not in cdp.frq.values():
             raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.jw_frq) + " has been loaded.")
 
         # Reduced spectral density mapping.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -175,11 +190,32 @@ class Jw_mapping(API_base, API_common):
             if r1 == None or r2 == None or noe == None:
                 continue
 
+            # Loop over the interatomic data.
+            interatoms = return_interatom(id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Gyromagnetic ratios.
+                gx = return_gyromagnetic_ratio(spin.isotope)
+                gh = return_gyromagnetic_ratio(spin2.isotope)
+
+                # The interatomic distance.
+                r = interatoms[i].r
+
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=cdp.jw_frq, gx=return_gyromagnetic_ratio(spin.heteronuc_type), gh=return_gyromagnetic_ratio(spin.proton_type), mu0=mu0, h_bar=h_bar)
+            self.jw = Mapping(frq=cdp.jw_frq, gx=gx, gh=gh, mu0=mu0, h_bar=h_bar)
 
             # Calculate the spectral density values.
-            j0, jwx, jwh = self.jw.func(r=spin.r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
+            j0, jwx, jwh = self.jw.func(r=r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Reduced spectral density values.
             if sim_index == None:
@@ -231,10 +267,7 @@ class Jw_mapping(API_base, API_common):
     default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
     _table = uf_tables.add_table(label="table: J(w) default values", caption="Reduced spectral density mapping default values.")
     _table.add_headings(["Data type", "Object name", "Value"])
-    _table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
     _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
-    _table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
-    _table.add_row(["Proton type", "'proton_type'", "'1H'"])
     default_value_doc.add_table(_table.label)
 
 
@@ -279,10 +312,7 @@ class Jw_mapping(API_base, API_common):
     _table.add_row(["J(0)", "'j0'"])
     _table.add_row(["J(wX)", "'jwx'"])
     _table.add_row(["J(wH)", "'jwh'"])
-    _table.add_row(["Bond length", "'r'"])
     _table.add_row(["CSA", "'csa'"])
-    _table.add_row(["Heteronucleus type", "'heteronuc_type'"])
-    _table.add_row(["Proton type", "'proton_type'"])
     return_data_name_doc.add_table(_table.label)
 
 
