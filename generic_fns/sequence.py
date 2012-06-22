@@ -313,6 +313,10 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
             spin_nums.append(spin_num)
             spin_names.append(spin_name)
 
+    # No data, so fail.
+    if not len(spin_names):
+        raise RelaxError("No sequence data could be loaded.")
+
     # Write the data.
     write_spin_data(sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
