@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@ from numpy import array
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.mol_res_spin import metadata_update
 from relax_errors import RelaxError, RelaxNoPipeError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -105,6 +106,9 @@ class Spin_base_class(UnitTestCase):
         cdp.mol[2].res[0].name = 'Gly'
         cdp.mol[2].res[0].spin[0].x = 'hello'
 
+        # Update the metadata.
+        metadata_update()
+
 
     def test_copy_spin(self):
         """Test the copying of the spin data within the same residue.
@@ -139,8 +143,8 @@ class Spin_base_class(UnitTestCase):
         prompt.spin.copy().
         """
 
-        # Copy the spin '111' from the first molecule, first residue to the second molecule, fifth residue.
-        self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
+        # Copy the spin 'C8' from the first molecule, first residue to the second molecule, fifth residue.
+        self.spin_fns.copy(spin_from='#Old mol:1@C8', spin_to='#New mol:5@334')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -169,8 +173,8 @@ class Spin_base_class(UnitTestCase):
         prompt.spin.copy().
         """
 
-        # Copy the spin '111' from the first residue to the third residue.
-        self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+        # Copy the spin 'C8' from the first residue to the third residue.
+        self.spin_fns.copy(spin_from='#Old mol:1@C8', spin_to='#Old mol:2')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -200,7 +204,7 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Copy the spin data.
-        self.spin_fns.copy(spin_from='#Old mol:1@111', pipe_to='test')
+        self.spin_fns.copy(spin_from='#Old mol:1@C8', pipe_to='test')
 
         # Get the data pipes.
         dp = pipes.get_pipe('orig')
@@ -209,6 +213,9 @@ class Spin_base_class(UnitTestCase):
         # Change the first spin's data.
         dp.mol[0].res[0].spin[0].num = 222
         dp.mol[0].res[0].spin[0].x = 2
+
+        # Update the metadata.
+        metadata_update()
 
         # Test the original spin.
         self.assertEqual(dp.mol[0].res[0].spin[0].num, 222)
@@ -227,7 +234,7 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Copy the spin to the second data pipe.
-        self.assertRaises(RelaxNoPipeError, self.spin_fns.copy, spin_from='#Old mol:1@111', pipe_to='test2')
+        self.assertRaises(RelaxNoPipeError, self.spin_fns.copy, spin_from='#Old mol:1@C8', pipe_to='test2')
 
 
 
@@ -238,8 +245,8 @@ class Spin_base_class(UnitTestCase):
         prompt.spin.copy().
         """
 
-        # Copy a non-existent residue (1 Met, @111).
-        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':Met@111', spin_to=':2,Gly')
+        # Copy a non-existent residue (1 Met, @C8).
+        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':Met@C8', spin_to=':2,Gly')
 
 
     def test_copy_spin_fail2(self):
@@ -261,7 +268,7 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Copy to a non-existent residue (3).
-        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
+        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from='#Old mol:1@C8', spin_to='#Old mol:3')
 
 
     def test_copy_spin_fail4(self):
@@ -296,7 +303,7 @@ class Spin_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[7].pos = [array([0.0, 0.0, 3.0])]
 
         # Create a pseudo-spin.
-        self.spin_fns.create_pseudo(spin_name='Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
+        self.spin_fns.create_pseudo(spin_name='Q3', spin_num=105, members=['#Old mol:1@H13', '#Old mol:1@H14', '#Old mol:1@H15'], averaging='linear')
 
         # Test that the spin numbers are correct.
         self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
@@ -323,7 +330,7 @@ class Spin_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
         self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_name, '@Q3')
         self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_num, 105)
-        self.assertEqual(dp.mol[0].res[0].spin[8].members, ['@H13', '@H14', '@H15'])
+        self.assertEqual(dp.mol[0].res[0].spin[8].members, ['#Old mol:1@H13', '#Old mol:1@H14', '#Old mol:1@H15'])
         self.assertEqual(dp.mol[0].res[0].spin[8].averaging, 'linear')
 
 
@@ -346,7 +353,7 @@ class Spin_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[6].pos = [array([0.0, 2.0, 0.0]), array([0.0, -2.0, 0.0])]
 
         # Create a pseudo-spin.
-        self.spin_fns.create_pseudo(spin_name='Q10', spin_num=105, members=['@H93', '@H94'], averaging='linear')
+        self.spin_fns.create_pseudo(spin_name='Q10', spin_num=105, members=['#Old mol:1@H93', '#Old mol:1@H94'], averaging='linear')
 
         # Test that the spin numbers are correct.
         self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
@@ -372,7 +379,7 @@ class Spin_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q10')
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
-        self.assertEqual(dp.mol[0].res[0].spin[7].members, ['@H93', '@H94'])
+        self.assertEqual(dp.mol[0].res[0].spin[7].members, ['#Old mol:1@H93', '#Old mol:1@H94'])
         self.assertEqual(dp.mol[0].res[0].spin[7].averaging, 'linear')
 
 
@@ -443,7 +450,7 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Delete the first spin.
-        self.spin_fns.delete(spin_id='@111')
+        self.spin_fns.delete(spin_id='@C8')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -480,7 +487,7 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Delete the first and third spins.
-        self.spin_fns.delete(spin_id='@111,7')
+        self.spin_fns.delete(spin_id='@C8,7')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -569,7 +576,7 @@ class Spin_base_class(UnitTestCase):
         """
 
         # Rename a few spins.
-        self.spin_fns.number(spin_id='@111', number=1, force=True)
+        self.spin_fns.number(spin_id='@C8', number=1, force=True)
         self.spin_fns.number(spin_id='@6', number=2, force=True)
         self.spin_fns.number(spin_id='@7', number=3, force=True)
         self.spin_fns.number(spin_id='@8', number=4, force=True)

@@ -27,7 +27,7 @@
 from types import IntType, NoneType
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_id_to_data_list, spin_loop
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_id_to_data_list, spin_loop
 import pipes
 from relax_errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import open_write_file, read_spin_data, write_spin_data
@@ -196,38 +196,20 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     if pipe == None:
         pipe = pipes.cdp_name()
 
-    # Get the data pipe.
-    dp = pipes.get_pipe(pipe)
-
-    # Get the molecule.
-    curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
-
     # A new molecule.
-    if not curr_mol:
-        # Add the molecule (and store it in the 'curr_mol' object).
-        dp.mol.add_item(mol_name=mol_name)
-        curr_mol = dp.mol[-1]
-
-    # Get the residue.
-    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)
+    if not return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe):
+        create_molecule(mol_name=mol_name, pipe=pipe)
 
     # A new residue.
-    if not curr_res:
-        # Add the residue (and store it in the 'curr_res' object).
-        curr_mol.res.add_item(res_name=res_name, res_num=res_num)
-        curr_res = curr_mol.res[-1]
-
-    # Get the spin.
-    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
+    if not return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe):
+        create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
 
     # A new spin.
     new_data = False
+    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
     if not curr_spin:
         # Add the spin.
-        curr_res.spin.add_item(spin_name=spin_name, spin_num=spin_num)
-
-        # Get the spin.
-        curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
+        curr_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name, pipe=pipe)
 
         # New data.
         new_data = True

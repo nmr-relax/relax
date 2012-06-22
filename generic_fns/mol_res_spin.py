@@ -683,6 +683,9 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         if mol_name_to != None:
             pipe.mol[-1].name = mol_name_to
 
+        # Update the private metadata.
+        metadata_update(pipe=pipe_to)
+
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
@@ -760,6 +763,9 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
             mol_to_container.res[-1].num = res_num_to
         if res_name_to != None:
             mol_to_container.res[-1].name = res_name_to
+
+        # Update the private metadata.
+        metadata_update(pipe=pipe_to)
 
     # Release the lock.
     finally:
@@ -839,6 +845,9 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
             res_to_cont.spin[-1].num = spin_num_to
         if spin_name_to != None:
             res_to_cont.spin[-1].name = spin_name_to
+
+        # Update the private metadata.
+        metadata_update(pipe=pipe_to)
 
     # Release the lock.
     finally:
@@ -951,19 +960,28 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
     return spin_num
 
 
-def create_molecule(mol_name=None, mol_type=None):
+def create_molecule(mol_name=None, mol_type=None, pipe=None):
     """Add a molecule into the relax data store.
 
     @keyword mol_name:  The name of the molecule.
     @type mol_name:     str
+    @keyword pipe:      The data pipe to add the molecule to.  Defaults to the current data pipe.
+    @type pipe:         str or None
     @keyword mol_type:  The type of molecule.
     @type mol_type:     str
     @return:            The newly created molecule.
     @rtype:             MoleculeContainer instance
     """
 
-    # Test if the current data pipe exists.
-    pipes.test()
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
@@ -973,15 +991,23 @@ def create_molecule(mol_name=None, mol_type=None):
             raise RelaxError("The molecule type '%s' must be one of %s" % (mol_type, ALLOWED_MOL_TYPES))
 
         # Test if the molecule name already exists.
-        for i in xrange(len(cdp.mol)):
-            if cdp.mol[i].name == mol_name:
+        for i in xrange(len(dp.mol)):
+            if dp.mol[i].name == mol_name:
                 raise RelaxError("The molecule '" + repr(mol_name) + "' already exists in the relax data store.")
 
         # Append the molecule.
-        cdp.mol.add_item(mol_name=mol_name, mol_type=mol_type)
+        dp.mol.add_item(mol_name=mol_name, mol_type=mol_type)
 
         # Alias the molecule.
-        mol = cdp.mol[-1]
+        mol = dp.mol[-1]
+
+        # Update the private metadata.
+        if len(dp.mol) == 2:
+            metadata_prune(pipe=pipe)
+            metadata_update(pipe=pipe)
+        else:
+            metadata_prune(mol_index=len(dp.mol)-1, pipe=pipe)
+            metadata_update(mol_index=len(dp.mol)-1, pipe=pipe)
 
     # Release the lock.
     finally:
@@ -991,7 +1017,7 @@ def create_molecule(mol_name=None, mol_type=None):
     return mol
 
 
-def create_residue(res_num=None, res_name=None, mol_name=None):
+def create_residue(res_num=None, res_name=None, mol_name=None, pipe=None):
     """Add a residue into the relax data store (and molecule if necessary).
 
     @keyword res_num:   The number of the new residue.
@@ -1000,26 +1026,40 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
     @type res_name:     str
     @keyword mol_name:  The name of the molecule to add the residue to.
     @type mol_name:     str
+    @keyword pipe:      The data pipe to add the residue to.  Defaults to the current data pipe.
+    @type pipe:         str or None
     @return:            The newly created residue.
     @rtype:             ResidueContainer instance
     """
 
-    # Test if the current data pipe exists.
-    pipes.test()
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Create the molecule if it does not exist.
-        mol_cont = return_molecule(generate_spin_id(mol_name=mol_name))
+        mol_cont = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
         if mol_cont == None:
-            mol_cont = create_molecule(mol_name=mol_name)
+            mol_cont = create_molecule(mol_name=mol_name, pipe=pipe)
 
         # Add the residue.
         mol_cont.res.add_item(res_num=res_num, res_name=res_name)
 
         # Alias the residue.
         res = mol_cont.res[-1]
+
+        # Update the private metadata.
+        if len(mol_cont.res) == 2:
+            metadata_prune(mol_index=mol_cont._mol_index, pipe=pipe)
+            metadata_update(mol_index=mol_cont._mol_index, pipe=pipe)
+        else:
+            metadata_prune(mol_index=mol_cont._mol_index, res_index=len(mol_cont.res)-1, pipe=pipe)
+            metadata_update(mol_index=mol_cont._mol_index, res_index=len(mol_cont.res)-1, pipe=pipe)
 
     # Release the lock.
     finally:
@@ -1029,7 +1069,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
     return res
 
 
-def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
+def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None, pipe=None):
     """Add a pseudo-atom spin container into the relax data store.
 
     @param spin_name:   The name of the new pseudo-spin.
@@ -1038,10 +1078,19 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     @type spin_num:     int
     @param res_id:      The molecule and residue identification string.
     @type res_id:       str
+    @keyword pipe:      The data pipe to add the spin to.  Defaults to the current data pipe.
+    @type pipe:         str or None
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
 
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
@@ -1055,11 +1104,11 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
         # Get the residue container to add the spin to.
         if res_id:
-            res_to_cont, mol_index, res_index = return_residue(res_id, indices=True)
+            res_to_cont, mol_index, res_index = return_residue(res_id, pipe=pipe, indices=True)
             if res_to_cont == None:
                 raise RelaxError("The residue in " + repr(res_id) + " does not exist in the current data pipe.")
         else:
-            res_to_cont = cdp.mol[0].res[0]
+            res_to_cont = dp.mol[0].res[0]
             mol_index = 0
             res_index = 0
 
@@ -1071,7 +1120,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         positions = []
         for atom in members:
             # Get the spin container.
-            spin = return_spin(atom)
+            spin = return_spin(atom, pipe=pipe)
 
             # Test that the spin exists.
             if spin == None:
@@ -1098,7 +1147,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         # Now add the pseudo-spin name to the spins belonging to it (after the tests).
         for atom in members:
             # Get the spin container.
-            spin = return_spin(atom)
+            spin = return_spin(atom, pipe=pipe)
 
             # Add the pseudo-spin number and name.
             if res_id:
@@ -1125,16 +1174,16 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
             else:
                 spin.pos = ave[0]
 
-        # Add the spin ID and indices to the lookup table.
-        spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=spin.num, spin_name=spin.name)
-        cdp.mol._lookup_table[spin_id] = [mol_index, res_index, spin_index]
+        # Update the private metadata.
+        metadata_prune(mol_index=mol_index, res_index=res_index, pipe=pipe)
+        metadata_update(mol_index=mol_index, res_index=res_index, pipe=pipe)
 
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
-def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
+def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None, pipe=None):
     """Add a spin into the relax data store (and molecule and residue if necessary).
 
     @keyword spin_num:  The number of the new spin.
@@ -1147,12 +1196,21 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     @type res_name:     str
     @keyword mol_name:  The name of the molecule to add the spin to.
     @type mol_name:     str
+    @keyword pipe:      The data pipe to add the spin to.  Defaults to the current data pipe.
+    @type pipe:         str or None
     @return:            The newly created spin.
     @rtype:             SpinContainer instance
     """
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
@@ -1160,17 +1218,17 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         # Create the molecule if it does not exist.
         mol_index = index_molecule(mol_name)
         if mol_index == None:
-            create_molecule(mol_name=mol_name)
-            mol_index = len(cdp.mol) - 1
+            create_molecule(mol_name=mol_name, pipe=pipe)
+            mol_index = len(dp.mol) - 1
 
         # Create the residue if it does not exist.
         res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=mol_index)
         if res_index == None:
-            create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
-            res_index = len(cdp.mol[mol_index].res) - 1
+            create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
+            res_index = len(dp.mol[mol_index].res) - 1
 
         # Alias the residue.
-        res_cont = cdp.mol[mol_index].res[res_index]
+        res_cont = dp.mol[mol_index].res[res_index]
 
         # Rename the spin, if only a single one exists and it is empty.
         if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():
@@ -1187,8 +1245,13 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         spin_index = len(res_cont.spin) - 1
         spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
-        # Add the spin ID and indices to the lookup table.
-        cdp.mol._lookup_table[spin_id] = [mol_index, res_index, spin_index]
+        # Update the private metadata.
+        if len(res_cont.spin) == 2:
+            metadata_prune(mol_index=mol_index, res_index=res_index, pipe=pipe)
+            metadata_update(mol_index=mol_index, res_index=res_index, pipe=pipe)
+        else:
+            metadata_prune(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
+            metadata_update(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
 
     # Release the lock.
     finally:
@@ -1264,6 +1327,10 @@ def delete_molecule(mol_id=None):
         # Reverse the indices.
         indices.reverse()
 
+        # First prune the metadata.
+        for index in indices:
+            metadata_prune(mol_index=index)
+
         # Delete the molecules.
         for index in indices:
             cdp.mol.pop(index)
@@ -1311,6 +1378,10 @@ def delete_residue(res_id=None):
             # Reverse the indices.
             indices.reverse()
 
+            # First prune the metadata.
+            for index in indices:
+                metadata_prune(mol_index=mol._mol_index, res_index=index)
+
             # Delete the residues.
             for index in indices:
                 mol.res.pop(index)
@@ -1354,6 +1425,10 @@ def delete_spin(spin_id=None):
 
             # Reverse the indices.
             indices.reverse()
+
+            # First prune the metadata.
+            for index in indices:
+                metadata_prune(mol_index=res._mol_index, res_index=res._res_index, spin_index=index)
 
             # Delete the spins.
             for index in indices:
@@ -1804,6 +1879,185 @@ def last_residue_num(selection=None):
     return mol.res[-1].num
 
 
+def linear_ave(positions):
+    """Perform linear averaging of the atomic positions.
+
+    @param positions:   The atomic positions.  The first index is that of the positions to be averaged over.  The second index is over the different models.  The last index is over the x, y, and z coordinates.
+    @type positions:    list of lists of numpy float arrays
+    @return:            The averaged positions as a list of vectors.
+    @rtype:             list of numpy float arrays
+    """
+
+    # Loop over the multiple models.
+    ave = []
+    for model_index in range(len(positions[0])):
+        # Append an empty vector.
+        ave.append(array([0.0, 0.0, 0.0]))
+
+        # Loop over the x, y, and z coordinates.
+        for coord_index in range(3):
+            # Loop over the atomic positions.
+            for atom_index in range(len(positions)):
+                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
+
+            # Average.
+            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
+
+    # Return the averaged positions.
+    return ave
+
+
+def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
+    """Prune all of the metadata matching the given indices.
+
+    @keyword mol_index:     The index of the molecule to prune.  If not supplied, all molecules will be pruned.
+    @type mol_index:        int or None
+    @keyword res_index:     The index of the residue to prune.  If not supplied, all residues of the matching molecules will be pruned.
+    @type res_index:        int or None
+    @keyword spin_index:    The index of the spin to prune.  If not supplied, all spins of the matching residues will be pruned.
+    @type spin_index:       int or None
+    @keyword pipe:          The data pipe to update, defaulting to the current data pipe.
+    @type pipe:             str or None
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Loop over the molecules.
+    for i in range(len(dp.mol)):
+        # Molecule skipping.
+        if mol_index != None and mol_index != i:
+            continue
+
+        # Alias.
+        mol = dp.mol[i]
+
+        # Loop over the residues.
+        for j in range(len(mol.res)):
+            # Residue skipping.
+            if res_index != None and res_index != j:
+                continue
+
+            # Alias.
+            res = mol.res[j]
+
+            # Loop over the spins.
+            for k in range(len(res.spin)):
+                # Spin skipping.
+                if spin_index != None and spin_index != k:
+                    continue
+
+                # Alias.
+                spin = res.spin[k]
+
+                # The list of IDs to remove.
+                spin_ids = spin_id_variants_elim(dp=dp, mol_index=i, res_index=j, spin_index=k)
+
+                # ID removal.
+                for spin_id in spin_ids:
+                    # Blank IDs.
+                    if spin_id == '':
+                        continue
+
+                    # Remove from the list in the spin container itself.
+                    if spin_id in spin._spin_ids:
+                        spin._spin_ids.pop(spin._spin_ids.index(spin_id))
+
+                    # Remove the IDs from the look up table.
+                    if dp.mol._spin_id_lookup.has_key(spin_id):
+                        dp.mol._spin_id_lookup.pop(spin_id)
+
+
+def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
+    """Update all of the private look up metadata for the given containers.
+
+    @keyword mol_index:     The index of the molecule to update.  If not supplied, all molecules will be updated.
+    @type mol_index:        int or None
+    @keyword res_index:     The index of the residue to update.  If not supplied, all residues will be updated.
+    @type res_index:        int or None
+    @keyword spin_index:    The index of the spin to update.  If not supplied, all spins will be updated.
+    @type spin_index:       int or None
+    @keyword pipe:          The data pipe to update, defaulting to the current data pipe.
+    @type pipe:             str or None
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Loop over the molecules.
+    for i in range(len(dp.mol)):
+        # Molecule skipping.
+        if mol_index != None and mol_index != i:
+            continue
+
+        # Alias.
+        mol = dp.mol[i]
+
+        # Update the residue metadata.
+        mol._mol_index = i
+
+        # Loop over the residues.
+        for j in range(len(mol.res)):
+            # Residue skipping.
+            if res_index != None and res_index != j:
+                continue
+
+            # Alias.
+            res = mol.res[j]
+
+            # Update the residue metadata.
+            res._mol_name = mol.name
+            res._mol_index = i
+            res._res_index = j
+
+            # Loop over the spins.
+            for k in range(len(res.spin)):
+                # Spin skipping.
+                if spin_index != None and spin_index != k:
+                    continue
+
+                # Alias.
+                spin = res.spin[k]
+
+                # Update the spin metadata.
+                spin._mol_name = mol.name
+                spin._mol_index = i
+                spin._res_name = res.name
+                spin._res_num = res.num
+                spin._res_index = j
+                spin._spin_index = k
+
+                # The list of IDs to store.
+                spin_ids = spin_id_variants(dp=dp, mol_index=i, res_index=j, spin_index=k)
+
+                # ID storage.
+                spin._spin_ids = []
+                for spin_id in spin_ids:
+                    # Blank IDs.
+                    if spin_id == '':
+                        continue
+
+                    # Store the list in the spin container itself.
+                    spin._spin_ids.append(spin_id)
+
+                    # Update the look up table.
+                    dp.mol._spin_id_lookup[spin_id] = [i, j, k]
+
+
 def molecule_loop(selection=None, pipe=None, return_id=False):
     """Generator function for looping over all the molecules of the given selection.
 
@@ -1851,34 +2105,6 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
             yield mol
 
 
-def linear_ave(positions):
-    """Perform linear averaging of the atomic positions.
-
-    @param positions:   The atomic positions.  The first index is that of the positions to be averaged over.  The second index is over the different models.  The last index is over the x, y, and z coordinates.
-    @type positions:    list of lists of numpy float arrays
-    @return:            The averaged positions as a list of vectors.
-    @rtype:             list of numpy float arrays
-    """
-
-    # Loop over the multiple models.
-    ave = []
-    for model_index in range(len(positions[0])):
-        # Append an empty vector.
-        ave.append(array([0.0, 0.0, 0.0]))
-
-        # Loop over the x, y, and z coordinates.
-        for coord_index in range(3):
-            # Loop over the atomic positions.
-            for atom_index in range(len(positions)):
-                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
-
-            # Average.
-            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
-
-    # Return the averaged positions.
-    return ave
-
-
 def name_molecule(mol_id, name=None, force=False):
     """Name the molecules.
 
@@ -1911,6 +2137,10 @@ def name_molecule(mol_id, name=None, force=False):
             else:
                 mol.name = name
 
+            # Update the private metadata.
+            metadata_prune(mol_index=mol._mol_index)
+            metadata_update(mol_index=mol._mol_index)
+
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
@@ -1942,6 +2172,10 @@ def name_residue(res_id, name=None, force=False):
             else:
                 res.name = name
 
+                # Update the private metadata.
+                metadata_prune(mol_index=res._mol_index, res_index=res._res_index)
+                metadata_update(mol_index=res._mol_index, res_index=res._res_index)
+
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
@@ -1967,6 +2201,10 @@ def name_spin(spin_id=None, name=None, force=False):
                 warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
             else:
                 spin.name = name
+
+                # Update the private metadata.
+                metadata_prune(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
+                metadata_update(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
 
     # Release the lock.
     finally:
@@ -2008,6 +2246,10 @@ def number_residue(res_id, number=None, force=False):
             else:
                 res.num = number
 
+                # Update the private metadata.
+                metadata_prune(mol_index=res._mol_index, res_index=res._res_index)
+                metadata_update(mol_index=res._mol_index, res_index=res._res_index)
+
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
@@ -2042,6 +2284,10 @@ def number_spin(spin_id=None, number=None, force=False):
                 warn(RelaxWarning("The spin '%s' is already numbered.  Set the force flag to renumber." % id))
             else:
                 spin.num = number
+
+                # Update the private metadata.
+                metadata_prune(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
+                metadata_update(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
 
     # Release the lock.
     finally:
@@ -2383,12 +2629,13 @@ def return_spin(spin_id=None, pipe=None, full_info=False):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # No spin ID, so switch to selection matching.
-    if not dp.mol._lookup_table.has_key(spin_id):
-        return return_spin_from_selection(selection=spin_id, pipe=pipe, full_info=full_info)
+    # No spin ID, so assume there is no spin.
+    if not dp.mol._spin_id_lookup.has_key(spin_id):
+        return None
 
     # The indices from the look up table.
-    mol_index, res_index, spin_index = dp.mol._lookup_table[spin_id]
+    else:
+        mol_index, res_index, spin_index = dp.mol._spin_id_lookup[spin_id]
 
     # Return the data.
     if full_info:
@@ -2530,7 +2777,7 @@ def return_spin_indices(spin_id=None, pipe=None):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so switch to selection matching.
-    if not dp.mol._lookup_table.has_key(spin_id):
+    if not dp.mol._spin_id_lookup.has_key(spin_id):
         # Parse the selection string.
         select_obj = Selection(spin_id)
 
@@ -2566,7 +2813,7 @@ def return_spin_indices(spin_id=None, pipe=None):
 
     # The indices from the look up table.
     else:
-        mol_index, res_index, spin_index = dp.mol._lookup_table[spin_id]
+        mol_index, res_index, spin_index = dp.mol._spin_id_lookup[spin_id]
 
     # Return the data.
     return mol_index, res_index, spin_index
@@ -2592,6 +2839,10 @@ def return_single_molecule_info(molecule_token):
             mol_name = info
         else:
             raise RelaxError("The molecule identifier " + repr(molecule_token) + " does not correspond to a single molecule.")
+
+    # Convert to a string if needed.
+    if mol_name != None and not isinstance(mol_name, str):
+        mol_name = str(mol_name)
 
     # Return the molecule name.
     return mol_name
@@ -2819,6 +3070,116 @@ def spin_id_to_data_list(id):
 
     # Return the data.
     return mol_name, res_num, res_name, spin_num, spin_name
+
+
+def spin_id_variants(dp=None, mol_index=None, res_index=None, spin_index=None):
+    """Generate a list of spin ID variants for the given set of molecule, residue and spin indices.
+
+    @keyword dp:            The data pipe to work on.
+    @type dp:               PipeContainer instance
+    @keyword mol_index:     The molecule index.
+    @type mol_index:        int
+    @keyword res_index:     The residue index.
+    @type res_index:        int
+    @keyword spin_index:    The spin index.
+    @type spin_index:       int
+    @return:                The list of all spin IDs matching the spin.
+    @rtype:                 list of str
+    """
+
+    # Initialise.
+    spin_ids = []
+    mol = dp.mol[mol_index]
+    res = dp.mol[mol_index].res[res_index]
+    spin = dp.mol[mol_index].res[res_index].spin[spin_index]
+    mol_count = len(dp.mol)
+    res_count = len(mol.res)
+    spin_count = len(res.spin)
+
+    # The spin ID.
+    spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+
+    # The spin IDs without spin info.
+    if spin_count == 1:
+        spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
+
+    # The spin IDs without residue info.
+    if res_count == 1:
+        spin_ids.append(generate_spin_id(mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
+
+    # The spin IDs without molecule info.
+    if mol_count == 1:
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+
+    # The spin IDs without spin or residue info.
+    if spin_count == 1 and res_count == 1:
+        spin_ids.append(generate_spin_id(mol_name=mol.name))
+
+    # The spin IDs without spin or molecule info.
+    if spin_count == 1 and mol_count == 1:
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
+
+    # The spin IDs without residue or molecule info.
+    if res_count == 1 and mol_count == 1:
+        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
+
+    # Return the IDs.
+    return spin_ids
+
+
+def spin_id_variants_elim(dp=None, mol_index=None, res_index=None, spin_index=None):
+    """Generate a list of spin ID variants to eliminate for the given set of molecule, residue and spin indices.
+
+    @keyword dp:            The data pipe to work on.
+    @type dp:               PipeContainer instance
+    @keyword mol_index:     The molecule index.
+    @type mol_index:        int
+    @keyword res_index:     The residue index.
+    @type res_index:        int
+    @keyword spin_index:    The spin index.
+    @type spin_index:       int
+    @return:                The list of all spin IDs matching the spin.
+    @rtype:                 list of str
+    """
+
+    # Initialise.
+    spin_ids = []
+    mol = dp.mol[mol_index]
+    res = dp.mol[mol_index].res[res_index]
+    spin = dp.mol[mol_index].res[res_index].spin[spin_index]
+    mol_count = len(dp.mol)
+    res_count = len(mol.res)
+    spin_count = len(res.spin)
+
+    # The spin ID.
+    spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+
+    # The spin IDs without spin info.
+    if spin_count > 1:
+        spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
+
+    # The spin IDs without residue info.
+    if res_count > 1:
+        spin_ids.append(generate_spin_id(mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
+
+    # The spin IDs without molecule info.
+    if mol_count > 1:
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+
+    # The spin IDs without spin or residue info.
+    if spin_count > 1 and res_count > 1:
+        spin_ids.append(generate_spin_id(mol_name=mol.name))
+
+    # The spin IDs without spin or molecule info.
+    if spin_count > 1 and mol_count > 1:
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
+
+    # The spin IDs without residue or molecule info.
+    if res_count > 1 and mol_count > 1:
+        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
+
+    # Return the IDs.
+    return spin_ids
 
 
 def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):

@@ -51,6 +51,15 @@ class SpinContainer(Prototype):
         self.num = spin_num
         self.select = select
 
+        # The private metadata.
+        self._mol_name = None
+        self._mol_index = None
+        self._res_name = None
+        self._res_num = None
+        self._res_index = None
+        self._spin_index = None
+        self._spin_ids = []
+
 
     def __repr__(self):
         """The string representation of the object.
@@ -365,6 +374,11 @@ class ResidueContainer(Prototype):
         self.name = res_name
         self.num = res_num
 
+        # The private metadata.
+        self._mol_name = None
+        self._mol_index = None
+        self._res_index = None
+
         # The empty spin system list.
         self.spin = SpinList()
 
@@ -582,6 +596,9 @@ class MoleculeContainer(Prototype):
         # The type of molecule.
         self.type = mol_type
 
+        # The private metadata.
+        self._mol_index = None
+
         # The empty residue list.
         self.res = ResidueList()
 
@@ -665,8 +682,8 @@ class MoleculeList(list):
         # Add the initial molecule container at index 0.
         self.append(MoleculeContainer())
 
-        # Create a special private lookup table for fast spin access.
-        self._lookup_table = {}
+        # Create a special private lookup table for fast spin accesses.
+        self._spin_id_lookup = {}
 
 
     def __repr__(self):
