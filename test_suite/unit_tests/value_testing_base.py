@@ -153,23 +153,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
 
 
-    def test_set_ct_all_spins_r(self):
-        """Set the consistency testing bond length parameter for all spins.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'ct'.
-        pipes.switch('ct')
-
-        # Set the parameter.
-        self.value_fns.set(param='r', val=1.04e-10)
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
-
-
     def test_set_ct_all_spins_csa(self):
         """Set the consistency testing CSA parameter for all spins.
 
@@ -185,23 +168,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -160e-6)
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
-
-
-    def test_set_ct_all_spins_heteronucleus(self):
-        """Set the consistency testing heteronucleus type for all spins.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'ct'.
-        pipes.switch('ct')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type', val='13C')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_ct_all_spins_orientation(self):
@@ -319,23 +285,6 @@ class Value_base_class(UnitTestCase):
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_r2')
 
 
-    def test_set_ct_defaults_r(self):
-        """Set the consistency testing bond length parameter to the default value.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'ct'.
-        pipes.switch('ct')
-
-        # Set the parameter.
-        self.value_fns.set(param='r')
-
-        # Test the parameter.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
-        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
-
-
     def test_set_ct_defaults_csa(self):
         """Set the consistency testing CSA parameter to the default value.
 
@@ -351,23 +300,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
         self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
-
-
-    def test_set_ct_defaults_heteronucleus(self):
-        """Set the consistency testing heteronucleus type to the default value.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'ct'.
-        pipes.switch('ct')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
 
 
     def test_set_ct_defaults_orientation(self):
@@ -468,23 +400,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
 
 
-    def test_set_ct_single_spin_r(self):
-        """Set the consistency tests bond length parameter for a single spin.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'ct'.
-        pipes.switch('ct')
-
-        # Set the parameter.
-        self.value_fns.set(param='r', val=1.04e-10, spin_id='@112')
-
-        # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
-
-
     def test_set_ct_single_spin_csa(self):
         """Set the consistency tests CSA parameter for a single spin.
 
@@ -500,23 +415,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
-
-
-    def test_set_ct_single_spin_heteronucleus(self):
-        """Set the consistency testing heteronucleus type for a single spin.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'ct'.
-        pipes.switch('ct')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
-
-        # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_ct_single_spin_orientation(self):
@@ -2641,23 +2539,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
 
 
-    def test_set_jw_all_spins_r(self):
-        """Set the RSDM bond length parameter for all spins.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'jw'.
-        pipes.switch('jw')
-
-        # Set the parameter.
-        self.value_fns.set(param='r', val=1.04e-10)
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
-
-
     def test_set_jw_all_spins_csa(self):
         """Set the RSDM CSA parameter for all spins.
 
@@ -2673,23 +2554,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -160e-6)
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
-
-
-    def test_set_jw_all_spins_heteronucleus(self):
-        """Set the RSDM heteronucleus type for all spins.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'jw'.
-        pipes.switch('jw')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type', val='13C')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_jw_all_spins_diff_j0_jwx_jwh(self):
@@ -2773,23 +2637,6 @@ class Value_base_class(UnitTestCase):
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='jwh')
 
 
-    def test_set_jw_defaults_r(self):
-        """Set the RSDM bond length parameter to the default value.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'jw'.
-        pipes.switch('jw')
-
-        # Set the parameter.
-        self.value_fns.set(param='r')
-
-        # Test the parameter.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
-        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
-
-
     def test_set_jw_defaults_csa(self):
         """Set the RSDM CSA parameter to the default value.
 
@@ -2805,23 +2652,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
         self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
-
-
-    def test_set_jw_defaults_heteronucleus(self):
-        """Set the RSDM heteronucleus type to the default value.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'jw'.
-        pipes.switch('jw')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
 
 
     def test_set_jw_defaults_j0_jwx_jwh(self):
@@ -2888,23 +2718,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
 
 
-    def test_set_jw_single_spin_r(self):
-        """Set the RSDM bond length parameter for a single spin.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'jw'.
-        pipes.switch('jw')
-
-        # Set the parameter.
-        self.value_fns.set(param='r', val=1.04e-10, spin_id='@112')
-
-        # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
-
-
     def test_set_jw_single_spin_csa(self):
         """Set the RSDM CSA parameter for a single spin.
 
@@ -2920,23 +2733,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
-
-
-    def test_set_jw_single_spin_heteronucleus(self):
-        """Set the RSDM heteronucleus type for a single spin.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'jw'.
-        pipes.switch('jw')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
-
-        # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_jw_single_spin_diff_j0_jwx_jwh(self):
@@ -3123,23 +2919,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].rex, 2.34)
 
 
-    def test_set_mf_all_spins_r(self):
-        """Set the model-free bond length parameter for all spins.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'mf'.
-        pipes.switch('mf')
-
-        # Set the parameter.
-        self.value_fns.set(param='r', val=1.02e-10)
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
-
-
     def test_set_mf_all_spins_csa(self):
         """Set the model-free CSA parameter for all spins.
 
@@ -3155,23 +2934,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
-
-
-    def test_set_mf_all_spins_heteronucleus(self):
-        """Set the model-free heteronucleus type for all spins.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'mf'.
-        pipes.switch('mf')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type', val='13C')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_mf_all_spins_diff_s2f_s2s(self):
@@ -3348,23 +3110,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].rex, 0.0)
 
 
-    def test_set_mf_defaults_r(self):
-        """Set the model-free bond length parameter to the default value.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'mf'.
-        pipes.switch('mf')
-
-        # Set the parameter.
-        self.value_fns.set(param='r')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02 * 1e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02 * 1e-10)
-
-
     def test_set_mf_defaults_csa(self):
         """Set the model-free CSA parameter to the default value.
 
@@ -3380,23 +3125,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172 * 1e-6)
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172 * 1e-6)
-
-
-    def test_set_mf_defaults_heteronucleus(self):
-        """Set the model-free heteronucleus type to the default value.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'mf'.
-        pipes.switch('mf')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
 
 
     def test_set_mf_defaults_s2f_s2s(self):
@@ -3554,23 +3282,6 @@ class Value_base_class(UnitTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].rex, 2.34)
 
 
-    def test_set_mf_single_spin_r(self):
-        """Set the model-free bond length parameter for a single spin.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'mf'.
-        pipes.switch('mf')
-
-        # Set the parameter.
-        self.value_fns.set(param='r', val=1.02e-10, spin_id='@112')
-
-        # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
-
-
     def test_set_mf_single_spin_csa(self):
         """Set the model-free CSA parameter for a single spin.
 
@@ -3586,23 +3297,6 @@ class Value_base_class(UnitTestCase):
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
-
-
-    def test_set_mf_single_spin_heteronucleus(self):
-        """Set the model-free heteronucleus type for a single spin.
-
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
-        """
-
-        # Set the current data pipe to 'mf'.
-        pipes.switch('mf')
-
-        # Set the parameter.
-        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
-
-        # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_mf_single_spin_diff_s2f_s2s(self):
