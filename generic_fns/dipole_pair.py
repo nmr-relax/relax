@@ -31,10 +31,10 @@ from warnings import warn
 
 # relax module imports.
 from arg_check import is_float
-from generic_fns.interatomic import create_interatom, interatomic_loop, return_interatom
+from generic_fns.interatomic import create_interatom, exists_data, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import Selection, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoInteratomError
 from relax_io import extract_data, write_data
 from relax_warnings import RelaxZeroVectorWarning
 
@@ -259,6 +259,10 @@ def unit_vectors(ave=True):
 
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Test if interatomic data exists.
+    if not exists_data():
+        raise RelaxNoInteratomError
 
     # Print out.
     if ave:
