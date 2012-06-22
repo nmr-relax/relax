@@ -1355,7 +1355,7 @@ class Mf_minimise:
                 if not hasattr(spin2, 'isotope'):
                     raise RelaxSpinTypeError
 
-                # Test if the bond length value has been set.
+                # Test if the interatomic distance has been set.
                 if not hasattr(interatom, 'r') or interatom.r == None:
                     raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
 
