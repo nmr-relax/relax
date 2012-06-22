@@ -36,7 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import bmrb
 from generic_fns.interatomic import create_interatom, return_interatom
-from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
@@ -827,7 +827,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     data = []
     for i in range(N):
         # Get the corresponding spin container.
-        mol_names, res_nums, res_names, spins = return_spin(spin_ids[i], full_info=True, multi=True)
+        spins = return_spin_from_selection(spin_ids[i], multi=True)
         if spins in [None, []]:
             raise RelaxNoSpinError(spin_ids[i])
 
