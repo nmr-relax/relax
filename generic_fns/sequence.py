@@ -188,8 +188,6 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     @type select:       bool
     @keyword verbose:   A flag which if True will cause info about each spin to be printed out as the sequence is generated.
     @type verbose:      bool
-    @return:            True if a new spin was created, False otherwise.
-    @rtype:             bool
     """
 
     # The current data pipe.
@@ -205,20 +203,13 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
 
     # A new spin.
-    new_data = False
     curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
     if not curr_spin:
         # Add the spin.
         curr_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name, pipe=pipe)
 
-        # New data.
-        new_data = True
-
     # Set the selection flag.
     curr_spin.select = select
-
-    # Return the creation status.
-    return new_data
 
 
 def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
@@ -276,15 +267,14 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     # Generate the sequence.
     for mol_name, res_num, res_name, spin_num, spin_name in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Add the spin.
-        new_spin = generate(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+        generate(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
         # Append the new spin.
-        if new_spin:
-            mol_names.append(mol_name)
-            res_nums.append(res_num)
-            res_names.append(res_name)
-            spin_nums.append(spin_num)
-            spin_names.append(spin_name)
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin_num)
+        spin_names.append(spin_name)
 
     # No data, so fail.
     if not len(spin_names):
