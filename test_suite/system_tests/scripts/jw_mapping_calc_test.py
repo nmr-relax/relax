@@ -24,11 +24,19 @@ self._execute_uf(uf_name='sequence.read', file='test_seq', dir=status.install_pa
 for i in xrange(len(ri_ids)):
     self._execute_uf(uf_name='relax_data.read', ri_id=ri_ids[i], ri_type=ri_type[i], frq=frq[i], file=data_paths[i], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
-# Set r, csa, heteronucleus type, and proton type.
-self._execute_uf(uf_name='value.set', val=NH_BOND_LENGTH, param='r')
+# Set the spin information.
+spin.name('N')
+spin.element('N')
+sequence.attach_protons()
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
+
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+# Define the chemical shift relaxation interaction.
 self._execute_uf(uf_name='value.set', val=N15_CSA, param='csa')
-self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type')
-self._execute_uf(uf_name='value.set', val='1H', param='proton_type')
 
 # Select the frequency.
 self._execute_uf(uf_name='jw_mapping.set_frq', frq=600.0 * 1e6)
