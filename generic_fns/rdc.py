@@ -502,17 +502,25 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
                 warn(RelaxWarning("The error value of the line %s is invalid." % line))
                 continue
 
+        # Get the spins.
+        spin1 = return_spin(spin_id1)
+        spin2 = return_spin(spin_id2)
+
         # Check the spin IDs.
-        if not return_spin(spin_id1):
+        if not spin1:
             warn(RelaxWarning("The spin ID '%s' cannot be found in the current data pipe, skipping the data %s." % (spin_id1, line)))
             continue
-        if not return_spin(spin_id2):
+        if not spin2:
             warn(RelaxWarning("The spin ID '%s' cannot be found in the current data pipe, skipping the data %s." % (spin_id2, line)))
             continue
 
         # Test the error value (cannot be 0.0).
         if error == 0.0:
             raise RelaxError("An invalid error value of zero has been encountered.")
+
+        # Remap the spin IDs.
+        spin_id1 = spin1._spin_ids[0]
+        spin_id2 = spin2._spin_ids[0]
 
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
@@ -557,6 +565,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         raise RelaxError("No RDC data could be extracted.")
 
     # Print out.
+    print("The following RDCs have been loaded into the relax data store:\n")
     write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
     # Initialise some global structures.
