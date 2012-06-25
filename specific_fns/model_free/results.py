@@ -34,7 +34,7 @@ import sys
 # relax module imports.
 import generic_fns
 from generic_fns import dipole_pair
-from generic_fns.interatomic import return_interatom
+from generic_fns.interatomic import return_interatom, return_interatom_list
 from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxInvalidDataError
@@ -230,7 +230,7 @@ class Results:
         model_type = spin_line[col['param_set']]
 
         # Get the interatomic data container.
-        interatom = return_interatom(spin_id)
+        interatom = return_interatom_list(spin_id)[0]
 
         # Values.
         if data_set == 'value':
@@ -314,9 +314,9 @@ class Results:
 
             # Interatomic distances.
             try:
-                interatom[0].r = float(spin_line[col['r']]) * 1e-10
+                interatom.r = float(spin_line[col['r']]) * 1e-10
             except ValueError:
-                interatom[0].r = None
+                interatom.r = None
 
         # Errors.
         if data_set == 'error':
@@ -1101,8 +1101,8 @@ class Results:
 
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
-        if len(interatom) != 1:
-            raise RelaxError("Only one interatomic interaction is allowed.")
+        if interatom == None:
+            raise RelaxError("No interatomic interaction between spins '%s' and '%s' could be found." (spin_id1, spin_id2))
 
         # The vector.
         vector = eval(spin_line[col['xh_vect']])
@@ -1114,7 +1114,7 @@ class Results:
                 raise RelaxError("The XH unit vector " + spin_line[col['xh_vect']] + " is invalid.")
 
             # Set the vector.
-            interatom[0].vector = vector
+            interatom.vector = vector
 
 
     def read_columnar_results(self, file_data, verbosity=1):
