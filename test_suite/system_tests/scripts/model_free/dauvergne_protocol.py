@@ -209,7 +209,7 @@ dipole_pair.unit_vectors()
 # Define the chemical shift relaxation interaction.
 value.set(-172 * 1e-6, 'csa', spin_id='@N')
 
-# Set the spin information.
+# Set the nuclear isotope type.
 spin.isotope('15N', spin_id='@N')
 spin.isotope('1H', spin_id='@H')
 
