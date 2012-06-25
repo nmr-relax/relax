@@ -84,20 +84,11 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
                         continue
 
             # Get the interatomic data object, if it exists.
-            interatoms = return_interatom(id1, id2)
+            interatom = return_interatom(id1, id2)
 
             # Create the container if needed.
-            if not len(interatoms):
+            if interatom == None:
                 interatom = create_interatom(spin_id1=id1, spin_id2=id2)
-
-            # Check the single container and alias it.
-            else:
-                # The check.
-                if len(interatoms) > 1:
-                    raise RelaxError("Multiple interatomic data containers found.")
-
-                # Alias.
-                interatom = interatoms[0]
 
             # Check that this has not already been set up.
             if interatom.dipole_pair:
