@@ -603,41 +603,15 @@ class N_state_model(API_base, API_common):
         if not hasattr(cdp, 'probs'):
             raise RelaxError("The N-state model populations do not exist.")
 
-        # Loop over the structures.
-        i = 0
-        while True:
-            # End condition.
-            if i == cdp.N - 1:
-                break
+        # Create the data structure if needed.
+        if not hasattr(cdp, 'select_models'):
+            cdp.state_select = [True] * cdp.N
 
+        # Loop over the structures.
+        for i in range(len(cdp.N)):
             # No probability.
             if cdp.probs[i] < 1e-5:
-                # Remove the probability.
-                cdp.probs.pop(i)
-
-                # Remove the structure.
-                cdp.structure.structural_data.pop(i)
-
-                # Eliminate bond vectors.
-                for spin in spin_loop():
-                    # Position info.
-                    if hasattr(spin, 'pos'):
-                        spin.pos.pop(i)
-
-                    # Vector info.
-                    if hasattr(spin, 'xh_vect'):
-                        spin.xh_vect.pop(i)
-                    if hasattr(spin, 'bond_vect'):
-                        spin.bond_vect.pop(i)
-
-                # Update N.
-                cdp.N -= 1
-
-                # Start the loop again without incrementing i.
-                continue
-
-            # Increment i.
-            i += 1
+                cdp.state_select[i] = False
 
 
     def _linear_constraints(self, data_types=None, scaling_matrix=None):
