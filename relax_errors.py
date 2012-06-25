@@ -316,13 +316,19 @@ class RelaxNoPdbChainError(BaseError):
 
 # Nucleus not set.
 class RelaxNucleusError(BaseError):
-    def __init__(self):
-        self.text = "The type of nucleus has not yet been set."
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The type of nucleus for the spin '%s' has not yet been set." % spin_id
+        else:
+            self.text = "The type of nucleus has not yet been set."
 
 # Spin type not set.
 class RelaxSpinTypeError(BaseError):
-    def __init__(self):
-        self.text = "The nuclear isotope type has not yet been set.  Please use the spin.isotope user function to set the type."
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The nuclear isotope type for the spin '%s' has not yet been set.  Please use the spin.isotope user function to set the type." % spin_id
+        else:
+            self.text = "The nuclear isotope type has not yet been set.  Please use the spin.isotope user function to set the type."
 
 
 # Argument errors.
