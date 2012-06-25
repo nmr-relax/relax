@@ -670,16 +670,14 @@ class MoleculeContainer(Prototype):
 
                     # Get the interatomic data container.
                     interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
-                    if len(interatom) != 1:
-                        raise RelaxError("Only one interatomic interaction is allowed.")
 
                     # Set the interatomic distance.
                     if hasattr(spin, 'r'):
-                        interatom[0].r = spin.r
+                        interatom.r = spin.r
 
                     # Set the interatomic unit vectors.
                     if hasattr(spin, 'xh_vect'):
-                        interatom[0].vector = spin.xh_vect
+                        interatom.vector = spin.xh_vect
 
                 # Delete the old structures.
                 if hasattr(spin, 'heteronuc_type'):
