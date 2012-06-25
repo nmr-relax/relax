@@ -82,22 +82,25 @@ class InteratomContainer(Prototype):
         return text
 
 
-    def id_match(self, spin_id1, spin_id2):
-        """Test if the two spin IDs match the current container (both ways).
+    def id_match(self, spin_id):
+        """Test if the spin ID matches one of the two spins of the current container.
 
-        @param spin_id1:    The spin ID string of the first atom.
-        @type spin_id1:     str
-        @param spin_id2:    The spin ID string of the first atom.
-        @type spin_id2:     str
+        @param spin_id:     The spin ID string of the first atom.
+        @type spin_id:      str
+        @return:            True if the spin ID matches one of the two spins, False otherwise.
+        @rtype:             bool
         """
 
-        # Check the IDs in both directions.
-        if spin_id1 == self.spin_id1 and spin_id2 == self.spin_id2:
+        # Get the spin containers.
+        spin1 = generic_fns.mol_res_spin.return_spin(self.spin_id1)
+        spin2 = generic_fns.mol_res_spin.return_spin(self.spin_id2)
+
+        # Check if the ID is in the private metadata list.
+        if spin_id in spin1._spin_ids or spin_id in spin2._spin_ids:
             return True
-        elif spin_id1 == self.spin_id2 and spin_id2 == self.spin_id1:
-            return True
-        else:
-            return False
+
+        # Nothing found.
+        return False
 
 
     def is_empty(self):
@@ -162,7 +165,7 @@ class InteratomList(list):
 
         # Check if the two spin ID have already been added.
         for i in range(len(self)):
-            if self[i].id_match(spin_id1, spin_id2):
+            if self[i].id_match(spin_id1) and self[i].id_match(spin_id2):
                 raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
         # Append a new InteratomContainer.

@@ -205,7 +205,7 @@ def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
 
     # Return the matching container.
     for i in range(len(dp.interatomic)):
-        if dp.interatomic[i].id_match(spin_id1, spin_id2):
+        if dp.interatomic[i].id_match(spin_id1) and dp.interatomic[i].id_match(spin_id2):
             return dp.interatomic[i]
 
     # No matchs.
