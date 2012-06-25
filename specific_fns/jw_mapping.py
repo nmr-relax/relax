@@ -27,7 +27,7 @@ from warnings import warn
 # relax module imports.
 from api_base import API_base
 from api_common import API_common
-from generic_fns.interatomic import return_interatom
+from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
@@ -123,7 +123,7 @@ class Jw_mapping(API_base, API_common):
                 raise RelaxNoValueError("CSA")
 
             # Test the interatomic data.
-            interatoms = return_interatom(id)
+            interatoms = return_interatom_list(id)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
@@ -191,7 +191,7 @@ class Jw_mapping(API_base, API_common):
                 continue
 
             # Loop over the interatomic data.
-            interatoms = return_interatom(id)
+            interatoms = return_interatom_list(id)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
