@@ -182,17 +182,50 @@ def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
 
     @keyword spin_id1:  The spin ID string of the first atom.
     @type spin_id1:     str
-    @keyword spin_id2:  The spin ID string of the optional second atom.
-    @type spin_id2:     str or None
+    @keyword spin_id2:  The spin ID string of the second atom.
+    @type spin_id2:     str
     @keyword pipe:      The data pipe holding the container.  Defaults to the current data pipe.
+    @type pipe:         str or None
+    @return:            The matching interatomic data container, if it exists.
+    @rtype:             data.interatomic.InteratomContainer instance or None
+    """
+
+    # Checks.
+    if spin_id1 == None:
+        raise RelaxError("The first spin ID must be supplied.")
+    if spin_id2 == None:
+        raise RelaxError("The second spin ID must be supplied.")
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Return the matching container.
+    for i in range(len(dp.interatomic)):
+        if dp.interatomic[i].id_match(spin_id1, spin_id2):
+            return dp.interatomic[i]
+
+    # No matchs.
+    return None
+
+
+def return_interatom_list(spin_id=None, pipe=None):
+    """Return the list of interatomic data containers for the given spin.
+
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      str
+    @keyword pipe:      The data pipe holding the container.  This defaults to the current data pipe.
     @type pipe:         str or None
     @return:            The list of matching interatomic data containers, if any exist.
     @rtype:             list of data.interatomic.InteratomContainer instances
     """
 
     # Check.
-    if spin_id1 == None:
-        raise RelaxError("The first spin ID must be supplied.")
+    if spin_id == None:
+        raise RelaxError("The spin ID must be supplied.")
 
     # The data pipe.
     if pipe == None:
@@ -204,17 +237,10 @@ def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
     # Initialise.
     interatoms = []
 
-    # Precise match.
-    if spin_id1 != None and spin_id2 != None:
-        for i in range(len(dp.interatomic)):
-            if dp.interatomic[i].id_match(spin_id1, spin_id2):
-                interatoms.append(dp.interatomic[i])
-
-    # Single spin.
-    else:
-        for i in range(len(dp.interatomic)):
-            if dp.interatomic[i].spin_id1 == spin_id1 or dp.interatomic[i].spin_id2 == spin_id1:
-                interatoms.append(dp.interatomic[i])
+    # Find and append all containers.
+    for i in range(len(dp.interatomic)):
+        if dp.interatomic[i].spin_id1 == spin_id or dp.interatomic[i].spin_id2 == spin_id:
+            interatoms.append(dp.interatomic[i])
 
     # Return the list of containers.
     return interatoms
