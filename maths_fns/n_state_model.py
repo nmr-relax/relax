@@ -195,8 +195,8 @@ class N_state_opt:
 
             # Alignment tensor in rank-2, 3D form.
             self.A = zeros((self.num_tensors, 3, 3), float64)
-            for i in range(self.num_tensors):
-                to_tensor(self.A[i], self.full_tensors[5*i:5*i+5])
+            for align_index in range(self.num_tensors):
+                to_tensor(self.A[align_index], self.full_tensors[5*i:5*i+5])
 
             # Initialise some empty numpy objects for storage of:
             # R:  the transient rotation matricies.
@@ -215,36 +215,39 @@ class N_state_opt:
 
         # The flexible population or equal probability N-state models.
         elif model in ['population', 'fixed']:
+            # The total number of alignments (must be the same for the RDC and PCS data).
+            self.num_align = 0
+            if rdcs != None:
+                self.num_align = len(rdcs)
+            elif pcs != None:
+                self.num_align = len(pcs)
+
             # Set the RDC and PCS flags (indicating the presence of data).
-            self.rdc_flag = True
-            self.pcs_flag = True
-            if rdcs == None or len(rdcs) == 0:
-                self.rdc_flag = False
-            if pcs == None or len(pcs) == 0:
-                self.pcs_flag = False
+            self.rdc_flag = [True] * self.num_align
+            self.pcs_flag = [True] * self.num_align
+            for align_index in range(self.num_align):
+                if rdcs == None or len(rdcs[align_index]) == 0:
+                    self.rdc_flag[align_index] = False
+                if pcs == None or len(pcs[align_index]) == 0:
+                    self.pcs_flag[align_index] = False
+            self.rdc_flag_sum = sum(self.rdc_flag)
+            self.pcs_flag_sum = sum(self.pcs_flag)
 
             # Some checks.
-            if self.rdc_flag and (rdc_vect == None or not len(rdc_vect)):
+            if self.rdc_flag_sum and (rdc_vect == None or not len(rdc_vect)):
                 raise RelaxError("The rdc_vect argument " + repr(rdc_vect) + " must be supplied.")
-            if self.pcs_flag and (atomic_pos == None or not len(atomic_pos)):
+            if self.pcs_flag_sum and (atomic_pos == None or not len(atomic_pos)):
                 raise RelaxError("The atomic_pos argument " + repr(atomic_pos) + " must be supplied.")
 
             # The total number of spins.
             self.num_spins = 0
-            if self.pcs_flag:
+            if self.pcs_flag_sum:
                 self.num_spins = len(pcs[0])
 
             # The total number of interatomic connections.
             self.num_interatom = 0
-            if self.rdc_flag:
+            if self.rdc_flag_sum:
                 self.num_interatom = len(rdcs[0])
-
-            # The total number of alignments.
-            self.num_align = 0
-            if self.rdc_flag:
-                self.num_align = len(rdcs)
-            elif self.pcs_flag:
-                self.num_align = len(pcs)
 
             # Alignment tensor function and gradient matrices.
             self.A = zeros((self.num_align, 3, 3), float64)
@@ -258,14 +261,14 @@ class N_state_opt:
             # Set up the alignment data.
             self.num_align_params = 0
             index = 0
-            for i in range(self.num_align):
+            for align_index in range(self.num_align):
                 # Fill the alignment tensor object with the fixed tensors.
-                if fixed_tensors[i]:
-                    to_tensor(self.A[i], self.full_tensors[5*index:5*index+5])
+                if fixed_tensors[align_index]:
+                    to_tensor(self.A[align_index], self.full_tensors[5*index:5*index+5])
                     index += 1
 
                 # The number of alignment parameters.
-                if not fixed_tensors[i]:
+                if not fixed_tensors[align_index]:
                     self.num_align_params += 5
 
             # Optimised alignment tensors.
@@ -278,7 +281,7 @@ class N_state_opt:
                 dAi_dAyz(self.dA[4])
 
             # PCS errors.
-            if self.pcs_flag:
+            if self.pcs_flag_sum:
                 err = False
                 for i in xrange(len(pcs_errors)):
                     for j in xrange(len(pcs_errors[i])):
@@ -291,7 +294,7 @@ class N_state_opt:
                     self.pcs_sigma_ij = 0.03 * 1e-6 * ones((self.num_align, self.num_spins), float64)
 
             # RDC errors.
-            if self.rdc_flag:
+            if self.rdc_flag_sum:
                 err = False
                 for i in xrange(len(rdc_errors)):
                     for j in xrange(len(rdc_errors[i])):
@@ -301,59 +304,58 @@ class N_state_opt:
                     self.rdc_sigma_ij = rdc_errors
                 else:
                     # Missing errors.
-                    self.rdc_sigma_ij = ones((self.num_align, self.num_spins), float64)
+                    self.rdc_sigma_ij = ones((self.num_align, self.num_interatom), float64)
 
             # Missing data matrices (RDC).
-            if self.rdc_flag:
-                self.missing_Dij = zeros((self.num_align, self.num_spins), float64)
+            if self.rdc_flag_sum:
+                self.missing_Dij = zeros((self.num_align, self.num_interatom), float64)
 
             # Missing data matrices (PCS).
-            if self.pcs_flag:
+            if self.pcs_flag_sum:
                 self.missing_deltaij = zeros((self.num_align, self.num_spins), float64)
 
             # Clean up problematic data and put the weights into the errors..
-            if self.rdc_flag or self.pcs_flag:
-                for i in xrange(self.num_align):
+            if self.rdc_flag_sum or self.pcs_flag_sum:
+                for align_index in xrange(self.num_align):
                     for j in xrange(self.num_spins):
-                        if self.rdc_flag:
-                            if isNaN(self.Dij[i, j]):
+                        if self.rdc_flag_sum:
+                            if isNaN(self.Dij[align_index, j]):
                                 # Set the flag.
-                                self.missing_Dij[i, j] = 1
+                                self.missing_Dij[align_index, j] = 1
 
                                 # Change the NaN to zero.
-                                self.Dij[i, j] = 0.0
+                                self.Dij[align_index, j] = 0.0
 
                                 # Change the error to one (to avoid zero division).
-                                self.rdc_sigma_ij[i, j] = 1.0
+                                self.rdc_sigma_ij[align_index, j] = 1.0
 
                                 # Change the weight to one.
-                                rdc_weights[i, j] = 1.0
+                                rdc_weights[align_index, j] = 1.0
 
-                        if self.pcs_flag:
-                            if isNaN(self.deltaij[i, j]):
+                        if self.pcs_flag_sum:
+                            if isNaN(self.deltaij[align_index, j]):
                                 # Set the flag.
-                                self.missing_deltaij[i, j] = 1
+                                self.missing_deltaij[align_index, j] = 1
 
                                 # Change the NaN to zero.
-                                self.deltaij[i, j] = 0.0
+                                self.deltaij[align_index, j] = 0.0
 
                                 # Change the error to one (to avoid zero division).
-                                self.pcs_sigma_ij[i, j] = 1.0
+                                self.pcs_sigma_ij[align_index, j] = 1.0
 
                                 # Change the weight to one.
-                                pcs_weights[i, j] = 1.0
+                                pcs_weights[align_index, j] = 1.0
 
                         # The RDC weights.
-                        if self.rdc_flag:
-                            self.rdc_sigma_ij[i, j] = self.rdc_sigma_ij[i, j] / sqrt(rdc_weights[i, j])
+                        if self.rdc_flag_sum:
+                            self.rdc_sigma_ij[align_index, j] = self.rdc_sigma_ij[align_index, j] / sqrt(rdc_weights[align_index, j])
 
                         # The PCS weights.
-                        if self.pcs_flag:
-                            self.pcs_sigma_ij[i, j] = self.pcs_sigma_ij[i, j] / sqrt(pcs_weights[i, j])
-
+                        if self.pcs_flag_sum:
+                            self.pcs_sigma_ij[align_index, j] = self.pcs_sigma_ij[align_index, j] / sqrt(pcs_weights[align_index, j])
 
             # The paramagnetic centre vectors and distances.
-            if self.pcs_flag:
+            if self.pcs_flag_sum:
                 # Initialise the data structures.
                 self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
                 self.paramag_dist = zeros((self.num_spins, self.N), float64)
@@ -370,9 +372,9 @@ class N_state_opt:
             self.d2deltaij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
             # RDC function, gradient, and Hessian matrices.
-            self.Dij_theta = zeros((self.num_align, self.num_spins), float64)
-            self.dDij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
-            self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
+            self.Dij_theta = zeros((self.num_align, self.num_interatom), float64)
+            self.dDij_theta = zeros((self.total_num_params, self.num_align, self.num_interatom), float64)
+            self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_interatom), float64)
 
             # Set the target function, gradient, and Hessian (paramagnetic centre optimisation).
             if not self.centre_fixed:
@@ -394,7 +396,8 @@ class N_state_opt:
             self.d2func = self.d2func_tensor_opt
 
             # The zero Hessian.
-            self.zero_hessian = zeros(self.num_spins, float64)
+            self.zero_hessian_rdc = zeros(self.num_interatom, float64)
+            self.zero_hessian_pcs = zeros(self.num_spins, float64)
 
             # The probability array.
             if probs:
@@ -442,22 +445,22 @@ class N_state_opt:
                     pc = pc - params[c2]
 
             # Back-calculate the reduced tensors for sum element c and add these to red_bc.
-            for i in xrange(self.num_tensors):
+            for align_index in xrange(self.num_tensors):
                 # Normal RT.X.R rotation.
-                if self.full_in_ref_frame[i]:
-                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.A[i], self.R[c]))
+                if self.full_in_ref_frame[align_index]:
+                    self.red_bc[align_index] = self.red_bc[align_index]  +  pc * dot(self.RT[c], dot(self.A[align_index], self.R[c]))
 
                 # Inverse R.X.RT rotation.
                 else:
-                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.R[c], dot(self.A[i], self.RT[c]))
+                    self.red_bc[align_index] = self.red_bc[align_index]  +  pc * dot(self.R[c], dot(self.A[align_index], self.RT[c]))
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
-        for i in xrange(self.num_tensors):
-            self.red_bc_vector[5*i]   = self.red_bc[i, 0, 0]    # Sxx.
-            self.red_bc_vector[5*i+1] = self.red_bc[i, 1, 1]    # Syy.
-            self.red_bc_vector[5*i+2] = self.red_bc[i, 0, 1]    # Sxy.
-            self.red_bc_vector[5*i+3] = self.red_bc[i, 0, 2]    # Sxz.
-            self.red_bc_vector[5*i+4] = self.red_bc[i, 1, 2]    # Syz.
+        for align_index in xrange(self.num_tensors):
+            self.red_bc_vector[5*align_index]   = self.red_bc[align_index, 0, 0]    # Sxx.
+            self.red_bc_vector[5*align_index+1] = self.red_bc[align_index, 1, 1]    # Syy.
+            self.red_bc_vector[5*align_index+2] = self.red_bc[align_index, 0, 1]    # Sxy.
+            self.red_bc_vector[5*align_index+3] = self.red_bc[align_index, 0, 2]    # Sxz.
+            self.red_bc_vector[5*align_index+4] = self.red_bc[align_index, 1, 2]    # Syz.
 
         # Return the chi-squared value.
         return chi2(self.red_data, self.red_bc_vector, self.red_errors)
@@ -632,35 +635,35 @@ class N_state_opt:
 
         # Loop over each alignment.
         index = 0
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Create tensor i from the parameters.
-            if not self.fixed_tensors[i]:
-                to_tensor(self.A[i], params[5*index:5*index + 5])
+            if not self.fixed_tensors[align_index]:
+                to_tensor(self.A[align_index], params[5*index:5*index + 5])
                 index += 1
 
             # The back calculated RDC.
-            if self.rdc_flag:
+            if self.rdc_flag[align_index]:
                 # Loop over the spin pairs k.
                 for j in xrange(self.num_interatom):
                     # Calculate the average RDC.
-                    if not self.missing_Dij[i, j]:
-                        self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[i], weights=self.probs)
+                    if not self.missing_Dij[align_index, j]:
+                        self.Dij_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs)
 
             # The back calculated PCS.
-            if self.pcs_flag:
+            if self.pcs_flag[align_index]:
                 # Loop over the spin systems j.
                 for j in xrange(self.num_spins):
                     # Calculate the average PCS.
-                    if not self.missing_deltaij[i, j]:
-                        self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.A[i], weights=self.probs)
+                    if not self.missing_deltaij[align_index, j]:
+                        self.deltaij_theta[align_index, j] = ave_pcs_tensor(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.A[align_index], weights=self.probs)
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
-            if self.rdc_flag:
-                chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
+            if self.rdc_flag[align_index]:
+                chi2_sum = chi2_sum + chi2(self.Dij[align_index], self.Dij_theta[align_index], self.rdc_sigma_ij[align_index])
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
-            if self.pcs_flag:
-                chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
+            if self.pcs_flag[align_index]:
+                chi2_sum = chi2_sum + chi2(self.deltaij[align_index], self.deltaij_theta[align_index], self.pcs_sigma_ij[align_index])
 
         # Return the chi-squared value.
         return chi2_sum
@@ -829,35 +832,35 @@ class N_state_opt:
 
         # Loop over each alignment.
         index = 0
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Create tensor i from the parameters.
-            if not self.fixed_tensors[i]:
-                to_tensor(self.A[i], params[5*index:5*index + 5])
+            if not self.fixed_tensors[align_index]:
+                to_tensor(self.A[align_index], params[5*index:5*index + 5])
                 index += 1
 
             # The back calculated RDC.
-            if self.rdc_flag:
+            if self.rdc_flag[align_index]:
                 # Loop over the spin pairs k.
                 for j in xrange(self.num_interatom):
                     # Calculate the average RDC.
-                    if not self.missing_Dij[i, j]:
-                        self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[i], weights=self.probs)
+                    if not self.missing_Dij[align_index, j]:
+                        self.Dij_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs)
 
             # The back calculated PCS.
-            if self.pcs_flag:
+            if self.pcs_flag[align_index]:
                 # Loop over the spin systems j.
                 for j in xrange(self.num_spins):
                     # Calculate the average PCS.
-                    if not self.missing_deltaij[i, j]:
-                        self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.A[i], weights=self.probs)
+                    if not self.missing_deltaij[align_index, j]:
+                        self.deltaij_theta[align_index, j] = ave_pcs_tensor(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.A[align_index], weights=self.probs)
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
-            if self.rdc_flag:
-                chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
+            if self.rdc_flag[align_index]:
+                chi2_sum = chi2_sum + chi2(self.Dij[align_index], self.Dij_theta[align_index], self.rdc_sigma_ij[align_index])
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
-            if self.pcs_flag:
-                chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
+            if self.pcs_flag[align_index]:
+                chi2_sum = chi2_sum + chi2(self.deltaij[align_index], self.deltaij_theta[align_index], self.pcs_sigma_ij[align_index])
 
         # Return the chi-squared value.
         return chi2_sum
@@ -1047,28 +1050,28 @@ class N_state_opt:
 
         # Loop over each alignment.
         index = 0
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Fixed tensor, so skip.
-            if self.fixed_tensors[i]:
+            if self.fixed_tensors[align_index]:
                 continue
 
             # Construct the Amn partial derivative components for the RDC.
-            if self.fixed_tensors[i] and self.rdc_flag and not self.missing_Dij[i, j]:
+            if self.fixed_tensors[align_index] and self.rdc_flag[align_index] and not self.missing_Dij[align_index, j]:
                 for j in xrange(self.num_interatom):
-                    self.dDij_theta[i*5, i, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs)
-                    self.dDij_theta[i*5+1, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs)
-                    self.dDij_theta[i*5+2, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs)
-                    self.dDij_theta[i*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs)
-                    self.dDij_theta[i*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
+                    self.dDij_theta[align_index*5, i, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs)
+                    self.dDij_theta[align_index*5+1, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs)
+                    self.dDij_theta[align_index*5+2, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs)
+                    self.dDij_theta[align_index*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs)
+                    self.dDij_theta[align_index*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
 
             # Construct the Amn partial derivative components for the PCS.
-            if self.fixed_tensors[i] and self.pcs_flag and not self.missing_deltaij[i, j]:
+            if self.fixed_tensors[align_index] and self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
                 for j in xrange(self.num_spins):
-                    self.ddeltaij_theta[i*5, i, j] =   ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.dA[0], weights=self.probs)
-                    self.ddeltaij_theta[i*5+1, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.dA[1], weights=self.probs)
-                    self.ddeltaij_theta[i*5+2, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.dA[2], weights=self.probs)
-                    self.ddeltaij_theta[i*5+3, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.dA[3], weights=self.probs)
-                    self.ddeltaij_theta[i*5+4, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.dA[4], weights=self.probs)
+                    self.ddeltaij_theta[align_index*5, i, j] =   ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.dA[0], weights=self.probs)
+                    self.ddeltaij_theta[align_index*5+1, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.dA[1], weights=self.probs)
+                    self.ddeltaij_theta[align_index*5+2, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.dA[2], weights=self.probs)
+                    self.ddeltaij_theta[align_index*5+3, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.dA[3], weights=self.probs)
+                    self.ddeltaij_theta[align_index*5+4, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[align_index, j], self.paramag_unit_vect[j], self.N, self.dA[4], weights=self.probs)
 
             # Construct the pc partial derivative gradient components, looping over each state.
             for c in xrange(self.N - 1):
@@ -1076,24 +1079,24 @@ class N_state_opt:
                 param_index = self.num_align_params + c
 
                 # Calculate the RDC for state c (this is the pc partial derivative).
-                if self.rdc_flag and not self.missing_Dij[i, j]:
+                if self.rdc_flag[align_index] and not self.missing_Dij[align_index, j]:
                     for j in xrange(self.num_interatom):
-                        self.dDij_theta[param_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.A[i])
+                        self.dDij_theta[param_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.A[align_index])
 
                 # Calculate the PCS for state c (this is the pc partial derivative).
-                if self.pcs_flag and not self.missing_deltaij[i, j]:
+                if self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
                     for j in xrange(self.num_spins):
-                        self.ddeltaij_theta[param_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.A[i])
+                        self.ddeltaij_theta[param_index, i, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.A[align_index])
 
             # Construct the chi-squared gradient element for parameter k, alignment i.
             for k in xrange(self.total_num_params):
                 # RDC part of the chi-squared gradient.
-                if self.rdc_flag:
-                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.rdc_sigma_ij[i])
+                if self.rdc_flag[align_index]:
+                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[align_index], self.Dij_theta[align_index], self.dDij_theta[k, i], self.rdc_sigma_ij[align_index])
 
                 # PCS part of the chi-squared gradient.
-                if self.pcs_flag:
-                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[k, i], self.pcs_sigma_ij[i])
+                if self.pcs_flag[align_index]:
+                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[align_index], self.deltaij_theta[align_index], self.ddeltaij_theta[k, i], self.pcs_sigma_ij[align_index])
 
             # Increment the index.
             index += 1
@@ -1258,14 +1261,14 @@ class N_state_opt:
 
         # Loop over each alignment.
         index = 0
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Fixed tensor, so skip.
-            if self.fixed_tensors[i]:
+            if self.fixed_tensors[align_index]:
                 continue
 
             # Construct the Amn partial derivative components for the RDC.
-            if self.rdc_flag and not self.missing_Dij[i, j]:
-                for j in xrange(self.num_interatom):
+            for j in xrange(self.num_interatom):
+                if self.rdc_flag[align_index] and not self.missing_Dij[align_index, j]:
                     self.dDij_theta[index*5,   index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs)
                     self.dDij_theta[index*5+1, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs)
                     self.dDij_theta[index*5+2, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs)
@@ -1273,8 +1276,8 @@ class N_state_opt:
                     self.dDij_theta[index*5+4, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
 
             # Construct the Amn partial derivative components for the PCS.
-            if self.pcs_flag and not self.missing_deltaij[i, j]:
-                for j in xrange(self.num_spins):
+            for j in xrange(self.num_spins):
+                if self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
                     self.ddeltaij_theta[index*5,   index, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[index, j], self.paramag_unit_vect[j], self.N, self.dA[0], weights=self.probs)
                     self.ddeltaij_theta[index*5+1, index, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[index, j], self.paramag_unit_vect[j], self.N, self.dA[1], weights=self.probs)
                     self.ddeltaij_theta[index*5+2, index, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[index, j], self.paramag_unit_vect[j], self.N, self.dA[2], weights=self.probs)
@@ -1284,11 +1287,11 @@ class N_state_opt:
             # Construct the chi-squared gradient element for parameter k, alignment i.
             for k in xrange(self.total_num_params):
                 # RDC part of the chi-squared gradient.
-                if self.rdc_flag:
+                if self.rdc_flag[align_index]:
                     self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[index], self.Dij_theta[index], self.dDij_theta[k, index], self.rdc_sigma_ij[index])
 
                 # PCS part of the chi-squared gradient.
-                if self.pcs_flag:
+                if self.pcs_flag[align_index]:
                     self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[index], self.deltaij_theta[index], self.ddeltaij_theta[k, index], self.pcs_sigma_ij[index])
 
             # Increment the index.
@@ -1439,9 +1442,9 @@ class N_state_opt:
 
         # Loop over each alignment.
         index = 0
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Fixed tensor, so skip.
-            if self.fixed_tensors[i]:
+            if self.fixed_tensors[align_index]:
                 continue
 
             # Construct the pc-Amn second partial derivative Hessian components.
@@ -1450,38 +1453,38 @@ class N_state_opt:
                 pc_index = self.num_align_params + c
 
                 # Calculate the RDC Hessian component.
-                if self.fixed_tensors[i] and self.rdc_flag and not self.missing_Dij[i, j]:
+                if self.fixed_tensors[align_index] and self.rdc_flag[align_index] and not self.missing_Dij[align_index, j]:
                     for j in xrange(self.num_interatom):
-                        self.d2Dij_theta[pc_index, i*5+0, i, j] = self.d2Dij_theta[i*5+0, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0])
-                        self.d2Dij_theta[pc_index, i*5+1, i, j] = self.d2Dij_theta[i*5+1, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1])
-                        self.d2Dij_theta[pc_index, i*5+2, i, j] = self.d2Dij_theta[i*5+2, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2])
-                        self.d2Dij_theta[pc_index, i*5+3, i, j] = self.d2Dij_theta[i*5+3, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3])
-                        self.d2Dij_theta[pc_index, i*5+4, i, j] = self.d2Dij_theta[i*5+4, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4])
+                        self.d2Dij_theta[pc_index, i*5+0, i, j] = self.d2Dij_theta[align_index*5+0, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0])
+                        self.d2Dij_theta[pc_index, i*5+1, i, j] = self.d2Dij_theta[align_index*5+1, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1])
+                        self.d2Dij_theta[pc_index, i*5+2, i, j] = self.d2Dij_theta[align_index*5+2, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2])
+                        self.d2Dij_theta[pc_index, i*5+3, i, j] = self.d2Dij_theta[align_index*5+3, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3])
+                        self.d2Dij_theta[pc_index, i*5+4, i, j] = self.d2Dij_theta[align_index*5+4, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4])
 
                 # Calculate the PCS Hessian component.
-                if self.fixed_tensors[i] and self.pcs_flag and not self.missing_deltaij[i, j]:
+                if self.fixed_tensors[align_index] and self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
                     for j in xrange(self.num_spins):
-                        self.d2deltaij_theta[pc_index, i*5+0, i, j] = self.d2deltaij_theta[i*5+0, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[0])
-                        self.d2deltaij_theta[pc_index, i*5+1, i, j] = self.d2deltaij_theta[i*5+1, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[1])
-                        self.d2deltaij_theta[pc_index, i*5+2, i, j] = self.d2deltaij_theta[i*5+2, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[2])
-                        self.d2deltaij_theta[pc_index, i*5+3, i, j] = self.d2deltaij_theta[i*5+3, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[3])
-                        self.d2deltaij_theta[pc_index, i*5+4, i, j] = self.d2deltaij_theta[i*5+4, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[4])
+                        self.d2deltaij_theta[pc_index, i*5+0, i, j] = self.d2deltaij_theta[align_index*5+0, pc_index, i, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[0])
+                        self.d2deltaij_theta[pc_index, i*5+1, i, j] = self.d2deltaij_theta[align_index*5+1, pc_index, i, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[1])
+                        self.d2deltaij_theta[pc_index, i*5+2, i, j] = self.d2deltaij_theta[align_index*5+2, pc_index, i, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[2])
+                        self.d2deltaij_theta[pc_index, i*5+3, i, j] = self.d2deltaij_theta[align_index*5+3, pc_index, i, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[3])
+                        self.d2deltaij_theta[pc_index, i*5+4, i, j] = self.d2deltaij_theta[align_index*5+4, pc_index, i, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[4])
 
             # Increment the index.
             index += 1
 
         # Loop over each alignment.
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Construct the chi-squared Hessian element for parameters j and k, alignment i.
             for j in xrange(self.total_num_params):
                 for k in xrange(self.total_num_params):
                     # RDC part of the chi-squared gradient.
-                    if self.fixed_tensors[i] and self.rdc_flag:
-                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[j, i], self.dDij_theta[k, i], self.d2Dij_theta[j, k, i], self.rdc_sigma_ij[i])
+                    if self.fixed_tensors[align_index] and self.rdc_flag[align_index]:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[align_index], self.Dij_theta[align_index], self.dDij_theta[j, i], self.dDij_theta[k, i], self.d2Dij_theta[j, k, i], self.rdc_sigma_ij[align_index])
 
                     # PCS part of the chi-squared gradient.
-                    if self.fixed_tensors[i] and self.pcs_flag:
-                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.d2deltaij_theta[j, k, i], self.pcs_sigma_ij[i])
+                    if self.fixed_tensors[align_index] and self.pcs_flag[align_index]:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[align_index], self.deltaij_theta[align_index], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.d2deltaij_theta[j, k, i], self.pcs_sigma_ij[align_index])
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1590,21 +1593,21 @@ class N_state_opt:
 
         # Loop over each alignment.
         index = 0
-        for i in xrange(self.num_align):
+        for align_index in xrange(self.num_align):
             # Fixed tensor, so skip.
-            if self.fixed_tensors[i]:
+            if self.fixed_tensors[align_index]:
                 continue
 
             # Construct the chi-squared Hessian element for parameters j and k, alignment i.
             for j in xrange(self.total_num_params):
                 for k in xrange(self.total_num_params):
                     # RDC part of the chi-squared gradient.
-                    if self.rdc_flag:
-                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[j, i], self.dDij_theta[k, i], self.zero_hessian, self.rdc_sigma_ij[i])
+                    if self.rdc_flag[align_index]:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[align_index], self.Dij_theta[align_index], self.dDij_theta[j, align_index], self.dDij_theta[k, align_index], self.zero_hessian_rdc, self.rdc_sigma_ij[align_index])
 
                     # PCS part of the chi-squared gradient.
-                    if self.pcs_flag:
-                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.zero_hessian, self.pcs_sigma_ij[i])
+                    if self.pcs_flag[align_index]:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[align_index], self.deltaij_theta[align_index], self.ddeltaij_theta[j, align_index], self.ddeltaij_theta[k, align_index], self.zero_hessian_pcs, self.pcs_sigma_ij[align_index])
 
             # Increment the index.
             index += 1
@@ -1627,7 +1630,7 @@ class N_state_opt:
             vectors_centre_per_state(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
 
         # The PCS constants.
-        for i in range(self.num_align):
+        for align_index in range(self.num_align):
             for j in range(self.num_spins):
                 for c in range(self.N):
-                    self.pcs_const[i, j, c] = pcs_constant(self.temp[i], self.frq[i], self.paramag_dist[j, c])
+                    self.pcs_const[align_index, j, c] = pcs_constant(self.temp[align_index], self.frq[align_index], self.paramag_dist[j, c])
