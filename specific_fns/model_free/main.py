@@ -451,7 +451,7 @@ class Model_free_main:
 
         # Missing interatomic vectors.
         if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
-            interatoms = interatomic.return_interatom(spin_id)
+            interatoms = interatomic.return_interatom_list(spin_id)
             for i in range(len(interatoms)):
                 # No dipolar relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -1501,7 +1501,7 @@ class Model_free_main:
             dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(spin)
 
             # Duplicate the relaxation active spins which have not been copied yet.
-            interatoms = interatomic.return_interatom(spin_id)
+            interatoms = interatomic.return_interatom_list(spin_id)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
@@ -1936,7 +1936,7 @@ class Model_free_main:
                 continue
 
             # The interatomic data.
-            interatoms = interatomic.return_interatom(spin_id)
+            interatoms = interatomic.return_interatom_list(spin_id)
 
             # Loop over the interatomic data.
             dipole_relax = False

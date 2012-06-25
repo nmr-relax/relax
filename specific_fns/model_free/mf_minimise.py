@@ -35,7 +35,7 @@ import arg_check
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
-from generic_fns.interatomic import interatomic_loop, return_interatom
+from generic_fns.interatomic import interatomic_loop, return_interatom_list
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi import Processor_box
@@ -1038,7 +1038,7 @@ class Mf_minimise:
             data_store.gx = [return_gyromagnetic_ratio(spin.isotope)]
 
             # The interatomic data.
-            interatoms = return_interatom(data_store.spin_id)
+            interatoms = return_interatom_list(data_store.spin_id)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -1111,7 +1111,7 @@ class Mf_minimise:
             data_store.gx.append(return_gyromagnetic_ratio(spin.isotope))
 
             # Repackage the interatomic data.
-            interatoms = return_interatom(data_store.spin_id)
+            interatoms = return_interatom_list(data_store.spin_id)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -1330,7 +1330,7 @@ class Mf_minimise:
                 raise RelaxNoValueError("CSA")
 
             # Test the interatomic data.
-            interatoms = return_interatom(spin_id)
+            interatoms = return_interatom_list(spin_id)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
@@ -1396,7 +1396,7 @@ class Mf_minimise:
                 csa = [spin.csa_sim[sim_index]]
 
             # The interatomic data.
-            interatoms = return_interatom(spin_id)
+            interatoms = return_interatom_list(spin_id)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -1613,7 +1613,7 @@ class Mf_minimise:
                     continue
 
                 # Get the interatomic data container.
-                interatoms = return_interatom(spin_id)
+                interatoms = return_interatom_list(spin_id)
 
                 # Unit vectors.
                 for i in range(len(interatoms)):
@@ -1655,7 +1655,7 @@ class Mf_minimise:
                 raise RelaxNoValueError("CSA")
 
             # Get the interatomic data container.
-            interatoms = return_interatom(spin_id)
+            interatoms = return_interatom_list(spin_id)
 
             # Interatomic distances.
             count = 0
@@ -1722,7 +1722,7 @@ class Mf_minimise:
 
             # Skip spins missing the dipolar interaction.
             if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm'):
-                interatoms = return_interatom(data_store.spin_id)
+                interatoms = return_interatom_list(data_store.spin_id)
                 if not len(interatoms):
                     continue
 
