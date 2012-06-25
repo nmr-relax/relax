@@ -74,13 +74,14 @@ class N_state_model(SystemTestCase):
             print("\ni = %i" % i)
             print("The real vector:      %s" % vect[i])
             print("The reordered vector: %s" % vect[ds.order_new[i]])
-            print("The loaded vector:    %s" % cdp.mol[0].res[0].spin[0].xh_vect[i])
+            print("The loaded vector:    %s" % cdp.interatomic[0].vector[i])
 
         # Check.
         for i in range(3):
-            self.assertAlmostEqual(norm(vect[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].xh_vect[i]), 0.0)
-        for i in range(3):
             self.assertAlmostEqual(norm(C_pos[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].pos[i]), 0.0)
+            self.assertAlmostEqual(norm(H_pos[ds.order_new[i]] - cdp.mol[0].res[0].spin[1].pos[i]), 0.0)
+        for i in range(3):
+            self.assertAlmostEqual(norm(vect[ds.order_new[i]] - cdp.interatomic[0].vector[i]), 0.0)
 
 
     def test_5_state_xz(self):

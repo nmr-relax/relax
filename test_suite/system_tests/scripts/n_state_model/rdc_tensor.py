@@ -23,13 +23,14 @@ self._execute_uf(uf_name='structure.read_pdb', file='bax_C_1J7P_N_H_Ca.pdb', dir
 self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
 self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
 
-# Load the NH vectors.
-self._execute_uf('H', '@N', ave=False, uf_name='structure.vectors')
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH_RDC)
+dipole_pair.unit_vectors()
 
-# Set the values needed to calculate the dipolar constant.
-self._execute_uf(NH_BOND_LENGTH_RDC, 'r', uf_name='value.set')
-self._execute_uf('15N', 'heteronuc_type', uf_name='value.set')
-self._execute_uf('1H', 'proton_type', uf_name='value.set')
+# Set the nuclear isotope type.
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
 
 # RDCs.
 self._execute_uf(uf_name='rdc.read', align_id=tag, file='rdc_dy', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, neg_g_corr=True)
