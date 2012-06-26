@@ -795,13 +795,13 @@ class N_state_model(API_base, API_common):
             return
 
         # Loop over each alignment.
-        for i in xrange(len(cdp.align_ids)):
+        for align_index in xrange(len(cdp.align_ids)):
             # Fixed tensor.
-            if cdp.align_tensors[i].fixed:
+            if cdp.align_tensors[align_index].fixed:
                 continue
 
             # The alignment ID.
-            align_id = cdp.align_ids[i]
+            align_id = cdp.align_ids[align_index]
 
             # Data flags
             rdc_flag = False
@@ -812,7 +812,7 @@ class N_state_model(API_base, API_common):
                 pcs_flag = True
 
             # Spin loop.
-            data_index = 0
+            spin_index = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -825,13 +825,14 @@ class N_state_model(API_base, API_common):
                         spin.pcs_bc = {}
 
                     # Add the back calculated PCS (in ppm).
-                    spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
+                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, spin_index] * 1e6
 
-                # Increment the spin index if it contains data.
-                if hasattr(spin, 'pcs') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
-                    data_index = data_index + 1
+                # Increment the data index if the spin container has data.
+                if hasattr(spin, 'pcs'):
+                    spin_index = spin_index + 1
 
             # Interatomic data container loop.
+            interatom_index = 0
             for interatom in interatomic_loop():
                 # Containers with RDC data.
                 if rdc_flag and hasattr(interatom, 'rdc'):
@@ -840,7 +841,11 @@ class N_state_model(API_base, API_common):
                         interatom.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    interatom.rdc_bc[align_id] = model.Dij_theta[i, data_index]
+                    interatom.rdc_bc[align_id] = model.Dij_theta[align_index, interatom_index]
+
+                # Increment the data index if the interatom container has data.
+                if hasattr(interatom, 'rdc'):
+                    interatom_index = interatom_index + 1
 
 
     def _minimise_setup_atomic_pos(self):
