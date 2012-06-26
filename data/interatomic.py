@@ -116,11 +116,11 @@ class InteratomContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name in ['spin_id1', 'spin_id2']:
+            if name in ['dipole_pair', 'spin_id1', 'spin_id2', 'select']:
                 continue
 
             # Skip the SpinContainer methods.
-            if name == 'is_empty':
+            if name in ['id_match', 'is_empty']:
                 continue
 
             # Skip special objects.
