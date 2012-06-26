@@ -943,14 +943,6 @@ class N_state_model(API_base, API_common):
 
                 # Skip spins without PCS data.
                 if not hasattr(spin, 'pcs'):
-                    # Add rows of None if other alignment data exists.
-                    if hasattr(spin, 'rdc'):
-                        pcs[-1].append(None)
-                        pcs_err[-1].append(None)
-                        pcs_weight[-1].append(None)
-                        j = j + 1
-
-                    # Jump to the next spin.
                     continue
 
                 # Append the PCSs to the list.
@@ -1261,18 +1253,20 @@ class N_state_model(API_base, API_common):
             if not spin.select:
                 continue
 
-            # RDC data (skipping array elements set to None).
-            if 'rdc' in data_types:
-                if hasattr(spin, 'rdc'):
-                    for rdc in spin.rdc:
-                        if isinstance(rdc, float):
-                            n = n + 1
-
             # PCS data (skipping array elements set to None).
             if 'pcs' in data_types:
                 if hasattr(spin, 'pcs'):
                     for pcs in spin.pcs:
                         if isinstance(pcs, float):
+                            n = n + 1
+
+        # Interatomic data loop.
+        for interatom in interatomic_loop():
+            # RDC data (skipping array elements set to None).
+            if 'rdc' in data_types:
+                if hasattr(interatom, 'rdc'):
+                    for rdc in interatom.rdc:
+                        if isinstance(rdc, float):
                             n = n + 1
 
         # Alignment tensors.
@@ -1620,56 +1614,57 @@ class N_state_model(API_base, API_common):
     def base_data_loop(self):
         """Loop over the base data of the spins - RDCs, PCSs, and NOESY data.
 
-        This loop iterates for each data point (RDC, PCS, NOESY) for each spin, returning the identification information.
+        This loop iterates for each data point (RDC, PCS, NOESY) for each spin or interatomic data container, returning the identification information.
 
-        @return:            A list of the spin ID string, the data type ('rdc', 'pcs', 'noesy'), and the alignment ID if required.
-        @rtype:             list of str
+        @return:            A list of the spin or interatomic data container, the data type ('rdc', 'pcs', 'noesy'), and the alignment ID if required.
+        @rtype:             list of [SpinContainer instance, str, str] or [InteratomContainer instance, str, str]
         """
 
-        # Loop over the spins.
-        for spin, spin_id in spin_loop(return_id=True):
+        # Loop over the interatomic data containers.
+        for interatom in interatomic_loop():
             # Re-initialise the data structure.
-            base_ids = [spin_id, None, None]
-
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+            data = [interatom, None, None]
 
             # RDC data.
-            if hasattr(spin, 'rdc'):
-                base_ids[1] = 'rdc'
+            if hasattr(interatom, 'rdc'):
+                data[1] = 'rdc'
 
                 # Loop over the alignment IDs.
                 for id in cdp.rdc_ids:
                     # Add the ID.
-                    base_ids[2] = id
+                    data[2] = id
 
                     # Yield the set.
-                    yield base_ids
-
-            # PCS data.
-            if hasattr(spin, 'pcs'):
-                base_ids[1] = 'pcs'
-
-                # Loop over the alignment IDs.
-                for id in cdp.pcs_ids:
-                    # Add the ID.
-                    base_ids[2] = id
-
-                    # Yield the set.
-                    yield base_ids
+                    yield data
 
             # NOESY data.
-            if hasattr(spin, 'noesy'):
-                base_ids[1] = 'noesy'
+            if hasattr(interatom, 'noesy'):
+                data[1] = 'noesy'
 
                 # Loop over the alignment IDs.
                 for id in cdp.noesy_ids:
                     # Add the ID.
-                    base_ids[2] = id
+                    data[2] = id
 
                     # Yield the set.
-                    yield base_ids
+                    yield data
+
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Re-initialise the data structure.
+            data = [spin, None, None]
+
+            # PCS data.
+            if hasattr(spin, 'pcs'):
+                data[1] = 'pcs'
+
+                # Loop over the alignment IDs.
+                for id in cdp.pcs_ids:
+                    # Add the ID.
+                    data[2] = id
+
+                    # Yield the set.
+                    yield data
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1749,47 +1744,47 @@ class N_state_model(API_base, API_common):
         # Initialise the MC data structure.
         mc_data = []
 
-        # Get the spin container and global spin index.
-        spin = return_spin(data_id[0])
+        # Alias the spin or interatomic data container.
+        container = data_id[0]
 
         # RDC data.
-        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+        if data_id[1] == 'rdc' and hasattr(container, 'rdc'):
             # Does back-calculated data exist?
-            if not hasattr(spin, 'rdc_bc'):
+            if not hasattr(container, 'rdc_bc'):
                 self.calculate()
 
             # The data.
-            if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
+            if not hasattr(container, 'rdc_bc') or not container.rdc_bc.has_key(data_id[2]):
                 data = None
             else:
-                data = spin.rdc_bc[data_id[2]]
-
-            # Append the data.
-            mc_data.append(data)
-
-        # PCS data.
-        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
-            # Does back-calculated data exist?
-            if not hasattr(spin, 'pcs_bc'):
-                self.calculate()
-
-            # The data.
-            if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
-                data = None
-            else:
-                data = spin.pcs_bc[data_id[2]]
+                data = container.rdc_bc[data_id[2]]
 
             # Append the data.
             mc_data.append(data)
 
         # NOESY data.
-        elif data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+        elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
             # Does back-calculated data exist?
-            if not hasattr(spin, 'noesy_bc'):
+            if not hasattr(container, 'noesy_bc'):
                 self.calculate()
 
             # Append the data.
-            mc_data.append(spin.noesy_bc)
+            mc_data.append(container.noesy_bc)
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
+            # Does back-calculated data exist?
+            if not hasattr(container, 'pcs_bc'):
+                self.calculate()
+
+            # The data.
+            if not hasattr(container, 'pcs_bc') or not container.pcs_bc.has_key(data_id[2]):
+                data = None
+            else:
+                data = container.pcs_bc[data_id[2]]
+
+            # Append the data.
+            mc_data.append(data)
 
         # Return the data.
         return mc_data
@@ -2190,39 +2185,39 @@ class N_state_model(API_base, API_common):
         # Initialise the MC data structure.
         mc_errors = []
 
-        # Get the spin container and global spin index.
-        spin = return_spin(data_id[0])
+        # Alias the spin or interatomic data container.
+        container = data_id[0]
 
         # Skip deselected spins.
-        if not spin.select:
+        if data_id[1] == 'pcs' and not container.select:
             return
 
         # RDC data.
-        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+        if data_id[1] == 'rdc' and hasattr(container, 'rdc'):
             # Do errors exist?
-            if not hasattr(spin, 'rdc_err'):
-                raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
+            if not hasattr(container, 'rdc_err'):
+                raise RelaxError("The RDC errors are missing for the spin pair '%s' and '%s'." % (container.spin_id1, container.spin_id2))
 
             # Append the data.
-            mc_errors.append(spin.rdc_err[data_id[2]])
+            mc_errors.append(container.rdc_err[data_id[2]])
+
+        # NOESY data.
+        elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
+            # Do errors exist?
+            if not hasattr(container, 'noesy_err'):
+                raise RelaxError("The NOESY errors are missing for the spin pair '%s' and '%s'." % (container.spin_id1, container.spin_id2))
+
+            # Append the data.
+            mc_errors.append(container.noesy_err)
 
         # PCS data.
-        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
             # Do errors exist?
-            if not hasattr(spin, 'pcs_err'):
+            if not hasattr(container, 'pcs_err'):
                 raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
-            mc_errors.append(spin.pcs_err[data_id[2]])
-
-        # NOESY data.
-        elif hasattr(spin, 'noesy'):
-            # Do errors exist?
-            if not hasattr(spin, 'noesy_err'):
-                raise RelaxError("The NOESY errors are missing for spin '%s'." % data_id[0])
-
-            # Append the data.
-            mc_errors.append(spin.noesy_err)
+            mc_errors.append(container.pcs_err[data_id[2]])
 
         # Return the errors.
         return mc_errors
@@ -2419,37 +2414,37 @@ class N_state_model(API_base, API_common):
         @type sim_data:     list of float
         """
 
-        # Get the spin container.
-        spin = return_spin(data_id[0])
+        # Alias the spin or interatomic data container.
+        container = data_id[0]
 
         # RDC data.
-        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+        if data_id[1] == 'rdc' and hasattr(container, 'rdc'):
             # Initialise.
-            if not hasattr(spin, 'rdc_sim'):
-                spin.rdc_sim = {}
+            if not hasattr(container, 'rdc_sim'):
+                container.rdc_sim = {}
                 
             # Store the data structure.
-            spin.rdc_sim[data_id[2]] = []
+            container.rdc_sim[data_id[2]] = []
             for i in range(cdp.sim_number):
-                spin.rdc_sim[data_id[2]].append(sim_data[i][0])
-
-        # PCS data.
-        if data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
-            # Initialise.
-            if not hasattr(spin, 'pcs_sim'):
-                spin.pcs_sim = {}
-                
-            # Store the data structure.
-            spin.pcs_sim[data_id[2]] = []
-            for i in range(cdp.sim_number):
-                spin.pcs_sim[data_id[2]].append(sim_data[i][0])
+                container.rdc_sim[data_id[2]].append(sim_data[i][0])
 
         # NOESY data.
-        if data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+        elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
             # Store the data structure.
-            spin.noesy_sim = []
+            container.noesy_sim = []
             for i in range(cdp.sim_number):
-                spin.noesy_sim[data_id[2]].append(sim_data[i][0])
+                container.noesy_sim[data_id[2]].append(sim_data[i][0])
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
+            # Initialise.
+            if not hasattr(container, 'pcs_sim'):
+                container.pcs_sim = {}
+                
+            # Store the data structure.
+            container.pcs_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                container.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
     def sim_return_param(self, model_info, index):
