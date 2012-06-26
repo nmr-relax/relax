@@ -158,11 +158,15 @@ def exists_data(pipe=None):
     return True
 
 
-def interatomic_loop(pipe=None):
+def interatomic_loop(selection1=None, selection2=None, pipe=None):
     """Generator function for looping over all the interatomic data containers.
 
-    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
-    @type pipe:         str
+    @keyword selection1:    The optional spin ID selection of the first atom.
+    @type selection1:       str
+    @keyword selection2:    The optional spin ID selection of the second atom.
+    @type selection2:       str
+    @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:             str
     """
 
     # The data pipe.
@@ -172,9 +176,33 @@ def interatomic_loop(pipe=None):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
+    # Parse the spin ID selection strings.
+    select_obj = None
+    select_obj1 = None
+    select_obj2 = None
+    if selection1 and selection2:
+        select_obj1 = Selection(selection1)
+        select_obj2 = Selection(selection2)
+    elif selection1:
+        select_obj = Selection(selection1)
+    elif selection2:
+        select_obj = Selection(selection2)
+
     # Loop over the containers, yielding them.
     for i in range(len(dp.interatomic)):
-        yield dp.interatomic[i]
+        # Alias.
+        interatom = dp.interatomic[i]
+
+        # Check that the selections are met.
+        if select_obj:
+            if interatom.spin_id1 not in select_obj:
+                continue
+        if select_obj1:
+            if not (interatom.spin_id1 in select_obj1 or interatom.spin_id2 in select_obj1) or not (interatom.spin_id1 in select_obj2 or interatom.spin_id2 in select_obj2):
+                continue
+
+        # Return the container.
+        yield interatom
 
 
 def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
