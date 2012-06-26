@@ -196,7 +196,7 @@ class N_state_opt:
             # Alignment tensor in rank-2, 3D form.
             self.A = zeros((self.num_tensors, 3, 3), float64)
             for align_index in range(self.num_tensors):
-                to_tensor(self.A[align_index], self.full_tensors[5*i:5*i+5])
+                to_tensor(self.A[align_index], self.full_tensors[5*align_index:5*align_index+5])
 
             # Initialise some empty numpy objects for storage of:
             # R:  the transient rotation matricies.
@@ -317,8 +317,8 @@ class N_state_opt:
             # Clean up problematic data and put the weights into the errors..
             if self.rdc_flag_sum or self.pcs_flag_sum:
                 for align_index in xrange(self.num_align):
-                    for j in xrange(self.num_spins):
-                        if self.rdc_flag_sum:
+                    if self.rdc_flag_sum:
+                        for j in xrange(self.num_interatom):
                             if isNaN(self.Dij[align_index, j]):
                                 # Set the flag.
                                 self.missing_Dij[align_index, j] = 1
@@ -332,7 +332,12 @@ class N_state_opt:
                                 # Change the weight to one.
                                 rdc_weights[align_index, j] = 1.0
 
-                        if self.pcs_flag_sum:
+                            # The RDC weights.
+                            self.rdc_sigma_ij[align_index, j] = self.rdc_sigma_ij[align_index, j] / sqrt(rdc_weights[align_index, j])
+
+
+                    if self.pcs_flag_sum:
+                        for j in xrange(self.num_spins):
                             if isNaN(self.deltaij[align_index, j]):
                                 # Set the flag.
                                 self.missing_deltaij[align_index, j] = 1
@@ -346,12 +351,7 @@ class N_state_opt:
                                 # Change the weight to one.
                                 pcs_weights[align_index, j] = 1.0
 
-                        # The RDC weights.
-                        if self.rdc_flag_sum:
-                            self.rdc_sigma_ij[align_index, j] = self.rdc_sigma_ij[align_index, j] / sqrt(rdc_weights[align_index, j])
-
-                        # The PCS weights.
-                        if self.pcs_flag_sum:
+                            # The PCS weights.
                             self.pcs_sigma_ij[align_index, j] = self.pcs_sigma_ij[align_index, j] / sqrt(pcs_weights[align_index, j])
 
             # The paramagnetic centre vectors and distances.
