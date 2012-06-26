@@ -37,13 +37,15 @@ import specific_fns
 class InteratomContainer(Prototype):
     """Class containing the interatomic data."""
 
-    def __init__(self, spin_id1=None, spin_id2=None):
+    def __init__(self, spin_id1=None, spin_id2=None, select=True):
         """Set up the objects of the interatomic data container.
 
         @keyword spin_id1:  The spin ID string of the first atom.
         @type spin_id1:     str
-        @keyword spin_id2:  The spin ID string of the first atom.
+        @keyword spin_id2:  The spin ID string of the second atom.
         @type spin_id2:     str
+        @keyword select:    The selection flag.
+        @type select:       bool
         """
 
         # Store the spin IDs.
@@ -52,6 +54,7 @@ class InteratomContainer(Prototype):
 
         # Class variable defaults.
         self.dipole_pair = False
+        self.select = select
 
 
     def __repr__(self):

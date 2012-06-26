@@ -59,6 +59,68 @@ uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
 
 
+# The deselect.interatom user function.
+uf = uf_info.add_uf("deselect.interatom")
+uf.title = "Deselect specific interatomic data containers."
+uf.title_short = "Interatomic data container deselection."
+uf.display = True
+uf.add_keyarg(
+    name = "spin_id1",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "first spin ID string",
+    desc = "The spin ID string of the first spin of the interatomic data container."
+)
+uf.add_keyarg(
+    name = "spin_id2",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "second spin ID string",
+    desc = "The spin ID string of the second spin of the interatomic data container."
+)
+uf.add_keyarg(
+    name = "boolean",
+    default = "AND",
+    py_type = "str",
+    desc_short = "boolean operator",
+    desc = "The boolean operator specifying how interatomic data containers should be selected.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "OR",
+        "NOR",
+        "AND",
+        "NAND",
+        "XOR",
+        "XNOR"
+    ],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "change_all",
+    default = False,
+    py_type = "bool",
+    desc_short = "change all",
+    desc = "A flag specifying if all other interatomic data containers should be changed."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to deselect specific interatomic data containers which store information about spin pairs such as RDCs, NOEs, dipole-dipole pairs involved in relaxation, etc.  The 'change all' flag default is False meaning that all interatomic data containers currently either selected or deselected will remain that way.  Setting this to True will cause all interatomic data containers not specified by the spin ID strings to be deselected.")
+uf.desc.append(selection.boolean_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To deselect all N-H backbone bond vectors of a protein, assuming these interatomic data containers have been already set up, type one of:")
+uf.desc[-1].add_prompt("relax> deselect.interatom('@N', '@H')")
+uf.desc[-1].add_prompt("relax> deselect.interatom(spin_id1='@N', spin_id2='@H')")
+uf.desc[-1].add_paragraph("To deselect all H-H interatomic vectors of a small organic molecule, type one of:")
+uf.desc[-1].add_prompt("relax> deselect.interatom('@H*', '@H*')")
+uf.desc[-1].add_prompt("relax> deselect.interatom(spin_id1='@H*', spin_id2='@H*')")
+uf.backend = selection.desel_interatom
+uf.menu_text = "&interatom"
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
+
+
 # The deselect.read user function.
 uf = uf_info.add_uf("deselect.read")
 uf.title = "Deselect the spins contained in a file."
@@ -255,7 +317,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified by the spin ID string to be selected.")
+uf.desc[-1].add_paragraph("The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified by the spin ID string to be deselected.")
 uf.desc.append(selection.boolean_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
