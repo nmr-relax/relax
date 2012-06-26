@@ -32,10 +32,11 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from arg_check import is_float
 from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
-from generic_fns.interatomic import create_interatom, return_interatom
+from generic_fns.interatomic import create_interatom, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
@@ -77,44 +78,46 @@ def back_calc(align_id=None):
     # Unit vector data structure init.
     unit_vect = zeros((cdp.N, 3), float64)
 
-    # Loop over the spins.
-    for spin in spin_loop():
-        # Skip spins with no bond vectors.
-        if not hasattr(spin, 'bond_vect') and not hasattr(spin, 'xh_vect'):
+    # Loop over the interatomic data.
+    for interatom in interatomic_loop():
+        # Skip containers with no interatomic vectors.
+        if not hasattr(interatom, 'vector'):
             continue
 
-        # Check.
-        if not hasattr(spin, 'heteronuc_type'):
-            raise RelaxSpinTypeError
+        # Get the spins.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
 
-        # Alias.
-        if hasattr(spin, 'bond_vect'):
-            vectors = spin.bond_vect
-        else:
-            vectors = spin.xh_vect
+        # Checks.
+        if not hasattr(spin1, 'isotope'):
+            raise RelaxSpinTypeError(interatom.spin_id1)
+        if not hasattr(spin2, 'isotope'):
+            raise RelaxSpinTypeError(interatom.spin_id2)
 
         # Single vector.
-        if type(vectors[0]) in [float, float64]:
-            vectors = [vectors]
+        if is_float(interatom.vector[0], raise_error=False):
+            vectors = [interatom.vector]
+        else:
+            vectors = interatom.vector
 
         # Gyromagnetic ratios.
-        gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-        gh = return_gyromagnetic_ratio(spin.proton_type)
+        g1 = return_gyromagnetic_ratio(spin1.isotope)
+        g2 = return_gyromagnetic_ratio(spin2.isotope)
 
         # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-        dj = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+        dj = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
 
         # Unit vectors.
         for c in range(cdp.N):
             unit_vect[c] = vectors[c] / norm(vectors[c])
 
         # Initialise if necessary.
-        if not hasattr(spin, 'rdc_bc'):
-            spin.rdc_bc = {}
+        if not hasattr(interatom, 'rdc_bc'):
+            interatom.rdc_bc = {}
 
         # Calculate the RDCs.
         for id in align_ids:
-            spin.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights)
+            interatom.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights)
 
 
 def convert(value, align_id, to_intern=False):
@@ -190,38 +193,30 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
         # Errors present?
         err_flag = False
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
+        for interatom in interatomic_loop():
             # Error present.
-            if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+            if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
                 err_flag = True
                 break
 
-        # Loop over the spins.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
+        # Loop over the interatomic data.
+        for interatom in interatomic_loop():
             # Skip if data is missing.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or not align_id in spin.rdc.keys() or not align_id in spin.rdc_bc.keys():
+            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc.keys() or not align_id in interatom.rdc_bc.keys():
                 continue
 
             # Append the data.
-            data[-1].append([convert(spin.rdc_bc[align_id], align_id), convert(spin.rdc[align_id], align_id)])
+            data[-1].append([convert(interatom.rdc_bc[align_id], align_id), convert(interatom.rdc[align_id], align_id)])
 
             # Errors.
             if err_flag:
-                if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
-                    data[-1][-1].append(convert(spin.rdc_err[align_id], align_id))
+                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                    data[-1][-1].append(convert(interatom.rdc_err[align_id], align_id))
                 else:
                     data[-1][-1].append(None)
 
             # Label.
-            data[-1][-1].append(spin_id)
+            data[-1][-1].append("%s-%s" % (interatom.spin_id1, interatom.spin_id2))
 
     # The data size.
     size = len(data)
@@ -277,15 +272,15 @@ def delete(align_id=None):
         if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(id):
             cdp.rdc_data_types.pop(id)
 
-        # The spin data.
-        for spin in spin_loop():
+        # The interatomic data.
+        for interatom in interatomic_loop():
             # The data.
-            if hasattr(spin, 'rdc') and spin.rdc.has_key(id):
-                spin.rdc.pop(id)
+            if hasattr(interatom, 'rdc') and interatom.rdc.has_key(id):
+                interatom.rdc.pop(id)
 
             # The error.
-            if hasattr(spin, 'rdc_err') and spin.rdc_err.has_key(id):
-                spin.rdc_err.pop(id)
+            if hasattr(interatom, 'rdc_err') and interatom.rdc_err.has_key(id):
+                interatom.rdc_err.pop(id)
 
         # Clean the global data.
         if not hasattr(cdp, 'pcs_ids') or id not in cdp.pcs_ids:
@@ -327,42 +322,42 @@ def q_factors(spin_id=None):
         D2_sum = 0.0
         sse = 0.0
 
-        # Spin loop.
+        # Interatomic data loop.
         dj = None
         N = 0
-        spin_count = 0
+        interatom_count = 0
         rdc_data = False
         rdc_bc_data = False
-        for spin in spin_loop(spin_id):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Increment the spin counter.
-            spin_count += 1
+        for interatom in interatomic_loop():
+            # Increment the counter.
+            interatom_count += 1
 
             # Data checks.
-            if hasattr(spin, 'rdc') and spin.rdc.has_key(align_id):
+            if hasattr(interatom, 'rdc') and interatom.rdc.has_key(align_id):
                 rdc_data = True
-            if hasattr(spin, 'rdc_bc') and spin.rdc_bc.has_key(align_id):
+            if hasattr(interatom, 'rdc_bc') and interatom.rdc_bc.has_key(align_id):
                 rdc_bc_data = True
 
-            # Skip spins without RDC data.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or not spin.rdc.has_key(align_id) or spin.rdc[align_id] == None or not spin.rdc_bc.has_key(align_id) or spin.rdc_bc[align_id] == None:
+            # Skip containers without RDC data.
+            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not interatom.rdc.has_key(align_id) or interatom.rdc[align_id] == None or not interatom.rdc_bc.has_key(align_id) or interatom.rdc_bc[align_id] == None:
                 continue
 
+            # Get the spins.
+            spin1 = return_spin(interatom.spin_id1)
+            spin2 = return_spin(interatom.spin_id2)
+
             # Sum of squares.
-            sse = sse + (spin.rdc[align_id] - spin.rdc_bc[align_id])**2
+            sse = sse + (interatom.rdc[align_id] - interatom.rdc_bc[align_id])**2
 
             # Sum the RDCs squared (for one type of normalisation).
-            D2_sum = D2_sum + spin.rdc[align_id]**2
+            D2_sum = D2_sum + interatom.rdc[align_id]**2
 
             # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-            gh = return_gyromagnetic_ratio(spin.proton_type)
+            g1 = return_gyromagnetic_ratio(spin1.isotope)
+            g2 = return_gyromagnetic_ratio(spin2.isotope)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+            dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
             if dj and dj_new != dj:
                 raise RelaxError("All the RDCs must come from the same nucleus type.")
             else:
@@ -372,8 +367,8 @@ def q_factors(spin_id=None):
             N = N + 1
 
         # Warnings (and then exit).
-        if not spin_count:
-            warn(RelaxWarning("No spins have been used in the calculation."))
+        if not interatom_count:
+            warn(RelaxWarning("No interatomic data containers have been used in the calculation."))
             return
         if not rdc_data:
             warn(RelaxWarning("No RDC data can be found."))
@@ -600,14 +595,14 @@ def weight(align_id=None, spin_id=None, weight=1.0):
     if not hasattr(cdp, 'rdc_ids') or align_id not in cdp.rdc_ids:
         raise RelaxNoRDCError(align_id)
 
-    # Loop over the spins.
-    for spin in spin_loop(spin_id):
+    # Loop over the interatomic data.
+    for interatom in interatomic_loop():
         # No data structure.
-        if not hasattr(spin, 'rdc_weight'):
-            spin.rdc_weight = {}
+        if not hasattr(interatom, 'rdc_weight'):
+            interatom.rdc_weight = {}
 
         # Set the weight.
-        spin.rdc_weight[align_id] = weight
+        interatom.rdc_weight[align_id] = weight
 
 
 def write(align_id=None, file=None, dir=None, bc=False, force=False):
@@ -639,39 +634,31 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
     # Open the file for writing.
     file = open_write_file(file, dir, force)
 
-    # Loop over the spins and collect the data.
-    mol_names = []
-    res_nums = []
-    res_names = []
-    spin_nums = []
-    spin_names = []
-    values = []
-    errors = []
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        # Skip spins with no RDCs.
-        if not bc and (not hasattr(spin, 'rdc') or align_id not in spin.rdc.keys()):
+    # Loop over the interatomic data containers and collect the data.
+    data = []
+    for interatom in interatomic_loop():
+        # Skip containers with no RDCs.
+        if not bc and (not hasattr(interatom, 'rdc') or align_id not in interatom.rdc.keys()):
             continue
-        elif bc and (not hasattr(spin, 'rdc_bc') or align_id not in spin.rdc_bc.keys()):
+        elif bc and (not hasattr(interatom, 'rdc_bc') or align_id not in interatom.rdc_bc.keys()):
             continue
 
         # Append the spin data.
-        mol_names.append(mol_name)
-        res_nums.append(res_num)
-        res_names.append(res_name)
-        spin_nums.append(spin.num)
-        spin_names.append(spin.name)
+        data.append([])
+        data[-1].append(interatom.spin_id1)
+        data[-1].append(interatom.spin_id2)
 
         # The value.
         if bc:
-            values.append(convert(spin.rdc_bc[align_id], align_id))
+            data[-1].append(convert(interatom.rdc_bc[align_id], align_id))
         else:
-            values.append(convert(spin.rdc[align_id], align_id))
+            data[-1].append(convert(interatom.rdc[align_id], align_id))
 
         # The error.
-        if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
-            errors.append(convert(spin.rdc_err[align_id], align_id))
+        if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+            data[-1].append(convert(interatom.rdc_err[align_id], align_id))
         else:
-            errors.append(None)
+            data[-1].append(None)
 
     # Write out.
-    write_spin_data(file=file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+    write_data(out=file, headings=["Spin_ID1", "Spin_ID2", "RDCs", "RDC_error"], data=data)
