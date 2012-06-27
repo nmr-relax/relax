@@ -7,7 +7,8 @@ from numpy.linalg import norm
 from os import sep
 
 # relax imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.interatomic import interatomic_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
 
@@ -24,8 +25,9 @@ structure.read_pdb(file='LE_trunc.pdb', dir=str_path, set_mol_name='LE')
 # Load the sequence information.
 structure.load_spins()
 
-# Load the bond vectors.
-structure.vectors('H*')
+# Load the CH vectors.
+dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+dipole_pair.unit_vectors(ave=False)
 
 # Init the alignment tensors.
 A_5D = []
@@ -138,33 +140,36 @@ for i in range(len(A)):
     out = open('missing_rdc_%i' % i, 'w')
 
     # Header.
-    out.write('%-10s %-10s %-10s %-10s %-10s %20s\n' % ('mol_name', 'res_num', 'res_name', 'spin.num', 'spin.name', 'rdc'))
+    out.write('# %-18s %-20s %20s\n' % ('spin_id1', 'spin_id2', 'rdc'))
 
-    # Loop over the spins.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        # Skip protons.
-        if spin.element == 'H':
+    # Loop over the interatomic data.
+    for interatom in interatomic_loop():
+        print interatom.spin_id1, interatom.spin_id2
+        # Deselected containers.
+        if not interatom.select:
             continue
 
-        # Skip spin.
+        # Get the spins.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
+
+        # Skip.
         skip = False
         for j in range(len(missing[i])):
-            if missing[i][j][1] == '*' and res_num == missing[i][j][0]:
+            if missing[i][j][1] == '*' and spin1._res_num == missing[i][j][0]:
                 skip = True
-            elif res_num == missing[i][j][0] and spin.name == missing[i][j][1]:
+            elif spin1._res_num == missing[i][j][0] and spin1.name == missing[i][j][1]:
                 skip = True
         if skip:
+            print "\tskip"
             continue
 
         # No vector.
-        if not hasattr(spin, 'xh_vect'):
+        if not hasattr(interatom, 'vector'):
             continue
 
-        # Unit vector.
-        unit = spin.xh_vect / norm(spin.xh_vect)
-
         # Calculate the RDC.
-        rdc = const * dot(unit, dot(A[i], unit))
+        rdc = const * dot(interatom.vector, dot(A[i], interatom.vector))
 
         # Output the rdc.
-        out.write('%-10s %-10s %-10s %-10s %-10s %20s\n' % (mol_name, res_num, res_name, spin.num, spin.name, rdc))
+        out.write('%-20s %-20s %20s\n' % (interatom.spin_id1, interatom.spin_id2, rdc))

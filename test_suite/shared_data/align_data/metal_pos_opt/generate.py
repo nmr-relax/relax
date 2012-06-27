@@ -8,7 +8,8 @@ from os import sep
 from re import search
 
 # relax imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.interatomic import interatomic_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
 
@@ -34,8 +35,10 @@ deselect.spin(spin_id=':UNK@H7')
 deselect.spin(spin_id=':UNK@H17')
 deselect.spin(spin_id=':UNK@H18')
 
-# Load the CH vectors for the C atoms.
-structure.vectors(spin_id='@C*', attached='H*', ave=False)
+# Load the CH vectors.
+dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+dipole_pair.unit_vectors(ave=False)
+
 
 # Init the alignment tensors.
 A_5D = []
@@ -153,36 +156,37 @@ for i in range(len(A)):
         continue
 
     # Header.
-    out.write('%-10s %-10s %-10s %-10s %-10s %20s\n' % ('mol_name', 'res_num', 'res_name', 'spin.num', 'spin.name', 'rdc'))
+    out.write('# %-18s %-20s %20s\n' % ('spin_id1', 'spin_id2', 'rdc'))
 
-    # Loop over the spins.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        # Skip protons.
-        if spin.element == 'H':
+    # Loop over the interatomic data.
+    for interatom in interatomic_loop():
+        # Deselected containers.
+        if not interatom.select:
             continue
 
-        # Skip spin.
+        # Get the spins.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
+
+        # Skip.
         skip = False
         for j in range(len(missing[i])):
-            if missing[i][j][1] == '*' and res_num == missing[i][j][0]:
+            if missing[i][j][1] == '*' and spin1._res_num == missing[i][j][0]:
                 skip = True
-            elif res_num == missing[i][j][0] and spin.name == missing[i][j][1]:
+            elif res_num == missing[i][j][0] and spin1.name == missing[i][j][1]:
                 skip = True
         if skip:
             continue
 
         # No vector.
-        if not hasattr(spin, 'xh_vect'):
+        if not hasattr(interatom, 'vector'):
             continue
 
         # Loop over the states.
         rdc_full = 0.0
         for j in range(NUM_STR):
-            # Unit vector.
-            unit = spin.xh_vect[j] / norm(spin.xh_vect[j])
-
             # Calculate the RDC.
-            rdc = const * dot(unit, dot(A[i], unit))
+            rdc = const * dot(interatom.vector[j], dot(A[i], interatom.vector[j]))
 
             # Add to the full RDC.
             rdc_full += rdc
@@ -191,4 +195,4 @@ for i in range(len(A)):
         rdc_full = rdc_full / NUM_STR
 
         # Output the rdc.
-        out.write('%-10s %-10s %-10s %-10s %-10s %20s\n' % (mol_name, res_num, res_name, spin.num, spin.name, rdc_full))
+        out.write('%-20s %-20s %20s\n' % (interatom.spin_id1, interatom.spin_id2, rdc_full))
