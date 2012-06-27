@@ -833,10 +833,6 @@ class N_state_model(API_base, API_common):
             # Interatomic data container loop.
             rdc_index = 0
             for interatom in interatomic_loop():
-                # Skip deselected containers.
-                if not interatom.select:
-                    continue
-
                 # Containers with RDC data.
                 if rdc_flag and hasattr(interatom, 'rdc'):
                     # Initialise the data structure if necessary.

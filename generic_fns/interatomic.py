@@ -158,7 +158,7 @@ def exists_data(pipe=None):
     return True
 
 
-def interatomic_loop(selection1=None, selection2=None, pipe=None):
+def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True):
     """Generator function for looping over all the interatomic data containers.
 
     @keyword selection1:    The optional spin ID selection of the first atom.
@@ -167,6 +167,8 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None):
     @type selection2:       str
     @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:             str
+    @keyword selected:      A flag which if True will only return selected interatomic data containers.
+    @type selected:         bool
     """
 
     # The data pipe.
@@ -190,6 +192,10 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None):
 
     # Loop over the containers, yielding them.
     for i in range(len(dp.interatomic)):
+        # Skip deselected containers.
+        if selected and not dp.interatomic[i].select:
+            continue
+
         # Aliases.
         interatom = dp.interatomic[i]
         mol_index1, res_index1, spin_index1 = cdp.mol._spin_id_lookup[interatom.spin_id1]
