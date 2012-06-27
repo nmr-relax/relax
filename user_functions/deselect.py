@@ -69,14 +69,16 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "first spin ID string",
-    desc = "The spin ID string of the first spin of the interatomic data container."
+    desc = "The spin ID string of the first spin of the interatomic data container.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_id2",
     py_type = "str",
     arg_type = "spin ID",
     desc_short = "second spin ID string",
-    desc = "The spin ID string of the second spin of the interatomic data container."
+    desc = "The spin ID string of the second spin of the interatomic data container.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "boolean",
