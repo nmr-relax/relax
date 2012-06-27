@@ -481,6 +481,12 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         if error_col:
             error = line[error_col-1]
 
+        # Convert the spin IDs.
+        if spin_id1[0] in ["\"", "\'"]:
+            spin_id1 = eval(spin_id1)
+        if spin_id2[0] in ["\"", "\'"]:
+            spin_id2 = eval(spin_id2)
+
         # Convert and check the value.
         if value != None:
             try:
