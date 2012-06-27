@@ -837,7 +837,6 @@ class N_state_model(API_base, API_common):
                 if not interatom.select:
                     continue
 
-                print interatom
                 # Containers with RDC data.
                 if rdc_flag and hasattr(interatom, 'rdc'):
                     # Initialise the data structure if necessary.
@@ -845,8 +844,6 @@ class N_state_model(API_base, API_common):
                         interatom.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    print model.Dij_theta.shape
-                    print align_index, rdc_index
                     interatom.rdc_bc[align_id] = model.Dij_theta[align_index, rdc_index]
 
                     # Increment the data index if the interatom container has data.
