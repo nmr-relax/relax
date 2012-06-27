@@ -27,6 +27,7 @@
 from warnings import warn
 
 # relax module imports.
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
@@ -98,7 +99,7 @@ def desel_interatom(spin_id1=None, spin_id2=None, boolean='AND', change_all=Fals
             interatom.select = True
 
     # Interatomic data loop.
-    for interatom in interatomic_loop(spin_id1=spin_id1, spin_id2=spin_id2):
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2):
         # Deselect just the specified residues.
         if change_all:
             interatom.select = False
@@ -390,7 +391,7 @@ def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
             interatom.select = False
 
     # Interatomic data loop.
-    for interatom in interatomic_loop(spin_id1=spin_id1, spin_id2=spin_id2):
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2):
         # Select just the specified containers.
         if change_all:
             interatom.select = True
