@@ -812,7 +812,7 @@ class N_state_model(API_base, API_common):
                 pcs_flag = True
 
             # Spin loop.
-            spin_index = 0
+            pcs_index = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -825,15 +825,19 @@ class N_state_model(API_base, API_common):
                         spin.pcs_bc = {}
 
                     # Add the back calculated PCS (in ppm).
-                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, spin_index] * 1e6
+                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, pcs_index] * 1e6
 
-                # Increment the data index if the spin container has data.
-                if hasattr(spin, 'pcs'):
-                    spin_index = spin_index + 1
+                    # Increment the data index if the spin container has data.
+                    pcs_index = pcs_index + 1
 
             # Interatomic data container loop.
-            interatom_index = 0
+            rdc_index = 0
             for interatom in interatomic_loop():
+                # Skip deselected containers.
+                if not interatom.select:
+                    continue
+
+                print interatom
                 # Containers with RDC data.
                 if rdc_flag and hasattr(interatom, 'rdc'):
                     # Initialise the data structure if necessary.
@@ -841,11 +845,12 @@ class N_state_model(API_base, API_common):
                         interatom.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    interatom.rdc_bc[align_id] = model.Dij_theta[align_index, interatom_index]
+                    print model.Dij_theta.shape
+                    print align_index, rdc_index
+                    interatom.rdc_bc[align_id] = model.Dij_theta[align_index, rdc_index]
 
-                # Increment the data index if the interatom container has data.
-                if hasattr(interatom, 'rdc'):
-                    interatom_index = interatom_index + 1
+                    # Increment the data index if the interatom container has data.
+                    rdc_index = rdc_index + 1
 
 
     def _minimise_setup_atomic_pos(self):
