@@ -19,13 +19,14 @@ self._execute_uf(uf_name='structure.read_pdb', file='trunc_ubi_pcs.pdb', dir=str
 # Load the spins.
 self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
 
-# Set the heteronucleus type.
-self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type')
-self._execute_uf(uf_name='value.set', val='1H', param='proton_type')
-self._execute_uf(uf_name='value.set', val=NH_BOND_LENGTH_RDC, param='r')
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH_RDC)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
 
-# Load the bond vectors.
-self._execute_uf(uf_name='structure.vectors', attached='H', spin_id='@N')
+# Set the nuclear isotope.
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # The dipolar constant.
 const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)

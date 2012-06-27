@@ -23,16 +23,17 @@ self._execute_uf(uf_name='structure.read_pdb', file='sphere', dir=STRUCT_PATH)
 # Load the spins.
 self._execute_uf(uf_name='structure.load_spins')
 
-# Load the NH vectors.
-self._execute_uf(uf_name='structure.vectors', spin_id='@N', attached='H', ave=False)
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
 
-# Set the values needed to calculate the dipolar constant.
-self._execute_uf(uf_name='value.set', val=1.041 * 1e-10, param='r', spin_id="@N")
-self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type', spin_id="@N")
-self._execute_uf(uf_name='value.set', val='1H', param='proton_type', spin_id="@N")
+# Set the nuclear isotope.
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # RDCs.
-self._execute_uf(uf_name='rdc.read', align_id='synth', file='synth_rdc', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+self._execute_uf(uf_name='rdc.read', align_id='synth', file='synth_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id1_col=2, data_col=3, error_col=4)
 
 # PCSs.
 self._execute_uf(uf_name='pcs.read', align_id='synth', file='synth_pcs', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
