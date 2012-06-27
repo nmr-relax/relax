@@ -98,6 +98,10 @@ class InteratomContainer(Prototype):
         spin1 = generic_fns.mol_res_spin.return_spin(self.spin_id1)
         spin2 = generic_fns.mol_res_spin.return_spin(self.spin_id2)
 
+        # No spins.
+        if spin1 == None or spin2 == None:
+            return False
+
         # Check if the ID is in the private metadata list.
         if spin_id in spin1._spin_ids or spin_id in spin2._spin_ids:
             return True
