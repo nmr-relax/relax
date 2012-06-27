@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import return_spin
+from generic_fns.mol_res_spin import Selection, return_spin
 from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError
 from relax_io import write_data
 from relax_warnings import RelaxNoSpinWarning
@@ -91,7 +91,7 @@ def copy(pipe_from=None, pipe_to=None, verbose=True):
             obj = deepcopy(getattr(interatom, name))
             setattr(new_interatom, name, obj)
 
-        # Store the IDs for the print out.
+        # Store the IDs for the printout.
         ids.append([repr(interatom.spin_id1), repr(interatom.spin_id2)])
 
     # Print out.
@@ -190,15 +190,23 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None):
 
     # Loop over the containers, yielding them.
     for i in range(len(dp.interatomic)):
-        # Alias.
+        # Aliases.
         interatom = dp.interatomic[i]
+        mol_index1, res_index1, spin_index1 = cdp.mol._spin_id_lookup[interatom.spin_id1]
+        mol_index2, res_index2, spin_index2 = cdp.mol._spin_id_lookup[interatom.spin_id2]
+        mol1 =  cdp.mol[mol_index1]
+        res1 =  cdp.mol[mol_index1].res[res_index1]
+        spin1 = cdp.mol[mol_index1].res[res_index1].spin[spin_index1]
+        mol2 = cdp.mol[mol_index2]
+        res2 =  cdp.mol[mol_index2].res[res_index2]
+        spin2 = cdp.mol[mol_index2].res[res_index2].spin[spin_index2]
 
         # Check that the selections are met.
         if select_obj:
-            if interatom.spin_id1 not in select_obj:
+            if (mol1, res1, spin1) not in select_obj or (mol2, res2, spin2) in select_obj:
                 continue
         if select_obj1:
-            if not (interatom.spin_id1 in select_obj1 or interatom.spin_id2 in select_obj1) or not (interatom.spin_id1 in select_obj2 or interatom.spin_id2 in select_obj2):
+            if not ((mol1, res1, spin1) in select_obj1 or (mol2, res2, spin2) in select_obj1) or not ((mol1, res1, spin1) in select_obj2 or (mol2, res2, spin2) in select_obj2):
                 continue
 
         # Return the container.
