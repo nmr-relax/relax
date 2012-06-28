@@ -705,8 +705,8 @@ class Model_free_main:
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = False
         for spin in spin_loop():
-            # No relaxation data.
-            if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # No params.
@@ -719,7 +719,7 @@ class Model_free_main:
 
             # Inconsistencies.
             elif local_tm and not 'local_tm' in spin.params:
-                raise RelaxError("All residues must either have a local tm parameter or not.")
+                raise RelaxError("All spins must either have a local tm parameter or not.")
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
