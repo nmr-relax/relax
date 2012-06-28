@@ -40,3 +40,11 @@ for i in [1, 2, 3, 4, 5, 7, 8, 9, 10, 11]:
 
 # Some more selection changes.
 self._execute_uf(uf_name='deselect.interatom', spin_id1='@C2')
+
+# Create a new molecule with 2 interatomic data containers.
+self._execute_uf(uf_name='spin.create', spin_name='N', res_name='Gly', res_num=1, mol_name='Poly-gly')
+self._execute_uf(uf_name='spin.create', spin_name='H', res_name='Gly', res_num=1, mol_name='Poly-gly')
+self._execute_uf(uf_name='spin.create', spin_name='N', res_name='Gly', res_num=2, mol_name='Poly-gly')
+self._execute_uf(uf_name='spin.create', spin_name='H', res_name='Gly', res_num=2, mol_name='Poly-gly')
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='#Poly-gly:N', spin_id2='#Poly-gly:H', direct_bond=True)
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':2')
