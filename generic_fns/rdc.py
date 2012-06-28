@@ -656,15 +656,15 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # The value.
         if bc:
-            data[-1].append(convert(interatom.rdc_bc[align_id], align_id))
+            data[-1].append(repr(convert(interatom.rdc_bc[align_id], align_id)))
         else:
-            data[-1].append(convert(interatom.rdc[align_id], align_id))
+            data[-1].append(repr(convert(interatom.rdc[align_id], align_id)))
 
         # The error.
         if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-            data[-1].append(convert(interatom.rdc_err[align_id], align_id))
+            data[-1].append(repr(convert(interatom.rdc_err[align_id], align_id)))
         else:
-            data[-1].append(None)
+            data[-1].append(repr(None))
 
     # Write out.
     write_data(out=file, headings=["Spin_ID1", "Spin_ID2", "RDCs", "RDC_error"], data=data)
