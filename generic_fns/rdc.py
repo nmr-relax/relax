@@ -488,6 +488,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             spin_id2 = eval(spin_id2)
 
         # Convert and check the value.
+        if value == 'None':
+            value = None
         if value != None:
             try:
                 value = float(value)
@@ -496,6 +498,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
                 continue
 
         # Convert and check the error.
+        if error == 'None':
+            error = None
         if error != None:
             try:
                 error = float(error)
