@@ -37,3 +37,6 @@ self._execute_uf(uf_name='deselect.interatom')
 # Select the non-CH2 bonds.
 for i in [1, 2, 3, 4, 5, 7, 8, 9, 10, 11]:
     self._execute_uf(uf_name='select.interatom', spin_id1=':UNK@C%i'%i)
+
+# Some more selection changes.
+self._execute_uf(uf_name='deselect.interatom', spin_id1='@C2')

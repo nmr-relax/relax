@@ -43,7 +43,7 @@ class Interatomic(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'interatomic_tests.py')
 
         # The data.
-        select = [True]*5 + [False]*2 + [True]*5 + [False]*2
+        select = [True, False] + [True]*3 + [False]*2 + [True]*5 + [False]*2
 
         # Check the data.
         self.assertEqual(len(cdp.interatomic), 14)
