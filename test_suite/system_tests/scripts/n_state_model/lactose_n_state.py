@@ -41,6 +41,12 @@ self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', d
 self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
 self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
 
+# Deselect the CH2 bonds.
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C6', spin_id2=':UNK@H6')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C6', spin_id2=':UNK@H7')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':UNK@H17')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':UNK@H18')
+
 # Set the nuclear isotope type.
 self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
 self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
