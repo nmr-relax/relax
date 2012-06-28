@@ -58,12 +58,17 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
         for spin2, mol_name2, res_num2, res_name2, id2 in spin_loop(spin_id2, full_info=True, return_id=True):
             # Directly bonded atoms.
             if direct_bond:
-                # From structural info.
-                if hasattr(cdp, 'structure') and not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
+                # Different molecules.
+                if mol_name1 != mol_name2:
                     continue
 
+                # From structural info.
+                if hasattr(cdp, 'structure') and cdp.structure.get_molecule(mol_name1, model=1):
+                    if not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
+                        continue
+
                 # From the residue info.
-                elif not hasattr(cdp, 'structure'):
+                else:
                     # No element info.
                     if not hasattr(spin1, 'element'):
                         raise RelaxError("The spin '%s' does not have the element type set." % id1)
