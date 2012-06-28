@@ -17,13 +17,13 @@ self._execute_uf(uf_name='pipe.create', pipe_name='rdc_back_calc', pipe_type='N-
 self._execute_uf(uf_name='structure.read_pdb', file='trunc_ubi_pcs.pdb', dir=str_path)
 
 # Load the spins.
-self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
-self._execute_uf(uf_name='structure.load_spins', spin_id='@H')
+self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
+self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
 
 # Define the magnetic dipole-dipole relaxation interaction.
 self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
 self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH_RDC)
-self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=True)
 
 # Set the nuclear isotope.
 self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
