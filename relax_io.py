@@ -536,6 +536,11 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     # Yield the data, spin by spin.
     missing_data = True
     for line in file_data:
+        # Convert the spin IDs.
+        if spin_id_col != None and line[spin_id_col-1][0] in ["\"", "\'"]:
+            line[spin_id_col-1] = eval(line[spin_id_col-1])
+
+        # Convert.
         # Validate the sequence.
         try:
             generic_fns.sequence.validate_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col)
