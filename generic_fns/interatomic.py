@@ -243,7 +243,7 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True)
 
         # Check that the selections are met.
         if select_obj:
-            if (mol1, res1, spin1) not in select_obj or (mol2, res2, spin2) in select_obj:
+            if (mol1, res1, spin1) not in select_obj and (mol2, res2, spin2) not in select_obj:
                 continue
         if select_obj1:
             if not ((mol1, res1, spin1) in select_obj1 or (mol2, res2, spin2) in select_obj1) or not ((mol1, res1, spin1) in select_obj2 or (mol2, res2, spin2) in select_obj2):
