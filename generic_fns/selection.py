@@ -95,11 +95,11 @@ def desel_interatom(spin_id1=None, spin_id2=None, boolean='AND', change_all=Fals
     # First select all interatom containers if the change_all flag is set.
     if change_all:
         # Interatomic data loop.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(selected=False):
             interatom.select = True
 
     # Interatomic data loop.
-    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2):
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2, selected=False):
         # Deselect just the specified residues.
         if change_all:
             interatom.select = False
@@ -387,11 +387,11 @@ def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
     # First deselect all interatom containers if the change_all flag is set.
     if change_all:
         # Interatomic data loop.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(selected=False):
             interatom.select = False
 
     # Interatomic data loop.
-    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2):
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2, selected=False):
         # Select just the specified containers.
         if change_all:
             interatom.select = True
