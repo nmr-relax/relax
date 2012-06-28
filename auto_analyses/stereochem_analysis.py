@@ -646,6 +646,7 @@ class Stereochem_analysis:
 
             # Define the magnetic dipole-dipole relaxation interaction.
             self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+            self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@Q*', ave_dist=self.bond_length)
 
             # Set the nuclear isotope.
             self.interpreter.spin.isotope(isotope='13C', spin_id='@C*')
@@ -672,8 +673,10 @@ class Stereochem_analysis:
                 # Read the ensemble.
                 self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
-                # Load the CH vectors.
-                self.interpreter.dipole_pair.unit_vectors(spin_id1="@H*", spin_id2="@*C*", ave=False)
+                # Get the positional information, then load the CH vectors.
+                self.interpreter.structure.get_pos(ave_pos=False)
+                self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+                self.interpreter.dipole_pair.unit_vectors(ave=False)
 
                 # Minimisation.
                 #grid_search(inc=4)
