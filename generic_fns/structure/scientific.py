@@ -28,7 +28,7 @@ import dep_check
 
 # Python module imports.
 from math import sqrt
-from numpy import array, dot, float64, zeros
+from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access, sep
 from extern.scientific_python.IO import PDB
@@ -152,6 +152,31 @@ class Scientific_data(Base_struct_API):
 
                 # Yield the residue info.
                 yield res, res.number, res.name, res_index
+
+
+    def are_bonded(self, atom_id1=None, atom_id2=None):
+        """Determine if two atoms are directly bonded to each other.
+
+        @keyword atom_id1:  The molecule, residue, and atom identifier string of the first atom.
+        @type atom_id1:     str
+        @keyword atom_id1:  The molecule, residue, and atom identifier string of the second atom.
+        @type atom_id1:     str
+        @return:            True if the atoms are directly bonded.
+        @rtype:             bool
+        """
+
+        # Loop over the atoms.
+        for pos1 in self.atom_loop(atom_id=atom_id1, pos_flag=True):
+            for pos2 in self.atom_loop(atom_id=atom_id2, pos_flag=True):
+                # The interatomic distance.
+                dist = linalg.norm(pos2[0]-pos1[0])
+
+                # The atom is within the radius of 1.2 Angstrom.
+                if dist < 1.2:
+                    return True
+
+        # Not bonded.
+        return False
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -467,6 +492,42 @@ class Scientific_data(Base_struct_API):
 
         # Return the data.
         return data
+
+
+    def get_molecule(self, molecule, model=None):
+        """Return the molecule.
+
+        Only one model can be specified.
+
+
+        @param molecule:    The molecule name.
+        @type molecule:     int or None
+        @keyword model:     The model number.
+        @type model:        int or None
+        @raises RelaxError: If the model is not specified and there is more than one model loaded.
+        @return:            The MolContainer corresponding to the molecule name and model number.
+        @rtype:             MolContainer instance or None
+        """
+
+        # Check if the target is a single molecule.
+        if model == None and self.num_models() > 1:
+            raise RelaxError("The target molecule cannot be determined as there are %s models already present." % self.num_models())
+
+        # Check the model argument.
+        if not isinstance(model, int) and not model == None:
+            raise RelaxNoneIntError
+
+        # No models.
+        if not len(self.structural_data):
+            return
+
+        # Loop over the models.
+        for model_cont in self.model_loop(model):
+            # Loop over the molecules.
+            for mol in model_cont.mol:
+                # Return the matching molecule.
+                if mol.mol_name == molecule:
+                    return mol
 
 
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
