@@ -633,8 +633,8 @@ class Stereochem_analysis:
             # Read the first structure.
             self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
-            # Load all protons as the sequence.
-            self.interpreter.structure.load_spins("@H*", ave_pos=False)
+            # Load all spins as the sequence.
+            self.interpreter.structure.load_spins(ave_pos=False)
 
             # Create the pseudo-atoms.
             for i in range(len(self.pseudo)):
@@ -644,13 +644,13 @@ class Stereochem_analysis:
             # Read the RDC data.
             self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id1_col=self.rdc_spin_id1_col, spin_id2_col=self.rdc_spin_id2_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
 
-            # Set the values needed to calculate the dipolar constant.
-            self.interpreter.value.set(self.bond_length, "r", spin_id="@H*")
-            self.interpreter.value.set(self.bond_length, "r", spin_id="@Q*")
-            self.interpreter.value.set("13C", "heteronuc_type", spin_id="@H*")
-            self.interpreter.value.set("13C", "heteronuc_type", spin_id="@Q*")
-            self.interpreter.value.set("1H", "proton_type", spin_id="@H*")
-            self.interpreter.value.set("1H", "proton_type", spin_id="@Q*")
+            # Define the magnetic dipole-dipole relaxation interaction.
+            self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+
+            # Set the nuclear isotope.
+            self.interpreter.spin.isotope(isotope='13C', spin_id='@C*')
+            self.interpreter.spin.isotope(isotope='1H', spin_id='@H*')
+            self.interpreter.spin.isotope(isotope='1H', spin_id='@Q*')
 
             # Set up the model.
             self.interpreter.n_state_model.select_model(model="fixed")
@@ -672,8 +672,8 @@ class Stereochem_analysis:
                 # Read the ensemble.
                 self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
-                # Load the CH vectors for the H atoms.
-                self.interpreter.structure.vectors(spin_id="@H*", attached="*C*", ave=False)
+                # Load the CH vectors.
+                self.interpreter.dipole_pair.unit_vectors(spin_id1="@H*", spin_id2="@*C*", ave=False)
 
                 # Minimisation.
                 #grid_search(inc=4)
