@@ -72,7 +72,7 @@ class InteratomContainer(Prototype):
         text = text + "Objects:\n"
         for name in dir(self):
             # Skip the SpinContainer methods.
-            if name in ['id_match', 'is_empty']:
+            if name in ['is_empty']:
                 continue
 
             # Skip special objects.
@@ -83,31 +83,6 @@ class InteratomContainer(Prototype):
             text += "  %s: %s\n" % (name, repr(getattr(self, name)))
 
         return text
-
-
-    def id_match(self, spin_id):
-        """Test if the spin ID matches one of the two spins of the current container.
-
-        @param spin_id:     The spin ID string of the first atom.
-        @type spin_id:      str
-        @return:            True if the spin ID matches one of the two spins, False otherwise.
-        @rtype:             bool
-        """
-
-        # Get the spin containers.
-        spin1 = generic_fns.mol_res_spin.return_spin(self.spin_id1)
-        spin2 = generic_fns.mol_res_spin.return_spin(self.spin_id2)
-
-        # No spins.
-        if spin1 == None or spin2 == None:
-            return False
-
-        # Check if the ID is in the private metadata list.
-        if spin_id in spin1._spin_ids or spin_id in spin2._spin_ids:
-            return True
-
-        # Nothing found.
-        return False
 
 
     def is_empty(self):
@@ -124,7 +99,7 @@ class InteratomContainer(Prototype):
                 continue
 
             # Skip the SpinContainer methods.
-            if name in ['id_match', 'is_empty']:
+            if name in ['is_empty']:
                 continue
 
             # Skip special objects.
@@ -169,11 +144,6 @@ class InteratomList(list):
         @return:            The new interatomic data container.
         @rtype:             InteratomContainer instance
         """
-
-        # Check if the two spin ID have already been added.
-        for i in range(len(self)):
-            if self[i].id_match(spin_id1) and self[i].id_match(spin_id2):
-                raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
         # Append a new InteratomContainer.
         cont = InteratomContainer(spin_id1, spin_id2)

@@ -127,6 +127,11 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None):
     if spin == None:
         raise RelaxNoSpinWarning(spin_id2)
 
+    # Check if the two spin IDs have already been added.
+    for i in range(len(dp.interatomic)):
+        if id_match(spin_id=spin_id1, interatom=dp.interatomic[i], pipe=pipe) and id_match(spin_id=spin_id2, interatom=dp.interatomic[i], pipe=pipe):
+            raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
+
     # Add and return the data.
     return dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
 
@@ -156,6 +161,35 @@ def exists_data(pipe=None):
 
     # Otherwise.
     return True
+
+
+def id_match(spin_id=None, interatom=None, pipe=None):
+    """Test if the spin ID matches one of the two spins of the given container.
+
+    @keyword spin_id:   The spin ID string of the first atom.
+    @type spin_id:      str
+    @keyword interatom: The interatomic data container.
+    @type interatom:    InteratomContainer instance
+    @keyword pipe:      The data pipe containing the interatomic data container.  Defaults to the current data pipe.
+    @type pipe:         str or None
+    @return:            True if the spin ID matches one of the two spins, False otherwise.
+    @rtype:             bool
+    """
+
+    # Get the spin containers.
+    spin1 = return_spin(interatom.spin_id1, pipe=pipe)
+    spin2 = return_spin(interatom.spin_id2, pipe=pipe)
+
+    # No spins.
+    if spin1 == None or spin2 == None:
+        return False
+
+    # Check if the ID is in the private metadata list.
+    if spin_id in spin1._spin_ids or spin_id in spin2._spin_ids:
+        return True
+
+    # Nothing found.
+    return False
 
 
 def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True):
@@ -247,7 +281,7 @@ def return_interatom(spin_id1=None, spin_id2=None, pipe=None):
 
     # Return the matching container.
     for i in range(len(dp.interatomic)):
-        if dp.interatomic[i].id_match(spin_id1) and dp.interatomic[i].id_match(spin_id2):
+        if id_match(spin_id=spin_id1, interatom=dp.interatomic[i], pipe=pipe) and id_match(spin_id=spin_id2, interatom=dp.interatomic[i], pipe=pipe):
             return dp.interatomic[i]
 
     # No matchs.
