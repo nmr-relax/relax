@@ -46,5 +46,7 @@ self._execute_uf(uf_name='spin.create', spin_name='N', res_name='Gly', res_num=1
 self._execute_uf(uf_name='spin.create', spin_name='H', res_name='Gly', res_num=1, mol_name='Poly-gly')
 self._execute_uf(uf_name='spin.create', spin_name='N', res_name='Gly', res_num=2, mol_name='Poly-gly')
 self._execute_uf(uf_name='spin.create', spin_name='H', res_name='Gly', res_num=2, mol_name='Poly-gly')
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='#Poly-gly:N', spin_id2='#Poly-gly:H', direct_bond=True)
+self._execute_uf(uf_name='spin.element', spin_id='#Poly-gly@N', element='N')
+self._execute_uf(uf_name='spin.element', spin_id='#Poly-gly@H', element='H')
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='#Poly-gly@N', spin_id2='#Poly-gly@H', direct_bond=True)
 self._execute_uf(uf_name='deselect.interatom', spin_id1=':2')
