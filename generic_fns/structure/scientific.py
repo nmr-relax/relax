@@ -171,8 +171,8 @@ class Scientific_data(Base_struct_API):
                 # The interatomic distance.
                 dist = linalg.norm(pos2[0]-pos1[0])
 
-                # The atom is within the radius of 1.2 Angstrom.
-                if dist < 1.2:
+                # The atom is within the radius of 2.0 Angstrom.
+                if dist < 2.0:
                     return True
 
         # Not bonded.
