@@ -33,7 +33,7 @@ self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
 self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # RDCs.
-self._execute_uf(uf_name='rdc.read', align_id='synth', file='synth_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id1_col=2, data_col=3, error_col=4)
+self._execute_uf(uf_name='rdc.read', align_id='synth', file='synth_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
 # PCSs.
 self._execute_uf(uf_name='pcs.read', align_id='synth', file='synth_pcs', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)

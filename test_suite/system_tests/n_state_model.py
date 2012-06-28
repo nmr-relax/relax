@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,6 +31,7 @@ from tempfile import mkdtemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
@@ -445,17 +446,25 @@ class N_state_model(SystemTestCase):
             print(spin)
 
             # Check for simulation data.
-            if spin.name == 'N':
-                self.assert_(hasattr(spin, 'rdc_sim'))
-                self.assert_(spin.rdc_sim.has_key(key))
             self.assert_(hasattr(spin, 'pcs_sim'))
             self.assert_(spin.pcs_sim.has_key(key))
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
-                if spin.name == 'N':
-                    self.assertAlmostEqual(spin.rdc[key], spin.rdc_sim[key][i], 5)
                 self.assertAlmostEqual(spin.pcs[key], spin.pcs_sim[key][i])
+
+        # The interatomic data.
+        for interatom in interatomic_loop():
+            # Print out.
+            print(interatom)
+
+            # Check for simulation data.
+            self.assert_(hasattr(interatom, 'rdc_sim'))
+            self.assert_(interatom.rdc_sim.has_key(key))
+
+            # Check the values of the simulated data.
+            for i in range(cdp.sim_number):
+                self.assertAlmostEqual(interatom.rdc[key], interatom.rdc_sim[key][i], 5)
 
         # Test the optimised simluation values.
         for i in range(cdp.sim_number):
