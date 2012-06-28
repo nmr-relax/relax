@@ -29,7 +29,8 @@ from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
-from generic_fns.mol_res_spin import count_spins, spin_loop
+from generic_fns.interatomic import interatomic_loop
+from generic_fns.mol_res_spin import count_spins
 from status import Status; status = Status()
 
 
@@ -47,19 +48,21 @@ class Rdc(SystemTestCase):
 
         # Load the spins.
         self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+        self.interpreter.sequence.attach_protons()
         self.interpreter.sequence.display()
 
         # Load the RDCs.
-        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id_col=1, data_col=2, error_col=3)
+        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
         self.interpreter.sequence.display()
 
         # The RDCs.
         rdcs = [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, 1.33652530397, -1.6021670281]
 
         # Checks.
-        self.assertEqual(count_spins(), 8)
+        self.assertEqual(count_spins(), 16)
+        self.assertEqual(len(cdp.interatomic), 8)
         i = 0
-        for spin in spin_loop():
-            self.assertAlmostEqual(rdcs[i], spin.rdc['tb'])
+        for interatom in interatomic_loop():
+            self.assertAlmostEqual(rdcs[i], interatom.rdc['tb'])
             i += 1
 
