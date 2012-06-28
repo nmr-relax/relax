@@ -833,6 +833,14 @@ class N_state_model(API_base, API_common):
             # Interatomic data container loop.
             rdc_index = 0
             for interatom in interatomic_loop():
+                # Get the spins.
+                spin1 = return_spin(interatom.spin_id1)
+                spin2 = return_spin(interatom.spin_id2)
+
+                # RDC checks.
+                if not self._check_rdcs(interatom, spin1, spin2):
+                    continue
+
                 # Containers with RDC data.
                 if rdc_flag and hasattr(interatom, 'rdc'):
                     # Initialise the data structure if necessary.
