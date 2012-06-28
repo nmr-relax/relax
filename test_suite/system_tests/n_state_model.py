@@ -31,7 +31,7 @@ from tempfile import mkdtemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
-from generic_fns.interatomic import interatomic_loop
+from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
@@ -225,18 +225,20 @@ class N_state_model(SystemTestCase):
 
             # Get a spin to check.
             spin = return_spin(':114@N')
+            interatom = return_interatom(':114@N', ':114@H')
 
             # Check the RDC and PCS values.
-            self.assertAlmostEqual(spin.rdc[tag], -8.9193269604999994)
-            self.assertAlmostEqual(spin.rdc_bc[tag], -9.1030018792821394)
+            self.assertAlmostEqual(interatom.rdc[tag], -8.9193269604999994)
+            self.assertAlmostEqual(interatom.rdc_bc[tag], -9.1030018792821394)
             self.assertAlmostEqual(spin.pcs[tag], -0.41430390310999998)
             self.assertAlmostEqual(spin.pcs_bc[tag], -0.39723010845807194)
 
             # MC sims so next round can check if values change.
             if i == 0:
                 # Set some errors.
+                for interatom in interatomic_loop():
+                    interatom.rdc_err = {tag: 1.0}
                 for spin in spin_loop():
-                    spin.rdc_err = {tag: 1.0}
                     spin.pcs_err = {tag: 0.1}
 
                 # MC sims.
