@@ -308,13 +308,6 @@ def unit_vectors(ave=True):
             for i in range(len(spin1.pos)):
                 vector_list.append(spin2.pos[i] - spin1.pos[i])
 
-        # Average.
-        if ave:
-            ave_vector = zeros(3, float64)
-            for i in range(len(vector_list)):
-                ave_vector += vector_list[i]
-            vector_list = [ave_vector / len(vector_list)]
-
         # Unit vectors.
         for i in range(len(vector_list)):
             # Normalisation factor.
@@ -327,6 +320,13 @@ def unit_vectors(ave=True):
             # Calculate the normalised vector.
             else:
                 vector_list[i] = vector_list[i] / norm_factor
+
+        # Average.
+        if ave:
+            ave_vector = zeros(3, float64)
+            for i in range(len(vector_list)):
+                ave_vector = ave_vector + vector_list[i]
+            vector_list = [ave_vector / len(vector_list)]
 
         # Convert to a single vector if needed.
         if len(vector_list) == 1:
