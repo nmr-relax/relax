@@ -562,9 +562,9 @@ class N_state_model(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pcs_to_rdc.py')
 
         # Test the values.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].rdc_bc['A'], 4.1319413321530014)
-        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].rdc_bc['A'], -9.5802642470087989)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].rdc_bc['A'], -16.244078605100817)
+        self.assertAlmostEqual(cdp.interatomic[0].rdc_bc['A'], 4.1319413321530014)
+        self.assertAlmostEqual(cdp.interatomic[1].rdc_bc['A'], -9.5802642470087989)
+        self.assertAlmostEqual(cdp.interatomic[2].rdc_bc['A'], -16.244078605100817)
 
 
     def test_rdc_tensor(self):

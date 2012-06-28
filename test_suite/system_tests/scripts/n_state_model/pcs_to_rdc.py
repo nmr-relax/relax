@@ -2,7 +2,7 @@
 from os import sep
 
 # relax imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.interatomic import interatomic_loop
 from physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
 from status import Status; status = Status()
 
@@ -18,6 +18,7 @@ self._execute_uf(uf_name='structure.read_pdb', file='trunc_ubi_pcs.pdb', dir=str
 
 # Load the spins.
 self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
+self._execute_uf(uf_name='structure.load_spins', spin_id='@H')
 
 # Define the magnetic dipole-dipole relaxation interaction.
 self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
@@ -48,9 +49,9 @@ self._execute_uf(uf_name='n_state_model.number_of_states', N=1)
 # Set the RDC data.
 rdcs = [-1.390, -6.270, -9.650]
 i = 0
-for spin in spin_loop():
-    spin.rdc = {}
-    spin.rdc[tensor] = rdcs[i]
+for interatom in interatomic_loop():
+    interatom.rdc = {}
+    interatom.rdc[tensor] = rdcs[i]
     i += 1
 
 # Back calc.
