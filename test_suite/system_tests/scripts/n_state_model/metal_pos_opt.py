@@ -60,7 +60,8 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.6
 # Load the RDCs and PCSs.
 for i in xrange(len(align_list)):
     # The RDC.
-    self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
+    if i != 1:
+        self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
 
     # The PCS.
     self._execute_uf(uf_name='pcs.read', align_id=align_list[i], file='missing_pcs_%i' % i, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=None, spin_name_col=5, data_col=6, error_col=None)
