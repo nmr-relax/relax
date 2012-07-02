@@ -142,7 +142,7 @@ def create_table(label):
         col_wrap = [True] * num_cols
 
         # Loop.
-        while True:
+        while 1:
             # The average column width.
             ave_width = free_space_wrap / num_cols_wrap
 

@@ -33,6 +33,7 @@ from wx.lib import buttons
 from gui import paths
 from gui.fonts import font
 from gui.input_elements.value import Value
+from gui.misc import bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
 
@@ -191,7 +192,7 @@ class New_analysis_page(Wiz_page):
         sizer2.AddSpacer(30)
 
         # Add the graphics.
-        self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
+        self.image = wx.StaticBitmap(self, -1, bitmap_setup(self.image_path))
         sizer2.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # Nest the sizers.

@@ -42,7 +42,7 @@ from gui.message import Missing_data
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.input_elements.value import Value
-from gui.misc import add_border
+from gui.misc import add_border, bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
@@ -236,7 +236,7 @@ class Export_bmrb_window(wx.Frame):
         sub_sizer.AddStretchSpacer(3)
 
         # Add the BMRB logo (left side).
-        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(IMAGE_PATH+"bmrb_100x100.png", wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, bitmap_setup(IMAGE_PATH+"bmrb_100x100.png"))
         sub_sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # Spacing.
@@ -267,7 +267,7 @@ class Export_bmrb_window(wx.Frame):
         sub_sizer.AddStretchSpacer()
 
         # Add the BMRB logo (right side).
-        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(IMAGE_PATH+"bmrb_100x100.png", wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, bitmap_setup(IMAGE_PATH+"bmrb_100x100.png"))
         sub_sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # Right spacing.

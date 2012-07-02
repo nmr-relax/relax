@@ -53,3 +53,4 @@ uf.backend = temperature.set
 uf.menu_text = "&temperature"
 uf.gui_icon = "oxygen.status.weather-clear"
 uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-snow-scattered-night.png'
