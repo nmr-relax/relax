@@ -37,7 +37,7 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, open_file, protected_exec
+from gui.misc import add_border, bitmap_setup, open_file, protected_exec
 from gui import paths
 from gui.string_conv import bool_to_gui, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 
@@ -202,7 +202,7 @@ class Wiz_page(wx.Panel):
 
         # Add the graphics.
         if self.image_path:
-            self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
+            self.image = wx.StaticBitmap(self, -1, bitmap_setup(self.image_path))
             sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # A spacer.
