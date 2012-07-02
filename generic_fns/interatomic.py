@@ -59,9 +59,9 @@ def copy(pipe_from=None, pipe_to=None, verbose=True):
     pipes.test(pipe_from)
     pipes.test(pipe_to)
 
-    # Test if pipe_from contains interatomic data.
+    # Test if pipe_from contains interatomic data (skipping the rest of the function if it is missing).
     if not exists_data(pipe_from):
-        raise RelaxNoInteratomError
+        return
 
     # Test if pipe_to contains interatomic data.
     if exists_data(pipe_to):
