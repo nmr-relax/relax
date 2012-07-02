@@ -17,11 +17,13 @@ pipe.create('vectors', 'mf')
 # Load the PDB file.
 structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path+'structures')
 
-# Load the backbone amide 15N spins from the structure.
+# Load the backbone amide 15N and 1H spins from the structure.
 structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@H')
 
 # Set the XH vectors.
-structure.vectors()
+dipole_pair.define('@N', '@H')
+dipole_pair.unit_vectors()
 
 # Create the PDB file.
 structure.create_vector_dist(file='devnull', force=True)
