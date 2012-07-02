@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -40,11 +40,11 @@ from string import replace
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
-from generic_fns import pipes
 
 
 # Name of the results file.
 RESULTS_FILE = 'final'
+DIR = None
 
 
 class Latex:
@@ -55,7 +55,7 @@ class Latex:
         pipe.create(RESULTS_FILE, 'mf')
 
         # Load the model-free results.
-        results.read(RESULTS_FILE, dir=None)
+        results.read(RESULTS_FILE, dir=DIR)
 
         # Open the file.
         self.file = open('results.tex', 'w')

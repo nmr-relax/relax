@@ -722,6 +722,91 @@ def test_binary(binary):
         raise RelaxNoInPathError(binary)
 
 
+def write_data(out=None, headings=None, data=None, sep=None):
+    """Write out a table of the data to the given file handle.
+
+    @keyword out:       The file handle to write to.
+    @type out:          file handle
+    @keyword headings:  The optional headings to print out.
+    @type headings:     list of str or None
+    @keyword data:      The data to print out.
+    @type data:         list of list of str
+    @keyword sep:       The column separator which, if None, defaults to whitespace.
+    @type sep:          str or None
+    """
+
+    # The number of rows and columns.
+    num_rows = len(data)
+    num_cols = len(data[0])
+
+    # Pretty whitespace formatting.
+    if sep == None:
+        # Determine the widths for the headings.
+        widths = []
+        for j in range(num_cols):
+            if headings != None:
+                if j == 0:
+                    widths.append(len(headings[j]) + 2)
+                else:
+                    widths.append(len(headings[j]))
+
+            # No headings.
+            else:
+                widths.append(0)
+
+        # Determine the maximum column widths for nice whitespace formatting.
+        for i in range(num_rows):
+            for j in range(num_cols):
+                size = len(data[i][j])
+                if size > widths[j]:
+                    widths[j] = size
+
+        # Convert to format strings.
+        formats = []
+        for j in range(num_cols):
+            formats.append("%%-%ss" % (widths[j] + 4))
+
+        # The headings.
+        if headings != None:
+            out.write(formats[0] % ("# " + headings[0]))
+            for j in range(1, num_cols):
+                out.write(formats[j] % headings[j])
+            out.write('\n')
+
+        # The data.
+        for i in range(num_rows):
+            # The row.
+            for j in range(num_cols):
+                out.write(formats[j] % data[i][j])
+            out.write('\n')
+
+    # Non-whitespace formatting.
+    else:
+        # The headings.
+        if headings != None:
+            out.write('#')
+            for j in range(num_cols):
+                # The column separator.
+                if j > 0:
+                    out.write(sep)
+
+                # The heading.
+                out.write(headings[j])
+            out.write('\n')
+
+        # The data.
+        for i in range(num_rows):
+            # The row.
+            for j in range(num_cols):
+                # The column separator.
+                if j > 0:
+                    out.write(sep)
+
+                # The heading.
+                out.write(data[i][j])
+            out.write('\n')
+
+
 def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None):
     """Generator function for reading the spin specific data from file.
 
@@ -833,12 +918,13 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
 
 
     # Init.
-    file_data = [[]]
+    headings = []
+    file_data = []
 
     # Headers - the spin ID info.
     for i in range(len(args)):
         if args[i]:
-            file_data[-1].append(arg_names[i])
+            headings.append(arg_names[i])
 
     # Headers - the data.
     if data:
@@ -847,32 +933,35 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
             # Loop over the list.
             for i in range(len(data[0])):
                 # The data.
-                file_data[-1].append(data_name[i])
+                headings.append(data_name[i])
 
                 # The error.
                 if error:
-                    file_data[-1].append(error_name[i])
+                    headings.append(error_name[i])
 
         # Simple list.
         else:
             # The data.
-            file_data[-1].append(data_name)
+            headings.append(data_name)
 
             # The error.
             if error:
-                file_data[-1].append(error_name)
+                headings.append(error_name)
 
     # Headers - only errors.
     elif error:
         # List of lists.
         if isinstance(error[0], list):
             for i in range(len(error[0])):
-                file_data[-1].append(error_name[i])
+                headings.append(error_name[i])
 
         # Simple list.
         else:
-            file_data[-1].append(error_name)
+            headings.append(error_name)
 
+    # No headings.
+    if headings == []:
+        headings = None
 
     # Spin specific data.
     for spin_index in range(N):
@@ -921,73 +1010,14 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
                 file_data[-1].append(repr(error[spin_index]))
 
     # No data to write, so do nothing!
-    if file_data == [[]]:
+    if file_data == [] or file_data == [[]]:
         return
 
     # Open the file for writing.
     file = open_write_file(file_name=file, dir=dir, force=force)
 
-    # The number of rows and columns.
-    num_rows = len(file_data)
-    num_cols = len(file_data[0])
-
-    # Pretty whitespace formatting.
-    if sep == None:
-        # Determine the maximum column widths for nice whitespace formatting.
-        widths = []
-        for j in range(num_cols):
-            if j == 0:
-                widths.append(len(file_data[0][j]) + 2)
-            else:
-                widths.append(len(file_data[0][j]))
-        for i in range(num_rows):
-            for j in range(num_cols):
-                size = len(file_data[i][j])
-                if size > widths[j]:
-                    widths[j] = size
-
-        # Convert to format strings.
-        formats = []
-        for j in range(num_cols):
-            formats.append("%%-%ss" % (widths[j] + 4))
-
-        # The headings.
-        file.write(formats[0] % ("# " + file_data[0][0]))
-        for j in range(1, num_cols):
-            file.write(formats[j] % file_data[0][j])
-        file.write('\n')
-
-        # The data.
-        for i in range(1, num_rows):
-            # The row.
-            for j in range(num_cols):
-                file.write(formats[j] % file_data[i][j])
-            file.write('\n')
-
-    # Non-whitespace formatting.
-    else:
-        # The headings.
-        file.write('#')
-        for j in range(num_cols):
-            # The column separator.
-            if j > 0:
-                file.write(sep)
-
-            # The heading.
-            file.write(file_data[0][j])
-        file.write('\n')
-
-        # The data.
-        for i in range(1, num_rows):
-            # The row.
-            for j in range(num_cols):
-                # The column separator.
-                if j > 0:
-                    file.write(sep)
-
-                # The heading.
-                file.write(file_data[i][j])
-            file.write('\n')
+    # Write out the file data.
+    write_data(out=file, headings=headings, data=file_data, sep=sep)
 
 
 

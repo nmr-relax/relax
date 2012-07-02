@@ -447,6 +447,10 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
             spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
             spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
+            # No data or errors.
+            if not hasattr(spin_from, 'ri_data') and not hasattr(spin_from, 'ri_data_err'):
+                continue
+
             # Initialise the spin data if necessary.
             if not hasattr(spin_to, 'ri_data'):
                 spin_to.ri_data = {}
@@ -812,10 +816,6 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     cdp.ri_ids.append(ri_id)
     cdp.ri_type[ri_id] = ri_type
     cdp.frq[ri_id] = frq
-
-    # Generate the sequence.
-    if gen_seq:
-        bmrb.generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
 
     # Loop over the spin data.
     for i in range(N):
