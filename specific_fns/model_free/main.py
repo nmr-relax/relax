@@ -466,6 +466,9 @@ class Model_free_main:
                     warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                     return
 
+        # Execute the over-fit deselection.
+        self.overfit_deselect()
+
         # Get the relaxation value from the minimise function.
         value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_id, ri_type, frq))
 
