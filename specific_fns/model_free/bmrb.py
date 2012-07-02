@@ -33,6 +33,7 @@ from warnings import warn
 if dep_check.bmrblib_module:
     import bmrblib
 from generic_fns import bmrb, diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
+from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
 from relax_warnings import RelaxWarning
@@ -438,6 +439,11 @@ class Bmrb:
 
         # Store the spin specific data in lists for later use.
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+            # Skip the protons.
+            if spin.name == 'H':
+                warn(RelaxWarning("Skipping the proton spin '%s'." % spin_id))
+                continue
+
             # Check the data for None (not allowed in BMRB!).
             if res_num == None:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
@@ -463,7 +469,7 @@ class Bmrb:
                 csa_list.append(None)
 
             # Interatomic distances.
-            interatoms = return_interatom(spin_id)
+            interatoms = return_interatom_list(spin_id)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -491,7 +497,10 @@ class Bmrb:
                 element_list.append(None)
 
             # Diffusion tensor.
-            local_tm_list.append(spin.local_tm)
+            if hasattr(spin, 'local_tm'):
+                local_tm_list.append(spin.local_tm)
+            else:
+                local_tm_list.append(None)
             if hasattr(spin, 'local_tm_err'):
                 local_tm_err_list.append(spin.local_tm_err)
             else:
