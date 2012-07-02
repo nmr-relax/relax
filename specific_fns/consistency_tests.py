@@ -35,6 +35,8 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
 import specific_fns
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 
 class Consistency_tests(API_base, API_common):
@@ -214,7 +216,6 @@ class Consistency_tests(API_base, API_common):
                 spin.f_r2_sim.append(f_r2)
 
 
-
     def data_init(self, data_cont, sim=False):
         """Initialise the data structures.
 
@@ -240,30 +241,17 @@ class Consistency_tests(API_base, API_common):
                 setattr(data_cont, name, None)
 
 
-    default_value_doc = """
-        Consistency testing default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        These default values are found in the file 'physical_constants.py'.
-
-         ______________________________________________________________________________________
-        |                                       |                    |                         |
-        | Data type                             | Object name        | Value                   |
-        |_______________________________________|____________________|_________________________|
-        |                                       |                    |                         |
-        | Bond length                           | 'r'                | 1.02 * 1e-10            |
-        |                                       |                    |                         |
-        | CSA                                   | 'csa'              | -172 * 1e-6             |
-        |                                       |                    |                         |
-        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                   |
-        |                                       |                    |                         |
-        | Proton type                           | 'proton_type'      | '1H'                    |
-        |                                       |                    |                         |
-        | Angle Theta                           | 'orientation'      | 15.7                    |
-        |                                       |                    |                         |
-        | Correlation time                      | 'tc'               | 13 * 1e-9               |
-        |_______________________________________|____________________|_________________________|
-
-        """
+    default_value_doc = Desc_container("Consistency testing default values")
+    default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
+    _table = uf_tables.add_table(label="table: consistency testing default values", caption="Consistency testing default values.")
+    _table.add_headings(["Data type", "Object name", "Value"])
+    _table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
+    _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
+    _table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
+    _table.add_row(["Angle theta", "'proton_type'", "'1H'"])
+    _table.add_row(["Proton type", "'orientation'", "15.7"])
+    _table.add_row(["Correlation time", "'tc'", "13 * 1e-9"])
+    default_value_doc.add_table(_table.label)
 
 
     def overfit_deselect(self):
@@ -301,45 +289,23 @@ class Consistency_tests(API_base, API_common):
                     spin.select = False
 
 
-    return_data_name_doc = """
-        Consistency testing data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-         ___________________________________________
-        |                       |                  |
-        | Data type             | Object name      |
-        |_______________________|__________________|
-        |                       |                  |
-        | J(0)                  | 'j0'             |
-        |                       |                  |
-        | F_eta                 | 'f_eta'          |
-        |                       |                  |
-        | F_R2                  | 'f_r2'           |
-        |                       |                  |
-        | Bond length           | 'r'              |
-        |                       |                  |
-        | CSA                   | 'csa'            |
-        |                       |                  |
-        | Heteronucleus type    | 'heteronuc_type' |
-        |                       |                  |
-        | Proton type           | 'proton_type'    |
-        |                       |                  |
-        | Angle Theta           | 'orientation'    |
-        |                       |                  |
-        | Correlation time      | 'tc'             |
-        |_______________________|__________________|
-        """
+    return_data_name_doc = Desc_container("Consistency testing data type string matching patterns")
+    _table = uf_tables.add_table(label="table: Consistency testing data types", caption="Consistency testing data type string matching patterns.")
+    _table.add_headings(["Data type", "Object name"])
+    _table.add_row(["J(0)", "'j0'"])
+    _table.add_row(["F_eta", "'f_eta'"])
+    _table.add_row(["F_R2", "'f_r2'"])
+    _table.add_row(["Bond length", "'r'"])
+    _table.add_row(["CSA", "'csa'"])
+    _table.add_row(["Heteronucleus type", "'heteronuc_type'"])
+    _table.add_row(["Proton type", "'proton_type'"])
+    _table.add_row(["Angle theta", "'orientation'"])
+    _table.add_row(["Correlation time", "'tc'"])
+    return_data_name_doc.add_table(_table.label)
 
 
-    set_doc = """
-        Consistency testing set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        In consistency testing, only four values can be set, the bond length, CSA, angle
-        Theta ('orientation') and correlation time values. These must be set prior to the
-        calculation of consistency functions.
-
-        """
+    set_doc = Desc_container("Consistency testing set details")
+    set_doc.add_paragraph("In consistency testing, only four values can be set, the bond length, CSA, angle Theta ('orientation') and correlation time values. These must be set prior to the calculation of consistency functions.")
 
 
     def set_error(self, model_info, index, error):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2011 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -32,6 +32,7 @@ from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
+from relax_errors import RelaxError
 from status import Status; status = Status()
 
 
@@ -182,6 +183,18 @@ class Relax_fit(SystemTestCase):
         self.assertEqual(len(lines[index]), 3)
         self.assertNotEqual(float(lines[index][2]), 0.0)
         self.assertNotEqual(float(lines[index+1][2]), 0.0)
+
+
+    def test_bug_19887_curvefit_fail(self):
+        """Test for the failure of relaxation curve-fitting, replicating bug #19887."""
+
+        # Execute the script.
+        try:
+            self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'bug_19887_curvefit_fail.py')
+
+        # A RelaxError is expected (but assertRaises() does not work with the script_exec method).
+        except RelaxError:
+            pass
 
 
     def test_curve_fitting_height_exp_2param_neg(self):

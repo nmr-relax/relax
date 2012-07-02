@@ -1,4 +1,4 @@
-* Compile the C modules for the major line (1.3) by typing
+* Compile the C modules for the major line (trunk) by typing
 
 $ scons
 
@@ -8,15 +8,15 @@ and then run the test suite on all possible architectures to make sure the relea
 
 * Make a copy of the current head to the tags directory using a command such as:
 
-$ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/1.3 svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.3.1
+$ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
-In the commit message file 'svn_msg', have a header line which says 'relax version 1.3.1.', followed by a short description of the release.
+In the commit message file 'svn_msg', have a header line which says 'relax version 2.0.1.', followed by a short description of the release.
 
 
 
 * Checkout the tagged version with:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.3.1
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
 
 
@@ -63,22 +63,22 @@ $ scons binary_dist key=xxxxx
 
 If the key is not supplied, or incorrectly supplied, the distribution file will be created but not signed.  To sign the file later, type:
 
-$ gpg --detach-sign --default-key xxxxx relax-1.3.1.GNU-Linux.x86_64.tar.bz2
+$ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
 
 
 
 * Build other distribution packages by checking out the tag and bundling minfx and bmrblib.:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.3.1
-$ cd 1.3.1
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
+$ cd 2.0.1
 $ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/trunk/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/trunk/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
-$ svn co http://svn.gna.org/svn/relax/tags/1.3.1
-$ cd 1.3.1
+$ svn co http://svn.gna.org/svn/relax/tags/2.0.1
+$ cd 2.0.1
 $ svn co http://svn.gna.org/svn/minfx/trunk/minfx
 $ svn co http://svn.gna.org/svn/bmrblib/trunk/bmrblib
 $ scons binary_dist

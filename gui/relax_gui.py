@@ -36,6 +36,7 @@ import webbrowser
 import wx
 
 # relax module imports.
+import ansi
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from info import Info_box
@@ -60,7 +61,7 @@ from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
-from gui.misc import gui_raise, open_file, protected_exec
+from gui.misc import bitmap_setup, gui_raise, open_file, protected_exec
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
@@ -256,7 +257,7 @@ class Main(wx.Frame):
         self.SetSizer(sizer)
 
         # The relax icon.
-        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
+        image = wx.StaticBitmap(self, -1, bitmap_setup(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png'))
 
         # Add the icon to the main spacer with spacing.
         sizer.AddStretchSpacer()
@@ -435,16 +436,17 @@ class Main(wx.Frame):
 
             # A printout.
             text = "\n\nThank you for citing:\n"
-            text = text + "\n\nrelaxGUI\n========\n\n"
+            text += "\n\n%srelaxGUI%s\n\n" % (ansi.relax_prompt, ansi.end)
             for line in wrap(info.bib['Bieri11'].cite_short(), width):
-                text = text + line + '\n'
-            text = text + "\n\n\nrelax\n=====\n\n"
+                text += line + '\n'
+            text += "\n\n\n%srelax%s\n\n" % (ansi.relax_prompt, ansi.end)
             for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), width):
-                text = text + line + '\n'
-            text = text + '\n'
+                text += line + '\n'
+            text += '\n'
             for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
-                text = text + line + '\n'
-            text = text + '\n'
+                text += line + '\n'
+            text += '\n'
+            text += '\n'
             sys.stdout.write(text)
 
             # Remove the Mac OS X task bar icon.
@@ -581,6 +583,9 @@ class Main(wx.Frame):
 
         # Unset the test suite flag.
         self.test_suite_flag = False
+
+        # Set the controller main gauge to 100%.
+        wx.CallAfter(self.controller.main_gauge.SetValue, 100)
 
 
     def run_test_suite_gui(self, event=None):

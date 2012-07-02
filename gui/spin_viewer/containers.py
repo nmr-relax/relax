@@ -34,6 +34,7 @@ from generic_fns.mol_res_spin import return_spin
 
 # GUI module imports.
 from gui import paths
+from gui.misc import bitmap_setup
 from gui.string_conv import str_to_gui
 
 
@@ -266,7 +267,7 @@ class Molecule(Container_base):
             path = paths.WIZARD_IMAGE_PATH + 'molecule.png'
         else:
             path = paths.WIZARD_IMAGE_PATH + 'molecule_grey.png'
-        image = wx.StaticBitmap(self.parent, -1, wx.Bitmap(path, wx.BITMAP_TYPE_ANY))
+        image = wx.StaticBitmap(self.parent, -1, bitmap_setup(path))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Return the sizer.
@@ -358,7 +359,7 @@ class Residue(Container_base):
             path = paths.WIZARD_IMAGE_PATH + 'residue.png'
         else:
             path = paths.WIZARD_IMAGE_PATH + 'residue_grey.png'
-        image = wx.StaticBitmap(self.parent, -1, wx.Bitmap(path, wx.BITMAP_TYPE_ANY))
+        image = wx.StaticBitmap(self.parent, -1, bitmap_setup(path))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Return the sizer.
@@ -464,7 +465,7 @@ class Spin(Container_base):
             path = paths.WIZARD_IMAGE_PATH + 'spin.png'
         else:
             path = paths.WIZARD_IMAGE_PATH + 'spin_grey.png'
-        image = wx.StaticBitmap(self.parent, -1, wx.Bitmap(path, wx.BITMAP_TYPE_ANY))
+        image = wx.StaticBitmap(self.parent, -1, bitmap_setup(path))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Return the sizer.
