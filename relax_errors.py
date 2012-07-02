@@ -302,8 +302,11 @@ class RelaxMultiVectorError(BaseError):
 
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
-    def __init__(self, pipe):
-        self.text = "The unit XH bond vectors for the data pipe " + repr(pipe) + " have not been calculated."
+    def __init__(self, pipe=None):
+        if pipe:
+            self.text = "No unit vectors have been calculated for the data pipe '%s'" % pipe
+        else:
+            self.text = "No unit vectors have been calculated."
 
 # No chains within the PDB file.
 class RelaxNoPdbChainError(BaseError):
