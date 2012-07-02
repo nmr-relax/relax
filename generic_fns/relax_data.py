@@ -744,7 +744,7 @@ def num_frq():
     return count
 
 
-def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, spin_id=None, gen_seq=False):
+def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, spin_id=None, gen_seq=False, verbose=True):
     """Pack the relaxation data into the data pipe and spin containers.
 
     The values, errors, and spin_ids arguments must be lists of equal length or None.  Each element i corresponds to a unique spin.
@@ -773,6 +773,8 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     @type spin_names:       None or list of str
     @keyword gen_seq:       A flag which if True will cause the molecule, residue, and spin sequence data to be generated.
     @type gen_seq:          bool
+    @keyword verbose:       A flag which if True will cause all relaxation data loaded to be printed out.
+    @type verbose:          bool
     """
 
     # The number of spins.
@@ -885,7 +887,9 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             data.append([new_id, repr(values[i]), repr(errors[i])])
 
     # Print out.
-    write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
+    if verbose:
+        print("\nThe following %s MHz %s relaxation data with the ID '%s' has been loaded into the relax data store:\n" % (frq/1e6, ri_type, ri_id))
+        write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
 
 
 def peak_intensity_type(ri_id=None, type=None):
