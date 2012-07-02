@@ -68,7 +68,6 @@ def attach_protons():
             continue
 
         # Store the sequence info.
-        print spin
         mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)
