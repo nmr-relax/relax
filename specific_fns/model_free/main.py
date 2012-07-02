@@ -228,7 +228,7 @@ class Model_free_main:
                     param_vector.append(cdp.diff_tensor.beta_sim[sim_index])
                     param_vector.append(cdp.diff_tensor.gamma_sim[sim_index])
 
-        # Model-free parameters (residue specific parameters).
+        # Model-free parameters (spin specific parameters).
         if model_type != 'diff':
             # The loop.
             if spin:
@@ -238,8 +238,12 @@ class Model_free_main:
 
             # Loop over the spins.
             for spin in loop:
-                # Skip deselected residues.
+                # Skip deselected spins.
                 if not spin.select:
+                    continue
+
+                # Skip spins with no parameters.
+                if not hasattr(spin, 'params'):
                     continue
 
                 # Loop over the model-free parameters.
