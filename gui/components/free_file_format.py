@@ -34,6 +34,7 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.input_elements.value import Value
 from gui.message import Question
+from gui.misc import bitmap_setup
 from gui import paths
 from gui.string_conv import gui_to_int, int_to_gui, str_to_gui
 from gui.wizard import Wiz_page
@@ -307,7 +308,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
         self.main_sizer.AddStretchSpacer()
 
         # The relax logo.
-        bmp = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        bmp = wx.StaticBitmap(self, -1, bitmap_setup(paths.IMAGE_PATH+'relax.gif'))
         self.main_sizer.Add(bmp, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
         self.main_sizer.AddStretchSpacer()
 

@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import copy_residue, create_residue
+from generic_fns.mol_res_spin import copy_residue, create_residue, metadata_update
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxMultiMolIDError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.base_classes import UnitTestCase
@@ -70,6 +70,9 @@ class Molecule_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[0].num = 222
         dp.mol[0].res[0].spin[0].x = 2
 
+        # Update the metadata.
+        metadata_update()
+
 
     def test_copy_molecule_between_pipes(self):
         """Test the copying of the molecule data between different data pipes.
@@ -88,6 +91,9 @@ class Molecule_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[0].num = 111
         dp.mol[0].res[0].spin[0].x = 1
 
+        # Update the metadata.
+        metadata_update()
+
         # Copy the molecule to the second data pipe.
         self.molecule_fns.copy(mol_from='#Old mol', pipe_to='test')
         self.molecule_fns.copy(pipe_from='orig', mol_from='#Old mol', pipe_to='test', mol_to='#New mol')
@@ -95,6 +101,9 @@ class Molecule_base_class(UnitTestCase):
         # Change the first molecule's data.
         dp.mol[0].res[0].spin[0].num = 222
         dp.mol[0].res[0].spin[0].x = 2
+
+        # Update the metadata.
+        metadata_update()
 
         # Test the original molecule.
         self.assertEqual(dp.mol[0].name, 'Old mol')
@@ -134,6 +143,9 @@ class Molecule_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[0].num = 111
         dp.mol[0].res[0].spin[0].x = 1
 
+        # Update the metadata.
+        metadata_update()
+
         # Copy the molecule to the second data pipe.
         self.assertRaises(RelaxNoPipeError, self.molecule_fns.copy, mol_from='#Old mol', pipe_to='test2')
 
@@ -154,6 +166,9 @@ class Molecule_base_class(UnitTestCase):
         dp.mol[0].res[0].spin[0].num = 111
         dp.mol[0].res[0].spin[0].x = 1
 
+        # Update the metadata.
+        metadata_update()
+
         # Copy the molecule a few times.
         self.molecule_fns.copy(mol_from='#Old mol', mol_to='#2')
         self.molecule_fns.copy(mol_from='#Old mol', pipe_to='orig', mol_to='#3')
@@ -161,6 +176,9 @@ class Molecule_base_class(UnitTestCase):
         # Change the first molecule's data.
         dp.mol[0].res[0].spin[0].num = 222
         dp.mol[0].res[0].spin[0].x = 2
+
+        # Update the metadata.
+        metadata_update()
 
         # Copy the molecule once more.
         self.molecule_fns.copy(mol_from='#Old mol', mol_to='#4')
@@ -173,21 +191,21 @@ class Molecule_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[0].spin[0].x, 2)
 
         # Test the new molecule 2.
-        self.assertEqual(dp.mol[1].name, 2)
+        self.assertEqual(dp.mol[1].name, '2')
         self.assertEqual(dp.mol[1].res[0].num, 1)
         self.assertEqual(dp.mol[1].res[0].name, 'Ala')
         self.assertEqual(dp.mol[1].res[0].spin[0].num, 111)
         self.assertEqual(dp.mol[1].res[0].spin[0].x, 1)
 
         # Test the new molecule 3.
-        self.assertEqual(dp.mol[2].name, 3)
+        self.assertEqual(dp.mol[2].name, '3')
         self.assertEqual(dp.mol[2].res[0].num, 1)
         self.assertEqual(dp.mol[2].res[0].name, 'Ala')
         self.assertEqual(dp.mol[2].res[0].spin[0].num, 111)
         self.assertEqual(dp.mol[2].res[0].spin[0].x, 1)
 
         # Test the new molecule 4.
-        self.assertEqual(dp.mol[3].name, 4)
+        self.assertEqual(dp.mol[3].name, '4')
         self.assertEqual(dp.mol[3].res[0].num, 1)
         self.assertEqual(dp.mol[3].res[0].name, 'Ala')
         self.assertEqual(dp.mol[3].res[0].spin[0].num, 222)

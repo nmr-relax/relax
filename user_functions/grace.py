@@ -30,8 +30,9 @@ import wx
 from generic_fns import grace, minimise
 from graphics import WIZARD_IMAGE_PATH
 from prompt.doc_string import regexp_doc
-from specific_fns.model_free import Model_free
+from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.jw_mapping import Jw_mapping
+from specific_fns.model_free import Model_free
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -183,6 +184,7 @@ uf.desc.append(minimise.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Model_free.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

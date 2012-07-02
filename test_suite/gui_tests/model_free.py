@@ -106,12 +106,16 @@ class Mf(GuiTestCase):
         # Set the values, using the methods behind the buttons to set up the user functions with default values, and then manually executing the user function.
         analysis.value_set_csa()
         uf_store['value.set'].wizard._ok()
+        interpreter.flush()    # Required because of the asynchronous uf call.
         analysis.value_set_r()
         uf_store['value.set'].wizard._ok()
+        interpreter.flush()    # Required because of the asynchronous uf call.
         analysis.value_set_heteronuc_type()
         uf_store['value.set'].wizard._ok()
+        interpreter.flush()    # Required because of the asynchronous uf call.
         analysis.value_set_proton_type()
         uf_store['value.set'].wizard._ok()
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # The unit vector loading wizard.
         analysis.load_unit_vectors()
@@ -120,9 +124,11 @@ class Mf(GuiTestCase):
         page = analysis.vect_wizard.get_page(0)
         page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
         analysis.vect_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # The unit vectors.
         analysis.vect_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Select only the tm0 and tm1 local tm models.
         analysis.local_tm_model_field.select = [True, True, False, False, False, False, False, False, False, False]

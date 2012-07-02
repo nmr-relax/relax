@@ -387,6 +387,9 @@ class Relax_data_store(dict):
             if self.current_pipe in self.keys():
                 __builtin__.cdp = self[self.current_pipe]
 
+        # Finally update the molecule, residue, and spin metadata.
+        generic_fns.mol_res_spin.metadata_update()
+
 
     def to_xml(self, file, pipes=None):
         """Create a XML document representation of the current data pipe.
