@@ -140,6 +140,13 @@ class Relax_fit(SystemTestCase):
         self.assertNotEqual(float(lines[index+1][2]), 0.0)
 
 
+    def test_bug_19887_curvefit_fail(self):
+        """Test for the failure of relaxation curve-fitting, replicating bug #19887."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'bug_19887_curvefit_fail.py')
+
+
     def test_curve_fitting_height(self):
         """Test the relaxation curve fitting C modules."""
 
