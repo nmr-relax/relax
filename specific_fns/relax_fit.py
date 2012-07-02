@@ -824,11 +824,17 @@ class Relax_fit(API_base, API_common):
             if not hasattr(spin, 'intensities'):
                 warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
                 spin.select = False
+                continue
 
             # Require 3 or more data points.
             elif len(spin.intensities) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data, 3 or more data points are required'))
                 spin.select = False
+                continue
+
+            # Check that the number of relaxation times is complete.
+            if len(spin.intensities) != len(cdp.relax_times):
+                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.spectrum_ids))
 
 
     def return_data(self, spin):
