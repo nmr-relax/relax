@@ -1809,10 +1809,14 @@ def index_molecule(mol_name=None):
     """Return the index of the molecule of the given name.
 
     @keyword mol_name:  The name of the molecule.
-    @type mol_name:     str
+    @type mol_name:     str or None
     @return:            The index of the molecule, if it exists.
     @rtype:             int or None
     """
+
+    # Single molecule and no name given.
+    if mol_name == None and len(cdp.mol) == 1:
+        return 0
 
     # Loop over the molecules.
     i = 0
