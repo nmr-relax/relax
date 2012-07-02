@@ -35,7 +35,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import bmrb
-from generic_fns.interatomic import create_interatom, return_interatom
+from generic_fns.interatomic import create_interatom, return_interatom, return_interatom_list
 from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
@@ -270,7 +270,7 @@ def bmrb_write(star):
             raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
         if spin.name == None:
             raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
-        if spin.heteronuc_type == None:
+        if spin.isotope == None:
             raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
         # The molecule/residue/spin info.
@@ -279,17 +279,26 @@ def bmrb_write(star):
         res_name_list.append(str(res_name))
         atom_name_list.append(str(spin.name))
 
+        # Interatomic info.
+        interatoms = return_interatom_list(spin_id)
+        if len(interatoms) == 0:
+            raise RelaxError("No interatomic interactions are defined for the spin '%s'." % spin_id)
+        if len(interatoms) > 1:
+            raise RelaxError("The BMRB only handles a signal interatomic interaction for the spin '%s'." % spin_id)
+
+        # Get the attached spin.
+        spin_attached = return_spin(interatoms[0].spin_id1)
+        if id(spin_attached) == id(spin):
+            spin_attached = return_spin(interatoms[0].spin_id2)
+
         # The attached atom info.
-        if hasattr(spin, 'attached_atom'):
-            attached_atom_name_list.append(str(spin.attached_atom))
-        elif hasattr(spin, 'attached_proton'):
-            attached_atom_name_list.append(str(spin.attached_proton))
+        if hasattr(spin_attached, 'name'):
+            attached_atom_name_list.append(str(spin_attached.name))
         else:
             attached_atom_name_list.append(None)
-
-        if hasattr(spin, 'proton_type'):
-            attached_element_list.append(element_from_isotope(spin.proton_type))
-            attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+        if hasattr(spin_attached, 'isotope'):
+            attached_element_list.append(element_from_isotope(spin_attached.isotope))
+            attached_isotope_list.append(str(number_from_isotope(spin_attached.isotope)))
         else:
             attached_element_list.append(None)
             attached_isotope_list.append(None)
@@ -306,7 +315,7 @@ def bmrb_write(star):
                 ri_data_err_list[i].append(None)
 
         # Other info.
-        isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+        isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
         element_list.append(spin.element)
 
     # Convert the molecule names into the entity IDs.
