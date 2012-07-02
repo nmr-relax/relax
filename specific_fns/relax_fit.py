@@ -707,7 +707,7 @@ class Relax_fit(API_base, API_common):
                 # The relaxation times.
                 times.append(cdp.relax_times[key])
 
-            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix.tolist())
+            setup(num_params=len(spin.params), num_times=len(values), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix.tolist())
 
 
             # Setup the minimisation algorithm when constraints are present.
