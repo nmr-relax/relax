@@ -1501,11 +1501,8 @@ class Model_free_main:
         # Sequence specific data.
         spin, spin_id = return_spin_from_index(model_info, pipe=pipe_from, return_spin_id=True)
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
-            # Get the spin container indices.
-            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_info, pipe=pipe_from)
-
             # Duplicate the spin specific data.
-            dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(spin)
+            dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index] = deepcopy(spin)
 
             # Duplicate the relaxation active spins which have not been copied yet.
             interatoms = interatomic.return_interatom_list(spin_id)
