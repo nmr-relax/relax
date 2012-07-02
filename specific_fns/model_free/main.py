@@ -1502,7 +1502,14 @@ class Model_free_main:
         spin, spin_id = return_spin_from_index(model_info, pipe=pipe_from, return_spin_id=True)
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Duplicate the spin specific data.
-            dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index] = deepcopy(spin)
+            for name in dir(spin):
+                # Skip special objects.
+                if search('^_', name):
+                    continue
+
+                # Duplicate the object.
+                new_obj = deepcopy(getattr(spin, name))
+                setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
 
             # Duplicate the relaxation active spins which have not been copied yet.
             interatoms = interatomic.return_interatom_list(spin_id)
