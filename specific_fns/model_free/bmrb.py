@@ -440,7 +440,7 @@ class Bmrb:
         # Store the spin specific data in lists for later use.
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
             # Skip the protons.
-            if spin.name == 'H':
+            if spin.name == 'H' or (hasattr(spin, 'element') and spin.element == 'H'):
                 warn(RelaxWarning("Skipping the proton spin '%s'." % spin_id))
                 continue
 
@@ -451,7 +451,7 @@ class Bmrb:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
             if spin.name == None:
                 raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
-            if spin.isotope == None:
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
                 raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
             if not hasattr(spin, 'element') or spin.element == None:
                 raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)

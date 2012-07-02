@@ -34,7 +34,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
-from generic_fns import bmrb
+from generic_fns import bmrb, dipole_pair
 from generic_fns.interatomic import create_interatom, return_interatom, return_interatom_list
 from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from generic_fns import pipes
@@ -175,7 +175,25 @@ def bmrb_read(star, sample_conditions=None):
         mol_names = bmrb.molecule_names(data, N)
 
         # Generate the sequence if needed.
-        bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
+        bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names, isotopes=data['isotope'], elements=data['atom_types'])
+
+        # The attached protons.
+        if data.has_key('atom_names_2'):
+            # Generate the proton spins.
+            bmrb.generate_sequence(N, spin_names=data['atom_names_2'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names, isotopes=data['isotope_2'], elements=data['atom_types_2'])
+
+            # Define the dipolar interaction.
+            for i in range(len(data['atom_names'])):
+                # The spin IDs.
+                spin_id1 = generate_spin_id(spin_name=data['atom_names'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
+                spin_id2 = generate_spin_id(spin_name=data['atom_names_2'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
+
+                # Check if the container exists.
+                if return_interatom(spin_id1=spin_id1, spin_id2=spin_id2):
+                    continue
+
+                # Define.
+                dipole_pair.define(spin_id1=spin_id1, spin_id2=spin_id2, verbose=False)
 
         # The data and error.
         vals = data['data']
@@ -212,7 +230,7 @@ def bmrb_read(star, sample_conditions=None):
                         errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
-        pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
+        pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True, verbose=False)
 
         # Store the temperature calibration and control.
         if data['temp_calibration']:
