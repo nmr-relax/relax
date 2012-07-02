@@ -315,7 +315,7 @@ def return_interatom_list(spin_id=None, pipe=None):
 
     # Find and append all containers.
     for i in range(len(dp.interatomic)):
-        if dp.interatomic[i].spin_id1 == spin_id or dp.interatomic[i].spin_id2 == spin_id:
+        if id_match(spin_id=spin_id, interatom=dp.interatomic[i], pipe=pipe) or id_match(spin_id=spin_id, interatom=dp.interatomic[i], pipe=pipe):
             interatoms.append(dp.interatomic[i])
 
     # Return the list of containers.
