@@ -221,7 +221,7 @@ class Relax_data_store(dict):
                                     spin.name = 'C'
 
                             # An attached proton - convert into a spin container.
-                            if hasattr(spin, 'attached_proton'):
+                            if hasattr(spin, 'attached_proton') and spin.attached_proton != None:
                                 # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
                                 h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.attached_proton)
                                 h_spin.select = False
