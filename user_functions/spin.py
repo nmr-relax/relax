@@ -59,8 +59,7 @@ uf.add_keyarg(
     desc_short = "source spin ID",
     desc = "The spin identifier string of the spin to copy the data from.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = get_spin_ids,
-    wiz_read_only = True
+    wiz_combo_iter = get_spin_ids
 )
 uf.add_keyarg(
     name = "pipe_to",
