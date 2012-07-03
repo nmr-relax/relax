@@ -125,7 +125,6 @@ uf.add_keyarg(
     desc = "The name of the residue to add the spin to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_residue_names,
-    wiz_read_only = True,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -135,7 +134,6 @@ uf.add_keyarg(
     desc = "The number of the residue to add the spin to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_residue_nums,
-    wiz_read_only = True,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -145,7 +143,6 @@ uf.add_keyarg(
     desc = "The name of the molecule to add the spin to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_molecule_names,
-    wiz_read_only = True,
     can_be_none = True
 )
 # Description.
