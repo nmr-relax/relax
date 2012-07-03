@@ -59,7 +59,7 @@ class Palmer(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
-        spin = return_spin(':0', pipe='m2')
+        spin = return_spin(':0@N', pipe='m2')
         if spin.te == 1.951*1e-12:
             compiler = 'gcc'    # Gnu gcc modelfree4 version.
         else:
@@ -68,7 +68,7 @@ class Palmer(SystemTestCase):
         # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
         params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
-        spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
+        spin_names = [':-2@N', ':-1@N', ':0@N']
         if compiler == 'gcc':
             s2 = [[0.869, 0.732, None], [0.869, 0.730, None], [0.715, 0.643, None]]
             te = [[None, None, None], [0.0, 1.951, None], [None, None, None]]    # Gnu gcc modelfree4 version.
@@ -182,9 +182,6 @@ class Palmer(SystemTestCase):
         chi2 = [[143.6773, 105.1767, 61.6684], [40.9055, 57.1562, 48.4927], [143.6773, 105.1767, 61.6684]]
 
         # Checks for model m1, m2, and m3 mfout file reading.
-        print ds['m1'].mol[0].res
-        print ds['m1'].mol[0].res[0]
-        print ds['m1'].mol[0].res[0].spin
         for model_index in xrange(3):
             print(("Model " + repr(models[model_index])))
             for spin_index in xrange(3):
