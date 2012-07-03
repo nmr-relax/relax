@@ -27,6 +27,7 @@ from numpy import float64, array, identity, transpose, zeros
 from re import match, search
 from string import replace, split
 import sys
+from types import MethodType
 from warnings import warn
 
 # relax module imports.
@@ -1504,7 +1505,14 @@ class Model_free_main:
             # Duplicate the spin specific data.
             for name in dir(spin):
                 # Skip special objects.
-                if search('^_', name):
+                if search('^__', name):
+                    continue
+
+                # Get the object.
+                obj = getattr(spin, name)
+
+                # Skip methods.
+                if isinstance(obj, MethodType):
                     continue
 
                 # Duplicate the object.
