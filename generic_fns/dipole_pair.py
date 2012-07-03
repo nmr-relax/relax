@@ -39,23 +39,32 @@ from relax_io import extract_data, write_data
 from relax_warnings import RelaxZeroVectorWarning
 
 
-def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
+def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=True):
     """Set up the magnetic dipole-dipole interaction.
 
     @keyword spin_id1:      The spin identifier string of the first spin of the pair.
     @type spin_id1:         str
     @keyword spin_id2:      The spin identifier string of the second spin of the pair.
     @type spin_id2:         str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
     @keyword direct_bond:   A flag specifying if the two spins are directly bonded.
     @type direct_bond:      bool
     @keyword verbose:       A flag which if True will result in printouts of the created interatomoic data containers.
     @type verbose:          bool
     """
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # Loop over both spin selections.
     ids = []
-    for spin1, mol_name1, res_num1, res_name1, id1 in spin_loop(spin_id1, full_info=True, return_id=True):
-        for spin2, mol_name2, res_num2, res_name2, id2 in spin_loop(spin_id2, full_info=True, return_id=True):
+    for spin1, mol_name1, res_num1, res_name1, id1 in spin_loop(spin_id1, pipe=pipe, full_info=True, return_id=True):
+        for spin2, mol_name2, res_num2, res_name2, id2 in spin_loop(spin_id2, pipe=pipe, full_info=True, return_id=True):
             # Directly bonded atoms.
             if direct_bond:
                 # Different molecules.
@@ -63,8 +72,8 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
                     continue
 
                 # From structural info.
-                if hasattr(cdp, 'structure') and cdp.structure.get_molecule(mol_name1, model=1):
-                    if not cdp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
+                if hasattr(dp, 'structure') and dp.structure.get_molecule(mol_name1, model=1):
+                    if not dp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
                         continue
 
                 # From the residue info.
@@ -89,11 +98,11 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
                         continue
 
             # Get the interatomic data object, if it exists.
-            interatom = return_interatom(id1, id2)
+            interatom = return_interatom(id1, id2, pipe=pipe)
 
             # Create the container if needed.
             if interatom == None:
-                interatom = create_interatom(spin_id1=id1, spin_id2=id2)
+                interatom = create_interatom(spin_id1=id1, spin_id2=id2, pipe=pipe)
 
             # Check that this has not already been set up.
             if interatom.dipole_pair:
