@@ -117,7 +117,7 @@ def define(spin_id1=None, spin_id2=None, direct_bond=False, verbose=True):
 
         # Report the problem.
         if count1 == 0 and count2 == 0:
-            raise RelaxError("Both spin IDs '%s' and '%s' match no spins." % (spin_id1, spin_id2))
+            raise RelaxError("Neither spin IDs '%s' and '%s' match any spins." % (spin_id1, spin_id2))
         elif count1 == 0:
             raise RelaxError("The spin ID '%s' matches no spins." % spin_id1)
         elif count2 == 0:
