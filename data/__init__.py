@@ -208,6 +208,9 @@ class Relax_data_store(dict):
                 for res in mol.res:
                     # Loop over the spins.
                     for spin in res.spin:
+                        # The current spin ID.
+                        spin_id = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
+
                         # The interatomic data container design.
                         if hasattr(spin, 'heteronuc_type'):
                             # Rename the nuclear isotope.
@@ -216,19 +219,29 @@ class Relax_data_store(dict):
                             # Name the spin if needed.
                             if spin.name == None:
                                 if search('N', spin.isotope):
-                                    spin.name = 'N'
+                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='N')
                                 elif search('C', spin.isotope):
-                                    spin.name = 'C'
+                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='C')
 
                             # An attached proton - convert into a spin container.
-                            if hasattr(spin, 'attached_proton') and spin.attached_proton != None:
-                                # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
-                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.attached_proton)
-                                h_spin.select = False
-                                h_spin.element = 'H'
-                                h_spin.isotope = '1H'
+                            if (hasattr(spin, 'attached_proton') and spin.attached_proton != None) or (hasattr(spin, 'proton_type') and spin.proton_type != None):
+                                # The proton name.
+                                if hasattr(spin, 'attached_proton') and spin.attached_proton != None:
+                                    proton_name = spin.attached_proton
+                                else:
+                                    proton_name = 'H'
+
+                                # The two spin IDs (newly regenerated due to the above renaming).
                                 spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
-                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name='H')
+                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
+
+                                # Create a new spin container for the proton.
+                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
+                                h_spin.select = False
+
+                                # Set up a dipole interaction between the two spins.
+                                generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H')
+                                generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H')
                                 generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False)
 
                                 # Get the interatomic data container.
