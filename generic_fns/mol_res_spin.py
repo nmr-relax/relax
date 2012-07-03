@@ -2185,22 +2185,31 @@ def name_residue(res_id, name=None, force=False):
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
-def name_spin(spin_id=None, name=None, force=False):
+def name_spin(spin_id=None, name=None, pipe=None, force=False):
     """Name the spins.
 
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @keyword name:      The new spin name.
     @type name:         str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
     @keyword force:     A flag which if True will cause the named spin to be renamed.
     @type force:        bool
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Rename the matching spins.
-        for spin, id in spin_loop(spin_id, return_id=True):
+        for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
             if spin.name and not force:
                 warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
             else:
@@ -2990,13 +2999,15 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
-def set_spin_element(spin_id=None, element=None, force=False):
+def set_spin_element(spin_id=None, element=None, pipe=None, force=False):
     """Set the element type of the spins.
 
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @keyword element:   The IUPAC element name.
     @type element:      str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
     @keyword force:     A flag which if True will cause the element to be changed.
     @type force:        bool
     """
@@ -3016,21 +3027,30 @@ def set_spin_element(spin_id=None, element=None, force=False):
     if element not in valid_names:
         raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
     # Set the element name for the matching spins.
-    for spin, id in spin_loop(spin_id, return_id=True):
+    for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
         if hasattr(spin, 'element') and spin.element and not force:
             warn(RelaxWarning("The element type of the spin '%s' is already set.  Set the force flag to True to rename." % id))
         else:
             spin.element = element
 
 
-def set_spin_isotope(spin_id=None, isotope=None, force=False):
+def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
     """Set the nuclear isotope type of the spins.
 
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @keyword isotope:   The nuclear isotope type.
     @type isotope:      str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
     @keyword force:     A flag which if True will cause the isotope type to be changed.
     @type force:        bool
     """
@@ -3053,8 +3073,15 @@ def set_spin_isotope(spin_id=None, isotope=None, force=False):
     if isotope not in supported_types:
         raise(RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope))
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
     # Set the isotope type for the matching spins.
-    for spin, id in spin_loop(spin_id, return_id=True):
+    for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
         if hasattr(spin, 'isotope') and spin.isotope and not force:
             warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
         else:
