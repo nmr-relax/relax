@@ -222,13 +222,26 @@ class SpinList(list):
 
 
     def add_item(self, spin_name=None, spin_num=None, select=True):
-        """Function for appending an empty container to the list."""
+        """Appending an empty container to the list.
+
+        @keyword spin_name: The name of the new spin.
+        @type spin_name:    str or None
+        @keyword spin_num:  The number of the new spin.
+        @type spin_num:     str or None
+        @keyword select:    The selection flag.
+        @type select:       bool
+        @return:            The new container.
+        @rtype:             SpinContainer instance
+        """
 
         # If no spin data exists, replace the empty first spin with this spin.
         if self.is_empty():
             self[0].num = spin_num
             self[0].name = spin_name
             self[0].select = select
+
+            # Return the container.
+            return self[0]
 
         # Otherwise append a new SpinContainer.
         else:
@@ -237,15 +250,18 @@ class SpinList(list):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
-                        raise RelaxError("The spin number '" + repr(spin_num) + "' already exists.")
+                        raise RelaxError("The spin number '%s' already exists." % spin_name)
 
                 # No spin numbers.
                 else:
                     if self[i].name == spin_name:
-                        raise RelaxError("The unnumbered spin name '" + repr(spin_name) + "' already exists.")
+                        raise RelaxError("The unnumbered spin name '%s' already exists." % spin_name)
 
             # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
+
+            # Return the container.
+            return self[-1]
 
 
     def is_empty(self):
@@ -636,66 +652,6 @@ class MoleculeContainer(Prototype):
         return text
 
 
-    def _back_compat_hook(self, file_version=None):
-        """Method for converting the old data structures to the new ones.
-
-        @keyword file_version:  The relax XML version of the XML file.
-        @type file_version:     int
-        """
-
-        # Loop over the residues.
-        for res in self.res:
-            # Loop over the spins.
-            for spin in res.spin:
-                # The interatomic data container design.
-                if hasattr(spin, 'heteronuc_type'):
-                    # Rename the nuclear isotope.
-                    spin.isotope = spin.heteronuc_type
-
-                    # Name the spin if needed.
-                    if spin.name == None:
-                        if search('N', spin.isotope):
-                            spin.name = 'N'
-                        elif search('C', spin.isotope):
-                            spin.name = 'C'
-
-                    # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
-                    h_spin = generic_fns.mol_res_spin.create_spin(mol_name=self.name, res_num=res.num, res_name=res.name, spin_name='H')
-                    h_spin.select = False
-                    h_spin.element = 'H'
-                    h_spin.isotope = '1H'
-                    spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=self.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
-                    spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=self.name, res_num=res.num, res_name=res.name, spin_name='H')
-                    generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False)
-
-                    # Get the interatomic data container.
-                    interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
-
-                    # Set the interatomic distance.
-                    if hasattr(spin, 'r'):
-                        interatom.r = spin.r
-
-                    # Set the interatomic unit vectors.
-                    if hasattr(spin, 'xh_vect'):
-                        interatom.vector = spin.xh_vect
-
-                # Delete the old structures.
-                if hasattr(spin, 'heteronuc_type'):
-                    del spin.heteronuc_type
-                if hasattr(spin, 'proton_type'):
-                    del spin.proton_type
-                if hasattr(spin, 'attached_proton'):
-                    del spin.attached_proton
-                if hasattr(spin, 'r'):
-                    del spin.r
-                if hasattr(spin, 'r_err'):
-                    del spin.r_err
-                if hasattr(spin, 'r_sim'):
-                    del spin.r_sim
-                if hasattr(spin, 'xh_vect'):
-                    del spin.xh_vect
-
-
     def is_empty(self):
         """Method for testing if this MoleculeContainer object is empty.
 
@@ -825,9 +781,6 @@ class MoleculeList(list):
 
             # Recreate the residue data structures for the current molecule.
             self[-1].res.from_xml(res_nodes, file_version=file_version)
-
-            # Backwards compatibility transformations.
-            self[-1]._back_compat_hook(file_version)
 
 
     def to_xml(self, doc, element):

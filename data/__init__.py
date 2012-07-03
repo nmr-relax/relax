@@ -188,6 +188,77 @@ class Relax_data_store(dict):
         status.observers.pipe_alteration.notify()
 
 
+    def _back_compat_hook(self, file_version=None, pipes=None):
+        """Method for converting the old data structures to the new ones.
+
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
+        @keyword pipes:         The list of new pipe names to update.
+        @type pipes:            list of str
+        """
+
+        # Loop over the new data pipes.
+        for pipe_name in pipes:
+            # The data pipe object.
+            dp = self[pipe_name]
+
+            # Convert the molecule-residue-spin data.
+            for mol in dp.mol:
+                # Loop over the residues.
+                for res in mol.res:
+                    # Loop over the spins.
+                    for spin in res.spin:
+                        # The interatomic data container design.
+                        if hasattr(spin, 'heteronuc_type'):
+                            # Rename the nuclear isotope.
+                            spin.isotope = spin.heteronuc_type
+
+                            # Name the spin if needed.
+                            if spin.name == None:
+                                if search('N', spin.isotope):
+                                    spin.name = 'N'
+                                elif search('C', spin.isotope):
+                                    spin.name = 'C'
+
+                            # An attached proton - convert into a spin container.
+                            if hasattr(spin, 'attached_proton'):
+                                # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
+                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.attached_proton)
+                                h_spin.select = False
+                                h_spin.element = 'H'
+                                h_spin.isotope = '1H'
+                                spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
+                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name='H')
+                                generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False)
+
+                                # Get the interatomic data container.
+                                interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+
+                                # Set the interatomic distance.
+                                if hasattr(spin, 'r'):
+                                    interatom.r = spin.r
+
+                                # Set the interatomic unit vectors.
+                                if hasattr(spin, 'xh_vect'):
+                                    interatom.vector = spin.xh_vect
+
+                        # Delete the old structures.
+                        if hasattr(spin, 'heteronuc_type'):
+                            del spin.heteronuc_type
+                        if hasattr(spin, 'proton_type'):
+                            del spin.proton_type
+                        if hasattr(spin, 'attached_proton'):
+                            del spin.attached_proton
+                        if hasattr(spin, 'r'):
+                            del spin.r
+                        if hasattr(spin, 'r_err'):
+                            del spin.r_err
+                        if hasattr(spin, 'r_sim'):
+                            del spin.r_sim
+                        if hasattr(spin, 'xh_vect'):
+                            del spin.xh_vect
+
+
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.
 
@@ -329,6 +400,9 @@ class Relax_data_store(dict):
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
 
+        # Structure for the names of the new pipes.
+        pipes = []
+
         # Target loading to a specific pipe (for pipe results reading).
         if pipe_to:
             # Check if there are multiple pipes in the XML file.
@@ -352,6 +426,9 @@ class Relax_data_store(dict):
 
             # Load the data.
             self[pipe_to].from_xml(pipe_nodes[0], dir=dir, file_version=file_version)
+
+            # Store the pipe name.
+            pipes.append(pipe_to)
 
         # Load the state.
         else:
@@ -384,12 +461,18 @@ class Relax_data_store(dict):
                 # Fill the pipe.
                 self[pipe_name].from_xml(pipe_node, file_version=file_version, dir=dir)
 
+                # Store the pipe name.
+                pipes.append(pipe_name)
+
             # Set the current pipe.
             if self.current_pipe in self.keys():
                 __builtin__.cdp = self[self.current_pipe]
 
         # Finally update the molecule, residue, and spin metadata.
         generic_fns.mol_res_spin.metadata_update()
+
+        # Backwards compatibility transformations.
+        self._back_compat_hook(file_version, pipes=pipes)
 
 
     def to_xml(self, file, pipes=None):
