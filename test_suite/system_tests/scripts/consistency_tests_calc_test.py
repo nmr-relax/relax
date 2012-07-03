@@ -25,11 +25,11 @@ for i in xrange(len(ri_ids)):
     self._execute_uf(uf_name='relax_data.read', ri_id=ri_ids[i], ri_type=ri_type[i], frq=frq[i], file=data_paths[i], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 # Set the spin information.
-spin.name('N')
-spin.element('N')
-sequence.attach_protons()
-spin.isotope('15N', spin_id='@N')
-spin.isotope('1H', spin_id='@H')
+self._execute_uf(uf_name='spin.name', name='N')
+self._execute_uf(uf_name='spin.element', element='N')
+self._execute_uf(uf_name='sequence.attach_protons')
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # Define the magnetic dipole-dipole relaxation interaction.
 self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)

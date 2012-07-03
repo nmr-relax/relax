@@ -20,11 +20,11 @@ self._execute_uf(uf_name='relax_data.read', ri_id='R2_600',  ri_type='R2',  frq=
 self._execute_uf(uf_name='relax_data.read', ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 # Set the spin information.
-spin.name('N')
-spin.element('N')
-sequence.attach_protons()
-spin.isotope('15N', spin_id='@N')
-spin.isotope('1H', spin_id='@H')
+self._execute_uf(uf_name='spin.name', name='N')
+self._execute_uf(uf_name='spin.element', element='N')
+self._execute_uf(uf_name='sequence.attach_protons')
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # Define the magnetic dipole-dipole relaxation interaction.
 self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
