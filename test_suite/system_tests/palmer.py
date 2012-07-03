@@ -159,7 +159,7 @@ class Palmer(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
 
         # Catch a the old, buggy modelfree4 versions and complain loudly!
-        spin = return_spin(':9', pipe='m2')
+        spin = return_spin(':9@N', pipe='m2')
         if spin.s2 == 0.855:
             raise RelaxError("You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later.")
 
@@ -172,7 +172,7 @@ class Palmer(SystemTestCase):
         # Model m1, m2, and m3 mfout file data.
         models = ['m1', 'm2', 'm3']
         params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
-        spin_names = [':9', ':10', ':11']
+        spin_names = [':9@N', ':10@N', ':11@N']
         s2 = [[0.822, 0.799, 0.823], [0.788, 0.777, 0.812], [0.822, 0.799, 0.823]]
         if compiler == 'gcc':
             te = [[None, None, None], [61.506, 36.084, 20.043], [None, None, None]]
@@ -182,6 +182,9 @@ class Palmer(SystemTestCase):
         chi2 = [[143.6773, 105.1767, 61.6684], [40.9055, 57.1562, 48.4927], [143.6773, 105.1767, 61.6684]]
 
         # Checks for model m1, m2, and m3 mfout file reading.
+        print ds['m1'].mol[0].res
+        print ds['m1'].mol[0].res[0]
+        print ds['m1'].mol[0].res[0].spin
         for model_index in xrange(3):
             print(("Model " + repr(models[model_index])))
             for spin_index in xrange(3):
