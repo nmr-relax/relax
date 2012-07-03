@@ -46,6 +46,46 @@ class State(GuiTestCase):
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'gui_analyses_1.3.bz2'
         self.app.gui.state_load(file_name=file)
 
+        # Check the analysis structures.
+        names = ['Steady-state NOE', 'R1 relaxation', 'Model-free']
+        types = ['NOE', 'R1', 'model-free']
+        frq = ['600', '300', None]
+        grid_inc = [None, None, 3]
+        mc_sim_num = [None, None, 50]
+        pipe_names = ['noe (Wed May 30 20:33:21 2012)', 'r1 (Wed May 30 20:55:02 2012)', 'mf (Wed May 30 21:23:17 2012)']
+        save_dirs = ['/data/relax/gui/gui_testing/noe', '/data/relax/gui/gui_testing/r1', '/data/relax/gui/gui_testing/mf']
+        for i in range(len(ds.relax_gui.analyses)):
+            self.assertEqual(ds.relax_gui.analyses[i].analysis_name, names[i])
+            self.assertEqual(ds.relax_gui.analyses[i].analysis_type, types[i])
+            self.assertEqual(ds.relax_gui.analyses[i].pipe_name, pipe_names[i])
+            self.assertEqual(ds.relax_gui.analyses[i].save_dir, save_dirs[i])
+            if frq[i] != None:
+                self.assertEqual(ds.relax_gui.analyses[i].frq, frq[i])
+            if grid_inc[i] != None:
+                self.assertEqual(ds.relax_gui.analyses[i].grid_inc, grid_inc[i])
+            if mc_sim_num[i] != None:
+                self.assertEqual(ds.relax_gui.analyses[i].mc_sim_num, mc_sim_num[i])
+
+        # Data checks.
+        self.assertEqual(len(ds), 9)
+        pipe_names = ["noe (Wed May 30 20:33:21 2012)", "r1 (Wed May 30 20:55:02 2012)", "mf (Wed May 30 21:23:17 2012)", "local_tm", "sphere", "oblate", "prolate", "ellipsoid", "final"]
+        for pipe in pipe_names:
+            # Loop over the residues.
+            for i in range(len(ds[pipe].mol[0].res)):
+                # Alias.
+                res = ds[pipe].mol[0].res[i]
+                print res.spin[0]
+
+                # Check the 15N spin data.
+                self.assertEqual(res.spin[0].name, 'N')
+
+                # Skip the 1H checks for the NOE and R1 pipes, as no 1H data is recreated.
+                if pipe in ["noe (Wed May 30 20:33:21 2012)", "r1 (Wed May 30 20:55:02 2012)"]:
+                    continue
+
+                # Check the 1H spin data.
+                self.assertEqual(res.spin[1].name, 'H')
+
 
     def test_load_state_no_gui(self):
         """Test the loading of a relax save state with no GUI data."""
