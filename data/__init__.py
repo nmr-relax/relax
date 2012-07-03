@@ -219,9 +219,9 @@ class Relax_data_store(dict):
                             # Name the spin if needed.
                             if spin.name == None:
                                 if search('N', spin.isotope):
-                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='N')
+                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='N', pipe=pipe_name)
                                 elif search('C', spin.isotope):
-                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='C')
+                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='C', pipe=pipe_name)
 
                             # An attached proton - convert into a spin container.
                             if (hasattr(spin, 'attached_proton') and spin.attached_proton != None) or (hasattr(spin, 'proton_type') and spin.proton_type != None):
@@ -236,16 +236,16 @@ class Relax_data_store(dict):
                                 spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
 
                                 # Create a new spin container for the proton.
-                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
+                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
                                 h_spin.select = False
 
                                 # Set up a dipole interaction between the two spins.
-                                generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H')
-                                generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H')
-                                generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False)
+                                generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
+                                generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
+                                generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
 
                                 # Get the interatomic data container.
-                                interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+                                interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2, pipe=pipe_name)
 
                                 # Set the interatomic distance.
                                 if hasattr(spin, 'r'):
