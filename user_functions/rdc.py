@@ -348,6 +348,13 @@ uf.add_keyarg(
     desc_short = "negative gyromagnetic ratio correction",
     desc = "A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If set to True, all RDC values will be inverted prior to being stored in the relax data store."
 )
+uf.add_keyarg(
+    name = "absolute",
+    default = False,
+    py_type = "bool",
+    desc_short = "absolute RDCs",
+    desc = "A flag which indicates that the loaded RDCs are are signless."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will read RDC data from a file and associate it with an alignment ID, either a new ID or a preexisting one with no RDC data.")
@@ -356,6 +363,7 @@ uf.desc[-1].add_list_element("'D' means that the splitting in the aligned sample
 uf.desc[-1].add_list_element("'2D' means that the splitting in the aligned sample was assumed to be J + 2D.")
 uf.desc[-1].add_paragraph("Internally, relax uses the D notation.  Therefore if set to '2D', the values will be doubled when read in.")
 uf.desc[-1].add_paragraph("If the negative gyromagnetic ratio correction flag is set, a sign inversion will be applied to all RDC values to be loaded.  This is sometimes needed for 15N if the data is not compensated for the negative gyromagnetic ratio.")
+uf.desc[-1].add_paragraph("The absolute RDCs flag is used for RDCs in which the sign is unknown.  All absolute RDCs loaded will be converted to positive values.")
 uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number and name, and spin number and name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

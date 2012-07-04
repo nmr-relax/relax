@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,7 +39,7 @@ from rotation_matrix import euler_to_R_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, fixed_tensors=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, temp=None, frq=None, dip_const=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
+    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, fixed_tensors=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, temp=None, frq=None, dip_const=None, absolute_rdc=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
         """Set up the class instance for optimisation.
 
         The N-state models
@@ -99,6 +99,7 @@ class N_state_opt:
             - rdc_errors, the optional residual dipolar coupling errors.
             - rdc_vect, the interatomic vectors.
             - dip_const, the dipolar constants.
+            - absolute_rdc, the flags specifying whether each RDC is signless.
 
 
         @keyword model:             The N-state model type.  This can be one of '2-domain', 'population' or 'fixed'.
@@ -139,6 +140,8 @@ class N_state_opt:
         @type frq:                  numpy rank-1 array
         @keyword dip_const:         The dipolar constants for each spin pair.  The indices correspond to the spin pairs k.
         @type dip_const:            numpy rank-1 array
+        @keyword absolute_rdc:      The signless or absolute value flags for the RDCs.
+        @type absolute_rdc:         numpy rank-2 array
         @keyword atomic_pos:        The atomic positions of all spins for the PCS and PRE data.  The first index is the spin systems j and the second is the structure or state c.
         @type atomic_pos:           numpy rank-3 array
         @keyword paramag_centre:    The paramagnetic centre position (or positions).
@@ -157,6 +160,7 @@ class N_state_opt:
         self.rdc = rdcs
         self.dip_vect = rdc_vect
         self.dip_const = dip_const
+        self.absolute_rdc = absolute_rdc
         self.temp = temp
         self.frq = frq
         self.atomic_pos = atomic_pos
@@ -647,7 +651,7 @@ class N_state_opt:
                 for j in xrange(self.num_interatom):
                     # Calculate the average RDC.
                     if not self.missing_rdc[align_index, j]:
-                        self.rdc_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs)
+                        self.rdc_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
 
             # The back calculated PCS.
             if self.pcs_flag[align_index]:
@@ -844,7 +848,7 @@ class N_state_opt:
                 for j in xrange(self.num_interatom):
                     # Calculate the average RDC.
                     if not self.missing_rdc[align_index, j]:
-                        self.rdc_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs)
+                        self.rdc_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
 
             # The back calculated PCS.
             if self.pcs_flag[align_index]:
@@ -1058,11 +1062,11 @@ class N_state_opt:
             # Construct the Amn partial derivative components for the RDC.
             if self.fixed_tensors[align_index] and self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
                 for j in xrange(self.num_interatom):
-                    self.drdc_theta[align_index*5, align_index, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs)
-                    self.drdc_theta[align_index*5+1, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs)
-                    self.drdc_theta[align_index*5+2, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs)
-                    self.drdc_theta[align_index*5+3, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs)
-                    self.drdc_theta[align_index*5+4, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
+                    self.drdc_theta[align_index*5, align_index, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[align_index*5+1, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[align_index*5+2, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[align_index*5+3, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[align_index*5+4, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
 
             # Construct the Amn partial derivative components for the PCS.
             if self.fixed_tensors[align_index] and self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
@@ -1081,7 +1085,7 @@ class N_state_opt:
                 # Calculate the RDC for state c (this is the pc partial derivative).
                 for j in xrange(self.num_interatom):
                     if self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                        self.drdc_theta[param_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.A[align_index])
+                        self.drdc_theta[param_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.A[align_index], absolute=self.absolute_rdc[align_index, j])
 
                 # Calculate the PCS for state c (this is the pc partial derivative).
                 for j in xrange(self.num_spins):
@@ -1269,11 +1273,11 @@ class N_state_opt:
             # Construct the Amn partial derivative components for the RDC.
             for j in xrange(self.num_interatom):
                 if self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                    self.drdc_theta[index*5,   index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs)
-                    self.drdc_theta[index*5+1, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs)
-                    self.drdc_theta[index*5+2, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs)
-                    self.drdc_theta[index*5+3, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs)
-                    self.drdc_theta[index*5+4, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
+                    self.drdc_theta[index*5,   index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[index*5+1, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[index*5+2, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[index*5+3, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                    self.drdc_theta[index*5+4, index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
 
             # Construct the Amn partial derivative components for the PCS.
             for j in xrange(self.num_spins):
@@ -1455,11 +1459,11 @@ class N_state_opt:
                 # Calculate the RDC Hessian component.
                 for j in xrange(self.num_interatom):
                     if self.fixed_tensors[align_index] and self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                        self.d2Dij_theta[pc_index, i*5+0, align_index, j] = self.d2Dij_theta[align_index*5+0, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0])
-                        self.d2Dij_theta[pc_index, i*5+1, align_index, j] = self.d2Dij_theta[align_index*5+1, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1])
-                        self.d2Dij_theta[pc_index, i*5+2, align_index, j] = self.d2Dij_theta[align_index*5+2, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2])
-                        self.d2Dij_theta[pc_index, i*5+3, align_index, j] = self.d2Dij_theta[align_index*5+3, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3])
-                        self.d2Dij_theta[pc_index, i*5+4, align_index, j] = self.d2Dij_theta[align_index*5+4, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4])
+                        self.d2Dij_theta[pc_index, i*5+0, align_index, j] = self.d2Dij_theta[align_index*5+0, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0], absolute=self.absolute_rdc[align_index, j])
+                        self.d2Dij_theta[pc_index, i*5+1, align_index, j] = self.d2Dij_theta[align_index*5+1, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1], absolute=self.absolute_rdc[align_index, j])
+                        self.d2Dij_theta[pc_index, i*5+2, align_index, j] = self.d2Dij_theta[align_index*5+2, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2], absolute=self.absolute_rdc[align_index, j])
+                        self.d2Dij_theta[pc_index, i*5+3, align_index, j] = self.d2Dij_theta[align_index*5+3, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3], absolute=self.absolute_rdc[align_index, j])
+                        self.d2Dij_theta[pc_index, i*5+4, align_index, j] = self.d2Dij_theta[align_index*5+4, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4], absolute=self.absolute_rdc[align_index, j])
 
                 # Calculate the PCS Hessian component.
                 for j in xrange(self.num_spins):

@@ -405,7 +405,7 @@ def q_factors(spin_id=None):
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id1_col=None, spin_id2_col=None, data_col=None, error_col=None, sep=None, neg_g_corr=False):
+def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id1_col=None, spin_id2_col=None, data_col=None, error_col=None, sep=None, neg_g_corr=False, absolute=False):
     """Read the RDC data from file.
 
     @keyword align_id:      The alignment tensor ID string.
@@ -429,6 +429,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     @type sep:              str or None
     @keyword neg_g_corr:    A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If True, a sign inversion will be applied to all RDC values to be loaded.
     @type neg_g_corr:       bool
+    @keyword absolute:      A flag which if True indicates that the RDCs to load are signless.  All RDCs will then be converted to positive values.
+    @type absolute:         bool
     """
 
     # Test if the current data pipe exists.
@@ -543,12 +545,22 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             if neg_g_corr and value != None:
                 value = -value
 
+            # Absolute values.
+            if absolute:
+                # Force the value to be positive.
+                value = abs(value)
+
             # Initialise.
             if not hasattr(interatom, 'rdc'):
                 interatom.rdc = {}
 
             # Add the value.
             interatom.rdc[align_id] = value
+
+            # Store the absolute value flag.
+            if not hasattr(interatom, 'absolute_rdc'):
+                interatom.absolute_rdc = {}
+            interatom.absolute_rdc[align_id] = absolute
 
         # Convert and add the error.
         if error_col:
