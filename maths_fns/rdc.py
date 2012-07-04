@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -88,7 +88,7 @@ def ave_rdc_5D(dj, vect, N, A, weights=None):
     return dj * val
 
 
-def ave_rdc_tensor(dj, vect, N, A, weights=None):
+def ave_rdc_tensor(dj, vect, N, A, weights=None, absolute=False):
     """Calculate the ensemble average RDC, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC value is::
@@ -135,8 +135,10 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None):
     @type N:            int
     @param A:           The alignment tensor.
     @type A:            numpy rank-2 3D tensor
-    @param weights:     The weights for each member of the ensemble (the last member need not be supplied).
-    @type weights:      numpy rank-1 array
+    @keyword weights:   The weights for each member of the ensemble (the last member need not be supplied).
+    @type weights:      numpy rank-1 array or None
+    @keyword absolute:  The absolute value or signless RDC flag.
+    @type absolute:     int
     @return:            The average RDC value.
     @rtype:             float
     """
@@ -160,10 +162,13 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None):
         val = val + weights[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average RDC.
-    return dj * val
+    if absolute:
+        return abs(dj * val)
+    else:
+        return dj * val
 
 
-def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
+def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None, absolute=False):
     """Calculate the ensemble average RDC gradient element for Amn, using the 3D tensor.
 
     This function calculates the average RDC gradient for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC gradient element is::
@@ -197,8 +202,10 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     @type N:            int
     @param dAi_dAmn:    The alignment tensor derivative with respect to parameter Amn.
     @type dAi_dAmn:     numpy rank-2 3D tensor
-    @param weights:     The weights for each member of the ensemble (the last member need not be supplied).
+    @keyword weights:   The weights for each member of the ensemble (the last member need not be supplied).
     @type weights:      numpy rank-1 array
+    @keyword absolute:  The absolute value or signless RDC flag.
+    @type absolute:     int
     @return:            The average RDC gradient element.
     @rtype:             float
     """
@@ -222,10 +229,13 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
         grad = grad + weights[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average RDC gradient element.
-    return dj * grad
+    if absolute:
+        return dj * grad
+    else:
+        return dj * grad
 
 
-def rdc_tensor(dj, mu, A):
+def rdc_tensor(dj, mu, A, absolute=False):
     """Calculate the RDC, using the 3D alignment tensor.
 
     The RDC value is::
@@ -265,9 +275,14 @@ def rdc_tensor(dj, mu, A):
     @type mu:           numpy rank-1 3D array
     @param A:           The alignment tensor.
     @type A:            numpy rank-2 3D tensor
+    @keyword absolute:  The absolute value or signless RDC flag.
+    @type absolute:     int
     @return:            The RDC value.
     @rtype:             float
     """
 
     # Return the RDC.
-    return dj * dot(mu, dot(A, mu))
+    if absolute:
+        return abs(dj * dot(mu, dot(A, mu)))
+    else:
+        return dj * dot(mu, dot(A, mu))
