@@ -141,6 +141,7 @@ class N_state_model(SystemTestCase):
         for i in range(3):
             self.assertAlmostEqual(cdp.chi[i, i] * 1e32, cdp.chi_ref[i] * 1e32, 2)
 
+
     def test_absolute_rdc(self):
         """Test the fitting of signless RDCs."""
 
