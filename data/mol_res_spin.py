@@ -25,7 +25,7 @@
 
 # Python module imports.
 import numpy
-from re import match
+from re import match, search
 from string import lower
 
 # relax module imports.
@@ -222,13 +222,26 @@ class SpinList(list):
 
 
     def add_item(self, spin_name=None, spin_num=None, select=True):
-        """Function for appending an empty container to the list."""
+        """Appending an empty container to the list.
+
+        @keyword spin_name: The name of the new spin.
+        @type spin_name:    str or None
+        @keyword spin_num:  The number of the new spin.
+        @type spin_num:     str or None
+        @keyword select:    The selection flag.
+        @type select:       bool
+        @return:            The new container.
+        @rtype:             SpinContainer instance
+        """
 
         # If no spin data exists, replace the empty first spin with this spin.
         if self.is_empty():
             self[0].num = spin_num
             self[0].name = spin_name
             self[0].select = select
+
+            # Return the container.
+            return self[0]
 
         # Otherwise append a new SpinContainer.
         else:
@@ -237,15 +250,18 @@ class SpinList(list):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
-                        raise RelaxError("The spin number '" + repr(spin_num) + "' already exists.")
+                        raise RelaxError("The spin number '%s' already exists." % spin_name)
 
                 # No spin numbers.
                 else:
                     if self[i].name == spin_name:
-                        raise RelaxError("The unnumbered spin name '" + repr(spin_name) + "' already exists.")
+                        raise RelaxError("The unnumbered spin name '%s' already exists." % spin_name)
 
             # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
+
+            # Return the container.
+            return self[-1]
 
 
     def is_empty(self):

@@ -95,6 +95,35 @@ def save_state():
     file.close()
 
 
+def list_to_text(data):
+    """Convert the given Python list to a text representation.
+
+    @param data:    The list of Python objects.
+    @type data:     list
+    @return:        The English text version of the list.
+    @rtype:         str
+    """
+
+    # Initialise.
+    text = ''
+
+    # Loop over the elements, adding the to the list.
+    for i in range(len(data)):
+        # Add the text.
+        text += repr(data[i])
+
+        # Comma separators.
+        if i < len(data) - 2:
+            text += ', '
+
+        # Last separator.
+        if i == len(data) - 2:
+            text += ' and '
+
+    # Return the text.
+    return text
+
+
 # Base class for all errors.
 ############################
 
@@ -273,8 +302,11 @@ class RelaxMultiVectorError(BaseError):
 
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
-    def __init__(self, pipe):
-        self.text = "The unit XH bond vectors for the data pipe " + repr(pipe) + " have not been calculated."
+    def __init__(self, pipe=None):
+        if pipe:
+            self.text = "No unit vectors have been calculated for the data pipe '%s'" % pipe
+        else:
+            self.text = "No unit vectors have been calculated."
 
 # No chains within the PDB file.
 class RelaxNoPdbChainError(BaseError):
@@ -287,18 +319,19 @@ class RelaxNoPdbChainError(BaseError):
 
 # Nucleus not set.
 class RelaxNucleusError(BaseError):
-    def __init__(self):
-        self.text = "The type of nucleus has not yet been set."
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The type of nucleus for the spin '%s' has not yet been set." % spin_id
+        else:
+            self.text = "The type of nucleus has not yet been set."
 
 # Spin type not set.
 class RelaxSpinTypeError(BaseError):
-    def __init__(self):
-        self.text = "The spin type has not yet been set.  Please use the value.set user function to set the heteronucleus type."
-
-# Proton type not set.
-class RelaxProtonTypeError(BaseError):
-    def __init__(self):
-        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set user function to set the proton type."
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The nuclear isotope type for the spin '%s' has not yet been set.  Please use the spin.isotope user function to set the type." % spin_id
+        else:
+            self.text = "The nuclear isotope type has not yet been set.  Please use the spin.isotope user function to set the type."
 
 
 # Argument errors.
@@ -618,9 +651,13 @@ class RelaxMultiResIDError(BaseError):
 
 # Multiple spins matching the ID.
 class RelaxMultiSpinIDError(BaseError):
-    def __init__(self, id):
-        if id == '':
+    def __init__(self, id, id_list=None):
+        if id_list != None and id == '':
+            self.text = "The empty spin ID corresponds to multiple spins, including %s." % list_to_text(id_list)
+        elif id_list == None and id == '':
             self.text = "The empty spin ID corresponds to more than a single spin in the current data pipe."
+        elif id_list != None:
+            self.text = "The spin ID '%s' corresponds to multiple spins, including %s." % (id, list_to_text(id_list))
         else:
             self.text = "The spin ID '%s' corresponds to more than a single spin in the current data pipe." % id
 
@@ -650,6 +687,25 @@ class RelaxSpinsNotLoadedError(BaseError):
     def __init__(self, spin_id):
         self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins user function."
 
+
+# Interatomic data errors.
+##########################
+
+# No interatomic data.
+class RelaxNoInteratomError(BaseError):
+    def __init__(self, pipe=None):
+        if pipe == None:
+            self.text = "The interatomic data does not exist."
+        else:
+            self.text = "The interatomic data for the data pipe " + repr(pipe) + " does not exist."
+
+# The interatomic data already exists.
+class RelaxInteratomError(BaseError):
+    def __init__(self, pipe=None):
+        if pipe == None:
+            self.text = "The interatomic data already exists."
+        else:
+            self.text = "The interatomic data for the data pipe " + repr(pipe) + " already exists."
 
 
 
@@ -864,8 +920,13 @@ class RelaxValueError(BaseError):
 
 # No data value.
 class RelaxNoValueError(BaseError):
-    def __init__(self, name):
-        self.text = "The " + repr(name) + " value has not yet been set."
+    def __init__(self, name, spin_id=None, spin_id2=None):
+        if spin_id2 != None:
+            self.text = "The %s value has not yet been set for spins '%s' and '%s'." % (name, spin_id, spin_id2)
+        elif spin_id != None:
+            self.text = "The %s value has not yet been set for spin '%s'." % (name, spin_id)
+        else:
+            self.text = "The " + repr(name) + " value has not yet been set."
 
 # Unknown data type.
 class RelaxUnknownDataTypeError(BaseError):

@@ -1,6 +1,7 @@
 # Script for calculation RDCs and PCSs for the rigid frame order model.
 
 # relax module imports.
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
 
 
@@ -14,13 +15,14 @@ structure.read_pdb('distribution')
 structure.load_spins('@N')
 structure.load_spins('@H')
 
-# Load the NH vectors.
-structure.vectors(spin_id='@N', attached='H', ave=False)
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+dipole_pair.unit_vectors(ave=False)
 
-# Set the values needed to calculate the dipolar constant.
-value.set(1.041 * 1e-10, 'r', spin_id="@N")
-value.set('15N', 'heteronuc_type', spin_id="@N")
-value.set('1H', 'proton_type', spin_id="@N")
+# Set the nuclear isotope type.
+spin.isotope(isotope='15N', spin_id='@N')
+spin.isotope(isotope='1H', spin_id='@H')
 
 # Load the tensors.
 execfile('../tensors.py')
@@ -45,16 +47,22 @@ for i in range(len(cdp.align_tensors)):
     rdc.back_calc(tag)
     pcs.back_calc(tag)
 
-    # Set 1 Hz and 0.1 ppm errors on all data.
+    # Set 1 Hz errors on all RDC data.
+    for interatom in interatomic_loop():
+        # Init.
+        if not hasattr(interatom, 'rdc_err'):
+            interatom.rdc_err = {}
+
+        # Set the errors.
+        interatom.rdc_err[tag] = 1.0
+
+    # Set 0.1 ppm errors on all PCS data.
     for spin in spin_loop():
         # Init.
-        if not hasattr(spin, 'rdc_err'):
-            spin.rdc_err = {}
         if not hasattr(spin, 'pcs_err'):
             spin.pcs_err = {}
 
         # Set the errors.
-        spin.rdc_err[tag] = 1.0
         spin.pcs_err[tag] = 0.1
 
     # Write the data.

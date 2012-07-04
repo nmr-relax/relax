@@ -27,6 +27,7 @@
 from warnings import warn
 
 # relax module imports.
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
@@ -37,9 +38,9 @@ from user_functions.objects import Desc_container
 
 
 boolean_doc = Desc_container("Boolean operators")
-boolean_doc.add_paragraph("The boolean operator can be used to change how spin systems are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details how the selections will occur for the different boolean operators.")
+boolean_doc.add_paragraph("The boolean operator can be used to change how spin systems or interatomic data containers are selected.  The allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details how the selections will occur for the different boolean operators.")
 table = uf_tables.add_table(label="table: bool operators", caption="Boolean operators and their effects on selections")
-table.add_headings(["Spin system", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
+table.add_headings(["Spin system or interatomic data container", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
 table.add_row(["Original selection", "0", "1", "1", "1", "1", "0", "1", "0", "1"])
 table.add_row(["New selection", "0", "1", "1", "1", "1", "1", "0", "0", "0"])
 table.add_row(["OR", "0", "1", "1", "1", "1", "1", "1", "0", "1"])
@@ -67,6 +68,58 @@ def desel_all():
     # Loop over the spins and deselect them.
     for spin in spin_loop():
         spin.select = False
+
+
+def desel_interatom(spin_id1=None, spin_id2=None, boolean='AND', change_all=False):
+    """Deselect specific interatomic data containers.
+
+    @keyword spin_id1:              The spin ID string of the first spin of the pair.
+    @type spin_id1:                 str or None
+    @keyword spin_id2:              The spin ID string of the second spin of the pair.
+    @type spin_id2:                 str or None
+    @param boolean:                 The boolean operator used to deselect the spin systems with.  It can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'. This will be ignored if the change_all flag is set.
+    @type boolean:                  str
+    @keyword change_all:            A flag which if True will cause all spins not specified in the file to be selected.  Only the boolean operator 'AND' is compatible with this flag set to True (all others will be ignored).
+    @type change_all:               bool
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    @raises RelaxError:             If the boolean operator is unknown.
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # First select all interatom containers if the change_all flag is set.
+    if change_all:
+        # Interatomic data loop.
+        for interatom in interatomic_loop(selected=False):
+            interatom.select = True
+
+    # Interatomic data loop.
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2, selected=False):
+        # Deselect just the specified residues.
+        if change_all:
+            interatom.select = False
+
+        # Boolean selections.
+        else:
+            if boolean == 'OR':
+                interatom.select = interatom.select or False
+            elif boolean == 'NOR':
+                interatom.select = not (interatom.select or False)
+            elif boolean == 'AND':
+                interatom.select = interatom.select and False
+            elif boolean == 'NAND':
+                interatom.select = not (interatom.select and False)
+            elif boolean == 'XOR':
+                interatom.select = not (interatom.select and False) and (interatom.select or False)
+            elif boolean == 'XNOR':
+                interatom.select = (interatom.select and False) or not (interatom.select or False)
+            else:
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
 
 
 def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False):
@@ -307,6 +360,58 @@ def sel_all():
     # Loop over the spins and select them.
     for spin in spin_loop():
         spin.select = True
+
+
+def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
+    """Select specific interatomic data containers.
+
+    @keyword spin_id1:              The spin ID string of the first spin of the pair.
+    @type spin_id1:                 str or None
+    @keyword spin_id2:              The spin ID string of the second spin of the pair.
+    @type spin_id2:                 str or None
+    @param boolean:                 The boolean operator used to select the spin systems with.  It can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.  This will be ignored if the change_all flag is set.
+    @type boolean:                  str
+    @keyword change_all:            A flag which if True will cause all spins not specified in the file to be deselected.  Only the boolean operator 'OR' is compatible with this flag set to True (all others will be ignored).
+    @type change_all:               bool
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    @raises RelaxError:             If the boolean operator is unknown.
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # First deselect all interatom containers if the change_all flag is set.
+    if change_all:
+        # Interatomic data loop.
+        for interatom in interatomic_loop(selected=False):
+            interatom.select = False
+
+    # Interatomic data loop.
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2, selected=False):
+        # Select just the specified containers.
+        if change_all:
+            interatom.select = True
+
+        # Boolean selections.
+        else:
+            if boolean == 'OR':
+                interatom.select = interatom.select or True
+            elif boolean == 'NOR':
+                interatom.select = not (interatom.select or True)
+            elif boolean == 'AND':
+                interatom.select = interatom.select and True
+            elif boolean == 'NAND':
+                interatom.select = not (interatom.select and True)
+            elif boolean == 'XOR':
+                interatom.select = not (interatom.select and True) and (interatom.select or True)
+            elif boolean == 'XNOR':
+                interatom.select = (interatom.select and True) or not (interatom.select or True)
+            else:
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
 
 
 def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='OR', change_all=False):

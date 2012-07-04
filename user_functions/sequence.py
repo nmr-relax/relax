@@ -40,6 +40,24 @@ uf_class.menu_text = "&sequence"
 uf_class.gui_icon = "relax.sequence"
 
 
+# The sequence.attach_protons user function.
+uf = uf_info.add_uf('sequence.attach_protons')
+uf.title = "Attach protons to all heteronuclei."
+uf.title_short = "Heteronuclei proton attachment."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This can be used to attach protons to all the heteronuclei in the current data pipe.  For each proton, a spin container will be created.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To attach protons, simply type:")
+uf.desc[-1].add_prompt("relax> sequence.attach_protons()")
+uf.backend = sequence.attach_protons
+uf.menu_text = "&attach_protons"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'sequence.png'
+
+
 # The sequence.copy user function.
 uf = uf_info.add_uf('sequence.copy')
 uf.title = "Copy the molecule, residue, and spin sequence data from one data pipe to another."

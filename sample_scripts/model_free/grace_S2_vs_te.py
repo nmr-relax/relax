@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,18 +20,17 @@
 #                                                                             #
 ###############################################################################
 
-"""Script for creating a grace plot of 'S2' vs 'te'."""
+"""Script for creating a grace plot of the simulated order parameters vs. simulated correlation times."""
 
 
-# Create the run.
-name = 'm4'
-pipe.create(name, 'mf')
+# Create a data pipe.
+pipe.create(pipe_name='m4', pipe_type='mf')
 
 # Load the data.
-results.read(name)
+results.read(file='results', dir='m4')
 
 # Grace plot.
-grace.write(name, x_data_type='s2', y_data_type='te', plot_data='sim', file='s2_te.agr', force=True)
+grace.write(file='s2_te.agr', x_data_type='s2', y_data_type='te', plot_data='sim', force=True)
 
 # View the plot.
 grace.view(file='s2_te.agr')

@@ -30,7 +30,7 @@ from re import search
 # relax module imports.
 from colour import linear_gradient
 from generic_fns.mol_res_spin import spin_loop
-from relax_errors import RelaxFault, RelaxStyleError, RelaxUnknownDataTypeError
+from relax_errors import RelaxError, RelaxFault, RelaxStyleError, RelaxUnknownDataTypeError
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -83,6 +83,10 @@ class Macro:
 
         # Loop over the spins.
         for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
+            # No relaxation data, so skip.
+            if not hasattr(spin, 'ri_data'):
+                continue
+
             # More than one spin.
             if prev_res_num == res_num:
                 raise RelaxError("Only a single spin per residue is allowed for the classic macro style.")

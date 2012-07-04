@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,6 +31,7 @@ from tempfile import mkdtemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
+from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
@@ -74,13 +75,14 @@ class N_state_model(SystemTestCase):
             print("\ni = %i" % i)
             print("The real vector:      %s" % vect[i])
             print("The reordered vector: %s" % vect[ds.order_new[i]])
-            print("The loaded vector:    %s" % cdp.mol[0].res[0].spin[0].xh_vect[i])
+            print("The loaded vector:    %s" % cdp.interatomic[0].vector[i])
 
         # Check.
         for i in range(3):
-            self.assertAlmostEqual(norm(vect[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].xh_vect[i]), 0.0)
-        for i in range(3):
             self.assertAlmostEqual(norm(C_pos[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].pos[i]), 0.0)
+            self.assertAlmostEqual(norm(H_pos[ds.order_new[i]] - cdp.mol[0].res[0].spin[1].pos[i]), 0.0)
+        for i in range(3):
+            self.assertAlmostEqual(norm(vect[ds.order_new[i]] - cdp.interatomic[0].vector[i]), 0.0)
 
 
     def test_5_state_xz(self):
@@ -258,18 +260,20 @@ class N_state_model(SystemTestCase):
 
             # Get a spin to check.
             spin = return_spin(':114@N')
+            interatom = return_interatom(':114@N', ':114@H')
 
             # Check the RDC and PCS values.
-            self.assertAlmostEqual(spin.rdc[tag], -8.9193269604999994)
-            self.assertAlmostEqual(spin.rdc_bc[tag], -9.1030018792821394)
+            self.assertAlmostEqual(interatom.rdc[tag], -8.9193269604999994)
+            self.assertAlmostEqual(interatom.rdc_bc[tag], -9.1030018792821394)
             self.assertAlmostEqual(spin.pcs[tag], -0.41430390310999998)
             self.assertAlmostEqual(spin.pcs_bc[tag], -0.39723010845807194)
 
             # MC sims so next round can check if values change.
             if i == 0:
                 # Set some errors.
+                for interatom in interatomic_loop():
+                    interatom.rdc_err = {tag: 1.0}
                 for spin in spin_loop():
-                    spin.rdc_err = {tag: 1.0}
                     spin.pcs_err = {tag: 0.1}
 
                 # MC sims.
@@ -479,17 +483,25 @@ class N_state_model(SystemTestCase):
             print(spin)
 
             # Check for simulation data.
-            if spin.name == 'N':
-                self.assert_(hasattr(spin, 'rdc_sim'))
-                self.assert_(spin.rdc_sim.has_key(key))
             self.assert_(hasattr(spin, 'pcs_sim'))
             self.assert_(spin.pcs_sim.has_key(key))
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
-                if spin.name == 'N':
-                    self.assertAlmostEqual(spin.rdc[key], spin.rdc_sim[key][i], 5)
                 self.assertAlmostEqual(spin.pcs[key], spin.pcs_sim[key][i])
+
+        # The interatomic data.
+        for interatom in interatomic_loop():
+            # Print out.
+            print(interatom)
+
+            # Check for simulation data.
+            self.assert_(hasattr(interatom, 'rdc_sim'))
+            self.assert_(interatom.rdc_sim.has_key(key))
+
+            # Check the values of the simulated data.
+            for i in range(cdp.sim_number):
+                self.assertAlmostEqual(interatom.rdc[key], interatom.rdc_sim[key][i], 5)
 
         # Test the optimised simluation values.
         for i in range(cdp.sim_number):
@@ -596,9 +608,9 @@ class N_state_model(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pcs_to_rdc.py')
 
         # Test the values.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].rdc_bc['A'], 4.1319413321530014)
-        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].rdc_bc['A'], -9.5802642470087989)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].rdc_bc['A'], -16.244078605100817)
+        self.assertAlmostEqual(cdp.interatomic[0].rdc_bc['A'], 4.1319413321530014)
+        self.assertAlmostEqual(cdp.interatomic[1].rdc_bc['A'], -9.5802642470087989)
+        self.assertAlmostEqual(cdp.interatomic[2].rdc_bc['A'], -16.244078605100817)
 
 
     def test_rdc_tensor(self):

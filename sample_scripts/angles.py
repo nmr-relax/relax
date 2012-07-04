@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,11 +20,28 @@
 #                                                                             #
 ###############################################################################
 
-"""Script for calculation the XH bond vector angles with respect to the diffusion tensor."""
+"""Script for calculating the protein NH bond vector angles with respect to the diffusion tensor."""
 
 
-name = 'spheroid'
-pipe.create(name, 'mf')
-structure.read_pdb("Ap4Aase_new_3.pdb")
+# Create the data pipe.
+pipe.create('spheroid', 'mf')
+
+# Read a PDB file.
+structure.read_pdb(file='Ap4Aase_new_3.pdb')
+
+# Load the spins.
+structure.load_spins('@N')
+structure.load_spins('@H')
+
+# Define the NH vectors.
+dipole_pair.define(spin_id1='@N', spin_id2='@H')
+dipole_pair.unit_vectors()
+
+# Initialise a diffusion tensor.
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
-angles()
+
+# Display the sequence.
+sequence.display()
+
+# Calculate the angles.
+angles.diff_frame()

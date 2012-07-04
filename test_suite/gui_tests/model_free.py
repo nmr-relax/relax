@@ -27,6 +27,7 @@ import wx
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import cdp_name
 from status import Status; status = Status()
@@ -77,13 +78,21 @@ class Mf(GuiTestCase):
         # Launch the spin viewer window.
         self.app.gui.show_tree()
 
-        # Run through the spin loading wizard.
+        # Spin loading wizard:  Initialisation.
         self.app.gui.spin_viewer.load_spins_wizard()
+
+        # Spin loading wizard:  The PDB file.
+        page = self.app.gui.spin_viewer.wizard.get_page(0)
+        page.selection = 'new pdb'
         self.app.gui.spin_viewer.wizard._go_next()
-        page = self.app.gui.spin_viewer.wizard.get_page(1)
-        page.SetValue('file', data_path+'noe.500.out')
+        page = self.app.gui.spin_viewer.wizard.get_page(self.app.gui.spin_viewer.wizard._current_page)
+        page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
         self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Spin loading wizard:  The spin loading.
         self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Close the spin viewer window.
         self.app.gui.spin_viewer.handler_close()
@@ -103,31 +112,28 @@ class Mf(GuiTestCase):
         for i in range(len(data)):
             self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
-        # Set the values, using the methods behind the buttons to set up the user functions with default values, and then manually executing the user function.
+        # Dipole-dipole interaction wizard:  Initialisation.
+        analysis.setup_dipole_pair()
+
+        # Dipole-dipole interaction wizard:  The dipole_pair.define, dipole_pair.set_dist, and dipole_pair.unit_vectors user functions.
+        analysis.dipole_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+        analysis.dipole_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+        analysis.dipole_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Set up the CSA interaction.
         analysis.value_set_csa()
         uf_store['value.set'].wizard._ok()
         interpreter.flush()    # Required because of the asynchronous uf call.
-        analysis.value_set_r()
-        uf_store['value.set'].wizard._ok()
-        interpreter.flush()    # Required because of the asynchronous uf call.
-        analysis.value_set_heteronuc_type()
-        uf_store['value.set'].wizard._ok()
-        interpreter.flush()    # Required because of the asynchronous uf call.
-        analysis.value_set_proton_type()
-        uf_store['value.set'].wizard._ok()
-        interpreter.flush()    # Required because of the asynchronous uf call.
 
-        # The unit vector loading wizard.
-        analysis.load_unit_vectors()
-
-        # The PDB file.
-        page = analysis.vect_wizard.get_page(0)
-        page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
-        analysis.vect_wizard._go_next()
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope_heteronuc()
+        uf_store['spin.isotope'].wizard._ok()
         interpreter.flush()    # Required because of the asynchronous uf call.
-
-        # The unit vectors.
-        analysis.vect_wizard._go_next()
+        analysis.spin_isotope_proton()
+        uf_store['spin.isotope'].wizard._ok()
         interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Select only the tm0 and tm1 local tm models.
@@ -197,11 +203,12 @@ class Mf(GuiTestCase):
         self.assertAlmostEqual(cdp.chi2, 4e-19)
 
         # The spin ID info.
-        mol_names = ["sphere_mol1"] * 9
-        res_names = ["GLY"] * 9
-        res_nums = range(1, 10)
-        spin_names = ["N"] * 9
-        spin_nums = numpy.array(range(9)) * 2 + 1
+        mol_names = ["sphere_mol1"] * 9*2
+        res_names = ["GLY"] * 9*2
+        res_nums = [val for pair in zip(range(1, 10), range(1, 10)) for val in pair]
+        spin_names = ["N", "H"] * 9
+        spin_nums = numpy.array(range(9*2)) * 2 + 1
+        spin_nums = range(1, 20)
 
         # Check the spin data.
         i = 0
@@ -213,37 +220,47 @@ class Mf(GuiTestCase):
             self.assertEqual(spin.name, spin_names[i])
             self.assertEqual(spin.num,  spin_nums[i])
 
-            # The data.
-            self.assertEqual(spin.select, True)
-            self.assertEqual(spin.fixed, False)
-            self.assertEqual(spin.proton_type, '1H')
-            self.assertEqual(spin.heteronuc_type, '15N')
-            self.assertEqual(spin.attached_proton, None)
-            self.assertAlmostEqual(spin.r, 1.02 * 1e-10)
-            self.assertAlmostEqual(spin.csa, -172e-6)
+            # The 1H spin checks.
+            if i%2:
+                # The data.
+                self.assertEqual(spin.select, False)
+                self.assertEqual(spin.isotope, '1H')
 
-            # The model-free data.
-            self.assertEqual(spin.model, 'm2')
-            self.assertEqual(spin.equation, 'mf_orig')
-            self.assertEqual(len(spin.params), 2)
-            self.assertEqual(spin.params[0], 's2')
-            self.assertEqual(spin.params[1], 'te')
-            self.assertAlmostEqual(spin.s2, 0.8)
-            self.assertEqual(spin.s2f, None)
-            self.assertEqual(spin.s2s, None)
-            self.assertEqual(spin.local_tm, None)
-            self.assertAlmostEqual(spin.te, 20e-12)
-            self.assertEqual(spin.tf, None)
-            self.assertEqual(spin.ts, None)
-            self.assertEqual(spin.rex, None)
+            # The 15N spin checks.
+            else:
+                # The data.
+                self.assertEqual(spin.select, True)
+                self.assertEqual(spin.fixed, False)
+                self.assertEqual(spin.isotope, '15N')
+                self.assertAlmostEqual(spin.csa, -172e-6)
 
-            # The spin minimisation info.
-            self.assertEqual(spin.chi2, None)
-            self.assertEqual(spin.iter, None)
-            self.assertEqual(spin.f_count, None)
-            self.assertEqual(spin.g_count, None)
-            self.assertEqual(spin.h_count, None)
-            self.assertEqual(spin.warning, None)
+                # The model-free data.
+                self.assertEqual(spin.model, 'm2')
+                self.assertEqual(spin.equation, 'mf_orig')
+                self.assertEqual(len(spin.params), 2)
+                self.assertEqual(spin.params[0], 's2')
+                self.assertEqual(spin.params[1], 'te')
+                self.assertAlmostEqual(spin.s2, 0.8)
+                self.assertEqual(spin.s2f, None)
+                self.assertEqual(spin.s2s, None)
+                self.assertEqual(spin.local_tm, None)
+                self.assertAlmostEqual(spin.te, 20e-12)
+                self.assertEqual(spin.tf, None)
+                self.assertEqual(spin.ts, None)
+                self.assertEqual(spin.rex, None)
+
+                # The spin minimisation info.
+                self.assertEqual(spin.chi2, None)
+                self.assertEqual(spin.iter, None)
+                self.assertEqual(spin.f_count, None)
+                self.assertEqual(spin.g_count, None)
+                self.assertEqual(spin.h_count, None)
+                self.assertEqual(spin.warning, None)
 
             # Increment the index.
             i += 1
+
+        # Check the interatomic data.
+        i = 0
+        for interatom in interatomic_loop():
+            self.assertAlmostEqual(interatom.r, 1.02 * 1e-10)

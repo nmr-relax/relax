@@ -74,7 +74,7 @@ def load_pickle(file):
     file.close()
 
     # Black list of objects (all dict objects, non-modifiable objects, data store specific methods, and other special objects).
-    black_list = dir(dict) + ['__weakref__', '__dict__', '__module__', '__reset__', 'add', 'from_xml', 'is_empty', 'to_xml']
+    black_list = dir(dict) + ['__weakref__', '__dict__', '__module__', '__reset__', '_back_compat_hook', 'add', 'from_xml', 'is_empty', 'to_xml']
 
     # Loop over the objects in the saved state, and dump them into the relax data store.
     for name in dir(state):

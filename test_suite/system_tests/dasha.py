@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import pi
 from os import sep
 import sys
 from tempfile import mkdtemp
@@ -29,6 +30,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
 from relax_io import test_binary
 from status import Status; status = Status()
@@ -69,14 +71,11 @@ class Dasha(SystemTestCase):
 
         # The spin data.
         select = [True, True, False, False]
-        fixed = [None, None, None, None]
-        proton_type = [None, None, None, None]
-        heteronuc_type = ['15N', '15N', '15N', '15N']
-        attached_proton = [None, None, None, None]
+        fixed = [False, False, False, False]
+        isotope = ['15N', '15N', '15N', '15N']
         model = ['m3', 'm3', 'm3', 'm3']
         equation = ['mf_orig', 'mf_orig', 'mf_orig', 'mf_orig']
         params = [['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex']]
-        xh_vect = [None, None, None, None]
         s2 = [0.71510, 0.64359, None, None]
         s2f = [None, None, None, None]
         s2s = [None, None, None, None]
@@ -84,8 +83,8 @@ class Dasha(SystemTestCase):
         te = [None, None, None, None]
         tf = [None, None, None, None]
         ts = [None, None, None, None]
-        rex = [4.32701, 4.29432, None, None]
-        r = [1.02e-10, 1.02e-10, 1.02e-10, 1.02e-10]
+        rex_scale = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
+        rex = [4.32701*rex_scale, 4.29432*rex_scale, None, None]
         csa = [-172e-6, -172e-6, -172e-6, -172e-6]
         chi2 = [1.9657, 0.63673, None, None]
         ri_data = [{'R1_600': 1.0, 'R2_600': 15.0, 'NOE_600': 0.9},
@@ -100,16 +99,19 @@ class Dasha(SystemTestCase):
         # Check the spin data.
         i = 0
         for spin in spin_loop():
+            # Protons.
+            if spin.isotope == '1H':
+                self.assertEqual(spin.select, False)
+                continue
+
             # Check the data.
+            print spin
             self.assertEqual(spin.select, select[i])
             self.assertEqual(spin.fixed, fixed[i])
-            self.assertEqual(spin.proton_type, proton_type[i])
-            self.assertEqual(spin.heteronuc_type, heteronuc_type[i])
-            self.assertEqual(spin.attached_proton, attached_proton[i])
+            self.assertEqual(spin.isotope, isotope[i])
             self.assertEqual(spin.model, model[i])
             self.assertEqual(spin.equation, equation[i])
             self.assertEqual(spin.params, params[i])
-            self.assertEqual(spin.xh_vect, xh_vect[i])
             self.assertEqual(spin.s2, s2[i])
             self.assertEqual(spin.s2f, s2f[i])
             self.assertEqual(spin.s2s, s2s[i])
@@ -118,7 +120,6 @@ class Dasha(SystemTestCase):
             self.assertEqual(spin.tf, tf[i])
             self.assertEqual(spin.ts, ts[i])
             self.assertEqual(spin.rex, rex[i])
-            self.assertAlmostEqual(spin.r, r[i])
             self.assertAlmostEqual(spin.csa, csa[i])
             self.assertEqual(spin.chi2, chi2[i])
             for ri_id in cdp.ri_ids:
@@ -126,4 +127,11 @@ class Dasha(SystemTestCase):
                     self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
 
             # Increment the spin index.
+            i += 1
+
+        # Check the interatomic data.
+        r = [1.02e-10, 1.02e-10, 1.02e-10, 1.02e-10]
+        i = 0
+        for interatom in interatomic_loop():
+            self.assertAlmostEqual(interatom.r, r[i])
             i += 1

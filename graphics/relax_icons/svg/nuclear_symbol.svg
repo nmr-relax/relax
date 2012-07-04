@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600" viewBox="-300 -300 600 600">
+<g style="fill:#f1cd43;fill-opacity:1" transform="matrix(0.983649,0,0,0.973132,-1.320985e-2,-6.490724e-2)">
+    <path open="true" end="12.156224" start="5.8970142" d="M 264.33964,-111.81925 C 323.62695,36.157731 254.04363,204.94724 108.58457,265.99862 C -36.874502,327.05 -203.61437,257.44894 -264.64541,110.20382 C -325.67642,-37.041297 -258.09193,-206.66515 -113.36448,-269.48168 C 31.362964,-332.29818 198.913,-264.7305 261.67898,-118.23841" ry="203.77359" rx="221.56334" cy="15.363881" cx="38.00539" id="path1315" style="opacity:0.9;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:20.85027122;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" type="arc"/>
+<circle r="50"/>
+<path d="M75,0 A 75,75 0 0,0 37.5,-64.952 L 125,-216.506 A 250,250 0 0,1 250,0 z" id="bld"/>
+<use xlink:href="#bld" transform="rotate(120)"/>
+<use xlink:href="#bld" transform="rotate(240)"/>
+</g>
+</svg>
