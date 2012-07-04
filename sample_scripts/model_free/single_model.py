@@ -28,7 +28,7 @@ name = 'm4'
 pipe.create(name, 'mf')
 
 # Set up the 15N spins.
-sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+sequence.read(file='noe.500.out', res_num_col=1, res_name_col=2)
 spin.name('N')
 spin.element('N')
 spin.isotope('15N', spin_id='@N')

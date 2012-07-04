@@ -189,13 +189,13 @@ structure.load_spins('@H', ave_pos=True)
 spin.isotope('15N', spin_id='@N')
 spin.isotope('1H', spin_id='@H')
 
-# Set up the 15N spins (alternative to the above).
+# Set up the 15N spins (alternative to the structure-based approach).
 #sequence.read(file='noe.500.out', dir=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None)
 #spin.name('N')
 #spin.element(element='N', spin_id='@N')
 #spin.isotope('15N', spin_id='@N')
 
-# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction.
+# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach).
 #sequence.attach_protons()
 
 # Load the relaxation data.
@@ -217,6 +217,7 @@ dipole_pair.unit_vectors()
 
 # Define the chemical shift relaxation interaction.
 value.set(-172 * 1e-6, 'csa', spin_id='@N')
+
 
 
 # Execution.
