@@ -1002,9 +1002,10 @@ class N_state_model(API_base, API_common):
                                 - rdc, the RDC values.
                                 - rdc_err, the RDC errors.
                                 - rdc_weight, the RDC weights.
-                                - vectors, the heteronucleus to proton vectors.
+                                - vectors, the interatomic vectors.
                                 - rdc_const, the dipolar constants.
-        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
+                                - absolute, the absolute value flags (as 1's and 0's).
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-3 array, numpy rank-2 array, numpy rank-2 array)
         """
 
         # Initialise.
@@ -1013,6 +1014,7 @@ class N_state_model(API_base, API_common):
         rdc_weight = []
         unit_vect = []
         rdc_const = []
+        absolute = []
 
         # The unit vectors and RDC constants.
         for interatom in interatomic_loop():
@@ -1069,6 +1071,7 @@ class N_state_model(API_base, API_common):
             rdc.append([])
             rdc_err.append([])
             rdc_weight.append([])
+            absolute.append([])
 
             # Interatom loop.
             for interatom in interatomic_loop():
@@ -1130,15 +1133,22 @@ class N_state_model(API_base, API_common):
                 else:
                     rdc_weight[-1].append(1.0)
 
+                # Append the absolute value flag.
+                if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
+                    absolute[-1].append(interatom.absolute_rdc[align_id])
+                else:
+                    absolute[-1].append(False)
+
         # Convert to numpy objects.
         rdc = array(rdc, float64)
         rdc_err = array(rdc_err, float64)
         rdc_weight = array(rdc_weight, float64)
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
+        absolute = array(absolute, float64)
 
         # Return the data structures.
-        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute
 
 
     def _minimise_setup_tensors(self, sim_index=None):
@@ -1497,9 +1507,9 @@ class N_state_model(API_base, API_common):
             pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj = None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc = None, None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
+            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
         fixed_tensors = None
@@ -1524,7 +1534,7 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
