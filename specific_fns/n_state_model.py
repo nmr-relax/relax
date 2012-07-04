@@ -1134,7 +1134,10 @@ class N_state_model(API_base, API_common):
                     rdc_weight[-1].append(1.0)
 
                 # Append the absolute value flag.
-                absolute[-1].append(interatom.absolute_rdc[align_id])
+                if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
+                    absolute[-1].append(interatom.absolute_rdc[align_id])
+                else:
+                    absolute[-1].append(False)
 
         # Convert to numpy objects.
         rdc = array(rdc, float64)
