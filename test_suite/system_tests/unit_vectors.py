@@ -59,18 +59,20 @@ class Unit_vectors(SystemTestCase):
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
+        self.interpreter.structure.load_spins(spin_id='@H')
 
         # Calculate the unit vectors.
-        self.interpreter.structure.vectors(attached='H')
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.unit_vectors()
 
         # Leu 3.
-        self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
-        self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[2], 0.42837054)
+        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertNotEqual(cdp.interatomic[0].vector, None)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)
 
 
     def test_calc_unit_vectors2(self):
@@ -81,21 +83,23 @@ class Unit_vectors(SystemTestCase):
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
+        self.interpreter.structure.load_spins(spin_id='@H')
 
         # Remove the spin numbers.
         self.interpreter.spin.number(force=True)
 
         # Calculate the unit vectors.
-        self.interpreter.structure.vectors(attached='H')
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.unit_vectors()
 
         # Leu 3.
-        self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
-        self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[2], 0.42837054)
+        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertNotEqual(cdp.interatomic[0].vector, None)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)
 
 
     def test_calc_unit_vectors3(self):
@@ -106,18 +110,20 @@ class Unit_vectors(SystemTestCase):
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
+        self.interpreter.structure.load_spins(spin_id='@H')
 
         # Calculate the unit vectors.
-        self.interpreter.structure.vectors(attached='H')
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.unit_vectors()
 
         # Leu 3.
-        self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
-        self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[2], 0.42837054)
+        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertNotEqual(cdp.interatomic[0].vector, None)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)
 
 
     def test_calc_unit_vectors4(self):
@@ -128,18 +134,20 @@ class Unit_vectors(SystemTestCase):
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
+        self.interpreter.structure.load_spins(spin_id='@H')
 
         # Remove the spin numbers.
         self.interpreter.spin.number(force=True)
 
         # Calculate the unit vectors.
-        self.interpreter.structure.vectors(attached='H')
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.unit_vectors()
 
         # Leu 3.
-        self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
-        self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
-        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[2], 0.42837054)
+        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertNotEqual(cdp.interatomic[0].vector, None)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
+        self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)

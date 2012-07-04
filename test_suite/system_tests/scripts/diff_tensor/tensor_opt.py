@@ -26,9 +26,8 @@ sequence.read('NOE.500.out', dir=path, res_num_col=1)
 # Load a PDB file.
 structure.read_pdb('uniform.pdb', dir=path)
 
-# Set the spin name and then load the NH vectors.
+# Set the spin names.
 spin.name(name='N')
-structure.vectors(spin_id='@N', attached='H*', ave=False)
 
 # Load the relaxation data.
 frq = array([500, 600, 700, 800], float64)
@@ -47,11 +46,22 @@ elif ds.diff_type == 'ellipsoid':
 else:
     raise RelaxError, "The diffusion type '%s' is unknown." % ds.diff_type
 
-# Setup other values.
-value.set(1.02 * 1e-10, 'r')
-value.set(-172 * 1e-6, 'csa')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
+# Create the proton spins.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+spin.element('N', '@N')
+structure.get_pos("@N")
+structure.get_pos("@H")
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+dipole_pair.unit_vectors()
+
+# Define the chemical shift relaxation interaction.
+value.set(-172 * 1e-6, 'csa', spin_id='@N')
+
+# Set the nuclear isotope type.
+spin.isotope('15N', spin_id='@N')
 
 # Select the model-free model.
 model_free.select_model(model='m0')

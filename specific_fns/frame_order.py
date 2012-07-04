@@ -81,10 +81,6 @@ class Frame_order(API_base, API_common):
         self.PARAMS.add('cone_sigma_max', scope='global', units='rad', desc='The torsion angle', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('params', scope='global', desc='The model parameters', py_type=list)
 
-        # Set up the spin parameters.
-        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
-        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
-
         # Add minimisation structures.
         self.PARAMS.add_min_data(min_stats_global=True)
 

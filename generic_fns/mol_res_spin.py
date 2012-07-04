@@ -1809,10 +1809,14 @@ def index_molecule(mol_name=None):
     """Return the index of the molecule of the given name.
 
     @keyword mol_name:  The name of the molecule.
-    @type mol_name:     str
+    @type mol_name:     str or None
     @return:            The index of the molecule, if it exists.
     @rtype:             int or None
     """
+
+    # Single molecule and no name given.
+    if mol_name == None and len(cdp.mol) == 1:
+        return 0
 
     # Loop over the molecules.
     i = 0
@@ -2181,22 +2185,31 @@ def name_residue(res_id, name=None, force=False):
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
-def name_spin(spin_id=None, name=None, force=False):
+def name_spin(spin_id=None, name=None, pipe=None, force=False):
     """Name the spins.
 
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @keyword name:      The new spin name.
     @type name:         str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
     @keyword force:     A flag which if True will cause the named spin to be renamed.
     @type force:        bool
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Rename the matching spins.
-        for spin, id in spin_loop(spin_id, return_id=True):
+        for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
             if spin.name and not force:
                 warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
             else:
@@ -2609,17 +2622,19 @@ def return_residue(selection=None, pipe=None, indices=False):
         return res_container
 
 
-def return_spin(spin_id=None, pipe=None, full_info=False):
+def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
     """Return the spin data container corresponding to the given spin ID string.
 
     @keyword spin_id:   The unique spin ID string.
     @type spin_id:      str
-    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
-    @type full_info:    boolean
+    @keyword full_info: A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
+    @type full_info:    bool
+    @keyword multi:     A flag which if True will allow multiple spins to be returned.
+    @type multi:        bool
     @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
-    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
+    @rtype:             SpinContainer instance of list of instances or tuple of (str, int, str, SpinContainer instance or list of instances)
     """
 
     # The data pipe.
@@ -2638,25 +2653,31 @@ def return_spin(spin_id=None, pipe=None, full_info=False):
         mol_index, res_index, spin_index = dp.mol._spin_id_lookup[spin_id]
 
     # Return the data.
-    if full_info:
+    if full_info and multi:
+        return [dp.mol[mol_index].name], [dp.mol[mol_index].res[res_index].num], [dp.mol[mol_index].res[res_index].name], [dp.mol[mol_index].res[res_index].spin[spin_index]]
+    elif full_info:
         return dp.mol[mol_index].name, dp.mol[mol_index].res[res_index].num, dp.mol[mol_index].res[res_index].name, dp.mol[mol_index].res[res_index].spin[spin_index]
+    elif multi:
+        return [dp.mol[mol_index].res[res_index].spin[spin_index]]
     else:
         return dp.mol[mol_index].res[res_index].spin[spin_index]
 
 
-def return_spin_from_selection(selection=None, pipe=None, full_info=False):
+def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi=False):
     """Function for returning the spin data container of the given selection.
 
     If more than one selection is given, then the boolean AND operation will be used to pull out the spin.
 
-    @param selection:   The spin selection identifier.
+    @keyword selection: The spin selection identifier.
     @type selection:    str
-    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
-    @type full_info:    boolean
+    @keyword full_info: A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
+    @type full_info:    bool
+    @keyword multi:     A flag which if True will allow multiple spins to be returned.
+    @type multi:        bool
     @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
-    @rtype:             SpinContainer instance or tuple of (str, int, str, SpinContainer instance)
+    @rtype:             SpinContainer instance of list of instances or tuple of (str, int, str, SpinContainer instance or list of instances)
     """
 
     # Handle Unicode.
@@ -2674,9 +2695,12 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False):
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    spin = None
     spin_num = 0
-    spin_container = None
+    spins = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_ids = []
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
@@ -2694,23 +2718,33 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False):
                 if spin not in select_obj:
                     continue
 
-                # Store all containers.
-                mol_container = mol
-                res_container = res
-                spin_container = spin
+                # Store all data.
+                mol_names.append(mol.name)
+                res_nums.append(res.num)
+                res_names.append(res.name)
+                spins.append(spin)
 
                 # Increment the spin number counter.
                 spin_num = spin_num + 1
 
+                # Generate as store the spin ID.
+                spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+
     # No unique identifier.
-    if spin_num > 1:
-        raise RelaxMultiSpinIDError(selection)
+    if not multi and spin_num > 1:
+        raise RelaxMultiSpinIDError(selection, spin_ids)
 
     # Return the spin container.
-    if full_info:
-        return mol_container.name, res_container.num, res_container.name, spin_container
+    if full_info and multi:
+        return mol_names, res_nums, res_names, spins
+    elif full_info:
+        return mol_names[0], res_nums[0], res_names[0], spins[0]
+    elif multi:
+        return spins
+    elif len(spins):
+        return spins[0]
     else:
-        return spin_container
+        return None
 
 
 def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
@@ -2965,13 +2999,15 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
-def set_spin_element(spin_id=None, element=None, force=False):
+def set_spin_element(spin_id=None, element=None, pipe=None, force=False):
     """Set the element type of the spins.
 
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @keyword element:   The IUPAC element name.
     @type element:      str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
     @keyword force:     A flag which if True will cause the element to be changed.
     @type force:        bool
     """
@@ -2991,13 +3027,65 @@ def set_spin_element(spin_id=None, element=None, force=False):
     if element not in valid_names:
         raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Set the element name for the matching spins.
-    for spin, id in spin_loop(spin_id, return_id=True):
+    for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
         if hasattr(spin, 'element') and spin.element and not force:
             warn(RelaxWarning("The element type of the spin '%s' is already set.  Set the force flag to True to rename." % id))
         else:
             spin.element = element
+
+
+def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
+    """Set the nuclear isotope type of the spins.
+
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @keyword isotope:   The nuclear isotope type.
+    @type isotope:      str
+    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:         str
+    @keyword force:     A flag which if True will cause the isotope type to be changed.
+    @type force:        bool
+    """
+
+    # Types currently supported in relax.
+    supported_types = [
+        '1H',
+        '2H',
+        '13C',
+        '14N',
+        '15N',
+        '17O',
+        '19F',
+        '23Na',
+        '31P',
+        '113Cd'
+    ]
+
+    # Check.
+    if isotope not in supported_types:
+        raise(RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope))
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Set the isotope type for the matching spins.
+    for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
+        if hasattr(spin, 'isotope') and spin.isotope and not force:
+            warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
+        else:
+            spin.isotope = isotope
 
 
 def spin_id_to_data_list(id):

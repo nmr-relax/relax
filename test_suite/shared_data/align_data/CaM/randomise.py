@@ -32,13 +32,13 @@ for line in rdc_file.readlines():
     row = split(line)
 
     # Randomise the value.
-    val = gauss(float(row[5]), SIGMA_RDC)
+    val = gauss(float(row[2]), SIGMA_RDC)
 
     # Write the line out.
-    rdc_out.write("%20s%10s%10s%10s%10s%30.11f\n" % (row[0], row[1], row[2], row[3], row[4], val))
+    rdc_out.write("%-20s %-20s %30.11f\n" % (row[0], row[1], val))
 
     # The Pales data line (equal weight, no errors).
-    pales_file.write("%5s     %6s       %6s        %5s     %6s       %6s    %9.3f   %9.3f %.2f\n" % (row[1], row[2], row[4], row[1], row[2], 'H', val, 0.0, 1.0))
+    #pales_file.write("%5s     %6s       %6s        %5s     %6s       %6s    %9.3f   %9.3f %.2f\n" % (row[1], row[2], row[4], row[1], row[2], 'H', val, 0.0, 1.0))
 
 
 # Loop over the PCS data.

@@ -47,6 +47,7 @@ __all__ = [ 'align_tensor',
             'diff_tensor',
             'exp_info',
             'gui',
+            'interatomic',
             'mol_res_spin',
             'pipe_container',
             'prototype',
@@ -185,6 +186,90 @@ class Relax_data_store(dict):
         # Signal the change.
         status.observers.reset.notify()
         status.observers.pipe_alteration.notify()
+
+
+    def _back_compat_hook(self, file_version=None, pipes=None):
+        """Method for converting the old data structures to the new ones.
+
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
+        @keyword pipes:         The list of new pipe names to update.
+        @type pipes:            list of str
+        """
+
+        # Loop over the new data pipes.
+        for pipe_name in pipes:
+            # The data pipe object.
+            dp = self[pipe_name]
+
+            # Convert the molecule-residue-spin data.
+            for mol in dp.mol:
+                # Loop over the residues.
+                for res in mol.res:
+                    # Loop over the spins.
+                    for spin in res.spin:
+                        # The current spin ID.
+                        spin_id = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
+
+                        # The interatomic data container design.
+                        if hasattr(spin, 'heteronuc_type'):
+                            # Rename the nuclear isotope.
+                            spin.isotope = spin.heteronuc_type
+
+                            # Name the spin if needed.
+                            if spin.name == None:
+                                if search('N', spin.isotope):
+                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='N', pipe=pipe_name)
+                                elif search('C', spin.isotope):
+                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='C', pipe=pipe_name)
+
+                            # An attached proton - convert into a spin container.
+                            if (hasattr(spin, 'attached_proton') and spin.attached_proton != None) or (hasattr(spin, 'proton_type') and spin.proton_type != None):
+                                # The proton name.
+                                if hasattr(spin, 'attached_proton') and spin.attached_proton != None:
+                                    proton_name = spin.attached_proton
+                                else:
+                                    proton_name = 'H'
+
+                                # The two spin IDs (newly regenerated due to the above renaming).
+                                spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
+                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
+
+                                # Create a new spin container for the proton.
+                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
+                                h_spin.select = False
+
+                                # Set up a dipole interaction between the two spins.
+                                generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
+                                generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
+                                generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
+
+                                # Get the interatomic data container.
+                                interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2, pipe=pipe_name)
+
+                                # Set the interatomic distance.
+                                if hasattr(spin, 'r'):
+                                    interatom.r = spin.r
+
+                                # Set the interatomic unit vectors.
+                                if hasattr(spin, 'xh_vect'):
+                                    interatom.vector = spin.xh_vect
+
+                        # Delete the old structures.
+                        if hasattr(spin, 'heteronuc_type'):
+                            del spin.heteronuc_type
+                        if hasattr(spin, 'proton_type'):
+                            del spin.proton_type
+                        if hasattr(spin, 'attached_proton'):
+                            del spin.attached_proton
+                        if hasattr(spin, 'r'):
+                            del spin.r
+                        if hasattr(spin, 'r_err'):
+                            del spin.r_err
+                        if hasattr(spin, 'r_sim'):
+                            del spin.r_sim
+                        if hasattr(spin, 'xh_vect'):
+                            del spin.xh_vect
 
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
@@ -328,6 +413,9 @@ class Relax_data_store(dict):
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
 
+        # Structure for the names of the new pipes.
+        pipes = []
+
         # Target loading to a specific pipe (for pipe results reading).
         if pipe_to:
             # Check if there are multiple pipes in the XML file.
@@ -351,6 +439,9 @@ class Relax_data_store(dict):
 
             # Load the data.
             self[pipe_to].from_xml(pipe_nodes[0], dir=dir, file_version=file_version)
+
+            # Store the pipe name.
+            pipes.append(pipe_to)
 
         # Load the state.
         else:
@@ -383,12 +474,18 @@ class Relax_data_store(dict):
                 # Fill the pipe.
                 self[pipe_name].from_xml(pipe_node, file_version=file_version, dir=dir)
 
+                # Store the pipe name.
+                pipes.append(pipe_name)
+
             # Set the current pipe.
             if self.current_pipe in self.keys():
                 __builtin__.cdp = self[self.current_pipe]
 
         # Finally update the molecule, residue, and spin metadata.
         generic_fns.mol_res_spin.metadata_update()
+
+        # Backwards compatibility transformations.
+        self._back_compat_hook(file_version, pipes=pipes)
 
 
     def to_xml(self, file, pipes=None):

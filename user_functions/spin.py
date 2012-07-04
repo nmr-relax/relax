@@ -24,7 +24,7 @@
 """The spin user function definitions."""
 
 # relax module imports.
-from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, get_molecule_names, get_residue_ids, get_residue_names, get_residue_nums, get_spin_ids, id_string_doc, name_spin, number_spin, set_spin_element
+from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, get_molecule_names, get_residue_ids, get_residue_names, get_residue_nums, get_spin_ids, id_string_doc, name_spin, number_spin, set_spin_element, set_spin_isotope
 from generic_fns import pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -59,8 +59,7 @@ uf.add_keyarg(
     desc_short = "source spin ID",
     desc = "The spin identifier string of the spin to copy the data from.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = get_spin_ids,
-    wiz_read_only = True
+    wiz_combo_iter = get_spin_ids
 )
 uf.add_keyarg(
     name = "pipe_to",
@@ -126,7 +125,6 @@ uf.add_keyarg(
     desc = "The name of the residue to add the spin to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_residue_names,
-    wiz_read_only = True,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -136,7 +134,6 @@ uf.add_keyarg(
     desc = "The number of the residue to add the spin to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_residue_nums,
-    wiz_read_only = True,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -146,7 +143,6 @@ uf.add_keyarg(
     desc = "The name of the molecule to add the spin to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_molecule_names,
-    wiz_read_only = True,
     can_be_none = True
 )
 # Description.
@@ -285,6 +281,14 @@ uf = uf_info.add_uf('spin.element')
 uf.title = "Set the element type of the spin."
 uf.title_short = "Spin element setting."
 uf.add_keyarg(
+    name = "element",
+    py_type = "str",
+    desc_short = "IUPAC element name",
+    desc = "The IUPAC element name.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["N", "C", "H", "O", "P"]
+)
+uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
@@ -292,14 +296,6 @@ uf.add_keyarg(
     wiz_element_type = 'combo',
     wiz_combo_iter = get_spin_ids,
     can_be_none = True
-)
-uf.add_keyarg(
-    name = "element",
-    py_type = "str",
-    desc_short = "IUPAC element name",
-    desc = "The IUPAC element name.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["N", "C", "H", "O", "P"]
 )
 uf.add_keyarg(
     name = "force",
@@ -324,6 +320,53 @@ uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spin.png'
+
+
+# The spin.isotope user function.
+uf = uf_info.add_uf('spin.isotope')
+uf.title = "Set the spins' nuclear isotope type."
+uf.title_short = "Nuclear isotope type."
+uf.add_keyarg(
+    name = "isotope",
+    py_type = "str",
+    desc_short = "nuclear isotope name",
+    desc = "The nuclear isotope name in the AE notation - the atomic mass number followed by the element symbol.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["1H", "2H", "13C", "14N", "15N", "17O", "19F", "23Na", "31P", "113Cd"],
+    wiz_read_only = False
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    desc_short = "spin ID string",
+    desc = "The spin identification string corresponding to one or more spins.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = get_spin_ids,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    arg_type = "force flag",
+    desc_short = "force flag",
+    desc = "A flag which if True will cause the nuclear isotope to be changed."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the nuclear isotope type of the spins to be set.")
+uf.desc.append(id_string_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The set all spins of residue 1 to the '13C' nuclear isotope, type one of:")
+uf.desc[-1].add_prompt("relax> spin.isotope('@1', '13C', force=True)")
+uf.desc[-1].add_prompt("relax> spin.isotope(spin_id='@1', isotope='13C', force=True)")
+uf.backend = set_spin_isotope
+uf.menu_text = "&isotope"
+uf.gui_icon = "relax.nuclear_symbol"
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'nuclear_symbol.png'
 
 
 # The spin.name user function.

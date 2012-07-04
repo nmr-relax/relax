@@ -40,7 +40,7 @@ from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from generic_fns.structure.superimpose import fit_to_first, fit_to_mean, Pivot_finder
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
-from relax_io import get_file_path, open_write_file, write_spin_data
+from relax_io import get_file_path, open_write_file, write_data, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
@@ -250,6 +250,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
     # Loop over all atoms of the spin_id selection.
     model_index = -1
     last_model = None
+    data = []
     for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Update the model info.
         if last_model != model_num:
@@ -265,7 +266,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
             atom_name = replace(atom_name, '+', '')
 
         # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_name=atom_name)
+        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=atom_name)
 
         # Get the spin container.
         spin_cont = return_spin(id)
@@ -281,6 +282,13 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
             if not hasattr(spin_cont, 'pos'):
                 spin_cont.pos = []
             spin_cont.pos.append(pos)
+
+        # Store the data for a printout at the end.
+        data.append([id, repr(pos)])
+
+    # No positions found.
+    if not len(data):
+        raise RelaxError("No positional information matching the spin ID '%s' could be found." % spin_id)
 
     # Update pseudo-atoms.
     for spin in spin_loop():
@@ -323,6 +331,9 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
                     spin.pos = ave
                 else:
                     spin.pos = ave[0]
+
+    # Print out.
+    write_data(out=sys.stdout, headings=["Spin_ID", "Position"], data=data)
 
 
 def load_spins(spin_id=None, str_id=None, ave_pos=False):
@@ -683,13 +694,13 @@ def translate(T=None, model=None, atom_id=None):
     cdp.structure.translate(T=T, model=model, atom_id=atom_id)
 
 
-def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
     """Extract the bond vectors from the loaded structures and store them in the spin container.
 
-    @keyword attached:      The name of the atom attached to the spin, as given in the structural file.  Regular expression can be used, for example 'H*'.  This uses relax rather than Python regular expression (i.e. shell like syntax).
-    @type attached:         str
-    @keyword spin_id:       The spin identifier string.
-    @type spin_id:          str
+    @keyword spin_id1:      The spin identifier string of the first spin of the pair.
+    @type spin_id1:         str
+    @keyword spin_id2:      The spin identifier string of the second spin of the pair.
+    @type spin_id2:         str
     @keyword model:         The model to extract the vector from.  If None, all vectors will be extracted.
     @type model:            str
     @keyword verbosity:     The higher the value, the more information is printed to screen.
@@ -733,23 +744,6 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         if unit:
             print("Calculating the unit vectors.")
 
-    # Determine if the attached atom is a proton.
-    proton = False
-    if relax_re.search('.*H.*', attached) or relax_re.search(attached, 'H'):
-        proton = True
-    if verbosity:
-        if proton:
-            print("The attached atom is a proton.")
-        else:
-            print("The attached atom is not a proton.")
-        print('')
-
-    # Set the variable name in which the vectors will be stored.
-    if proton:
-        object_name = 'xh_vect'
-    else:
-        object_name = 'bond_vect'
-
     # Loop over the spins.
     no_vectors = True
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
@@ -766,8 +760,8 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             continue
 
         # The bond vector already exists.
-        if hasattr(spin, object_name):
-            obj = getattr(spin, object_name)
+        if hasattr(spin, 'vector'):
+            obj = getattr(spin, 'vector')
             if obj != None:
                 warn(RelaxWarning("The bond vector for the spin " + repr(id) + " already exists."))
                 continue
@@ -824,7 +818,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             vector = vector[0]
 
         # Set the vector.
-        setattr(spin, object_name, vector)
+        setattr(spin, 'vector', vector)
 
         # We have a vector!
         no_vectors = False

@@ -16,4 +16,13 @@ ATOM     15  N   GLY     8       0.000   0.000   0.000  1.00  0.00
 ATOM     16  H   GLY     8      -0.373   0.645   0.667  1.00  0.00
 ATOM     17  N   GLY     9       0.000   0.000   0.000  1.00  0.00
 ATOM     18  H   GLY     9      -0.373  -0.645   0.667  1.00  0.00
+CONECT    1    2
+CONECT    3    4
+CONECT    5    6
+CONECT    7    8
+CONECT    9   10
+CONECT   11   12
+CONECT   13   14
+CONECT   15   16
+CONECT   17   18
 END

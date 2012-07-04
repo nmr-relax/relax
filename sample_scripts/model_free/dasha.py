@@ -31,14 +31,15 @@ for name in pipes:
     # Create the data pipe.
     pipe.create(name, 'mf')
 
-    # Nuclei type.
-    value.set('15N', 'heteronuc_type')
+    # Set up the 15N spins.
+    sequence.read('noe.500.out', res_num_col=1, res_name_col=2)
+    spin.name('N')
+    spin.element(element='N', spin_id='@N')
+    spin.isotope('15N', spin_id='@N')
 
-    # Load the sequence.
-    sequence.read('noe.500.out', res_num_col=1)
-
-    # Load a PDB file.
-    #structure.read_pdb('example.pdb')
+    # Set up the 15N spins from a PDB file.
+    #structure.read_pdb(file='example.pdb')
+    #structure.load_spins(spin_id='@N')
 
     # Load the relaxation data.
     relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
@@ -48,11 +49,19 @@ for name in pipes:
     relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out', res_num_col=1, data_col=3, error_col=4)
     relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
-    # Setup other values.
+    # Set up the diffusion tensor.
     diffusion_tensor.init(10e-9, fixed=1)
     #diffusion_tensor.init((10e-9, 0, 0, 40, 30, 80), fixed=1)
-    value.set(1.02 * 1e-10, 'r')
-    value.set(-172 * 1e-6, 'csa')
+
+    # Generate the 1H spins for the magnetic dipole-dipole relaxation interaction.
+    sequence.attach_protons()
+
+    # Define the magnetic dipole-dipole relaxation interaction.
+    dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+    dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+    # Define the chemical shift relaxation interaction.
+    value.set(-172 * 1e-6, 'csa', spin_id='@N')
 
     # Select the model-free model.
     model_free.select_model(model=name)

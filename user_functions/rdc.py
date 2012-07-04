@@ -295,63 +295,30 @@ uf.add_keyarg(
     default = "D",
     py_type = "str",
     desc_short = "data type",
-    desc = "Whether the RDC data is in the D or 2D format.",
+    desc = "Specify if the RDC data is in the D or 2D format.",
     wiz_element_type = "combo",
     wiz_combo_choices = ["D", "2D"],
     wiz_read_only = True
 )
 uf.add_keyarg(
-    name = "spin_id_col",
+    name = "spin_id1_col",
+    default = 1,
     py_type = "int",
-    arg_type = "free format",
-    desc_short = "spin ID column",
-    desc = "The spin ID string column (an alternative to the mol, res, and spin name and number columns).",
-    can_be_none = True
+    min = 1,
+    desc_short = "first spin ID column",
+    desc = "The spin ID string column for the first spin."
 )
 uf.add_keyarg(
-    name = "mol_name_col",
+    name = "spin_id2_col",
+    default = 2,
     py_type = "int",
-    arg_type = "free format",
-    desc_short = "molecule name column",
-    desc = "The molecule name column (alternative to the spin_id_col).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "res_num_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "residue number column",
-    desc = "The residue number column (alternative to the spin_id_col).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "res_name_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "residue name column",
-    desc = "The residue name column (alternative to the spin_id_col).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "spin_num_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "spin number column",
-    desc = "The spin number column (alternative to the spin_id_col).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "spin_name_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "spin name column",
-    desc = "The spin name column (alternative to the spin_id_col).",
-    can_be_none = True
+    min = 1,
+    desc_short = "second spin ID column",
+    desc = "The spin ID string column for the second spin."
 )
 uf.add_keyarg(
     name = "data_col",
     py_type = "int",
-    arg_type = "free format",
     desc_short = "data column",
     desc = "The RDC data column.",
     can_be_none = True
@@ -359,7 +326,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "error_col",
     py_type = "int",
-    arg_type = "free format",
     desc_short = "error column",
     desc = "The experimental error column.",
     can_be_none = True
@@ -367,16 +333,12 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "sep",
     py_type = "str",
-    arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "spin_id",
-    py_type = "str",
-    desc_short = "spin ID string",
-    desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["white space", ",", ";", ":"],
+    wiz_combo_data = [None, ",", ";", ":"],
+    wiz_read_only = False,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -384,7 +346,7 @@ uf.add_keyarg(
     default = False,
     py_type = "bool",
     desc_short = "negative gyromagnetic ratio correction",
-    desc = "A flag which is used to correct for the negative gyromagnetic ratio of 15N."
+    desc = "A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If set to True, all RDC values will be inverted prior to being stored in the relax data store."
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -393,7 +355,7 @@ uf.desc[-1].add_paragraph("The data type is used to specify how the RDC is defin
 uf.desc[-1].add_list_element("'D' means that the splitting in the aligned sample was taken as J + D.")
 uf.desc[-1].add_list_element("'2D' means that the splitting in the aligned sample was assumed to be J + 2D.")
 uf.desc[-1].add_paragraph("Internally, relax uses the D notation.  Therefore if set to '2D', the values will be doubled when read in.")
-uf.desc[-1].add_paragraph("If neg_g_corr is set to True, a sign inversion will be applied to all RDC values to be loaded.  This is sometimes needed for 15N if the data is not compensated for the negative gyromagnetic ratio.")
+uf.desc[-1].add_paragraph("If the negative gyromagnetic ratio correction flag is set, a sign inversion will be applied to all RDC values to be loaded.  This is sometimes needed for 15N if the data is not compensated for the negative gyromagnetic ratio.")
 uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number and name, and spin number and name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -407,7 +369,7 @@ uf.desc[-1].add_prompt("relax> rdc.read('Tb', 'Tb.txt', spin_id='@N')")
 uf.backend = rdc.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 180
+uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
