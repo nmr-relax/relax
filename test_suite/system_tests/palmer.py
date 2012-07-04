@@ -68,7 +68,7 @@ class Palmer(SystemTestCase):
         # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
         params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
-        spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
+        spin_names = [':-2', ':-1', ':0']
         if compiler == 'gcc':
             s2 = [[0.869, 0.732, None], [0.869, 0.730, None], [0.715, 0.643, None]]
             te = [[None, None, None], [0.0, 1.951, None], [None, None, None]]    # Gnu gcc modelfree4 version.
