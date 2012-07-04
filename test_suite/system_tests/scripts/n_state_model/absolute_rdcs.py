@@ -30,7 +30,7 @@ self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
 self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # Load the RDCs (both a signed and absolute value version).
-self._execute_uf(uf_name='rdc.read', align_id='signed', file='synth_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
+self._execute_uf(uf_name='rdc.read', align_id='abs', file='synth_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
 self._execute_uf(uf_name='rdc.read', align_id='abs', file='synth_rdc_abs', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None, absolute=True)
 
 # Set up the model.
