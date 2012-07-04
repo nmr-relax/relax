@@ -48,6 +48,10 @@ class Relax_data(SystemTestCase):
         # Loop over the spins.
         index = 0
         for spin in spin_loop():
+            # Skip deselected protons.
+            if not spin.select:
+                continue
+
             # Check the back calculated data.
             self.assertEqual(spin.ri_data_bc, ri_data_bc[index])
 
@@ -71,6 +75,10 @@ class Relax_data(SystemTestCase):
         # Loop over the spins.
         index = 0
         for spin in spin_loop():
+            # Skip deselected protons.
+            if not spin.select:
+                continue
+
             # Check the back calculated data.
             self.assertEqual(spin.ri_data_bc, ri_data_bc[index])
 
@@ -94,6 +102,10 @@ class Relax_data(SystemTestCase):
         # Loop over the spins.
         index = 0
         for spin in spin_loop():
+            # Skip deselected protons.
+            if not spin.select:
+                continue
+
             # Check the back calculated data.
             self.assertEqual(spin.ri_data_bc, ri_data_bc[index])
 

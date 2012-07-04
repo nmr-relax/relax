@@ -288,6 +288,12 @@ relax> model\_free.
 
 All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \texttt{`copy'}, \texttt{`create\_model'}, \texttt{`delete'}, \texttt{`remove\_tm'}, and \texttt{`select\_model'} contained within \texttt{`model\_free'} are all visible.
 
+% GUI screenshot
+\begin{figure}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/start.eps.gz}}
+\caption[GUI screenshot]{Screenshot of the relax GUI interface -- the starting interface.  To start one of the automated analyses, either the menu \texttt{`File->New analysis'} or the new analysis button in the toolbar should be selected.}\label{fig: GUI screenshot - start}
+\end{figure}
+
 
 
 % The data pipe.
@@ -328,11 +334,16 @@ Data pipe type          & Description \\
 \end{center}
 
 
-% GUI screenshot
-\begin{figure}
-\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/start.eps.gz}}
-\caption[GUI screenshot]{Screenshot of the relax GUI interface -- the starting interface.  To start one of the automated analyses, either the menu \texttt{`File->New analysis'} or the new analysis button in the toolbar should be selected.}\label{fig: GUI screenshot - start}
-\end{figure}
+
+% The spin and interatomic data containers.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The spin and interatomic data containers}
+\index{spin container|textbf}
+\index{interatomic data container|textbf}
+
+Any data which is not considered global for the molecule, such as diffusion tensors, alignment tensors, global minimisation statistics, etc., are stored within two special structures of the data pipes.  Any NMR data or information which is specific to an isolated spin system is stored within special spin containers.  This includes for example relaxation data, CSA information, nuclear isotope type, chemical element type, model-free parameters, reduced spectral density mapping values, spin specific minimisation statistics and PCS data.  NMR data or information which is defined as being between two spin systems, such as the magnetic dipole-dipole interaction involved in both NMR relaxation and RDC data, interatomic vectors and NOESY data, is stored within the interatomic data containers.  The spin and interatomic data containers and their associated data can be manipulated using a multitude of the relax user functions.
+
 
 % Analysis wizard screenshot
 \begin{figure}
@@ -359,26 +370,36 @@ An example of a simple script which will minimise the model-free model `m4' afte
 name = `m4' \\
 pipe.create(name, `mf') \\
  \\
-\# Nuclei type \\
-nuclei(`N') \\
+\# Load the PDB file. \\
+structure.read\_pdb(`1f3y.pdb') \\
  \\
-\# Load the sequence. \\
-sequence.read(`noe.500.out', res\_num\_col=1) \\
+\# Set up the 15N and 1H spins. \\
+structure.load\_spins(`@N', ave\_pos=True) \\
+structure.load\_spins(`@H', ave\_pos=True) \\
+spin.isotope(`15N', spin\_id=`@N') \\
+spin.isotope(`1H', spin\_id=`@H') \\
  \\
 \# Load the relaxation data. \\
-relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='R2\_600',  ri\_type='R2',  frq=600.0*1e6, file='r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='NOE\_600', ri\_type='NOE', frq=600.0*1e6, file='noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='R1\_500',  ri\_type='R1',  frq=500.0*1e6, file='r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='R2\_500',  ri\_type='R2',  frq=500.0*1e6, file='r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='NOE\_500', ri\_type='NOE', frq=500.0*1e6, file='noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.0*1e6, file=`r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.0*1e6, file=`r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.0*1e6, file=`noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
  \\
-\# Setup other values. \\
+\# Initialise the diffusion tensor. \\
 diffusion\_tensor.init((2e-8, 1.3, 60, 290), param\_types=1, axial\_type=`prolate', fixed=True) \\
-value.set(1.02 * 1e-10, `bond\_length') \\
+ \\
+\# Create all attached protons. \\
+sequence.attach\_protons() \\
+ \\
+\# Define the magnetic dipole-dipole relaxation interaction. \\
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+dipole\_pair.unit\_vectors() \\
+ \\
+\# Define the CSA relaxation interaction. \\
 value.set(-172 * 1e-6, `csa') \\
-value.set(`15N', `heteronuc\_type') \\
-value.set(`1H', `proton\_type') \\
  \\
 \# Select a preset model-free model. \\
 model\_free.select\_model(model=name) \\
@@ -414,8 +435,17 @@ A few sample scripts have been provided in the directory `sample\_scripts'.  The
 \subsection{The test suite}
 \index{test suite}
 
-To test that the program functions correctly, relax possesses an inbuilt test suite.  The suite is a collection of simple tests which execute or probe different parts of the program checking that the software runs without problem.  The test suite is executed by running relax using the command \texttt{`relax --test-suite'}.
+To test that the program functions correctly, relax possesses an inbuilt test suite.  The suite is a collection of simple tests which execute or probe different parts of the program checking that the software runs without problem.  The test suite is executed by running relax using the command
 
+\example{\$ relax --test-suite}
+
+Alternatively the three components of the test suite -- system tests, unit tests, and GUI tests -- can be run separately with
+
+\example{\$ relax --system-tests}
+
+\example{\$ relax --unit-tests}
+
+\example{\$ relax --gui-tests}
 
 
 % The GUI.

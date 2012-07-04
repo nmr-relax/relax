@@ -46,11 +46,23 @@ relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.484*1e6, file='data.r1.6
 relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.484*1e6, file='data.r2.600',  dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_name_col=5, data_col=6, error_col=7)
 relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.484*1e6, file='data.noe.600', dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_name_col=5, data_col=6, error_col=7)
 
-# Setup other values.
-value.set(1.02 * 1e-10, 'r')
+# Name the spins and set the element type.
+spin.name('N')
+spin.element('N')
+
+# Create all attached protons.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+# Set up the CSA value.
 value.set(-172 * 1e-6, 'csa')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
+
+# Set the spin information.
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
 
 # Select the model-free model.
 model_free.select_model(model=name)

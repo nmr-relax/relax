@@ -164,11 +164,22 @@ def setup_data(dir=None):
         interpreter.relax_data.read(ri_id='R1_%s'%frq[i],  ri_type='R1',  frq=float(frq[i])*1e6, file='r1.%s.out'%frq[i],  dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
         interpreter.relax_data.read(ri_id='R2_%s'%frq[i],  ri_type='R2',  frq=float(frq[i])*1e6, file='r2.%s.out'%frq[i],  dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
-    # Setup other values.
-    interpreter.value.set(1.20 * 1e-10, 'r')
+    # Set the element type.
+    interpreter.spin.element('C', spin_id='@C*')
+    
+    # Create all attached protons.
+    interpreter.sequence.attach_protons()
+
+    # Define the magnetic dipole-dipole relaxation interaction.
+    interpreter.dipole_pair.define(spin_id1='@C*', spin_id2='@H', direct_bond=True)
+    interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H', ave_dist=1.20 * 1e-10)
+
+    # Set up the CSA value.
     interpreter.value.set(200 * 1e-6, 'csa')
-    interpreter.value.set('13C', 'heteronuc_type')
-    interpreter.value.set('1H', 'proton_type')
+
+    # Set the spin information.
+    interpreter.spin.isotope('13C', spin_id='@C*')
+    interpreter.spin.isotope('1H', spin_id='@H')
 
     # Select the model-free model.
     interpreter.model_free.select_model(model=cdp._model)

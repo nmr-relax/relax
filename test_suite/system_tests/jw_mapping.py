@@ -78,7 +78,6 @@ class Jw(SystemTestCase):
 
         # Loop over residues.
         for res in residue_loop():
-            self.assertAlmostEqual(res.spin[0].r, NH_BOND_LENGTH)
             self.assertAlmostEqual(res.spin[0].csa, N15_CSA)
 
 

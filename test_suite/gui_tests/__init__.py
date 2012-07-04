@@ -36,6 +36,7 @@ from bmrb import Bmrb
 from consistency_tests import Ct
 from dead_uf_pages import Dead_uf_pages
 from frame_order import Frame_order
+from interatomic import Interatomic
 from jw_mapping import Jw_mapping
 from model_free import Mf
 from n_state_model import N_state_model
@@ -48,6 +49,7 @@ from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 __all__ = ['bmrb',
            'consistency_tests',
+           'interatomic',
            'jw_mapping',
            'model_free',
            'n_state_model',
@@ -113,6 +115,7 @@ class GUI_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dead_uf_pages))
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Interatomic))
             suite_array.append(TestLoader().loadTestsFromTestCase(Jw_mapping))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))

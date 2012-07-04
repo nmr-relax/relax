@@ -764,8 +764,8 @@ class API_base(object):
         @rtype:             bool
         """
 
-        # Not implemented.
-        raise RelaxImplementError('skip_function')
+        # Never skip.
+        return False
 
 
     def test_grid_ops(self, lower=None, upper=None, inc=None, n=None):

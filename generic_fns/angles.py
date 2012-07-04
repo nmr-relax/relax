@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import pipes
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_loop
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from relax_warnings import RelaxWarning
@@ -150,21 +151,18 @@ def fold_spherical_angles(theta, phi, theta_lower=0, theta_upper=2*pi, theta_win
 def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
-    # Loop over the sequence.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+    # Loop over the interatomic info.
+    for interatom in interatomic_loop():
         # Test if the vector exists.
-        if not hasattr(spin, 'xh_vect'):
-            # Get the spin id string.
-            spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
-
+        if not hasattr(interatom, 'vector'):
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
 
-            # Skip the spin.
+            # Skip the container.
             continue
 
         # Calculate alpha.
-        spin.alpha = acos(dot(cdp.diff_tensor.Dpar_unit, spin.xh_vect))
+        interatom.alpha = acos(dot(cdp.diff_tensor.Dpar_unit, interatom.vector))
 
 
 def wrap_angles(angle, lower, upper, window=2*pi):

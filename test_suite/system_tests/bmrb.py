@@ -68,11 +68,11 @@ class Bmrb(SystemTestCase):
         print("\n\nComparing data pipe contents:")
 
         # Blacklists (data that is not restored, and relaxation data which has been reordered and will be checked in data_ri_comp()).
-        blacklist_spin = ['attached_proton', 'fixed', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['r_err', 'csa_err'] + ['chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error']
+        blacklist_spin = ['attached_proton', 'fixed', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['r_err', 'csa_err'] + ['chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error'] + ['_spin_index']
         if version == '3.0':
             blacklist_spin = blacklist_spin + ['r', 'local_tm', 'local_tm_err']
         blacklist_diff = []
-        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['ri_ids', 'frq', 'ri_type'] + ['result_files']
+        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'interatomic', 'sim_number', 'sim_state'] + ['ri_ids', 'frq', 'ri_type'] + ['result_files']
 
         # The data pipes.
         old_pipe = ds[old_pipe_name]
@@ -99,10 +99,18 @@ class Bmrb(SystemTestCase):
                     if not old_pipe.mol[i].res[j].spin[k].select:
                         continue
 
+                    # Swap the spin indices for the N, H, NE1 and HE1 spins of residue 9.
+                    k_new = k
+                    if i == 0 and j == 0:
+                        if k == 1:
+                            k_new = 2
+                        elif k == 2:
+                            k_new = 1
+
                     # Check the containers.
-                    self.data_cont_comp(label='Spin', cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k], blacklist=blacklist_spin)
+                    self.data_cont_comp(label='Spin', cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k_new], blacklist=blacklist_spin)
                     if hasattr(old_pipe.mol[i].res[j].spin[k], 'ri_labels'):
-                        self.data_ri_comp_spin(cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k])
+                        self.data_ri_comp_spin(cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k_new])
 
         # The diffusion tensor.
         if version != '3.0':

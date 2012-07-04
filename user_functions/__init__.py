@@ -42,6 +42,7 @@ __all__ += [
     'dasha',
     'deselect',
     'diffusion_tensor',
+    'dipole_pair',
     'dx',
     'eliminate',
     'fix',
@@ -90,6 +91,7 @@ import user_functions.consistency_tests
 import user_functions.dasha
 import user_functions.deselect
 import user_functions.diffusion_tensor
+import user_functions.dipole_pair
 import user_functions.dx
 import user_functions.eliminate
 import user_functions.fix

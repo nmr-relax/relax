@@ -42,6 +42,7 @@ from diffusion_tensor import Diffusion_tensor
 from frame_order import Frame_order
 from generic import Generic
 from grace import Grace
+from interatomic import Interatomic
 from jw_mapping import Jw
 from load_spins import Load_spins
 from model_elimination import Modelim
@@ -75,6 +76,7 @@ __all__ = ['align_tensor',
            'frame_order',
            'generic',
            'grace',
+           'interatomic',
            'jw_mapping',
            'load_spins',
            'model_elimination',
@@ -158,6 +160,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
             suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
             suite_array.append(TestLoader().loadTestsFromTestCase(Grace))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Interatomic))
             suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
             suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
             suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))

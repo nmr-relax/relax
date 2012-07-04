@@ -32,10 +32,11 @@ from string import count, find, split
 import sys
 
 # relax module imports.
+from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import diffusion_tensor, pipes
 from physical_constants import return_gyromagnetic_ratio
-from relax_errors import RelaxDirError, RelaxFileError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 
@@ -77,28 +78,21 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
         - dir/mfmodel
         - dir/run.sh
 
-    @keyword dir:               The optional directory to place the files into.  If None, then the
-                                files will be placed into a directory named after the current data
-                                pipe.
+    @keyword dir:               The optional directory to place the files into.  If None, then the files will be placed into a directory named after the current data pipe.
     @type dir:                  str or None
-    @keyword binary:            The name of the Modelfree4 binary file.  This can include the path
-                                to the binary.
+    @keyword binary:            The name of the Modelfree4 binary file.  This can include the path to the binary.
     @type binary:               str
-    @keyword diff_search:       The diffusion tensor search algorithm (see the Modelfree4 manual for
-                                details).
+    @keyword diff_search:       The diffusion tensor search algorithm (see the Modelfree4 manual for details).
     @type diff_search:          str
     @keyword sims:              The number of Monte Carlo simulations to perform.
     @type sims:                 int
-    @keyword sim_type:          The type of simulation to perform (see the Modelfree4 manual for
-                                details).
+    @keyword sim_type:          The type of simulation to perform (see the Modelfree4 manual for details).
     @type sim_type:             str
-    @keyword trim:              Trimming of the Monte Carlo simulations (see the Modelfree4 manual
-                                for details).
+    @keyword trim:              Trimming of the Monte Carlo simulations (see the Modelfree4 manual for details).
     @type trim:                 int
     @keyword steps:             The grid search size (see the Modelfree4 manual for details).
     @type steps:                int
-    @keyword heteronuc_type:    The Modelfree4 three letter code for the heteronucleus type, e.g.
-                                '15N', '13C', etc.
+    @keyword heteronuc_type:    The Modelfree4 three letter code for the heteronucleus type, e.g. '15N', '13C', etc.
     @type heteronuc_type:       str
     @keyword atom1:             The name of the heteronucleus in the PDB file.
     @type atom1:                str
@@ -106,8 +100,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     @type atom2:                str
     @keyword spin_id:           The spin identification string.
     @type spin_id:              str
-    @keyword force:             A flag which if True will cause all pre-existing files to be
-                                overwritten.
+    @keyword force:             A flag which if True will cause all pre-existing files to be overwritten.
     @type force:                bool
     @keyword constraints:       A flag which if True will result in constrained optimisation.
     @type constraints:          bool
@@ -475,14 +468,21 @@ def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=
     @type atom2:        str
     """
 
+    # Get the interatomic data containers.
+    interatoms = return_interatom_list(spin_id)
+    if len(interatoms) == 0:
+        raise RelaxNoInteratomError
+    elif len(interatoms) > 1:
+        raise RelaxError("Only one interatomic data container, hence dipole-dipole interaction, is supported per spin.")
+
     # Spin title.
     file.write("\nspin     " + spin_id + "\n")
 
     file.write('%-14s' % "constants")
     file.write('%-6i' % res_num)
-    file.write('%-7s' % spin.heteronuc_type)
-    file.write('%-8.4f' % (return_gyromagnetic_ratio(spin.heteronuc_type) / 1e7))
-    file.write('%-8.3f' % (spin.r * 1e10))
+    file.write('%-7s' % spin.isotope)
+    file.write('%-8.4f' % (return_gyromagnetic_ratio(spin.isotope) / 1e7))
+    file.write('%-8.3f' % (interatoms[0].r * 1e10))
     file.write('%-8.3f\n' % (spin.csa * 1e6))
 
     file.write('%-10s' % "vector")
