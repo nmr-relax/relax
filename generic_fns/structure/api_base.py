@@ -118,6 +118,21 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def are_bonded(self, atom_id1=None, atom_id2=None):
+        """Prototype method stub for determining if two atoms are directly bonded to each other.
+
+        @keyword atom_id1:  The molecule, residue, and atom identifier string of the first atom.
+        @type atom_id1:     str
+        @keyword atom_id1:  The molecule, residue, and atom identifier string of the second atom.
+        @type atom_id1:     str
+        @return:            True if the atoms are directly bonded.
+        @rtype:             bool
+        """
+
+        # Raise the error.
+        raise RelaxImplementError('are_bonded')
+
+
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 

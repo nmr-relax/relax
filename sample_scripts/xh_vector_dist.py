@@ -31,19 +31,21 @@ from os import pardir, sep
 pipe.create('vectors', 'mf')
 
 # Load the PDB file.
-structure.read_pdb('test.pdb', parser='scientific')
+structure.read_pdb('test.pdb')
 
-# Load the backbone amide nitrogen spins from the structure.
+# Load the backbone amide 15N and 1H spins from the structure.
 structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@H')
 
 # Select solely the NH vectors used in the analysis.
 select.read(file=pardir+sep+'rates.txt', change_all=True, res_num_col=2)
 
-# Extract the XH vectors.
-structure.vectors()
+# Set up the NH vectors.
+dipole_pair.define(spin_id1='@N', spin_id2='@H')
+dipole_pair.unit_vectors()
 
 # Create the PDB file representing the vector distribution.
-structure.create_vector_dist(force=True)
+structure.create_vector_dist(file='vect_dist.pdb', force=True)
 
 # Display the structure and distribution in PyMOL.
 pymol.view()

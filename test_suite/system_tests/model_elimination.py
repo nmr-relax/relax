@@ -53,10 +53,10 @@ class Modelim(SystemTestCase):
         self.interpreter.eliminate()
 
         # Checks.
-        self.assert_(return_spin(':9').select)
-        self.assert_(return_spin(':10').select)
-        self.assert_(not return_spin(':11').select)
-        self.assert_(return_spin(':12').select)
+        self.assert_(return_spin(':9@N').select)
+        self.assert_(return_spin(':10@N').select)
+        self.assert_(not return_spin(':11@N').select)
+        self.assert_(return_spin(':12@N').select)
 
 
     def test_tm_51ns(self):

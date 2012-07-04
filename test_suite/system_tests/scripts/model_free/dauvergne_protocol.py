@@ -186,15 +186,14 @@ pipe.create(name, 'mf', bundle=bundle_name)
 # The data path.
 data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
-# Load the sequence.
-sequence.read(file='noe.500.out', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
-
-# Name the spins.
-spin.name(name='N')
-
 # Load the PDB file.
 structure.read_pdb('sphere.pdb', dir=data_path)
-structure.vectors(attached='H')
+
+# Set up the 15N and 1H spins.
+structure.load_spins('@N', ave_pos=True)
+structure.load_spins('@H', ave_pos=True)
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
 
 # Load the relaxation data.
 relax_data.read(ri_id='R1_900',  ri_type='R1',  frq=900*1e6, file='r1.900.out',  dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
@@ -204,12 +203,13 @@ relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500*1e6, file='r1.500.out', 
 relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500*1e6, file='r2.500.out',  dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500*1e6, file='noe.500.out', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
-# Set the bond length, CSA values, heteronucleus type, and proton type.
-value.set(1.02 * 1e-10, 'r')
-value.set(-172 * 1e-6, 'csa')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+dipole_pair.unit_vectors()
 
+# Define the chemical shift relaxation interaction.
+value.set(-172 * 1e-6, 'csa', spin_id='@N')
 
 
 # Execution.

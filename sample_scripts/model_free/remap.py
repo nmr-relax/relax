@@ -51,8 +51,11 @@ name = 'm5'
 # Create the data pipe.
 pipe.create(name, 'mf')
 
-# Load the sequence.
-sequence.read('noe.500.out', res_num_col=1)
+# Set up the 15N spins.
+sequence.read(file='noe.500.out', res_num_col=1, res_name_col=2)
+spin.name('N')
+spin.element('N')
+spin.isotope('15N', spin_id='@N')
 
 # Load the relaxation data.
 relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
@@ -62,11 +65,18 @@ relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.0*1e6, file='r1.500.out'
 relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out', res_num_col=1, data_col=3, error_col=4)
 relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
-# Setup other values.
-diffusion_tensor.init(1e-8)
-value.set(1.02*1e-10, 'r')
-value.set(-172*1e-6, 'csa')
-value.set('15N', 'heteronuc_type')
+# Initialise the diffusion tensor.
+diffusion_tensor.init(1e-8, fixed=True)
+
+# Create all attached protons.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+# Define the CSA relaxation interaction.
+value.set(N15_CSA, 'csa')
 
 # Select the model-free model.
 model_free.select_model(model=name)

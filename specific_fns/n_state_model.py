@@ -39,6 +39,7 @@ import arg_check
 from float import isNaN, isInf
 import generic_fns
 from generic_fns.align_tensor import all_tensors_fixed, get_tensor_object, num_tensors, return_tensor
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
 from generic_fns.structure.cones import Iso_cone
@@ -49,7 +50,7 @@ from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
 from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -74,10 +75,7 @@ class N_state_model(API_base, API_common):
         self.test_grid_ops = self._test_grid_ops_general
 
         # Set up the spin parameters.
-        self.PARAMS.add('r', scope='spin', units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
         self.PARAMS.add('csa', scope='spin', units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
-        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
-        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
@@ -245,8 +243,8 @@ class N_state_model(API_base, API_common):
         list = []
 
         # RDC search.
-        for spin in spin_loop():
-            if hasattr(spin, 'rdc'):
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
                 list.append('rdc')
                 break
 
@@ -404,6 +402,56 @@ class N_state_model(API_base, API_common):
         print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
         print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
         print("\n\n")
+
+
+    def _check_rdcs(self, interatom, spin1, spin2):
+        """Check if the RDCs for the given interatomic data container should be used.
+
+        @param interatom:   The interatomic data container.
+        @type interatom:    InteratomContainer instance
+        @param spin1:       The first spin container.
+        @type spin1:        SpinContainer instance
+        @param spin2:       The second spin container.
+        @type spin2:        SpinContainer instance
+        @return:            True if the RDCs should be used, False otherwise.
+        """
+
+        # Skip deselected spins.
+        if not spin1.select or not spin2.select:
+            return False
+
+        # Only use interatomic data containers with RDC data.
+        if not hasattr(interatom, 'rdc'):
+            return False
+
+        # RDC data exists but the interatomic vectors are missing?
+        if not hasattr(interatom, 'vector'):
+            # Throw a warning.
+            warn(RelaxWarning("RDC data exists but the interatomic vectors are missing, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+
+            # Jump to the next spin.
+            return False
+
+        # Skip non-Me pseudo-atoms for the first spin.
+        if hasattr(spin1, 'members') and len(spin1.members) != 3:
+            warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+            return False
+
+        # Skip non-Me pseudo-atoms for the second spin.
+        if hasattr(spin2, 'members') and len(spin2.members) != 3:
+            warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+            return False
+
+        # Checks.
+        if not hasattr(spin1, 'isotope'):
+            raise RelaxSpinTypeError(interatom.spin_id1)
+        if not hasattr(spin2, 'isotope'):
+            raise RelaxSpinTypeError(interatom.spin_id2)
+        if not hasattr(interatom, 'r'):
+            raise RelaxNoValueError("averaged interatomic distance")
+
+        # Everything is ok.
+        return True
 
 
     def _cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
@@ -747,13 +795,13 @@ class N_state_model(API_base, API_common):
             return
 
         # Loop over each alignment.
-        for i in xrange(len(cdp.align_ids)):
+        for align_index in xrange(len(cdp.align_ids)):
             # Fixed tensor.
-            if cdp.align_tensors[i].fixed:
+            if cdp.align_tensors[align_index].fixed:
                 continue
 
             # The alignment ID.
-            align_id = cdp.align_ids[i]
+            align_id = cdp.align_ids[align_index]
 
             # Data flags
             rdc_flag = False
@@ -764,7 +812,7 @@ class N_state_model(API_base, API_common):
                 pcs_flag = True
 
             # Spin loop.
-            data_index = 0
+            pcs_index = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -777,20 +825,33 @@ class N_state_model(API_base, API_common):
                         spin.pcs_bc = {}
 
                     # Add the back calculated PCS (in ppm).
-                    spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
+                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, pcs_index] * 1e6
 
-                # Spins with RDC data.
-                if rdc_flag and hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
+                    # Increment the data index if the spin container has data.
+                    pcs_index = pcs_index + 1
+
+            # Interatomic data container loop.
+            rdc_index = 0
+            for interatom in interatomic_loop():
+                # Get the spins.
+                spin1 = return_spin(interatom.spin_id1)
+                spin2 = return_spin(interatom.spin_id2)
+
+                # RDC checks.
+                if not self._check_rdcs(interatom, spin1, spin2):
+                    continue
+
+                # Containers with RDC data.
+                if rdc_flag and hasattr(interatom, 'rdc'):
                     # Initialise the data structure if necessary.
-                    if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = {}
+                    if not hasattr(interatom, 'rdc_bc'):
+                        interatom.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[align_id] = model.rdc_theta[i, data_index]
+                    interatom.rdc_bc[align_id] = model.rdc_theta[align_index, rdc_index]
 
-                # Increment the spin index if it contains data.
-                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
-                    data_index = data_index + 1
+                    # Increment the data index if the interatom container has data.
+                    rdc_index = rdc_index + 1
 
 
     def _minimise_setup_atomic_pos(self):
@@ -810,7 +871,7 @@ class N_state_model(API_base, API_common):
                 continue
 
             # Only use spins with alignment/paramagnetic data.
-            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc') and not hasattr(spin, 'pre'):
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'pre'):
                 continue
 
             # The position list.
@@ -893,14 +954,6 @@ class N_state_model(API_base, API_common):
 
                 # Skip spins without PCS data.
                 if not hasattr(spin, 'pcs'):
-                    # Add rows of None if other alignment data exists.
-                    if hasattr(spin, 'rdc'):
-                        pcs[-1].append(None)
-                        pcs_err[-1].append(None)
-                        pcs_weight[-1].append(None)
-                        j = j + 1
-
-                    # Jump to the next spin.
                     continue
 
                 # Append the PCSs to the list.
@@ -962,102 +1015,44 @@ class N_state_model(API_base, API_common):
         rdc_const = []
 
         # The unit vectors and RDC constants.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
+        for interatom in interatomic_loop():
+            # Get the spins.
+            spin1 = return_spin(interatom.spin_id1)
+            spin2 = return_spin(interatom.spin_id2)
+
+            # RDC checks.
+            if not self._check_rdcs(interatom, spin1, spin2):
                 continue
 
-            # Only use spins with RDC data.
-            if not hasattr(spin, 'rdc'):
-                # Add rows of None if other alignment data exists.
-                if hasattr(spin, 'pcs'):
-                    unit_vect.append(None)
-                    rdc_const.append(None)
-
-                # Jump to the next spin.
-                continue
-
-            # RDC data exists but the XH bond vectors are missing?
-            if not hasattr(spin, 'members') and not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect'):
-                # Throw a warning.
-                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin %s." % spin_id))
-
-                # Add rows of None if other data exists.
-                if hasattr(spin, 'pcs'):
-                    unit_vect.append(None)
-                    rdc_const.append(None)
-
-                # Jump to the next spin.
-                continue
-
-            # Pseudo-atom set up.
-            if hasattr(spin, 'members'):
-                # Skip non-Me groups.
-                if len(spin.members) != 3:
-                    warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping spin %s." % spin_id))
-                    continue
-
-                # The summed vector.
-                vect = zeros(3, float64)
-                for i in range(3):
-                    # Get the spin.
-                    spin_i = return_spin(spin.members[i])
-
-                    # Add the bond vector.
-                    if hasattr(spin_i, 'xh_vect'):
-                        obj = getattr(spin_i, 'xh_vect')
-                    else:
-                        obj = getattr(spin_i, 'bond_vect')
-                    vect = vect + obj
-
-                # Normalise.
-                vect = vect / norm(vect)
-
-            # Normal spin set up.
+            # Add the vectors.
+            if arg_check.is_float(interatom.vector[0], raise_error=False):
+                unit_vect.append([interatom.vector])
             else:
-                # Append the RDC and XH vectors to the lists.
-                if hasattr(spin, 'xh_vect'):
-                    vect = getattr(spin, 'xh_vect')
-                else:
-                    vect = getattr(spin, 'bond_vect')
-
-            # Add the bond vectors.
-            if isinstance(vect[0], float):
-                unit_vect.append([vect])
-            else:
-                unit_vect.append(vect)
-
-            # Checks.
-            if not hasattr(spin, 'heteronuc_type'):
-                raise RelaxSpinTypeError
-            if not hasattr(spin, 'proton_type'):
-                raise RelaxProtonTypeError
-            if not hasattr(spin, 'r'):
-                raise RelaxNoValueError("bond length")
+                unit_vect.append(interatom.vector)
 
             # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-            gh = return_gyromagnetic_ratio(spin.proton_type)
+            g1 = return_gyromagnetic_ratio(spin1.isotope)
+            g2 = return_gyromagnetic_ratio(spin2.isotope)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
 
         # Fix the unit vector data structure.
         num = None
-        for i in range(len(unit_vect)):
+        for rdc_index in range(len(unit_vect)):
             # Number of vectors.
             if num == None:
-                if unit_vect[i] != None:
-                    num = len(unit_vect[i])
+                if unit_vect[rdc_index] != None:
+                    num = len(unit_vect[rdc_index])
                 continue
 
             # Check.
-            if unit_vect[i] != None and len(unit_vect[i]) != num:
-                raise RelaxError, "The number of bond vectors for all spins do no match:\n%s" % unit_vect
+            if unit_vect[rdc_index] != None and len(unit_vect[rdc_index]) != num:
+                raise RelaxError, "The number of interatomic vectors for all no match:\n%s" % unit_vect
 
         # Missing unit vectors.
         if num == None:
-            raise RelaxError, "No bond vectors could be found."
+            raise RelaxError, "No interatomic vectors could be found."
 
         # Update None entries.
         for i in range(len(unit_vect)):
@@ -1075,21 +1070,18 @@ class N_state_model(API_base, API_common):
             rdc_err.append([])
             rdc_weight.append([])
 
-            # Spin loop.
-            for spin in spin_loop():
+            # Interatom loop.
+            for interatom in interatomic_loop():
+                # Get the spins.
+                spin1 = return_spin(interatom.spin_id1)
+                spin2 = return_spin(interatom.spin_id2)
+
                 # Skip deselected spins.
-                if not spin.select:
+                if not spin1.select or not spin2.select:
                     continue
 
-                # Skip spins without RDC data or XH bond vectors.
-                if not hasattr(spin, 'rdc') or (not hasattr(spin, 'members') and not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect')):
-                    # Add rows of None if other alignment data exists.
-                    if hasattr(spin, 'pcs'):
-                        rdc[-1].append(None)
-                        rdc_err[-1].append(None)
-                        rdc_weight[-1].append(None)
-
-                    # Jump to the next spin.
+                # Only use interatomic data containers with RDC and vector data.
+                if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):
                     continue
 
                 # Defaults of None.
@@ -1097,34 +1089,34 @@ class N_state_model(API_base, API_common):
                 error = None
 
                 # Pseudo-atom set up.
-                if hasattr(spin, 'members') and align_id in spin.rdc.keys():
+                if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc.keys():
                     # Skip non-Me groups.
-                    if len(spin.members) != 3:
+                    if len(spin1.members) != 3:
                         continue
 
                     # The RDC for the Me-pseudo spin where:
                     #     <D> = -1/3 Dpar.
                     # See Verdier, et al., JMR, 2003, 163, 353-359.
                     if sim_index != None:
-                        value = -3.0 * spin.rdc_sim[align_id][sim_index]
+                        value = -3.0 * interatom.rdc_sim[align_id][sim_index]
                     else:
-                        value = -3.0 * spin.rdc[align_id]
+                        value = -3.0 * interatom.rdc[align_id]
 
                     # The error.
-                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
-                        error = -3.0 * spin.rdc_err[align_id]
+                    if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                        error = -3.0 * interatom.rdc_err[align_id]
 
-                # Normal spin set up.
-                elif align_id in spin.rdc.keys():
+                # Normal set up.
+                elif align_id in interatom.rdc.keys():
                     # The RDC.
                     if sim_index != None:
-                        value = spin.rdc_sim[align_id][sim_index]
+                        value = interatom.rdc_sim[align_id][sim_index]
                     else:
-                        value = spin.rdc[align_id]
+                        value = interatom.rdc[align_id]
 
                     # The error.
-                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
-                        error = spin.rdc_err[align_id]
+                    if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                        error = interatom.rdc_err[align_id]
 
                 # Append the RDCs to the list.
                 rdc[-1].append(value)
@@ -1133,8 +1125,8 @@ class N_state_model(API_base, API_common):
                 rdc_err[-1].append(error)
 
                 # Append the weight.
-                if hasattr(spin, 'rdc_weight') and align_id in spin.rdc_weight.keys():
-                    rdc_weight[-1].append(spin.rdc_weight[align_id])
+                if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
+                    rdc_weight[-1].append(interatom.rdc_weight[align_id])
                 else:
                     rdc_weight[-1].append(1.0)
 
@@ -1272,18 +1264,20 @@ class N_state_model(API_base, API_common):
             if not spin.select:
                 continue
 
-            # RDC data (skipping array elements set to None).
-            if 'rdc' in data_types:
-                if hasattr(spin, 'rdc'):
-                    for rdc in spin.rdc:
-                        if isinstance(rdc, float):
-                            n = n + 1
-
             # PCS data (skipping array elements set to None).
             if 'pcs' in data_types:
                 if hasattr(spin, 'pcs'):
                     for pcs in spin.pcs:
                         if isinstance(pcs, float):
+                            n = n + 1
+
+        # Interatomic data loop.
+        for interatom in interatomic_loop():
+            # RDC data (skipping array elements set to None).
+            if 'rdc' in data_types:
+                if hasattr(interatom, 'rdc'):
+                    for rdc in interatom.rdc:
+                        if isinstance(rdc, float):
                             n = n + 1
 
         # Alignment tensors.
@@ -1503,9 +1497,9 @@ class N_state_model(API_base, API_common):
             pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
+            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
         fixed_tensors = None
@@ -1530,7 +1524,7 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
@@ -1631,56 +1625,57 @@ class N_state_model(API_base, API_common):
     def base_data_loop(self):
         """Loop over the base data of the spins - RDCs, PCSs, and NOESY data.
 
-        This loop iterates for each data point (RDC, PCS, NOESY) for each spin, returning the identification information.
+        This loop iterates for each data point (RDC, PCS, NOESY) for each spin or interatomic data container, returning the identification information.
 
-        @return:            A list of the spin ID string, the data type ('rdc', 'pcs', 'noesy'), and the alignment ID if required.
-        @rtype:             list of str
+        @return:            A list of the spin or interatomic data container, the data type ('rdc', 'pcs', 'noesy'), and the alignment ID if required.
+        @rtype:             list of [SpinContainer instance, str, str] or [InteratomContainer instance, str, str]
         """
 
-        # Loop over the spins.
-        for spin, spin_id in spin_loop(return_id=True):
+        # Loop over the interatomic data containers.
+        for interatom in interatomic_loop():
             # Re-initialise the data structure.
-            base_ids = [spin_id, None, None]
-
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+            data = [interatom, None, None]
 
             # RDC data.
-            if hasattr(spin, 'rdc'):
-                base_ids[1] = 'rdc'
+            if hasattr(interatom, 'rdc'):
+                data[1] = 'rdc'
 
                 # Loop over the alignment IDs.
                 for id in cdp.rdc_ids:
                     # Add the ID.
-                    base_ids[2] = id
+                    data[2] = id
 
                     # Yield the set.
-                    yield base_ids
-
-            # PCS data.
-            if hasattr(spin, 'pcs'):
-                base_ids[1] = 'pcs'
-
-                # Loop over the alignment IDs.
-                for id in cdp.pcs_ids:
-                    # Add the ID.
-                    base_ids[2] = id
-
-                    # Yield the set.
-                    yield base_ids
+                    yield data
 
             # NOESY data.
-            if hasattr(spin, 'noesy'):
-                base_ids[1] = 'noesy'
+            if hasattr(interatom, 'noesy'):
+                data[1] = 'noesy'
 
                 # Loop over the alignment IDs.
                 for id in cdp.noesy_ids:
                     # Add the ID.
-                    base_ids[2] = id
+                    data[2] = id
 
                     # Yield the set.
-                    yield base_ids
+                    yield data
+
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Re-initialise the data structure.
+            data = [spin, None, None]
+
+            # PCS data.
+            if hasattr(spin, 'pcs'):
+                data[1] = 'pcs'
+
+                # Loop over the alignment IDs.
+                for id in cdp.pcs_ids:
+                    # Add the ID.
+                    data[2] = id
+
+                    # Yield the set.
+                    yield data
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1760,47 +1755,47 @@ class N_state_model(API_base, API_common):
         # Initialise the MC data structure.
         mc_data = []
 
-        # Get the spin container and global spin index.
-        spin = return_spin(data_id[0])
+        # Alias the spin or interatomic data container.
+        container = data_id[0]
 
         # RDC data.
-        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+        if data_id[1] == 'rdc' and hasattr(container, 'rdc'):
             # Does back-calculated data exist?
-            if not hasattr(spin, 'rdc_bc'):
+            if not hasattr(container, 'rdc_bc'):
                 self.calculate()
 
             # The data.
-            if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
+            if not hasattr(container, 'rdc_bc') or not container.rdc_bc.has_key(data_id[2]):
                 data = None
             else:
-                data = spin.rdc_bc[data_id[2]]
-
-            # Append the data.
-            mc_data.append(data)
-
-        # PCS data.
-        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
-            # Does back-calculated data exist?
-            if not hasattr(spin, 'pcs_bc'):
-                self.calculate()
-
-            # The data.
-            if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
-                data = None
-            else:
-                data = spin.pcs_bc[data_id[2]]
+                data = container.rdc_bc[data_id[2]]
 
             # Append the data.
             mc_data.append(data)
 
         # NOESY data.
-        elif data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+        elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
             # Does back-calculated data exist?
-            if not hasattr(spin, 'noesy_bc'):
+            if not hasattr(container, 'noesy_bc'):
                 self.calculate()
 
             # Append the data.
-            mc_data.append(spin.noesy_bc)
+            mc_data.append(container.noesy_bc)
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
+            # Does back-calculated data exist?
+            if not hasattr(container, 'pcs_bc'):
+                self.calculate()
+
+            # The data.
+            if not hasattr(container, 'pcs_bc') or not container.pcs_bc.has_key(data_id[2]):
+                data = None
+            else:
+                data = container.pcs_bc[data_id[2]]
+
+            # Append the data.
+            mc_data.append(data)
 
         # Return the data.
         return mc_data
@@ -2201,39 +2196,39 @@ class N_state_model(API_base, API_common):
         # Initialise the MC data structure.
         mc_errors = []
 
-        # Get the spin container and global spin index.
-        spin = return_spin(data_id[0])
+        # Alias the spin or interatomic data container.
+        container = data_id[0]
 
         # Skip deselected spins.
-        if not spin.select:
+        if data_id[1] == 'pcs' and not container.select:
             return
 
         # RDC data.
-        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+        if data_id[1] == 'rdc' and hasattr(container, 'rdc'):
             # Do errors exist?
-            if not hasattr(spin, 'rdc_err'):
-                raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
+            if not hasattr(container, 'rdc_err'):
+                raise RelaxError("The RDC errors are missing for the spin pair '%s' and '%s'." % (container.spin_id1, container.spin_id2))
 
             # Append the data.
-            mc_errors.append(spin.rdc_err[data_id[2]])
+            mc_errors.append(container.rdc_err[data_id[2]])
+
+        # NOESY data.
+        elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
+            # Do errors exist?
+            if not hasattr(container, 'noesy_err'):
+                raise RelaxError("The NOESY errors are missing for the spin pair '%s' and '%s'." % (container.spin_id1, container.spin_id2))
+
+            # Append the data.
+            mc_errors.append(container.noesy_err)
 
         # PCS data.
-        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
             # Do errors exist?
-            if not hasattr(spin, 'pcs_err'):
+            if not hasattr(container, 'pcs_err'):
                 raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
-            mc_errors.append(spin.pcs_err[data_id[2]])
-
-        # NOESY data.
-        elif hasattr(spin, 'noesy'):
-            # Do errors exist?
-            if not hasattr(spin, 'noesy_err'):
-                raise RelaxError("The NOESY errors are missing for spin '%s'." % data_id[0])
-
-            # Append the data.
-            mc_errors.append(spin.noesy_err)
+            mc_errors.append(container.pcs_err[data_id[2]])
 
         # Return the errors.
         return mc_errors
@@ -2430,37 +2425,37 @@ class N_state_model(API_base, API_common):
         @type sim_data:     list of float
         """
 
-        # Get the spin container.
-        spin = return_spin(data_id[0])
+        # Alias the spin or interatomic data container.
+        container = data_id[0]
 
         # RDC data.
-        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+        if data_id[1] == 'rdc' and hasattr(container, 'rdc'):
             # Initialise.
-            if not hasattr(spin, 'rdc_sim'):
-                spin.rdc_sim = {}
+            if not hasattr(container, 'rdc_sim'):
+                container.rdc_sim = {}
                 
             # Store the data structure.
-            spin.rdc_sim[data_id[2]] = []
+            container.rdc_sim[data_id[2]] = []
             for i in range(cdp.sim_number):
-                spin.rdc_sim[data_id[2]].append(sim_data[i][0])
-
-        # PCS data.
-        if data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
-            # Initialise.
-            if not hasattr(spin, 'pcs_sim'):
-                spin.pcs_sim = {}
-                
-            # Store the data structure.
-            spin.pcs_sim[data_id[2]] = []
-            for i in range(cdp.sim_number):
-                spin.pcs_sim[data_id[2]].append(sim_data[i][0])
+                container.rdc_sim[data_id[2]].append(sim_data[i][0])
 
         # NOESY data.
-        if data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+        elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
             # Store the data structure.
-            spin.noesy_sim = []
+            container.noesy_sim = []
             for i in range(cdp.sim_number):
-                spin.noesy_sim[data_id[2]].append(sim_data[i][0])
+                container.noesy_sim[data_id[2]].append(sim_data[i][0])
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
+            # Initialise.
+            if not hasattr(container, 'pcs_sim'):
+                container.pcs_sim = {}
+                
+            # Store the data structure.
+            container.pcs_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                container.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
     def sim_return_param(self, model_info, index):

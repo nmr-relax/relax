@@ -29,6 +29,7 @@ from align_tensor import AlignTensorList
 from diff_tensor import DiffTensorData
 from exp_info import ExpInfo
 import generic_fns
+from interatomic import InteratomList
 from mol_res_spin import MoleculeList
 from prototype import Prototype
 from relax_errors import RelaxFromXMLNotEmptyError
@@ -44,6 +45,9 @@ class PipeContainer(Prototype):
 
         # The molecule-residue-spin object.
         self.mol = MoleculeList()
+
+        # The interatomic data object.
+        self.interatomic = InteratomList()
 
         # The data pipe type.
         self.pipe_type = None
@@ -63,7 +67,7 @@ class PipeContainer(Prototype):
         text = "The data pipe storage object.\n"
 
         # Special objects/methods (to avoid the getattr() function call on).
-        spec_obj = ['exp_info', 'mol', 'diff_tensor', 'structure']
+        spec_obj = ['exp_info', 'mol', 'interatomic', 'diff_tensor', 'structure']
 
         # Objects.
         text = text + "\n"
@@ -72,6 +76,10 @@ class PipeContainer(Prototype):
             # Molecular list.
             if name == 'mol':
                 text = text + "  mol: The molecule list (for the storage of the spin system specific data)\n"
+
+            # Interatomic data list.
+            if name == 'interatomic':
+                text = text + "  interatomic: The interatomic data list (for the storage of the inter-spin system data)\n"
 
             # Diffusion tensor.
             if name == 'diff_tensor':
@@ -216,6 +224,10 @@ class PipeContainer(Prototype):
             # Fill its contents.
             self.align_tensors.from_xml(align_tensor_nodes[0], file_version=file_version)
 
+        # Recreate the interatomic data structure (this needs to be before the 'mol' structure as the backward compatibility hooks can create interatomic data containers!).
+        interatom_nodes = pipe_node.getElementsByTagName('interatomic')
+        self.interatomic.from_xml(interatom_nodes, file_version=file_version)
+
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = pipe_node.getElementsByTagName('mol')
         self.mol.from_xml(mol_nodes, file_version=file_version)
@@ -256,6 +268,10 @@ class PipeContainer(Prototype):
         if not self.mol.is_empty():
             return False
 
+        # Is the interatomic data object empty?
+        if not self.interatomic.is_empty():
+            return False
+
         # Tests for the initialised data (the pipe type can be set in an empty data pipe, so this isn't checked).
         if self.hybrid_pipes:
             return False
@@ -263,7 +279,7 @@ class PipeContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'mol' or name == 'pipe_type' or name == 'hybrid_pipes':
+            if name in ['mol', 'interatomic', 'pipe_type', 'hybrid_pipes']:
                 continue
 
             # Skip the PipeContainer methods.
@@ -294,7 +310,7 @@ class PipeContainer(Prototype):
         global_element = doc.createElement('global')
         element.appendChild(global_element)
         global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'exp_info', 'interatomic', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
 
         # Hybrid info.
         self.xml_create_hybrid_element(doc, element)
@@ -313,6 +329,9 @@ class PipeContainer(Prototype):
 
         # Add the molecule-residue-spin data.
         self.mol.to_xml(doc, element)
+
+        # Add the interatomic data.
+        self.interatomic.to_xml(doc, element)
 
         # Add the structural data, if it exists.
         if hasattr(self, 'structure'):

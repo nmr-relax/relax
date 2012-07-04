@@ -7,7 +7,8 @@ from os import sep
 import sys
 
 # relax module imports.
-from generic_fns.mol_res_spin import return_spin, spin_loop
+from generic_fns.interatomic import return_interatom
+from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from status import Status; status = Status()
 
 
@@ -66,8 +67,9 @@ structure.read_pdb('sphere.pdb', dir=path)
 # Load all atoms as spins.
 structure.load_spins()
 
-# Calculate NH bond vectors for the N spins.
-structure.vectors('H', spin_id='@N')
+# Load the NH vectors.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.unit_vectors(ave=False)
 
 # Set the Ln3+ position 10 Angstrom away.
 centre = [10.0, 0.0, 0.0]
@@ -104,13 +106,18 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     if spin.name == "H":
         continue
 
-    # Skip spins without vectors.
-    if not hasattr(spin, 'xh_vect'):
+    # Get the interatomic data container.
+    spin_id1 = generate_spin_id(res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
+    spin_id2 = generate_spin_id(res_num=res_num, res_name=res_name, spin_name='H')
+    interatom = return_interatom(spin_id1, spin_id2)
+
+    # Skip interatoms without vectors.
+    if not hasattr(interatom, 'vector'):
         continue
 
     # Calculate and write the RDC.
-    rdc = dip_const * dot(transpose(spin.xh_vect), dot(tensor, spin.xh_vect))
-    rdc_file.write("%20s%10s%10s%10s%10s%30.11f%30.11g\n" % (mol, res_num, res_name, spin.num, spin.name, rdc, 1e-10))
+    rdc = dip_const * dot(transpose(interatom.vector), dot(tensor, interatom.vector))
+    rdc_file.write("%-10s %-10s %20.11f %20.11g\n" % (repr(spin_id1), repr(spin_id2), rdc, 1e-10))
 
 # Print outs.
 print(("\nAlignment tensor (A):\n" + repr(tensor)))

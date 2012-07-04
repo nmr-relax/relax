@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@ from os import sep
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.interatomic import return_interatom_list
 from status import Status; status = Status()
 
 
@@ -70,24 +71,29 @@ class Angles(SystemTestCase):
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
             self.assertEqual(cdp.mol[0].res[i].name, res_name[i])
-            self.assertEqual(len(cdp.mol[0].res[i].spin), 1)
             self.assertEqual(cdp.mol[0].res[i].spin[0].num, spin_num[i])
             self.assertEqual(cdp.mol[0].res[i].spin[0].name, spin_name[i])
 
-            # Angles have been calculated.
-            if hasattr(cdp.mol[0].res[i].spin[0], 'attached_atom'):
-                # The attached proton.
-                self.assertEqual(cdp.mol[0].res[i].spin[0].attached_atom, attached_atoms[i])
+            # Get the interatomic container.
+            interatoms = return_interatom_list(cdp.mol[0].res[i].spin[0]._spin_ids[0])
 
-                # The XH vector.
+            # Check the containers.
+            self.assert_(len(interatoms) <= 1)
+
+            # No interatomic container.
+            if not interatoms:
+                # The spin info.
+                self.assertEqual(len(cdp.mol[0].res[i].spin), 1)
+
+            # Check the interatomic info.
+            else:
+                # The spin info.
+                self.assertEqual(len(cdp.mol[0].res[i].spin), 2)
+                self.assertEqual(cdp.mol[0].res[i].spin[1].name, attached_atoms[i])
+
+                # The vector.
                 for j in xrange(3):
-                    self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].xh_vect[j], xh_vects[i][j])
+                    self.assertAlmostEqual(interatoms[0].vector[j], xh_vects[i][j])
 
                 # Check the alpha angles.
-                self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].alpha, alpha[i])
-
-            # No angles calculated.
-            else:
-                self.assertEqual(attached_atoms[i], None)
-                self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], 'xh_vect'))
-                self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], 'alpha'))
+                self.assertAlmostEqual(interatoms[0].alpha, alpha[i])

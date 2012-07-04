@@ -24,15 +24,21 @@ self._execute_uf(uf_name='results.read', file='final_results_trunc_1.3_v2', dir=
 
 # Play with the data.
 self._execute_uf(uf_name='deselect.all')
-self._execute_uf(uf_name='spin.copy', spin_from=':9', spin_to=':9@NE')
-self._execute_uf(uf_name='select.spin', spin_id=':9')
-self._execute_uf(uf_name='select.spin', spin_id=':10')
-self._execute_uf(uf_name='select.spin', spin_id=':11')
-self._execute_uf(uf_name='spin.name', name='N', force=False)
-self._execute_uf(uf_name='spin.element', element='N', force=False)
+self._execute_uf(uf_name='select.spin', spin_id=':9@N')
+self._execute_uf(uf_name='select.spin', spin_id=':10@N')
+self._execute_uf(uf_name='select.spin', spin_id=':11@N')
+self._execute_uf(uf_name='spin.name', name='N', spin_id='@N', force=False)
+self._execute_uf(uf_name='spin.element', element='N', spin_id='@N*', force=False)
 self._execute_uf(uf_name='molecule.name', name='OMP')
 self._execute_uf(uf_name='molecule.type', type='protein')
 self._execute_uf(uf_name='bmrb.thiol_state', state='reduced')
+
+# Set up a second spin type.
+self._execute_uf(uf_name='spin.copy', spin_from=':9@N', spin_to=':9@NE1')
+self._execute_uf(uf_name='spin.create', res_num=9, spin_name='HE1')
+self._execute_uf(uf_name='spin.element', element='H', spin_id=':9@HE1')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id=':9@HE1')
+self._execute_uf(uf_name='dipole_pair.define', spin_id1=':9@NE1', spin_id2=':9@HE1')
 
 # Display the data (as a test).
 self._execute_uf(uf_name='relax_data.display', ri_id='R1_800')

@@ -30,6 +30,7 @@ import wx
 # relax module imports.
 from generic_fns import pipes, relax_data
 from graphics import WIZARD_IMAGE_PATH
+from physical_constants import NH_BOND_LENGTH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
