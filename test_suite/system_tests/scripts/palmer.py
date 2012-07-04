@@ -26,24 +26,24 @@ def exec_stage_1(pipes):
         print(("\n\n# " + name + " #"))
         pipe.create(name, 'mf')
 
-        # Load the sequence.
+        # Set up the 15N spins.
         sequence.read(status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
+        spin.name('N')
+        spin.element(element='N', spin_id='@N')
+        spin.isotope('15N', spin_id='@N')
 
         # Load the relaxation data.
         relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
         relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
         relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
-        # Name the spins, then attach some protons.
-        spin.name('N')
-        sequence.attach_protons()
-
-        # Setup other values.
+        # Set up the diffusion tensor.
         diffusion_tensor.init(1e-8)
 
+        # Generate 1H spins for the magnetic dipole-dipole relaxation interaction.
+        sequence.attach_protons()
+
         # Define the magnetic dipole-dipole relaxation interaction.
-        spin.element(element='N', spin_id='@N')
-        spin.element(element='H', spin_id='@H')
         dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
         dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 
@@ -51,7 +51,6 @@ def exec_stage_1(pipes):
         value.set(-172 * 1e-6, 'csa', spin_id='@N')
         
         # Set the nuclear isotope type.
-        spin.isotope('15N', spin_id='@N')
         spin.isotope('1H', spin_id='@H')
 
         # Select the model-free model.

@@ -26,9 +26,11 @@ NUM_STR = 4
 for i in range(NUM_STR):
     self._execute_uf(uf_name='structure.read_pdb', file='lactose_MCMM4_S1_'+repr(i+1), dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
 
-# Load the sequence information.
+# Set up the 13C and 1H spins information.
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@C*', ave_pos=False)
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@H*', ave_pos=False)
+self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H6')
@@ -46,10 +48,6 @@ self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C6', spin_id2=':UN
 self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C6', spin_id2=':UNK@H7')
 self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':UNK@H17')
 self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':UNK@H18')
-
-# Set the nuclear isotope type.
-self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
-self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er']

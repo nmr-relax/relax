@@ -46,17 +46,19 @@ dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
 dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 dipole_pair.unit_vectors()
 
+# Define the CSA relaxation interaction.
+value.set(val=-172e-6, param='csa')
+
 # Set the diffusion tensor in the PDB frame (Dxx, Dyy, Dzz, Dxy, Dxz, Dyz).
 diffusion_tensor.init((1.340e7, 1.516e7, 1.691e7, 0.000e7, 0.000e7, 0.000e7), param_types=3)
-
-# Set the required values.
-value.set(val=-172e-6, param='csa')
-value.set(val=0.8, param='s2')
-value.set(val=20e-12, param='te')
 
 # Set the spin information.
 spin.isotope('15N', spin_id='@N')
 spin.isotope('1H', spin_id='@H')
+
+# Set the required values.
+value.set(val=0.8, param='s2')
+value.set(val=20e-12, param='te')
 
 # Select model-free model m2.
 model_free.select_model(model='m2')

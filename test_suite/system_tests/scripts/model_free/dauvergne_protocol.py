@@ -189,9 +189,11 @@ data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep
 # Load the PDB file.
 structure.read_pdb('sphere.pdb', dir=data_path)
 
-# Load all the N and H spins.
+# Set up the 15N and 1H spins.
 structure.load_spins('@N', ave_pos=True)
 structure.load_spins('@H', ave_pos=True)
+spin.isotope('15N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
 
 # Load the relaxation data.
 relax_data.read(ri_id='R1_900',  ri_type='R1',  frq=900*1e6, file='r1.900.out',  dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
@@ -208,11 +210,6 @@ dipole_pair.unit_vectors()
 
 # Define the chemical shift relaxation interaction.
 value.set(-172 * 1e-6, 'csa', spin_id='@N')
-
-# Set the nuclear isotope type.
-spin.isotope('15N', spin_id='@N')
-spin.isotope('1H', spin_id='@H')
-
 
 
 # Execution.

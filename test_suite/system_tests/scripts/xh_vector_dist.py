@@ -21,8 +21,8 @@ structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path+'structures')
 structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@H')
 
-# Set the XH vectors.
-dipole_pair.define('@N', '@H')
+# Set up the XH vectors.
+dipole_pair.define(spin_id1='@N', spin_id2='@H')
 dipole_pair.unit_vectors()
 
 # Create the PDB file.
