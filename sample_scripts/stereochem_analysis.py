@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -92,12 +92,8 @@ NOE_NORM = 50 * 4**2    # The NOE normalisation factor (sum of all NOEs squared)
 # RDC file info.
 RDC_NAME = "PAN"
 RDC_FILE = "pan_rdcs"
-RDC_SPIN_ID_COL = 1
-RDC_MOL_NAME_COL = None
-RDC_RES_NUM_COL = None
-RDC_RES_NAME_COL = None
-RDC_SPIN_NUM_COL = None
-RDC_SPIN_NAME_COL = None
+RDC_SPIN_ID1_COL = 1
+RDC_SPIN_ID2_COL = 2
 RDC_DATA_COL = 2
 RDC_ERROR_COL = None
 
@@ -131,12 +127,8 @@ analysis = Stereochem_analysis(
     noe_norm=NOE_NORM,
     rdc_name=RDC_NAME,
     rdc_file=RDC_FILE,
-    rdc_spin_id_col=RDC_SPIN_ID_COL,
-    rdc_mol_name_col=RDC_MOL_NAME_COL,
-    rdc_res_num_col=RDC_RES_NUM_COL,
-    rdc_res_name_col=RDC_RES_NAME_COL,
-    rdc_spin_num_col=RDC_SPIN_NUM_COL,
-    rdc_spin_name_col=RDC_SPIN_NAME_COL,
+    rdc_spin_id1_col=RDC_SPIN_ID1_COL,
+    rdc_spin_id2_col=RDC_SPIN_ID2_COL,
     rdc_data_col=RDC_DATA_COL,
     rdc_error_col=RDC_ERROR_COL,
     bond_length=BOND_LENGTH,

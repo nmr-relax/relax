@@ -14,9 +14,11 @@ structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'te
 
 # Load the spins.
 structure.load_spins('@N')
+structure.load_spins('@H')
 
 # Set the NH vector.
-structure.vectors(attached='H')
+dipole_pair.define('@N', '@H')
+dipole_pair.unit_vectors()
 
 # Initialise a diffusion tensor.
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)

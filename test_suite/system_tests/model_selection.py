@@ -62,6 +62,10 @@ class Modsel(SystemTestCase):
             self.interpreter.relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
             self.interpreter.relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
+            # Name the spins, then create all attached protons.
+            self.interpreter.spin.name('N')
+            self.interpreter.sequence.attach_protons()
+
             # Set the diffusion tensors.
             self.interpreter.diffusion_tensor.init(tensors[i], fixed=False)
 

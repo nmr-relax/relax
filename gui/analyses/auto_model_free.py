@@ -35,8 +35,11 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.interatomic import interatomic_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns.pipes import has_bundle, has_pipe
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from graphics import fetch_icon
+from physical_constants import NH_BOND_LENGTH
 from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
@@ -255,11 +258,9 @@ class Auto_model_free(Base_analysis):
         wx.CallAfter(self.field_results_dir.Enable, enable)
         wx.CallAfter(self.spin_systems.Enable, enable)
         wx.CallAfter(self.relax_data.Enable, enable)
+        wx.CallAfter(self.button_dipole_pair.Enable, enable)
         wx.CallAfter(self.button_csa.Enable, enable)
-        wx.CallAfter(self.button_r.Enable, enable)
-        wx.CallAfter(self.button_h_type.Enable, enable)
-        wx.CallAfter(self.button_x_type.Enable, enable)
-        wx.CallAfter(self.button_vectors.Enable, enable)
+        wx.CallAfter(self.button_isotope.Enable, enable)
         wx.CallAfter(self.local_tm_model_field.Enable, enable)
         wx.CallAfter(self.mf_model_field.Enable, enable)
         wx.CallAfter(self.grid_inc.Enable, enable)
@@ -279,50 +280,41 @@ class Auto_model_free(Base_analysis):
         # Sizer.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Dipole-dipole relaxation setup button.
+        self.button_dipole_pair = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Dipolar relaxation")
+        self.button_dipole_pair.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.dipole_pair", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_dipole_pair.SetFont(font.normal)
+        self.button_dipole_pair.SetSize((-1, 25))
+        self.button_dipole_pair.SetToolTipString("Set the Chemical Shift Anisotropy (CSA) values via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.setup_dipole_pair, self.button_dipole_pair)
+        sizer.Add(self.button_dipole_pair, 1, wx.ALL|wx.EXPAND, 0)
+
         # CSA button.
-        self.button_csa = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA")
-        self.button_csa.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        self.button_csa = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA relaxation")
+        self.button_csa.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.align_tensor", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_csa.SetFont(font.normal)
-        self.button_csa.SetSize((-1, 20))
+        self.button_csa.SetSize((-1, 25))
         self.button_csa.SetToolTipString("Set the Chemical Shift Anisotropy (CSA) values via the value.set user function.")
         self.gui.Bind(wx.EVT_BUTTON, self.value_set_csa, self.button_csa)
         sizer.Add(self.button_csa, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Bond length button.
-        self.button_r = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Bond length")
-        self.button_r.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        self.button_r.SetFont(font.normal)
-        self.button_r.SetSize((-1, 20))
-        self.button_r.SetToolTipString("Set the bond length (r) values via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_r, self.button_r)
-        sizer.Add(self.button_r, 1, wx.ALL|wx.EXPAND, 0)
+        # Isotope type button (heteronucleus).
+        self.button_isotope = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " X isotope")
+        self.button_isotope.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.nuclear_symbol", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_isotope.SetFont(font.normal)
+        self.button_isotope.SetSize((-1, 25))
+        self.button_isotope.SetToolTipString("Set the nuclear isotope types of the heteronuclear spins via the spin.isotope user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.spin_isotope_heteronuc, self.button_isotope)
+        sizer.Add(self.button_isotope, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Proton type button.
-        self.button_h_type = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " H type")
-        self.button_h_type.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        self.button_h_type.SetFont(font.normal)
-        self.button_h_type.SetSize((-1, 20))
-        self.button_h_type.SetToolTipString("Set the type of proton via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_proton_type, self.button_h_type)
-        sizer.Add(self.button_h_type, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Heteronucleus type button.
-        self.button_x_type = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " X type")
-        self.button_x_type.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        self.button_x_type.SetFont(font.normal)
-        self.button_x_type.SetSize((-1, 20))
-        self.button_x_type.SetToolTipString("Set the type of heteronucleus via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_heteronuc_type, self.button_x_type)
-        sizer.Add(self.button_x_type, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Unit vectors button.
-        self.button_vectors = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Unit vectors")
-        self.button_vectors.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.structure, wx.BITMAP_TYPE_ANY))
-        self.button_vectors.SetFont(font.normal)
-        self.button_vectors.SetSize((-1, 20))
-        self.button_vectors.SetToolTipString("Load unit vectors from PDB files.")
-        self.gui.Bind(wx.EVT_BUTTON, self.load_unit_vectors, self.button_vectors)
-        sizer.Add(self.button_vectors, 1, wx.ALL|wx.EXPAND, 0)
+        # Isotope type button (proton).
+        self.button_isotope = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " H isotope")
+        self.button_isotope.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.nuclear_symbol", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_isotope.SetFont(font.normal)
+        self.button_isotope.SetSize((-1, 25))
+        self.button_isotope.SetToolTipString("Set the nuclear isotope types of the proton spins via the spin.isotope user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.spin_isotope_proton, self.button_isotope)
+        sizer.Add(self.button_isotope, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
@@ -380,6 +372,10 @@ class Auto_model_free(Base_analysis):
         if hasattr(cdp, 'ri_ids') and len(cdp.ri_ids) <= 3:
             missing.append("Insufficient relaxation data, 4 or more data sets are essential for the execution of the dauvergne_protocol auto-analysis.")
 
+        # Interatomic data containers.
+        if not hasattr(cdp, 'interatomic') or len(cdp.interatomic) == 0:
+            missing.append("Interatomic data (for the dipole-dipole interaction)")
+
         # Get the mode.
         mode = gui_to_str(self.mode.GetValue())
 
@@ -397,7 +393,7 @@ class Auto_model_free(Base_analysis):
         if 'prolate' in data.global_models or 'oblate' in data.global_models or 'ellipsoid' in data.global_models:
             vector_check = True
 
-        # Spin vars.
+        # Spin variables.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -406,25 +402,36 @@ class Auto_model_free(Base_analysis):
             # The message skeleton.
             msg = "Spin '%s' - %s (try the %s user function)." % (spin_id, "%s", "%s")
 
-            # Test if the bond length has been set.
-            if not hasattr(spin, 'r') or spin.r == None:
-                missing.append(msg % ("bond length data", "value.set"))
-
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
                 missing.append(msg % ("CSA data", "value.set"))
 
-            # Test if the heteronucleus type has been set.
-            if not hasattr(spin, 'heteronuc_type') or spin.heteronuc_type == None:
-                missing.append(msg % ("heteronucleus type data", "value.set"))
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
+                missing.append(msg % ("nuclear isotope data", "spin.isotope"))
 
-            # Test if the proton type has been set.
-            if not hasattr(spin, 'proton_type') or spin.proton_type == None:
-                missing.append(msg % ("proton type data", "value.set"))
+        # Interatomic data container variables.
+        for interatom in interatomic_loop():
+            # Get the spin containers.
+            spin1 = return_spin(interatom.spin_id1)
+            spin2 = return_spin(interatom.spin_id2)
+
+            # Skip deselected spins.
+            if not spin1.select:
+                continue
+            if not spin2.select:
+                continue
+
+            # The message skeleton.
+            msg = "Spin pair '%s' and '%s' - %s (try the %s user function)." % (interatom.spin_id1, interatom.spin_id2, "%s", "%s")
+
+            # Test if the interatomic distance has been set.
+            if not hasattr(interatom, 'r') or interatom.r == None:
+                missing.append(msg % ("bond length data", "value.set"))
 
             # Test if the unit vectors have been loaded.
-            if vector_check and (not hasattr(spin, 'xh_vect') or spin.xh_vect == None):
-                missing.append(msg % ("unit vectors", "structure.vectors"))
+            if vector_check and (not hasattr(interatom, 'vector') or interatom.vector == None):
+                missing.append(msg % ("unit vectors", "dipole_pair.unit_vectors"))
 
         # Return the container and list of missing data.
         return data, missing
@@ -591,35 +598,6 @@ class Auto_model_free(Base_analysis):
         event.Skip()
 
 
-    def load_unit_vectors(self, event=None):
-        """Create the wizard for structure.read_pdb and structure.vectors.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
-
-        # Change the cursor to busy.
-        wx.BeginBusyCursor()
-
-        # Create the wizard.
-        self.vect_wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Load unit vectors from file")
-
-        # Create the PDB reading page.
-        page = uf_store['structure.read_pdb'].create_page(self.vect_wizard)
-        self.vect_wizard.add_page(page, skip_button=True)
-
-        # Create the vector loading page.
-        page = uf_store['structure.vectors'].create_page(self.vect_wizard)
-        self.vect_wizard.add_page(page)
-
-        # Reset the cursor.
-        if wx.IsBusy():
-            wx.EndBusyCursor()
-
-        # Execute the wizard.
-        self.vect_wizard.run()
-
-
     def mode_dialog(self, event=None):
         """The calculation mode selection.
 
@@ -684,6 +662,76 @@ class Auto_model_free(Base_analysis):
         self.field_results_dir.SetValue(str_to_gui(path))
 
 
+    def setup_dipole_pair(self, event=None):
+        """Create the wizard for the dipole-dipole interaction.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
+        # Create the wizard.
+        self.dipole_wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Dipole-dipole interaction setup")
+
+        # Structural data.
+        if not hasattr(cdp, 'structure'):
+            # Create the PDB reading page.
+            page = uf_store['structure.read_pdb'].create_page(self.dipole_wizard)
+            self.dipole_wizard.add_page(page, skip_button=True)
+
+            # Create the position reading page.
+            page = uf_store['structure.get_pos'].create_page(self.dipole_wizard)
+            self.dipole_wizard.add_page(page, skip_button=True)
+
+        # Create the dipole_pair.define page.
+        page = uf_store['dipole_pair.define'].create_page(self.dipole_wizard)
+        page.SetValue('spin_id1', '@N')
+        page.SetValue('spin_id2', '@H')
+        self.dipole_wizard.add_page(page)
+
+        # Create the dipole_pair.set_dist page.
+        page = uf_store['dipole_pair.set_dist'].create_page(self.dipole_wizard)
+        page.SetValue('spin_id1', '@N')
+        page.SetValue('spin_id2', '@H')
+        page.SetValue('ave_dist', NH_BOND_LENGTH)
+        self.dipole_wizard.add_page(page)
+
+        # Create the dipole_pair.unit_vectors page.
+        page = uf_store['dipole_pair.unit_vectors'].create_page(self.dipole_wizard)
+        self.dipole_wizard.add_page(page)
+
+        # Reset the cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+        # Execute the wizard.
+        self.dipole_wizard.run()
+
+
+    def spin_isotope_heteronuc(self, event=None):
+        """Set the nuclear isotope types of the heteronuclear spins via the spin.isotope user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['spin.isotope'](isotope='15N', spin_id='@N')
+
+
+    def spin_isotope_proton(self, event=None):
+        """Set the nuclear isotope types of the proton spins via the spin.isotope user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['spin.isotope'](isotope='1H', spin_id='@H')
+
+
     def sync_ds(self, upload=False):
         """Synchronise the analysis frame and the relax data store, both ways.
 
@@ -742,48 +790,6 @@ class Auto_model_free(Base_analysis):
 
         # Call the user function.
         uf_store['value.set'](val=val, param='csa')
-
-
-    def value_set_heteronuc_type(self, event=None):
-        """Set the type of heteronucleus via the value.set uf.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
-
-        # Get the default value.
-        val = get_specific_fn('default_value')('heteronuc_type')
-
-        # Call the user function.
-        uf_store['value.set'](val=val, param='heteronuc_type')
-
-
-    def value_set_proton_type(self, event=None):
-        """Set the type of proton via the value.set uf.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
-
-        # Get the default value.
-        val = get_specific_fn('default_value')('proton_type')
-
-        # Call the user function.
-        uf_store['value.set'](val=val, param='proton_type')
-
-
-    def value_set_r(self, event=None):
-        """Set the bond length via the value.set uf.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
-
-        # Get the default value.
-        val = get_specific_fn('default_value')('r')
-
-        # Call the user function.
-        uf_store['value.set'](val=val, param='r')
 
 
 

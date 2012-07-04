@@ -7,7 +7,8 @@ from os import sep
 import sys
 
 # relax module imports.
-from generic_fns.mol_res_spin import return_spin, spin_loop
+from generic_fns.interatomic import return_interatom
+from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from status import Status; status = Status()
 
 
@@ -67,10 +68,11 @@ structure.read_pdb('bax_C_1J7P_N_H_Ca.pdb', dir=path+sep+'structures')
 structure.load_spins()
 
 # Deselect unresolved residues.
-deselect.read(file='unresolved', mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
-# Calculate NH bond vectors for the N spins.
-structure.vectors('H', spin_id='@N')
+# Load the NH vectors.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.unit_vectors(ave=False)
 
 # Get the first calcium position.
 spin = return_spin(':1000@CA')
@@ -118,16 +120,21 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     if spin.name == "H":
         continue
 
-    # Skip spins without vectors.
-    if not hasattr(spin, 'xh_vect'):
+    # Get the interatomic data container.
+    spin_id1 = generate_spin_id(res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
+    spin_id2 = generate_spin_id(res_num=res_num, res_name=res_name, spin_name='H')
+    interatom = return_interatom(spin_id1, spin_id2)
+
+    # Skip interatoms without vectors.
+    if not hasattr(interatom, 'vector'):
         continue
 
     # Calculate and write the RDC.
-    rdc = dip_const * dot(transpose(spin.xh_vect), dot(tensor, spin.xh_vect))
-    rdc_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, rdc))
+    rdc = dip_const * dot(transpose(interatom.vector), dot(tensor, interatom.vector))
+    rdc_file.write("%-10s %-10s %20.11f\n" % (repr(spin_id1), repr(spin_id2), rdc))
 
     # The Pales data line (equal weight, no errors).
-    pales_file.write("%5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n" % (res_num, res_name, spin.name, res_num, res_name, spin.attached_atom, rdc, 0.0, 1.0))
+    pales_file.write("%5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n" % (res_num, res_name, spin.name, res_num, res_name, 'H', rdc, 0.0, 1.0))
 
 # Print outs.
 print(("\nAlignment tensor (A):\n" + repr(tensor)))

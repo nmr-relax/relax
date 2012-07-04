@@ -31,7 +31,16 @@ self._execute_uf(uf_name='structure.read_pdb', file='bax_C_1J7P_N_H_Ca', dir=STR
 # Load the spins.
 self._execute_uf(uf_name='structure.load_spins')
 
-# Deselect most spins (to speed things up).
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+
+# Set the nuclear isotope type.
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
+
+# Deselect most spins and interatomic data containers (to speed things up).
 self._execute_uf(uf_name='deselect.spin')
 self._execute_uf(uf_name='select.spin', spin_id=":83")
 self._execute_uf(uf_name='select.spin', spin_id=":84")
@@ -41,18 +50,19 @@ self._execute_uf(uf_name='select.spin', spin_id=":130")
 self._execute_uf(uf_name='select.spin', spin_id=":131")
 self._execute_uf(uf_name='select.spin', spin_id=":132")
 self._execute_uf(uf_name='select.spin', spin_id=":148")
-
-# Load the NH vectors.
-self._execute_uf(uf_name='structure.vectors', spin_id='@N', attached='H', ave=False)
-
-# Set the values needed to calculate the dipolar constant.
-self._execute_uf(uf_name='value.set', val=1.041 * 1e-10, param='r', spin_id="@N")
-self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type', spin_id="@N")
-self._execute_uf(uf_name='value.set', val='1H', param='proton_type', spin_id="@N")
+self._execute_uf(uf_name='deselect.interatom')
+self._execute_uf(uf_name='select.interatom', spin_id1=":83")
+self._execute_uf(uf_name='select.interatom', spin_id1=":84")
+self._execute_uf(uf_name='select.interatom', spin_id1=":85")
+self._execute_uf(uf_name='select.interatom', spin_id1=":111")
+self._execute_uf(uf_name='select.interatom', spin_id1=":130")
+self._execute_uf(uf_name='select.interatom', spin_id1=":131")
+self._execute_uf(uf_name='select.interatom', spin_id1=":132")
+self._execute_uf(uf_name='select.interatom', spin_id1=":148")
 
 # RDCs.
 if ds.mode == 'all':
-    self._execute_uf(uf_name='rdc.read', align_id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
+    self._execute_uf(uf_name='rdc.read', align_id='synth', file=rdc_file, dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3)
 
 # PCSs.
 self._execute_uf(uf_name='pcs.read', align_id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)

@@ -319,6 +319,7 @@ def select_all_sims(number=None, all_select_sim=None):
     # Model loop and set the selected simulation array functions.
     model_loop = get_specific_fn('model_loop', cdp.pipe_type)
     set_selected_sim = get_specific_fn('set_selected_sim', cdp.pipe_type)
+    skip_function = get_specific_fn('skip_function', cdp.pipe_type)
 
     # Create the selected simulation array with all simulations selected.
     if all_select_sim == None:
@@ -327,6 +328,10 @@ def select_all_sims(number=None, all_select_sim=None):
     # Loop over the models.
     i = 0
     for model_info in model_loop():
+        # Skip function.
+        if skip_function(model_info):
+            continue
+
         # Set up the selected simulation array.
         if all_select_sim != None:
             select_sim = all_select_sim[i]
@@ -335,7 +340,7 @@ def select_all_sims(number=None, all_select_sim=None):
         set_selected_sim(model_info, select_sim)
 
         # Model index.
-        i = i + 1
+        i += 1
 
 
 def setup(number=None, all_select_sim=None):

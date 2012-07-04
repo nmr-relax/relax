@@ -31,7 +31,7 @@ from string import strip
 from generic_fns import pipes
 from generic_fns import value
 from generic_fns.exp_info import software_select
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, set_spin_isotope, spin_loop
 from generic_fns.relax_data import pack_data, peak_intensity_type
 from relax_errors import RelaxError
 from relax_io import open_read_file
@@ -180,8 +180,8 @@ def read(ri_id=None, file=None, dir=None):
 
         # The labelling.
         elif row[0] == 'Labelling:':
-            # Set the heteronucleus value.
-            value.set(row[1], 'heteronuc_type')
+            # Set the isotope value.
+            set_spin_isotope(isotope=row[1])
 
             # Name the spins.
             name = split('([A-Z]+)', row[1])[1]

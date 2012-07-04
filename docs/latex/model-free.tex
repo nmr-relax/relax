@@ -755,23 +755,33 @@ The sample script which demonstrates the optimisation of model-free model $m4$ w
 name = `m4' \\
 pipe.create(name, `mf') \\
  \\
-\# Load the sequence. \\
-sequence.read(`noe.500.out', res\_num\_col=1) \\
+\# Set up the 15N spins. \\
+sequence.read(`noe.500.out', res\_num\_col=1, res\_name\_col=2) \\
+spin.name(`N') \\
+spin.element(element=`N', spin\_id=`@N') \\
+spin.isotope(`15N', spin\_id=`@N') \\
  \\
 \# Load the relaxation data. \\
-relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='R2\_600',  ri\_type='R2',  frq=600.0*1e6, file='r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='NOE\_600', ri\_type='NOE', frq=600.0*1e6, file='noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='R1\_500',  ri\_type='R1',  frq=500.0*1e6, file='r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='R2\_500',  ri\_type='R2',  frq=500.0*1e6, file='r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id='NOE\_500', ri\_type='NOE', frq=500.0*1e6, file='noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.0*1e6, file=`r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.0*1e6, file=`r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.0*1e6, file=`noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
  \\
-\# Setup other values. \\
+\# Initialise the diffusion tensor. \\
 diffusion\_tensor.init(10e-9, fixed=True) \\
-value.set(1.02 * 1e-10, `r') \\
+ \\
+\# Create all attached protons. \\
+sequence.attach\_protons() \\
+ \\
+\# Define the magnetic dipole-dipole relaxation interaction. \\
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+\#dipole\_pair.unit\_vectors() \\
+ \\
+\# Define the CSA relaxation interaction. \\
 value.set(-172 * 1e-6, `csa') \\
-value.set(`15N', `heteronuc\_type') \\
-value.set(`1H', `proton\_type') \\
  \\
 \# Select the model-free model. \\
 model\_free.select\_model(model=name) \\
@@ -804,7 +814,7 @@ state.save(`save', force=True)
 The above script consists of three major sections:
 
 \begin{description}
-\item[Loading of data] Firstly a data pipe called `m4' is created to hold all of the analysis data.  Then the spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the `noe.500.out' file, assuming that only residue numbers are present and are in the first column.  The options of this \texttt{sequence.read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.  The next part is to load all of the relaxation data, to set up the initial diffusion tensor and to set the CSA and bond length information as well as the spin types.  Finally the model-free model `m4' is chosen.
+\item[Loading of data] Firstly a data pipe called `m4' is created to hold all of the analysis data.  Then the $^{15}$N spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the `noe.500.out' file, assuming that only residue numbers and names are present and are in the first and second columns respectively.  The options of this \texttt{sequence.read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.  The $^{15}$N spin is then set up using the `spin' user functions.  The next part is to load all of the relaxation data, to set up the initial diffusion tensor, create the $^1$H spins required for the magnetic dipole-dipole interaction, and to set up the magnetic dipole-dipole and CSA relaxation mechanisms.  Finally the model-free model `m4' is chosen.
 \item[Optimisation] The optimisation of model-free models requires an initial grid search to find a position close to the minimum, followed by the high precision Newton optimisation together with the Method of Multipliers constraint algorithm \citep{dAuvergneGooley08a}.  Errors are propagated from the relaxation data to the model-free parameters via Monte Carlo simulations which is a multi-step process in relax (designed for flexibility and to teach how the simulations are constructed and carried out).
 \item[Data output] The last stage consists of writing out the XML formatted results file which contains all of the data in the current data pipe, as well as the XML formatted save file which contains not only the current data pipe data but all of the relax data store data.  Both files can be loaded back into relax later on.
 \end{description}
@@ -833,30 +843,38 @@ for name in pipes: \\
 \hspace*{4ex} \# Create the data pipe. \\
 \hspace*{4ex} pipe.create(name, `mf') \\
  \\
-\hspace*{4ex} \# Load the sequence. \\
+\hspace*{4ex} \# Set up the 15N spins. \\
 \hspace*{4ex} sequence.read(`noe.500.out', res\_num\_col=1) \\
+\hspace*{4ex} spin.name(`N') \\
+\hspace*{4ex} spin.element(element=`N', spin\_id=`@N') \\
+\hspace*{4ex} spin.isotope(`15N', spin\_id=`@N') \\
  \\
 \hspace*{4ex} \# Load a PDB file. \\
 \hspace*{4ex} structure.read\_pdb(`example.pdb') \\
  \\
-\hspace*{4ex} \# Set the spin name and then load the NH vectors. \\
-\hspace*{4ex} spin.name(name=`N') \\
-\hspace*{4ex} structure.vectors(spin\_id=`@N', attached=`H*', ave=False) \\
- \\
 \hspace*{4ex} \# Load the relaxation data. \\
-\hspace*{4ex} relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id='R2\_600',  ri\_type='R2',  frq=600.0*1e6, file='r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id='NOE\_600', ri\_type='NOE', frq=600.0*1e6, file='noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id='R1\_500',  ri\_type='R1',  frq=500.0*1e6, file='r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id='R2\_500',  ri\_type='R2',  frq=500.0*1e6, file='r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id='NOE\_500', ri\_type='NOE', frq=500.0*1e6, file='noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.0*1e6, file=`r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.0*1e6, file=`r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.0*1e6, file=`noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
  \\
-\hspace*{4ex} \# Setup other values. \\
+\hspace*{4ex} \# Set up the diffusion tensor. \\
 \hspace*{4ex} diffusion\_tensor.init(1e-8, fixed=True) \\
-\hspace*{4ex} value.set(1.02 * 1e-10, `r') \\
-\hspace*{4ex} value.set(-172 * 1e-6, `csa') \\
-\hspace*{4ex} value.set(`15N', `heteron\_type') \\
-\hspace*{4ex} value.set(`1H', `proton\_type') \\
+ \\
+\hspace*{4ex} \# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction. \\
+\hspace*{4ex} sequence.attach\_protons() \\
+ \\
+\hspace*{4ex} \# Define the magnetic dipole-dipole relaxation interaction. \\
+\hspace*{4ex} dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+\hspace*{4ex} dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+\hspace*{4ex} structure.get\_pos(`@N') \\
+\hspace*{4ex} structure.get\_pos(`@H') \\
+\hspace*{4ex} dipole\_pair.unit\_vectors() \\
+ \\
+\hspace*{4ex} \# Define the chemical shift relaxation interaction. \\
+\hspace*{4ex} value.set(-172 * 1e-6, `csa', spin\_id=`@N') \\
  \\
 \hspace*{4ex} \# Select the model-free model. \\
 \hspace*{4ex} model\_free.select\_model(model=name) \\
@@ -1255,15 +1273,23 @@ CONV\_LOOP = True \\
 name = ``mf (\%s)'' \% asctime(localtime()) \\
 pipe.create(name, `mf') \\
  \\
-\# Load the sequence. \\
-sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None) \\
- \\
-\# Name the spins. \\
-spin.name(name=`N') \\
- \\
 \# Load the PDB file. \\
 structure.read\_pdb(`1f3y.pdb') \\
-structure.vectors(attached=`H') \\
+ \\
+\# Set up the 15N and 1H spins. \\
+structure.load\_spins(`@N', ave\_pos=True) \\
+structure.load\_spins(`@H', ave\_pos=True) \\
+spin.isotope(`15N', spin\_id=`@N') \\
+spin.isotope(`1H', spin\_id=`@H') \\
+ \\
+\# Set up the 15N spins (alternative to the structure-based approach). \\
+\#sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None) \\
+\#spin.name(`N') \\
+\#spin.element(element=`N', spin\_id=`@N') \\
+\#spin.isotope(`15N', spin\_id=`@N') \\
+ \\
+\# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach). \\
+\#sequence.attach\_protons() \\
  \\
 \# Load the relaxation data. \\
 relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
@@ -1277,11 +1303,13 @@ relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.208*1e6, file=`noe.5
 deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=None, spin\_num\_col=None, spin\_name\_col=None, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
 deselect.read(file=`exclude', spin\_id\_col=1) \\
  \\
-\# Set the bond length, CSA values, heteronucleus type, and proton type. \\
-value.set(1.02 * 1e-10, `r') \\
-value.set(-172 * 1e-6, `csa') \\
-value.set(`15N', `heteronuc\_type') \\
-value.set(`1H', `proton\_type') \\
+\# Define the magnetic dipole-dipole relaxation interaction. \\
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+dipole\_pair.unit\_vectors() \\
+ \\
+\# Define the chemical shift relaxation interaction. \\
+value.set(-172 * 1e-6, `csa', spin\_id=`@N') \\
  \\
  \\
  \\

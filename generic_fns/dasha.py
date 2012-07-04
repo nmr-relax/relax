@@ -31,9 +31,10 @@ import sys
 
 # relax module imports.
 from generic_fns import angles, diffusion_tensor, pipes, relax_data, value
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, spin_loop
+from generic_fns.interatomic import return_interatom_list
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
-from relax_io import mkdir_nofail, open_write_file, test_binary
+from relax_io import extract_data, mkdir_nofail, open_write_file, strip, test_binary
 from specific_fns.setup import model_free_obj
 
 
@@ -97,12 +98,6 @@ def create(algor='LM', dir=None, force=False):
     if algor not in ['LM', 'NR']:
         raise RelaxError("The Dasha optimisation algorithm '%s' is unknown, it should either be 'LM' or 'NR'." % algor)
 
-    # Multiple spins per residue not allowed.
-    for residue in residue_loop():
-        # Test the number of spins.
-        if len(residue.spin) > 1:
-            raise RelaxError("More than one spin per residue is not supported.")
-
     # Deselect certain spins.
     __deselect_spins()
 
@@ -144,13 +139,17 @@ def create_script(file, model_type, algor):
     file.write("\n# Nucleus type.\n")
     nucleus = None
     for spin in spin_loop():
+        # Skip protons.
+        if spin.isotope == '1H':
+            continue
+
         # Can only handle one spin type.
-        if nucleus and spin.heteronuc_type != nucleus:
-            raise RelaxError("The nuclei '%s' and '%s' do not match, relax can only handle one nucleus type in Dasha." % (nucleus, spin.heteronuc_type))
+        if nucleus and spin.isotope != nucleus:
+            raise RelaxError("The nuclei '%s' and '%s' do not match, relax can only handle one nucleus type in Dasha." % (nucleus, spin.isotope))
 
         # Set the nucleus.
         if not nucleus:
-            nucleus = spin.heteronuc_type
+            nucleus = spin.isotope
 
     # Convert the name and write it.
     if nucleus == '15N':
@@ -275,6 +274,13 @@ def create_script(file, model_type, algor):
             if not spin.select:
                 continue
 
+            # Get the interatomic data containers.
+            interatoms = return_interatom_list(spin._spin_ids[0])
+            if len(interatoms) == 0:
+                raise RelaxNoInteratomError
+            elif len(interatoms) > 1:
+                raise RelaxError("Only one interatomic data container, hence dipole-dipole interaction, is supported per spin.")
+
             # Comment.
             file.write("\n\n\n# Residue %s\n\n" % residue.num)
 
@@ -338,7 +344,7 @@ def create_script(file, model_type, algor):
 
             # Bond length.
             file.write("\n# Bond length.\n")
-            file.write("set r_hx %s\n" % (spin.r / 1e-10))
+            file.write("set r_hx %s\n" % (interatoms[0].r / 1e-10))
 
             # CSA value.
             file.write("\n# CSA value.\n")
@@ -476,8 +482,12 @@ def extract(dir):
         else:
             scaling = 1.0
 
+        # Read the values.
+        data = read_results(file=file_name, scaling=scaling)
+
         # Set the values.
-        value.read(param=param, scaling=scaling, file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)
+        for i in range(len(data)):
+            value.set(val=data[i][1], error=data[i][0], param=param, spin_id=data[i][0])
 
         # Clean up of non-existent parameters (set the parameter to None!).
         for spin in spin_loop():
@@ -495,5 +505,39 @@ def extract(dir):
     if not access(file_name, F_OK):
         raise RelaxFileError('Dasha', file_name)
 
+    # Read the values.
+    data = read_results(file=file_name)
+
     # Set the values.
-    value.read(param='chi2', file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)
+    for i in range(len(data)):
+        spin = return_spin(data[i][0])
+        spin.chi2 = data[i][1]
+
+
+def read_results(file=None, dir=None, scaling=1.0):
+    """Extract the data from the Dasha results file.
+
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
+    @type dir:              str or None
+    @keyword scaling:       The parameter scaling factor.
+    @type scaling:          float
+    """
+
+    # Extract the data.
+    data = extract_data(file=file, dir=dir)
+
+    # Remove comments.
+    data = strip(data)
+
+    # Repackage the data as a list of lists of spin ID, value, error.
+    new_data = []
+    for i in range(len(data)):
+        spin_id = ':%s@N' % data[i][0]
+        value = float(data[i][1]) * scaling
+        error = float(data[i][2]) * scaling
+        new_data.append([spin_id, value, error])
+
+    # Return the data.
+    return new_data

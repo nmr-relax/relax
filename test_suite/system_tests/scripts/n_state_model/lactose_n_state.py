@@ -26,9 +26,11 @@ NUM_STR = 4
 for i in range(NUM_STR):
     self._execute_uf(uf_name='structure.read_pdb', file='lactose_MCMM4_S1_'+repr(i+1), dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
 
-# Load the sequence information.
+# Set up the 13C and 1H spins information.
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@C*', ave_pos=False)
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@H*', ave_pos=False)
+self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H6')
@@ -36,13 +38,16 @@ self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H7')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H17')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H18')
 
-# Load the CH vectors for the C atoms.
-self._execute_uf(uf_name='structure.vectors', spin_id='@C*', attached='H*', ave=False)
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
 
-# Set the values needed to calculate the dipolar constant.
-self._execute_uf(1.10 * 1e-10, 'r', spin_id="@C*", uf_name='value.set')
-self._execute_uf('13C', 'heteronuc_type', spin_id="@C*", uf_name='value.set')
-self._execute_uf('1H', 'proton_type', spin_id="@C*", uf_name='value.set')
+# Deselect the CH2 bonds.
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C6', spin_id2=':UNK@H6')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C6', spin_id2=':UNK@H7')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':UNK@H17')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':UNK@H18')
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er']
@@ -50,8 +55,8 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er']
 # Load the RDCs and PCSs.
 for i in xrange(len(align_list)):
     # The RDC.
-    self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='rdc.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+3, error_col=None)
-    self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='rdc_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+3)
+    self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='rdc.txt', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=i+3, error_col=None)
+    self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='rdc_err.txt', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=None, error_col=i+3)
     self._execute_uf(uf_name='rdc.display', align_id=align_list[i])
 
     # The PCS.

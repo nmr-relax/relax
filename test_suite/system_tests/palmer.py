@@ -59,7 +59,7 @@ class Palmer(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
-        spin = return_spin(':0', pipe='m2')
+        spin = return_spin(':0@N', pipe='m2')
         if spin.te == 1.951*1e-12:
             compiler = 'gcc'    # Gnu gcc modelfree4 version.
         else:
@@ -68,7 +68,7 @@ class Palmer(SystemTestCase):
         # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
         params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
-        spin_names = [':-2', ':-1', ':0']
+        spin_names = [':-2@N', ':-1@N', ':0@N']
         if compiler == 'gcc':
             s2 = [[0.869, 0.732, None], [0.869, 0.730, None], [0.715, 0.643, None]]
             te = [[None, None, None], [0.0, 1.951, None], [None, None, None]]    # Gnu gcc modelfree4 version.
@@ -159,7 +159,7 @@ class Palmer(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
 
         # Catch a the old, buggy modelfree4 versions and complain loudly!
-        spin = return_spin(':9', pipe='m2')
+        spin = return_spin(':9@N', pipe='m2')
         if spin.s2 == 0.855:
             raise RelaxError("You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later.")
 
@@ -172,7 +172,7 @@ class Palmer(SystemTestCase):
         # Model m1, m2, and m3 mfout file data.
         models = ['m1', 'm2', 'm3']
         params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
-        spin_names = [':9', ':10', ':11']
+        spin_names = [':9@N', ':10@N', ':11@N']
         s2 = [[0.822, 0.799, 0.823], [0.788, 0.777, 0.812], [0.822, 0.799, 0.823]]
         if compiler == 'gcc':
             te = [[None, None, None], [61.506, 36.084, 20.043], [None, None, None]]

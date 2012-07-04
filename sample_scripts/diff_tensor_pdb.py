@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,10 +25,10 @@
 
 # Create the data pipe.
 name = 'sims'
-pipe.create(name, 'mf')
+pipe.create(pipe_name=name, pipe_type='mf')
 
-# Read the results.
-results.read(dir=None)
+# Read a results file containing diffusion tensor data.
+results.read(file='results.bz2', dir=None)
 
 # Display the diffusion tensor.
 diffusion_tensor.display()
@@ -37,7 +37,7 @@ diffusion_tensor.display()
 tensor_file = 'tensor.pdb'
 structure.create_diff_tensor_pdb(file=tensor_file, force=True)
 
-# PyMOL.
+# PyMOL visualisation.
 pymol.view()
 pymol.cartoon()
 pymol.tensor_pdb(file=tensor_file)
