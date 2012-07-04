@@ -1504,7 +1504,7 @@ class N_state_model(API_base, API_common):
             pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj = None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc = None, None, None, None, None, None
         if 'rdc' in data_types:
             rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc = self._minimise_setup_rdcs(sim_index=sim_index)
 
