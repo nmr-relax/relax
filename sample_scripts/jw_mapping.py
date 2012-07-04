@@ -24,23 +24,28 @@
 
 
 # Create the data pipe.
-pipe.create('my_protein', 'jw')
+pipe.create(pipe_name='my_protein', pipe_type='jw')
 
-# Load the sequence.
-sequence.read('noe.600.out', res_num_col=1)
+# Set up the 15N spins.
+sequence.read(file='noe.600.out', res_num_col=1, res_name_col=2)
+spin.name(name='N')
+spin.element(element='N')
+spin.isotope(isotope='15N', spin_id='@N')
 
-# Load the relaxation data.
+# Load the 15N relaxation data.
 relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
 relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out', res_num_col=1, data_col=3, error_col=4)
 relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
 
-# Set the nuclei types.
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
+# Generate 1H spins for the magnetic dipole-dipole relaxation interaction.
+sequence.attach_protons()
 
-# Set the bond length and CSA values.
-value.set(1.02 * 1e-10, 'r')
-value.set(-172 * 1e-6, 'csa')
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+# Define the chemical shift relaxation interaction.
+value.set(val=-172 * 1e-6, param='csa')
 
 # Select the frequency.
 jw_mapping.set_frq(frq=600.0 * 1e6)

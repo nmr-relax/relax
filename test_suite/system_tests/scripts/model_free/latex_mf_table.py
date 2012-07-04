@@ -38,11 +38,9 @@ with the command:
 # Python module imports.
 from os import sep
 from string import replace
-import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
-from generic_fns import pipes
 from relax_io import open_write_file
 from status import Status; status = Status()
 
@@ -139,25 +137,12 @@ class Latex:
         # End the font size.
         self.file.write("\\end{small}\n")
 
-        # Terminate the document.
-        self.file.write("\\end{document}\n")
-
 
     def latex_header(self):
         """Create the LaTeX header.
 
         This function will need to be heavily modified to suit your needs.
         """
-
-        # Document class - to allow for compilation tests.
-        self.file.write("\documentclass[a4paper, 12pt, twoside]{book}\n\n")
-
-        # Package inclusion.
-        self.file.write("\usepackage{longtable}\n")
-        self.file.write("\usepackage{booktabs}\n\n")
-
-        # Start the document.
-        self.file.write("\\begin{document}\n\n")
 
         # Font size.
         self.file.write("% Small font.\n")
@@ -193,10 +178,15 @@ class Latex:
 
             # The spin is not selected.
             if not spin.select:
-                self.file.write("\\\n")
+                self.file.write("\\multicolumn{11}{c}{} \\\\\n")
+                continue
 
             # The model-free model.
-            self.file.write("$%s$ & " % spin.model)
+            if hasattr(spin, 'model'):
+                self.file.write("$%s$ & " % spin.model)
+            else:
+                self.file.write("\\multicolumn{11}{c}{} \\\\\n")
+                continue
 
             # S2.
             if spin.s2 == None:

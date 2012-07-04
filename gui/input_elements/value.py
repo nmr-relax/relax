@@ -368,10 +368,10 @@ class Value:
             if sel == None and combo_default != None:
                 # Translate if needed.
                 if combo_default in combo_choices:
-                    string = combo_default
+                    string = str_to_gui(str(combo_default))
                     set_sel = True
                 elif combo_default not in combo_data:
-                    string = combo_default
+                    string = str_to_gui(str(combo_default))
                     set_sel = False
                 else:
                     string = combo_choices[combo_data.index(combo_default)]

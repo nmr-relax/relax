@@ -34,13 +34,14 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
-from generic_fns import bmrb
-from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
+from generic_fns import bmrb, dipole_pair
+from generic_fns.interatomic import create_interatom, return_interatom, return_interatom_list
+from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
-from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
-from relax_io import read_spin_data
+from relax_errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
+from relax_io import read_spin_data, write_data
 from relax_warnings import RelaxWarning
 import specific_fns
 
@@ -174,7 +175,25 @@ def bmrb_read(star, sample_conditions=None):
         mol_names = bmrb.molecule_names(data, N)
 
         # Generate the sequence if needed.
-        bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
+        bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names, isotopes=data['isotope'], elements=data['atom_types'])
+
+        # The attached protons.
+        if data.has_key('atom_names_2'):
+            # Generate the proton spins.
+            bmrb.generate_sequence(N, spin_names=data['atom_names_2'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names, isotopes=data['isotope_2'], elements=data['atom_types_2'])
+
+            # Define the dipolar interaction.
+            for i in range(len(data['atom_names'])):
+                # The spin IDs.
+                spin_id1 = generate_spin_id(spin_name=data['atom_names'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
+                spin_id2 = generate_spin_id(spin_name=data['atom_names_2'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
+
+                # Check if the container exists.
+                if return_interatom(spin_id1=spin_id1, spin_id2=spin_id2):
+                    continue
+
+                # Define.
+                dipole_pair.define(spin_id1=spin_id1, spin_id2=spin_id2, verbose=False)
 
         # The data and error.
         vals = data['data']
@@ -211,7 +230,7 @@ def bmrb_read(star, sample_conditions=None):
                         errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
-        pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
+        pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True, verbose=False)
 
         # Store the temperature calibration and control.
         if data['temp_calibration']:
@@ -269,7 +288,7 @@ def bmrb_write(star):
             raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
         if spin.name == None:
             raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
-        if spin.heteronuc_type == None:
+        if spin.isotope == None:
             raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
         # The molecule/residue/spin info.
@@ -278,17 +297,26 @@ def bmrb_write(star):
         res_name_list.append(str(res_name))
         atom_name_list.append(str(spin.name))
 
+        # Interatomic info.
+        interatoms = return_interatom_list(spin_id)
+        if len(interatoms) == 0:
+            raise RelaxError("No interatomic interactions are defined for the spin '%s'." % spin_id)
+        if len(interatoms) > 1:
+            raise RelaxError("The BMRB only handles a signal interatomic interaction for the spin '%s'." % spin_id)
+
+        # Get the attached spin.
+        spin_attached = return_spin(interatoms[0].spin_id1)
+        if id(spin_attached) == id(spin):
+            spin_attached = return_spin(interatoms[0].spin_id2)
+
         # The attached atom info.
-        if hasattr(spin, 'attached_atom'):
-            attached_atom_name_list.append(str(spin.attached_atom))
-        elif hasattr(spin, 'attached_proton'):
-            attached_atom_name_list.append(str(spin.attached_proton))
+        if hasattr(spin_attached, 'name'):
+            attached_atom_name_list.append(str(spin_attached.name))
         else:
             attached_atom_name_list.append(None)
-
-        if hasattr(spin, 'proton_type'):
-            attached_element_list.append(element_from_isotope(spin.proton_type))
-            attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+        if hasattr(spin_attached, 'isotope'):
+            attached_element_list.append(element_from_isotope(spin_attached.isotope))
+            attached_isotope_list.append(str(number_from_isotope(spin_attached.isotope)))
         else:
             attached_element_list.append(None)
             attached_isotope_list.append(None)
@@ -305,7 +333,7 @@ def bmrb_write(star):
                 ri_data_err_list[i].append(None)
 
         # Other info.
-        isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+        isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
         element_list.append(spin.element)
 
     # Convert the molecule names into the entity IDs.
@@ -734,7 +762,7 @@ def num_frq():
     return count
 
 
-def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
+def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, spin_id=None, gen_seq=False, verbose=True):
     """Pack the relaxation data into the data pipe and spin containers.
 
     The values, errors, and spin_ids arguments must be lists of equal length or None.  Each element i corresponds to a unique spin.
@@ -763,6 +791,8 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     @type spin_names:       None or list of str
     @keyword gen_seq:       A flag which if True will cause the molecule, residue, and spin sequence data to be generated.
     @type gen_seq:          bool
+    @keyword verbose:       A flag which if True will cause all relaxation data loaded to be printed out.
+    @type verbose:          bool
     """
 
     # The number of spins.
@@ -817,22 +847,67 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     cdp.ri_type[ri_id] = ri_type
     cdp.frq[ri_id] = frq
 
+    # The selection object.
+    select_obj = None
+    if spin_id:
+        select_obj = Selection(spin_id)
+
     # Loop over the spin data.
+    data = []
     for i in range(N):
         # Get the corresponding spin container.
-        spin = return_spin(spin_ids[i])
-        if spin == None:
+        spins = return_spin_from_selection(spin_ids[i], multi=True)
+        if spins in [None, []]:
             raise RelaxNoSpinError(spin_ids[i])
 
-        # Initialise the spin data if necessary.
-        if not hasattr(spin, 'ri_data') or spin.ri_data == None:
-            spin.ri_data = {}
-        if not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None:
-            spin.ri_data_err = {}
+        # Remove non-matching spins.
+        if select_obj:
+            new_spins = []
+            new_ids = []
+            for j in range(len(spins)):
+                if spins[j] in select_obj:
+                    new_spins.append(spins[j])
+                    new_ids.append(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=spins[j].num, spin_name=spins[j].name))
+            new_id = new_ids[0]
 
-        # Update all data structures.
-        spin.ri_data[ri_id] = values[i]
-        spin.ri_data_err[ri_id] = errors[i]
+        # Aliases for normal operation.
+        else:
+            new_spins = spins
+            new_id = spin_ids[i]
+            new_ids = None
+
+        # Check that only a singe spin is present.
+        if len(new_spins) > 1:
+            if new_ids:
+                raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
+            else:
+                raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
+        if len(new_spins) == 0:
+            raise RelaxNoSpinError(spin_ids[i])
+
+        # Loop over the spins.
+        for spin in new_spins:
+            # No match to the selection.
+            if select_obj and spin not in select_obj:
+                continue
+
+            # Initialise the spin data if necessary.
+            if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+                spin.ri_data = {}
+            if not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None:
+                spin.ri_data_err = {}
+
+            # Update all data structures.
+            spin.ri_data[ri_id] = values[i]
+            spin.ri_data_err[ri_id] = errors[i]
+
+            # Append the data for printing out.
+            data.append([new_id, repr(values[i]), repr(errors[i])])
+
+    # Print out.
+    if verbose:
+        print("\nThe following %s MHz %s relaxation data with the ID '%s' has been loaded into the relax data store:\n" % (frq/1e6, ri_type, ri_id))
+        write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
 
 
 def peak_intensity_type(ri_id=None, type=None):
@@ -931,7 +1006,7 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     res_names = []
     spin_nums = []
     spin_names = []
-    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep):
         # Unpack.
         if data_col and error_col:
             mol_name, res_num, res_name, spin_num, spin_name, value, error = data
@@ -952,7 +1027,7 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
         errors.append(error)
 
     # Pack the data.
-    pack_data(ri_id, ri_type, frq, values, errors, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
+    pack_data(ri_id, ri_type, frq, values, errors, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, spin_id=spin_id)
 
 
 def return_data_desc(name):

@@ -46,10 +46,19 @@ def exec_stage_1(pipes):
 
         # Setup other values.
         diffusion_tensor.init((1e-8, 0, 0, 0))
-        value.set('15N', 'heteronuc_type')
-        value.set('1H', 'proton_type')
-        value.set(1.02 * 1e-10, 'r')
-        value.set(-172 * 1e-6, 'csa')
+
+        # Define the magnetic dipole-dipole relaxation interaction.
+        spin.element(element='N', spin_id='@N')
+        spin.element(element='H', spin_id='@H')
+        dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+        # Define the chemical shift relaxation interaction.
+        value.set(-172 * 1e-6, 'csa', spin_id='@N')
+        
+        # Set the nuclear isotope type.
+        spin.isotope('15N', spin_id='@N')
+        spin.isotope('1H', spin_id='@H')
 
         # Select the model-free model.
         model_free.select_model(model=name)

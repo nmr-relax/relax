@@ -32,7 +32,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 import dep_check
 from generic_fns import exp_info
-from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_residue, return_spin
+from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_residue, return_spin, set_spin_element, set_spin_isotope
 from generic_fns.pipes import cdp_name
 from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
@@ -53,7 +53,7 @@ def display(version='3.1'):
     write(file=sys.stdout, version=version)
 
 
-def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_nums=None, res_names=None, mol_names=None):
+def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_nums=None, res_names=None, mol_names=None, isotopes=None, elements=None):
     """Generate the sequence data from the BRMB information.
 
     @keyword N:             The number of spins.
@@ -70,6 +70,10 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
     @type res_names:        list of str or None
     @keyword mol_names:     The list of molecule names.
     @type mol_names:        list of str or None
+    @keyword isotopes:      The optional list of isotope types.
+    @type isotopes:         list of str or None
+    @keyword elements:      The optional list of element types.
+    @type elements:         list of str or None
     """
 
     # The blank data.
@@ -97,7 +101,15 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
             continue
 
         # Create the spin.
-        create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
+        spin = create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
+
+        # Set the spin isotope and element.
+        spin_id = spin._spin_ids[0]
+        if elements:
+            set_spin_element(spin_id=spin_id, element=elements[i], force=True)
+        if isotopes and elements:
+            isotope = "%s%s" % (isotopes[i], elements[i])
+            set_spin_isotope(spin_id=spin_id, isotope=isotope, force=True)
 
 
 def list_sample_conditions(star):

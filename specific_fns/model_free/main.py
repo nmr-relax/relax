@@ -27,14 +27,15 @@ from numpy import float64, array, identity, transpose, zeros
 from re import match, search
 from string import replace, split
 import sys
+from types import MethodType
 from warnings import warn
 
 # relax module imports.
 import arg_check
 from data.diff_tensor import DiffTensorSimList
 from float import isNaN, isInf
-from generic_fns import diffusion_tensor, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
+from generic_fns import diffusion_tensor, interatomic, pipes, relax_data, sequence
+from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 import specific_fns
@@ -228,7 +229,7 @@ class Model_free_main:
                     param_vector.append(cdp.diff_tensor.beta_sim[sim_index])
                     param_vector.append(cdp.diff_tensor.gamma_sim[sim_index])
 
-        # Model-free parameters (residue specific parameters).
+        # Model-free parameters (spin specific parameters).
         if model_type != 'diff':
             # The loop.
             if spin:
@@ -238,8 +239,12 @@ class Model_free_main:
 
             # Loop over the spins.
             for spin in loop:
-                # Skip deselected residues.
+                # Skip deselected spins.
                 if not spin.select:
+                    continue
+
+                # Skip spins with no parameters.
+                if not hasattr(spin, 'params'):
                     continue
 
                 # Loop over the model-free parameters.
@@ -416,7 +421,7 @@ class Model_free_main:
                     elif spin.params[k] == 'rex':
                         scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
 
-                    # Bond length.
+                    # Interatomic distances.
                     elif spin.params[k] == 'r':
                         scaling_matrix[i, i] = 1e-10
 
@@ -449,10 +454,21 @@ class Model_free_main:
         # Get the spin container.
         spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
-        # Missing structural data.
-        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid') and (not hasattr(spin, 'xh_vect') or spin.xh_vect == None):
-            warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-            return
+        # Missing interatomic vectors.
+        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+            interatoms = interatomic.return_interatom_list(spin_id)
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check the unit vectors.
+                if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                    warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
+                    return
+
+        # Execute the over-fit deselection.
+        self.overfit_deselect()
 
         # Get the relaxation value from the minimise function.
         value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_id, ri_type, frq))
@@ -629,7 +645,7 @@ class Model_free_main:
                     invalid_param = 1
                 rex = 1
 
-            # Bond length.
+            # Interatomic distances.
             elif params[i] == 'r':
                 if r:
                     invalid_param = 1
@@ -697,6 +713,10 @@ class Model_free_main:
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = False
         for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # No params.
             if not hasattr(spin, 'params') or not spin.params:
                 continue
@@ -707,7 +727,7 @@ class Model_free_main:
 
             # Inconsistencies.
             elif local_tm and not 'local_tm' in spin.params:
-                raise RelaxError("All residues must either have a local tm parameter or not.")
+                raise RelaxError("All spins must either have a local tm parameter or not.")
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
@@ -1218,11 +1238,8 @@ class Model_free_main:
         @type sim:          bool
         """
 
-        # Get the data names.
-        data_names = self.data_names(scope='spin')
-
         # Loop over the data structure names.
-        for name in data_names:
+        for name in self.PARAMS.loop(scope='spin'):
             # Blacklisted data structures.
             if name in ['ri_data', 'ri_data_bc', 'ri_data_err']:
                 continue
@@ -1232,8 +1249,12 @@ class Model_free_main:
             if name in list_data:
                 init_data = []
 
-            # Set everything else initially to None.
+            # Set everything else initially to None or False.
             init_data = None
+            if self.PARAMS.get_type(name) == bool:
+                init_data = False
+                if name == 'select':
+                    init_data = True
 
             # If the name is not in 'data_cont', add it.
             if not hasattr(data_cont, name):
@@ -1253,14 +1274,10 @@ class Model_free_main:
         types = {
             'select':           bool,
             'fixed':            bool,
-            'proton_type':      str,
-            'heteronuc_type':   str,
-            'attached_proton':  str,
             'nucleus':          str,
             'model':            str,
             'equation':         str,
             'params':           [str],
-            'xh_vect':          [float],
             's2':               float,
             's2f':              float,
             's2s':              float,
@@ -1269,7 +1286,6 @@ class Model_free_main:
             'tf':               float,
             'ts':               float,
             'rex':              float,
-            'r':                float,
             'csa':              float,
             'chi2':             float,
             'iter':             int,
@@ -1293,10 +1309,7 @@ class Model_free_main:
     _table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
     _table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
     _table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
-    _table.add_row(["Bond length", "'r'", "1.02 * 1e-10"])
     _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
-    _table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
-    _table.add_row(["Proton type", "'proton_type'", "'1H'"])
     default_value_doc.add_table(_table.label)
 
     def default_value(self, param):
@@ -1384,7 +1397,7 @@ class Model_free_main:
         # Duplicate all non-sequence specific data.
         for data_name in dir(dp_from):
             # Skip the container objects.
-            if data_name in ['diff_tensor', 'mol', 'structure', 'exp_info']:
+            if data_name in ['diff_tensor', 'mol', 'interatomic', 'structure', 'exp_info']:
                 continue
 
             # Skip special objects.
@@ -1478,17 +1491,51 @@ class Model_free_main:
         if dp_to.mol.is_empty():
             sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, preserve_select=True, verbose=verbose)
 
+        # Duplicate the interatomic data if it doesn't exist.
+        if dp_to.interatomic.is_empty():
+            interatomic.copy(pipe_from=pipe_from, pipe_to=pipe_to, verbose=verbose)
+
         # Determine the model type of the original data pipe.
         pipes.switch(pipe_from)
         model_type = self._determine_model_type()
 
         # Sequence specific data.
+        spin, spin_id = return_spin_from_index(model_info, pipe=pipe_from, return_spin_id=True)
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
-            # Get the spin container indices.
-            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_info, pipe=pipe_from)
-
             # Duplicate the spin specific data.
-            dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(dp_from.mol[mol_index].res[res_index].spin[spin_index])
+            for name in dir(spin):
+                # Skip special objects.
+                if search('^__', name):
+                    continue
+
+                # Get the object.
+                obj = getattr(spin, name)
+
+                # Skip methods.
+                if isinstance(obj, MethodType):
+                    continue
+
+                # Duplicate the object.
+                new_obj = deepcopy(getattr(spin, name))
+                setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
+
+            # Duplicate the relaxation active spins which have not been copied yet.
+            interatoms = interatomic.return_interatom_list(spin_id)
+            for interatom in interatoms:
+                # No relaxation mechanism.
+                if not interatom.dipole_pair:
+                    continue
+
+                # The interacting spin.
+                if spin_id != interatom.spin_id1:
+                    spin_id2 = interatom.spin_id1
+                else:
+                    spin_id2 = interatom.spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Duplicate the spin specific data.
+                mol_index, res_index, spin_index = return_spin_indices(spin_id2)
+                dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(spin2)
 
         # Other data types.
         else:
@@ -1677,7 +1724,7 @@ class Model_free_main:
         elif param == 'rex':
             return [0.0, 30.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2]
 
-        # Bond length.
+        # Interatomic distances.
         elif param == 'r':
             return [1.0 * 1e-10, 1.1 * 1e-10]
 
@@ -1907,6 +1954,31 @@ class Model_free_main:
             if not spin.select:
                 continue
 
+            # The interatomic data.
+            interatoms = interatomic.return_interatom_list(spin_id)
+
+            # Loop over the interatomic data.
+            dipole_relax = False
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Dipolar relaxation flag.
+                dipole_relax = False
+
+            # No relaxation mechanism.
+            if not dipole_relax and not hasattr(spin, 'csa') or spin.csa == None:
+                warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
+                spin.select = False
+
             # The number of relaxation data points.
             data_points = 0
             if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
@@ -1930,12 +2002,16 @@ class Model_free_main:
                 spin.select = False
 
             # Test for structural data if required.
-            elif need_vect and not hasattr(spin, 'xh_vect'):
-                warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-                spin.select = False
-            elif need_vect and spin.xh_vect == None:
-                warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
-                spin.select = False
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check the unit vectors.
+                if need_vect:
+                    if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                        warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
+                        spin.select = False
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
@@ -1949,10 +2025,7 @@ class Model_free_main:
     _table.add_row(["Correlation time tf", "'tf'"])
     _table.add_row(["Correlation time ts", "'ts'"])
     _table.add_row(["Chemical exchange", "'rex'"])
-    _table.add_row(["Bond length", "'r'"])
     _table.add_row(["CSA", "'csa'"])
-    _table.add_row(["Heteronucleus type", "'heteronuc_type'"])
-    _table.add_row(["Proton type", "'proton_type'"])
     return_data_name_doc.add_table(_table.label)
 
 

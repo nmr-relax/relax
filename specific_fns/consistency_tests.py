@@ -28,11 +28,12 @@ from warnings import warn
 # relax module imports.
 from api_base import API_base
 from api_common import API_common
+from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
 import specific_fns
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -63,10 +64,7 @@ class Consistency_tests(API_base, API_common):
         self.PARAMS.add('j0', scope='spin', desc='Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)', py_type=float, grace_string='\\qJ(0)\\Q', err=True, sim=True)
         self.PARAMS.add('f_eta', scope='spin', desc='Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\s\\xh\\Q', err=True, sim=True)
         self.PARAMS.add('f_r2', scope='spin', desc='R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\sR2\\Q', err=True, sim=True)
-        self.PARAMS.add('r', scope='spin', default=NH_BOND_LENGTH, units='Angstrom', desc='Bond length', py_type=float, grace_string='Bond length')
         self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
-        self.PARAMS.add('heteronuc_type', scope='spin', default='15N', desc='The heteronucleus type', py_type=str)
-        self.PARAMS.add('proton_type', scope='spin', default='1H', desc='The proton type', py_type=str)
         self.PARAMS.add('orientation', scope='spin', default=15.7, units='degrees', desc="Angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor", py_type=float, grace_string='\\q\\xq\\Q')
         self.PARAMS.add('tc', scope='spin', default=13 * 1e-9, units='ns', desc="Correlation time", py_type=float, grace_string='\\q\\xt\\f{}c\\Q')
 
@@ -113,19 +111,19 @@ class Consistency_tests(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the CSA, bond length, angle Theta and correlation time values have been set.
-        for spin in spin_loop(spin_id):
+        # Test if the spin data has been set.
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
+                raise RelaxSpinTypeError
+
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError("CSA")
-
-            # Test if the bond length has been set.
-            if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError("bond length")
 
             # Test if the angle Theta has been set.
             if not hasattr(spin, 'orientation') or spin.orientation == None:
@@ -135,20 +133,34 @@ class Consistency_tests(API_base, API_common):
             if not hasattr(spin, 'tc') or spin.tc == None:
                 raise RelaxNoValueError("correlation time")
 
-            # Test if the spin type has been set.
-            if not hasattr(spin, 'heteronuc_type'):
-                raise RelaxSpinTypeError
+            # Test the interatomic data.
+            interatoms = return_interatom_list(id)
+            for interatom in interatoms:
+                # No relaxation mechanism.
+                if not interatom.dipole_pair:
+                    continue
 
-            # Test if the type attached proton has been set.
-            if not hasattr(spin, 'proton_type'):
-                raise RelaxProtonTypeError
+                # The interacting spin.
+                if id != interatom.spin_id1:
+                    spin_id2 = interatom.spin_id1
+                else:
+                    spin_id2 = interatom.spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Test if the nuclear isotope type has been set.
+                if not hasattr(spin2, 'isotope'):
+                    raise RelaxSpinTypeError
+
+                # Test if the interatomic distance has been set.
+                if not hasattr(interatom, 'r') or interatom.r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
 
         # Frequency index.
         if cdp.ct_frq not in cdp.frq.values():
             raise RelaxError("No relaxation data corresponding to the frequency %s has been loaded." % cdp.ct_frq)
 
         # Consistency testing.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -189,11 +201,32 @@ class Consistency_tests(API_base, API_common):
             if r1 == None or r2 == None or noe == None:
                 continue
 
+            # Loop over the interatomic data.
+            interatoms = return_interatom_list(id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Gyromagnetic ratios.
+                gx = return_gyromagnetic_ratio(spin.isotope)
+                gh = return_gyromagnetic_ratio(spin2.isotope)
+
+                # The interatomic distance.
+                r = interatoms[i].r
+
             # Initialise the function to calculate.
-            self.ct = Consistency(frq=cdp.ct_frq, gx=return_gyromagnetic_ratio(spin.heteronuc_type), gh=return_gyromagnetic_ratio(spin.proton_type), mu0=mu0, h_bar=h_bar)
+            self.ct = Consistency(frq=cdp.ct_frq, gx=gx, gh=gh, mu0=mu0, h_bar=h_bar)
 
             # Calculate the consistency tests values.
-            j0, f_eta, f_r2 = self.ct.func(orientation=spin.orientation, tc=spin.tc, r=spin.r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
+            j0, f_eta, f_r2 = self.ct.func(orientation=spin.orientation, tc=spin.tc, r=r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Consistency tests values.
             if sim_index == None:

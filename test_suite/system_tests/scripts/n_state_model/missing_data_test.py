@@ -21,13 +21,14 @@ self._execute_uf(uf_name='structure.read_pdb', file='LE_trunc.pdb', dir=str_path
 self._execute_uf(uf_name='structure.load_spins', spin_id='@C*', ave_pos=False)
 self._execute_uf(uf_name='structure.load_spins', spin_id='@H*', ave_pos=False)
 
-# Load the CH vectors for the C atoms.
-self._execute_uf(uf_name='structure.vectors', spin_id='@C*', attached='H*', ave=False)
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
 
-# Set the values needed to calculate the dipolar constant.
-self._execute_uf(uf_name='value.set', val=1.10 * 1e-10, param='r', spin_id="@C*")
-self._execute_uf(uf_name='value.set', val='13C', param='heteronuc_type', spin_id="@C*")
-self._execute_uf(uf_name='value.set', val='1H', param='proton_type', spin_id="@C*")
+# Set the nuclear isotope type.
+self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er']
@@ -36,7 +37,7 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er']
 for i in xrange(len(align_list)):
     # The RDC.
     if i != 1:
-        self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=None, spin_name_col=5, data_col=6, error_col=None)
+        self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
         self._execute_uf(uf_name='rdc.display', align_id=align_list[i])
 
     # The PCS.

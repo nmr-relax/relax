@@ -29,7 +29,8 @@ from time import sleep
 # relax module imports.
 from float import floatAsByteArray
 from info import Info_box; info = Info_box()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_index_loop, spin_loop
+from generic_fns.interatomic import interatomic_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
 from generic_fns.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
 from generic_fns import selection
 from prompt.interpreter import Interpreter
@@ -287,24 +288,31 @@ class dAuvergne_protocol:
             if not spin.select:
                 continue
 
-            # Print.
-            print("Checking spin '%s'." % spin_id)
+            # Test if the isotope type has been set.
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
+                raise RelaxNoValueError("nuclear isotope type", spin_id=spin_id)
 
-            # Test if the bond length has been set.
-            if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError("bond length")
+            # Skip spins with no relaxation data.
+            if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+                continue
 
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
-                raise RelaxNoValueError("CSA")
+                raise RelaxNoValueError("CSA", spin_id=spin_id)
 
-            # Test if the heteronucleus type has been set.
-            if not hasattr(spin, 'heteronuc_type') or spin.heteronuc_type == None:
-                raise RelaxNoValueError("heteronucleus type")
+        # Interatomic vars.
+        for interatom in interatomic_loop():
+            # Get the corresponding spins.
+            spin1 = return_spin(interatom.spin_id1)
+            spin2 = return_spin(interatom.spin_id2)
 
-            # Test if the proton type has been set.
-            if not hasattr(spin, 'proton_type') or spin.proton_type == None:
-                raise RelaxNoValueError("proton type")
+            # Skip deselected spins.
+            if not spin1.select or not spin2.select:
+                continue
+
+            # Test if the interatomic distance has been set.
+            if not hasattr(interatom, 'r') or interatom.r == None:
+                raise RelaxNoValueError("interatomic distance", spin_id=interatom.spin_id1, spin_id2=interatom.spin_id2)
 
         # Min vars.
         if not isinstance(self.grid_inc, int):

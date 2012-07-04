@@ -52,7 +52,7 @@ for i in xrange(len(pipes)):
         # Create the data pipe.
         pipe.create(cv_pipes[i][j], 'mf')
 
-        # Load the sequence.
+        # Load the 15N spins.
         sequence.read('noe.500.out', res_num_col=1)
 
         # Create the calibration set by loading all relaxation data except the index 'i'.
@@ -64,16 +64,22 @@ for i in xrange(len(pipes)):
         # Set up the global rotational correlation time.
         diffusion_tensor.init(1e-8)
 
-        # Set the bond length and CSA values.
-        value.set(1.02 * 1e-10, 'r')
-        value.set(-172 * 1e-6, 'csa')
+        # Create all attached protons.
+        sequence.attach_protons()
+
+        # Define the magnetic dipole-dipole relaxation interaction.
+        dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+        # Define the chemical shift relaxation interaction.
+        value.set(-172 * 1e-6, 'csa', spin_id='@N')
 
         # Select the preset model-free models.
         model_free.select_model(model=pipes[i])
 
         # Minimisation of the calibration set.
         grid_search(inc=11)
-        minimise('newton', 'chol')
+        minimise('newton')
 
         # Write the results.
         results.write(force=True)

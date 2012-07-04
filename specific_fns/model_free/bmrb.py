@@ -33,6 +33,7 @@ from warnings import warn
 if dep_check.bmrblib_module:
     import bmrblib
 from generic_fns import bmrb, diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
+from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
 from relax_warnings import RelaxWarning
@@ -267,7 +268,7 @@ class Bmrb:
                         iso_num = iso_table[data['atom_types'][i]]
 
                     # Set the type.
-                    setattr(spin, 'heteronuc_type', str(iso_num) + data['atom_types'][i])
+                    setattr(spin, 'isotope', str(iso_num) + data['atom_types'][i])
 
 
     def _sf_csa_read(self, star):
@@ -438,6 +439,11 @@ class Bmrb:
 
         # Store the spin specific data in lists for later use.
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+            # Skip the protons.
+            if spin.name == 'H' or (hasattr(spin, 'element') and spin.element == 'H'):
+                warn(RelaxWarning("Skipping the proton spin '%s'." % spin_id))
+                continue
+
             # Check the data for None (not allowed in BMRB!).
             if res_num == None:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
@@ -445,7 +451,7 @@ class Bmrb:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
             if spin.name == None:
                 raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
-            if spin.heteronuc_type == None:
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
                 raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
             if not hasattr(spin, 'element') or spin.element == None:
                 raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)
@@ -462,15 +468,25 @@ class Bmrb:
             else:
                 csa_list.append(None)
 
-            # Bond lengths.
-            if hasattr(spin, 'csa'):
-                r_list.append(spin.r)
-            else:
-                r_list.append(None)
+            # Interatomic distances.
+            interatoms = return_interatom_list(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
 
-            # The heteronucleus type.
-            if hasattr(spin, 'csa'):
-                isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+                # Add the interatomic distance.
+                if hasattr(interatoms[i], 'r'):
+                    r_list.append(interatoms[i].r)
+                else:
+                    r_list.append(None)
+
+                # Stop adding.
+                break
+
+            # The nuclear isotope.
+            if hasattr(spin, 'isotope'):
+                isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
             else:
                 isotope_list.append(None)
 
@@ -481,7 +497,10 @@ class Bmrb:
                 element_list.append(None)
 
             # Diffusion tensor.
-            local_tm_list.append(spin.local_tm)
+            if hasattr(spin, 'local_tm'):
+                local_tm_list.append(spin.local_tm)
+            else:
+                local_tm_list.append(None)
             if hasattr(spin, 'local_tm_err'):
                 local_tm_err_list.append(spin.local_tm_err)
             else:

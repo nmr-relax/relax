@@ -2,7 +2,7 @@
 from os import sep
 
 # relax imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.interatomic import interatomic_loop
 from physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
 from status import Status; status = Status()
 
@@ -17,15 +17,17 @@ self._execute_uf(uf_name='pipe.create', pipe_name='rdc_back_calc', pipe_type='N-
 self._execute_uf(uf_name='structure.read_pdb', file='trunc_ubi_pcs.pdb', dir=str_path)
 
 # Load the spins.
-self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
+self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
+self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
 
-# Set the heteronucleus type.
-self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type')
-self._execute_uf(uf_name='value.set', val='1H', param='proton_type')
-self._execute_uf(uf_name='value.set', val=NH_BOND_LENGTH_RDC, param='r')
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH_RDC)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=True)
 
-# Load the bond vectors.
-self._execute_uf(uf_name='structure.vectors', attached='H', spin_id='@N')
+# Set the nuclear isotope.
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # The dipolar constant.
 const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
@@ -47,9 +49,9 @@ self._execute_uf(uf_name='n_state_model.number_of_states', N=1)
 # Set the RDC data.
 rdcs = [-1.390, -6.270, -9.650]
 i = 0
-for spin in spin_loop():
-    spin.rdc = {}
-    spin.rdc[tensor] = rdcs[i]
+for interatom in interatomic_loop():
+    interatom.rdc = {}
+    interatom.rdc[tensor] = rdcs[i]
     i += 1
 
 # Back calc.

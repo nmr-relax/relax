@@ -35,12 +35,13 @@ import arg_check
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.interatomic import interatomic_loop, return_interatom_list
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi import Processor_box
 from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
 
 
@@ -1022,12 +1023,11 @@ class Mf_minimise:
 
         # Set up the data for the back_calc function.
         if min_algor == 'back_calc':
-            # The data.
+            # The spin data.
             data_store.ri_data = [0.0]
             data_store.ri_data_err = [0.000001]
             data_store.equations = [spin.equation]
             data_store.param_types = [spin.params]
-            data_store.r = [spin.r]
             data_store.csa = [spin.csa]
             data_store.num_frq = [1]
             data_store.frq = [[min_options[3]]]
@@ -1035,12 +1035,29 @@ class Mf_minimise:
             data_store.remap_table = [[0]]
             data_store.noe_r1_table = [[None]]
             data_store.ri_types = [[min_options[2]]]
-            data_store.gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
-            data_store.gh = [return_gyromagnetic_ratio(spin.proton_type)]
-            if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                data_store.xh_unit_vectors = [spin.xh_vect]
-            else:
-                data_store.xh_unit_vectors = [None]
+            data_store.gx = [return_gyromagnetic_ratio(spin.isotope)]
+
+            # The interatomic data.
+            interatoms = return_interatom_list(data_store.spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if data_store.spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # The data.
+                data_store.r = [interatoms[i].r]
+                data_store.gh = [return_gyromagnetic_ratio(spin2.isotope)]
+                if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                    data_store.xh_unit_vectors = [interatoms[i].vector]
+                else:
+                    data_store.xh_unit_vectors = [None]
 
             # Count the number of model-free parameters for the spin index.
             data_store.num_params = [len(spin.params)]
@@ -1083,35 +1100,56 @@ class Mf_minimise:
             data_store.frq.append(data[5])
             data_store.remap_table.append(data[6])
             data_store.noe_r1_table.append(data[7])
-
-            # Repackage the data.
-            data_store.equations.append(spin.equation)
-            data_store.param_types.append(spin.params)
-            data_store.gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
-            data_store.gh.append(return_gyromagnetic_ratio(spin.proton_type))
             if sim_index == None or data_store.model_type == 'diff':
-                data_store.r.append(spin.r)
                 data_store.csa.append(spin.csa)
             else:
-                data_store.r.append(spin.r_sim[sim_index])
                 data_store.csa.append(spin.csa_sim[sim_index])
+
+            # Repackage the spin data.
+            data_store.equations.append(spin.equation)
+            data_store.param_types.append(spin.params)
+            data_store.gx.append(return_gyromagnetic_ratio(spin.isotope))
+
+            # Repackage the interatomic data.
+            interatoms = return_interatom_list(data_store.spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if data_store.spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # The data.
+                data_store.gh.append(return_gyromagnetic_ratio(spin2.isotope))
+                if sim_index == None or data_store.model_type == 'diff' or not hasattr(interatoms[i], 'r_sim'):
+                    data_store.r.append(interatoms[i].r)
+                else:
+                    data_store.r.append(interatoms[i].r_sim[sim_index])
+
+                # Vectors.
+                if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                    # Check that this is a single vector!
+                    if arg_check.is_num_list(interatoms[i].vector[0], raise_error=False):
+                        raise RelaxMultiVectorError(data_store.spin_id)
+
+                    # Store the vector.
+                    data_store.xh_unit_vectors.append(interatoms[i].vector)
+
+                # No vector.
+                else:
+                    data_store.xh_unit_vectors.append(None)
+
+                # Stop - only one mechanism is current supported.
+                break
 
             # Model-free parameter values.
             if data_store.model_type == 'local_tm':
                 pass
-
-            # Vectors.
-            if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                # Check that this is a single vector!
-                if arg_check.is_num_list(spin.xh_vect[0], raise_error=False):
-                    raise RelaxMultiVectorError(data_store.spin_id)
-
-                # Store the vector.
-                data_store.xh_unit_vectors.append(spin.xh_vect)
-
-            # No vector.
-            else:
-                data_store.xh_unit_vectors.append(None)
 
             # Count the number of model-free parameters for the spin index.
             data_store.num_params.append(len(spin.params))
@@ -1278,21 +1316,9 @@ class Mf_minimise:
             if not spin.model:
                 raise RelaxNoModelError
 
-            # Test if unit vectors exist.
-            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(spin, 'xh_vect'):
-                raise RelaxNoVectorsError
-
-            # Test if multiple unit vectors exist.
-            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(spin, 'xh_vect') and arg_check.is_num_list(spin.xh_vect[0], raise_error=False):
-                raise RelaxMultiVectorError
-
-            # Test if the spin type has been set.
-            if not hasattr(spin, 'heteronuc_type'):
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
                 raise RelaxSpinTypeError
-
-            # Test if the type attached proton has been set.
-            if not hasattr(spin, 'proton_type'):
-                raise RelaxProtonTypeError
 
             # Test if the model-free parameter values exist.
             unset_param = self._are_mf_params_set(spin)
@@ -1303,9 +1329,35 @@ class Mf_minimise:
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError("CSA")
 
-            # Test if the bond length value has been set.
-            if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError("bond length")
+            # Test the interatomic data.
+            interatoms = return_interatom_list(spin_id)
+            for interatom in interatoms:
+                # No relaxation mechanism.
+                if not interatom.dipole_pair:
+                    continue
+
+                # Test if unit vectors exist.
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(interatom, 'vector'):
+                    raise RelaxNoVectorsError
+
+                # Test if multiple unit vectors exist.
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(interatom, 'vector') and arg_check.is_num_list(interatom.vector[0], raise_error=False):
+                    raise RelaxMultiVectorError
+
+                # The interacting spin.
+                if spin_id != interatom.spin_id1:
+                    spin_id2 = interatom.spin_id1
+                else:
+                    spin_id2 = interatom.spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Test if the nuclear isotope type has been set.
+                if not hasattr(spin2, 'isotope'):
+                    raise RelaxSpinTypeError
+
+                # Test if the interatomic distance has been set.
+                if not hasattr(interatom, 'r') or interatom.r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
 
             # Skip spins where there is no data or errors.
             if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
@@ -1328,7 +1380,7 @@ class Mf_minimise:
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
 
-            # Append the data.
+            # The spin data.
             ri_data = [array(data[0])]
             ri_data_err = [array(data[1])]
             num_frq = [data[2]]
@@ -1337,24 +1389,40 @@ class Mf_minimise:
             frq = [data[5]]
             remap_table = [data[6]]
             noe_r1_table = [data[7]]
-
-            # Repackage the spin.
+            gx = [return_gyromagnetic_ratio(spin.isotope)]
             if sim_index == None:
-                r = [spin.r]
                 csa = [spin.csa]
             else:
-                r = [spin.r_sim[sim_index]]
                 csa = [spin.csa_sim[sim_index]]
 
-            # Vectors.
-            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                xh_unit_vectors = [spin.xh_vect]
-            else:
-                xh_unit_vectors = [None]
+            # The interatomic data.
+            interatoms = return_interatom_list(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
 
-            # Gyromagnetic ratios.
-            gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
-            gh = [return_gyromagnetic_ratio(spin.proton_type)]
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # The data.
+                if sim_index == None:
+                    r = [interatoms[i].r]
+                else:
+                    r = [interatoms[i].r_sim[sim_index]]
+
+                # Vectors.
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                    xh_unit_vectors = [interatoms[i].vector]
+                else:
+                    xh_unit_vectors = [None]
+
+                # Gyromagnetic ratios.
+                gh = [return_gyromagnetic_ratio(spin2.isotope)]
 
             # Count the number of model-free parameters for the residue index.
             num_params = [len(spin.params)]
@@ -1485,7 +1553,7 @@ class Mf_minimise:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the model-free model has been setup, and that the heteronucleus and attached proton type have been set.
+        # Test if the model-free model has been setup, and that the nuclear isotope types have been set.
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
@@ -1495,13 +1563,9 @@ class Mf_minimise:
             if not spin.model:
                 raise RelaxNoModelError
 
-            # Test if the spin type has been set.
-            if not hasattr(spin, 'heteronuc_type'):
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
                 raise RelaxSpinTypeError
-
-            # Test if the type attached proton has been set.
-            if not hasattr(spin, 'proton_type'):
-                raise RelaxProtonTypeError
 
         # Reset the minimisation statistics.
         if sim_index == None and min_algor != 'back_calc':
@@ -1543,14 +1607,23 @@ class Mf_minimise:
                 raise RelaxNoPdbError
 
             # Test if unit vectors exist.
-            for spin in spin_loop():
+            for spin, spin_id in spin_loop(return_id=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
 
-                # Unit vector.
-                if not hasattr(spin, 'xh_vect'):
-                    raise RelaxNoVectorsError
+                # Get the interatomic data container.
+                interatoms = return_interatom_list(spin_id)
+
+                # Unit vectors.
+                for i in range(len(interatoms)):
+                    # No relaxation mechanism.
+                    if not interatoms[i].dipole_pair:
+                        continue
+
+                    # Check for the vectors.
+                    if not hasattr(interatoms[i], 'vector'):
+                        raise RelaxNoVectorsError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
         if data_store.model_type == 'diff':
@@ -1571,8 +1644,8 @@ class Mf_minimise:
             elif data_store.model_type == 'all':
                 print("The diffusion tensor parameters together with the model-free parameters for all spins will be used.")
 
-        # Test if the CSA and bond length values have been set.
-        for spin in spin_loop():
+        # Test if the CSA and interatomic distances have been set.
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -1581,9 +1654,26 @@ class Mf_minimise:
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError("CSA")
 
-            # Bond length value.
-            if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError("bond length")
+            # Get the interatomic data container.
+            interatoms = return_interatom_list(spin_id)
+
+            # Interatomic distances.
+            count = 0
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check for the distances.
+                if not hasattr(interatoms[i], 'r') or interatoms[i].r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=interatoms[i].spin_id1, spin_id2=interatoms[i].spin_id2)
+
+                # Count the number of interactions.
+                count += 1
+            
+            # Too many interactions.
+            if count > 1:
+                raise RelaxError("The spin '%s' has %s dipolar relaxation interactions defined, but only a maximum of one is currently supported." % (spin_id, count))
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
@@ -1628,6 +1718,12 @@ class Mf_minimise:
 
                 # Skip spins missing relaxation data or errors.
                 if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
+                    continue
+
+            # Skip spins missing the dipolar interaction.
+            if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm'):
+                interatoms = return_interatom_list(data_store.spin_id)
+                if not len(interatoms):
                     continue
 
             # Parameter vector and diagonal scaling.

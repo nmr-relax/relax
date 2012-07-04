@@ -669,6 +669,59 @@ class Internal(Base_struct_API):
             self.structural_data[i].mol.add_item(mol_name=name, mol_cont=MolContainer())
 
 
+    def are_bonded(self, atom_id1=None, atom_id2=None):
+        """Determine if two atoms are directly bonded to each other.
+
+        @keyword atom_id1:  The molecule, residue, and atom identifier string of the first atom.
+        @type atom_id1:     str
+        @keyword atom_id1:  The molecule, residue, and atom identifier string of the second atom.
+        @type atom_id1:     str
+        @return:            True if the atoms are directly bonded.
+        @rtype:             bool
+        """
+
+        # Generate the selection objects.
+        sel_obj1 = Selection(atom_id1)
+        sel_obj2 = Selection(atom_id2)
+
+        # Build the connectivities if needed.
+        for mol in self.structural_data[0].mol:
+            for i in range(len(mol.atom_num)):
+                if not len(mol.bonded[i]):
+                    self._find_bonded_atoms(i, mol, radius=2)
+
+        # Loop over the molecules.
+        for mol in self.structural_data[0].mol:
+            # Skip non-matching molecules.
+            if not sel_obj1.contains_mol(mol.mol_name):
+                continue
+            if not sel_obj2.contains_mol(mol.mol_name):
+                continue
+
+            # Find the first atom.
+            index1 = None
+            for i in range(len(mol.atom_num)):
+                # Skip a non-matching first atom.
+                if sel_obj1.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                    index1 = i
+                    break
+
+            # Find the second atom.
+            index2 = None
+            for i in range(len(mol.atom_num)):
+                # Skip a non-matching first atom.
+                if sel_obj2.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                    index2 = i
+                    break
+
+            # Connectivities exist.
+            if index1 < len(mol.bonded):
+                if index2 in mol.bonded[index1]:
+                    return True
+                else:
+                    return False
+
+
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
