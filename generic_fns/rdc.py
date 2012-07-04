@@ -557,6 +557,11 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             # Add the value.
             interatom.rdc[align_id] = value
 
+            # Store the absolute value flag.
+            if not hasattr(interatom, 'absolute_rdc'):
+                interatom.absolute_rdc = {}
+            interatom.absolute_rdc[align_id] = absolute
+
         # Convert and add the error.
         if error_col:
             # Data conversion.
