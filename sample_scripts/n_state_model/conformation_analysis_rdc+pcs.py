@@ -25,6 +25,8 @@
 The reference for this script is:
 
     Erdelyi, M., d'Auvergne, E. J., Navarro-Vazquez, A., Leonov, A. and Griesinger, C. (2011).  Dynamics of the glycosidic bond.  Conformational space of lactose.  Manuscript in preparation.
+
+This should be used in combination with the local_min_search.py sample script.
 """
 
 
@@ -50,9 +52,16 @@ for file in files:
         num += 1
 NUM_STR = num - 1
 
-# Load the sequence information.
+# Set up the 13C and 1H spins information.
 structure.load_spins(spin_id=':900@C*', ave_pos=False)
 structure.load_spins(spin_id=':900@H*', ave_pos=False)
+spin.isotope(isotope='13C', spin_id='@C*')
+spin.isotope(isotope='1H', spin_id='@H*')
+
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+dipole_pair.unit_vectors(ave=False)
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 deselect.spin(spin_id=':900@H6')
@@ -60,13 +69,11 @@ deselect.spin(spin_id=':900@H7')
 deselect.spin(spin_id=':900@H17')
 deselect.spin(spin_id=':900@H18')
 
-# Load the CH vectors for the C atoms.
-structure.vectors(spin_id='@C*', attached='H*', ave=False)
-
-# Set the values needed to calculate the dipolar constant.
-value.set(1.10 * 1e-10, 'r', spin_id="@C*")
-value.set('13C', 'heteronuc_type', spin_id="@C*")
-value.set('1H', 'proton_type', spin_id="@C*")
+# Deselect the CH2 bonds.
+deselect.interatom(spin_id1=':UNK@C6', spin_id2=':UNK@H6')
+deselect.interatom(spin_id1=':UNK@C6', spin_id2=':UNK@H7')
+deselect.interatom(spin_id1=':UNK@C12', spin_id2=':UNK@H17')
+deselect.interatom(spin_id1=':UNK@C12', spin_id2=':UNK@H18')
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
@@ -74,8 +81,8 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
 # Load the RDCs and PCSs.
 for i in xrange(len(align_list)):
     # The RDC.
-    rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir='../../../align_data', spin_id1_col=1, spin_id1_col=2, data_col=i+3, error_col=None)
-    rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir='../../../align_data', spin_id1_col=1, spin_id1_col=2, data_col=None, error_col=i+3)
+    rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir='../../../align_data', spin_id1_col=1, spin_id2_col=2, data_col=i+3, error_col=None)
+    rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir='../../../align_data', spin_id1_col=1, spin_id2_col=2, data_col=None, error_col=i+3)
     rdc.display(align_id=align_list[i])
 
     # The PCS.

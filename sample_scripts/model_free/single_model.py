@@ -27,8 +27,11 @@
 name = 'm4'
 pipe.create(name, 'mf')
 
-# Load the sequence.
-sequence.read('noe.500.out', res_num_col=1)
+# Set up the 15N spins.
+sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+spin.name('N')
+spin.element('N')
+spin.isotope('15N', spin_id='@N')
 
 # Load a PDB file.
 #structure.read_pdb('example.pdb')
@@ -41,20 +44,29 @@ relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.0*1e6, file='r1.500.out'
 relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out', res_num_col=1, data_col=3, error_col=4)
 relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
-# Setup other values.
+# Initialise the diffusion tensor.
 diffusion_tensor.init(10e-9, fixed=True)
 #diffusion_tensor.init((2e-8, 1.3, 60, 290), param_types=0, spheroid_type='prolate', fixed=True)
 #diffusion_tensor.init((9e-8, 0.5, 0.3, 60, 290, 100), fixed=False)
-value.set(1.02 * 1e-10, 'r')
+
+# Create all attached protons.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+#dipole_pair.unit_vectors()
+
+# Define the CSA relaxation interaction.
 value.set(-172 * 1e-6, 'csa')
-#value.set(1.0, 's2f')
-#value.set(0.970, 's2')
-#value.set(2048e-12, 'te')
-#value.set(2048e-12, 'ts')
-#value.set(2048e-12, 'tf')
-#value.set(0.149/(2*pi*600e6)**2, 'rex')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
+
+# Set some model-free parameter values.
+#value.set(val=1.0, param='s2f')
+#value.set(val=0.970, param='s2')
+#value.set(val=2048e-12, param='te')
+#value.set(val=2048e-12, param='ts')
+#value.set(val=2048e-12, param='tf')
+#value.set(val=0.149/(2*pi*600e6)**2, param='rex')
 
 # Select the model-free model.
 model_free.select_model(model=name)
