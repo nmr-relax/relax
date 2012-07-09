@@ -41,28 +41,18 @@ class Dead_uf_pages(GuiTestCase):
     def test_mol_create(self):
         """Test a failure detected via the molecule.create user function."""
 
-        # The user function objects.
-        mol_create = uf_store['molecule.create']
-        pipe_create = uf_store['pipe.create']
-
         # First try to create a molecule (this will fail due to no data pipes being present).
         try:
-            # Call the object, then simulate the 'ok' click.
-            mol_create(mol_name='x', mol_type='protein')
-            mol_create.wizard._ok()
-            interpreter.flush()
+            # Call the object.
+            self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
         except RelaxNoPipeError, instance:
             sys.stderr.write(instance.__str__())
 
         # Create a data pipe.
-        pipe_create(pipe_name='test', pipe_type='mf')
-        pipe_create.wizard._ok()
-        interpreter.flush()
+        self._execute_uf(uf_name='pipe.create', pipe_name='test', pipe_type='mf')
 
         # Try to create the molecule a second time.
-        mol_create(mol_name='x', mol_type='protein')
-        mol_create.wizard._ok()
-        interpreter.flush()
+        self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
 
         # Checks.
         self.assertEqual(len(cdp.mol), 1)
