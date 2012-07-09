@@ -262,5 +262,8 @@ class GuiTestCase(TestCase):
                 # Destroy the Python object part.
                 delattr(self.app.gui, window)
 
+        # Delete the app.
+        del self.app
+
         # Flush all wx events to make sure the GUI is ready for the next test.
         wx.Yield()
