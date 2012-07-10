@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@
 # Python module imports.
 from os import sep
 from shutil import rmtree
+from time import sleep
 from unittest import TestCase
 
 # relax module imports.
@@ -86,6 +87,9 @@ class SystemTestCase(TestCase):
 
         # Remove temporary files.
         if hasattr(ds, 'tmpfile'):
+            # MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
+            sleep(0.01)
+
             # Delete the file.
             delete(ds.tmpfile, fail=False)
 
@@ -94,6 +98,9 @@ class SystemTestCase(TestCase):
 
         # Remove temporary files.
         if hasattr(self, 'tmpfile'):
+            # MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
+            sleep(0.01)
+
             # Delete the file.
             delete(self.tmpfile, fail=False)
 
