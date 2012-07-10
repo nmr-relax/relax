@@ -2,11 +2,11 @@
 #                                                                             #
 # Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
 # relax is free software; you can redistribute it and/or modify               #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation; either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
 # relax is distributed in the hope that it will be useful,                    #
@@ -15,8 +15,7 @@
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with relax.  If not, see <http://www.gnu.org/licenses/>.              #
 #                                                                             #
 ###############################################################################
 
