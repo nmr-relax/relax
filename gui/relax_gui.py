@@ -169,9 +169,9 @@ class Main(wx.Frame):
         self.interpreter = Interpreter()
 
         # Register functions with the observer objects.
-        status.observers.pipe_alteration.register('status bar', self.update_status_bar)
-        status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
-        status.observers.exec_lock.register('gui', self.enable)
+        status.observers.pipe_alteration.register('status bar', self.update_status_bar, method_name='update_status_bar')
+        status.observers.result_file.register('gui', self.show_results_viewer_no_warn, method_name='show_results_viewer_no_warn')
+        status.observers.exec_lock.register('gui', self.enable, method_name='enab')
 
         # Assume a script has been run and there is data in the store.
         self.analysis.load_from_store()

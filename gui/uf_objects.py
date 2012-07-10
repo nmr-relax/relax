@@ -808,7 +808,7 @@ class Uf_page(Wiz_page):
         """Clear and update the data if needed."""
 
         # Register this page with the 'gui_uf' observer so that update_args() is called once the any user function completes.
-        status.observers.gui_uf.register(self.name, self.update_args)
+        status.observers.gui_uf.register(self.name, self.update_args, method_name='update_args')
 
         # Update the args.
         return self.update_args()

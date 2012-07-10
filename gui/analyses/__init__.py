@@ -84,16 +84,16 @@ class Analysis_controller:
 
         # Register the page switch method for pipe switches.
         self.name = 'notebook page switcher'
-        status.observers.pipe_alteration.register(self.name, self.pipe_switch)
+        status.observers.pipe_alteration.register(self.name, self.pipe_switch, method_name='pipe_switch')
 
         # Register a method for removing analyses if the associated pipe is deleted.
-        status.observers.pipe_alteration.register('notebook pipe deletion', self.pipe_deletion)
+        status.observers.pipe_alteration.register('notebook pipe deletion', self.pipe_deletion, method_name='pipe_deletion')
 
         # Register the deletion of all analyses for the reset status observer.
-        status.observers.reset.register('gui analyses', self.post_reset)
+        status.observers.reset.register('gui analyses', self.post_reset, method_name='post_reset')
 
         # Register state loading.
-        status.observers.state_load.register('gui analyses', self.load_from_store)
+        status.observers.state_load.register('gui analyses', self.load_from_store, method_name='load_from_store')
 
 
     def analysis_data_loop(self):

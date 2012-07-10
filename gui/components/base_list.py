@@ -298,8 +298,8 @@ class Base_list(object):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.name, self.build_element)
-            status.observers.pipe_alteration.register(self.name, self.build_element)
+            status.observers.gui_uf.register(self.name, self.build_element, method_name='build_element')
+            status.observers.pipe_alteration.register(self.name, self.build_element, method_name='build_element')
 
         # Unregister.
         else:

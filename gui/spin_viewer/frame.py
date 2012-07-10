@@ -125,9 +125,9 @@ class Spin_view_window(wx.Frame):
         """
 
         # Register a few methods in the observer objects.
-        status.observers.gui_uf.register(self.name, self.refresh)
-        status.observers.pipe_alteration.register(self.name, self.refresh)
-        status.observers.exec_lock.register(self.name, self._activate)
+        status.observers.gui_uf.register(self.name, self.refresh, method_name='ref')
+        status.observers.pipe_alteration.register(self.name, self.refresh, method_name='ref')
+        status.observers.exec_lock.register(self.name, self._activate, method_name='_activate')
 
         # First update.
         self.refresh()

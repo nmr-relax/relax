@@ -128,10 +128,10 @@ class Controller(wx.Frame):
         print(info.intro_text())
 
         # Register functions with the observer objects.
-        status.observers.pipe_alteration.register('controller', self.update_controller)
-        status.observers.auto_analyses.register('controller', self.update_controller)
-        status.observers.gui_analysis.register('controller', self.update_controller)
-        status.observers.exec_lock.register('controller', self.update_gauge)
+        status.observers.pipe_alteration.register('controller', self.update_controller, method_name='update_controller')
+        status.observers.auto_analyses.register('controller', self.update_controller, method_name='update_controller')
+        status.observers.gui_analysis.register('controller', self.update_controller, method_name='update_controller')
+        status.observers.exec_lock.register('controller', self.update_gauge, method_name='update_gauge')
 
 
     def add_gauge(self, parent, sizer, desc, tooltip=None):

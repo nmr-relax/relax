@@ -382,7 +382,7 @@ class Export_bmrb_window(wx.Frame):
 
         # Register.
         if not remove:
-            status.observers.pipe_alteration.register('BMRB export', self.update_pipes)
+            status.observers.pipe_alteration.register('BMRB export', self.update_pipes, method_name='update_pipes')
 
         # Unregister.
         else:

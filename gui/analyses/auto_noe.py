@@ -283,8 +283,8 @@ class Auto_noe(Base_analysis):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count)
-            status.observers.exec_lock.register(self.data.pipe_bundle, self.activate)
+            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count, method_name='update_spin_count')
+            status.observers.exec_lock.register(self.data.pipe_bundle, self.activate, method_name='activate')
 
         # Unregister.
         else:

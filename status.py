@@ -412,8 +412,9 @@ class Observer(object):
         # Store the args.
         self._name = name
 
-        # The dictionary of callback methods.
+        # The dictionary of callback methods (and their names).
         self._callback = {}
+        self._method_names = {}
 
         # The list of keys, for ordered execution.
         self._keys = []
@@ -429,19 +430,24 @@ class Observer(object):
         for key in self._keys:
             # Debugging.
             if self._status.debug:
-                sys.stdout.write("debug> Observer: '%s' notifying '%s'.\n" % (self._name, key))
+                if self._method_names[key]:
+                    sys.stdout.write("debug> Observer: '%s' notifying the '%s' method %s().\n" % (self._name, key, self._method_names[key]))
+                else:
+                    sys.stdout.write("debug> Observer: '%s' notifying '%s'.\n" % (self._name, key))
 
             # Call the method.
             self._callback[key]()
 
 
-    def register(self, key, method):
+    def register(self, key, method, method_name=None):
         """Register a method to be called when the state changes.
 
-        @param key:     The key to identify the observer's method.
-        @type key:      str
-        @param method:  The observer's method to be called after a state change.
-        @type method:   method
+        @param key:             The key to identify the observer's method.
+        @type key:              str
+        @param method:          The observer's method to be called after a state change.
+        @type method:           method
+        @keyword method_name:   The optional method name used in debugging print outs.
+        @type method_name:      str or None
         """
 
         # Already exists.
@@ -450,10 +456,16 @@ class Observer(object):
 
         # Debugging.
         if self._status.debug:
-            sys.stdout.write("debug> Observer: '%s' registering '%s'.\n" % (self._name, key))
+            if method_name:
+                sys.stdout.write("debug> Observer: '%s' registering the '%s' method %s().\n" % (self._name, key, method_name))
+            else:
+                sys.stdout.write("debug> Observer: '%s' registering '%s'.\n" % (self._name, key))
 
         # Add the method to the dictionary of callbacks.
         self._callback[key] = method
+
+        # Add the method name.
+        self._method_names[key] = method_name
 
         # Add the key to the ordered list.
         self._keys.append(key)
@@ -492,6 +504,9 @@ class Observer(object):
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
+
+        # Remove the name.
+        self._method_names.pop(key)
 
         # Remove the key for the ordered key list.
         self._keys.remove(key)

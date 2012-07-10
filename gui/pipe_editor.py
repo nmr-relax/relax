@@ -119,9 +119,9 @@ class Pipe_editor(wx.Frame):
         self.activate()
 
         # Register the grid for updating when a user function completes or when the GUI analysis tabs change.
-        status.observers.pipe_alteration.register(self.name, self.update_grid)
-        status.observers.gui_analysis.register(self.name, self.update_grid)
-        status.observers.exec_lock.register(self.name, self.activate)
+        status.observers.pipe_alteration.register(self.name, self.update_grid, method_name='update_grid')
+        status.observers.gui_analysis.register(self.name, self.update_grid, method_name='update_grid')
+        status.observers.exec_lock.register(self.name, self.activate, method_name='activa')
 
         # Show the window using the base class method.
         if status.show_gui:

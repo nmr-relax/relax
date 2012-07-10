@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -66,7 +66,7 @@ class Prompt(wx.Frame):
         self.add_shell(sizer)
 
         # Register functions with the observer objects.
-        status.observers.exec_lock.register('GUI prompt', self.enable)
+        status.observers.exec_lock.register('GUI prompt', self.enable, method_name='enable')
 
 
     def add_shell(self, sizer):
