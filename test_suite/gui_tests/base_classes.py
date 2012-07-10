@@ -57,11 +57,12 @@ class GuiTestCase(TestCase):
     def __init__(self, methodName=None):
         """Set up the test case class for the system tests."""
 
+        # A string used for classifying skipped tests.
+        if not hasattr(self, '_skip_type'):
+            self._skip_type = 'gui'
+
         # Execute the TestCase __init__ method.
         super(GuiTestCase, self).__init__(methodName)
-
-        # A string used for classifying skipped tests.
-        self._skip_type = 'gui'
 
 
     def _execute_uf(self, *args, **kargs):

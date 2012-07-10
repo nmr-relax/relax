@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -71,13 +71,13 @@ class Frame_order(SystemTestCase):
         @type methodName:       str
         """
 
+        # Execute the base class method.
+        super(Frame_order, self).__init__(methodName)
+
         # Missing module.
         if not dep_check.scipy_module:
             # Store in the status object. 
-            status.skipped_tests.append([methodName, 'Scipy', 'system'])
-
-        # Execute the base class method.
-        super(Frame_order, self).__init__(methodName)
+            status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
 
 
     def setUp(self):

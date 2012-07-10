@@ -45,7 +45,8 @@ class SystemTestCase(TestCase):
         super(SystemTestCase, self).__init__(methodName)
 
         # A string used for classifying skipped tests.
-        self._skip_type = 'system'
+        if not hasattr(self, '_skip_type'):
+            self._skip_type = 'system'
 
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
