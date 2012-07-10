@@ -237,11 +237,11 @@ class Test_suite_runner:
         # Header.
         print("Tests skipped due to missing packages/modules:\n")
         header = "%-30s" % "Module" 
-        if hasattr(self, 'system_result'):
+        if len(system_count):
             header = "%s %20s" % (header, "System test count")
-        if hasattr(self, 'unit_result'):
+        if len(unit_count):
             header = "%s %20s" % (header, "Unit test count")
-        if hasattr(self, 'gui_result'):
+        if len(gui_count):
             header = "%s %20s" % (header, "GUI test count")
         print('-'*len(header))
         print(header)
@@ -250,11 +250,11 @@ class Test_suite_runner:
         # The table.
         for module in missing_modules:
             text = "%-30s" % module
-            if hasattr(self, 'system_result'):
+            if len(system_count):
                 text = "%s %20s" % (text, system_count[module])
-            if hasattr(self, 'unit_result'):
+            if len(unit_count):
                 text = "%s %20s" % (text, unit_count[module])
-            if hasattr(self, 'gui_result'):
+            if len(gui_count):
                 text = "%s %20s" % (text, gui_count[module])
             print(text)
 
