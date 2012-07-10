@@ -63,14 +63,6 @@ class GuiTestCase(TestCase):
         # A string used for classifying skipped tests.
         self._skip_type = 'gui'
 
-        # Get the wx app, if the test suite is launched from the gui.
-        self.app = wx.GetApp()
-
-        # Flag for the GUI.
-        self._gui_launch = False
-        if self.app != None:
-            self._gui_launch = True
-
 
     def _execute_uf(self, *args, **kargs):
         """Execute the given user function.
@@ -193,8 +185,12 @@ class GuiTestCase(TestCase):
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()
 
-        # Start the GUI if not launched from the GUI.
-        if not self._gui_launch:
+        # Get the wx app, if it exists.
+        self.app = wx.GetApp()
+
+        # Create the app if needed.
+        if self.app == None:
+            # Initialise.
             self.app = wx.App(redirect=False)
 
             # relax GUI imports (here to prevent a circular import from the test suite in the GUI).
@@ -249,24 +245,15 @@ class GuiTestCase(TestCase):
         # Reset relax.
         reset()
 
-        # Reset the observers.
-        status._setup_observers()
-
-        # Destroy some GUI windows, if open.
+        # Close some GUI windows, if open.
         windows = ['pipe_editor', 'relax_prompt', 'results_viewer', 'spin_viewer']
         for window in windows:
             if hasattr(self.app.gui, window):
                 # Get the object.
                 win_obj = getattr(self.app.gui, window)
 
-                # Destroy the wxWidget part.
-                win_obj.Destroy()
-
-                # Destroy the Python object part.
-                delattr(self.app.gui, window)
-
-        # Delete the app.
-        del self.app
+                # Close the window.
+                win_obj.Close()
 
         # Flush all wx events to make sure the GUI is ready for the next test.
         wx.Yield()
