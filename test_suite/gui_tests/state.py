@@ -74,7 +74,6 @@ class State(GuiTestCase):
             for i in range(len(ds[pipe].mol[0].res)):
                 # Alias.
                 res = ds[pipe].mol[0].res[i]
-                print res.spin[0]
 
                 # Check the 15N spin data.
                 self.assertEqual(res.spin[0].name, 'N')
@@ -93,6 +92,9 @@ class State(GuiTestCase):
         # Simulate the 'Open relax state' menu entry.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'OMP' + sep + 'final_results_trunc_1.3_v2'
         self.app.gui.state_load(file_name=file)
+
+        # Create a data pipe bundle.
+        self._execute_uf(uf_name='pipe.bundle', pipe='a')
 
         # Show the pipe editor.
         self.app.gui.show_pipe_editor(None)
