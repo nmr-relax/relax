@@ -107,22 +107,6 @@ class Pipe_editor(wx.Frame):
         self.update_grid()
 
 
-    def Show(self, show=True):
-        """Change the behaviour of showing the window to update the content.
-
-        @keyword show:  A flag which is True shows the window.
-        @type show:     bool
-        """
-
-        # Update the grid.
-        self.update_grid()
-        self.activate()
-
-        # Show the window using the base class method.
-        if status.show_gui:
-            super(Pipe_editor, self).Show(show)
-
-
     def activate(self):
         """Activate or deactivate certain elements in response to the execution lock."""
 

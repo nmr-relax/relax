@@ -664,6 +664,10 @@ class Main(wx.Frame):
         if status.show_gui and not self.pipe_editor.IsShown():
             self.pipe_editor.Show()
 
+        # Update the grid.
+        self.pipe_editor.update_grid()
+        self.pipe_editor.activate()
+
         # Register the grid for updating when a user function completes or when the GUI analysis tabs change (needed here for the window hiding and associated unregistering).
         self.pipe_editor.observer_setup(register=True)
 
