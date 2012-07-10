@@ -176,9 +176,6 @@ class GuiTestCase(TestCase):
     def setUp(self):
         """Set up for all the functional tests."""
 
-        # Reset the observers (needed for clean up if this setUp method fails).
-        status._setup_observers()
-
         # Create a temporary file for the tests that need it.
         ds.tmpfile = mktemp()
 
