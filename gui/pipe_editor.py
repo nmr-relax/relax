@@ -118,11 +118,6 @@ class Pipe_editor(wx.Frame):
         self.update_grid()
         self.activate()
 
-        # Register the grid for updating when a user function completes or when the GUI analysis tabs change.
-        status.observers.pipe_alteration.register(self.name, self.update_grid, method_name='update_grid')
-        status.observers.gui_analysis.register(self.name, self.update_grid, method_name='update_grid')
-        status.observers.exec_lock.register(self.name, self.activate, method_name='activa')
-
         # Show the window using the base class method.
         if status.show_gui:
             super(Pipe_editor, self).Show(show)
@@ -369,12 +364,30 @@ class Pipe_editor(wx.Frame):
         """
 
         # Unregister the methods from the observers to avoid unnecessary updating.
-        status.observers.pipe_alteration.unregister(self.name)
-        status.observers.gui_analysis.unregister(self.name)
-        status.observers.exec_lock.unregister(self.name)
+        self.observer_setup(register=False)
 
         # Close the window.
         self.Hide()
+
+
+    def observer_setup(self, register=True):
+        """Register and unregister with the observer objects.
+
+        @keyword register:  A flag which if True will register with the observers and if False will unregister all methods.
+        @type register:     bool
+        """
+
+        # Register the methods with the observers.
+        if register:
+            status.observers.pipe_alteration.register(self.name, self.update_grid, method_name='update_grid')
+            status.observers.gui_analysis.register(self.name, self.update_grid, method_name='update_grid')
+            status.observers.exec_lock.register(self.name, self.activate, method_name='activate')
+
+        # Unregister the methods.
+        else:
+            status.observers.pipe_alteration.unregister(self.name)
+            status.observers.gui_analysis.unregister(self.name)
+            status.observers.exec_lock.unregister(self.name)
 
 
     def pipe_bundle(self, event):
