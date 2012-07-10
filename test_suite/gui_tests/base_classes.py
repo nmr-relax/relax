@@ -239,9 +239,6 @@ class GuiTestCase(TestCase):
             # Remove the variable.
             del self.tmpfile
 
-        # Delete all the GUI analysis tabs.
-        self.app.gui.analysis.delete_all()
-
         # Reset relax.
         reset()
 
