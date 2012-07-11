@@ -31,11 +31,11 @@ from warnings import warn
 # relax module imports.
 from arg_check import is_float
 from generic_fns.interatomic import create_interatom, exists_data, interatomic_loop, return_interatom
-from generic_fns.mol_res_spin import Selection, return_spin, spin_loop
+from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoInteratomError
 from relax_io import extract_data, write_data
-from relax_warnings import RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxZeroVectorWarning
 
 
 def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=True):
@@ -197,6 +197,10 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
 
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
+
+        # No container found.
+        if interatom == None:
+            raise RelaxNoInteratomError(spin_id1=spin_id1, spin_id2=spin_id2)
 
         # Store the averaged distance.
         interatom.r = ave_dist
