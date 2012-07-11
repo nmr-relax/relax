@@ -525,7 +525,7 @@ class Main(wx.Frame):
 
         # Ask if this should be done.
         msg = "In running the test suite, relax will be reset and all data lost.  Are you sure you would like to run the test suite?"
-        if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
+        if Question(msg, parent=self, size=(400, 150), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Set the test suite flag.
