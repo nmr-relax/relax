@@ -124,15 +124,15 @@ class Mf(GuiTestCase):
 
         # Set up the CSA interaction.
         analysis.value_set_csa()
-        uf_store['value.set'].wizard._ok()
+        uf_store['value.set'].wizard._go_next()
         interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Set up the nuclear isotopes.
         analysis.spin_isotope_heteronuc()
-        uf_store['spin.isotope'].wizard._ok()
+        uf_store['spin.isotope'].wizard._go_next()
         interpreter.flush()    # Required because of the asynchronous uf call.
         analysis.spin_isotope_proton()
-        uf_store['spin.isotope'].wizard._ok()
+        uf_store['spin.isotope'].wizard._go_next()
         interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Select only the tm0 and tm1 local tm models.
