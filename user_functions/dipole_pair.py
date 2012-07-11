@@ -147,8 +147,8 @@ uf.desc[-1].add_paragraph("This user function allows these r^-3 averaged interat
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load the distances from the fifth column of the 'distances' file, and where the spin IDs are in the first and second columns, type one of the following:")
-uf.desc[-1].add_prompt("relax> dipole_pair.read_dist('distances', 1, 2, 5")
-uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', spin_id1_col=1, spin_id2_col=2, data_col=5")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist('distances', 1, 2, 5)")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', spin_id1_col=1, spin_id2_col=2, data_col=5)")
 uf.backend = dipole_pair.read_dist
 uf.menu_text = "&read_dist"
 uf.gui_icon = "oxygen.actions.document-open"
