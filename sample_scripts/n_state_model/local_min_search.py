@@ -25,7 +25,7 @@ This script follows on from the results obtained from conformation_analysis_rdc+
 
 The reference for this script is:
 
-    Erdelyi, M., d'Auvergne, E. J., Navarro-Vazquez, A., Leonov, A. and Griesinger, C. (2011).  Dynamics of the glycosidic bond.  Conformational space of lactose.  Manuscript in preparation.
+    Erdelyi, M., d'Auvergne E., Navarro-Vazquez, A., Leonov, A., and Griesinger, C. (2011) Dynamics of the Glycosidic Bond: Conformational Space of Lactose. Chemistry-A European Journal, 17(34), 9368-9376 (http://dx.doi.org/10.1002/chem.201100854).
 """
 
 

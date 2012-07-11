@@ -23,7 +23,7 @@
 
 The reference for this script is:
 
-    Erdelyi, M., d'Auvergne, E. J., Navarro-Vazquez, A., Leonov, A. and Griesinger, C. (2011).  Dynamics of the glycosidic bond.  Conformational space of lactose.  Manuscript in preparation.
+    Erdelyi, M., d'Auvergne E., Navarro-Vazquez, A., Leonov, A., and Griesinger, C. (2011) Dynamics of the Glycosidic Bond: Conformational Space of Lactose. Chemistry-A European Journal, 17(34), 9368-9376 (http://dx.doi.org/10.1002/chem.201100854).
 
 This should be used in combination with the local_min_search.py sample script.
 """
@@ -41,7 +41,7 @@ from specific_fns.setup import n_state_model_obj
 # Create the data pipe.
 pipe.create('lactose', 'N-state')
 
-# Load the structures.
+# Load all PDB structures from the current directory.
 files = listdir(getcwd())
 num = 1
 for file in files:
@@ -69,10 +69,10 @@ deselect.spin(spin_id=':900@H17')
 deselect.spin(spin_id=':900@H18')
 
 # Deselect the CH2 bonds.
-deselect.interatom(spin_id1=':UNK@C6', spin_id2=':UNK@H6')
-deselect.interatom(spin_id1=':UNK@C6', spin_id2=':UNK@H7')
-deselect.interatom(spin_id1=':UNK@C12', spin_id2=':UNK@H17')
-deselect.interatom(spin_id1=':UNK@C12', spin_id2=':UNK@H18')
+deselect.interatom(spin_id1=':900@C6', spin_id2=':900@H6')
+deselect.interatom(spin_id1=':900@C6', spin_id2=':900@H7')
+deselect.interatom(spin_id1=':900@C12', spin_id2=':900@H17')
+deselect.interatom(spin_id1=':900@C12', spin_id2=':900@H18')
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
