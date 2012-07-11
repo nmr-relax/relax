@@ -692,11 +692,15 @@ class RelaxSpinsNotLoadedError(BaseError):
 
 # No interatomic data.
 class RelaxNoInteratomError(BaseError):
-    def __init__(self, pipe=None):
-        if pipe == None:
-            self.text = "The interatomic data does not exist."
+    def __init__(self, spin_id1=None, spin_id2=None, pipe=None):
+        if spin_id1 and pipe:
+            self.text = "The interatomic data between the spins '%s' and '%s' for the data pipe '%s' does not exist." % (spin_id1, spin_id2, pipe)
+        elif spin_id1:
+            self.text = "The interatomic data between the spins '%s' and '%s' does not exist." % (spin_id1, spin_id2)
+        elif pipe:
+            self.text = "The interatomic data for the data pipe '%s' does not exist." % pipe
         else:
-            self.text = "The interatomic data for the data pipe " + repr(pipe) + " does not exist."
+            self.text = "The interatomic data does not exist."
 
 # The interatomic data already exists.
 class RelaxInteratomError(BaseError):
