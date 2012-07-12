@@ -3,21 +3,20 @@
 # Copyright (C) 2009 Michael Bieri                                            #
 # Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -169,9 +168,9 @@ class Main(wx.Frame):
         self.interpreter = Interpreter()
 
         # Register functions with the observer objects.
-        status.observers.pipe_alteration.register('status bar', self.update_status_bar)
-        status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
-        status.observers.exec_lock.register('gui', self.enable)
+        status.observers.pipe_alteration.register('status bar', self.update_status_bar, method_name='update_status_bar')
+        status.observers.result_file.register('gui', self.show_results_viewer_no_warn, method_name='show_results_viewer_no_warn')
+        status.observers.exec_lock.register('gui', self.enable, method_name='enab')
 
         # Assume a script has been run and there is data in the store.
         self.analysis.load_from_store()
@@ -526,7 +525,7 @@ class Main(wx.Frame):
 
         # Ask if this should be done.
         msg = "In running the test suite, relax will be reset and all data lost.  Are you sure you would like to run the test suite?"
-        if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
+        if Question(msg, parent=self, size=(400, 150), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Set the test suite flag.
@@ -663,6 +662,13 @@ class Main(wx.Frame):
         # Open the window.
         if status.show_gui and not self.pipe_editor.IsShown():
             self.pipe_editor.Show()
+
+        # Update the grid.
+        self.pipe_editor.update_grid()
+        self.pipe_editor.activate()
+
+        # Register the grid for updating when a user function completes or when the GUI analysis tabs change (needed here for the window hiding and associated unregistering).
+        self.pipe_editor.observer_setup(register=True)
 
 
     def show_prompt(self, event=None):

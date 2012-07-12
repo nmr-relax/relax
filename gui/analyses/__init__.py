@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -84,16 +83,16 @@ class Analysis_controller:
 
         # Register the page switch method for pipe switches.
         self.name = 'notebook page switcher'
-        status.observers.pipe_alteration.register(self.name, self.pipe_switch)
+        status.observers.pipe_alteration.register(self.name, self.pipe_switch, method_name='pipe_switch')
 
         # Register a method for removing analyses if the associated pipe is deleted.
-        status.observers.pipe_alteration.register('notebook pipe deletion', self.pipe_deletion)
+        status.observers.pipe_alteration.register('notebook pipe deletion', self.pipe_deletion, method_name='pipe_deletion')
 
         # Register the deletion of all analyses for the reset status observer.
-        status.observers.reset.register('gui analyses', self.post_reset)
+        status.observers.reset.register('gui analyses', self.post_reset, method_name='post_reset')
 
         # Register state loading.
-        status.observers.state_load.register('gui analyses', self.load_from_store)
+        status.observers.state_load.register('gui analyses', self.load_from_store, method_name='load_from_store')
 
 
     def analysis_data_loop(self):

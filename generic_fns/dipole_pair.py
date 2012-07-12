@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -32,11 +31,11 @@ from warnings import warn
 # relax module imports.
 from arg_check import is_float
 from generic_fns.interatomic import create_interatom, exists_data, interatomic_loop, return_interatom
-from generic_fns.mol_res_spin import Selection, return_spin, spin_loop
+from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoInteratomError
 from relax_io import extract_data, write_data
-from relax_warnings import RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxZeroVectorWarning
 
 
 def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=True):
@@ -198,6 +197,10 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
 
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
+
+        # No container found.
+        if interatom == None:
+            raise RelaxNoInteratomError(spin_id1=spin_id1, spin_id2=spin_id2)
 
         # Store the averaged distance.
         interatom.r = ave_dist
