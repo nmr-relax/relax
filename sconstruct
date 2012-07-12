@@ -37,6 +37,7 @@ import sys
 from scons.distrib import package, gpg_sign
 from scons.install import install, uninstall
 from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
+from SCons.Script import ARGUMENTS
 import SCons.Util
 
 # relax version file.
