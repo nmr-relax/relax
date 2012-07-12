@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -148,8 +147,8 @@ uf.desc[-1].add_paragraph("This user function allows these r^-3 averaged interat
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load the distances from the fifth column of the 'distances' file, and where the spin IDs are in the first and second columns, type one of the following:")
-uf.desc[-1].add_prompt("relax> dipole_pair.read_dist('distances', 1, 2, 5")
-uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', spin_id1_col=1, spin_id2_col=2, data_col=5")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist('distances', 1, 2, 5)")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', spin_id1_col=1, spin_id2_col=2, data_col=5)")
 uf.backend = dipole_pair.read_dist
 uf.menu_text = "&read_dist"
 uf.gui_icon = "oxygen.actions.document-open"

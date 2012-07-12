@@ -1,3 +1,179 @@
+Version 2.1.0
+(12 July 2012, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.1.0
+
+    Features:
+        * Update of relax to the GNU General Public License version 3.
+        * Introduction of the interatomic data container design for NMR data such as the magnetic dipole-dipole interaction between two spins (including relaxation and RDC data) and NOESY data.
+        * Support for absolute or signless RDC values.
+        * Creation of a fast molecule, residue and spin data lookup framework using private metadata.
+
+
+    Changes:
+        * Updated the journal reference for the published lactose conformational search scripts.
+        * Shifted some of the sample scripts into the analysis specific sub-directories.
+        * Increased the size of the test suite warning dialog for MS Windows.
+        * Improvements to the skipped test printout from the test suite.  Now all test categories (system, unit and GUI) are printed if a module/package is missing.  This allows for better debugging.
+        * Shifted all of the observer registration and unregistration to observer_setup() in the pipe editor.
+        * Improved debugging print outs for the observer objects.  The method name is now stored and included in all the observer 'debug>' printouts.
+        * Removed the notebook tab deletion from the GUI tests tearDown() method.  This should be performed when a relax reset happens, so it is not needed in the tearDown() method just before the reset() call.
+        * Merger of the absolute RDC branch (absolute_rdc).
+        * Added support for the absolute or signless RDCs to the N-state model.  This simply propagates the absolute flags into the maths_fns.rdc module functions whereby the absolute RDC values and gradients can be returned.
+        * The rdc.read user function backend is now storing the absolute value flag in interatom.absolute_rdc.
+        * Converted the N-state model absolute_rdcs.py system test script to the interatomic data design.
+        * Created an absolute value version of the synthetic CaM RDC file for the test suite.
+        * The rdc.read user function backend now accepts the 'absolute' argument.  This is used to signal that the RDCs are signless absolute values.
+        * Created an initial system (and GUI) test for the absolute RDC concept.
+        * Added the 'absolute' keyword arg to the rdc.read user function definition.  This will be used to mark RDCs as being unsigned.
+        * Merger of the interatomic data container branch (interatomic).
+        * Added a new screenshot of the GUI model-free auto-analysis, as it is now quite different.
+        * Added a wizard graphic (SVG form) for the 13C-1H dipole-dipole pair.
+        * A number of the generic_fns.mol_res_spin functions now accept the pipe argument.  These include name_spin(), set_spin_element(), and set_spin_isotope() and this allows the functions to operate on any data pipe.
+        * The dipole_pair.define user function backend now can handle the pipe argument.  This allows it to operate on an alternative data pipe.
+        * The State.test_old_state_loading() GUI test now checks the loaded data to a small extent.
+        * Better backwards compatibility of old relax results and state XML files for the interatomic design.  The MoleculeContainer._back_compat_hook() method has been shifted into the Relax_data_store._back_compat_hook() method.  This allows the spin containers with attached protons to be converted (with new spin containers for the attached protons added) after loading of the XML state.
+        * A small speed up for the model-free duplicate_data() function.  This is used in model selection.
+        * The generic_fns.mol_res_spin.index_molecule() function now handles no molecule name given.  If no name is given and only a single molecule is in the current data pipe, then the index of 0 will be returned.
+        * The sequence.attach_protons user function now ignores spins with pre-existing attached protons.
+        * Improvement for the generic_fns.interatomic.return_interatom_list() function.  The spin ID matching is now through the id_match() function, allowing unique but different spin IDs to be used.  This now matches the return_interatom() behaviour.
+        * The relax_io.read_spin_data() function can now handle spin IDs in quotes.
+        * The Scientific Python structural object are_bonded() now uses 2.0 Angstrom as a cutoff radius.
+        * Added the are_bonded() and get_molecule() methods for the Scientific Python PDB reader.  This is now needed for defining interatomic vectors in the interatomic data design.
+        * Expanded the Interatomic.test_manipulation system test to demonstrate a few current failures.
+        * Some changes to the Interatomic.test_manipulation system test to better test selection/deselection.
+        * The interatomic test suite scripts are now GUI tests as well.
+        * Created the new Interatomic system test class for testing out the interatomic data containers.
+        * The rdc.read user function can now handle spin IDs in quotation marks.
+        * Interatomic data containers can now be selected and deselected.  The user functions select.interatom and deselect.interatom have been created mimicking the equivalent select.spin and deselect.spin functions.  Each interatomic data container now has a select flag.
+        * Modified the interatomic_loop() function so that spin IDs can be used to restrict the looping.
+        * Modified InteratomContainer.id_match() to handle a single spin ID and to match to all unique IDs.  This uses the spin container _spin_ids list private metadata structure.
+        * Split the return_interatom() function into two.  The new return_interatom() function is used for returning single interatomic data containers for perfect matches, whereas the return_interatom_list() function is used to return a list of containers matching a given spin.  This simplifies the behaviour of the module.
+        * The RelaxNucleusError and RelaxSpinTypeError can now have the spin ID supplied.
+        * Bug fix for the dipole_pair.unit_vectors user function positional checking.  The arg_check.is_float() function needs the raise_error flag turned off.
+        * dipole_pair.unit_vectors now raises a RelaxNoInteratomError if not interatomic data is present.
+        * The specific API base skip_function() method now returns False.  This was previously raising a RelaxImplementError, but as Monte Carlo simulations now require this function, but returning always False, all analyses will be automatically supported.
+        * Eliminated all of the bond length and heteronucleus type value.set units tests.  These are no longer specific analysis parameters.
+        * Removed all of the unit tests of the deleted structure.vectors user function.
+        * The model-free data_init() method now sets boolean parameters to the default of False.  This excludes the selection flag which is set to True.  The data_init() method no longer uses the data_names() API method but the self.PARAMS.loop() method for returning the parameter names.
+        * Improvements for the reading of old 1.2 relax results files for the attached proton spin containers.
+        * Improvements and fixes for the generic_fns.relax_data.pack_data() function.  This affects all the relaxation data reading user functions.
+        * The structure.get_pos user function now prints out all data and fails if nothing was extracted.  This is to prevent the user from going too far without realising that something is wrong.
+        * More print outs and better data loading checks in the dipole_pair user functions.
+        * The relax_data.read user function now prints out all of the data read in.  This is to better inform the user that something has happened.
+        * The return_spin_from_selection() function now lists all matching spins in RelaxMultiSpinIDError.
+        * The return_spin() and return_spin_from_selection() functions can now handle multiple spins.  It the 'multi' flag is supplied, then lists of spins (and associated data) will be returned, rather than a RelaxMultiSpinIDError error raised.
+        * Created the list_to_text() RelaxError system function for prettifying the output of RelaxMultiSpinIDError.
+        * Expanded RelaxMultiSpinIDError to be able to print out a list of all the matching spin Ids.
+        * Improvements for the MoleculeContainer backwards compatibility hook for the creation of proton spins.  The proton element and isotope type is now set to 'H' and '1H' respectively.  This now means that the old XML files require less work by the user to convert to the new interatomic data design.
+        * Eliminated the RelaxProtonTypeError error and changed the RelaxSpinTypeError message.
+        * The sequence.attach_protons user function now sets the proton element and isotope types.  This reduces the amount of work required from the user.
+        * Rearranged the spin.element user function arguments.
+        * Created the sequence.attach_proton user function.  This will be useful for analyses which are missing structural data.
+        * The dipole_pair user functions now fail if nothing could be done.  This is for the dipole_pair.define, dipole_pair.read_dist, and dipole_pair.set_dist user functions.
+        * The Monte Carlo select_all_sims() function is now using the specific skip_function().  This is needed for recreating model-free simulations as deselected proton spin containers now exist.
+        * The MoleculeContainer XML backwards compatibility hook now deletes the spin 'r_err' and 'r_sim' vars.
+        * Added a backwards compatibility hook for converting old XML files to the interatomic data design.  This will convert the variable names, deleting the old, and create proton spins and interatomic data containers populating them with the old spin parameters.
+        * Added a verbose flag to the generic_fns.dipole_pair.define() function.
+        * Added a check to the model-free overfit_deselect() to see if a relaxation mechanism is present.
+        * Expanded the functionality of the generic_fns.interatomic module.  The copy() and exists_data() functions have been added to copy all interatomic data from one data pipe to another and to check if interatomic data exists within a data pipe respectively.  The create_interatom() function now also accepts a 'pipe' argument so that non-current pipes can be used.
+        * Created the RelaxInteratomError and RelaxNoInteratomError classes for interatomic data errors.
+        * The interatomic data container now has the dipole_pair flag initialised to False.
+        * Expanded the return_interatom() function to handle a single spin ID.  This function now returns a list of matching interatomic data containers.
+        * Modified the check_args() method of the dauvergne_protocol model-free auto-analysis for the new data.  The heteronuc_type and proton_type are now in the spin's isotope variable, and the bond length 'r' is now the interatomic distance variable 'r'.  All spin containers and interatomic data containers are being checked.
+        * Expanded the RelaxNoValueError to handle one or two spin IDs as arguments.  This is to better identify which spins or interatomic data containers are deficient.
+        * The nuclear isotope is now defined via spin.isotope.
+        * Eliminated a number of the specific API parameters relating to dipole-dipole interactions.  These are now provided by the spin.isotope user function and the dipole_pair user functions.  The eliminated parameters are: 'r' - replaced by dipole_pair.set_dist or dipole_pair.read_dist, 'xh_vect' - replaced by dipole_pair.unit_vectors, 'heteronuc_type' - replaced by spin.isotope, 'proton_type' - replaced by spin.isotope, and 'attached_proton' - replaced by dipole_pair.define.
+        * Created the spin.isotope user function.  This is designed to be a permanent replacement for the specific analysis API 'heteronuc_type' and 'proton_type' parameters.
+        * Added the nuclear symbol as a wizard graphic.
+        * Added a set of icons for nuclear or isotope related usage.
+        * Deletion of the structure.vectors user function as it has been superseded by dipole_pair.unit_vectors.  Only the user function definition has deleted - the backend code will remain so that it can be used internally.
+        * Implemented the dipole_pair.unit_vectors user function backend.  This code originates from the generic_fns.structure.main.vectors() function (the structure.vectors user function backend).  The dipole_pair.unit_vectors user function is designed to replace structure.vectors.
+        * Created the dipole_pair.unit_vectors user function definition.
+        * Created the backend of the dipole_pair.read_dist user function.
+        * Created the dipole_pair.read_dist user function definitions.  This new user function is for simplifying the loading of many different interatomic distances into relax.
+        * Created a set of icons for the dipole_pair user functions.
+        * Shifted the relax_data.dipole_pair user function into the new dipole_pair user function class.  This has also been split into two new user functions:  dipole_pair.define used to set up the magnetic dipole-dipole interactions, and dipole_pair.set_dist used to set up the r^-3 averaged interatomic distances.
+        * The relax_data.dipole_pair backend now uses the direct_bond flag.
+        * Added CONECT records to the sphere.pdb file to allow connectivities to be more easily determined.  This is for the internal reader, as the current algorithm for finding attached atoms is distance based, and as all N atoms of all residues are at [0, 0, 0], this algorithm fails.
+        * Implemented the are_bonded() structural API method for the internal structural object.
+        * Created the structural API base are_bonded() method - this is for determining if 2 atoms are bonded.  This is a method stub which raises a RelaxImplementError.
+        * Started to add the backend of the relax_data.dipole_pair user function.
+        * Shifted the dipole-dipole graphics to the Wizard directory, as this is a wizard graphic.
+        * Created graphics for the magnetic dipole-dipole interaction.
+        * Removed the bond length from the model-free parameter list.
+        * The bond length setting via value.set has no been merged into relax_data.dipole_pair.  This averaged length is dipole-dipole distance and does not need to be a model-free parameter.
+        * Added the definition for the new relax_data.dipole_pair user function.
+        * Started to change the structure.vectors backend to handle two spin IDs.
+        * Expanded the description of the negative gyromagnetic ratio flag for the rdc.read user function.
+        * Created the generic_fns.interatomic.interatomic_loop() generator function.
+        * The generic_fns.interatomic.create_interatom() function now returns the created container.  This comes from the InteratomicContainer.add_item() method which now also returns the container.
+        * Renamed the interatomic function return_container() to return_interatom().  This is to make the name more unique.
+        * Shifted some code from InteratomList.add_item() to generic_fns.interatomic.create_interatom().  This is to break a circular import problem.
+        * The rdc.read user function backend is now adding the RDCs to the interatomic data containers.
+        * Created the generic_fns.interatomic.create_interatom() function for creating interatomic data containers.
+        * Added checks to the InteratomList.add_item() method to make sure that the spin IDs already exist.
+        * Created the generic_fns.interatomic module and added the return_container() method.
+        * Created the InteratomContainer.id_match() method for checking the spin IDs in both directions for a match.
+        * Created the interatomic data list and containers, and added these to the data pipe structures.  This is modelled on the molecule/residue/spin structures.  The new containers have is_empty(), from_xml() and to_xml() methods and should be fully functional with the relax infrastructure.
+        * Improvement for the RelaxNoVectorsError class - the data pipe name is now optional.  The print outs have been improved as well.
+        * The spin container hidden objects are now replicated when the object is copied.  The old Prototype.__deepcopy__() method was skipping all hidden objects, but now only objects starting with '__' are skipped.
+        * Created a system test to replicate Romel Bobby's bug #19887.  This is the bug report at https://gna.org/bugs/?19887.
+        * Modified the working of the n_state_model.elim_no_prob backend.  This user function is not functional anyway and is not tested by the relax test suite, but will remain as it might be useful in the future.
+        * Added the consistency testing documentation to the grace.write and value.* user functions.
+        * Converted the consistency testing documentation strings to the Uf_tables and Desc_container design.  This is needed to use the consistency testing documentation within the user function help system.
+        * The sequence.read user function now fails with a RelaxError if no sequence data was loaded.  This is for better user feedback.
+        * Creation of a fast molecule, residue and spin data lookup framework using private metadata.  This consists of two elements:  The already existing private lookup table now at cdp.mol._spin_id_lookup which is a dictionary with spin IDs as keys and a list of molecule, residue and spin indices as values;  and a set of private variables within the molecule, residue and spin containers which identify the parent container names, numbers and indices.  As all data is private,it will not be visible to the user or be saved in the XML results and save files and should be considered volatile.  All this private metadata is kept up to date via the two new generic_fns.mol_res_spin functions metadata_prune() and metadata_update().  For fast operation, these methods can update specific container subsets via the mol_index, res_index and spin_index arguments.  All parts of relax which modify the data pipe's molecule, residue and spin data structure (the generic_fns.mol_res_spin functions and test suite) call these two functions as needed.  Two auxiliary functions spin_id_variants() and spin_id_variants_elim() have been added to create all possible matching spin ID strings for a given spin (the second created IDs strings which should no longer exist).  The speed ups from this change are significant.  On one system, the system and unit tests decrease from 492.8s/26.4s to 434.3s/25.1s.  On another the decrease is from 330.7s/17.4s to 258.9s/15.4s.  In addition, the pipe argument has been added to the generic_fns.mol_res_spin functions create_molecule(), create_residue(), create_pseudo_spin() and create_spin().  Also, the molecule name will now always be a string.  Previously this was allowed to be an integer.  This is needed for the private metadata functions to operate correctly.   A number of unit tests have been updated for the changes.
+        * Removed a hack from the generic_fns.relax_data.pack_data() function for the BMRB support.  This calls the generic_fns.bmrb.generate_sequence() function.  As non-BMRB code paths access the pack_data() function, this is a nasty hack which would have caused problems in the future.
+        * Removal of a hack from the generic_fns.bmrb.generate_sequence() function.  This hack was for naming unnamed spins.  But this is not needed as the generic_fns.mol_res_spin.create_spin() function already does this but with many more safety checks.
+        * The spin ID lookup table has been made private so that it is not included in the save files.
+        * Update and clean up of the model-free LaTeX table generation script.
+        * Created the generic_fns.mol_res_spin.return_spin_indices() function to return the index triplet.  This allows a spin ID to be converted into the molecule, residue and spin indices.
+        * The generate_spin_id() function now choses to use the spin name instead of number by default.
+        * Renamed return_spin_from_id() to return_spin(), and return_spin() to return_spin_from_selection().  This shaves off a number of seconds from the system test - the look up table speed ups will come with support in the other mol_res_spin module functions.
+        * return_spin_from_id() now defaults to return_spin() when the spin ID is not in the lookup table.  The slower return_spin() method will allow return_spin_from_id() to always be functional.
+        * Added the 'pipe' argument to generic_fns.mol_res_spin.return_spin_from_id().  This is to mimic the return_spin() function.
+        * Created generic_fns.mol_res_spin.return_spin_from_id() for returning spin containers from spin IDs.
+        * generic_fns.mol_res_spin.create_pseudo_spin() is now adding data to the spin ID look up table.  To support this, the return_residue() method now takes the 'indices' argument and returns the molecule and residue indices.
+        * Started to fill up the spin ID look up table.  The index_molecule() and index_residue() functions have been added to determine the MoleculeList and ResidueList indices of given molecules and residues.  These are used by the create_spin for efficiency and to allow the indices (together with the spin index and spin ID string) to be assembled into the look up table.  This table is not used anywhere yet.
+        * Initialised a look up table in the cdp.mol structure for faster spin access.  This look up table will be slowly transitioned to, and should significantly speed up certain operations.
+        * Created the gui.misc.bitmap_setup() function for handling bitmap alpha correctly on operating systems.  This function is required to handle alpha in bitmap on MS Windows so that regions with partial transparency are not blended into the default dark grey colour of Windows' windows.
+        * Added the status/weather-snow-scattered-night Oxygen icon as a wizard graphic for the temperature uf.
+        * The about model-free dialog no longer has grey at the bottom in MS Windows.  The wx.ScrolledWindow.GetScrollPixelsPerUnit() function is now used to determine how many pixels the y scrolling is, and rounds up the virtual size based on that.
+        * Improved the debugging drawing for the about GUI elements.
+        * Hack for the relax_fit C module compilation to detect supported CPUs for Mac OS X cross compilation.
+
+
+    Bugfixes:
+        * Bug fix for the model-free GUI auto-analysis GUI test on MS Windows - the wizards for the CSA value and nuclear isotopes were experiencing racing conditions on MS Windows.
+        * Bug fix for MS Windows for the deletion of temporary files in the system tests.  For certain Windows/Python combinations, a WindowsError was being raised saying that the file cannot be deleted as it is being used by another process.
+        * Fix for the reporting of skipped GUI tests.  The Frame_order tests skipped because of the missing Scipy module were been labelled as system rather than GUI tests.
+        * The GUI show_pipe_editor() method is now the place where the methods are registered with the observers.  This is a partial bug fix for the GUI tests.  The hiding mechanism of the window with unregistration requires this.
+        * Bug fix for the pipe editor window hiding and restoring.  All of the Pipe_editor.Show() method has been shifted into the GUI show_pipe_editor() method.  This is needed for the technique of unregistering with the observer objects when the window is closed via a Hide() call.
+        * Fix for the State.test_load_state_no_gui() GUI test for handling pipe bundles.
+        * Redesign of the setUp() and tearDown() methods of the GUI tests.  This is needed as the current design does not work under MS Windows.  Instead of created a new wx app for each test (this dies in Windows as it looks like only a limited number of toolbars can be created), only one app is created and is recycled.  This design better mimics GUI usage anyway.  This change uncovers a few GUI bugs not caught by the previous design.
+        * Bug fix for the GUI test suite setUp() method.  The observer objects are reset at the start to get around a bug when the setUp() method fails for a previous test.
+        * Bug fix for the running of the GUI tests on Mac OS X - the relax GUI 'app' needs to be deleted after each test.
+        * Bug fix for the Dead_uf_pages.test_mol_create() GUI test for MS Windows.  The _execute_uf() method is now used instead of simulating _ok() calls.
+        * Bug fix for the GUI tests on MS Windows.  The GuiTestCase._execute_uf() method now prevents the wizard from running when calling the GUI user function by setting the wx_wizard_run argument to False.  This allows the wizard _ok() call to function on Windows.
+        * Bug fix for the Palmer system tests for the changed spin ID syntax.  The spin Gly 2 can no longer be selected with ':2&:Gly', the '&' symbol is not allowed here.
+        * Bug fix for the Value GUI input element for integer values.  This is only uncovered when remotely running the GUI - e.g. through the test suite - and an integer value is set.
+        * A final fix for bug #19887 (https://gna.org/bugs/?19887).  Now a RelaxError is raised if the number of peak intensities is not the same for all spins.  This occurs in the relaxation curve-fitting overfit_deselect() method.
+        * Partial fix for bug #19887 (https://gna.org/bugs/?19887).  The problem is that the number of peak height values was not the same for all spins.  The error message was being caused by the math_fns.relax_fit C object 'setup' function being feed in incorrect values, causing relax to fail directly after the setup() call in specific_fns.relax_fit.minimise().  The number of points was being taken from cdp.relax_times, but in the Relax_fit.test_bug_19887_curvefit_fail system test, one of the 3 spins has 4 points rather than 5.  Now the correct number is sent into setup().
+        * Fix for reading of BMRB CSA saveframe data - spin IDs generated from the data now have molecule info.  This is problematic only in certain edge cases, for example a multi-molecule entry.
+        * Bug fox for the generic_fns.mol_res_spin.return_spin_indices() function.  The selection object was using the wrong variable name, and the look up table fallback was always on.
+        * Bug fix for the relax_data.copy user function - it can now handle spins without relaxation data.
+        * Bug fix for the grey about windows on MS Windows.  All the about windows were grey.  The temporary wxPython 2.9.3.1 fix was breaking the Windows GUI.
+        * Bug fix for the model-free analysis tab about window - sometimes a grey region would appear at the bottom.  This is a problem in at least GTK+ as scrolling is in increments of 20.
+        * Bug fix for sizing of the GUI about dialogs - the virtual sizes are now accurately calculated.  To do this, the window contents (a wx.BufferedDC instance) is created twice, with the virtual window size exactly calculated in the first pass, and then used to set up the device context in the second.  A space is also now added to the end to ensure the border is there.
+        * Fixes for the spin.create user function for GUI usage.
+        * Fixes for the J(w) mapping and consistency testings scripts so they can run as GUI tests.
+        * Fix for the spin.copy user function for GUI use.
+        * Bug fix for the return_spin_from_selection() function for the 'multi' flag.  This function needs to handle the case of no spins matching the selection!
+        * Bug fix - the spin_id arg for the relax_data.read user function now actually does something.  This argument is passed into the pack_data() function, where it is used to match against the spins matching each file line.  Only if there is a match, is the relaxation data loaded for that spin.
+        * Fixes for the reading of relax 1.2 results files.  The new 'H' spin containers are now deselected, and the simulation structure creation has been reverted.
+
+
+
 Version 2.0.0
 (12 June 2012, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.0.0
@@ -897,7 +1073,7 @@ http://svn.gna.org/svn/relax/tags/1.3.15
         * Converted the pipe switching with GUI tab switching to synchronous to avoid rare races (triggered by wxPython 2.9).
         * The analysis deletion buttons now do nothing if the notebook is not created yet - this avoids problems on the new wxPython 2.9 versions.
         * Fix for the radiobutton group in the Spectral_error_type_page of the peak intensity wizard.
-        * Fix for the spin loading wizard of the spin window - the RadioButtons of the first page for selecting the spin loading method are now fixed. 
+        * Fix for the spin loading wizard of the spin window - the RadioButtons of the first page for selecting the spin loading method are now fixed.
         * Fix for the about relax window size for wxPython 2.9.
         * Fix for the relax controller find dialog on Mac OS X with wxPython 2.9.
         * wxPython 2.9 fix for the spin viewer window (at least for Mac OS X).
@@ -942,7 +1118,7 @@ http://svn.gna.org/svn/relax/tags/1.3.14
         * Added some code to detect the bit version of MS Windows in the information print out (to better distinguish 32 vs. 64-bit versions).
         * Added some documentation about master processors on Linux 2.6 eating 100% of one CPU core (in the mpi4py multi-processor fabric).
         * Added a reference implementation to the multi-processor package - this is to demonstrate to users of the package how an implementation is created via the public API.
-        * Elimination of all relax dependencies from the multi-processor package. 
+        * Elimination of all relax dependencies from the multi-processor package.
         * Added support for the memory size on MS Windows to the relax info print out.
         * Updated the value.set user function unknown parameter error message to list the known ones.
         * For Unix and GNU/Linux systems, the relax info printout now shows the ram and swap size.
@@ -1030,7 +1206,7 @@ http://svn.gna.org/svn/relax/tags/1.3.13
         * The GUI is now fully functional on Mac OS X and MS Windows.
         * The elimination of many race conditions causing the GUI to crash.
         * Implementation within the GUI of many of the relax user functions available in the prompt and scripting UI modes.
-        * Creation of the test suite GUI test category to complement the system and unit tests. 
+        * Creation of the test suite GUI test category to complement the system and unit tests.
         * Added a toolbar to the main relax window with some of the most important menu entries as icons.
         * Most parts of the GUI are now deactivated when execution is in progress (via the execution lock) to prevent fatal race conditions.
         * Redesigned the dauvergne_protocol, NOE and Rx auto-analyses to use a pre-prepared data pipe for data input.  This allows greater support for the GUI and for analyses of RNA, DNA, and small molecules.
@@ -2118,7 +2294,7 @@ http://svn.gna.org/svn/relax/tags/1.3.5
         * Fix for when structural models are loaded out of order.
         * Fix for the 'population' N-state model whereby the last probability can have a negative value.
         * The infinite looping around the universal solution in the dauvergne_protocol module is now being caught (for the full_analysis.py script).
- 
+
 
 
 Version 1.3.4

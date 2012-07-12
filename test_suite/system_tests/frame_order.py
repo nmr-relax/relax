@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -71,13 +70,13 @@ class Frame_order(SystemTestCase):
         @type methodName:       str
         """
 
+        # Execute the base class method.
+        super(Frame_order, self).__init__(methodName)
+
         # Missing module.
         if not dep_check.scipy_module:
             # Store in the status object. 
-            status.skipped_tests.append([methodName, 'Scipy', 'system'])
-
-        # Execute the base class method.
-        super(Frame_order, self).__init__(methodName)
+            status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
 
 
     def setUp(self):

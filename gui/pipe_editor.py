@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -105,27 +104,6 @@ class Pipe_editor(wx.Frame):
 
         # Update the grid.
         self.update_grid()
-
-
-    def Show(self, show=True):
-        """Change the behaviour of showing the window to update the content.
-
-        @keyword show:  A flag which is True shows the window.
-        @type show:     bool
-        """
-
-        # Update the grid.
-        self.update_grid()
-        self.activate()
-
-        # Register the grid for updating when a user function completes or when the GUI analysis tabs change.
-        status.observers.pipe_alteration.register(self.name, self.update_grid)
-        status.observers.gui_analysis.register(self.name, self.update_grid)
-        status.observers.exec_lock.register(self.name, self.activate)
-
-        # Show the window using the base class method.
-        if status.show_gui:
-            super(Pipe_editor, self).Show(show)
 
 
     def activate(self):
@@ -369,12 +347,30 @@ class Pipe_editor(wx.Frame):
         """
 
         # Unregister the methods from the observers to avoid unnecessary updating.
-        status.observers.pipe_alteration.unregister(self.name)
-        status.observers.gui_analysis.unregister(self.name)
-        status.observers.exec_lock.unregister(self.name)
+        self.observer_setup(register=False)
 
         # Close the window.
         self.Hide()
+
+
+    def observer_setup(self, register=True):
+        """Register and unregister with the observer objects.
+
+        @keyword register:  A flag which if True will register with the observers and if False will unregister all methods.
+        @type register:     bool
+        """
+
+        # Register the methods with the observers.
+        if register:
+            status.observers.pipe_alteration.register(self.name, self.update_grid, method_name='update_grid')
+            status.observers.gui_analysis.register(self.name, self.update_grid, method_name='update_grid')
+            status.observers.exec_lock.register(self.name, self.activate, method_name='activate')
+
+        # Unregister the methods.
+        else:
+            status.observers.pipe_alteration.unregister(self.name)
+            status.observers.gui_analysis.unregister(self.name)
+            status.observers.exec_lock.unregister(self.name)
 
 
     def pipe_bundle(self, event):
