@@ -673,8 +673,8 @@ class Internal(Base_struct_API):
 
         @keyword atom_id1:  The molecule, residue, and atom identifier string of the first atom.
         @type atom_id1:     str
-        @keyword atom_id1:  The molecule, residue, and atom identifier string of the second atom.
-        @type atom_id1:     str
+        @keyword atom_id2:  The molecule, residue, and atom identifier string of the second atom.
+        @type atom_id2:     str
         @return:            True if the atoms are directly bonded.
         @rtype:             bool
         """
