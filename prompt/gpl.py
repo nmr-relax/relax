@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -37,7 +36,6 @@ def gpl():
                        Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.
-     59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -334,7 +332,7 @@ the "copyright" line and a pointer to where the full notice is found.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -344,7 +342,6 @@ the "copyright" line and a pointer to where the full notice is found.
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 Also add information on how to contact you by electronic and paper mail.

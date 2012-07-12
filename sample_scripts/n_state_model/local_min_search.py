@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -26,7 +25,7 @@ This script follows on from the results obtained from conformation_analysis_rdc+
 
 The reference for this script is:
 
-    Erdelyi, M., d'Auvergne, E. J., Navarro-Vazquez, A., Leonov, A. and Griesinger, C. (2011).  Dynamics of the glycosidic bond.  Conformational space of lactose.  Manuscript in preparation.
+    Erdelyi, M., d'Auvergne E., Navarro-Vazquez, A., Leonov, A., and Griesinger, C. (2011) Dynamics of the Glycosidic Bond: Conformational Space of Lactose. Chemistry-A European Journal, 17(34), 9368-9376 (http://dx.doi.org/10.1002/chem.201100854).
 """
 
 

@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -57,19 +56,12 @@ class GuiTestCase(TestCase):
     def __init__(self, methodName=None):
         """Set up the test case class for the system tests."""
 
+        # A string used for classifying skipped tests.
+        if not hasattr(self, '_skip_type'):
+            self._skip_type = 'gui'
+
         # Execute the TestCase __init__ method.
         super(GuiTestCase, self).__init__(methodName)
-
-        # A string used for classifying skipped tests.
-        self._skip_type = 'gui'
-
-        # Get the wx app, if the test suite is launched from the gui.
-        self.app = wx.GetApp()
-
-        # Flag for the GUI.
-        self._gui_launch = False
-        if self.app != None:
-            self._gui_launch = True
 
 
     def _execute_uf(self, *args, **kargs):
@@ -139,7 +131,7 @@ class GuiTestCase(TestCase):
         status.gui_uf_force_sync = True
 
         # Call the GUI user function object with all keyword args, but do not execute the wizard.
-        uf(**kargs)
+        uf(wx_wizard_run=False, **kargs)
 
         # Execute the user function, by mimicking a click on 'ok'.
         uf.wizard._ok()
@@ -190,8 +182,12 @@ class GuiTestCase(TestCase):
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()
 
-        # Start the GUI if not launched from the GUI.
-        if not self._gui_launch:
+        # Get the wx app, if it exists.
+        self.app = wx.GetApp()
+
+        # Create the app if needed.
+        if self.app == None:
+            # Initialise.
             self.app = wx.App(redirect=False)
 
             # relax GUI imports (here to prevent a circular import from the test suite in the GUI).
@@ -240,27 +236,18 @@ class GuiTestCase(TestCase):
             # Remove the variable.
             del self.tmpfile
 
-        # Delete all the GUI analysis tabs.
-        self.app.gui.analysis.delete_all()
-
         # Reset relax.
         reset()
 
-        # Reset the observers.
-        status._setup_observers()
-
-        # Destroy some GUI windows, if open.
+        # Close some GUI windows, if open.
         windows = ['pipe_editor', 'relax_prompt', 'results_viewer', 'spin_viewer']
         for window in windows:
             if hasattr(self.app.gui, window):
                 # Get the object.
                 win_obj = getattr(self.app.gui, window)
 
-                # Destroy the wxWidget part.
-                win_obj.Destroy()
-
-                # Destroy the Python object part.
-                delattr(self.app.gui, window)
+                # Close the window.
+                win_obj.Close()
 
         # Flush all wx events to make sure the GUI is ready for the next test.
         wx.Yield()
