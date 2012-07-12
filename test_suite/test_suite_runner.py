@@ -2,21 +2,20 @@
 #                                                                             #
 # Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -237,11 +236,11 @@ class Test_suite_runner:
         # Header.
         print("Tests skipped due to missing packages/modules:\n")
         header = "%-30s" % "Module" 
-        if hasattr(self, 'system_result'):
+        if len(system_count):
             header = "%s %20s" % (header, "System test count")
-        if hasattr(self, 'unit_result'):
+        if len(unit_count):
             header = "%s %20s" % (header, "Unit test count")
-        if hasattr(self, 'gui_result'):
+        if len(gui_count):
             header = "%s %20s" % (header, "GUI test count")
         print('-'*len(header))
         print(header)
@@ -250,11 +249,11 @@ class Test_suite_runner:
         # The table.
         for module in missing_modules:
             text = "%-30s" % module
-            if hasattr(self, 'system_result'):
+            if len(system_count):
                 text = "%s %20s" % (text, system_count[module])
-            if hasattr(self, 'unit_result'):
+            if len(unit_count):
                 text = "%s %20s" % (text, unit_count[module])
-            if hasattr(self, 'gui_result'):
+            if len(gui_count):
                 text = "%s %20s" % (text, gui_count[module])
             print(text)
 

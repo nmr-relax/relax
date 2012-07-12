@@ -1,22 +1,21 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
-# This file is part of the program relax.                                     #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
-# relax is free software; you can redistribute it and/or modify               #
+# This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation; either version 2 of the License, or           #
+# the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# relax is distributed in the hope that it will be useful,                    #
+# This program is distributed in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
@@ -26,6 +25,7 @@
 # Python module imports.
 from os import sep
 from shutil import rmtree
+from time import sleep
 from unittest import TestCase
 
 # relax module imports.
@@ -45,7 +45,8 @@ class SystemTestCase(TestCase):
         super(SystemTestCase, self).__init__(methodName)
 
         # A string used for classifying skipped tests.
-        self._skip_type = 'system'
+        if not hasattr(self, '_skip_type'):
+            self._skip_type = 'system'
 
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
@@ -85,6 +86,9 @@ class SystemTestCase(TestCase):
 
         # Remove temporary files.
         if hasattr(ds, 'tmpfile'):
+            # MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
+            sleep(0.01)
+
             # Delete the file.
             delete(ds.tmpfile, fail=False)
 
@@ -93,6 +97,9 @@ class SystemTestCase(TestCase):
 
         # Remove temporary files.
         if hasattr(self, 'tmpfile'):
+            # MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
+            sleep(0.01)
+
             # Delete the file.
             delete(self.tmpfile, fail=False)
 
