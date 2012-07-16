@@ -20,43 +20,34 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'domain' user function for defining structural domains."""
-__docformat__ = 'plaintext'
+"""The domain user function definitions."""
 
 # relax module imports.
-from base_class import Basic_class, _build_doc
-import arg_check
 from generic_fns import domain
-from relax_errors import RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
-from specific_fns.model_free import Model_free
+from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
-class Domain(Basic_class):
-    """Class containing the user function for defining domains."""
-
-    def domain(self, id=None, spin_id=None):
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "domain("
-            text = text + "id=" + repr(id)
-            text = text + ", spin_id=" + repr(spin_id) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(id, 'domain ID string')
-        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
-
-        # Execute the functional code.
-        domain.define(id=id, spin_id=spin_id)
-
-    # The function doc info.
-    domain._doc_title = "Definition of structural domains."
-    domain._doc_title_short = "Domain definition."
-    domain._doc_args = [
-        ["id", "The domain ID string."],
-        ["spin_id", "The spin ID string of all atomic members of the domain."]
-    ]
-    domain._doc_desc = """
-        This is used to define structural domains.  Multiple domains can be defined, and these can overlap.  Rather than labelling the currently loaded spins with the ID string, the spin ID string is stored for later use.  This allows new spins to be loaded later and still be included within the same domain.
-        """
-    _build_doc(domain)
+# The domain user function.
+uf = uf_info.add_uf('domain')
+uf.title = "Definition of structural domains."
+uf.title_short = "Domain definition."
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "domain ID string",
+    desc = "The ID string used to identify molecular domains.",
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "spin ID string",
+    desc = "The spin ID string of all atomic members of the domain.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to define structural domains.  Multiple domains can be defined, and these can overlap.  Rather than labelling the currently loaded spins with the ID string, the spin ID string is stored for later use.  This allows new spins to be loaded later and still be included within the same domain.")
+uf.backend = domain.define
+uf.menu_text = "&domain"
