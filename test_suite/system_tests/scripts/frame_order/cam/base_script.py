@@ -171,24 +171,23 @@ class Base_script:
         self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
 
-        # Load the spins.
-        self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
-        self._execute_uf(uf_name='structure.load_spins', spin_id='@H')
+        # Set up the 15N and 1H spins.
+        self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=True)
+        self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=True)
+        self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+        self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
-        # Load the NH vectors.
-        self._execute_uf(uf_name='structure.vectors', spin_id='@N', attached='H', ave=False)
-
-        # Set the values needed to calculate the dipolar constant.
-        self._execute_uf(uf_name='value.set', val=1.041 * 1e-10, param='r', spin_id="@N")
-        self._execute_uf(uf_name='value.set', val='15N', param='heteronuc_type', spin_id="@N")
-        self._execute_uf(uf_name='value.set', val='1H', param='proton_type', spin_id="@N")
+        # Define the magnetic dipole-dipole relaxation interaction.
+        self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        self._execute_uf(uf_name='dipole_pair.unit_vectors')
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             # Load the RDCs.
             if not hasattr(status, 'flag_rdc') or status.flag_rdc:
-                self._execute_uf(uf_name='rdc.read', align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+                self._execute_uf(uf_name='rdc.read', align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
             # The PCS.
             if not hasattr(status, 'flag_pcs') or status.flag_pcs:
