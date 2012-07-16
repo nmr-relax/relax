@@ -139,13 +139,15 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
 
 
-def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_col=None, sep=None):
+def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col=None, data_col=None, sep=None):
     """Set up the magnetic dipole-dipole interaction.
 
     @keyword file:          The name of the file to open.
     @type file:             str
     @keyword dir:           The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
+    @keyword unit:          The measurement unit.  This can be either 'meter' or 'Angstrom'.
+    @type unit:             str
     @keyword spin_id1_col:  The column containing the spin ID strings of the first spin.
     @type spin_id1_col:     int
     @keyword spin_id2_col:  The column containing the spin ID strings of the second spin.
@@ -155,6 +157,10 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
     """
+
+    # Check the units.
+    if unit not in ['meter', 'Angstrom']:
+        raise RelaxError("The measurement unit of '%s' must be one of 'meter' or 'Angstrom'." % unit)
 
     # Test if the current data pipe exists.
     pipes.test()
@@ -195,6 +201,10 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
                 warn(RelaxWarning("The averaged distance of '%s' from the line %s is invalid." % (ave_dist, line)))
                 continue
 
+        # Unit conversion.
+        if unit == 'Angstrom':
+            ave_dist = ave_dist * 1e-10
+
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
 
@@ -214,10 +224,10 @@ def read_dist(file=None, dir=None, spin_id1_col=None, spin_id2_col=None, data_co
 
     # Print out.
     print("The following averaged distances have been read:\n")
-    write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
+    write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance(meters)"], data=data)
 
 
-def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
+def set_dist(spin_id1=None, spin_id2=None, ave_dist=None, unit='meter'):
     """Set up the magnetic dipole-dipole interaction.
 
     @keyword spin_id1:      The spin identifier string of the first spin of the pair.
@@ -226,7 +236,17 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
     @type spin_id2:         str
     @keyword ave_dist:      The r^-3 averaged interatomic distance.
     @type ave_dist:         float
+    @keyword unit:          The measurement unit.  This can be either 'meter' or 'Angstrom'.
+    @type unit:             str
     """
+
+    # Check the units.
+    if unit not in ['meter', 'Angstrom']:
+        raise RelaxError("The measurement unit of '%s' must be one of 'meter' or 'Angstrom'." % unit)
+
+    # Unit conversion.
+    if unit == 'Angstrom':
+        ave_dist = ave_dist * 1e-10
 
     # Generate the selection objects.
     sel_obj1 = Selection(spin_id1)
@@ -255,7 +275,7 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None):
 
     # Print out.
     print("The following averaged distances have been set:\n")
-    write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance"], data=data)
+    write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2", "Ave_distance(meters)"], data=data)
 
 
 def unit_vectors(ave=True):

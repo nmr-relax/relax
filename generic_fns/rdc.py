@@ -327,6 +327,7 @@ def q_factors(spin_id=None):
         interatom_count = 0
         rdc_data = False
         rdc_bc_data = False
+        norm2_flag = True
         for interatom in interatomic_loop():
             # Increment the counter.
             interatom_count += 1
@@ -357,8 +358,9 @@ def q_factors(spin_id=None):
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
-            if dj and dj_new != dj:
-                raise RelaxError("All the RDCs must come from the same nucleus type.")
+            if norm2_flag and dj != None and dj_new != dj:
+                warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                norm2_flag = False
             else:
                 dj = dj_new
 
@@ -377,20 +379,25 @@ def q_factors(spin_id=None):
             return
 
         # Normalisation factor of 2Da^2(4 + 3R)/5.
-        D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
-        Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
-        Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
-        if Da == 0:
-            R = nan
-        else:
-            R = Dr / Da
-        norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
-        if Da == 0.0:
-            norm = 1e-15
+        if norm2_flag:
+            D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
+            Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
+            Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
+            if Da == 0:
+                R = nan
+            else:
+                R = Dr / Da
+            norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+            if Da == 0.0:
+                norm = 1e-15
 
-        # The Q-factor for the alignment.
-        Q = sqrt(sse / N / norm)
-        cdp.q_factors_rdc[align_id] = Q
+            # The Q-factor for the alignment.
+            cdp.q_factors_rdc[align_id] = sqrt(sse / N / norm)
+
+        else:
+            cdp.q_factors_rdc[align_id] = 0.0
+
+        # The second Q-factor definition.
         cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
 
     # The total Q-factor.
