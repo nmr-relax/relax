@@ -242,6 +242,20 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.add_keyarg(
+    name = "align_id",
+    py_type = "str",
+    desc_short = "alignment ID string",
+    desc = "The optional alignment ID string that the tensor corresponds to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "domain",
+    py_type = "str",
+    desc_short = "domain ID string",
+    desc = "The optional domain ID string that the tensor corresponds to.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "errors",
     default = False,
     py_type = "bool",
