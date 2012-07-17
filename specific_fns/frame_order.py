@@ -30,26 +30,27 @@ from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, eye, float64, identity, ones, transpose, zeros
 from numpy.linalg import inv
 from re import search
-from string import upper
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
+import arg_check
 from float import isNaN, isInf
-from generic_fns import align_tensor, pipes
+from generic_fns import pipes
 from generic_fns.angles import wrap_angles
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop
+from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
-from generic_fns.structure.geometric import create_cone_pdb, generate_vector_dist, generate_vector_residues
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from relax_io import open_write_file
-from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from relax_warnings import RelaxWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 
 
 class Frame_order(API_base, API_common):
@@ -238,8 +239,8 @@ class Frame_order(API_base, API_common):
         list = []
 
         # RDC search.
-        for spin in spin_loop():
-            if hasattr(spin, 'rdc'):
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
                 list.append('rdc')
                 break
 
@@ -409,11 +410,11 @@ class Frame_order(API_base, API_common):
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
-            res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+            res_num = geometric.generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
 
             # The negative.
             if neg_cone:
-                res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
         # The full axis system.
         else:
@@ -458,9 +459,9 @@ class Frame_order(API_base, API_common):
                     axis_sim_neg = axes_sim_neg[:, :, j]
 
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+                    res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
@@ -495,11 +496,11 @@ class Frame_order(API_base, API_common):
                 cone = Iso_cone(cone_theta)
 
             # Create the positive and negative cones.
-            create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
+            geometric.create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
 
             # The negative.
             if neg_cone:
-                create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
+                geometric.create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
 
 
         # Create the PDB file.
