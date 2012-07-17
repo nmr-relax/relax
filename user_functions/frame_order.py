@@ -136,6 +136,12 @@ uf.add_keyarg(
     desc_short = "pivot point",
     desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates)."
 )
+uf.add_keyarg(
+    name = "fix",
+    py_type = "bool",
+    desc_short = "fixed flag",
+    desc = "A flag specifying if the pivot point should be fixed during optimisation."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will set the pivot point for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.")
