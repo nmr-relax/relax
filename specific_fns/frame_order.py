@@ -1121,7 +1121,6 @@ class Frame_order(API_base, API_common):
             # Spin loop over the domain.
             id = cdp.domain[self._domain_moving()]
             pcs_index = 0
-            rdc_index = 0
             for spin in spin_loop(id):
                 # Skip deselected spins.
                 if not spin.select:
@@ -1139,17 +1138,26 @@ class Frame_order(API_base, API_common):
                     # Increment the index.
                     pcs_index += 1
 
-                # Spins with RDC data.
-                if rdc_flag and hasattr(spin, 'rdc'):
-                    # Initialise the data structure.
-                    if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = {}
+            # Interatomic data container loop.
+            rdc_index = 0
+            for interatom in interatomic_loop(id):
+                # Get the spins.
+                spin1 = return_spin(interatom.spin_id1)
+                spin2 = return_spin(interatom.spin_id2)
 
-                    # Store the back-calculated value.
-                    spin.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+                # RDC checks.
+                if not self._check_rdcs(interatom, spin1, spin2):
+                    continue
 
-                    # Increment the index.
-                    rdc_index += 1
+                # Initialise the data structure.
+                if not hasattr(interatom, 'rdc_bc'):
+                    interatom.rdc_bc = {}
+
+                # Store the back-calculated value.
+                interatom.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+
+                # Increment the index.
+                rdc_index += 1
 
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
