@@ -222,7 +222,7 @@ class Base_script:
         self._execute_uf(uf_name='frame_order.select_model', model=self.model)
 
         # Set the reference domain.
-        self._execute_uf(uf_name='frame_order.ref_domain', domain='N')
+        self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
         # Set the initial pivot point.
         pivot = array([ 37.254, 0.5, 16.7465])
