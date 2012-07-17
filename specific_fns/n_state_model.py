@@ -23,7 +23,7 @@
 """Module for the specific analysis of the N-state dynamic model."""
 
 # Python module imports.
-from math import acos, cos, pi, sqrt
+from math import acos, cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import array, dot, float64, identity, ones, zeros
@@ -32,26 +32,25 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 import arg_check
 from float import isNaN, isInf
 import generic_fns
-from generic_fns.align_tensor import all_tensors_fixed, get_tensor_object, num_tensors, return_tensor
+from generic_fns import align_tensor, pcs, pipes, rdc
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop
-from generic_fns import pcs, pipes, rdc
+from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone
-import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
-import generic_fns.structure.mass
+from generic_fns.structure.mass import centre_of_mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
 from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from relax_io import open_write_file
-from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from relax_warnings import RelaxWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -101,7 +100,7 @@ class N_state_model(API_base, API_common):
         param_vector = []
 
         # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
-        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
@@ -192,7 +191,7 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments.
             tensor_num = 0
             for i in range(len(cdp.align_tensors)):
@@ -344,7 +343,7 @@ class N_state_model(API_base, API_common):
 
         # Calculate from the structure file.
         else:
-            cdp.CoM = generic_fns.structure.mass.centre_of_mass()
+            cdp.CoM = centre_of_mass()
 
         # Calculate the vector between the pivot and CoM points.
         cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
@@ -514,19 +513,19 @@ class N_state_model(API_base, API_common):
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
-        res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        res_num = geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
         print("\nGenerating the cone outer edge.")
         cap_start_atom = mol.atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(mol=mol, cone=cone, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
+        geometric.cone_edge(mol=mol, cone=cone, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
-            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
+            geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
+            geometric.stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
 
         # Create the PDB file.
         print("\nGenerating the PDB file.")
@@ -553,7 +552,7 @@ class N_state_model(API_base, API_common):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
-        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             tensor_num = 0
             for i in xrange(len(cdp.align_tensors)):
@@ -732,7 +731,7 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments.
             for i in range(len(cdp.align_tensors)):
                 # Fixed tensor.
@@ -1226,7 +1225,7 @@ class N_state_model(API_base, API_common):
         """
 
         # Initialise.
-        n = num_tensors(skip_fixed=False) - num_tensors(skip_fixed=True)
+        n = align_tensor.num_tensors(skip_fixed=False) - align_tensor.num_tensors(skip_fixed=True)
         tensors = zeros(n*5, float64)
 
         # Nothing to do.
@@ -1361,7 +1360,7 @@ class N_state_model(API_base, API_common):
         num = 0
 
         # Alignment tensor params.
-        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
@@ -1618,7 +1617,7 @@ class N_state_model(API_base, API_common):
             for id in cdp.align_ids:
                 # No tensors initialised.
                 if not hasattr(cdp, 'align_tensors'):
-                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
                 # Find if the tensor corresponding to the id exists.
                 exists = False
@@ -1628,7 +1627,7 @@ class N_state_model(API_base, API_common):
 
                 # Initialise the tensor.
                 if not exists:
-                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def base_data_loop(self):
@@ -2314,7 +2313,7 @@ class N_state_model(API_base, API_common):
             tensor_index = (index - index % 5) / 5
 
             # Set the error.
-            tensor = return_tensor(index=tensor_index, skip_fixed=True)
+            tensor = align_tensor.return_tensor(index=tensor_index, skip_fixed=True)
             return setattr(tensor, names[param_index]+'_err', error)
 
 
@@ -2482,11 +2481,11 @@ class N_state_model(API_base, API_common):
         names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
 
         # Alignment tensor parameters.
-        if index < num_tensors(skip_fixed=True)*5:
+        if index < align_tensor.num_tensors(skip_fixed=True)*5:
             # The tensor and parameter index.
             param_index = index % 5
             tensor_index = (index - index % 5) / 5
 
             # Return the simulation parameter array.
-            tensor = return_tensor(index=tensor_index, skip_fixed=True)
+            tensor = align_tensor.return_tensor(index=tensor_index, skip_fixed=True)
             return getattr(tensor, names[param_index]+'_sim')
