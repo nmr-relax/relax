@@ -191,7 +191,7 @@ class Base_script:
 
             # The PCS.
             if not hasattr(status, 'flag_pcs') or status.flag_pcs:
-                self._execute_uf(uf_name='pcs.read', align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+                self._execute_uf(uf_name='pcs.read', align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             self._execute_uf(uf_name='temperature', id=ln[i], temp=303)
