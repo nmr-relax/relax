@@ -285,7 +285,7 @@ class Frame_order:
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_interatom), float64)
 
         # The quasi-random integration via the multi-processor.
-        if not quad_int and self.pcs_flag_sum:
+        if not quad_int and self.pcs_flag_sum and model not in ['rigid']:
             # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
             processor_box = Processor_box() 
             self.processor = processor_box.processor
