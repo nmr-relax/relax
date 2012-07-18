@@ -730,7 +730,7 @@ class Frame_order(API_base, API_common):
             # Average multiple atomic positions.
             else:
                 # First throw a warning to tell the user what is happening.
-                warn(RelaxWarning("Averaging the %s atomic positions for the spin '%s'." % (len(spin.pos), spin_id)))
+                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
 
                 # The average position.
                 ave_pos = zeros(3, float64)
@@ -780,11 +780,26 @@ class Frame_order(API_base, API_common):
             if not self._check_rdcs(interatom, spin1, spin2):
                 continue
 
-            # Add the vectors.
+            # A single unit vector.
             if arg_check.is_float(interatom.vector[0], raise_error=False):
-                unit_vect.append([interatom.vector])
-            else:
                 unit_vect.append(interatom.vector)
+
+            # A single unit vector.
+            elif len(interatom.vector) == 1:
+                unit_vect.append(interatom.vector[0])
+
+            # Average multiple unit vectors.
+            else:
+                # First throw a warning to tell the user what is happening.
+                warn(RelaxWarning("Averaging the %s unit vectors for the RDC for the spin pair '%s' and '%s'." % (len(interatom.vector), interatom.spin_id1, interatom.spin_id2)))
+
+                # The average position.
+                ave_vector = zeros(3, float64)
+                for i in range(len(interatom.vector)):
+                    ave_vector += interatom.vector[i]
+
+                # Store.
+                unit_vect.append(ave_vector)
 
             # Gyromagnetic ratios.
             g1 = return_gyromagnetic_ratio(spin1.isotope)
