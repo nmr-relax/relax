@@ -172,8 +172,8 @@ class Base_script:
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
 
         # Set up the 15N and 1H spins.
-        self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=True)
-        self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=True)
+        self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
+        self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
         self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
         self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
