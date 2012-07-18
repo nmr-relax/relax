@@ -723,11 +723,22 @@ class Frame_order(API_base, API_common):
             if not hasattr(spin, 'pcs'):
                 continue
 
-            # The position list.
-            if type(spin.pos[0]) in [float, float64]:
-                atomic_pos.append(spin.pos)
+            # A single atomic position.
+            if len(spin.pos) == 1:
+                atomic_pos.append(spin.pos[0])
+
+            # Average multiple atomic positions.
             else:
-                raise RelaxError("The spin '%s' contains more than one atomic position %s." % (spin_id, spin.pos))
+                # First throw a warning to tell the user what is happening.
+                warn(RelaxWarning("Averaging the %s atomic positions for the spin '%s'." % (len(spin.pos), spin_id)))
+
+                # The average position.
+                ave_pos = zeros(3, float64)
+                for i in range(len(spin.pos)):
+                    ave_pos += spin.pos[i]
+
+                # Store.
+                atomic_pos.append(ave_pos)
 
         # Convert to numpy objects.
         atomic_pos = array(atomic_pos, float64)
