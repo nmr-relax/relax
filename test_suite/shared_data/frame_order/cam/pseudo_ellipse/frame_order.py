@@ -39,22 +39,25 @@ class Analysis:
         structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
 
         # Load the spins.
-        structure.load_spins('@N')
-        structure.load_spins('@H')
+        structure.load_spins('@N', ave_pos=False)
+        structure.load_spins('@H', ave_pos=False)
 
-        # Load the NH vectors.
-        structure.vectors(spin_id='@N', attached='H', ave=False)
+        # Set up the 15N and 1H spins.
+        structure.load_spins(spin_id='@N', ave_pos=False)
+        structure.load_spins(spin_id='@H', ave_pos=False)
+        spin.isotope(isotope='15N', spin_id='@N')
+        spin.isotope(isotope='1H', spin_id='@H')
 
-        # Set the values needed to calculate the dipolar constant.
-        value.set(1.041 * 1e-10, 'r', spin_id="@N")
-        value.set('15N', 'heteronuc_type', spin_id="@N")
-        value.set('1H', 'proton_type', spin_id="@N")
+        # Define the magnetic dipole-dipole relaxation interaction.
+        dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        dipole_pair.unit_vectors()
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             # Load the RDCs.
-            rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
             # The PCS.
             pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
@@ -110,6 +113,7 @@ class Analysis:
         calc()
         print("\nchi2: %s" % cdp.chi2)
         print("real chi2: %s" % 3.90846472844)
+        print("num_int_pts: %s" % cdp.num_int_pts)
 
         # Optimise.
         #grid_search(inc=5)
