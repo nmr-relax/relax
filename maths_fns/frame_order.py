@@ -1371,8 +1371,47 @@ class Frame_order:
 
         # PCS via Monte Carlo integration.
         if self.pcs_flag_sum:
-            # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            # Clear the data structures.
+            for i in range(len(self.pcs_theta)):
+                for j in range(len(self.pcs_theta[i])):
+                    self.pcs_theta[i, j] = 0.0
+                    self.pcs_theta_err[i, j] = 0.0
+
+            # Initialise the data object for the slave results to be stored in.
+            data = Data()
+            data.num_pts = 0
+            data.pcs_theta = self.pcs_theta
+
+            # Subdivide the points.
+            for i in range(self.processor.processor_size()):
+                # Initialise the slave command and memo.
+                self.slaves[i].load_data(theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=pi, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, R_eigen=self.R_eigen, RT_eigen=RT_eigen)
+
+                # Update certain data structures.
+                if self.pivot_opt:
+                    self.slaves[i].r_ln_pivot = self.r_ln_pivot
+
+                # Initialise the memo.
+                memo = Memo_pcs_pseudo_ellipse_qrint(data)
+
+                # Queue the block.
+                self.processor.add_to_queue(self.slaves[i], memo)
+
+            # Wait for completion.
+            self.processor.run_queue()
+
+            # Calculate the PCS and error.
+            num = data.num_pts
+            for i in range(len(self.pcs_theta)):
+                for j in range(len(self.pcs_theta[i])):
+                    # The average PCS.
+                    self.pcs_theta[i, j] = self.pcs_const[i] * self.pcs_theta[i, j] / float(num)
+
+                    # The error.
+                    error_flag = False
+                    if error_flag:
+                        self.pcs_theta_err[i, j] = abs(self.pcs_theta_err[i, j] / float(num)  -  self.pcs_theta[i, j]**2) / float(num)
+                        self.pcs_theta_err[i, j] = c[i] * sqrt(self.pcs_theta_err[i, j])
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in xrange(self.num_align):
