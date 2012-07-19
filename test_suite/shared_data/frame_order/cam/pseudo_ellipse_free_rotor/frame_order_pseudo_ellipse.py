@@ -67,7 +67,7 @@ class Analysis:
 
         # Define the domains.
         domain(id='N', spin_id=":1-78")
-        domain(id='C', spin_id=":80-144")
+        domain(id='C', spin_id=":80-148")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
