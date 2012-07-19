@@ -38,10 +38,6 @@ class Analysis:
         structure.read_pdb('1J7O_1st_NH.pdb', dir='..', set_mol_name='N-dom')
         structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
 
-        # Load the spins.
-        structure.load_spins('@N', ave_pos=False)
-        structure.load_spins('@H', ave_pos=False)
-
         # Set up the 15N and 1H spins.
         structure.load_spins(spin_id='@N', ave_pos=False)
         structure.load_spins(spin_id='@H', ave_pos=False)
@@ -60,7 +56,7 @@ class Analysis:
             rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
             # The PCS.
-            #pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            #pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             temperature(id=ln[i], temp=303)
