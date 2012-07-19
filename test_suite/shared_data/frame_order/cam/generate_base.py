@@ -71,11 +71,6 @@ class Main:
     def _back_calc(self):
         """Calculate the RDCs and PCSs expected for the structural distribution."""
 
-        # Set the values needed to calculate the dipolar constant.
-        self.interpreter.value.set(1.041 * 1e-10, 'r', spin_id="@N")
-        self.interpreter.value.set('15N', 'heteronuc_type', spin_id="@N")
-        self.interpreter.value.set('1H', 'proton_type', spin_id="@N")
-
         # Load the tensors.
         self.interpreter.script('../tensors.py')
 
@@ -145,12 +140,16 @@ class Main:
         # Load the original PDB.
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir='..')
 
-        # Load the spins.
-        self.interpreter.structure.load_spins('@N')
-        self.interpreter.structure.load_spins('@H')
+        # Set up the 15N and 1H spins.
+        self.interpreter.structure.load_spins(spin_id='@N', ave_pos=False)
+        self.interpreter.structure.load_spins(spin_id='@H', ave_pos=False)
+        self.interpreter.spin.isotope(isotope='15N', spin_id='@N')
+        self.interpreter.spin.isotope(isotope='1H', spin_id='@H')
 
-        # Load the NH vectors.
-        self.interpreter.structure.vectors(spin_id='@N', attached='H', ave=False)
+        # Define the magnetic dipole-dipole relaxation interaction.
+        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        self.interpreter.dipole_pair.unit_vectors()
 
         # Back up the original positional data.
         self._backup_pos()
