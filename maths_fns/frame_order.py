@@ -258,14 +258,13 @@ class Frame_order:
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
             self.pcs_const = zeros(self.num_align, float64)
-            self.r_pivot_atom = zeros((3, self.num_spins), float64)
-            self.r_pivot_atom_rev = zeros((3, self.num_spins), float64)
-            self.r_pivot_atom_rev = zeros((3, self.num_spins), float64)
-            self.r_ln_pivot = zeros((3, self.num_spins), float64)
+            self.r_pivot_atom = zeros((3, self.num_spins), float16)
+            self.r_pivot_atom_rev = zeros((3, self.num_spins), float16)
+            self.r_ln_pivot = zeros((3, self.num_spins), float16)
             for j in xrange(self.num_spins):
                 self.r_ln_pivot[:, j] = pivot - self.paramag_centre
             if self.paramag_centre == None:
-                self.paramag_centre = zeros(3, float64)
+                self.paramag_centre = zeros(3, float16)
 
             # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
             for align_index in range(self.num_align):
