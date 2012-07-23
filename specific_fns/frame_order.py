@@ -1553,7 +1553,7 @@ class Frame_order(API_base, API_common):
                 continue
 
             # Loop over the alignment IDs.
-            for align_id in cdp.pcs_ids:
+            for align_id in cdp.rdc_ids:
                 # Yield the info set.
                 yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
 
