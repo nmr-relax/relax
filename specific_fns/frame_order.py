@@ -962,6 +962,20 @@ class Frame_order(API_base, API_common):
         return full_tensors, full_err, full_in_ref_frame
 
 
+    def _num_int_pts(self, num=200000):
+        """Set the number of integration points to use in the quasi-random Sobol' sequence.
+
+        @keyword num:   The number of integration points.
+        @type num:      int
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Store the value.
+        cdp.num_int_pts = num
+
+
     def _param_num(self):
         """Determine the number of parameters in the model.
 

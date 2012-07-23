@@ -155,6 +155,30 @@ uf.menu_text = "&pivot"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
+# The frame_order.num_int_pts user function.
+uf = uf_info.add_uf('frame_order.num_int_pts')
+uf.title = "Set the number of integration points used in the quasi-random Sobol' sequence during optimisation."
+uf.title_short = "Number of integration points."
+uf.add_keyarg(
+    name = "num",
+    default = 200000,
+    min = 3,
+    max = 10000000,
+    py_type = "int",
+    desc_short = "number of points",
+    desc = "The number of integration points to use in the Sobol' sequence during optimisation.",
+    wiz_element_type = "spin"
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the number of integration points used during the Frame Order target function optimisation to be changed from the default.  This is used in the quasi-random Sobol' sequence for the numerical integration.")
+uf.backend = frame_order_obj._num_int_pts
+uf.menu_text = "&num_int_pts"
+uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_size = (900, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
 # The frame_order.ref_domain user function.
 uf = uf_info.add_uf('frame_order.ref_domain')
 uf.title = "Set the reference domain for the '2-domain' Frame Order theories."
