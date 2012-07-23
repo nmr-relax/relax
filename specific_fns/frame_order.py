@@ -1068,6 +1068,20 @@ class Frame_order(API_base, API_common):
         return True
 
 
+    def _quad_int(self, flag=False):
+        """Turn the high precision Scipy quadratic numerical integration on or off.
+
+        @keyword flag:  The flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type flag:     bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Store the flag.
+        cdp.quad_int = flag
+
+
     def _ref_domain(self, ref=None):
         """Set the reference domain for the frame order, multi-domain models.
 
@@ -1118,13 +1132,15 @@ class Frame_order(API_base, API_common):
         # Initialise the list of model parameters.
         cdp.params = []
 
-        # Scipy quadratic numerical integration.
-        if cdp.model in []:
-            cdp.quad_int = True
+        # Set the integration method if needed.
+        if not hasattr(cdp, 'quad_int'):
+            # Scipy quadratic numerical integration.
+            if cdp.model in []:
+                cdp.quad_int = True
 
-        # Quasi-random numerical integration.
-        else:
-            cdp.quad_int = False
+            # Quasi-random numerical integration.
+            else:
+                cdp.quad_int = False
 
         # Update the model.
         self._update_model()
