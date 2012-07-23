@@ -2232,7 +2232,6 @@ class Frame_order(API_base, API_common):
             # Store the data structure.
             interatom.rdc_sim[align_id] = []
             for i in range(cdp.sim_number):
-                print sim_data[i]
                 interatom.rdc_sim[align_id].append(sim_data[i][0])
 
         # The PCS data.
