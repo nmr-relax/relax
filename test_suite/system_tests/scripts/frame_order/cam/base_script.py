@@ -79,7 +79,7 @@ class Base_script:
 
         # Set the number of numerical integration points.
         if hasattr(self, 'num_int_pts'):
-            cdp.num_int_pts = self.num_int_pts
+            self._execute_uf(uf_name='frame_order.num_int_pts', num=self.num_int_pts)
 
         # Check the minimum.
         if hasattr(self, 'ave_pos_alpha'):
