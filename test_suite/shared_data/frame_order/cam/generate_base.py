@@ -325,11 +325,14 @@ class Main:
 
         # Rotate the eigenframe.
         self.axes = dot(R, axes)
+        alpha, beta, gamma = R_to_euler_zyz(self.axes)
 
         # Print out.
         print("Tilt axis: %s, norm = %s" % (repr(tilt_axis), norm(tilt_axis)))
         print("CoM-pivot axis: %s, norm = %s" % (repr(axis_z), norm(axis_z)))
         print("Rotation axis: %s, norm = %s" % (repr(self.axes[:,2]), norm(self.axes[:,2])))
+        print("Full axis system:\n%s" % self.axes)
+        print("Full axis system Euler angles:\n\talpha: %s\n\tbeta: %s\n\tgamma: %s" % (repr(alpha), repr(beta), repr(gamma)))
 
 
     def build_axes_pivot_com(self):
