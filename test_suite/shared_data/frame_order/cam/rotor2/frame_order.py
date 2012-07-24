@@ -104,7 +104,7 @@ class Analysis:
         value.set(param='ave_pos_alpha', val=4.3434999280669997)
         value.set(param='ave_pos_beta', val=0.43544332764249905)
         value.set(param='ave_pos_gamma', val=3.8013235235956007)
-        value.set(param='axis_theta', val=0.69798281380709504)
+        value.set(param='axis_theta', val=0.69828059079619353433)
         value.set(param='axis_phi', val=4.03227550621962294031)
         value.set(param='cone_sigma_max', val=30.0 / 360.0 * 2.0 * pi)
         calc()
