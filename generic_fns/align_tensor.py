@@ -692,7 +692,7 @@ def get_tensor_object_from_align(align_id, pipe=None):
     # Loop over the tensors.
     count = 0
     for i in xrange(len(cdp.align_tensors)):
-        if cdp.align_tensors[i].align_id == align_id:
+        if hasattr(cdp.align_tensors[i], 'align_id') and cdp.align_tensors[i].align_id == align_id:
             data = cdp.align_tensors[i]
             count += 1
 
@@ -737,7 +737,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
 
     # Test if alignment tensor data already exists.
-    if errors and not align_data_exists(align_id):
+    if errors and (not hasattr(cdp, 'align_ids') or not align_id in cdp.align_ids):
         raise RelaxNoTensorError('alignment')
 
     # Check that the domain is defined.
@@ -751,6 +751,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         cdp.align_ids.append(align_id)
 
     # Add the align_tensors object to the data pipe.
+    tensor_obj = None
     if not errors:
         # Initialise the super structure.
         if not hasattr(cdp, 'align_tensors'):
@@ -758,13 +759,14 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
 
         # Add the tensor, if it doesn't already exist.
         if tensor == None or tensor not in cdp.align_tensors.names():
-            cdp.align_tensors.add_item(tensor)
+            tensor_obj = cdp.align_tensors.add_item(tensor)
 
     # Get the tensor.
-    if tensor:
-        tensor_obj = get_tensor_object(tensor)
-    else:
-        tensor_obj = get_tensor_object_from_align(align_id)
+    if not tensor_obj:
+        if tensor:
+            tensor_obj = get_tensor_object(tensor)
+        else:
+            tensor_obj = get_tensor_object_from_align(align_id)
 
     # {Sxx, Syy, Sxy, Sxz, Syz}.
     if param_types == 0:
@@ -918,7 +920,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
     if domain:
         set_domain(tensor=tensor, domain=domain)
     if align_id:
-        set_align_id(tensor=tensor, align_id=align_id)
+        tensor_obj.align_id = align_id
 
 
 def map_bounds(param):
