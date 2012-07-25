@@ -577,10 +577,10 @@ def gdo(A):
     return gdo
 
 
-def get_ids():
-    """Return the list of all alignment tensor IDs.
+def get_align_ids():
+    """Return the list of all alignment IDs.
 
-    @return:        The list of all alignment tensors.
+    @return:        The list of all alignment IDs.
     @rtype:         list of str
     """
 
@@ -594,6 +594,33 @@ def get_ids():
 
     # The tensor IDs.
     return cdp.align_ids
+
+
+def get_tensor_ids():
+    """Return the list of all tensor IDs.
+
+    @return:        The list of all tensor IDs.
+    @rtype:         list of str
+    """
+
+    # Init.
+    ids = []
+
+    # No pipe.
+    if cdp == None:
+        return ids
+
+    # No tensor data.
+    if not hasattr(cdp, 'align_tensors'):
+        return ids
+
+    # Loop over the tensors.
+    for i in xrange(len(cdp.align_tensors)):
+        if cdp.align_tensors[i].name != None:
+            ids.append(cdp.align_tensors[i].name)
+
+    # Return the object.
+    return ids
 
 
 def get_tensor_index(tensor=None, align_id=None, pipe=None):
