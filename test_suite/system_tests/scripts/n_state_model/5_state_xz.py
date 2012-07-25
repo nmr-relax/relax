@@ -21,18 +21,11 @@ self._execute_uf(uf_name='domain', id='C')
 self._execute_uf(uf_name='domain', id='N')
 
 # Load the C-terminal alignment tensors.
-self._execute_uf(uf_name='align_tensor.init', tensor='chi1 C-dom', params=(-1/2., -1/2.,  0.,   0.,     0.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi2 C-dom', params=(-1/8., -7/8.,  0.,   0.,     0.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi3 C-dom', params=(-1/8.,  1/16., 0.,   0.,    -15/16.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi4 C-dom', params=(7/16., -7/8.,  0.,   9/16.,  0.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi5 C-dom', params=(-1/2., -1/2.,  3/8., 0.,     0.))
-
-# Set the domain the tensors correspond to.
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi1 C-dom', domain='C')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi2 C-dom', domain='C')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi3 C-dom', domain='C')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi4 C-dom', domain='C')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi5 C-dom', domain='C')
+self._execute_uf(uf_name='align_tensor.init', tensor='chi1 C-dom', align_id='1', domain='C', params=(-1/2., -1/2.,  0.,   0.,     0.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi2 C-dom', align_id='2', domain='C', params=(-1/8., -7/8.,  0.,   0.,     0.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi3 C-dom', align_id='3', domain='C', params=(-1/8.,  1/16., 0.,   0.,    -15/16.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi4 C-dom', align_id='4', domain='C', params=(7/16., -7/8.,  0.,   9/16.,  0.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi5 C-dom', align_id='5', domain='C', params=(-1/2., -1/2.,  3/8., 0.,     0.))
 
 # Calculate the singular values.
 self._execute_uf(uf_name='align_tensor.svd', basis_set=0, tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
@@ -44,18 +37,11 @@ self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set=1, tensors=['ch
 
 
 # Load the N-terminal alignment tensors.
-self._execute_uf(uf_name='align_tensor.init', tensor='chi1 N-dom', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   0.,              0.,   0.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi2 N-dom', params=(1/80.*(26-9*sqrt(2)),  -7/8.,   0.,              0.,  0.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi3 N-dom', params=(-1/160.*(8+3*sqrt(2)),  1/16.,  0.,    0., -3/16.*(1+sqrt(2)+2*cos(pi/8.))))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi4 N-dom', params=(7/16.,                 -7/8.,   0.,    9/80.*(1+sqrt(2)),     0.))
-self._execute_uf(uf_name='align_tensor.init', tensor='chi5 N-dom', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   3/40.*(1+sqrt(2)+2*cos(pi/8.)),   0., 0.))
-
-# Set the domain the tensors correspond to.
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi1 N-dom', domain='N')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi2 N-dom', domain='N')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi3 N-dom', domain='N')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi4 N-dom', domain='N')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='chi5 N-dom', domain='N')
+self._execute_uf(uf_name='align_tensor.init', tensor='chi1 N-dom', align_id='1', domain='N', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   0.,              0.,   0.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi2 N-dom', align_id='2', domain='N', params=(1/80.*(26-9*sqrt(2)),  -7/8.,   0.,              0.,  0.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi3 N-dom', align_id='3', domain='N', params=(-1/160.*(8+3*sqrt(2)),  1/16.,  0.,    0., -3/16.*(1+sqrt(2)+2*cos(pi/8.))))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi4 N-dom', align_id='4', domain='N', params=(7/16.,                 -7/8.,   0.,    9/80.*(1+sqrt(2)),     0.))
+self._execute_uf(uf_name='align_tensor.init', tensor='chi5 N-dom', align_id='5', domain='N', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   3/40.*(1+sqrt(2)+2*cos(pi/8.)),   0., 0.))
 
 # Specify the tensor reductions.
 self._execute_uf(uf_name='align_tensor.reduction', full_tensor='chi1 C-dom', red_tensor='chi1 N-dom')

@@ -207,9 +207,10 @@ class Base_script:
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
         red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
+        ids =  ['dy', 'tb', 'tm', 'er']
         for i in range(len(full)):
             # Initialise the reduced tensor.
-            self._execute_uf(uf_name='align_tensor.init', tensor=red[i], params=(0,0,0,0,0))
+            self._execute_uf(uf_name='align_tensor.init', tensor=red[i], align_id=ids[i], params=(0, 0, 0, 0, 0))
 
             # Set the domain info.
             self._execute_uf(uf_name='align_tensor.set_domain', tensor=full[i], domain='N')
