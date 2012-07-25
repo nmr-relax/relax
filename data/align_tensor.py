@@ -942,9 +942,22 @@ class AlignTensorList(ListType):
 
 
     def add_item(self, name):
-        """Function for appending a new AlignTensorData instance to the list."""
+        """Append a new AlignTensorData instance to the list.
 
-        self.append(AlignTensorData(name))
+        @param name:    The tensor ID string.
+        @type name:     str
+        @return:        The tensor object.
+        @rtype:         AlignTensorData instance
+        """
+
+        # Create the instance.
+        obj = AlignTensorData(name)
+
+        # Append the object.
+        self.append(obj)
+
+        # Return the object.
+        return obj
 
 
     def from_xml(self, align_tensor_super_node, file_version=1):
