@@ -28,27 +28,20 @@ The N-state model uses alignment tensors as determined by RDC data to determine 
 # Create the data pipe.
 pipe.create('test', 'N-state')
 
-# Load the C-terminal alignment tensors.
-align_tensor.init(tensor='110 t43L C-dom', params=(-1.0474e-04, 3.9223e-04, -3.7442e-05, 1.0529e-04, 4.0116e-05), param_types=1)
-align_tensor.init(tensor='143 pk2 C-dom', params=(-1.4348e-05, -4.9444e-04, 5.1804e-05, 1.3307e-04, -1.0238e-04), param_types=1)
-align_tensor.init(tensor='146 pk1 C-dom', params=(-2.4660e-04, -1.3212e-04, -3.1946e-04, 8.7208e-05, -8.4264e-05), param_types=1)
-align_tensor.init(tensor='17 t43L C-dom', params=(8.5734e-06, -1.2820e-04, 5.3537e-05, -3.3512e-05, -4.1060e-05), param_types=1)
-align_tensor.init(tensor='N60D Tb C-dom', params=(-4.8126e-05, -2.9930e-04, 4.3719e-04, 3.7058e-04, 1.2690e-04), param_types=1)
-align_tensor.init(tensor='N60D Th C-dom', params=(-7.9627e-06, 2.7383e-04, -3.2579e-04, -2.9647e-04, -1.5191e-04), param_types=1)
-align_tensor.init(tensor='146 pk2 C-dom', params=(-1.4930e-04, -2.9012e-04, -1.9983e-04, -2.0327e-05, -2.2792e-05), param_types=1)
-align_tensor.init(tensor='146 t43D C-dom', params=(2.9713e-04, -9.4987e-05, -2.1837e-04, 2.1539e-05, 2.0522e-05), param_types=1)
-align_tensor.init(tensor='146 t43L C-dom', params=(-1.6814e-04, -1.0235e-04, -2.3152e-04, -9.4095e-05, -2.9964e-05), param_types=1)
+# Define the two domains.
+domain(id='C-dom')
+domain(id='N-dom')
 
-# Set the domain the tensors correspond to.
-n_state_model.set_domain(tensor='110 t43L C-dom', domain='C')
-n_state_model.set_domain(tensor='143 pk2 C-dom', domain='C')
-n_state_model.set_domain(tensor='146 pk1 C-dom', domain='C')
-n_state_model.set_domain(tensor='17 t43L C-dom', domain='C')
-n_state_model.set_domain(tensor='N60D Tb C-dom', domain='C')
-n_state_model.set_domain(tensor='N60D Th C-dom', domain='C')
-n_state_model.set_domain(tensor='146 pk2 C-dom', domain='C')
-n_state_model.set_domain(tensor='146 t43D C-dom', domain='C')
-n_state_model.set_domain(tensor='146 t43L C-dom', domain='C')
+# Load the C-terminal alignment tensors.
+align_tensor.init(tensor='110 t43L C-dom', align_id='110 t43L', domain='C-dom', params=(-1.0474e-04, 3.9223e-04, -3.7442e-05, 1.0529e-04, 4.0116e-05), param_types=1)
+align_tensor.init(tensor='143 pk2 C-dom',  align_id='143 pk2',  domain='C-dom', params=(-1.4348e-05, -4.9444e-04, 5.1804e-05, 1.3307e-04, -1.0238e-04), param_types=1)
+align_tensor.init(tensor='146 pk1 C-dom',  align_id='146 pk1',  domain='C-dom', params=(-2.4660e-04, -1.3212e-04, -3.1946e-04, 8.7208e-05, -8.4264e-05), param_types=1)
+align_tensor.init(tensor='17 t43L C-dom',  align_id='17 t43L',  domain='C-dom', params=(8.5734e-06, -1.2820e-04, 5.3537e-05, -3.3512e-05, -4.1060e-05), param_types=1)
+align_tensor.init(tensor='N60D Tb C-dom',  align_id='N60D Tb',  domain='C-dom', params=(-4.8126e-05, -2.9930e-04, 4.3719e-04, 3.7058e-04, 1.2690e-04), param_types=1)
+align_tensor.init(tensor='N60D Th C-dom',  align_id='N60D Th',  domain='C-dom', params=(-7.9627e-06, 2.7383e-04, -3.2579e-04, -2.9647e-04, -1.5191e-04), param_types=1)
+align_tensor.init(tensor='146 pk2 C-dom',  align_id='146 pk2',  domain='C-dom', params=(-1.4930e-04, -2.9012e-04, -1.9983e-04, -2.0327e-05, -2.2792e-05), param_types=1)
+align_tensor.init(tensor='146 t43D C-dom', align_id='146 t43D', domain='C-dom', params=(2.9713e-04, -9.4987e-05, -2.1837e-04, 2.1539e-05, 2.0522e-05), param_types=1)
+align_tensor.init(tensor='146 t43L C-dom', align_id='146 t43L', domain='C-dom', params=(-1.6814e-04, -1.0235e-04, -2.3152e-04, -9.4095e-05, -2.9964e-05), param_types=1)
 
 # Set the tensor state (reduced or full).
 n_state_model.set_type(tensor='110 t43L C-dom', red=False)
@@ -74,26 +67,15 @@ align_tensor.matrix_angles(basis_set=1, tensors=c_tensor_list)
 
 
 # Load the N-terminal alignment tensors.
-align_tensor.init(tensor='110 t43L N-dom', params=(2.2127e-04, 5.2855e-05, 1.8433e-05, 3.0827e-05, 1.2017e-04), param_types=1)
-align_tensor.init(tensor='143 pk2 N-dom', params=(3.1618e-05, 4.2658e-05, -8.7183e-06, -8.1250e-05, 4.8628e-05), param_types=1)
-align_tensor.init(tensor='146 pk1 N-dom', params=(7.4553e-05, -9.6076e-05, 4.9363e-05, -6.0947e-05, -2.5628e-05), param_types=1)
-align_tensor.init(tensor='17 t43L N-dom', params=(2.1506e-06, -2.0811e-04, -1.4169e-04, 6.1467e-05, -8.0616e-05), param_types=1)
-align_tensor.init(tensor='N60D Tb N-dom', params=(1.0278e-03, -1.4860e-03, 8.4778e-04, 5.7108e-04, 3.6500e-04), param_types=1)
-align_tensor.init(tensor='N60D Th N-dom', params=(-8.8394e-04, 1.5459e-03, -4.9095e-04, -5.4784e-04, -2.2704e-05), param_types=1)
-align_tensor.init(tensor='146 pk2 N-dom', params=(-1.0566e-05, -7.7580e-05, -4.9425e-05, -5.2596e-06, -1.8736e-05), param_types=1)
-align_tensor.init(tensor='146 t43D N-dom', params=(-3.0584e-05, -1.7438e-05, 5.5619e-05, 5.1900e-05, -2.6510e-05), param_types=1)
-align_tensor.init(tensor='146 t43L N-dom', params=(3.1001e-05, -4.3433e-05, 1.7081e-05, 6.1744e-05, -2.8761e-05), param_types=1)
-
-# Set the domain the tensors correspond to.
-n_state_model.set_domain(tensor='110 t43L N-dom', domain='N')
-n_state_model.set_domain(tensor='143 pk2 N-dom', domain='N')
-n_state_model.set_domain(tensor='146 pk1 N-dom', domain='N')
-n_state_model.set_domain(tensor='17 t43L N-dom', domain='N')
-n_state_model.set_domain(tensor='N60D Tb N-dom', domain='N')
-n_state_model.set_domain(tensor='N60D Th N-dom', domain='N')
-n_state_model.set_domain(tensor='146 pk2 N-dom', domain='N')
-n_state_model.set_domain(tensor='146 t43D N-dom', domain='N')
-n_state_model.set_domain(tensor='146 t43L N-dom', domain='N')
+align_tensor.init(tensor='110 t43L N-dom', align_id='110 t43L', domain='N-dom', params=(2.2127e-04, 5.2855e-05, 1.8433e-05, 3.0827e-05, 1.2017e-04), param_types=1)
+align_tensor.init(tensor='143 pk2 N-dom',  align_id='143 pk2',  domain='N-dom', params=(3.1618e-05, 4.2658e-05, -8.7183e-06, -8.1250e-05, 4.8628e-05), param_types=1)
+align_tensor.init(tensor='146 pk1 N-dom',  align_id='146 pk1',  domain='N-dom', params=(7.4553e-05, -9.6076e-05, 4.9363e-05, -6.0947e-05, -2.5628e-05), param_types=1)
+align_tensor.init(tensor='17 t43L N-dom',  align_id='17 t43L',  domain='N-dom', params=(2.1506e-06, -2.0811e-04, -1.4169e-04, 6.1467e-05, -8.0616e-05), param_types=1)
+align_tensor.init(tensor='N60D Tb N-dom',  align_id='N60D Tb',  domain='N-dom', params=(1.0278e-03, -1.4860e-03, 8.4778e-04, 5.7108e-04, 3.6500e-04), param_types=1)
+align_tensor.init(tensor='N60D Th N-dom',  align_id='N60D Th',  domain='N-dom', params=(-8.8394e-04, 1.5459e-03, -4.9095e-04, -5.4784e-04, -2.2704e-05), param_types=1)
+align_tensor.init(tensor='146 pk2 N-dom',  align_id='146 pk2',  domain='N-dom', params=(-1.0566e-05, -7.7580e-05, -4.9425e-05, -5.2596e-06, -1.8736e-05), param_types=1)
+align_tensor.init(tensor='146 t43D N-dom', align_id='146 t43D', domain='N-dom', params=(-3.0584e-05, -1.7438e-05, 5.5619e-05, 5.1900e-05, -2.6510e-05), param_types=1)
+align_tensor.init(tensor='146 t43L N-dom', align_id='146 t43L', domain='N-dom', params=(3.1001e-05, -4.3433e-05, 1.7081e-05, 6.1744e-05, -2.8761e-05), param_types=1)
 
 # Set the tensor state (reduced or full).
 n_state_model.set_type(tensor='110 t43L N-dom', red=True)
