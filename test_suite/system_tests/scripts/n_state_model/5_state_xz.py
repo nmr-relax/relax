@@ -17,8 +17,8 @@ self._execute_uf('test', 'N-state', uf_name='pipe.create')
 
 
 # Define the two domains.
-domain('C')
-domain('N')
+self._execute_uf(uf_name='domain', id='C')
+self._execute_uf(uf_name='domain', id='N')
 
 # Load the C-terminal alignment tensors.
 self._execute_uf(uf_name='align_tensor.init', tensor='chi1 C-dom', params=(-1/2., -1/2.,  0.,   0.,     0.))
