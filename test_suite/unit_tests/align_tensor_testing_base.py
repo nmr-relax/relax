@@ -57,7 +57,7 @@ class Align_tensor_base_class(UnitTestCase):
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(tensor='Pf1', align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Change the current data pipe.
         pipes.switch('test')
@@ -84,7 +84,7 @@ class Align_tensor_base_class(UnitTestCase):
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(tensor='Pf1', align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Copy the tensor to the test pipe.
         self.align_tensor_fns.copy(tensor_from='Pf1', pipe_to='test', tensor_to='Pf1')
@@ -108,7 +108,7 @@ class Align_tensor_base_class(UnitTestCase):
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(tensor='Pf1', align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Copy the tensor to the test pipe.
         self.assertRaises(RelaxError, self.align_tensor_fns.copy, tensor_from='Pf1', tensor_to='Pf1')
@@ -122,7 +122,7 @@ class Align_tensor_base_class(UnitTestCase):
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(tensor='Pf1', align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Delete the tensor data.
         self.align_tensor_fns.delete(tensor='Pf1')
@@ -167,7 +167,7 @@ class Align_tensor_base_class(UnitTestCase):
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(tensor='Pf1', align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Display the alignment tensor.
         self.align_tensor_fns.display(tensor='Pf1')
@@ -206,7 +206,7 @@ class Align_tensor_base_class(UnitTestCase):
         """
 
         # Initialise the tensor.
-        self.assertRaises(RelaxError, self.align_tensor_fns.init, tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), angle_units='aaa')
+        self.assertRaises(RelaxError, self.align_tensor_fns.init, align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), angle_units='aaa')
 
 
     def test_init(self):
@@ -220,7 +220,7 @@ class Align_tensor_base_class(UnitTestCase):
         dp = pipes.get_pipe('orig')
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(align_id='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Test the alignment tensor.
         self.assertEqual(dp.align_tensors[0].Sxx, -16.6278)
@@ -241,11 +241,11 @@ class Align_tensor_base_class(UnitTestCase):
         dp = pipes.get_pipe('orig')
 
         # Initialise the 5 tensors.
-        self.align_tensor_fns.init(tensor='1', params=(1, 0, 0, 0, 0))
-        self.align_tensor_fns.init(tensor='2', params=(0, 1, 0, 0, 0))
-        self.align_tensor_fns.init(tensor='3', params=(0, 0, 1, 0, 0))
-        self.align_tensor_fns.init(tensor='4', params=(0, 0, 0, 1, 0))
-        self.align_tensor_fns.init(tensor='5', params=(0, 0, 0, 0, 1))
+        self.align_tensor_fns.init(align_id='1', params=(1, 0, 0, 0, 0))
+        self.align_tensor_fns.init(align_id='2', params=(0, 1, 0, 0, 0))
+        self.align_tensor_fns.init(align_id='3', params=(0, 0, 1, 0, 0))
+        self.align_tensor_fns.init(align_id='4', params=(0, 0, 0, 1, 0))
+        self.align_tensor_fns.init(align_id='5', params=(0, 0, 0, 0, 1))
 
         # Matrix angles.
         self.align_tensor_fns.matrix_angles()
@@ -293,11 +293,11 @@ class Align_tensor_base_class(UnitTestCase):
         dp = pipes.get_pipe('orig')
 
         # Initialise the 5 tensors.
-        self.align_tensor_fns.init(tensor='1', params=(1, 0, 0, 0, 0), param_types=0)
-        self.align_tensor_fns.init(tensor='2', params=(0, 1, 0, 0, 0), param_types=0)
-        self.align_tensor_fns.init(tensor='3', params=(0, 0, 1, 0, 0), param_types=0)
-        self.align_tensor_fns.init(tensor='4', params=(0, 0, 0, 1, 0), param_types=0)
-        self.align_tensor_fns.init(tensor='5', params=(0, 0, 0, 0, 1), param_types=0)
+        self.align_tensor_fns.init(align_id='1', params=(1, 0, 0, 0, 0), param_types=0)
+        self.align_tensor_fns.init(align_id='2', params=(0, 1, 0, 0, 0), param_types=0)
+        self.align_tensor_fns.init(align_id='3', params=(0, 0, 1, 0, 0), param_types=0)
+        self.align_tensor_fns.init(align_id='4', params=(0, 0, 0, 1, 0), param_types=0)
+        self.align_tensor_fns.init(align_id='5', params=(0, 0, 0, 0, 1), param_types=0)
 
         # SVD.
         self.align_tensor_fns.svd()

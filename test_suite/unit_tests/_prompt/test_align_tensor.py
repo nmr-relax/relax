@@ -137,12 +137,38 @@ class Test_align_tensor(Align_tensor_base_class):
 
         # Loop over the data types.
         for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.init, tensor=data[1])
+
+
+    def test_init_argfail_align_id(self):
+        """Failure of the align_id arg of the align_tensor.init() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
             # Catch the str argument, and skip it.
             if data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.align_tensor_fns.init, tensor=data[1])
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.init, align_id=data[1])
+
+
+    def test_init_argfail_domain(self):
+        """Failure of the domain arg of the align_tensor.init() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.init, align_id='Pf1', domain=data[1])
 
 
     def test_init_argfail_params(self):
@@ -157,7 +183,7 @@ class Test_align_tensor(Align_tensor_base_class):
                     continue
 
             # The argument test.
-            self.assertRaises(RelaxTupleNumError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
+            self.assertRaises(RelaxTupleNumError, self.align_tensor_fns.init, align_id='Pf1', params=data[1])
 
 
     def test_init_argfail_scale(self):
@@ -170,7 +196,7 @@ class Test_align_tensor(Align_tensor_base_class):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), scale=data[1])
+            self.assertRaises(RelaxFloatError, self.align_tensor_fns.init, align_id='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), scale=data[1])
 
 
     def test_init_argfail_angle_units(self):
@@ -196,7 +222,7 @@ class Test_align_tensor(Align_tensor_base_class):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), param_types=data[1])
+            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, align_id='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), param_types=data[1])
 
 
     def test_init_argfail_errors(self):
@@ -209,14 +235,14 @@ class Test_align_tensor(Align_tensor_base_class):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBoolError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
+            self.assertRaises(RelaxBoolError, self.align_tensor_fns.init, align_id='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
 
 
     def test_matrix_angles_argfail_basis_set(self):
         """The proper failure of the align_tensor.matrix_angles() user function for the basis_set argument."""
 
         # Add an alignment tensor.
-        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+        align_tensor.init(align_id='a', params=(0.0, 0.0, 0.0, 0.0, 0.0))
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -232,7 +258,7 @@ class Test_align_tensor(Align_tensor_base_class):
         """The tensors arg unit test of the align_tensor.matrix_angles() user function."""
 
         # Add an alignment tensor.
-        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+        align_tensor.init(align_id='a', params=(0.0, 0.0, 0.0, 0.0, 0.0))
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -299,7 +325,7 @@ class Test_align_tensor(Align_tensor_base_class):
         """The proper failure of the align_tensor.svd() user function for the basis_set argument."""
 
         # Add an alignment tensor.
-        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+        align_tensor.init(align_id='a', params=(0.0, 0.0, 0.0, 0.0, 0.0))
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -315,7 +341,7 @@ class Test_align_tensor(Align_tensor_base_class):
         """The tensors arg unit test of the align_tensor.svd() user function."""
 
         # Add an alignment tensor.
-        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+        align_tensor.init(align_id='a', params=(0.0, 0.0, 0.0, 0.0, 0.0))
 
         # Loop over the data types.
         for data in DATA_TYPES:
