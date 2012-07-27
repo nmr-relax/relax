@@ -22,26 +22,13 @@
 # Module docstring.
 """Module for the handling of Frame Order."""
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
-from copy import deepcopy
-from math import acos, cos, pi, sin, sqrt
-from numpy import cross, dot, inner, sinc, transpose
+from math import cos, sin, sqrt
+from numpy import dot, inner, transpose
 from numpy.linalg import norm
-from random import uniform
-if dep_check.scipy_module:
-    from scipy.integrate import dblquad, quad, tplquad
 
 # relax module imports.
-from float import isNaN
-from maths_fns import order_parameters
-from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.kronecker_product import kron_prod, transpose_23
-from maths_fns.pseudo_ellipse import pec
-from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
-from multi import Memo, Result_command, Slave_command
+from maths_fns.kronecker_product import transpose_23
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
