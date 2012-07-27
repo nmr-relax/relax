@@ -39,7 +39,7 @@ from extern.sobol.sobol_lib import i4_sobol
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order.frame_order_matrix_ops import Data, reduce_alignment_tensor
+from maths_fns.frame_order.matrix_ops import Data, reduce_alignment_tensor
 from maths_fns.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
 from maths_fns.frame_order.free_rotor import compile_2nd_matrix_free_rotor
 from maths_fns.frame_order.iso_cone import compile_2nd_matrix_iso_cone, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint

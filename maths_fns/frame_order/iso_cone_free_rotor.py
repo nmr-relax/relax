@@ -26,7 +26,7 @@
 from math import cos
 
 # relax module imports.
-from maths_fns.frame_order.frame_order_matrix_ops import rotate_daeg
+from maths_fns.frame_order.matrix_ops import rotate_daeg
 from maths_fns import order_parameters
 from multi import Memo, Result_command, Slave_command
 

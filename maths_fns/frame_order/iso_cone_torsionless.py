@@ -31,7 +31,7 @@ if dep_check.scipy_module:
     from scipy.integrate import dblquad
 
 # relax module imports.
-from maths_fns.frame_order.frame_order_matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
+from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
 from multi import Memo, Result_command, Slave_command
 
 

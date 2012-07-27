@@ -32,7 +32,7 @@ if dep_check.scipy_module:
     from scipy.integrate import quad, tplquad
 
 # relax module imports.
-from maths_fns.frame_order.frame_order_matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
+from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
 from maths_fns.frame_order.pec import pec
 from multi import Memo, Result_command, Slave_command
 
