@@ -2406,10 +2406,6 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
         # Store the number of points in the data container.
         memo.data.num_pts += self.num_pts
 
-        # Sum the PCS values.
-        memo.data.pcs_theta += self.pcs_theta
-
-
 
 
 class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
