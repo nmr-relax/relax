@@ -26,8 +26,8 @@
 import dep_check
 
 # Python module imports.
-from math import pi, sqrt
-from numpy import sinc
+from math import cos, pi, sin, sqrt
+from numpy import dot, inner, sinc, transpose
 if dep_check.scipy_module:
     from scipy.integrate import quad
 
