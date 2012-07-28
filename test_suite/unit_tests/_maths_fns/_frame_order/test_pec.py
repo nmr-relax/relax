@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from math import pi
 from unittest import TestCase
 
 # relax module imports.
-from maths_fns.pseudo_ellipse import pec
+from maths_fns.frame_order.pec import pec
 
 
 class Test_pseudo_ellipse(TestCase):
