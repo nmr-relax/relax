@@ -30,6 +30,7 @@ import ansi
 from code import InteractiveConsole, softspace
 from math import pi
 from os import F_OK, access, chdir, getcwd, path
+from pydoc import pager
 from re import search
 if dep_check.readline_module:
     import readline
@@ -41,7 +42,6 @@ import sys
 # relax module imports.
 from info import Info_box
 from prompt.command import Ls, Lh, Ll, system
-from prompt.gpl import GPL
 from prompt.help import _Helper, _Helper_python
 if dep_check.readline_module:
     from prompt.tab_completion import Tab_completion
@@ -290,6 +290,20 @@ class _Exit:
 
         print("Exiting the program.")
         sys.exit()
+
+
+class GPL:
+    """A special object for displaying the GPL license."""
+
+    def __repr__(self):
+        """Replacement representation."""
+
+        # First display the GPL using paging.
+        file = open('docs/COPYING')
+        pager(file.read())
+
+        # Then return some text to print out.
+        return "The GNU General Public License."
 
 
 

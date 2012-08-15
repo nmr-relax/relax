@@ -25,7 +25,6 @@
 __all__ = [
     'command',
     'doc_string',
-    'gpl',
     'help',
     'interpreter',
     'tab_completion',

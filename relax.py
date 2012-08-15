@@ -39,6 +39,7 @@ from os import F_OK, access, getpid, putenv
 if dep_check.profile_module:
     import profile
 import pstats
+from pydoc import pager
 from re import match
 from string import split, strip
 import sys
@@ -46,7 +47,6 @@ import sys
 # relax modules.
 from info import Info_box
 from multi import Application_callback, load_multiprocessor
-from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
@@ -436,7 +436,9 @@ class Relax:
     def licence(self):
         """Function for displaying the licence."""
 
-        help(gpl)
+        # Present the GPL using paging.
+        file = open('docs/COPYING')
+        pager(file.read())
 
 
     def test_mode(self):
