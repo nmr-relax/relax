@@ -335,6 +335,12 @@ The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (
 
 \section{Final checks}
 
-To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \texttt{intensities.agr} and \texttt{intensities\_norm.agr} 2D Grace files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible.
+To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \texttt{intensities.agr} and \texttt{intensities\_norm.agr} 2D Grace\index{software!Grace|textbf} files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible (see figure~\ref{fig: screenshot: xmgrace peak intensities}).  If Xmgrace or a compatible program is not available for your operating system, the Grace files contain a text representation of the curves at the end which can be edited and opened in another 2D graph visualisation program.
+ 
+% Xmgrace screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 923 724]{graphics/screenshots/xmgrace_peak_intensities.eps.gz}}
+\caption[Peak intensity 2D plot xmgrace screenshot]{Screenshot of the 2D peak intensity plots for the exponential relaxation curves in Xmgrace.}\label{fig: screenshot: xmgrace peak intensities}
+\end{figure}
 
-Note that errors resulting in systematic bias in the data -- for example if temperature control (single-scan interleaving or temperature compensation blocks) or per-experiment/per-spectrometer temperature calibration on MeOH or ethylene glycol have not been performed -- will not be detected by looking at the decay curves.  See the \texttt{relax\_data.temp\_calibration} and \texttt{relax\_data.temp\_control} user function documentation for more details.
+Note that errors resulting in systematic bias in the data -- for example if temperature control (single-scan interleaving or temperature compensation blocks) or per-experiment/per-spectrometer temperature calibration on MeOH or ethylene glycol have not been performed -- will not be detected by looking at the decay curves.  See the \texttt{relax\_data.temp\_calibration} user function documentation on page~\pageref{uf: relax_data.temp_calibration} and the \texttt{relax\_data.temp\_control} user function documentation on page~\pageref{uf: relax_data.temp_control} for more details.
