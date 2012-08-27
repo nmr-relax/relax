@@ -30,23 +30,53 @@ pipe.create(`rx', `relax\_fit') \\
 structure.read\_pdb(`Ap4Aase\_new\_3.pdb') \\
 structure.load\_spins(spin\_id=`@N') \\
  \\
-\# Load the peak intensities. \\
-relax\_fit.read(file=`T2\_ncyc1.list', relax\_time=0.0176) \\
-relax\_fit.read(file=`T2\_ncyc1b.list', relax\_time=0.0176) \\
-relax\_fit.read(file=`T2\_ncyc2.list', relax\_time=0.0352) \\
-relax\_fit.read(file=`T2\_ncyc4.list', relax\_time=0.0704) \\
-relax\_fit.read(file=`T2\_ncyc4b.list', relax\_time=0.0704) \\
-relax\_fit.read(file=`T2\_ncyc6.list', relax\_time=0.1056) \\
-relax\_fit.read(file=`T2\_ncyc9.list', relax\_time=0.1584) \\
-relax\_fit.read(file=`T2\_ncyc9b.list', relax\_time=0.1584) \\
-relax\_fit.read(file=`T2\_ncyc11.list', relax\_time=0.1936) \\
-relax\_fit.read(file=`T2\_ncyc11b.list', relax\_time=0.1936) \\
+\# Spectrum names. \\
+names = [ \\
+\hspace*{4ex} `T2\_ncyc1\_ave', \\
+\hspace*{4ex} `T2\_ncyc1b\_ave', \\
+\hspace*{4ex} `T2\_ncyc2\_ave', \\
+\hspace*{4ex} `T2\_ncyc4\_ave', \\
+\hspace*{4ex} `T2\_ncyc4b\_ave', \\
+\hspace*{4ex} `T2\_ncyc6\_ave', \\
+\hspace*{4ex} `T2\_ncyc9\_ave', \\
+\hspace*{4ex} `T2\_ncyc9b\_ave', \\
+\hspace*{4ex} `T2\_ncyc11\_ave', \\
+\hspace*{4ex} `T2\_ncyc11b\_ave' \\
+] \\
  \\
-\# Calculate the peak intensity averages and the standard deviation of all spectra. \\
-relax\_fit.mean\_and\_error() \\
+\# Relaxation times (in seconds). \\
+times = [ \\
+\hspace*{4ex} 0.0176, \\
+\hspace*{4ex} 0.0176, \\
+\hspace*{4ex} 0.0352, \\
+\hspace*{4ex} 0.0704, \\
+\hspace*{4ex} 0.0704, \\
+\hspace*{4ex} 0.1056, \\
+\hspace*{4ex} 0.1584, \\
+\hspace*{4ex} 0.1584, \\
+\hspace*{4ex} 0.1936, \\
+\hspace*{4ex} 0.1936 \\
+] \\
  \\
-\# Deselect unresolved residues. \\
-deselect.read(file=`unresolved') \\
+\# Loop over the spectra. \\
+for i in xrange(len(names)): \\
+\hspace*{4ex} \# Load the peak intensities. \\
+\hspace*{4ex} spectrum.read\_intensities(file=names[i]+`.list', dir=data\_path, spectrum\_id=names[i], int\_method=`height') \\
+ \\
+\hspace*{4ex} \# Set the relaxation times. \\
+\hspace*{4ex} relax\_fit.relax\_time(time=times[i], spectrum\_id=names[i]) \\
+ \\
+\# Specify the duplicated spectra. \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc1\_ave', `T2\_ncyc1b\_ave']) \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc4\_ave', `T2\_ncyc4b\_ave']) \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc9\_ave', `T2\_ncyc9b\_ave']) \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc11\_ave', `T2\_ncyc11b\_ave']) \\
+ \\
+\# Peak intensity error analysis. \\
+spectrum.error\_analysis() \\
+ \\
+\# Deselect unresolved spins. \\
+deselect.read(file=`unresolved', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
  \\
 \# Set the relaxation curve type. \\
 relax\_fit.select\_model(`exp') \\
@@ -67,12 +97,25 @@ monte\_carlo.error\_analysis() \\
 \# Save the relaxation rates. \\
 value.write(param=`rx', file=`rx.out', force=True) \\
  \\
-\# Grace plots of the relaxation rate. \\
-grace.write(y\_data\_type=`rx', file=`rx.agr', force=True) \\
-grace.view(file=`rx.agr') \\
+\# Save the results. \\
+results.write(file=`results', force=True) \\
  \\
-\# Save the program state. \\
-state.save(file=`rx.save', force=True)
+\# Create Grace plots of the data. \\
+grace.write(y\_data\_type=`chi2', file=`chi2.agr', force=True)    \# Minimised chi-squared value. \\
+grace.write(y\_data\_type=`i0', file=`i0.agr', force=True)    \# Initial peak intensity. \\
+grace.write(y\_data\_type=`rx', file=`rx.agr', force=True)    \# Relaxation rate. \\
+grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', file=`intensities.agr', force=True)    \# Average peak intensities. \\
+grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', norm=True, file=`intensities\_norm.agr', force=True)    \# Average peak intensities (normalised). \\
+ \\
+\# Display the Grace plots. \\
+grace.view(file=`chi2.agr') \\
+grace.view(file=`i0.agr') \\
+grace.view(file=`rx.agr') \\
+grace.view(file=`intensities.agr') \\
+grace.view(file=`intensities\_norm.agr') \\
+ \\
+\# Save the program state.
+state.save(`rx.save', force=True)
 \end{exampleenv}
 
 
@@ -95,24 +138,29 @@ initialises the data pipe labelled \texttt{`rx'}.  The data pipe type is set to 
 
 \example{structure.load\_spins(spin\_id=`@N')}
 
-To load the peak intensities\index{peak!intensity} into relax the user function \texttt{relax\_fit.read} is executed.  Two important keyword arguments to this command are the file name and the relaxation time period of the experiment in seconds.  It is assumed that the file format is that of a Sparky\index{software!Sparky} peak list.  Using the format argument, this can be changed to XEasy\index{software!XEasy} text window output format.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated
+To load the peak intensities\index{peak!intensity} into relax the user function \texttt{spectrum.read\_intensities} is executed.  Important keyword arguments to this command are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
 
 \begin{exampleenv}
-relax\_fit.read(file=`T2\_ncyc1.list', relax\_time=0.0176) \\
-relax\_fit.read(file=`T2\_ncyc1b.list', relax\_time=0.0176) \\
-relax\_fit.read(file=`T2\_ncyc2.list', relax\_time=0.0352) \\
-relax\_fit.read(file=`T2\_ncyc4.list', relax\_time=0.0704) \\
-relax\_fit.read(file=`T2\_ncyc4b.list', relax\_time=0.0704) \\
-relax\_fit.read(file=`T2\_ncyc6.list', relax\_time=0.1056) \\
-relax\_fit.read(file=`T2\_ncyc9.list', relax\_time=0.1584) \\
-relax\_fit.read(file=`T2\_ncyc9b.list', relax\_time=0.1584) \\
-relax\_fit.read(file=`T2\_ncyc11.list', relax\_time=0.1936) \\
-relax\_fit.read(file=`T2\_ncyc11b.list', relax\_time=0.1936)
+spectrum.read\_intensities(file=`T2\_ncyc1.list',   spectrum\_id=`1',   relax\_time=0.0176, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc1b.list',  spectrum\_id=`1b',  relax\_time=0.0176, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc2.list',   spectrum\_id=`2',   relax\_time=0.0352, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc4.list',   spectrum\_id=`4',   relax\_time=0.0704, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc4b.list',  spectrum\_id=`4b',  relax\_time=0.0704, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc6.list',   spectrum\_id=`6',   relax\_time=0.1056, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc9.list',   spectrum\_id=`9',   relax\_time=0.1584, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc9b.list',  spectrum\_id=`9b',  relax\_time=0.1584, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc11.list',  spectrum\_id=`11',  relax\_time=0.1936, int\_col=10) \\
+spectrum.read\_intensities(file=`T2\_ncyc11b.list', spectrum\_id=`11b', relax\_time=0.1936, int\_col=10) \\
+ \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc1\_ave', `T2\_ncyc1b\_ave']) \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc4\_ave', `T2\_ncyc4b\_ave']) \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc9\_ave', `T2\_ncyc9b\_ave']) \\
+spectrum.replicated(spectrum\_ids=[`T2\_ncyc11\_ave', `T2\_ncyc11b\_ave'])
 \end{exampleenv}
 
-The format for the Sparky peak list is assumed to have the intensity value in the 4$^\textrm{th}$ column, e.g.:
+For the Sparky peak lists, by default relax assumes that the intensity value is in the 4$^\textrm{th}$ column.  A typical file looks like:
 
-{\footnotesize \begin{verbatim}
+{\scriptsize \begin{verbatim}
      Assignment         w1         w2   Data Height
 
         LEU3N-HN    122.454      8.397       129722
@@ -125,6 +173,32 @@ The format for the Sparky peak list is assumed to have the intensity value in th
        GLY12N-HN    110.525      9.028        90144
 \end{verbatim}}
 
+By supplying the \texttt{`int\_col'} argument to the \texttt{spectrum.read\_intensities} user function, this can be changed.  A typical XEasy file will look like:
+
+{\scriptsize \begin{verbatim}
+ No.  Color    w1      w2     ass. in w1     ass. in w2    Volume     Vol. Err.  Method  Comment
+
+   2    2    10.014 134.221   HN  21 LEU      N  21 LEU    7.919e+03  0.00e+00     m
+   3    2    10.481 132.592  HE1  79 TRP    NE1  79 TRP    1.532e+04  0.00e+00     m
+  17    2     9.882 129.041   HN 110 PHE      N 110 PHE    9.962e+03  0.00e+00     m
+  18    2     8.757 128.278   HN  52 ASP      N  52 ASP    2.041e+04  0.00e+00     m
+  19    2    10.086 128.297   HN  69 SER      N  69 SER    9.305e+03  0.00e+00     m
+  20    3     9.111 127.707   HN  15 ARG      N  15 ARG    9.714e+03  0.00e+00     m
+\end{verbatim}}
+
+where the peak height is in the `Volume' column.  And for an NMRView file:
+
+{\scriptsize \begin{verbatim}
+label dataset sw sf
+H1 N15
+cNTnC_noe0.nv
+2505.63354492 1369.33557129
+499.875 50.658000946
+H1.L H1.P H1.W H1.B H1.E H1.J H1.U N15.L N15.P N15.W N15.B N15.E N15.J N15.U vol int stat comment flag0
+0 {70.HN} 10.75274 0.02954 0.05379 ++ 0.0 {} {70.N} 116.37241 0.23155 0.35387 ++ 0.0 {} -6.88333129883 -0.1694 0 {} 0
+1 {72.HN} 9.67752 0.03308 0.05448 ++ 0.0 {} {72.N} 126.41302 0.27417 0.37217 ++ 0.0 {} -5.49038267136 -0.1142 0 {} 0
+2 {} 8.4532 0.02331 0.05439 ++ 0.0 {} {} 122.20137 0.38205 0.33221 ++ 0.0 {} -2.58034267191 -0.1320 0 {} 0
+\end{verbatim}}
 
 
 % The rest of the setup.
@@ -132,13 +206,13 @@ The format for the Sparky peak list is assumed to have the intensity value in th
 
 \section{The rest of the setup}
 
-Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual residues needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
+Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
 
-\example{relax\_fit.mean\_and\_error()}
+\example{spectrum.error\_analysis()}
 
-Any residues which cannot be resolved due to peak overlap were included in a file called \texttt{`unresolved'}.  This file consists solely of one residue number per line.  These residues are excluded from the analysis by the user function
+Any spins which cannot be resolved due to peak overlap were included in a file called \texttt{`unresolved'}.  This file can consist of optional columns of the molecule name, the residue name and number, and the spin name and number.  The matching spins are excluded from the analysis by the user function
 
-\example{deselect.read(file=`unresolved')}
+\example{deselect.read(file=`unresolved', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5)}
 
 Finally the experiment type is specified by the command
 
@@ -197,6 +271,12 @@ The parameter errors are then determined as the standard deviation of the optimi
 \example{monte\_carlo.error\_analysis()}
 
 
+% R1 analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r1.eps.gz}}
+\caption[GUI screenshot -- $\Rone$ analysis]{Screenshot of the relax GUI interface -- the $\Rone$ analysis.}\label{fig: screenshot: R1 analysis}
+\end{figure}
+
 
 % Finishing off.
 %%%%%%%%%%%%%%%%
@@ -209,13 +289,36 @@ To finish off, the script first saves the relaxation rates together with their e
 
 Grace plots are created and viewed
 
+\example{grace.write(y\_data\_type=`chi2', file=`chi2.agr', force=True)}
+
+\example{grace.write(y\_data\_type=`i0', file=`i0.agr', force=True)}
+
 \example{grace.write(y\_data\_type=`rx', file=`rx.agr', force=True)}
 
+\example{grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', file=`intensities.agr', force=True)}
+
+\example{grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', norm=True, file=`intensities\_norm.agr', force=True)}
+
+\example{grace.view(file=`chi2.agr')}
+
+\example{grace.view(file=`i0.agr')}
+
 \example{grace.view(file=`rx.agr')}
+
+\example{grace.view(file=`intensities.agr')}
+
+\example{grace.view(file=`intensities\_norm.agr')}
 
 and finally the program state is saved for future reference
 
 \example{state.save(file=`rx.save', force=True)}
+
+
+% R2 analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r2.eps.gz}}
+\caption[GUI screenshot -- $\Rtwo$ analysis]{Screenshot of the relax GUI interface -- the $\Rtwo$ analysis.}\label{fig: screenshot: R2 analysis}
+\end{figure}
 
 
 
@@ -224,16 +327,14 @@ and finally the program state is saved for future reference
 
 \section{The GUI auto-analysis}
 
-The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R1 analysis}).  These auto-analyses can be selected using the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Just as with the steady-state NOE, these auto-analyses are very similar in spirit to the sample script described in this chapter, though the Grace 2D visualisation is more advanced.  If you have read this chapter, the usage of these analyses should be self explanatory.
+The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis}).  These auto-analyses can be selected using the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Just as with the steady-state NOE, these auto-analyses are very similar in spirit to the sample script described in this chapter, though the Grace 2D visualisation is more advanced.  If you have read this chapter, the usage of these analyses should be self explanatory.
 
-% R1 analysis screenshot
-\begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r1.eps.gz}}
-\caption[GUI screenshot -- $\Rone$ analysis]{Screenshot of the relax GUI interface -- the $\Rone$ analysis.}\label{fig: screenshot: R1 analysis}
-\end{figure}
 
-% R2 analysis screenshot
-\begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r2.eps.gz}}
-\caption[GUI screenshot -- $\Rtwo$ analysis]{Screenshot of the relax GUI interface -- the $\Rtwo$ analysis.}\label{fig: screenshot: R2 analysis}
-\end{figure}
+% Final checks.
+%%%%%%%%%%%%%%%
+
+\section{Final checks}
+
+To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \texttt{intensities.agr} and \texttt{intensities\_norm.agr} 2D Grace files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible.
+
+Note that errors resulting in systematic bias in the data -- for example if temperature control (single-scan interleaving or temperature compensation blocks) or per-experiment/per-spectrometer temperature calibration on MeOH or ethylene glycol have not been performed -- will not be detected by looking at the decay curves.  See the \texttt{relax\_data.temp\_calibration} and \texttt{relax\_data.temp\_control} user function documentation for more details.
