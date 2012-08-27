@@ -221,7 +221,6 @@ class Fetch_docstrings:
         self.file.write("\n\n")
 
         # Add a spaced out rule.
-        self.file.write("\\vspace{20pt}\n")
         self.file.write("\\pagebreak[4]\n")
         self.file.write("\\rule{\columnwidth}{2pt}\n")
         self.file.write("\\vspace{10pt}\n")
