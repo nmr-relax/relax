@@ -226,8 +226,8 @@ class Fetch_docstrings:
         self.uf_name_latex = replace(self.uf_name_latex, '.', '\-.')
         self.uf_name_latex = replace(self.uf_name_latex, '\_', '\-\_')
 
-        # Write out the title.
-        self.file.write("\subsection{%s}\n\n" % self.uf_name_latex)
+        # Write out the title (with label).
+        self.file.write("\subsection{%s} \label{uf: %s}\n\n" % (self.uf_name_latex, self.uf_name))
 
 
     def indexing(self, index, bold=False):
