@@ -722,6 +722,8 @@ FUNCTION {phdthesis}
   school "school" output.check
   address output
   new.block
+  format.doi output
+  new.block
   note output
   fin.entry
 }
