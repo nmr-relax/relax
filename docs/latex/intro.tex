@@ -6,8 +6,8 @@
 The program relax is designed for the study of molecular dynamics through the analysis of experimental NMR data. Organic molecules, proteins, RNA, DNA, sugars, and other biomolecules are all supported. It was originally written for the model-free analysis of protein dynamics, though its scope has been significantly expanded.  It is a community driven project created by NMR spectroscopists for NMR spectroscopists.  It supports many analysis types including:
 
 \begin{description}
-\item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data.
-\item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the Rx NMR relaxation rates.
+\item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data
+\item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the R$_x$ NMR relaxation rates.
 \item[NOE] - the calculation of the steady-state NOE NMR relaxation data.
 \item[Data consistency] - the consistency testing of multiple field NMR relaxation data.
 \item[RSDM] - Reduced Spectral Density Mapping.
@@ -46,15 +46,16 @@ Other literature related to the improved model-free analysis used within relax i
 The following relaxation data analysis techniques are currently supported by relax:
 
 \begin{itemize}
-\item Model-free analysis \citep{LipariSzabo82a, LipariSzabo82b, Clore90a}.
+\item Model-free analysis (\citet{LipariSzabo82a, LipariSzabo82b, Clore90a} and the specific implementation of \citet{dAuvergneGooley03,dAuvergneGooley06,dAuvergneGooley07,dAuvergneGooley08a,dAuvergneGooley08b}).
 \item Reduced spectral density mapping \citep{Farrow95, Lefevre96}\index{reduced spectral density mapping}.
+\item Consistency testing -- the validation of multiple field NMR relaxation data \citep{MorinGagne09}.
 \item Exponential curve fitting (to find the $\Rone$ and $\Rtwo$ relaxation rates)\index{exponential curve fitting}.
 \item Steady-state NOE calculation\index{NOE}.
-\item Determination of absolute stereochemistry of flexible molecules using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD (see \citet{Sun11}).
+\item Determination of absolute stereochemistry of flexible molecules via the N-state model using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD \citep{Sun11}.
 \item The N-state model for investigating domain motions.
 \item The frame order theory.
-\item Conformational analysis of paramagnetically tagged molecules (see \citet{Erdelyi11}).
-\item Analysis of RDCs and PCSs using ensemble of structures (the N-state model of dynamics).
+\item Conformational analysis of paramagnetically tagged molecules via the N-state model \citep{Erdelyi11}.
+\item Analysis and comparison of ensembles of structures using RDCs, PCSs, NOEs, etc. (the N-state model of dynamics).
 \end{itemize}
 
 
