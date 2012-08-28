@@ -274,7 +274,7 @@ FUNCTION {format.doi}
 {
   doi empty$
     { "" }
-    { "(\href{http://dx.doi.org/" doi * "}{DOI: " * doi * "})" * }
+    { "(\href{http://dx.doi.org/" doi * "}{" * doi * "})" * }
   if$
 }
 
