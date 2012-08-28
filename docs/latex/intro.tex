@@ -299,7 +299,7 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 % The data pipe.
 %~~~~~~~~~~~~~~~
 
-\subsection{The data pipe}
+\subsection{The data pipe} \label{sect: the data pipe}
 \index{data pipe|textbf}
 
 Within relax all user functions operate on data stored within the current data pipe.  This pipe stores data is input, processed, or output as user functions are called.  There are different types of data pipe for different analyses, e.g. a reduced spectral density mapping pipe, a model-free pipe, an exponential curve-fitting pipe, etc.  Multiple data pipes can be created within relax and various operations performed in sequence on these pipes.  This is useful for operations such as model selection whereby the function \texttt{`model\_selection'} can operate on a number of pipes corresponding to different models and then assign the results to a newly created pipe.  When running relax you choose which pipe you are currently in by using the \texttt{`pipe.switch'} user function to jump between pipes. 
@@ -481,7 +481,7 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 % Spin viewer screenshot
 \begin{figure}
 \centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/spin_viewer.eps.gz}}
-\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.}\label{fig: screenshot: spin viewer}
+\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.  The window is accessible via the `View$\to$Spin view' menu entry, typing `Ctrl-T', the spin viewer button in the toolbar, or the `spin editor' button within the auto-analysis tabs.}\label{fig: screenshot: spin viewer}
 \end{figure}
 
 % Results viewer screenshot
@@ -492,7 +492,7 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 
 % Pipe editor screenshot
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 619 410]{graphics/screenshots/pipe_editor.eps.gz}}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 769 488]{graphics/screenshots/pipe_editor.eps.gz}}
 \caption[Pipe editor window screenshot]{Screenshot of the relax GUI interface -- the pipe editor window.  One analysis may consist of one or more data pipes.  And each analysis has its own unique set of data pipes.  This editor allows for the easy manipulation of data pipes for advanced users.}\label{fig: screenshot: pipe editor}
 \end{figure}
 
