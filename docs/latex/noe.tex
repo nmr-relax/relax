@@ -211,6 +211,12 @@ Num  Name  Value                         Error
 % Viewing the results.
 %%%%%%%%%%%%%%%%%%%%%%
 
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
+\caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
+\end{figure}
+
+
 \section{Viewing the results}
 
 Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
@@ -234,12 +240,6 @@ grace.view(file=`noe.agr')
 \end{exampleenv}
 
 An example of the output after modifying the axes is shown in figure~\ref{fig: NOE plot}.
-
-\begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
-\caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
-\end{figure}
-
 
 
 % GUI.
