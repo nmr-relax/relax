@@ -19,6 +19,129 @@ Relaxation curve-fitting involves a number of steps including the loading of dat
 
 
 
+% From spectra to peak intensities.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{From spectra to peak intensities}
+
+The following subsections simply contain advice on how to go from the recorded FIDs to the peak lists ready to be input into relax.  This need not be followed -- it is simply a set of recommendations for obtaining the highest quality relaxation rates.
+
+
+% Temperature control and calibration.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Temperature control and calibration}
+
+\includegraphics[bb=0 0 18 18]{/data/relax/relax-trunk/graphics/oxygen_icons/128x128/status/weather-clear.eps.gz}
+
+Before starting with the spectral processing, it should be noted that proper temperature control and calibration are essential for relaxation data.  Small temperature changes can have an effect on the viscosity and hence global tumbling of the molecule being studied and, as the molecular diffusion tensor is the major contributor to relaxation, any non-consistent data will likely lead to artificial motions appearing in subsequent model-free analyses.
+
+Per-experiment temperature calibration is essential and the technique used will need to be specified for BMRB data deposition.  Note that the standard MeOH/ethylene glycol calibration of a spectrometer is of no use when you are running experiments which pump in large amounts of power into the probe head!  Although the R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol spectrometer calibration, the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.
+
+Explicit temperature control techniques are also essential for relaxation data collection.  Again the technique used will be asked for by relax for BMRB data deposition.  A number of factors can cause significant temperature fluctuations between individual relaxation experiments.  This includes the daily temperature cycle of the room housing the spectrometer, different amounts of power for the individual experiments, etc.  The best methods for eliminating such problems are single scan interleaving and temperature compensation block.  Single scan interleaving is the most powerful technique for averaging the temperature fluctuations not only across different experiments, but also across the entire measurement time.  The application of off-resonance temperature compensation blocks at the start of the experiment is useful for the R2 and will normalise the temperature between the individual experiments, but single scan or single fid interleaving is nevertheless required for normalising the temperature across the entire measurement.
+
+
+% Spectral processing.
+%~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Spectral processing}
+
+For the best measurement of peak heights across the myriad of NMR spectral analysis softwares, it is recommend to zero fill a lot -- 8k to 16k would give the best results.  This does not increase the information content of the spectrum or decrease the errors, it simply interpolates.  Even if the NMR spectral software performs 3-point quadratic interpolation between the highest points to determine the peak height, the additional free interpolation will make the estimation more accurate.
+
+Additionally, care must be taken to properly scale the first point as this can cause a baseline roll which will affect peak heights.  A very useful description comes directly from the \href{http://spin.niddk.nih.gov/NMRPipe/doc1/}{NMRPipe manual}:
+
+\begin{quotation}
+Depending on the delay, the first point of the FID should be adjusted before Fourier Transform.  The first point scaling factor is selected by the window function argument ``-c''.
+
+If the required first order phase P1 for the given dimension is 0.0, the first point scaling factor should be 0.5.  This is because the discrete Fourier transform does the equivalent of counting the point at t=0 twice.  If the first point is not scaled properly in this case, ridge-line baseline offsets in the spectrum will result.
+
+In all other cases (P1 is not zero), this scale factor should be 1.0. This is because the first point of the FID no longer corresponds to t=0, and so it shouldn't be scaled. If the scale factor is not set correctly, it will introduce a baseline distortion which is either zero-order or sinusoidal, depending on what first-order phase is required. When possible, it is best to set up experiments with either exactly 0, 1/2, or 1-point delay.  There are several reasons:
+
+\begin{itemize}
+\item Phase correction values can be determined easily.
+\item If the delay is not a multiple of 1/2 point, the phase of folded peaks will be distorted.
+\item The Hilbert transform (HT) is used, sometimes automatically, to reconstruct previously deleted imaginary data for interactive rephasing or inverse processing. But, the HT can only reconstruct imaginary data perfectly if the phase is a multiple of 1/2 point.
+\item Data with P1 = 360 have the first point t=0 missing (i.e. 1 point delay). Since the first point of the FID corresponds to the sum of points in the corresponding spectrum, this missing first point can be ``restored'' by adding a constant to the phased spectrum.  This can be done conveniently by automated zero-order baseline correction, as shown in table~\ref{table: NMRPipe -c}.
+
+\begin{table}
+\begin{center}
+\caption{Summary, First Point Scaling and Phase Correction}
+\begin{tabular}{llll}
+\toprule
+Delay & P1 & FID & Spectrum\\
+\midrule
+0   point &   0 & Scale -c 0.5 \\
+1/2 point & 180 & Scale -c 1.0 & Folded peaks have opposite sign \\
+1   point & 360 & Scale -c 1.0 & Use ``POLY -auto -ord 0'' \\
+\bottomrule
+\label{table: NMRPipe -c}
+\end{tabular}
+\end{center}
+\end{table}
+
+\end{itemize}
+\end{quotation}
+
+
+Here is an example NMRPipe script designed for optimal relaxation rate extraction:
+
+\begin{exampleenv}
+\#!/bin/csh \\
+ \\
+setenv FILEROOT \$1 \\
+set PHASE=81.4 \\
+ \\
+echo "\textbackslash n\# Fourier Transform (nmrPipe fid/*.fid to ft/*.dat)" \\
+echo "\# t2 phase is set to \$PHASE" \\
+echo "\# t1 phase is set to 0.0\textbackslash n" \\
+ \\
+nmrPipe -in fid/\$FILEROOT.fid \ \\
+| nmrPipe -fn SOL \ \\
+| nmrPipe -fn GM -g1 15 -g2 20 -c 0.5 \ \\
+| nmrPipe -fn ZF -size 8192 \ \\
+| nmrPipe -fn FT -auto \ \\
+| nmrPipe -fn PS -p0 \$PHASE -p1 0.0 -di -verb \ \\
+| nmrPipe -fn TP \ \\
+| nmrPipe -fn PS -rs 2.5 \ \\
+| nmrPipe -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5 \ \\
+| nmrPipe -fn ZF -size 8192 \ \\
+| nmrPipe -fn FT -auto \ \\
+| nmrPipe -fn PS -p0 0.0 -p1 0.0 -di -verb \ \\
+| nmrPipe -fn REV \ \\
+| nmrPipe -fn TP \ \\
+| nmrPipe -fn POLY -auto \ \\
+| nmrPipe -fn EXT -left -sw \ \\
+| nmrPipe -out ft/\$FILEROOT.dat -ov \\
+ \\
+echo "\# Done\textbackslash n"
+\end{exampleenv}
+
+
+% Measuring peak intensities.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Measuring peak intensities}
+
+For the measurement of peak intensities, again care must be taken.  A read of the paper:
+
+\begin{itemize}
+\item \bibentry{Viles01}
+\end{itemize}
+
+is highly recommended.  Despite the recommendations in the discussion of this paper, a different methodology using peak heights can be used to solve the same problems.  This will be discussed in a paper which is currently in preparation from the Gooley group.  The steps involved are:
+
+\begin{itemize}
+\item For the first spectrum in the time series, shift the peak list to the tops of the peaks (for example using `pc' in Sparky on subsets of peaks).
+\item Copy this \nth{1} spectrum list onto all spectra, shifting the peaks to the top as in the previous step.
+\item When the peak disappears into the noise, leave it at its current position and do not type `pc' or equivalent.  This will add weight to the first point in the subsequent step.
+\item Once all spectra are shifted, calculate an average peak list.
+\item Copy this average peak list onto fresh copies of all spectra.
+\item Measure peak heights using this averaged peak list.
+\end{itemize}
+
+This will produce the most accurate peak intensity measurements until better, more robust peak shape integration comes along.  This is a special technique which is designed to minimise the white-noise bias talked about in the \citet{Viles01} paper.  As the noise often decreases with the decrease in total spectral power, using the tops of the peaks means that you are actually measuring the real peak height plus positive noise in all cases.  This non-constant additional positive noise contribution can result in a double exponential in the measured data.  The technique above eliminates this as you then measure close to real peak height with the addition of white noise centred at zero -- it is both negative and positive to equal amounts -- rather than the peak high with noise contribution strongly biased towards the positive.  Where the peaks disappear, you then are measuring the pure baseplane noise.  This is fine as these white-noise data points centred at zero will help in the subsequent exponential fit in relax. 
+
+
 % The sample script.
 %%%%%%%%%%%%%%%%%%%%
 
