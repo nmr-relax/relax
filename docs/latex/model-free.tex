@@ -118,6 +118,7 @@ The relaxation equations are themselves dependent on the calculation of the spec
 
 \noindent where $S^2_f$ and $\tau_f$ are the amplitude and timescale of the faster of the two motions whereas $S^2_s$ and $\tau_s$ are those of the slower motion.  $S^2_f$ and $S^2_s$ are related by the formula $S^2 = S^2_f \cdot S^2_s$.
 
+If these forms of the model-free spectral density functions are unfamiliar, that is because these are the numerically stabilised forms presented in \citet{dAuvergneGooley08a}.  The original model-free spectral density functions presented in \inlinecite{LipariSzabo82a} and \inlinecite{Clore90a} are not the most numerically stable form of these equations.  An important problem encountered in optimisation is round-off error in which machine precision influences the result of mathematical operations.  The double reciprocal $\tau^{-1} = \tau_m^{-1} + \tau_e^{-1}$ used in the equations are operations which are particularly susceptible to round-off error, especially when $\tau_e \ll \tau_m$.  By incorporating these reciprocals into the model-free spectral density functions and then simplifying the equations this source of round-off error can be eliminated, giving relax an edge over other model-free optimisation softwares.
 
 
 % Brownian rotational diffusion.
