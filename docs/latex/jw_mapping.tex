@@ -11,7 +11,7 @@
 
 The reduced spectral density mapping analysis is often performed when the system under study is not suitable for model-free analysis, or as a last resort if a model-free analysis fails.  The aim is to convert the relaxation data into three $J(\omega)$ values for the given field strength.  Interpretation of this data, although slightly less convoluted than the relaxation data, is still plagued by problems related to non-spherical diffusion and much care must be taken when making conclusions.  A full understanding of the model-free analysis and the effect of diffusion tensor anisotropy and rhombicity allows for better interpretation of the raw numbers.
 
-To understand how reduced spectral density mapping is implemented in relax, the sample script will be worked through.  This analysis type is not implemented in the GUI yet, though it shouldn't be too hard if anyone would like to contribute this and have a reference added to Chapter~\ref{ch: cite}, the citations chapter.
+To understand how reduced spectral density mapping is implemented in relax, the sample script will be worked through.  This analysis type is not implemented in the GUI yet, though it shouldn't be too hard if anyone would like to contribute this and have a reference added to Chapter~\ref{ch: citations}, the citations chapter.
 
 
 % The sample script.
@@ -89,7 +89,7 @@ The steps for setting up relax and the data model concept are described in full 
 pipe.create(pipe\_name=`my\_protein', pipe\_type=`jw')
 \end{exampleenv}
 
-Then, in this example, the $^{15}$N spins are created from one of the NOE relaxation data files (Chapter~\ref{}):
+Then, in this example, the $^{15}$N spins are created from one of the NOE relaxation data files (Chapter~\ref{ch: NOE}):
 
 \begin{exampleenv}
 sequence.read(file=`noe.600.out', res\_num\_col=1, res\_name\_col=2) \\
