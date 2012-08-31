@@ -1103,9 +1103,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         cdp.spectrum_ids = []
         if ncproc != None:
             cdp.ncproc = {}
-    if spectrum_id in cdp.spectrum_ids:
-        raise RelaxError("The spectrum identification string '%s' already exists." % spectrum_id)
-    else:
+    if not spectrum_id in cdp.spectrum_ids:
         cdp.spectrum_ids.append(spectrum_id)
         if ncproc != None:
             cdp.ncproc[spectrum_id] = ncproc
