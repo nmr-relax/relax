@@ -860,11 +860,12 @@ def intensity_sparky(file_data=None, int_col=None):
         x_assign, h_assign = split('-', line[0])
 
         # The proton info.
-        h_name = split('([A-Z]+)', h_assign)[-2]
+        h_row = split('([A-Z]+)', h_assign)
+        h_name = h_row[-2] + h_row[-1]
 
         # The heteronucleus info.
         x_row = split('([A-Z]+)', x_assign)
-        x_name = x_row[-2]
+        x_name = x_row[-2] + x_row[-1]
 
         # The residue number.
         try:
