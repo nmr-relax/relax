@@ -141,6 +141,9 @@ is highly recommended.  Despite the recommendations in the discussion of this pa
 
 This will produce the most accurate peak intensity measurements until better, more robust peak shape integration comes along.  This is a special technique which is designed to minimise the white-noise bias talked about in the \citet{Viles01} paper.  As the noise often decreases with the decrease in total spectral power, using the tops of the peaks means that you are actually measuring the real peak height plus positive noise in all cases.  This non-constant additional positive noise contribution can result in a double exponential in the measured data.  The technique above eliminates this as you then measure close to real peak height with the addition of white noise centred at zero -- it is both negative and positive to equal amounts -- rather than the peak high with noise contribution strongly biased towards the positive.  Where the peaks disappear, you then are measuring the pure baseplane noise.  This is fine as these white-noise data points centred at zero will help in the subsequent exponential fit in relax. 
 
+If using Sparky then, to be sure that the peak heights are properly updated, for each spectrum type `pa' to select all peaks, `ph' to update all selected peak heights, `lt' to show the spectrum peaks window, make sure `data height' is selected in the options, and then save the peak list.
+
+
 
 % The sample script.
 %%%%%%%%%%%%%%%%%%%%
