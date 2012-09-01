@@ -80,6 +80,9 @@ class Noe(GuiTestCase):
         # Name the spins.
         self._execute_uf(uf_name='spin.name', name="N")
 
+        # Create a Trp indole N spin.
+        self._execute_uf(uf_name='spin.create', res_num=40, spin_name="NE1")
+
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
         interpreter.flush()
 
@@ -90,6 +93,7 @@ class Noe(GuiTestCase):
             status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
         ]
         errors = [3600, 3000]
+        errors_5 = [122000, 8500]
         types = ['ref', 'sat']
 
         # Loop over the 2 spectra.
@@ -103,6 +107,12 @@ class Noe(GuiTestCase):
             page.uf_args['spectrum_id'].SetValue(str_to_gui(ids[i]))
             page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
+            # Apply to load the backbone NH, then set up for the Trp indoles.
+            analysis.wizard._apply(None)
+            interpreter.flush()
+            page.uf_args['heteronuc'].SetValue(str_to_gui('NE1'))
+            page.uf_args['proton'].SetValue(str_to_gui('HE1'))
+
             # Move down 2 pages.
             analysis.wizard._go_next(None)
             analysis.wizard._go_next(None)
@@ -110,6 +120,12 @@ class Noe(GuiTestCase):
             # Set the errors.
             page = analysis.wizard.get_page(analysis.page_indices['rmsd'])
             page.uf_args['error'].SetValue(int_to_gui(errors[i]))
+
+            # Apply, then set the individual spin errors.
+            analysis.wizard._apply(None)
+            interpreter.flush()
+            page.uf_args['error'].SetValue(int_to_gui(errors_5[i]))
+            page.uf_args['spin_id'].SetValue(str_to_gui(':5'))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
@@ -138,11 +154,11 @@ class Noe(GuiTestCase):
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # The real data.
-        res_nums = [4, 5, 6]
-        sat = [5050.0, 51643.0, 53663.0]
-        ref = [148614.0, 166842.0, 128690.0]
-        noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
-        noe_err = [0.02020329903276632, 0.019181416098790607, 0.026067523940084526]
+        res_nums = [4, 5, 6, 40, 40, 55]
+        sat = [5050.0, 51643.0, 53663.0, -65111.0, -181131.0, -105322.0]
+        ref = [148614.0, 166842.0, 128690.0, 99566.0, 270047.0, 130959.0]
+        noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706, -0.6539481349054899, -0.6707387973204665, -0.8042364404126482]
+        noe_err = [0.02020329903276632, 0.2320024671657343, 0.026067523940084526, 0.038300618865378507, 0.014260663438353431, 0.03183614777183591]
 
         # Check the data pipe.
         self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)
