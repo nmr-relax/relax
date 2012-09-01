@@ -211,22 +211,23 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 y_err = [y_err]
 
             # A new spin type (one data set per spin type).
-            if not data_list and not data_dict and spin.name not in spin_names:
-                # Append a new set structure.
-                data[0].append([])
+            if not data_list and not data_dict:
+                if spin.name not in spin_names:
+                    # Append a new set structure.
+                    data[0].append([])
 
-                # Append the label.
-                set_labels.append("%s spins. " % spin.name + set_label)
+                    # Append the label.
+                    set_labels.append("%s spins. " % spin.name + set_label)
 
-                # Add the spin name to the list.
-                spin_names.append(spin.name)
+                    # Add the spin name to the list.
+                    spin_names.append(spin.name)
 
-                # The set index.
-                index = i * len(spin_names) + spin_names.index(spin.name)
+                    # The set index.
+                    index = i * len(spin_names) + spin_names.index(spin.name)
 
-            # Existing spin type, so change the index to match the correct data category (fix for bug #20120, https://gna.org/bugs/?20120).
-            else:
-                index = spin_names.index(spin.name)
+                # Existing spin type, so change the index to match the correct data category (fix for bug #20120, https://gna.org/bugs/?20120).
+                else:
+                    index = spin_names.index(spin.name)
 
             # Loop over the points.
             for j in range(len(x_val)):
