@@ -224,6 +224,10 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 # The set index.
                 index = i * len(spin_names) + spin_names.index(spin.name)
 
+            # Existing spin type, so change the index to match the correct data category (fix for bug #20120, https://gna.org/bugs/?20120).
+            else:
+                index = spin_names.index(spin.name)
+
             # Loop over the points.
             for j in range(len(x_val)):
                 # Initialise and alias point structure.
