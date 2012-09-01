@@ -127,7 +127,6 @@ class Noe(SystemTestCase):
         # Check the Grace file.
         file = open(ds.tmpfile)
         lines = file.readlines()
-        print lines
         file.close()
         for i in range(len(lines)):
             self.assertEqual(data[i], lines[i])
