@@ -28,13 +28,14 @@
 from math import sqrt
 from re import split
 import string
+import sys
 from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
-from relax_io import extract_data, read_spin_data, strip
+from relax_io import extract_data, read_spin_data, strip, write_data
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -1002,7 +1003,7 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
     return data
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
+def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -1037,6 +1038,8 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
+    @keyword verbose:       A flag which if True will cause all relaxation data loaded to be printed out.
+    @type verbose:          bool
     """
 
     # Test if the current data pipe exists.
@@ -1110,6 +1113,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
+    data = []
     data_flag = False
     for i in xrange(len(intensity_data)):
         # Extract the data.
@@ -1144,6 +1148,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Switch the flag.
         data_flag = True
 
+        # Append the data for printing out.
+        data.append([spin_id, repr(intensity)])
+
     # No data.
     if not data_flag:
         # Delete all the data.
@@ -1151,6 +1158,12 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Raise the error.
         raise RelaxError("No data could be loaded from the peak list")
+
+    # Print out.
+    if verbose:
+        print("\nThe following intensities have been loaded into the relax data store:\n")
+        write_data(out=sys.stdout, headings=["Spin_ID", "Intensity"], data=data)
+
 
 
 def replicated(spectrum_ids=None):
