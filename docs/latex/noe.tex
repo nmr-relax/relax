@@ -47,20 +47,30 @@ This sample script will be used as the template for the next sections describing
 pipe.create(`NOE', `noe') \\
  \\
 \# Load the sequence from a PDB file. \\
-structure.read\_pdb(name, `Ap4Aase\_new\_3.pdb') \\
+structure.read\_pdb(`Ap4Aase\_new\_3.pdb') \\
 structure.load\_spins(spin\_id=`@N') \\
+structure.load\_spins(spin\_id=`@NE1') \\
  \\
 \# Load the reference spectrum and saturated spectrum peak intensities. \\
-noe.read(file=`ref.list', spectrum\_type=`ref') \\
-noe.read(file=`sat.list', spectrum\_type=`sat') \\
+spectrum.read\_intensities(file=`ref.list', spectrum\_id=`ref\_ave', heteronuc=`N', proton=`HN') \\
+spectrum.read\_intensities(file=`ref.list', spectrum\_id=`ref\_ave', heteronuc=`NE1', proton=`HE1') \\
+spectrum.read\_intensities(file=`sat.list', spectrum\_id=`sat\_ave', heteronuc=`N', proton=`HN') \\
+spectrum.read\_intensities(file=`sat.list', spectrum\_id=`sat\_ave', heteronuc=`NE1', proton=`HE1') \\
+ \\
+\# Set the spectrum types. \\
+noe.spectrum\_type(`ref', `ref\_ave') \\
+noe.spectrum\_type(`sat', `sat\_ave') \\
  \\
 \# Set the errors. \\
-noe.error(error=3600, spectrum\_type=`ref') \\
-noe.error(error=3000, spectrum\_type=`sat') \\
+spectrum.baseplane\_rmsd(error=3600, spectrum\_id=`ref\_ave') \\
+spectrum.baseplane\_rmsd(error=3000, spectrum\_id=`sat\_ave') \\
  \\
 \# Individual residue errors. \\
-noe.error(error=122000, spectrum\_type=`ref', res\_num=114) \\
-noe.error(error=8500, spectrum\_type=`sat', res\_num=114) \\
+spectrum.baseplane\_rmsd(error=122000, spectrum\_type=`ref', res\_num=114) \\
+spectrum.baseplane\_rmsd(error=8500, spectrum\_type=`sat', res\_num=114) \\
+ \\
+\# Peak intensity error analysis. \\
+spectrum.error\_analysis() \\
  \\
 \# Deselect unresolved residues. \\
 deselect.read(file=`unresolved', res\_num\_col=1, spin\_name\_col=2) \\
@@ -109,14 +119,17 @@ This user function will then create a NOE calculation specific data pipe labelle
 
 The first thing which need to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above this is generated from a PDB file, however a plain text file with the sequence information can be used instead (see the \texttt{sequence.read} user function on page~\pageref{uf: sequence.read} for more details).  In the case of the sample script, the command
 
-\example{structure.read\_pdb(name, `Ap4Aase\_new\_3.pdb')}
+\example{structure.read\_pdb(`Ap4Aase\_new\_3.pdb')}
 \index{PDB}
 
 will load the PDB file `Ap4Aase\_new\_3.pdb' into relax.  Then
 
-\example{structure.load\_spins(spin\_id=`@N')}
+\begin{exampleenv}
+structure.load\_spins(spin\_id=`@N') \\
+structure.load\_spins(spin\_id=`@NE1')
+\end{exampleenv}
 
-will generate the molecule, residue, and spin sequence for the current data pipe.  In this situation there will be a single spin system per residue generated corresponding to the backbone amide nitrogens.  Although the PDB coordinates have been loaded into the program, the structural information serves no purpose when calculating NOE values.
+will generate the molecule, residue, and spin sequence for the current data pipe.  In this situation there will be a single spin system per residue generated corresponding to the backbone amide nitrogens as well as $^{15}$N spins set up for the tryptophan indole NH.  Although the 3D coordinates have been loaded into the program from the PDB, the structural information serves no purpose when calculating NOE values.
 
 
 % Loading the data.
@@ -124,14 +137,18 @@ will generate the molecule, residue, and spin sequence for the current data pipe
 
 \subsection{Loading the data}
 
-The two commands
+The commands
 
 \begin{exampleenv}
-noe.read(file=`ref.list', spectrum\_type=`ref') \\
-noe.read(file=`sat.list', spectrum\_type=`sat')
+spectrum.read\_intensities(file=`ref.list', spectrum\_id=`ref\_ave', heteronuc=`N', proton=`HN') \\
+spectrum.read\_intensities(file=`ref.list', spectrum\_id=`ref\_ave', heteronuc=`NE1', proton=`HE1') \\
+spectrum.read\_intensities(file=`sat.list', spectrum\_id=`sat\_ave', heteronuc=`N', proton=`HN') \\
+spectrum.read\_intensities(file=`sat.list', spectrum\_id=`sat\_ave', heteronuc=`NE1', proton=`HE1')
 \end{exampleenv}
 
-will load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  The keyword argument \texttt{format} has not been specified hence the default format of a Sparky\index{software!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{software!XEasy} was used to analyse the spectra the argument \texttt{format=`xeasy'} is necessary.  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume.  For example:
+will load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  relax will automatically determine the format of the peak list.  Currently only Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView} and a generic columnar formatted text file are supported.
+
+In this case, relax will determine from the file contents that these are Sparky\index{software!Sparky} peak lists (saved after typing \texttt{`lt'}).  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume.  For example:
 
 {\footnotesize \begin{verbatim}
      Assignment         w1         w2   Data Height
@@ -146,6 +163,8 @@ will load the peak heights\index{peak!height} of the reference and saturated NOE
        GLY12N-HN    110.525      9.028        90144
 \end{verbatim}}
 
+For subsequent usage of the data in relax, assuming a 3D structure exists, it is currently advisable to use the same residue and atom numbering as found in the PDB file.
+
 If you have any other format you would like read by relax please send an email to the relax development mailing list\index{mailing list!relax-devel} detailing the software used, the format of the file (specifically where the residue number and peak intensity\index{peak!intensity} are located), and possibly attaching an example of the file itself.
 
 
@@ -158,17 +177,20 @@ If you have any other format you would like read by relax please send an email t
 In this example the errors where measured from the base plain noise.  The Sparky\index{software!Sparky} RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
 
 \begin{exampleenv}
-noe.error(error=3600, spectrum\_type=`ref') \\
-noe.error(error=3000, spectrum\_type=`sat')
+spectrum.baseplane\_rmsd(error=3600, spectrum\_id=`ref\_ave') \\
+spectrum.baseplane\_rmsd(error=3000, spectrum\_id=`sat\_ave')
 \end{exampleenv}
 
 For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.  The higher errors for this residue are specified by the commands
 
 \begin{exampleenv}
-noe.error(error=122000, spectrum\_type=`ref', res\_num=114) \\
-noe.error(error=8500, spectrum\_type=`sat', res\_num=114)
+spectrum.baseplane\_rmsd(error=122000, spectrum\_type=`ref', res\_num=114) \\
+spectrum.baseplane\_rmsd(error=8500, spectrum\_type=`sat', res\_num=114)
 \end{exampleenv}
 
+There are many other ways of setting the errors, for example via spectral duplication, triplication, etc.  See the documentation for the \texttt{spectrum.error\_analysis} user function on page~\pageref{uf: spectrum.error_analysis} for all possible options.  This user function needs to be executed at this stage to correctly set up the errors for all spin systems:
+
+\example{spectrum.error\_analysis()}
 
 
 % Unresolved spins.
@@ -209,22 +231,22 @@ NOE = \frac{I_{sat}}{I_{ref}},
 
 will create a file called \texttt{noe.out} with the NOE values and errors.  The force flag will cause any file with the same name to be overwritten.  An example of the format of \texttt{noe.out} is
 
-{\footnotesize \begin{verbatim}
-Num  Name  Value                         Error
-1    GLY   None                          None
-2    PRO   None                          None
-3    LEU   None                          None
-4    GLY   0.12479588727508535           0.020551827436105764
-5    SER   0.42240815792914105           0.02016346825976852
-6    MET   0.45281703194372114           0.026272719841642134
-7    ASP   0.60727570079478255           0.032369427242382849
-8    SER   0.63871921623680161           0.024695665815261791
-9    PRO   None                          None
-10   PRO   None                          None
-11   GLU   None                          None
-12   GLY   0.92927160307645906           0.059569089743604184
-13   TYR   0.88832516377296256           0.044119641308479306
-14   ARG   0.84945042565860407           0.060533543601110441
+{\scriptsize \begin{verbatim}
+# mol_name            res_num    res_name    spin_num    spin_name    value                    error                   
+Ap4Aase_new_3_mol1    1          GLY         1           N            None                     None                    
+Ap4Aase_new_3_mol1    2          PRO         11          N            None                     None                    
+Ap4Aase_new_3_mol1    3          LEU         28          N            None                     None                    
+Ap4Aase_new_3_mol1    4          GLY         51          N            -0.038921946984531344    0.019031770246176943    
+Ap4Aase_new_3_mol1    5          SER         59          N            -0.312404225679127       0.018596937298386886    
+Ap4Aase_new_3_mol1    6          MET         71          N            -0.42850831873249773     0.02525856323041225     
+Ap4Aase_new_3_mol1    7          ASP         91          N            -0.5305492810313481      0.027990623144176396    
+Ap4Aase_new_3_mol1    8          SER         104         N            -0.5652842977581912      0.021706121467731133    
+Ap4Aase_new_3_mol1    9          PRO         116         N            None                     None                    
+Ap4Aase_new_3_mol1    10         PRO         133         N            None                     None                    
+Ap4Aase_new_3_mol1    11         GLU         150         N            None                     None                    
+Ap4Aase_new_3_mol1    12         GLY         167         N            -0.7036626368123614      0.04681370194503697     
+Ap4Aase_new_3_mol1    13         TYR         175         N            -0.747464566367261       0.03594640051809186     
+Ap4Aase_new_3_mol1    14         ARG         200         N            -0.7524129557634996      0.04957018638401278     
 \end{verbatim}}
 
 
