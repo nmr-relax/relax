@@ -474,6 +474,17 @@ class Wiz_window(wx.Dialog):
         self.Bind(wx.EVT_CLOSE, self._handler_close)
 
 
+    def _apply(self, event=None):
+        """Execute the current page's 'Apply' method.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the current page's apply() method.
+        self._pages[self._current_page]._apply()
+
+
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
 
