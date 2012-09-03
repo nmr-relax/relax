@@ -285,7 +285,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the atomic positions of the spins to be extracted from the loaded structures.  This is automatically performed by the structure.load_spins() user function, but if the sequence information is generated in other ways, this user function allows the structural information to be obtained.")
+uf.desc[-1].add_paragraph("This allows the atomic positions of the spins to be extracted from the loaded structures.  This is automatically performed by the structure.load_spins user function, but if the sequence information is generated in other ways, this user function allows the structural information to be obtained.")
 uf.desc[-1].add_paragraph("If averaging the atomic positions, then average position of all models will be loaded into the spin container.  Otherwise the positions from all models will be loaded separately.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
