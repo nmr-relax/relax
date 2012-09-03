@@ -5,22 +5,141 @@
 \index{consistency testing|textbf}
 
 
-In spin relaxation, datasets are often recorded at different magnetic fields. This is especially important when $R_2$ values are to be used since $\mu$s-ms motions contribute to $R_2$. This contribution being scaled quadratically with the strength of the magnetic field, recording at multiple magnetic fields helps extract it. Also, acquiring data at multiple magnetic fields allows overdetermination of the mathematical problems, e.g. in the model-free approach.
+% Introduction.
+%%%%%%%%%%%%%%%
 
-Recording at multiple magnetic fields is a good practice. However, it can cause artifacts if those different datasets are inconsistent. Inconsistencies can originate from, inter alia, the sample or the acquisition. Sample variations can be linked to changes in temperature, concentration, pH, etc. Water suppression is the main cause of acquisition variations as it affect relaxation parameters (especially NOE) of exposed and exchangeable moieties (e.g. the NH moiety).
+\section{Introduction}
 
-It is thus a good idea to assess consistency of datasets acquired at different magnetic fields. For this purpose, three tests are implemented in relax. They are all based on the same principle : calculate a field independant value and compare it from one field to another.
+In spin relaxation, datasets are often recorded at different magnetic fields.  This is especially important when $\Rtwo$ values are to be used since $\mu$s-ms motions contribute to $\Rtwo$.  This contribution being scaled quadratically with the strength of the magnetic field, recording at multiple magnetic fields helps extract it.  Also, acquiring data at multiple magnetic fields allows over-determination of the mathematical problems, e.g. in the model-free approach.
 
-The three tests are :
+Recording at multiple magnetic fields is a good practice.  However, it can cause artifacts if those different datasets are inconsistent.  Inconsistencies can originate from, inter alia, the sample or the acquisition.  Sample variations can be linked to changes in temperature, concentration, pH, etc.  Water suppression is the main cause of acquisition variations as it affect relaxation parameters (especially NOE) of exposed and exchangeable moieties (e.g. the NH moiety).
 
-$J(0)$ : The spectral density at the zero frequency calculated using the reduced spectral density approach.
+It is thus a good idea to assess consistency of datasets acquired at different magnetic fields.  For this purpose, three tests are implemented in relax.  They are all based on the same principle -- calculate a field independent value and compare it from one field to another.
 
-$F_\eta$ : A consistency function proposed by Fushman D. et al. (1998) JACS, 120: 10947-10952.
+The three tests are:
 
-$F_{R_2}$ : A consistency function proposed by Fushman D. et al. (1998) JACS, 120: 10947-10952.
+\begin{description}
+\item[$J(0)$]  The spectral density at the zero frequency calculated using the reduced spectral density approach.
+\item[$F_\eta$]  A consistency function proposed by \citet{Fushman98}.
+\item[$F_{R_2}$]  A consistency function proposed by \citet{Fushman98}.
+\end{description}
 
-Different methods exist to compare tests values calculated from one field to another. These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
+Different methods exist to compare tests values calculated from one field to another.  These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
+
+For more details on the implementation within relax, see:
+
+\begin{itemize}
+\item \bibentry{MorinGagne09}
+\end{itemize}
+
+Or for the origin of the tests themselves:
+
+\begin{itemize}
+\item \bibentry{Fushman99}
+\end{itemize}
 
 
+% Script UI.
+%%%%%%%%%%%%
+\section{Prompt/script UI mode}
 
-Until this chapter is completed written please look at the sample script \file{consistency\_tests.py}.
+The consistency testing analysis is only available via the prompt/script UI modes -- no GUI auto-analysis has yet been built.
+
+
+% The sample script.
+%~~~~~~~~~~~~~~~~~~~
+
+\subsection{The sample script}
+
+The following script can be found in the \directory{sample\_scripts} directory.
+
+\begin{exampleenv}
+"""Script for consistency testing. \\
+ \\
+Severe artifacts can be introduced if model-free analysis is performed from inconsistent multiple magnetic field datasets. The use of simple tests as validation tools for the consistency assessment can help avoid such problems in order to extract more reliable information from spin relaxation experiments. In particular, these tests are useful for detecting inconsistencies arising from R2 data. Since such inconsistencies can yield artifactual Rex parameters within model-free analysis, these tests should be use routinely prior to any analysis such as model-free calculations. \\
+ \\
+This script will allow one to calculate values for the three consistency tests J(0), F\_eta and F\_R2. Once this is done, qualitative analysis can be performed by comparing values obtained at different magnetic fields. Correlation plots and histograms are useful tools for such comparison, such as presented in Morin \& Gagne (2009a) J. Biomol. NMR, 45: 361-372. \\
+ \\
+ \\
+References \\
+========== \\
+ \\
+The description of the consistency testing approach: \\
+ \\
+    Morin \& Gagne (2009a) Simple tests for the validation of multiple field spin relaxation data. J. Biomol. NMR, 45: 361-372. http://dx.doi.org/10.1007/s10858-009-9381-4 \\
+ \\
+The origins of the equations used in the approach: \\
+ \\
+    J(0): \\
+        Farrow et al. (1995) Spectral density function mapping using 15N relaxation data exclusively. J. Biomol. NMR, 6: 153-162. http://dx.doi.org/10.1007/BF00211779 \\
+ \\
+    F\_eta: \\
+        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. http://dx.doi.org/10.1021/ja981686m \\
+ \\
+    F\_R2: \\
+        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. http://dx.doi.org/10.1021/ja981686m \\
+ \\
+A study where consistency tests were used: \\
+ \\
+    Morin \& Gagne (2009) NMR dynamics of PSE-4 beta-lactamase: An interplay of ps-ns order and us-ms motions in the active site. Biophys. J., 96: 4681-4691. http://dx.doi.org/10.1016/j.bpj.2009.02.068  \\
+""" \\
+ \\
+\# Create the run. \\
+name = `consistency' \\
+pipe.create(name, `ct') \\
+ \\
+\# Set up the 15N spins. \\
+sequence.read(`noe.600.out', res\_num\_col=1) \\
+spin.name(name=`N') \\
+spin.element(element=`N') \\
+spin.isotope(isotope=`15N', spin\_id=`@N') \\
+ \\
+\# Load the relaxation data. \\
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out',  res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out',  res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+ \\
+\# Generate the 1H spins for the magnetic dipole-dipole interaction. \\
+sequence.attach\_protons() \\
+ \\
+\# Define the magnetic dipole-dipole relaxation interaction. \\
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+ \\
+\# Define the chemical shift relaxation interaction. \\
+value.set(val=-172 * 1e-6, param=`csa') \\
+ \\
+\# Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor \\
+value.set(val=15.7, param=`orientation')
+ \\
+\# Set the approximate correlation time. \\
+value.set(val=13 * 1e-9, param=`tc') \\
+ \\
+\# Set the frequency. \\
+consistency\_tests.set\_frq(frq=600.0 * 1e6) \\
+ \\
+\# Consistency tests. \\
+calc() \\
+ \\
+\# Monte Carlo simulations. \\
+monte\_carlo.setup(number=500) \\
+monte\_carlo.create\_data() \\
+calc() \\
+monte\_carlo.error\_analysis() \\
+ \\
+\# Create grace files. \\
+grace.write(y\_data\_type=`j0', file=`j0.agr', force=True) \\
+grace.write(y\_data\_type=`f\_eta', file=`f\_eta.agr', force=True) \\
+grace.write(y\_data\_type=`f\_r2', file=`f\_r2.agr', force=True) \\
+ \\
+\# View the grace files. \\
+grace.view(file=`j0.agr') \\
+grace.view(file=`f\_eta.agr') \\
+grace.view(file=`f\_r2.agr') \\
+ \\
+\# Finish. \\
+results.write(file=`results', force=True) \\
+state.save(`save', force=True)
+\end{exampleenv}
+
+This is similar in spirit to the reduced spectral density mapping sample script, so please see Chapter~\ref{ch: J(w) mapping} on page~\pageref{ch: J(w) mapping} if you require a detailed description of the usage of this script.
