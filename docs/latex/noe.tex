@@ -337,50 +337,7 @@ You can also choose to change the `Results directory' where all of the automatic
 
 \subsection{Setting up the spin systems}
 
-Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The `Spin systems' GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like `0 spins loaded and selected'.  To fix this, click on the `Spin editor' button and you should then see the spin viewer window:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_blank.eps.gz}}
-\end{minipage}
-
-At this point, click on the `Load spins' button to launch the spin loading wizard.  A number of options will be presented to you: 
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_wizard1.eps.gz}}
-\end{minipage}
-
-As in the sample script, here the spins will be loaded from a PDB file.  The next series of screenshots will only demonstrate this option.  If you do not have a 3D structure file, then you will need to load the sequence data from a special text file.  See the \texttt{sequence.read} user function on page~\pageref{uf: sequence.read} for more details.  The wizard will present this user function to you if you choose `From a file containing sequence data'.  After selecting `From a new PDB structure file' and clicking on next, you will see:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_wizard2.eps.gz}}
-\end{minipage}
-
-Now select the PDB file you wish to use.  The other options in this screen allow you to handle NMR models and multiple molecules within a single PDB file.  These options are explained in the window.  Hovering the mouse over the options will give additional hints.  Now click on `Next' to bring up the spin loading page:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_wizard3.eps.gz}}
-\end{minipage}
-
-This is a bit more complicated.  In this example we are studying the backbone dynamics of $^{15}$N spins of a protein.  Therefore first set the spin ID string to `@N' (which can be selected from the pull down) and click on `Apply' to set up the backbone spins.  Do not click on `Next' yet.
-
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_wizard4.eps.gz}}
-\end{minipage}
-
-Now change the spin ID string to `@NE1' and then click on `Next'.  This will add spin containers for the tryptophan indole $^{15}$N spins.  Finally click on `Finish' to exit the wizard:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_wizard5.eps.gz}}
-\end{minipage}
-
-You should now see something like:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_full.eps.gz}}
-\end{minipage}
-
-The spin viewer window can now be closed.
+Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The `Spin systems' GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like `0 spins loaded and selected'.  To fix this, click on the `Spin editor' button and you should then see the spin viewer window.  The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for a sequence file.
 
 
 % Loading the data.
