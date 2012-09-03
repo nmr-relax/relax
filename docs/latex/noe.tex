@@ -337,7 +337,15 @@ You can also choose to change the `Results directory' where all of the automatic
 
 \subsection{Setting up the spin systems}
 
-Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The `Spin systems' GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like `0 spins loaded and selected'.  To fix this, click on the `Spin editor' button and you should then see the spin viewer window.  The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for a sequence file.
+Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The `Spin systems' GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like `0 spins loaded and selected'.  To fix this, click on the `Spin editor' button and you should then see the spin viewer window.  The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for a sequence file.  The spin viewer window can now be closed.
+
+
+% Unresolved spins.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Unresolved spins}
+
+Using the unresolved spins file as described in the prompt/script UI sections, the same spins can be deselected at this point.  See Section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins} for the details of how to deselect the spins in the GUI.
 
 
 % Loading the data.
@@ -395,30 +403,6 @@ The NOE analysis tab should now look like:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab2.eps.gz}}
-\end{minipage}
-
-
-% Unresolved spins.
-%~~~~~~~~~~~~~~~~~~
-
-\subsection{Unresolved spins}
-
-Using the unresolved spins file as described in the prompt/script UI sections, the same spins will be deselected here.  Click on the `User functions$\to$deselect$\to$read' menu item:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab3.eps.gz}}
-\end{minipage}
-
-Select the `unresolved' file and change the column numbers in the `Free format file settings' GUI element as follows: 
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/deselect.eps.gz}}
-\end{minipage}
-
-Alternatively the spin editor window can be reopened and the spins manually deselected by right clicking on them and selecting `Deselect'.  Returning to the spin editor window, you should now see certain spins coloured grey:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/spin_viewer_deselect.eps.gz}}
 \end{minipage}
 
 

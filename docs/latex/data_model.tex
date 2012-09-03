@@ -286,12 +286,14 @@ You will then see:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/blank.eps.gz}}
+\label{figure: spin viewer blank}
 \end{minipage}
 
 At this point, click on the `Load spins' button (or the `Load spins' menu entry from the right click pop up menu) to launch the spin loading wizard.  A number of options will be presented to you: 
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_start.eps.gz}}
+\label{figure: spin viewer wizard start}
 \end{minipage}
 
 As in the sample script, here the spins will be loaded from a PDB file.  The next series of screenshots will only demonstrate this option.  If you do not have a 3D structure file, then you will need to load the sequence data from a special text file.  See the \texttt{sequence.read} user function on page~\pageref{uf: sequence.read} for more details.  The wizard will present this user function to you if you choose `From a file containing sequence data'.  After selecting `From a new PDB structure file' and clicking on next, you will see:
@@ -317,6 +319,7 @@ Now change the spin ID string to `@NE1' and then click on `Next'.  This will add
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_end.eps.gz}}
+\label{figure: spin viewer end}
 \end{minipage}
 
 You should now see something like:
@@ -325,13 +328,20 @@ You should now see something like:
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/full.eps.gz}}
 \end{minipage}
 
-The spin viewer window can now be closed.
 
 
 % Sequence file.
 %~~~~~~~~~~~~~~~
 
 \subsection{Sequence file} \label{sect: GUI - sequence file}
+
+Starting from the empty spin viewer window on page~\pageref{figure: spin viewer blank}), click on the `Load spins' button.  You will then see the spin loading wizard (see page~\pageref{figure: spin viewer wizard start}).  Select the option for reading data from a sequence file.  You should then see:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_sequence.eps.gz}}
+\end{minipage}
+
+Change the `Free format file settings' as needed.  Click on `Next' to reach the wizard ending page (see~\pageref{figure: spin viewer end}).  Finally click on `Finish' to exit the wizard.
 
 
 % Manual construction.
@@ -340,6 +350,30 @@ The spin viewer window can now be closed.
 \subsection{Manual construction} \label{sect: GUI - manual construction}
 
 Just like in the prompt/script UI mode, the molecules, residues and spins can be manually added.  First add a molecule by right clicking on the `Spin system information' element and selecting the relevant entry in the popup menu.  Then right click on the newly created molecule container to add residues, and right click on residue containers to add spins.
+
+
+% Deselect spins.
+%~~~~~~~~~~~~~~~~
+
+\subsection{Deselect spins} \label{sect: GUI - deselect spins}
+
+To deselect spins (for example if they are unresolved, overlapping peaks), click on the `User functions$\to$deselect$\to$read' menu item from the main relax window or the spin viewer window:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab3.eps.gz}}
+\end{minipage}
+
+Select the file listing the unresolved spins and change the column numbers in the `Free format file settings' GUI element as needed: 
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/deselect.eps.gz}}
+\end{minipage}
+
+Alternatively the spin editor window can be reopened and the spins manually deselected by right clicking on them and selecting `Deselect'.  Returning to the spin editor window, you should now see certain spins coloured grey:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/deselect.eps.gz}}
+\end{minipage}
 
 
 
