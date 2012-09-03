@@ -105,11 +105,11 @@ state.save(`save', force=True)
 
 \subsection{Initialisation of the data pipe} \label{NOE initialisation}
 
-The data pipe is simply created by the command
+The start of this sample script is very similar to that of the relaxation curve-fitting calculation on page~\pageref{Rx initialisation}.  The command
 
 \example{pipe.create(`NOE', `noe')}
 
-This user function will then create a NOE calculation specific data pipe labelled \promptstring{NOE}.  The second argument sets the pipe type to that of the NOE calculation.  Setting the pipe type is important so that the program knows which user functions are compatible with the data pipe, for example the function \uf{minimise} (see page~\pageref{uf: minimise}) is meaningless in this sample script as the NOE values are directly calculated rather than optimised.
+initialises the data pipe labelled \promptstring{NOE}.  The data pipe type is set to the NOE calculation by the argument \promptstring{noe}.
 
 
 % Spin systems.
@@ -117,19 +117,17 @@ This user function will then create a NOE calculation specific data pipe labelle
 
 \subsection{Setting up the spin systems}
 
-The first thing which need to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above this is generated from a PDB file, however a plain text file with the sequence information can be used instead (see the \uf{sequence.read} user function on page~\pageref{uf: sequence.read} for more details).  In the case of the sample script, the command
+The backbone amide nitrogen sequence is extracted from a PDB\index{PDB} file using the same commands as the relaxation curve-fitting script (Chapter~\ref{ch: relax-fit}.  The command
 
 \example{structure.read\_pdb(`Ap4Aase\_new\_3.pdb')}
 \index{PDB}
 
-will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then
+will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then the following commands will generate both the backbone amide and tryptophan indole $^{15}$N spins
 
 \begin{exampleenv}
 structure.load\_spins(spin\_id=`@N') \\
 structure.load\_spins(spin\_id=`@NE1')
 \end{exampleenv}
-
-will generate the molecule, residue, and spin sequence for the current data pipe.  In this situation there will be a single spin system per residue generated corresponding to the backbone amide nitrogens as well as $^{15}$N spins set up for the tryptophan indole nitrogens.  Although the 3D coordinates have been loaded into the program from the PDB file, this structural information serves no purpose when calculating NOE values.
 
 
 % Loading the data.
