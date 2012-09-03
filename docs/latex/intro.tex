@@ -132,7 +132,7 @@ relax can be used through the following UIs:
 \begin{description}
 \item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.  See Figure~\ref{fig: relax prompt} for a screenshot.
 \item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.  See Figure~\ref{fig: relax script} for a screenshot.
-\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the \texttt{dauvergne\_protocol} module \citep{dAuvergneGooley08b}.  See Figure~\ref{fig: GUI screenshot - start} for a screenshot.
+\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the \module{dauvergne\_protocol} module \citep{dAuvergneGooley08b}.  See Figure~\ref{fig: GUI screenshot - start} for a screenshot.
 \end{description}
 
 
@@ -149,7 +149,7 @@ relax can be used through the following UIs:
 \subsection{The prompt}
 \index{prompt|textbf}
 
-The primary interface of relax is the prompt.  After typing \texttt{`relax'} within a terminal\index{terminal} you will be presented with
+The primary interface of relax is the prompt.  After typing \promptstring{relax} within a terminal\index{terminal} you will be presented with
 
 \example{relax>}
 
@@ -189,7 +189,7 @@ relax>
 \index{Python|textbf}
 relax has been designed such that knowledge about Python is not required to be able to fully use the program.  A few basics though will aid in understanding relax.
 
-A number of simple programming axioms includes that of strings\index{string}, integers\index{integer}, floating point numbers\index{floating point number}, and lists\index{list}.  A string is text and within Python (as well as relax) this is delimited by either single or double quotes.  An integer is a number with no decimal point whereas a float is a number with a decimal point.  A list in Python (called an array in other languages) is a list of anything separated by commas and delimited by square brackets, an example is [0, 1, 2, `a', 1.2143235].
+A number of simple programming axioms includes that of strings\index{string}, integers\index{integer}, floating point numbers\index{floating point number}, and lists\index{list}.  A string is text and within Python (as well as relax) this is delimited by either single or double quotes.  An integer is a number with no decimal point whereas a float is a number with a decimal point.  A list in Python (called an array in other languages) is a list of anything separated by commas and delimited by square brackets, an example is \prompt{[0, 1, 2, `a', 1.2143235]}.
 
 Probably the most important detail is that functions in Python require brackets around their arguments.  For example
 
@@ -205,7 +205,7 @@ The arguments to a function are simply a comma separated list within the bracket
 
 \example{relax> state.save(`save', force=True)}
 
-Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{keyword argument}\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \texttt{file} and the value you would like to supply is \texttt{`R1.out'}.  Various methods exist for supplying this argument.  Firstly you could simply type \texttt{`R1.out'} into the correct position in the argument list.  Secondly you can type \texttt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
+Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{keyword argument}\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \prompt{file} and the value you would like to supply is \promptstring{R1.out}.  Various methods exist for supplying this argument.  Firstly you could simply type \promptstring{R1.out} into the correct position in the argument list.  Secondly you can type \prompt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
 
 
 % Script screenshot
@@ -221,13 +221,13 @@ Two types of arguments exist in Python\index{Python|textbf} -- standard argument
 \subsection{User functions}
 \index{user functions|textbf}
 
-For standard data analysis a large number of specially tailored functions called `user functions' have been implemented.  These are accessible from the relax prompt by simply typing the name of the function.  An example is \texttt{`help()'}\index{help system}.  An alphabetical listing of all accessible user functions together with full descriptions is presented later in this manual.
+For standard data analysis a large number of specially tailored functions called ``user functions'' have been implemented.  These are accessible from the relax prompt by simply typing the name of the function.  An example is \uf{help()}\index{help system}.  An alphabetical listing of all accessible user functions together with full descriptions is presented later in this manual.
 
 A few special objects which are available within the prompt are not actually functions.  These objects do not require brackets at their end for them to function.  For example to exit relax type
 
 \example{relax> exit}
 
-Another special object is that of the function class\index{function class}.  This object is simply a container which holds a number of user functions.  You can access the user function within the class by typing the name of the class, then a dot \texttt{`.'}, followed by the name of the user function.  An example is the user function for reading relaxation data out of a file and loading the data into relax.  The function is called \texttt{`read'} and the class is called \texttt{`relax\_data'}.  To execute the function, type something like
+Another special object is that of the function class\index{function class}.  This object is simply a container which holds a number of user functions.  You can access the user function within the class by typing the name of the class, then a dot \promptstring{.}, followed by the name of the user function.  An example is the user function for reading relaxation data out of a file and loading the data into relax.  The function is called \promptstring{read} and the class is called \promptstring{relax\_data}.  To execute the function, type something like
 
 \example{relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4)}
 
@@ -249,7 +249,7 @@ In addition to functions if
 
 \example{help(object)}
 
-is typed the help for the python object is returned.  This system is similar to the help function built into the python interpreter, which has been renamed to \texttt{help\_python}, with the interactive component removed.  For the standard interactive python help system type
+is typed the help for the python object is returned.  This system is similar to the help function built into the python interpreter, which has been renamed to \prompt{help\_python}, with the interactive component removed.  For the standard interactive python help system type
 
 \example{help\_python()}
 
@@ -264,7 +264,7 @@ is typed the help for the python object is returned.  This system is similar to 
 
 Tab completion is implemented to prevent insanity as the function names can be quite long -- a deliberate feature to improve usability.  The behaviour of the tab completion is very similar to that of the bash prompt.
 
-Not only is tab completion useful for preventing RSI but it can also be used for listing all available functions.  To begin with if you hit the [TAB] key without typing any text all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example to list the user functions within the function class \texttt{`model\_free'} type
+Not only is tab completion useful for preventing RSI but it can also be used for listing all available functions.  To begin with if you hit the [TAB] key without typing any text all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example to list the user functions within the function class \uf{model\_free} type
 
 \example{relax> model\_free.}
 
@@ -285,12 +285,12 @@ model\_free.select\_model \\
 relax> model\_free.
 \end{exampleenv}
 
-All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \texttt{`copy'}, \texttt{`create\_model'}, \texttt{`delete'}, \texttt{`remove\_tm'}, and \texttt{`select\_model'} contained within \texttt{`model\_free'} are all visible.
+All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \uf{copy}, \uf{create\_model}, \uf{delete}, \uf{remove\_tm}, and \uf{select\_model} contained within \uf{model\_free} are all visible.
 
 % GUI screenshot
 \begin{figure}
 \centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/start.eps.gz}}
-\caption[GUI screenshot]{Screenshot of the relax GUI interface -- the starting interface.  To start one of the automated analyses, either the menu \texttt{`File->New analysis'} or the new analysis button in the toolbar should be selected.}\label{fig: GUI screenshot - start}
+\caption[GUI screenshot]{Screenshot of the relax GUI interface -- the starting interface.  To start one of the automated analyses, either the menu \guimenuitemtwo{File}{New analysis} or the new analysis button in the toolbar should be selected.}\label{fig: GUI screenshot - start}
 \end{figure}
 
 
@@ -301,15 +301,15 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 \subsection{The data pipe} \label{sect: the data pipe}
 \index{data pipe|textbf}
 
-Within relax all user functions operate on data stored within the current data pipe.  This pipe stores data is input, processed, or output as user functions are called.  There are different types of data pipe for different analyses, e.g. a reduced spectral density mapping pipe, a model-free pipe, an exponential curve-fitting pipe, etc.  Multiple data pipes can be created within relax and various operations performed in sequence on these pipes.  This is useful for operations such as model selection whereby the function \texttt{`model\_selection'} can operate on a number of pipes corresponding to different models and then assign the results to a newly created pipe.  When running relax you choose which pipe you are currently in by using the \texttt{`pipe.switch'} user function to jump between pipes. 
+Within relax all user functions operate on data stored within the current data pipe.  This pipe stores data is input, processed, or output as user functions are called.  There are different types of data pipe for different analyses, e.g. a reduced spectral density mapping pipe, a model-free pipe, an exponential curve-fitting pipe, etc.  Multiple data pipes can be created within relax and various operations performed in sequence on these pipes.  This is useful for operations such as model selection whereby the function \uf{model\_selection} can operate on a number of pipes corresponding to different models and then assign the results to a newly created pipe.  When running relax you choose which pipe you are currently in by using the \uf{pipe.switch} user function to jump between pipes. 
 
 The flow of data through relax can be thought of as travelling through these pipes.  User functions\index{user functions} exist to transfer data between these pipes and other functions combine data from multiple pipes into one or vice versa.  The simplest invocation of relax would be the creation of a single data pipe and with the data being processed as it is passing through this pipe.
 
-The primary method for creating a data pipe is through the user function\index{user functions} \texttt{`pipe.create'}.  For example
+The primary method for creating a data pipe is through the user function\index{user functions} \uf{pipe.create}.  For example
 
 \example{relax> pipe.create(`m1', `mf')}
 
-will create a model-free data pipe labelled \texttt{`m1'}.  The following is a table of all the types which can be assigned to a data pipe.
+will create a model-free data pipe labelled \promptstring{m1}.  The following is a table of all the types which can be assigned to a data pipe.
 
 \begin{center}
 \begin{tabular}{ll}
@@ -319,14 +319,14 @@ Data pipe type          & Description \\
 
 \midrule
 
-\texttt{`ct'}           & Consistency testing of relaxation data \\
-\texttt{`frame order'}  & The Frame Order analyses of domain motions \\
-\texttt{`jw'}           & Reduced spectral density mapping \\
-\texttt{`hybrid'}       & A special hybridised data pipe \\
-\texttt{`mf'}           & Model-free data analysis \\
-\texttt{`N-state'}      & N-state model of domain motions \\
-\texttt{`noe'}          & Steady state NOE calculation \\
-\texttt{`relax\_fit'}   & Relaxation curve-fitting \\
+\promptstring{ct}           & Consistency testing of relaxation data \\
+\promptstring{frame order}  & The Frame Order analyses of domain motions \\
+\promptstring{jw}           & Reduced spectral density mapping \\
+\promptstring{hybrid}       & A special hybridised data pipe \\
+\promptstring{mf}           & Model-free data analysis \\
+\promptstring{N-state}      & N-state model of domain motions \\
+\promptstring{noe}          & Steady state NOE calculation \\
+\promptstring{relax\_fit}   & Relaxation curve-fitting \\
 
 \bottomrule
 \end{tabular}
@@ -358,11 +358,11 @@ Any data which is not considered global for the molecule, such as diffusion tens
 \subsection{Scripting}
 \index{scripting|textbf}
 
-What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file ending in \texttt{`*.py'} and then at the terminal type
+What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file ending in \file{*.py} and then at the terminal type
 
 \example{\$ relax your\_script.py}
 
-An example of a simple script which will minimise the model-free model `m4' after loading six relaxation data sets is
+An example of a simple script which will minimise the model-free model ``m4'' after loading six relaxation data sets is
 
 \begin{exampleenv}
 \# Create the data pipe. \\
@@ -414,7 +414,7 @@ results.write(file=`results', force=True) \\
 state.save(`save', force=True)
 \end{exampleenv}
 
-Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file `relax\_curve\_diff.py' in the `sample\_scripts' directory for an example).
+Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file \file{relax\_curve\_diff.py} in the \directory{sample\_scripts} directory for an example).
 
 
 
@@ -424,7 +424,7 @@ Scripting is much more powerful than the prompt as advanced Python\index{Python}
 \subsection{Sample scripts}
 \index{scripting!sample scripts}
 
-A few sample scripts have been provided in the directory `sample\_scripts'.  These can be copied and modified for different types of data analysis.
+A few sample scripts have been provided in the directory \directory{sample\_scripts}.  These can be copied and modified for different types of data analysis.
 
 
 
@@ -468,12 +468,12 @@ or
 
 \example{\$ relax --gui}
 
-The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses.  This provides an easy way for the user to perform quick analyses.  The interface consists of a tab for each analysis.  By clicking on the \texttt{`File->New analysis'} menu entry, the analysis wizard will appear (see Figure~\ref{fig: screenshot: analysis wizard}).  The following analyses can be set up using this wizard:
+The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses.  This provides an easy way for the user to perform quick analyses.  The interface consists of a tab for each analysis.  By clicking on the \guimenuitemtwo{File}{New analysis} menu entry, the analysis wizard will appear (see Figure~\ref{fig: screenshot: analysis wizard}).  The following analyses can be set up using this wizard:
 
 \begin{description}
 \item[Steady-state NOE:]  this provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).  See Figure~\ref{fig: screenshot: NOE analysis} on page~\pageref{fig: screenshot: NOE analysis}.
 \item[$\Rone$ and $\Rtwo$]:  these provide easy access to optimisations and error analysis for the $\Rone$ and $\Rtwo$ relaxation rates via exponential curve-fitting (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis} on pages~\pageref{fig: screenshot: R1 analysis} and~\pageref{fig: screenshot: R2 analysis}).
-\item[Model-free analysis]:  A fully automatic model-free protocol is provided in another tab.  This operates via the \texttt{dauvergne\_protocol} module which implements the protocol of \cite{dAuvergneGooley08b} (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).
+\item[Model-free analysis]:  A fully automatic model-free protocol is provided in another tab.  This operates via the \module{dauvergne\_protocol} module which implements the protocol of \cite{dAuvergneGooley08b} (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).
 \end{description}
 
 A number of windows in the GUI provide user feedback or allow for the viewing and editing of data.  These include:
@@ -487,7 +487,7 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 % Spin viewer screenshot
 \begin{figure}
 \centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/spin_viewer.eps.gz}}
-\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.  The window is accessible via the `View$\to$Spin view' menu entry, typing `Ctrl-T', the spin viewer button in the toolbar, or the `spin editor' button within the auto-analysis tabs.}\label{fig: screenshot: spin viewer}
+\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.  The window is accessible via the \guimenuitemtwo{View}{Spin viewer} menu entry, typing \shortcutkey{Ctrl-T}, the spin viewer button in the toolbar, or the \guibutton{spin editor} button within the auto-analysis tabs.}\label{fig: screenshot: spin viewer}
 \end{figure}
 
 % Results viewer screenshot
@@ -528,7 +528,7 @@ To enable advanced Python\index{Python} scripting and control many parts of rela
 
 \example{relax> from data import Relax\_data\_store; ds = Relax\_data\_store()}
 
-The \texttt{`ds'} object is a dictionary type which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
+The \prompt{ds} object is a dictionary type which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
 
 \begin{exampleenv}
 relax> alpha = 0.1342 \\
@@ -570,11 +570,11 @@ Thanks to Gary Thompson's multi-processor framework, relax can be run on multi-c
 
 \subsection{Usage}
 
-If you have access to a 256 node cluster and can run calculations on all nodes, assuming that the \texttt{`dauvergne\_protocol.py'} automated model-free analysis sample script will be used (after modification for the system under study), relax can be executed by typing:
+If you have access to a 256 node cluster and can run calculations on all nodes, assuming that the \file{dauvergne\_protocol.py} automated model-free analysis sample script will be used (after modification for the system under study), relax can be executed by typing:
 
 \example{\$ mpirun -np 257 /usr/local/bin/relax --multi=`mpi4py' dauvergne\_protocol.py}
 
-Note that the argument \texttt{`-np'} value is one more than the number of slaves you would like to run.  You should then see the following text in the initial relax printout:
+Note that the argument \prompt{-np} value is one more than the number of slaves you would like to run.  You should then see the following text in the initial relax printout:
 
 \example{Processor fabric:  MPI 2.1 running via mpi4py with 256 slave processors \& 1 master.  Using Open MPI 1.4.3.}
 
