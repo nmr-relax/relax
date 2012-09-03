@@ -164,10 +164,10 @@ As the interatomic data container concept is relatively new, how they are create
 Below are three different examples showing how to set up the relax data model for any analysis type requiring spin specific data.
 
 
-% Structural data.
-%~~~~~~~~~~~~~~~~~
+% Spins from structural data.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Structural data} \label{sect: script - structural data}
+\subsection{Spins from structural data} \label{sect: script - structural data}
 
 \begin{figure*}[h]
 \includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/n_state_model/phthalic_acid_ens_600x600.eps.gz}
@@ -201,16 +201,16 @@ Note that if structural data from the PDB is used to generate the spin container
 
 
 
-% Sequence file.
-%~~~~~~~~~~~~~~~
+% Spins from a sequence file.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Sequence file} \label{sect: script - sequence file}
+\subsection{Spins from a sequence file} \label{sect: script - sequence file}
 
 \begin{figure*}[h]
 \includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/sequence_600x600.eps.gz}
 \end{figure*}
 
-Alternatively to setting up the molecule, residue, and spin containers via 3D structural data, a plain text columnar formatted file can be used.  This is useful for when no 3D structure exists for the molecule.  For example:
+Alternatively to setting up the molecule, residue, and spin containers via 3D structural data, a plain text columnar formatted file can be used.  This is useful for when no 3D structure exists for the molecule.  It also has the advantage that the residue and atom names need not conform to the PDB standard.  An example for reading sequence data is:
 
 \begin{exampleenv}
 \# Create a data pipe. \\
@@ -268,10 +268,10 @@ In the GUI, the most common way to create the data pipe is to initialise one of 
 
 
 
-% Structural data.
-%~~~~~~~~~~~~~~~~~
+% Spins from structural data.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Structural data} \label{sect: GUI - structural data}
+\subsection{Spins from structural data} \label{sect: GUI - structural data}
 
 For this section, the example of protein $^{15}$N relaxation data will be used to illustrate how to set up the data structures.  To manipulate the molecule, residue and spin data structures in the GUI, the most convenient option is to use the spin viewer window (see Figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}).  This window can be opened in four ways:
 
@@ -330,10 +330,10 @@ You should now see something like:
 
 
 
-% Sequence file.
-%~~~~~~~~~~~~~~~
+% Spins from a sequence file.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Sequence file} \label{sect: GUI - sequence file}
+\subsection{Spins from a sequence file} \label{sect: GUI - sequence file}
 
 Starting from the empty spin viewer window on page~\pageref{figure: spin viewer blank}), click on the \guibutton{Load spins} button.  You will then see the spin loading wizard (see page~\pageref{figure: spin viewer wizard start}).  Select the option for reading data from a sequence file.  You should then see:
 
