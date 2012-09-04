@@ -190,7 +190,7 @@ structure.load\_spins(`@H', ave\_pos=True) \\
 structure.load\_spins(`@NE1', ave\_pos=True) \\
 structure.load\_spins(`@HE1', ave\_pos=True) \\
  \\
-\# Define the spin isotopes.
+\# Define the spin isotopes. \\
 spin.isotope(`15N', spin\_id=`@N*') \\
 spin.isotope(`1H', spin\_id=`@H*')
 \end{exampleenv}
@@ -217,15 +217,29 @@ Alternatively to setting up the molecule, residue, and spin containers via 3D st
 pipe.create(pipe\_name=`R1 1200', pipe\_type=`relax\_fit') \\
  \\
 \# Set up the 15N spins. \\
-sequence.read(file=`noe.500.out', mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None) \\
-spin.name(`N') \\
-spin.element(element=`N', spin\_id=`@N') \\
+sequence.read(file=`noe.500.out', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
+spin.element(element=`N', spin\_id=`@N*') \\
 spin.isotope(`15N', spin\_id=`@N')
 \end{exampleenv}
 
-Here the molecule, residue, and spin information is extracted from the \promptstring{noe.500.out} file.  The \uf{sequence.read} user function call assumes that only residue information is present in the file, with the residue number and name in the first and second columns respectively.  The file can contain columns for the molecule name, the residue name and number, and the spin name and number in any order.  The subsequent user functions in the above example are used to set up the spin containers appropriately for a model-free analysis.  These are not required in the automatic analysis of GUI as these user functions will be presented to you when adding relaxation data, or when clicking on the heteronucleus and proton buttons (\guibutton{X isotope} and \guibutton{H isotope}).
+Here the molecule, residue, and spin information is extracted from the \promptstring{noe.500.out} file which could look like:
 
-If 3D structures are to be used later on in the analysis, then the residue and spin names and numbers must either be blank or match the notation used in the 3D structure file.
+{\scriptsize \begin{verbatim}
+# mol_name          res_num  res_name  spin_num  spin_name  value             error               
+Ap4Aase_new_3_mol1  1        GLY       1         N          None              None                
+Ap4Aase_new_3_mol1  2        PRO       11        N          None              None                
+Ap4Aase_new_3_mol1  3        LEU       28        N          None              None                
+Ap4Aase_new_3_mol1  4        GLY       51        N          0.03892194698453  0.01903177024613    
+Ap4Aase_new_3_mol1  5        SER       59        N          0.31240422567912  0.01859693729836    
+Ap4Aase_new_3_mol1  6        MET       71        N          0.42850831873249  0.0252585632304     
+Ap4Aase_new_3_mol1  7        ASP       91        N          0.53054928103134  0.02799062314416    
+Ap4Aase_new_3_mol1  8        SER       104       N          0.56528429775819  0.02170612146773    
+Ap4Aase_new_3_mol1  9        PRO       116       N          None              None                
+Ap4Aase_new_3_mol1  40       TRP       685       N          0.65394813490548  0.03830061886537    
+Ap4Aase_new_3_mol1  40       TRP       698       NE1        0.67073879732046  0.01426066343831    
+\end{verbatim}} \label{verb: noe.500.out}
+
+The file can contain columns for the molecule name, the residue name and number, and the spin name and number in any order though not all are needed.  For example for a single protein system, the molecule name, residue name and spin number are nonessential.  Or for an organic molecule, the molecule name, residue name and number and spin number could be nonessential.  The subsequent user functions in the above example are used to set up the spin containers appropriately for a model-free analysis.  These are not required in the automatic analysis of GUI as these user functions will be presented to you when adding relaxation data, or when clicking on the heteronucleus and proton buttons (\guibutton{X isotope} and \guibutton{H isotope}).
 
 In the GUI, the creation of molecule, residue, and spin containers from a sequence file is also available via the \gui{Load spins} wizard within the spin viewer window (\textit{vide supra}).
 
@@ -235,7 +249,7 @@ In the GUI, the creation of molecule, residue, and spin containers from a sequen
 
 \subsection{Manual construction} \label{sect: script - manual construction}
 
-For the masochist, the full molecule, residue and spin data structure can be manually constructed.  For example:
+For the masochists out there, the full molecule, residue and spin data structure can be manually constructed.  For example:
 
 \begin{exampleenv}
 \# Manually create the molecule, residue, and spin containers. \\
@@ -341,7 +355,7 @@ Starting from the empty spin viewer window on page~\pageref{figure: spin viewer 
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_sequence.eps.gz}}
 \end{minipage}
 
-Change the \gui{Free format file settings} as needed.  Click on \guibutton{Next} to reach the wizard ending page (see~\pageref{figure: spin viewer end}).  Finally click on \guibutton{Finish} to exit the wizard.
+Select the file to load and change the \gui{Free format file settings} as needed.  An example of a suitable format is given on page~\pageref{verb: noe.500.out}.  Click on \guibutton{Next} to reach the wizard ending page (see~\pageref{figure: spin viewer end}).  Finally click on \guibutton{Finish} to exit the wizard.
 
 
 % Manual construction.
