@@ -253,7 +253,7 @@ Ap4Aase_new_3_mol1  14       ARG       200       N          -0.7524129557634996 
 %~~~~~~~~~~~~~~~~~~~~~
 
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
+\centerline{\includegraphics[width=0.9\textwidth, bb=0 -1 826 521]{graphics/screenshots/noe_analysis/grace.eps.gz}}
 \caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \uf{grace.write}.}\label{fig: NOE plot}
 \end{figure}
 
@@ -291,9 +291,9 @@ An example of the output after modifying the axes is shown in figure~\ref{fig: N
 
 The relax graphical user interface provides access to an automated steady-state NOE analysis.  This auto-analysis operates in the same way as the sample script described earlier in this chapter.  In this example, relax will be launched with:
 
-\example{\$ relax --log noe.log --gui}
+\example{\$ relax --log log --gui}
 
-The \prompt{--log} command line argument will cause all of relax's text printouts to be placed into the \file{noe.log} file which can serve as a record for later reference (the \prompt{--tee} command line argument could be used as well).
+The \prompt{--log} command line argument will cause all of relax's text printouts to be placed into the \file{log} file which can serve as a record for later reference (the \prompt{--tee} command line argument could be used as well).
 
 
 % Initialisation of the data pipe.
@@ -335,7 +335,7 @@ You can also choose to change the \gui{Results directory} where all of the autom
 
 \subsection{Setting up the spin systems}
 
-Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The \gui{Spin systems} GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like \gui{0 spins loaded and selected}.  To fix this, click on the \guibutton{Spin editor} button and you should then see the spin viewer window.  The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for a sequence file.  The spin viewer window can now be closed.
+Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The \gui{Spin systems} GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like \gui{0 spins loaded and selected}.  To fix this, click on the \guibutton{Spin editor} button and you should then see the spin viewer window.  The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file} for a sequence file.  The spin viewer window can now be closed.
 
 
 % Unresolved spins.
