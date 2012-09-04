@@ -30,13 +30,13 @@ The following subsections simply contain advice on how to go from the recorded F
 % Temperature control and calibration.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Temperature control and calibration}
+\subsection{Temperature control and calibration} \label{sect: temperature control and calibration}
 
 \includegraphics[bb=0 0 18 18]{/data/relax/relax-trunk/graphics/oxygen_icons/128x128/status/weather-clear.eps.gz}
 
 Before starting with the spectral processing, it should be noted that proper temperature control and calibration are essential for relaxation data.  Small temperature changes can have an effect on the viscosity and hence global tumbling of the molecule being studied and, as the molecular diffusion tensor is the major contributor to relaxation, any non-consistent data will likely lead to artificial motions appearing in subsequent model-free analyses.
 
-Per-experiment temperature calibration is essential and the technique used will need to be specified for BMRB data deposition.  Note that the standard MeOH/ethylene glycol calibration of a spectrometer is of no use when you are running experiments which pump in large amounts of power into the probe head!  Although the R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol spectrometer calibration, the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.
+Per-experiment temperature calibration is essential and the technique used will need to be specified for BMRB data deposition.  Note that the standard MeOH/ethylene glycol calibration of a spectrometer is of no use when you are running experiments which pump in large amounts of power into the probe head.  Although the R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol spectrometer calibration, the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.
 
 Explicit temperature control techniques are also essential for relaxation data collection.  Again the technique used will be asked for by relax for BMRB data deposition.  A number of factors can cause significant temperature fluctuations between individual relaxation experiments.  This includes the daily temperature cycle of the room housing the spectrometer, different amounts of power for the individual experiments, etc.  The best methods for eliminating such problems are single scan interleaving and temperature compensation block.  Single scan interleaving is the most powerful technique for averaging the temperature fluctuations not only across different experiments, but also across the entire measurement time.  The application of off-resonance temperature compensation blocks at the start of the experiment is useful for the R2 and will normalise the temperature between the individual experiments, but single scan or single fid interleaving is nevertheless required for normalising the temperature across the entire measurement.
 
@@ -295,16 +295,16 @@ will generate the molecule, residue, and spin sequence for the current data pipe
 To load the peak intensities\index{peak!intensity} into relax the user function \uf{spectrum.read\_intensities} is executed.  Important keyword arguments to this command are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands -- an expansion of the \prompt{for} loop in the sample script -- will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
 
 \begin{exampleenv}
-spectrum.read\_intensities(file=`T2\_ncyc1.list',   spectrum\_id=`1',   relax\_time=0.0176, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc1b.list',  spectrum\_id=`1b',  relax\_time=0.0176, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc2.list',   spectrum\_id=`2',   relax\_time=0.0352, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc4.list',   spectrum\_id=`4',   relax\_time=0.0704, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc4b.list',  spectrum\_id=`4b',  relax\_time=0.0704, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc6.list',   spectrum\_id=`6',   relax\_time=0.1056, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc9.list',   spectrum\_id=`9',   relax\_time=0.1584, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc9b.list',  spectrum\_id=`9b',  relax\_time=0.1584, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc11.list',  spectrum\_id=`11',  relax\_time=0.1936, int\_col=10) \\
-spectrum.read\_intensities(file=`T2\_ncyc11b.list', spectrum\_id=`11b', relax\_time=0.1936, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc1.list',   spectrum\_id=`1',   relax\_time=0.0176, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc1b.list',  spectrum\_id=`1b',  relax\_time=0.0176, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc2.list',   spectrum\_id=`2',   relax\_time=0.0352, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc4.list',   spectrum\_id=`4',   relax\_time=0.0704, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc4b.list',  spectrum\_id=`4b',  relax\_time=0.0704, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc6.list',   spectrum\_id=`6',   relax\_time=0.1056, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc9.list',   spectrum\_id=`9',   relax\_time=0.1584, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc9b.list',  spectrum\_id=`9b',  relax\_time=0.1584, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc11.list',  spectrum\_id=`11',  relax\_time=0.1936, int\_col=10) \\
+spectrum.read\_intensities(`T2\_ncyc11b.list', spectrum\_id=`11b', relax\_time=0.1936, int\_col=10) \\
  \\
 spectrum.replicated(spectrum\_ids=[`T2\_ncyc1\_ave', `T2\_ncyc1b\_ave']) \\
 spectrum.replicated(spectrum\_ids=[`T2\_ncyc4\_ave', `T2\_ncyc4b\_ave']) \\
@@ -342,7 +342,7 @@ By supplying the \promptstring{int\_col} argument to the \uf{spectrum.read\_inte
 
 where the peak height is in the \prompt{Volume} column.  And for an NMRView file:
 
-{\scriptsize \begin{verbatim}
+{\tiny \begin{verbatim}
 label dataset sw sf
 H1 N15
 cNTnC_noe0.nv
@@ -356,9 +356,9 @@ H1.L H1.P H1.W H1.B H1.E H1.J H1.U N15.L N15.P N15.W N15.B N15.E N15.J N15.U vol
 
 
 % The rest of the setup.
-%%%%%%%%%%%%%%%%%%%%%%%%
+%~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{The rest of the setup}
+\subsection{The rest of the setup} \label{sect: Rx setup fin}
 
 Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
 
@@ -385,9 +385,9 @@ The argument \promptstring{exp} sets the relaxation curve to a two parameter \{$
 
 
 % Optimisation.
-%%%%%%%%%%%%%%%
+%~~~~~~~~~~~~~~
 
-\section{Optimisation}
+\subsection{Optimisation}
 
 Now that everything has been setup minimision can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
 
@@ -400,9 +400,9 @@ The next step is to select one of the minimisation algorithms to optimise the mo
 
 
 % Error analysis.
-%%%%%%%%%%%%%%%%%
+%~~~~~~~~~~~~~~~~
 
-\section{Error analysis}
+\subsection{Error analysis}
 
 Only one technique adequately estimates parameter errors when the parameter values where found by optimisation -- Monte Carlo simulations\index{Monte Carlo simulation}.  In relax this can be implemented by using a series of functions from the \uf{monte\_carlo} user function class.  Firstly the number of simulations needs to be set
 
@@ -425,17 +425,10 @@ The parameter errors are then determined as the standard deviation of the optimi
 \example{monte\_carlo.error\_analysis()}
 
 
-% R1 analysis screenshot
-\begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r1.eps.gz}}
-\caption[GUI screenshot -- $\Rone$ analysis]{Screenshot of the relax GUI interface -- the $\Rone$ analysis.}\label{fig: screenshot: R1 analysis}
-\end{figure}
-
-
 % Finishing off.
-%%%%%%%%%%%%%%%%
+%~~~~~~~~~~~~~~~
 
-\section{Finishing off}
+\subsection{Finishing off}
 
 To finish off, the script first saves the relaxation rates together with their errors in a simple text file
 
@@ -461,20 +454,155 @@ and finally the program state is saved for future reference
 \example{state.save(file=`rx.save', force=True)}
 
 
-% R2 analysis screenshot
-\begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_r2.eps.gz}}
-\caption[GUI screenshot -- $\Rtwo$ analysis]{Screenshot of the relax GUI interface -- the $\Rtwo$ analysis.}\label{fig: screenshot: R2 analysis}
-\end{figure}
-
-
 
 % GUI.
 %%%%%%
 
+\newpage
 \section{The GUI auto-analysis}
 
-The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis}).  These auto-analyses can be selected using the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Just as with the steady-state NOE, these auto-analyses are very similar in spirit to the sample script described in this chapter, though the Grace 2D visualisation is more advanced.  If you have read this chapter, the usage of these analyses should be self explanatory.
+The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis}).  These auto-analyses can be selected using the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Just as with the steady-state NOE in the next chapter, these auto-analyses are very similar in spirit to the sample script described in this chapter, though the Grace 2D visualisation is more advanced.  If you have read this chapter, the usage of these analyses should be self explanatory.
+
+As in the script/prompt UI section above, the example of protein $^{15}$N $\Rone$ relaxation analysis will be performed in the following sections.  To keep track of all the messages relax produces for future reference, you can run the relax GUI with the following command line arguments:
+
+\example{\$ relax --log log --gui}
+
+The messages will then appear both in the relax controller window (see Figure~\ref{fig: screenshot: relax controller} on page~\pageref{fig: screenshot: relax controller}) and in the \file{log} file.
+
+
+% Initialisation of the data pipe.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Initialisation of the data pipe}
+
+To begin the analysis, launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).  Select either the $\Rone$ or $\Rtwo$ analyses, and change the name of the analysis if you plan on running multiple analyses from different field strengths in one relax instance.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard1.eps.gz}}
+\end{minipage}
+
+Then click on the \guibutton{Next} button.  On the second page click on \guibutton{Start} to commence the analysis -- this second part of the wizard does not need to be changed.  For the $\Rone$ and $\Rtwo$ analyses in the GUI, a data pipe bundle containing only a single data pipe for that analysis will be created.  This data pipe bundle can be safely ignored.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard2.eps.gz}}
+\end{minipage}
+
+
+% General setup.
+%~~~~~~~~~~~~~~~
+
+\subsection{General setup}
+
+You will now be presented with a blank analysis tab:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/blank.eps.gz}}
+\end{minipage}
+
+Here there are two things unique to the GUI which need to be preformed:
+
+\begin{description}
+\item[NMR frequency label:]  First set the NMR frequency label.  This is only used for the name of the output file.  For example if you set the label to \guistring{1200}, the file \file{r1.1200.out} will be created at the end of the analysis.
+\item[Results directory:]  All of the automatically created results and Grace files will be placed into this directory.  The \gui{Results directory} can now be changed.
+\end{description}
+
+
+% Spin systems.
+%~~~~~~~~~~~~~~
+
+\subsection{Setting up the spin systems}
+
+As the relaxation data is at the level of the spins, the molecule, residue and spin data structures need to be set up.  In the $\Rone$ and $\Rtwo$ GUI analysis tabs, there is a special \gui{Spin systems} GUI element designed for this.  This will initially say \gui{0 spins loaded and selected}.  Click on the \guibutton{Spin editor} button to launch the spin viewer window.  The steps for setting up the spin containers using PDB files are described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} or for sequence files in section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file}.
+
+
+% Unresolved spins.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Unresolved spins}
+
+As in the prompt/script UI section~\ref{sect: Rx setup fin}, the spins can be deselected at this point using the same \file{unresolved} file.  This is described in detail in section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins}.
+
+
+
+% Loading the data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Loading the data}
+
+At this stage, the peak intensity data needs to be loaded.  In both the $\Rone$ and $\Rtwo$ analysis tabs is a \gui{Spectra list} GUI element.  Click on the \guibutton{Add} button to launch the peak intensity loading wizard:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_bb_peaks.eps.gz}}
+\end{minipage}
+
+In this example, a Sparky peak list containing the peak heights determined from the averaged chemical shift positions for all spectra will be loaded.  Set the spectrum ID string to a unique value.  Change the heteronucleus and proton names to those of the $^{15}$N backbone assignments in the peak lists, in this case \gui{N} and \gui{NH}.
+
+To load the tryptophan indole $^{15}$N spins as well, first click on \guibutton{Apply} rather than \guibutton{Next}.  This will most likely cause a \prompt{RelaxWarning} message to appear for all peak list elements which do not match the atom names given:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_warnings.eps.gz}}
+\end{minipage}
+
+These messages must be carefully checked to be sure that the correct data has been loaded.  A \prompt{RelaxError} might be thrown if the peak list is corrupted or if the atom names have been incorrectly given.  In this case, check the message, fix the problem, and click on \guibutton{Apply} again.
+
+For the the tryptophan indole $^{15}$N spins, change the heteronucleus and proton names to \gui{NE1} and \gui{HE1} respectively (or to whatever you have named these in your assignments).  Then click on \guibutton{Next}:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_trp_peaks.eps.gz}}
+\end{minipage}
+
+Again check the messages in the relax controller window which will appear.  You should now see the error type page:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_err_type.eps.gz}}
+\end{minipage}
+
+The description for this wizard page should be very carefully read -- it will tell you about all of the error analysis options available and how these are implemented in relax.  For the protein relaxation example, replicated spectra have been collected.  Therefore the option \gui{Replicated spectra} will be chosen.  The \gui{Baseplane RMSD} option is documented in the NOE chapter.  After clicking on \guibutton{Next} you will see:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates1.eps.gz}}
+\end{minipage}
+
+For the first of the duplicate spectra, or any spectrum without a duplicate, you can click on the \guibutton{Skip} button.  If this is the second spectrum you have loaded from a duplicated set, select the two replicated spectra and then click on \guibutton{Next}:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates2.eps.gz}}
+\end{minipage}
+
+Finally set the relaxation time period for this experiment in seconds:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_times.eps.gz}}
+\end{minipage}
+
+All delays in the pulse sequence should be carefully checked to be sure that the time is exactly what you would expect.  To set the time and close the wizard, click on the \guibutton{Finish} button.
+
+This procedure should be repeated for every experiment you have collected.  In the end you should see something such as:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_tab_full.eps.gz}}
+\end{minipage}
+
+
+% Optimisation and error analysis.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Optimisation and error analysis}
+
+Back in the main $\Rone$ analysis tab, the grid search increments and number of Monte Carlo simulations can be changed.  The default values of 21 grid search increments and 500 MC simulations are optimal -- lower values are not recommended.  To perform the optimisation and error analysis, click on the \guibutton{Execute relax} button.  The relax controller will open to show you the progress of the optimisation and simulations:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/mc_sim.eps.gz}}
+\end{minipage}
+
+Once finished, the \gui{Results viewer} window will also appear:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/fin.eps.gz}}
+\end{minipage}
+
+This window can be used to open the text files in the default text editor for your operating system or the 2D Grace plots in \prompt{xmgrace} if available on your system.
+
 
 
 % Final checks.
@@ -482,7 +610,7 @@ The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (
 
 \section{Final checks}
 
-To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \file{intensities.agr} and \file{intensities\_norm.agr} 2D Grace\index{software!Grace|textbf} files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible (see figure~\ref{fig: screenshot: xmgrace peak intensities}).  If Xmgrace or a compatible program is not available for your operating system, the Grace files contain a text representation of the curves at the end which can be edited and opened in another 2D graph visualisation program.
+To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \file{intensities.agr} and \file{intensities\_norm.agr} 2D Grace\index{software!Grace|textbf} files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible (see Figure~\ref{fig: screenshot: xmgrace peak intensities}).  If Xmgrace or a compatible program is not available for your operating system, the Grace files contain text representations of the curves at the end which can opened, edited and visualised in any another 2D graphing software package.
  
 % Xmgrace screenshot
 \begin{figure}
@@ -490,4 +618,4 @@ To be sure that the data has been properly collected and that no instrumentation
 \caption[Peak intensity 2D plot xmgrace screenshot]{Screenshot of the 2D peak intensity plots for the exponential relaxation curves in Xmgrace.}\label{fig: screenshot: xmgrace peak intensities}
 \end{figure}
 
-Note that errors resulting in systematic bias in the data -- for example if temperature control (single-scan interleaving or temperature compensation blocks) or per-experiment/per-spectrometer temperature calibration on MeOH or ethylene glycol have not been performed -- will not be detected by looking at the decay curves.  See the \uf{relax\_data.temp\_calibration} user function documentation on page~\pageref{uf: relax_data.temp_calibration} and the \uf{relax\_data.temp\_control} user function documentation on page~\pageref{uf: relax_data.temp_control} for more details.
+Note that errors resulting in systematic bias in the data -- for example if temperature control (single-scan interleaving or temperature compensation blocks) or per-experiment/per-spectrometer temperature calibration on MeOH or ethylene glycol have not been performed -- will not be detected by looking at the decay curves.  See section~\ref{sect: temperature control and calibration} or the \uf{relax\_data.temp\_calibration} user function documentation on page~\pageref{uf: relax_data.temp_calibration} and the \uf{relax\_data.temp\_control} user function documentation on page~\pageref{uf: relax_data.temp_control} for more details.
