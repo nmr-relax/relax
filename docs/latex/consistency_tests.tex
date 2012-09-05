@@ -24,7 +24,7 @@ The three tests are:
 \item[$F_{R_2}$]  A consistency function proposed by \citet{Fushman98}.
 \end{description}
 
-Different methods exist to compare tests values calculated from one field to another.  These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
+Different methods exist to compare tests values calculated from one field to another.  These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients. The details of how to interpret such analyses are avaliable at the end of this section in Section \ref{sec: Visualisation and data output}.
 
 For more details on the implementation within relax, see:
 
@@ -254,16 +254,32 @@ In this case, the \uf{monte\_carlo.initial\_values} user function call is not re
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Visualisation and data output}
+\label{sec: Visualisation and data output}
 
 The rest of the script is used to output the results to 2D Grace files for visualisation (the \uf{grace.view} user function calls will launch Grace with the created files), and the output of the values into plain text files.
 
 However, simply visualizing the calculated $J(0)$, $F_\eta$, and $F_{R_2}$ values this way does not allow proper consistency testing. Indeed, for assessing the consistency of relaxation data using these tests, different methods exist to compare values calculated from one field to another.  These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
+
+To complete the consistency testing analysis, the following steps are needed:
+
+\begin{itemize}
+\item Extract the $J(0)$ values at multiple magnetic fields.
+\item Join together the data from a pair of magnetic fields either by pasting them as two columns of one file (approach A), or by dividing values from a first magnetic field by values from a second magnetic field (approach B).
+\item Make either a correlation plot (approach A), or an histogram of the ratios (approach B).
+\item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).  If yes, data from multiple magnetic fields is consistent from one magnetic field to another.  If no, data is inconsistent.  In the case where inconsistency arises, if data from more than two magnetic fields is avaliable, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
+\end{itemize}
 
 An example of such an analysis is shown in Figure \ref{fig: consistency analysis} below
 
 \begin{figure*}[h]
 \label{fig: consistency analysis}
 \includegraphics[width=0.9\textwidth]{graphics/analyses/consistency_testing/consistency__J0_PSE-4.eps.gz}
-\caption[Example of consistency testing visual analysis]{Example of consistency testing visual analysis. Relaxation data from three different magnetic fields are compared. For each pair of magnetic field, a correlation plot of the calculated $J(0)$ values (top) as well as an histogram of the ration of calculated $J(0)$ values (bottom) are shown.}
+\caption[Example of consistency testing visual analysis]{Example of consistency testing visual analysis. Relaxation data from three different magnetic fields are compared. For each pair of magnetic field, a correlation plot of the calculated $J(0)$ values (approach A, top) as well as an histogram of the ration of calculated $J(0)$ values (approach B, bottom) are shown. Data from \citep{MorinGagne09b} is used for the purpose of this example.}
 \end{figure*}
+
+As shown in Figure \ref{fig: consistency analysis}, the example data displays both consistent and inconsistent data. In fact, data recorded at 500 MHz and 600 MHz are consistent together, whereas data recorded at 800 MHz is not consistent with data recorded at 500 MHz nor 600 MHz.  Since more than two magnetic fields were used, this allowed the identification of the data from 800 MHz  as the inconsistent data, as data from 500 MHz is consistent with data from 600 MHz, and vice-versa.  In this particular example, this allowed the authors to take special care with data at 800 MHz.
+
+This inconsistency of 800 MHz data is seen on the correlation plot (toop) by a deviation from the dotted line (which represents the theoretical situation when equal $J(0)$ values are extracted from both magnetic fields. It is also observable in the histogram (bottom) where the ration of the data from two magnetic fields is not centered around 0. In fact, there seems to be a systematic shift of the calculated $J(0)$ values at 800 MHz when compared to the two other magnetic fields. This is caused by a similar shift in the experimental $R_2$ (transversal relaxation rate) data.
+
+For the 500 MHz and 600 MHz data pair, the data are centered around the dotted line in the correlation plot (approach A, top left) as well as centered around a value of 1 in the histogram comparing the ratios of values from both magnetic fields (approach B, bottom left). Of course, there are some outsider values even in the case of consistent data. There are caused by specific dynamic characteristics of these spins and are different from systematic inconsistencies such as depicted in the example above with the data recorded at 800 MHz.
 
