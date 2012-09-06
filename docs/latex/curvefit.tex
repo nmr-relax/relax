@@ -307,7 +307,7 @@ spectrum.replicated(spectrum\_ids=[`T2\_ncyc9\_ave', `T2\_ncyc9b\_ave']) \\
 spectrum.replicated(spectrum\_ids=[`T2\_ncyc11\_ave', `T2\_ncyc11b\_ave'])
 \end{exampleenv}
 
-For the Sparky peak lists, by default relax assumes that the intensity value is in the 4$^\textrm{th}$ column.  A typical file looks like:
+Note that the relaxation time period should be calculated directly from the pulse sequence (as the sum of delays and pulses for the peroid), as the estimated time may not match the real time.   For the Sparky peak lists, by default relax assumes that the intensity value is in the 4$^\textrm{th}$ column.  A typical file looks like:
 
 {\scriptsize \begin{verbatim}
      Assignment         w1         w2   Data Height
@@ -570,9 +570,9 @@ Finally set the relaxation time period for this experiment in seconds:
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_times.eps.gz}}
 \end{minipage}
 
-All delays in the pulse sequence should be carefully checked to be sure that the time is exactly what you would expect.  To set the time and close the wizard, click on the \guibutton{Finish} button.
+All delays and pulse lengths in the pulse sequence should be carefully checked to be sure that the time is exactly what you would expect -- the estimated time may not match the real time.  To set the time and close the wizard, click on the \guibutton{Finish} button.
 
-This procedure should be repeated for every experiment you have collected.  In the end you should see something such as:
+This procedure should be repeated for every experiment you have collected (you could, as an alternative, load all at the same time using the \guibutton{Apply} button at each stage).  In the end you should see something such as:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_tab_full.eps.gz}}
