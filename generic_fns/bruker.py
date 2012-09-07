@@ -154,6 +154,16 @@ def read(ri_id=None, file=None, dir=None):
         elif in_ri_data:
             # Skip the header.
             if row[0] == 'Peak name':
+                # Catch old PDC files (to fix https://gna.org/bugs/?20152).
+                pdc_file = False
+                if ri_type == 'R1' and not search('R1', line):
+                    pdc_file = True
+                elif ri_type == 'R2' and not search('R2', line):
+                    pdc_file = True
+                if pdc_file:
+                    raise RelaxError("The old Protein Dynamics Center (PDC) files are not supported")
+
+                # Skip.
                 continue
 
             # The residue info.
