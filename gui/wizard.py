@@ -160,7 +160,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Execute.
-        self.exec_status = protected_exec(self.on_execute)
+        self.exec_status = self.on_execute()
 
         # Execution failure.
         if not self.exec_status:
