@@ -252,16 +252,20 @@ class Uf_object(object):
         self.wizard = None
 
 
-    def create_page(self, wizard=None, sync=False):
+    def create_page(self, wizard=None, sync=None):
         """Create the user function wizard page GUI object.
 
         @keyword wizard:    The parent wizard.
         @type wizard:       Wiz_window instance
         @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
-        @type sync:         bool
+        @type sync:         None or bool
         @return:            The user function page object.
         @rtype:             Uf_page instance
         """
+
+        # Overwrite (a)synchronous operation.
+        if sync != None:
+            self._sync = sync
 
         # Initialise and return the page.
         return Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
