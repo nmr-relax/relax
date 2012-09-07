@@ -32,6 +32,7 @@ from relax_errors import RelaxError
 
 # relax GUI test module imports.
 from bmrb import Bmrb
+from bruker import Bruker
 from consistency_tests import Ct
 from dead_uf_pages import Dead_uf_pages
 from frame_order import Frame_order
@@ -111,6 +112,7 @@ class GUI_test_runner:
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Bruker))
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dead_uf_pages))
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
