@@ -29,6 +29,7 @@ from os import sep
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns.mol_res_spin import spin_loop
+from relax_errors import RelaxError
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 from test_suite import system_tests
@@ -118,24 +119,12 @@ class Bruker(GuiTestCase, system_tests.bruker.Bruker):
         page.uf_args['ri_id'].SetValue(str_to_gui('r1_700'))
         page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'bruker_files' + sep + 'T1_demo_1UBQ_H_trunc.txt'))
 
-        # Next to load the data.
-        analysis.relax_data.wizard._go_next(None)
-        interpreter.flush()
+        # Catch the failure.
+        try:
+            error = False
+            analysis.relax_data.wizard._go_next(None)
+        except RelaxError:
+            error = True
 
-        # Go to the next page (i.e. finish).
-        analysis.wizard._go_next(None)
-
-        # The real data.
-        res_nums = [1, 2, 3]
-        r1 = [None, 0.455962, 0.428882]
-        r1_err = [None, 0.0055642, 0.0040993]
-
-        # Check the data.
-        i = 0
-        for spin_cont, mol_name, res_num, res_name in spin_loop(full_info=True):
-            # Spin info.
-            self.assertEqual(res_nums[i], res_num)
-
-            # Check the relaxation data and errors.
-            self.assertEqual(r1[i], spin_cont.ri['r1_700'])
-            self.assertEqual(r1_err[i], spin_cont.ri_err['r1_700'])
+        # Assert that the RelaxError has occurred.
+        self.assertEqual(error, True)
