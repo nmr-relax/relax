@@ -421,6 +421,7 @@ uf.add_keyarg(
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string for the selective loading of certain spins into the relax data store.",
+    wiz_combo_choices = ["@N", "@NE1", "@C", "@H", "@O", "@P", ":A@C2", ":A@C8", ":G@N1", ":G@C8", ":C@C5", ":C@C5", ":U@N3", ":U@C5", ":U@C6"],
     can_be_none = True
 )
 uf.add_keyarg(
