@@ -192,6 +192,8 @@ class Interpreter(object):
         @type args:     any arguments
         @param kwds:    The user function keyword arguments.
         @type kwds:     any keyword arguments
+        @return:        Whether the user function was successfully applied or not (though as this is asynchronous, this cannot be checked so True will always be returned.
+        @rtype:         bool
         """
 
         # Debugging.
@@ -203,6 +205,9 @@ class Interpreter(object):
 
         # Call the thread's method.
         self._interpreter_thread.queue(fn, *args, **kwds)
+
+        # Cannot judge if the user function was successful.
+        return True
 
 
 

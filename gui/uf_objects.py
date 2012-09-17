@@ -793,11 +793,13 @@ class Uf_page(Wiz_page):
 
         # Synchronous execution.
         if self.sync or status.gui_uf_force_sync:
-            interpreter.apply(uf, *args, **kwds)
+            return_status = interpreter.apply(uf, *args, **kwds)
+            return return_status
 
         # Asynchronous execution.
         else:
             interpreter.queue(uf, *args, **kwds)
+            return True
 
 
     def on_back(self):
@@ -831,7 +833,7 @@ class Uf_page(Wiz_page):
 
             # Skip execution when a Combo_list does not have enough elements.
             if self.uf_data.kargs[i]['wiz_combo_list_min'] != None and kargs[name] == None:
-                return
+                return True
 
         # Handle the free file format args.
         if 'free_file_format' in self.uf_args:
@@ -861,11 +863,14 @@ class Uf_page(Wiz_page):
             print(self._intro_text(keys, values))
 
         # Execute the user function.
-        self.execute(self.name, **kargs)
+        return_status = self.execute(self.name, **kargs)
 
         # Bring the controller to the front.
         if status.show_gui and self.uf_data.display:
             wx.CallAfter(app.gui.controller.Raise)
+
+        # Return the status.
+        return return_status
 
 
     def on_next(self):

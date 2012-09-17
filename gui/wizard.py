@@ -318,6 +318,8 @@ class Wiz_page(wx.Panel):
         This method is called when terminating the wizard or hitting the apply button.
         """
 
+        return True
+
 
     def on_init(self):
         """To be over-ridden if an action is to be performed when a page is newly displayed.
@@ -331,7 +333,6 @@ class Wiz_page(wx.Panel):
 
         This method is called when moving to the next page of the wizard.
         """
-
 
 
 
