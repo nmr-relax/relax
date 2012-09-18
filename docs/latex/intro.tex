@@ -358,11 +358,19 @@ Any data which is not considered global for the molecule, such as diffusion tens
 \subsection{Scripting}
 \index{scripting|textbf}
 
-What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file ending in \file{*.py} and then at the terminal type
+What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  First type your commands into a text file ending in \file{*.py}.  To use this mode of relax, you will need to open up a terminal in your respective operating system:
+
+\begin{description}
+\item[GNU/Linux:]  Here you have an incredible number of choices.  If you don't have a preferred shell already, you could try one of \software{Konsole}, \software{GNOME Terminal} or even \software{XTerm} if you are a masochist.
+\item[Mac OS X:]  This is as simple as in GNU/Linux -- just launch \software{Terminal.app} from the \directory{Utilities} folder.
+\item[MS Windows:]  If your system supports it, you should install and use \software{Windows PowerShell}.  The alternative is the nasty \software{cmd} command line terminal program which comes installed by default on all Windows versions.  The \software{PowerShell}, although no where near as powerful as the Linux and Mac terminals, is a huge improvement on the ancient \software{cmd} program and will make relax much better to use on MS Windows.
+\end{description}
+
+Once your terminal is running, go to the directory containing your script using the \prompt{cd} command (if you do not know what this is, please see the documentation for your terminal program to understand some of its basic usage).  Once you are in the correct directory, within the terminal type:
 
 \example{\$ relax your\_script.py}
 
-An example of a simple script which will minimise the model-free model ``m4'' after loading six relaxation data sets is
+You will need to replace \file{your\_script.py} with the name of your script.  An example of a simple script which will minimise the model-free model ``m4'' after loading six relaxation data sets is
 
 \begin{exampleenv}
 \# Create the data pipe. \\
