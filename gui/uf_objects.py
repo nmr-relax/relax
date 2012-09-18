@@ -111,8 +111,7 @@ def build_uf_menus(parent=None, menubar=None):
                 class_list.append(class_name)
 
             # Create the user function menu entry.
-            uf_id = wx.NewId()
-            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
         # No sub menu.
         else:
@@ -122,8 +121,7 @@ def build_uf_menus(parent=None, menubar=None):
                 class_item = None
 
             # The menu item.
-            uf_id = wx.NewId()
-            menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+            menu.AppendItem(build_menu_item(menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
         # New menu.
         if menu_index == 0 and not search(pattern, name):
@@ -131,7 +129,7 @@ def build_uf_menus(parent=None, menubar=None):
             menu_index = 1
 
         # Bind the menu item to the parent.
-        parent.Bind(wx.EVT_MENU, uf_store[name], id=uf_id)
+        parent.Bind(wx.EVT_MENU, parent.uf_call, id=uf_store[name]._uf_id)
 
     # Add the very last sub menu.
     if class_item != None:
@@ -250,6 +248,9 @@ class Uf_object(object):
 
         # Initialise the wizard storage.
         self.wizard = None
+
+        # Create a unique wx ID for the user function.
+        self._uf_id = wx.NewId()
 
 
     def create_page(self, wizard=None, sync=None):
@@ -960,3 +961,18 @@ class Uf_storage(dict):
 
         # Already instantiated, so return the instance.
         return self._instance
+
+
+    def get_uf(self, id=0):
+        """Return the name of the user function corresponding to the given wx ID.
+
+        @keyword id:    The unique wx ID number.
+        @type id:       int
+        @return:        The name of the user function.
+        @rtype:         str
+        """
+
+        # Loop over the elements, returning the name when a match occurs.
+        for name in self.keys():
+            if self[name]._uf_id == id:
+                return name
