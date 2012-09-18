@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,47 +19,40 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for handling result files."""
 
-__all__ = [ 'align_tensor',
-            'angles',
-            'bmrb',
-            'bruker',
-            'dasha',
-            'diffusion_tensor',
-            'dipole_pair',
-            'eliminate',
-            'exp_info',
-            'fix',
-            'frame_order',
-            'frq',
-            'grace',
-            'interatomic',
-            'minimise',
-            'model_selection',
-            'mol_res_spin',
-            'molmol',
-            'monte_carlo',
-            'noesy',
-            'palmer',
-            'paramag',
-            'pcs',
-            'pipes',
-            'pymol_control',
-            'rdc',
-            'relax_data',
-            'relax_re',
-            'reset',
-            'result_files',
-            'results',
-            'script',
-            'selection',
-            'sequence',
-            'spectrum',
-            'state',
-            'structure',
-            'sys_info',
-            'temperature',
-            'value',
-            'vmd',
-            'xplor'
-]
+# relax module imports.
+from status import Status; status = Status()
+
+
+def add_result_file(type=None, label=None, file=None):
+    """Add a results file to the current data pipe.
+
+    @keyword type:  The mimetype of the result file, for example 'text', 'grace', 'molmol' or 'pymol'.
+    @type type:     str
+    @keyword label: The label to attach to the file.  For example a BMRB file can have the label 'BMRB' and type 'text'.
+    @type label:    str
+    @keyword file:  The path of the file.
+    @type file:     str
+    """
+
+    # First check if the structure exists, creating it if needed.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+
+    # Check if the file already exists.
+    for i in range(len(cdp.result_files)): 
+        if cdp.result_files[i][2] == file:
+            # Overwrite the settings.
+            cdp.result_files[i][0] = type
+            cdp.result_files[i][1] = label
+
+            # Nothing left to do.
+            return True
+
+    # Add the file.
+    cdp.result_files.append([type, label, file])
+
+    # Notify all observers.
+    status.observers.result_file.notify()

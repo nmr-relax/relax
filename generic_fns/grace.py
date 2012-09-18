@@ -31,6 +31,7 @@ from warnings import warn
 import generic_fns
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
 from generic_fns import pipes
+from generic_fns.result_files import add_result_file
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from relax_io import get_file_path, open_write_file, test_binary
 from relax_warnings import RelaxWarning
@@ -421,11 +422,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     file.close()
 
     # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    cdp.result_files.append(['grace', 'Grace', file_path])
-    status.observers.result_file.notify()
-
+    add_result_file(type='grace', label='Grace', file=file_path)
 
 
 def write_xy_data(data, file=None, graph_type=None, norm=False):

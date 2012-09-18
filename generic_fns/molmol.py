@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,6 +31,7 @@ from time import sleep
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
+from generic_fns.result_files import add_result_file
 from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
@@ -338,10 +339,7 @@ def macro_write(data_type=None, style="classic", colour_start_name=None, colour_
     file.close()
 
     # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    cdp.result_files.append(['molmol', 'Molmol', file_path])
-    status.observers.result_file.notify()
+    add_result_file(type='molmol', label='Molmol', file=file_path)
 
 
 def ribbon():
