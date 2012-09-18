@@ -516,10 +516,6 @@ class API_common:
                 # Name for the simulation object.
                 sim_object_name = object_name + '_sim'
 
-                # Test if the simulation object already exists.
-                if hasattr(spin, sim_object_name):
-                    raise RelaxError("Monte Carlo parameter values have already been set.")
-
 
         # Set the Monte Carlo parameter values.
         #######################################
