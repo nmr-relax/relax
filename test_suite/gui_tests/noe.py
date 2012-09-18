@@ -179,7 +179,7 @@ class Noe(GuiTestCase):
 
             # Check the NOE data.
             self.assertEqual(noe[i], spin_cont.noe)
-            self.assertEqual(noe_err[i], spin_cont.noe_err)
+            self.assertAlmostEqual(noe_err[i], spin_cont.noe_err)
 
             # Increment the spin index.
             i += 1
