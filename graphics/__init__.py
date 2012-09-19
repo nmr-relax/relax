@@ -50,7 +50,7 @@ def fetch_icon(icon=None, size='16x16', format='png'):
     @type icon:         str
     @keyword size:      The icon size to fetch.
     @type size:         str
-    @keyword format:    The format of the icon, defaulting to PNG images.  This can be changed to 'eps.gz' for example.
+    @keyword format:    The format of the icon, defaulting to PNG images.  This can be changed to 'eps.gz' for example, or None for no file ending.
     @type format:       str
     @return:            The icon path, for example 'oxygen_icons/16x16/actions/document-open.png'.
     @rtype:             str
@@ -82,7 +82,9 @@ def fetch_icon(icon=None, size='16x16', format='png'):
         path += elements[1] + sep
 
     # The file.
-    if format == 'png':
+    if format == None:
+        path = elements[-1]
+    elif format == 'png':
         path += "%s.png" % elements[-1]
     elif format == 'eps.gz':
         path += "%s.eps.gz" % elements[-1]
