@@ -334,19 +334,21 @@ class Sequence:
         @type event:    wx event
         """
 
-        # Initialise the model selection window.
-        win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
+        # Show the window.
+        self.selection_win_show()
 
-        # Set the model selector window selections.
-        win.SetValue(self.GetValue())
+        # Extract the data from the selection window once closed.
+        self.selection_win_data()
 
-        # Show the model selector window.
-        if status.show_gui:
-            win.ShowModal()
-            win.Close()
+        # Destroy the window.
+        del self.sel_win
+
+
+    def selection_win_data(self):
+        """Extract the data from the selection window."""
 
         # Get the value.
-        value = win.GetValue()
+        value = self.sel_win.GetValue()
 
         # No sequence data.
         if not len(value):
@@ -356,8 +358,20 @@ class Sequence:
         else:
             self.SetValue(value)
 
-        # Destroy the window.
-        del win
+
+    def selection_win_show(self):
+        """Show the selection window."""
+
+        # Initialise the model selection window.
+        self.sel_win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
+
+        # Set the model selector window selections.
+        self.sel_win.SetValue(self.GetValue())
+
+        # Show the model selector window.
+        if status.show_gui:
+            self.sel_win.ShowModal()
+            self.sel_win.Close()
 
 
 
