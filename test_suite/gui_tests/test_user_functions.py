@@ -61,7 +61,6 @@ class User_functions(GuiTestCase):
         uf.page.SetValue('read_model', str_to_gui('6'))
         uf.page.uf_args['read_model'].selection_win_show()
         uf.page.uf_args['read_model'].sel_win.append_row(None)
-        uf.page.uf_args['read_model'].sel_win.append_row(None)
         uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(2))
         uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=1, col=0, label=int_to_gui(4))
         uf.page.uf_args['read_model'].selection_win_data()
