@@ -249,9 +249,19 @@ class Sequence:
             value_set = False
             if self.single_value:
                 try:
+                    # Convert.
                     value = self.convert_from_gui(value)
-                    if isinstance(value, self.value_type):
-                        value_set = True
+
+                    # Check that the conversion was successful.
+                    if self.value_type in ['float', 'num']:
+                        if isinstance(value, int) or isinstance(value, float):
+                            value_set = True
+                    elif self.value_type == 'int':
+                        if isinstance(value, int):
+                            value_set = True
+                    elif self.value_type == 'str':
+                        if isinstance(value, str):
+                            value_set = True
                 except:
                     pass
 
