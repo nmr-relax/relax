@@ -611,7 +611,7 @@ Thanks to Gary Thompson's multi-processor framework, relax can be run on multi-c
 
 If you have access to a 256 node cluster and can run calculations on all nodes, assuming that the \file{dauvergne\_protocol.py} automated model-free analysis sample script will be used (after modification for the system under study), relax can be executed by typing:
 
-\example{\$ mpirun -np 257 /usr/local/bin/relax --multi=`mpi4py' --log log dauvergne\_protocol.py}
+\example{\$ mpirun -np 257 /usr/local/bin/relax --multi=`mpi4py' --tee log dauvergne\_protocol.py}
 
 Note that the argument \prompt{-np} value is one more than the number of slaves you would like to run.  You should then see the following text in the initial relax printout:
 
