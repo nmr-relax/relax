@@ -83,7 +83,7 @@ def fetch_icon(icon=None, size='16x16', format='png'):
 
     # The file.
     if format == None:
-        path = elements[-1]
+        path += elements[-1]
     elif format == 'png':
         path += "%s.png" % elements[-1]
     elif format == 'eps.gz':
