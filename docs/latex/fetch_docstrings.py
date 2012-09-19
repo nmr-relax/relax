@@ -220,13 +220,24 @@ class Fetch_docstrings:
         # Some whitespace.
         self.file.write("\n\n")
 
-        # Add a spaced out rule.
+        # Start a new column for each user function and add a rule to the top.
         self.file.write("\\pagebreak[4]\n")
-        self.file.write("\\rule{\columnwidth}{2pt}\n")
-        self.file.write("\\vspace{10pt}\n")
+        self.file.write("\\rule{\columnwidth}{1pt}\n")
 
-        # Minipage start.
-        self.file.write("\\begin{minipage}[h]{\\linewidth}\n")
+        # The title (with less spacing).
+        self.file.write("\\vspace{-20pt}\n")
+        self.uf_name_latex = self.uf_name
+
+        # LaTeX formatting.
+        self.uf_name_latex = self.latex_special_chars(self.uf_name_latex)
+        self.uf_name_latex = self.word_formatting(self.uf_name_latex, bold=True)
+
+        # Allow for hyphenation.
+        self.uf_name_latex = replace(self.uf_name_latex, '.', '\-.')
+        self.uf_name_latex = replace(self.uf_name_latex, '\_', '\-\_')
+
+        # Write out the title (with label).
+        self.file.write("\subsection{%s} \label{uf: %s}\n" % (self.uf_name_latex, self.uf_name))
 
         # Add the user function class icon.
         if self.uf_class:
@@ -243,23 +254,8 @@ class Fetch_docstrings:
         else:
             self.file.write("\n")
 
-        # Minipage end.
-        self.file.write("\\end{minipage}\n\n")
-
-        # The title.
-        self.file.write("\\vspace{-20pt}\n")
-        self.uf_name_latex = self.uf_name
-
-        # LaTeX formatting.
-        self.uf_name_latex = self.latex_special_chars(self.uf_name_latex)
-        self.uf_name_latex = self.word_formatting(self.uf_name_latex, bold=True)
-
-        # Allow for hyphenation.
-        self.uf_name_latex = replace(self.uf_name_latex, '.', '\-.')
-        self.uf_name_latex = replace(self.uf_name_latex, '\_', '\-\_')
-
-        # Write out the title (with label).
-        self.file.write("\subsection{%s} \label{uf: %s}\n" % (self.uf_name_latex, self.uf_name))
+        # End.
+        self.file.write("\n")
 
 
     def indexing(self, index, bold=False):
