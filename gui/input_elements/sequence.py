@@ -304,11 +304,8 @@ class Sequence:
         # The other elements.
         else:
             # Handle single values.
-            if self.single_value and isinstance(value, list):
-                if len(value) == 1:
-                    value = value[0]
-                else:
-                    raise RelaxError("The list of values '%s' cannot be converted to a single value." % value)
+            if self.single_value and isinstance(value, list) and len(value) == 1:
+                value = value[0]
 
             # Convert and set the value.
             self._field.SetValue(self.convert_to_gui_seq(value))
