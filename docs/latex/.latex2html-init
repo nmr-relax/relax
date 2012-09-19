@@ -69,6 +69,7 @@ $FONT_SIZE = "12pt";
 documentstyle # [] # {}
 linebreak # []
 mbox
+bibitem
 _IGNORED_CMDS_
 
 1;	# This must be the last line
