@@ -370,7 +370,15 @@ Once your terminal is running, go to the directory containing your script using 
 
 \example{\$ relax your\_script.py}
 
-You will need to replace \file{your\_script.py} with the name of your script.  An example of a simple script which will minimise the model-free model ``m4'' after loading six relaxation data sets is
+You will need to replace \file{your\_script.py} with the name of your script.  In most cases you would probably like to keep a log of all of the messages, warnings and errors relax produces for future reference.  To active logging within relax, type:
+
+\example{\$ relax --log log your\_script.py}
+
+This will place all output (both STDOUT and STDERR) into the \file{log} file (you can choose any name for this log file).  Alternatively you can both log the output and simultaneously see the messages in your terminal by typing:
+
+\example{\$ relax --tee log your\_script.py}
+
+These command line arguments could be replaced by IO redirection if this is a familiar concept to you, but note that these arguments are active also in the GUI mode whereby IO redirection in the terminal will have no effect.   An example of a simple script which will minimise the model-free model ``m4'' after loading six relaxation data sets is
 
 \begin{exampleenv}
 \# Create the data pipe. \\
@@ -427,9 +435,7 @@ Scripting is much more powerful than the prompt as advanced Python\index{Python}
 
 
 % Sample scripts.
-%~~~~~~~~~~~~~~~~
-
-\subsection{Sample scripts}
+\subsubsection{Sample scripts}
 \index{scripting!sample scripts}
 
 A few sample scripts have been provided in the directory \directory{sample\_scripts}.  These can be copied and modified for different types of data analysis.
@@ -481,7 +487,7 @@ Alternatively the three components of the test suite -- system tests, unit tests
 \caption[GUI screenshot -- $\Rtwo$ analysis]{Screenshot of the relax GUI interface -- the $\Rtwo$ analysis.}\label{fig: screenshot: R2 analysis}
 \end{figure}
 
-If the wx Python module is installed on your system, you will have access to the GUI interface of relax.  To launch relax in GUI mode, type either
+If the wxPython module is installed on your system, you will have access to the GUI interface of relax.  To launch relax in GUI mode, type either
 
 \example{\$ relax -g}
 
@@ -489,7 +495,19 @@ or
 
 \example{\$ relax --gui}
 
-The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses.  This provides an easy way for the user to perform quick analyses.  The interface consists of a tab for each analysis.  By clicking on the \guimenuitemtwo{File}{New analysis} menu entry, the analysis wizard will appear (see Figure~\ref{fig: screenshot: analysis wizard}).  The following analyses can be set up using this wizard:
+In most cases you will probably like to have a permanent copy of all the messages, warnings, and errors relax produces for future reference.  In such a case you could run the GUI with:
+
+\example{\$ relax --gui --log log}
+
+This will place all of the output into the \file{log} file.
+
+% Model-free analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_mf.eps.gz}}
+\caption[GUI screenshot -- Model-free analysis]{Screenshot of the relax GUI interface -- the automated model-free analysis.  The analysis is fully automated via a new model-free protocol as described in detail in Chapter~\ref{ch: model-free}.  Clicking on the \guibutton{About} button in the bottom left hand corner will give a full description of the protocol.  For using this interface or any of the modern-day model-free protocols, data from at least two magnetic field strengths must be without question collected.}\label{fig: screenshot: model-free analysis}
+\end{figure}
+
+The GUI is currently and interface to the automatic analyses, providing an easy way to perform quick analyses.  The interface consists of a tab for each analysis.  By clicking on the \guimenuitemtwo{File}{New analysis} menu entry or the \guibutton{New analysis} toolbar button, the analysis wizard will appear (see Figure~\ref{fig: screenshot: analysis wizard}).  The following analyses can be set up using this wizard:
 
 \begin{description}
 \item[Steady-state NOE:]  this provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).  See Figure~\ref{fig: screenshot: NOE analysis} on page~\pageref{fig: screenshot: NOE analysis}.
@@ -593,7 +611,7 @@ Thanks to Gary Thompson's multi-processor framework, relax can be run on multi-c
 
 If you have access to a 256 node cluster and can run calculations on all nodes, assuming that the \file{dauvergne\_protocol.py} automated model-free analysis sample script will be used (after modification for the system under study), relax can be executed by typing:
 
-\example{\$ mpirun -np 257 /usr/local/bin/relax --multi=`mpi4py' dauvergne\_protocol.py}
+\example{\$ mpirun -np 257 /usr/local/bin/relax --multi=`mpi4py' --log log dauvergne\_protocol.py}
 
 Note that the argument \prompt{-np} value is one more than the number of slaves you would like to run.  You should then see the following text in the initial relax printout:
 
