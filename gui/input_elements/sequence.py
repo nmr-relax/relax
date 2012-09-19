@@ -101,6 +101,7 @@ class Sequence:
         """
 
         # Store the args.
+        self.parent = parent
         self.name = name
         self.default = default
         self.element_type = element_type
@@ -337,7 +338,7 @@ class Sequence:
         """
 
         # Initialise the model selection window.
-        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
+        win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
 
         # Set the model selector window selections.
         win.SetValue(self.GetValue())
@@ -392,9 +393,11 @@ class Sequence_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (150, 33)
 
-    def __init__(self, name='', seq_type='list', value_type='str', dim=None):
+    def __init__(self, parent=None, name='', seq_type='list', value_type='str', dim=None):
         """Set up the string list editor window.
 
+        @keyword parent:        The parent GUI element.
+        @type parent:           wx.Window instance or None
         @keyword name:          The name of the window.
         @type name:             str
         @keyword seq_type:      The type of Python sequence.  This should be one of 'list' or 'tuple'.
@@ -428,7 +431,7 @@ class Sequence_window(wx.Dialog):
         title = "Edit the %s values." % name
 
         # Set up the dialog.
-        wx.Dialog.__init__(self, None, id=-1, title=title)
+        wx.Dialog.__init__(self, parent, id=-1, title=title)
 
         # Initialise some values
         self.width = self.SIZE[0] - 2*self.BORDER
