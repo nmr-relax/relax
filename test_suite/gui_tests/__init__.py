@@ -44,6 +44,7 @@ from noe import Noe
 from pipes import Pipes
 from rx import Rx
 from state import State
+from test_suite.gui_tests.test_user_functions import User_functions
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
@@ -124,6 +125,7 @@ class GUI_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
+            suite_array.append(TestLoader().loadTestsFromTestCase(User_functions))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
