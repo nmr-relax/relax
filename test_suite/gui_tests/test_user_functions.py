@@ -58,6 +58,7 @@ class User_functions(GuiTestCase):
         uf.page.SetValue('file', str_to_gui(file))
 
         # Set the models to read.
+        uf.page.SetValue('read_model', str_to_gui('6'))
         uf.page.uf_args['read_model'].selection_win_show()
         uf.page.uf_args['read_model'].sel_win.append_row(None)
         uf.page.uf_args['read_model'].sel_win.append_row(None)
