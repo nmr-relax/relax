@@ -7,7 +7,7 @@
 % Introduction.
 %%%%%%%%%%%%%%%
 
-\section{Introduction}
+\section{The concept of the relax data model}
 
 To begin to understand how to use relax, a basic comprehension of the relax data model is needed.  The data model includes the concepts of the relax data store, the data pipes, the molecule, residue and spin data structures and the interatomic data containers.  These concepts are independent of the specific analyses presented in the next chapters and are important for setting up relax.
 
@@ -167,7 +167,7 @@ Below are three different examples showing how to set up the relax data model fo
 % Spins from structural data.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Spins from structural data} \label{sect: script - structural data}
+\subsection{Script mode -- spins from structural data} \label{sect: script - structural data}
 
 \begin{figure*}[h]
 \includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/n_state_model/phthalic_acid_ens_600x600.eps.gz}
@@ -204,7 +204,7 @@ Note that if structural data from the PDB is used to generate the spin container
 % Spins from a sequence file.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Spins from a sequence file} \label{sect: script - sequence file}
+\subsection{Script mode -- spins from a sequence file} \label{sect: script - sequence file}
 
 \begin{figure*}[h]
 \includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/sequence_600x600.eps.gz}
@@ -247,7 +247,7 @@ In the GUI, the creation of molecule, residue, and spin containers from a sequen
 % Manual construction.
 %~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Manual construction} \label{sect: script - manual construction}
+\subsection{Script mode -- manual construction} \label{sect: script - manual construction}
 
 For the masochists out there, the full molecule, residue and spin data structure can be manually constructed.  For example:
 
@@ -276,7 +276,7 @@ These user functions can be repeated until the full sequence has been constructe
 % The data pipe.
 %~~~~~~~~~~~~~~~
 
-\subsection{The data pipe} \label{sect: GUI - data pipe}
+\subsection{GUI mode -- setting up the data pipe} \label{sect: GUI - data pipe}
 
 In the GUI, the most common way to create the data pipe is to initialise one of the auto-analyses via the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  The initialisation will create the appropriate starting data pipe.  Alternatively the data pipe editor can be used (see Figure~\ref{fig: screenshot: pipe editor} on page~\pageref{fig: screenshot: pipe editor}).  Or the \guimenuitemthree{User functions}{pipe}{create} menu item can be selected for graphical access to the \uf{pipe.create} user function.
 
@@ -285,7 +285,7 @@ In the GUI, the most common way to create the data pipe is to initialise one of 
 % Spins from structural data.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Spins from structural data} \label{sect: GUI - structural data}
+\subsection{GUI mode -- spins from structural data} \label{sect: GUI - structural data}
 
 For this section, the example of protein $^{15}$N relaxation data will be used to illustrate how to set up the data structures.  To manipulate the molecule, residue and spin data structures in the GUI, the most convenient option is to use the spin viewer window (see Figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}).  This window can be opened in four ways:
 
@@ -348,7 +348,7 @@ If the $^1$H spins have been loaded as well, then you should see exactly twice a
 % Spins from a sequence file.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Spins from a sequence file} \label{sect: GUI - sequence file}
+\subsection{GUI mode -- spins from a sequence file} \label{sect: GUI - sequence file}
 
 Starting from the empty spin viewer window on page~\pageref{figure: spin viewer blank}), click on the \guibutton{Load spins} button.  You will then see the spin loading wizard (see page~\pageref{figure: spin viewer wizard start}).  Select the option for reading data from a sequence file.  You should then see:
 
@@ -362,7 +362,7 @@ Select the file to load and change the \gui{Free format file settings} as needed
 % Manual construction.
 %~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Manual construction} \label{sect: GUI - manual construction}
+\subsection{GUI mode -- manual construction} \label{sect: GUI - manual construction}
 
 Just as in the prompt/script UI mode, the molecules, residues and spins can be manually added.  First add a molecule by right clicking on the \gui{Spin system information} element and selecting the relevant entry in the popup menu.  Then right click on the newly created molecule container to add residues, and right click on residue containers to add spins.
 
@@ -370,7 +370,7 @@ Just as in the prompt/script UI mode, the molecules, residues and spins can be m
 % Deselect spins.
 %~~~~~~~~~~~~~~~~
 
-\subsection{Deselect spins} \label{sect: GUI - deselect spins}
+\subsection{GUI mode -- deselect spins} \label{sect: GUI - deselect spins}
 
 To deselect spins (for example if they are unresolved, overlapping peaks), click on the \guimenuitemthree{User functions}{deselect}{read} menu item from the main relax window or the spin viewer window:
 

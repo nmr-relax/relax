@@ -13,16 +13,16 @@
 % Introduction.
 %%%%%%%%%%%%%%%
 
-\section{Introduction}
+\section{Introduction to relaxation curve-fitting}
 
-Relaxation curve-fitting involves a number of steps including the loading of data, the calculation of both the average peak intensity\index{peak!intensity} across replicated spectra and the standard deviations\index{standard deviation} of those peak intensities, selection of the experiment type, optimisation of the parameters of the fit, Monte Carlo simulations\index{Monte Carlo simulation} to find the parameter errors, and saving and viewing the results.  To simplify the process a sample script will be followed step by step as was done with the NOE calculation.
+The fitting of exponentials to relaxation curves (relaxation curve-fitting or as used throughout this chapter abbreviated simply as relax-fit) involves a number of steps including the loading of data, the calculation of both the average peak intensity\index{peak!intensity} across replicated spectra and the standard deviations\index{standard deviation} of those peak intensities, selection of the experiment type, optimisation of the parameters of the exponential curves during the fit for each observed spin, Monte Carlo simulations\index{Monte Carlo simulation} to find the parameter errors, and saving and viewing the results.  To simplify the process a sample script will be followed step by step as was done with the NOE calculation.
 
 
 
 % From spectra to peak intensities.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{From spectra to peak intensities} \label{sect: spectra to intensities}
+\section{From spectra to peak intensities for the relaxation rates} \label{sect: spectra to intensities}
 
 The following subsections simply contain advice on how to go from the recorded FIDs to the peak lists ready to be input into relax.  This need not be followed -- it is simply a set of recommendations for obtaining the highest quality relaxation rates.
 
@@ -143,13 +143,13 @@ If using Sparky then, to be sure that the peak heights are properly updated, for
 
 % Script UI.
 %%%%%%%%%%%%
-\section{Prompt/script UI mode}
+\section{Relaxation curve-fitting in the prompt/script UI mode}
 
 
 % The sample script.
 %~~~~~~~~~~~~~~~~~~~
 
-\subsection{The sample script}
+\subsection{Relax-fit script mode -- the sample script}
 
 The following is a verbatim copy of the contents of the \file{sample\_scripts/relax\_fit.py} file.  If your copy of the sample script is different than that below, please send an email to the relax-devel mailing list\index{mailing list!relax-devel} to tell the relax developers that the manual is out of date (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  You will need to first copy this script to a dedicated analysis directory containing peak lists, a PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.  The script contents are:
 
@@ -257,7 +257,7 @@ The next sections will break this script down into its logical components and ex
 % Initialisation of the data pipe.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Initialisation of the data pipe} \label{Rx initialisation}
+\subsection{Relax-fit script mode -- initialisation of the data pipe} \label{Rx initialisation}
 
 The data pipe is simply created by the command
 
@@ -269,7 +269,7 @@ This user function will then create a relaxation exponential curve-fitting speci
 % Spin systems.
 %~~~~~~~~~~~~~~
 
-\subsection{Setting up the spin systems}
+\subsection{Relax-fit script mode -- setting up the spin systems}
 
 The first thing which need to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above this is generated from a PDB file, however a plain text file with the sequence information can be used instead (see the \uf{sequence.read} user function on page~\pageref{uf: sequence.read} for more details).  In the case of the sample script, the command
 
@@ -289,7 +289,7 @@ will generate the molecule, residue, and spin sequence for the current data pipe
 % Loading the data.
 %~~~~~~~~~~~~~~~~~~
 
-\subsection{Loading the data}
+\subsection{Relax-fit script mode -- loading the data}
 
 To load the peak intensities\index{peak!intensity} into relax the user function \uf{spectrum.read\_intensities} is executed.  Important keyword arguments to this command are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands -- an expansion of the \prompt{for} loop in the sample script -- will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
 
@@ -357,7 +357,7 @@ H1.L H1.P H1.W H1.B H1.E H1.J H1.U N15.L N15.P N15.W N15.B N15.E N15.J N15.U vol
 % The rest of the setup.
 %~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The rest of the setup} \label{sect: Rx setup fin}
+\subsection{Relax-fit script mode -- the rest of the setup} \label{sect: Rx setup fin}
 
 Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
 
@@ -386,7 +386,7 @@ The argument \promptstring{exp} sets the relaxation curve to a two parameter \{$
 % Optimisation.
 %~~~~~~~~~~~~~~
 
-\subsection{Optimisation}
+\subsection{Relax-fit script mode -- optimisation of exponential curves}
 
 Now that everything has been setup minimision can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
 
@@ -401,7 +401,7 @@ The next step is to select one of the minimisation algorithms to optimise the mo
 % Error analysis.
 %~~~~~~~~~~~~~~~~
 
-\subsection{Error analysis}
+\subsection{Relax-fit script mode -- error analysis}
 
 Only one technique adequately estimates parameter errors when the parameter values where found by optimisation -- Monte Carlo simulations\index{Monte Carlo simulation}.  In relax this can be implemented by using a series of functions from the \uf{monte\_carlo} user function class.  Firstly the number of simulations needs to be set
 
@@ -427,7 +427,7 @@ The parameter errors are then determined as the standard deviation of the optimi
 % Finishing off.
 %~~~~~~~~~~~~~~~
 
-\subsection{Finishing off}
+\subsection{Relax-fit script mode -- finishing off}
 
 To finish off, the script first saves the relaxation rates together with their errors in a simple text file
 
@@ -458,7 +458,7 @@ and finally the program state is saved for future reference
 %%%%%%
 
 \newpage
-\section{The GUI auto-analysis}
+\section{The relaxation curve-fitting auto-analysis in the GUI}
 
 The $\Rone$ and $\Rtwo$ relaxation rates can be calculated using the relax GUI (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis}).  These auto-analyses can be selected using the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Just as with the steady-state NOE in the next chapter, these auto-analyses are very similar in spirit to the sample script described in this chapter, though the Grace 2D visualisation is more advanced.  If you have read this chapter, the usage of these analyses should be self explanatory.
 
@@ -472,7 +472,7 @@ The messages will then appear both in the relax controller window (see Figure~\r
 % Initialisation of the data pipe.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Initialisation of the data pipe}
+\subsection{Relax-fit GUI mode -- initialisation of the data pipe}
 
 To begin the analysis, launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).  Select either the $\Rone$ or $\Rtwo$ analyses, and change the name of the analysis if you plan on running multiple analyses from different field strengths in one relax instance.
 
@@ -490,7 +490,7 @@ Then click on the \guibutton{Next} button.  On the second page click on \guibutt
 % General setup.
 %~~~~~~~~~~~~~~~
 
-\subsection{General setup}
+\subsection{Relax-fit GUI mode -- general setup}
 
 You will now be presented with a blank analysis tab:
 
@@ -509,7 +509,7 @@ Here there are two things unique to the GUI which need to be preformed:
 % Spin systems.
 %~~~~~~~~~~~~~~
 
-\subsection{Setting up the spin systems}
+\subsection{Relax-fit GUI mode -- setting up the spin systems}
 
 As the relaxation data is at the level of the spins, the molecule, residue and spin data structures need to be set up.  In the $\Rone$ and $\Rtwo$ GUI analysis tabs, there is a special \gui{Spin systems} GUI element designed for this.  This will initially say \gui{0 spins loaded and selected}.  Click on the \guibutton{Spin editor} button to launch the spin viewer window.  The steps for setting up the spin containers using PDB files are described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} or for sequence files in section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file}.
 
@@ -517,7 +517,7 @@ As the relaxation data is at the level of the spins, the molecule, residue and s
 % Unresolved spins.
 %~~~~~~~~~~~~~~~~~~
 
-\subsection{Unresolved spins}
+\subsection{Relax-fit GUI mode -- unresolved spins}
 
 As in the prompt/script UI section~\ref{sect: Rx setup fin}, the spins can be deselected at this point using the same \file{unresolved} file.  This is described in detail in section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins}.
 
@@ -526,7 +526,7 @@ As in the prompt/script UI section~\ref{sect: Rx setup fin}, the spins can be de
 % Loading the data.
 %~~~~~~~~~~~~~~~~~~
 
-\subsection{Loading the data}
+\subsection{Relax-fit GUI mode -- loading the data}
 
 At this stage, the peak intensity data needs to be loaded.  In both the $\Rone$ and $\Rtwo$ analysis tabs is a \gui{Spectra list} GUI element.  Click on the \guibutton{Add} button to launch the peak intensity loading wizard:
 
@@ -586,7 +586,7 @@ This procedure should be repeated for every experiment you have collected (you c
 % Optimisation and error analysis.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Optimisation and error analysis}
+\subsection{Relax-fit GUI mode -- optimisation and error analysis}
 
 Back in the main $\Rone$ analysis tab, the grid search increments and number of Monte Carlo simulations can be changed.  The default values of 21 grid search increments and 500 MC simulations are optimal -- lower values are not recommended.  To perform the optimisation and error analysis, click on the \guibutton{Execute relax} button.  The relax controller will open to show you the progress of the optimisation and simulations:
 
@@ -607,7 +607,7 @@ This window can be used to open the text files in the default text editor for yo
 % Final checks.
 %%%%%%%%%%%%%%%
 
-\section{Final checks}
+\section{Final checks of the curve-fitting}
 
 To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \file{intensities.agr} and \file{intensities\_norm.agr} 2D Grace\index{software!Grace|textbf} files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible (see Figure~\ref{fig: screenshot: xmgrace peak intensities}).  If Xmgrace or a compatible program is not available for your operating system, the Grace files contain text representations of the curves at the end which can opened, edited and visualised in any another 2D graphing software package.
  
