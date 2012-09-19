@@ -31,7 +31,7 @@ All permanent data handled by relax is kept in a structure known as the relax da
 \subsubsection{Data pipes}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/pipe_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/pipe_600x600}
 \end{figure*}
 
 The first thing one must do when relax is launched is to create a data pipe.  When using the GUI, a base data pipe will be created when opening one of the automatic analyses via the analysis selection window (see figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  This will also create a data pipe bundle for the analysis (\textit{vide infra}).  Alternatively the data pipe editor window can be used to create data pipes (see figure~\ref{fig: screenshot: pipe editor} on page~\pageref{fig: screenshot: pipe editor}).  For the prompt/scripting modes, or the \guimenuitemthree{User functions}{pipe}{create} menu entry, a data pipe can be initialised by specifying the unique name of the data pipe and the data pipe type:
@@ -47,7 +47,7 @@ All data not associated with spin systems will be stored in the base data pipe. 
 \subsubsection{Data pipe bundles}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/pipe_bundle_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/pipe_bundle_600x600}
 \end{figure*}
 
 Related data pipes can be grouped into a `bundle'.  For example if the data pipes ``sphere'', ``oblate spheroid'', ``prolate spheroid'', and ``ellipsoid'' preexist, these can be grouped into a bundle called ``diffusion tensors'' with the following series of user function calls:
@@ -76,7 +76,7 @@ Within a data pipe is the molecule, residue, and spin container data structure. 
 \subsubsection{Molecule containers}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/molecule_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/molecule_600x600}
 \end{figure*}
 
 The spin containers are part of a nested set of containers, and are graphically depicted in the spin viewer window of the GUI in figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}.  As can be seen from the figure, the top level holds a single molecular container.  Multiple molecular containers can be present if the study is of a molecular complex.  Using the GUI menus or the prompt/scripting mode, molecule containers can be manually created with the user function:
@@ -91,7 +91,7 @@ In the spin viewer window of the GUI, right clicking on the \gui{Spin system inf
 \subsubsection{Residue containers}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/residue_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/residue_600x600}
 \end{figure*}
 
 Nested within the molecule containers are residue containers.  These are graphically depicted in the spin viewer window (see figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}).  Each molecule container can possess multiple residues.  These require either a unique residue number or unique residue name.  For organic molecules where the residue concept is meaningless, all spin containers can be held within a single unnamed and unnumbered residue container.  Using the GUI menus or the prompt/scripting mode, residue containers can be manually created with the user function:
@@ -107,7 +107,7 @@ Alternatively residues can be added in the spin viewer window from the pop up me
 \subsubsection{Spin containers}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/spin_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/spin_600x600}
 \end{figure*}
 
 Spin containers are nested within a residue container (again graphically depicted in the spin viewer window in figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}).  Multiple spin containers can exist per residue.  This allows, for example, a single model-free analysis simultaneously on the backbone nitrogen spins, side-chain tryptophan indole nitrogen spins and alpha carbon spins.  Or, for example, studying the pseudocontact shifts for all nitrogen, carbon and proton spins in the molecule simultaneously.
@@ -145,7 +145,7 @@ Regular expression can, in some instances, be used to select spins.  For example
 \section{Interatomic data containers} \label{sect: interatomic container}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/wizards/dipole_pair/NH_dipole_pair_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/wizards/dipole_pair/NH_dipole_pair_600x600}
 \end{figure*}
 
 Separate from the spin containers, yet strongly linked to them, are the interatomic data containers.  These containers are grouped together within the same data pipe as the spins they point to.  These define interactions between two spins located anywhere within the molecule, residue and spin nested data structure.  These are automatically created when reading in data defined between two spins such as RDCs and NOE distance constraints.  They can also be created using the \uf{dipole\_pair.define} user function:
@@ -170,7 +170,7 @@ Below are three different examples showing how to set up the relax data model fo
 \subsection{Script mode -- spins from structural data} \label{sect: script - structural data}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/n_state_model/phthalic_acid_ens_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/n_state_model/phthalic_acid_ens_600x600}
 \end{figure*}
 
 3D structural data is stored at the level of the current data pipe.  This data is completely separate from the molecule, residue and spin data structure.  However the structural data can be used to generate the spin containers.  For example for the nitrogen relaxation in a model-free analysis where both the nitrogen and proton are needed to define the magnetic dipole-dipole relaxation:
@@ -207,7 +207,7 @@ Note that if structural data from the PDB is used to generate the spin container
 \subsection{Script mode -- spins from a sequence file} \label{sect: script - sequence file}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/sequence_600x600.eps.gz}
+\includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/misc/sequence_600x600}
 \end{figure*}
 
 Alternatively to setting up the molecule, residue, and spin containers via 3D structural data, a plain text columnar formatted file can be used.  This is useful for when no 3D structure exists for the molecule.  It also has the advantage that the residue and atom names need not conform to the PDB standard.  An example for reading sequence data is:
@@ -299,47 +299,47 @@ For this section, the example of protein $^{15}$N relaxation data will be used t
 You will then see:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/blank.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/blank}}
 \label{figure: spin viewer blank}
 \end{minipage}
 
 At this point, click on the \guibutton{Load spins} button (or the \guimenuitemone{Load spins} menu entry from the right click pop up menu) to launch the spin loading wizard.  A number of options will be presented to you: 
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_start.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_start}}
 \label{figure: spin viewer wizard start}
 \end{minipage}
 
 Here the spins will be loaded from a PDB file.  If you do not have a 3D structure file, please see the next section.  After selecting \gui{From a new PDB structure file} and clicking on \guibutton{Next}, you will see:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_read_pdb.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_read_pdb}}
 \end{minipage}
 
 Now select the PDB file you wish to use.  The other options in this screen allow you to handle NMR models and multiple molecules within a single PDB file.  These options are explained in the window.  Hovering the mouse over the options will give additional hints.  In this example, the \nth{3} model from the 1F3Y PDB file will be read and the single molecule will be named \guistring{Ap4Aase} to override the default naming of \guistring{1f3y\_mol1}.  Now click on \guibutton{Next} to bring up the spin loading page:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_load_spins_n.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_load_spins_n}}
 \end{minipage}
 
 This is a bit more complicated.  In this example we are studying the backbone dynamics of $^{15}$N spins of a protein.  Therefore first set the spin ID string to \guistring{@N} (which can be selected from the pull down) and click on \guibutton{Apply} to set up the backbone spins.  Do not click on \guibutton{Next} yet.  If the current study requires the specification of the dipole-dipole interaction (for example if it involves relaxation data -- model-free analyses, consistency testing, reduced spectral density mapping; or the dipolar coupling -- the N-state model or ensemble analyses, the Frame Order theory) you will also need to load the $^1$H spins as well.  Therefore set the spin ID string to \guistring{@H} and click on \guibutton{Apply} again.
 
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_load_spins_ne1.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_load_spins_ne1}}
 \end{minipage}
 
 Now change the spin ID string to \guistring{@NE1} and then click on \guibutton{Next} (or \guibutton{Apply} if the Trp protons \guistring{@HE1} need to be loaded as well).  This will add spin containers for the tryptophan indole $^{15}$N spins.  Finally click on \guibutton{Finish} to exit the wizard:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_end.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_end}}
 \label{figure: spin viewer end}
 \end{minipage}
 
 You should now see something such as:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/full.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/full}}
 \end{minipage}
 
 If the $^1$H spins have been loaded as well, then you should see exactly twice as many spin containers as shown above.
@@ -353,7 +353,7 @@ If the $^1$H spins have been loaded as well, then you should see exactly twice a
 Starting from the empty spin viewer window on page~\pageref{figure: spin viewer blank}), click on the \guibutton{Load spins} button.  You will then see the spin loading wizard (see page~\pageref{figure: spin viewer wizard start}).  Select the option for reading data from a sequence file.  You should then see:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_sequence.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/wizard_sequence}}
 \end{minipage}
 
 Select the file to load and change the \gui{Free format file settings} as needed.  An example of a suitable format is given on page~\pageref{verb: noe.500.out}.  Click on \guibutton{Next} to reach the wizard ending page (see~\pageref{figure: spin viewer end}).  Finally click on \guibutton{Finish} to exit the wizard.
@@ -375,19 +375,19 @@ Just as in the prompt/script UI mode, the molecules, residues and spins can be m
 To deselect spins (for example if they are unresolved, overlapping peaks), click on the \guimenuitemthree{User functions}{deselect}{read} menu item from the main relax window or the spin viewer window:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab3.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab3}}
 \end{minipage}
 
 Select the file listing the unresolved spins and change the column numbers in the \gui{Free format file settings} GUI element as needed: 
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/deselect.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/deselect}}
 \end{minipage}
 
 Alternatively the spin editor window can be reopened and the spins manually deselected by right clicking on them and selecting \gui{Deselect}.  Returning to the spin editor window, you should now see certain spins coloured grey:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/deselect.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/spin_viewer/deselect}}
 \end{minipage}
 
 

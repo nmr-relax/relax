@@ -225,16 +225,26 @@ class Fetch_docstrings:
         self.file.write("\\rule{\columnwidth}{2pt}\n")
         self.file.write("\\vspace{10pt}\n")
 
+        # Minipage start.
+        self.file.write("\\begin{minipage}[h]{\\linewidth}\n")
+
         # Add the user function class icon.
         if self.uf_class:
-            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format='eps.gz')
+            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format=None)
             if icon:
                 self.file.write("\includegraphics[bb=0 0 18 18]{%s} \hfill " % icon)
+            else:
+                self.file.write("\hfill ")
 
         # Add the user function icon.
-        icon = fetch_icon(self.uf.gui_icon, size='128x128', format='eps.gz')
+        icon = fetch_icon(self.uf.gui_icon, size='128x128', format=None)
         if icon:
-            self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n\n" % icon)
+            self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n" % icon)
+        else:
+            self.file.write("\n")
+
+        # Minipage end.
+        self.file.write("\\end{minipage}\n\n")
 
         # The title.
         self.file.write("\\vspace{-20pt}\n")

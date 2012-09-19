@@ -6,7 +6,7 @@
 
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/noe_600x600.eps.gz}
+\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/noe_600x600}
 \end{figure*}
 
 
@@ -253,7 +253,7 @@ Ap4Aase_new_3_mol1  14       ARG       200       N          -0.7524129557634996 
 %~~~~~~~~~~~~~~~~~~~~~
 
 \begin{figure}
-\centerline{\includegraphics[width=0.9\textwidth, bb=0 -1 826 521]{graphics/screenshots/noe_analysis/grace.eps.gz}}
+\centerline{\includegraphics[width=0.9\textwidth, bb=0 -1 826 521]{graphics/screenshots/noe_analysis/grace}}
 \caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \uf{grace.write}.}\label{fig: NOE plot}
 \end{figure}
 
@@ -304,13 +304,13 @@ The \prompt{--log} command line argument will cause all of relax's text printout
 First launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).  Select the NOE analysis and, if you plan on running steady-state NOE analyses from multiple fields in one relax instance, change the name of the analysis:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_wizard1.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_wizard1}}
 \end{minipage}
 
 The second part of the wizard need not be modified, just click on \guibutton{Start} to begin.  This will create a dedicated data pipe for the analysis.  A data pipe bundle will also be created, but for the steady-state NOE will only contain a single data throughout the analysis.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_wizard2.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_wizard2}}
 \end{minipage}
 
 
@@ -322,7 +322,7 @@ The second part of the wizard need not be modified, just click on \guibutton{Sta
 You should then see the blank analysis tab:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/blank.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/blank}}
 \end{minipage}
 
 The first thing to do now is to set the NMR frequency label.  This is only used for the name of the NOE output file.  For example if you set the label to \guistring{500}, the file \file{noe.500.out} will be created at the end of the analysis.
@@ -354,7 +354,7 @@ Using the unresolved spins file as described in the prompt/script UI sections, t
 The next step is to load the saturated and reference NOE peak lists.  From the main NOE auto-analysis tab, click on the \guibutton{Add} button in the \gui{Spectra list} GUI element.  This will launch the NOE peak intensity loading wizard.  From the first wizard page, select the peak list file containing the reference intensities (from the averaged shift list):
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity1.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity1}}
 \end{minipage}
 
 Then set the obligatory spectrum ID string to a unique value (in this case \guistring{ref}).  The heteronucleus and proton names must be changed to match the convention used in the peak list.  In case you have forgotten the spin names, next to the file name selection button is a preview button which can be used to open the peak list in the default text editor.  Set the other fields as needed.
@@ -362,37 +362,37 @@ Then set the obligatory spectrum ID string to a unique value (in this case \guis
 To load the NH data, rather than clicking on \guibutton{Next}, click on \guibutton{Apply}.  This will allow the tryptophan indole data to be loaded in the next step.  Note that a \prompt{RelaxWarning} will be thrown for all peak list entries which do not match the heteronucleus and proton names.  This will cause the relax controller window to appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity2.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity2}}
 \end{minipage}
 
 Carefully check these warnings to be sure that the data is correctly loaded, and if everything is fine, the relax controller window can be closed.  If the atom names have been wrongly specified or some other setting is incorrect, a \prompt{RelaxError} might appear saying that no data was loaded -- you will then need to fix the settings and click on \guibutton{Apply} again.  Now change the heteronucleus and protons names to \guistring{NE1} and \guistring{HE1} respectively (or to what ever they have been named in the peak list).  Click on \guibutton{Next}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity3.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity3}}
 \end{minipage}
 
 The relax controller will appear again -- check the \prompt{RelaxWarnings} to be sure that the data has loaded correctly then close the controller again.  The error type page should now appear.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity4.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity4}}
 \end{minipage}
 
 Please read the description in this window very carefully to know what to do next.  In this example, we will choose \gui{Baseplane RMSD}.  For this specific example, Sparky's \guimenuitemthree{Extensions}{Spectrum}{Spectrum baseplane RMSD} option in the \gui{F1} selection mode was used to measure empty regions of the spectrum (mainly in the random coil region) to determine an average RMSD of approximately 3600.  Set the value and click on \guibutton{Apply}.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity5.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity5}}
 \end{minipage}
 
 As glycine 114 is located close to the noise signal, its error was much higher at 122000.  Individual spin errors can be set via the spin ID string (see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID} for information about spin IDs):
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity6.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity6}}
 \end{minipage}
 
 Finally select which type of spectrum this is and click on \guibutton{Finish}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity7.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity7}}
 \end{minipage}
 
 The entire procedure should be repeated for the saturated spectrum (or you may have worked out that both can be loaded simultaneously by using the \guibutton{Apply} button more often).  For this example, the spectrum ID was set to \guistring{sat} and the baseplane RMSD to 3000 for all spins (except for G114 which had an error of 8500).
@@ -400,7 +400,7 @@ The entire procedure should be repeated for the saturated spectrum (or you may h
 The NOE analysis tab should now look like:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab2.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab2}}
 \end{minipage}
 
 
@@ -412,7 +412,7 @@ The NOE analysis tab should now look like:
 Now that everything is set up, simply click on \guibutton{Execute relax} in the NOE analysis tab.  The relax controller window will appear displaying many messages.  These should all be checked very carefully to make sure that everything has executed as you expected.  The \gui{Results viewer} window will also appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/fin.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/fin}}
 \end{minipage}
 
 The results viewer window can be used to launch a text editor to see the NOE values and error or Grace to visualise the results (see Figure~\ref{fig: NOE plot} on page~\pageref{fig: NOE plot}).

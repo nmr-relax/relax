@@ -6,7 +6,7 @@
 
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r1_600x600.eps.gz} \hfill \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r2_600x600.eps.gz}
+\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r1_600x600} \hfill \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r2_600x600}
 \end{figure*}
 
 
@@ -32,7 +32,7 @@ The following subsections simply contain advice on how to go from the recorded F
 
 \subsection{Temperature control and calibration} \label{sect: temperature control and calibration}
 
-\includegraphics[bb=0 0 18 18]{/data/relax/relax-trunk/graphics/oxygen_icons/128x128/status/weather-clear.eps.gz}
+\includegraphics[bb=0 0 18 18]{/data/relax/relax-trunk/graphics/oxygen_icons/128x128/status/weather-clear}
 
 Before starting with the spectral processing, it should be noted that proper temperature control and calibration are essential for relaxation data.  Small temperature changes can have an effect on the viscosity and hence global tumbling of the molecule being studied and, as the molecular diffusion tensor is the major contributor to relaxation, any non-consistent data will likely lead to artificial motions appearing in subsequent model-free analyses.
 
@@ -477,13 +477,13 @@ The messages will then appear both in the relax controller window (see Figure~\r
 To begin the analysis, launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).  Select either the $\Rone$ or $\Rtwo$ analyses, and change the name of the analysis if you plan on running multiple analyses from different field strengths in one relax instance.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard1.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard1}}
 \end{minipage}
 
 Then click on the \guibutton{Next} button.  On the second page click on \guibutton{Start} to commence the analysis -- this second part of the wizard does not need to be changed.  For the $\Rone$ and $\Rtwo$ analyses in the GUI, a data pipe bundle containing only a single data pipe for that analysis will be created.  This data pipe bundle can be safely ignored.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard2.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard2}}
 \end{minipage}
 
 
@@ -495,7 +495,7 @@ Then click on the \guibutton{Next} button.  On the second page click on \guibutt
 You will now be presented with a blank analysis tab:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/blank.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/blank}}
 \end{minipage}
 
 Here there are two things unique to the GUI which need to be preformed:
@@ -531,7 +531,7 @@ As in the prompt/script UI section~\ref{sect: Rx setup fin}, the spins can be de
 At this stage, the peak intensity data needs to be loaded.  In both the $\Rone$ and $\Rtwo$ analysis tabs is a \gui{Spectra list} GUI element.  Click on the \guibutton{Add} button to launch the peak intensity loading wizard:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_bb_peaks.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_bb_peaks}}
 \end{minipage}
 
 In this example, a Sparky peak list containing the peak heights determined from the averaged chemical shift positions for all spectra will be loaded.  Set the spectrum ID string to a unique value.  Change the heteronucleus and proton names to those of the $^{15}$N backbone assignments in the peak lists, in this case \gui{N} and \gui{NH}.
@@ -539,7 +539,7 @@ In this example, a Sparky peak list containing the peak heights determined from 
 To load the tryptophan indole $^{15}$N spins as well, first click on \guibutton{Apply} rather than \guibutton{Next}.  This will most likely cause a \prompt{RelaxWarning} message to appear for all peak list elements which do not match the atom names given:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_warnings.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_warnings}}
 \end{minipage}
 
 These messages must be carefully checked to be sure that the correct data has been loaded.  A \prompt{RelaxError} might be thrown if the peak list is corrupted or if the atom names have been incorrectly given.  In this case, check the message, fix the problem, and click on \guibutton{Apply} again.
@@ -547,31 +547,31 @@ These messages must be carefully checked to be sure that the correct data has be
 For the the tryptophan indole $^{15}$N spins, change the heteronucleus and proton names to \gui{NE1} and \gui{HE1} respectively (or to whatever you have named these in your assignments).  Then click on \guibutton{Next}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_trp_peaks.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_trp_peaks}}
 \end{minipage}
 
 Again check the messages in the relax controller window which will appear.  You should now see the error type page:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_err_type.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_err_type}}
 \end{minipage}
 
 The description for this wizard page should be very carefully read -- it will tell you about all of the error analysis options available and how these are implemented in relax.  For the protein relaxation example, replicated spectra have been collected.  Therefore the option \gui{Replicated spectra} will be chosen.  The \gui{Baseplane RMSD} option is documented in the NOE chapter.  After clicking on \guibutton{Next} you will see:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates1.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates1}}
 \end{minipage}
 
 For the first of the duplicate spectra, or any spectrum without a duplicate, you can click on the \guibutton{Skip} button.  If this is the second spectrum you have loaded from a duplicated set, select the two replicated spectra and then click on \guibutton{Next}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates2.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates2}}
 \end{minipage}
 
 Finally set the relaxation time period for this experiment in seconds:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_times.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_times}}
 \end{minipage}
 
 All delays and pulse lengths in the pulse sequence should be carefully checked to be sure that the time is exactly what you would expect -- the estimated time may not match the real time.  To set the time and close the wizard, click on the \guibutton{Finish} button.
@@ -579,7 +579,7 @@ All delays and pulse lengths in the pulse sequence should be carefully checked t
 This procedure should be repeated for every experiment you have collected (you could, as an alternative, load all at the same time using the \guibutton{Apply} button at each stage).  In the end you should see something such as:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_tab_full.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_tab_full}}
 \end{minipage}
 
 
@@ -591,13 +591,13 @@ This procedure should be repeated for every experiment you have collected (you c
 Back in the main $\Rone$ analysis tab, the grid search increments and number of Monte Carlo simulations can be changed.  The default values of 21 grid search increments and 500 MC simulations are optimal -- lower values are not recommended.  To perform the optimisation and error analysis, click on the \guibutton{Execute relax} button.  The relax controller will open to show you the progress of the optimisation and simulations:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/mc_sim.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/mc_sim}}
 \end{minipage}
 
 Once finished, the \gui{Results viewer} window will also appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/fin.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/fin}}
 \end{minipage}
 
 This window can be used to open the text files in the default text editor for your operating system or the 2D Grace plots in \prompt{xmgrace} if available on your system.
@@ -613,7 +613,7 @@ To be sure that the data has been properly collected and that no instrumentation
  
 % Xmgrace screenshot
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 923 724]{graphics/screenshots/xmgrace_peak_intensities.eps.gz}}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 923 724]{graphics/screenshots/xmgrace_peak_intensities}}
 \caption[Peak intensity 2D plot xmgrace screenshot]{Screenshot of the 2D peak intensity plots for the exponential relaxation curves in Xmgrace.}\label{fig: screenshot: xmgrace peak intensities}
 \end{figure}
 

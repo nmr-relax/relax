@@ -7,7 +7,7 @@
 
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/model_free/model_free_600x600.eps.gz}
+\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/model_free/model_free_600x600}
 \end{figure*}
 
 
@@ -968,7 +968,7 @@ These three sample scripts describe the basic components of model-free analysis.
 
 % Mandel et al., 1995 figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 539]{images/model_free/mandel95.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 539]{images/model_free/mandel95}}
 \caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{A schematic of the model-free optimisation protocol of \citet{Mandel95}.  This specific protocol is for single field strength data.  The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.  The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each spin $i$ are optimised and 500 Monte Carlo simulations executed.  Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.  These steps are repeated for all spins of the molecule.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).} \label{fig: Mandel et al.}
 \end{figure}
 
@@ -991,7 +991,7 @@ Ever since the original Lipari and Szabo papers \citep{LipariSzabo82a, LipariSza
 
 % The diffusion seeded paradigm figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 437 523]{images/model_free/init_diff_est.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 437 523]{images/model_free/init_diff_est}}
 \caption[Model-free analysis using the diffusion seeded paradigm]{A schematic of model-free analysis using the diffusion seeded paradigm -- the initial diffusion tensor estimate -- together with AIC model selection and model elimination.  The initial estimates of the parameters of $\Diffset$ are held constant while model-free models $m0$ to $m9$ (\ref{model: m0}--\ref{model: m9}) of the set $\Mfset_i$ for each spin system $i$ are optimised, model elimination applied to remove failed models, and AIC model selection used to determine the best model.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The entire iterative process is repeated for each of the Brownian diffusion models.  Finally AIC model selection is used to determine the best description of the dynamics of the molecule by selecting between the global models $\Space$ including the sphere, oblate spheroid, prolate spheroid, and ellipsoid.  Once the solution has been found, Monte Carlo simulations can be utilised for error analysis.} \label{fig: init diff estimate}
 \end{figure}
 
@@ -1089,7 +1089,7 @@ The complex model-free problem, in which the motions of each spin are both mathe
 
 % New model-free optimisation protocol figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol}}
 \caption[A schematic of the new model-free optimisation protocol]{A schematic of the new model-free optimisation protocol.  Initially models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9}) of the set $\Localset_i$ for each spin system $i$ are optimised, model elimination used to remove failed models, and AIC model selection used to pick the best model.  Once all the $\Localset_i$ have been determined for the system the the local $\tau_m$ parameter is removed, the model-free parameters are held fixed, and the global diffusion parameters of $\Diffset$ are optimised.  These parameters are used as input for the central part of the schematic which follows the same procedure as that of Figure~\ref{fig: init diff estimate}.  Convergence is however precisely defined as identical models $\Space$, identical $\chi^2$ values, and identical parameters $\theta$ between two iterations.  The universal solution $\widehat\Univset$, the best description of the dynamics of the molecule, is determined using AIC model selection to select between the local $\tau_m$ models for all spins, the sphere, oblate spheroid, prolate spheroid, ellipsoid, and possibly hybrid models whereby multiple diffusion tensors have been applied to different parts of the molecule.} \label{fig: new protocol}
 \end{figure}
 
