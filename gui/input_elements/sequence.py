@@ -490,6 +490,15 @@ class Sequence_window(wx.Dialog):
         if values == None:
             return
 
+        # Single values.
+        try:
+            len(values)
+        except TypeError:
+            if self.seq_type == 'list':
+                values = [values]
+            elif self.seq_type == 'tuple':
+                values = (values,)
+
         # Loop over the entries.
         for i in range(len(values)):
             # Fixed dimension sequences - set the values of the pre-created list.
