@@ -61,7 +61,6 @@ class User_functions(GuiTestCase):
         uf.page.uf_args['read_model'].selection_win_show()
         uf.page.uf_args['read_model'].sel_win.append_row(None)
         uf.page.uf_args['read_model'].sel_win.append_row(None)
-        uf.page.uf_args['read_model'].sel_win.append_row(None)
         uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(2))
         uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=1, col=0, label=int_to_gui(4))
         uf.page.uf_args['read_model'].selection_win_data()
@@ -76,7 +75,7 @@ class User_functions(GuiTestCase):
 
         # GUI data checks.
         self.assertEqual(uf.page.uf_args['read_model'].GetValue(), [2, 4])
-        self.assertEqual(uf.page.uf_args['set_model_num'].GetValue(), [1, 2])
+        self.assertEqual(uf.page.uf_args['set_model_num'].GetValue(), [1, 3])
 
         # Execute the user function.
         uf.wizard._go_next(None)
