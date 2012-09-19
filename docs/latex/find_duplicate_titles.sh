@@ -12,5 +12,6 @@ grep "section{" *.tex -h \
 | sed "s/^The //g" \
 | sed "s/\\\\-//g" \
 | sed "s/\\\\//g" \
+| tr '[:upper:]' '[:lower:]' \
 | sort \
-| uniq -d
+| uniq -cd
