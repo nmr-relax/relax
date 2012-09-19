@@ -151,6 +151,8 @@ If using Sparky then, to be sure that the peak heights are properly updated, for
 
 \subsection{The sample script}
 
+The following is a verbatim copy of the contents of the \file{sample\_scripts/relax\_fit.py} file.  If your copy of the sample script is different than that below, please send an email to the relax-devel mailing list\index{mailing list!relax-devel} to tell the relax developers that the manual is out of date (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  You will need to first copy this script to a dedicated analysis directory containing peak lists, a PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.  The script contents are:
+
 \begin{exampleenv}
 \# Script for relaxation curve-fitting. \\
  \\
@@ -249,6 +251,7 @@ grace.view(file=`intensities\_norm.agr') \\
 state.save(`rx.save', force=True)
 \end{exampleenv}
 
+The next sections will break this script down into its logical components and explain how these parts will be interpreted by relax.  To execute this script, please see section~\ref{sect: scripting} on page~\pageref{sect: scripting} for details.
 
 
 % Initialisation of the data pipe.
@@ -323,7 +326,7 @@ Note that the relaxation time period should be calculated directly from the puls
        GLY12N-HN    110.525      9.028        90144
 \end{verbatim}}
 
-By supplying the \promptstring{int\_col} argument to the \uf{spectrum.read\_intensities} user function, this can be changed.  A typical XEasy file will look like:
+By supplying the \keyword{int\_col} argument to the \uf{spectrum.read\_intensities} user function, this can be changed.  A typical XEasy file will look like:
 
 {\scriptsize \begin{verbatim}
  No.  Color    w1      w2     ass. in w1     ass. in w2    Volume     Vol. Err.  Method  Comment
