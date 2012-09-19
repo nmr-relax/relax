@@ -250,7 +250,8 @@ class Sequence:
             if self.single_value:
                 try:
                     value = self.convert_from_gui(value)
-                    value_set = True
+                    if isinstance(value, self.value_type):
+                        value_set = True
                 except:
                     pass
 
