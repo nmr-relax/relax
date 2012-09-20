@@ -687,8 +687,8 @@ class Auto_model_free(Base_analysis):
 
         # Create the dipole_pair.define page.
         page = uf_store['dipole_pair.define'].create_page(self.dipole_wizard)
-        page.SetValue('spin_id1', '@N*')
-        page.SetValue('spin_id2', '@H*')
+        page.SetValue('spin_id1', '@N')
+        page.SetValue('spin_id2', '@H')
         self.dipole_wizard.add_page(page)
 
         # Create the dipole_pair.set_dist page.
