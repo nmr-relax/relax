@@ -211,7 +211,8 @@ deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=1, res
 deselect.read(file='exclude', spin_id_col=1)
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@N*', spin_id2='@H*', direct_bond=True)
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
 dipole_pair.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
 dipole_pair.unit_vectors()
 
