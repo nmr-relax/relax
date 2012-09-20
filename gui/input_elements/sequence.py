@@ -253,7 +253,11 @@ class Sequence:
                     value = self.convert_from_gui(value)
 
                     # Check that the conversion was successful.
-                    if self.value_type in ['float', 'num']:
+                    if value == None and self.can_be_none:
+                        value_set = True
+                    elif self.value_type == None:
+                        value_set = True
+                    elif self.value_type in ['float', 'num']:
                         if isinstance(value, int) or isinstance(value, float):
                             value_set = True
                     elif self.value_type == 'int':
