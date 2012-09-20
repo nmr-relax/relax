@@ -30,7 +30,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.string_conv import int_to_gui, str_to_gui
+from gui.string_conv import float_to_gui, int_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
@@ -86,3 +86,32 @@ class User_functions(GuiTestCase):
         self.assertEqual(len(cdp.structure.structural_data), 2)
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(cdp.structure.structural_data[1].num, 3)
+
+
+    def test_value_set(self):
+        """Test the full operation of the value.set user function GUI window."""
+
+        # Open the pipe.create user function window, set the args and execute.
+        uf = uf_store['pipe.create']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+        uf.page.SetValue('pipe_name', str_to_gui('value.set user function test'))
+        uf.page.SetValue('pipe_type', str_to_gui('mf'))
+        uf.wizard._go_next(None)
+
+        # Create a spin to add data to.
+        uf = uf_store['spin.create']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+        uf.page.SetValue('res_num', int_to_gui(1))
+        uf.page.SetValue('res_name', str_to_gui('Gly'))
+        uf.page.SetValue('spin_name', str_to_gui('N'))
+        uf.wizard._go_next(None)
+
+        # Open the value.set user function window.
+        uf = uf_store['value.set']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+        uf.page.SetValue('val', float_to_gui(-0.000172))
+        uf.page.SetValue('param', str_to_gui('csa'))
+        uf.wizard._go_next(None)
