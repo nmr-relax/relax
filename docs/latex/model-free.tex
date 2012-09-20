@@ -1728,7 +1728,15 @@ Further visualisations of the results are possible via the \guimenuitemone{User 
 
 
 % BMRB.
-%~~~~~~~~~~~~
+%~~~~~~
 \subsection{d'Auvergne protocol GUI mode -- BMRB deposition}
 
-The very last step once you are ready to publish your results is to 
+Once you are ready to publish your results, the very last step of the model-free analysis is to create a NMR-STAR formatted file for \href{http://www.bmrb.wisc.edu/}{BioMagResBank} submission for each model-free analysis you perform.  This can be accomplished using the BMRB export window.  Simply select the \guimenuitemtwo{File}{Export for BMRB deposition} menu item.  You will then see the BMRB export window:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/bmrb_export_window}}
+\end{minipage}
+
+From here you can complete the relaxation data metadata if needed, set up all the molecule information needed for a BMRB deposition, specify the softwares you have used running up to the model-free analysis and any spectral processing or relax scripts you have used.  You can also add as many citations relevant to your analysis as you wish.  The NMR-STAR formatted file can be previewed in the relax controller window via the \guibutton{Preview} button and the final file exported using the \guibutton{Export} button.
+
+Then simply go to the ADIT-NMR webpage at \href{http://deposit.bmrb.wisc.edu/bmrb-adit/}{http://deposit.bmrb.wisc.edu/bmrb-adit/},  create a new BMRB deposition, upload the file you have created, and complete the deposition as needed.
