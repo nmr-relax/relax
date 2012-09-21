@@ -1516,7 +1516,9 @@ This assumes that OpenMPI and the Python mpi4py module have been installed on yo
 
 \example{Processor fabric:  MPI 2.1 running via mpi4py with 4 slave processors \& 1 master.  Using Open MPI 1.4.3.}
 
-If you are using a different MPI implementation, please see the documentation of that implementation to see how to launch a program in MPI mode.
+If you are using a different MPI implementation, please see the documentation of that implementation to see how to launch a program in MPI mode.  Finally as the calculation takes so long, we will run the calculations at a lower priority so that the computer is not slowed down too much and remains responsive.  Therefore this model-free GUI analysis tutorial will be launched with the full command:
+
+\example{\$ nice -n 15 mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui --log log}
 
 
 % Initialisation of the data pipe.
