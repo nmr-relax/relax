@@ -31,7 +31,7 @@ from subprocess import PIPE, Popen
 from status import Status; status = Status()
 
 
-version = "repository checkout"
+version = "2.1.1"
 
 
 def revision():
