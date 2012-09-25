@@ -1940,7 +1940,7 @@ class Model_free_main:
         """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        print("\nOver-fit spin deselection:")
 
         # Test if sequence data exists.
         if not exists_mol_res_spin_data():
@@ -1952,6 +1952,7 @@ class Model_free_main:
             need_vect = True
 
         # Loop over the sequence.
+        deselect_flag = False
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -1981,6 +1982,7 @@ class Model_free_main:
             if not dipole_relax and not hasattr(spin, 'csa') or spin.csa == None:
                 warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
                 spin.select = False
+                deselect_flag = True
                 continue
 
             # Data checks.
@@ -1996,18 +1998,21 @@ class Model_free_main:
                 if not hasattr(spin, 'ri_data'):
                     warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                     spin.select = False
+                    deselect_flag = True
                     continue
 
                 # Require 3 or more relaxation data points.
                 elif data_points < 3:
                     warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                     spin.select = False
+                    deselect_flag = True
                     continue
 
                 # Require at least as many data points as params to prevent over-fitting.
                 elif hasattr(spin, 'params') and spin.params and len(spin.params) > data_points:
                     warn(RelaxDeselectWarning(spin_id, 'over-fitting - more parameters than data points'))
                     spin.select = False
+                    deselect_flag = True
                     continue
 
             # Test for structural data if required.
@@ -2021,7 +2026,12 @@ class Model_free_main:
                     if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
                         warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                         spin.select = False
+                        deselect_flag = True
                         continue
+
+        # Final printout.
+        if not deselect_flag:
+            print("No spins have been deselected.")
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
