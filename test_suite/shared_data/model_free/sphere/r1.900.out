@@ -1,11 +1,21 @@
-
-# mol_name     res_num    res_name   spin_num   spin_name  value                error               
-sphere_mol1    1          GLY        1          N                0.711182020108      0.0142236404022
-sphere_mol1    2          GLY        3          N                0.711182020108      0.0142236404022
-sphere_mol1    3          GLY        5          N                0.711182020108      0.0142236404022
-sphere_mol1    4          GLY        7          N                0.711182020108      0.0142236404022
-sphere_mol1    5          GLY        9          N                0.711182020108      0.0142236404022
-sphere_mol1    6          GLY        11         N                0.711182020108      0.0142236404022
-sphere_mol1    7          GLY        13         N                0.711182020108      0.0142236404022
-sphere_mol1    8          GLY        15         N                0.711182020108      0.0142236404022
-sphere_mol1    9          GLY        17         N                0.711182020108      0.0142236404022
+# mol_name     res_num    res_name    spin_num    spin_name    value                 error                   
+sphere_mol1    1          GLY         1           N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    1          GLY         2           H            None                  None                    
+sphere_mol1    2          GLY         3           N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    2          GLY         4           H            None                  None                    
+sphere_mol1    3          GLY         5           N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    3          GLY         6           H            None                  None                    
+sphere_mol1    4          GLY         7           N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    4          GLY         8           H            None                  None                    
+sphere_mol1    5          GLY         9           N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    5          GLY         10          H            None                  None                    
+sphere_mol1    6          GLY         11          N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    6          GLY         12          H            None                  None                    
+sphere_mol1    7          GLY         13          N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    7          GLY         14          H            None                  None                    
+sphere_mol1    8          GLY         15          N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    8          GLY         16          H            None                  None                    
+sphere_mol1    9          GLY         17          N            0.7111820201079988    0.014223640402159976    
+sphere_mol1    9          GLY         18          H            None                  None                    
+sphere_mol1    10         TRP         19          NE1          0.7111820201079988    0.014223640402159976    
+sphere_mol1    10         TRP         20          HE1          None                  None                    
