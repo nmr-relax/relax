@@ -298,24 +298,28 @@ class Mf(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 4e-19)
 
         # The spin info.
-        mol_names = ["sphere_mol1"] * 18
-        res_names = ["GLY"] * 18
+        mol_names = ["sphere_mol1"] * 20
+        res_names = ["GLY"] * 20
         res_nums = []
         for i in range(1, 10):
             res_nums.append(i)
             res_nums.append(i)
-        spin_names = ["N", "H"] * 9
-        spin_nums = range(1, 19)
-        isotopes = ["15N", "1H"] * 9
-        csa = [-172e-6, None] * 9
-        select = [True, False] * 9
-        fixed = [False, False] * 9
-        s2 = [0.8, None] * 9
-        te = [20e-12, None] * 9
+        res_nums.append(i)
+        res_nums.append(i)
+        spin_names = ["N", "H"] * 9 + ["NE1", "HE1"]
+        spin_nums = range(1, 21)
+        isotopes = ["15N", "1H"] * 10
+        csa = [-172e-6, None] * 10
+        select = [True, False] * 10
+        fixed = [False, False] * 10
+        s2 = [0.8, None] * 10
+        te = [20e-12, None] * 10
 
         # Check the spin data.
         i = 0
+        print `res_nums`
         for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+            print i
             # The ID info.
             self.assertEqual(mol_name, mol_names[i])
             self.assertEqual(res_name, res_names[i])
