@@ -1981,6 +1981,7 @@ class Model_free_main:
             if not dipole_relax and not hasattr(spin, 'csa') or spin.csa == None:
                 warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
                 spin.select = False
+                continue
 
             # Data checks.
             if data_check:
@@ -1995,16 +1996,19 @@ class Model_free_main:
                 if not hasattr(spin, 'ri_data'):
                     warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                     spin.select = False
+                    continue
 
                 # Require 3 or more relaxation data points.
                 elif data_points < 3:
                     warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                     spin.select = False
+                    continue
 
                 # Require at least as many data points as params to prevent over-fitting.
                 elif hasattr(spin, 'params') and spin.params and len(spin.params) > data_points:
                     warn(RelaxDeselectWarning(spin_id, 'over-fitting - more parameters than data points'))
                     spin.select = False
+                    continue
 
             # Test for structural data if required.
             for i in range(len(interatoms)):
@@ -2017,6 +2021,7 @@ class Model_free_main:
                     if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
                         warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                         spin.select = False
+                        continue
 
 
     return_data_name_doc = Desc_container("Model-free data type string matching patterns")
