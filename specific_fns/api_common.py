@@ -208,7 +208,7 @@ class API_common:
         return count_spins()
 
 
-    def _overfit_deselect_dummy(self, data_check=True):
+    def _overfit_deselect_dummy(self, data_check=True, verbose=True):
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 

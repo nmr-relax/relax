@@ -140,15 +140,18 @@ class Noe_main:
             spin.noe_err = sqrt((sat_err * ref)**2 + (ref_err * sat)**2) / ref**2
 
 
-    def overfit_deselect(self, data_check=True):
+    def overfit_deselect(self, data_check=True, verbose=True):
         """Deselect spins which have insufficient data to support calculation.
 
         @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
         @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
         """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        if verbose:
+            print("\n\nOver-fit spin deselection.\n")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():

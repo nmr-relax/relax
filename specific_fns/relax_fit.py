@@ -803,15 +803,18 @@ class Relax_fit(API_base, API_common):
                 spin.warning = warning
 
 
-    def overfit_deselect(self, data_check=True):
+    def overfit_deselect(self, data_check=True, verbose=True):
         """Deselect spins which have insufficient data to support minimisation.
 
         @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
         @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
         """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        if verbose:
+            print("\n\nOver-fit spin deselection.\n")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
