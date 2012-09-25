@@ -467,7 +467,7 @@ class Model_free_main:
                     return
 
         # Execute the over-fit deselection.
-        self.overfit_deselect()
+        self.overfit_deselect(data_check=False)
 
         # Get the relaxation value from the minimise function.
         value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_id, ri_type, frq))
@@ -1932,7 +1932,7 @@ class Model_free_main:
             raise RelaxFault
 
 
-    def overfit_deselect(self):
+    def overfit_deselect(self, data_check=True):
         """Deselect spins which have insufficient data to support minimisation."""
 
         # Print out.
@@ -1978,27 +1978,29 @@ class Model_free_main:
                 warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
                 spin.select = False
 
-            # The number of relaxation data points.
-            data_points = 0
-            if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
-                for id in cdp.ri_ids:
-                    if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
-                        data_points += 1
+            # Data checks.
+            if data_check:
+                # The number of relaxation data points.
+                data_points = 0
+                if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
+                    for id in cdp.ri_ids:
+                        if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
+                            data_points += 1
 
-            # Relaxation data must exist!
-            if not hasattr(spin, 'ri_data'):
-                warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
-                spin.select = False
+                # Relaxation data must exist!
+                if not hasattr(spin, 'ri_data'):
+                    warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
+                    spin.select = False
 
-            # Require 3 or more relaxation data points.
-            elif data_points < 3:
-                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
-                spin.select = False
+                # Require 3 or more relaxation data points.
+                elif data_points < 3:
+                    warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
+                    spin.select = False
 
-            # Require at least as many data points as params to prevent over-fitting.
-            elif hasattr(spin, 'params') and spin.params and len(spin.params) > data_points:
-                warn(RelaxDeselectWarning(spin_id, 'over-fitting - more parameters than data points'))
-                spin.select = False
+                # Require at least as many data points as params to prevent over-fitting.
+                elif hasattr(spin, 'params') and spin.params and len(spin.params) > data_points:
+                    warn(RelaxDeselectWarning(spin_id, 'over-fitting - more parameters than data points'))
+                    spin.select = False
 
             # Test for structural data if required.
             for i in range(len(interatoms)):
