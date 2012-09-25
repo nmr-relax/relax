@@ -126,8 +126,14 @@ class Relax_data(SystemTestCase):
         self.assert_(not cdp.frq.has_key('R2_900'))
         self.assert_(not cdp.ri_type.has_key('R2_900'))
         for spin in spin_loop():
-            self.assert_(not spin.ri_data.has_key('R2_900'))
-            self.assert_(not spin.ri_data_err.has_key('R2_900'))
+            # Protons.
+            if spin.name in ['H', 'HE1']:
+                self.assert_(not hasattr(spin, 'ri_data'))
+
+            # Nitrogens.
+            else:
+                self.assert_(not spin.ri_data.has_key('R2_900'))
+                self.assert_(not spin.ri_data_err.has_key('R2_900'))
 
         # Switch to the second pipe.
         self.interpreter.pipe.switch('delete 2')
