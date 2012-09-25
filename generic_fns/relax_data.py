@@ -1016,6 +1016,10 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
             mol_name, res_num, res_name, spin_num, spin_name, error = data
             value = None
 
+        # No data.
+        if value == None and error == None:
+            continue
+
         # Store all the info.
         mol_names.append(mol_name)
         res_nums.append(res_num)
