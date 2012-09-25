@@ -286,8 +286,12 @@ class Consistency_tests(API_base, API_common):
     default_value_doc.add_table(_table.label)
 
 
-    def overfit_deselect(self):
-        """Deselect spins which have insufficient data to support calculation."""
+    def overfit_deselect(self, data_check=True):
+        """Deselect spins which have insufficient data to support calculation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        """
 
         # Print out.
         print("\n\nOver-fit spin deselection.\n")

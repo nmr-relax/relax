@@ -463,8 +463,12 @@ class API_base(object):
         raise RelaxImplementError('num_instances')
 
 
-    def overfit_deselect(self):
-        """Deselect models with insufficient data for minimisation."""
+    def overfit_deselect(self, data_check=True):
+        """Deselect models with insufficient data for minimisation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        """
 
         # Not implemented.
         raise RelaxImplementError('overfit_deselect')

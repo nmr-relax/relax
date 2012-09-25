@@ -1933,7 +1933,11 @@ class Model_free_main:
 
 
     def overfit_deselect(self, data_check=True):
-        """Deselect spins which have insufficient data to support minimisation."""
+        """Deselect spins which have insufficient data to support minimisation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        """
 
         # Print out.
         print("\n\nOver-fit spin deselection.\n")
