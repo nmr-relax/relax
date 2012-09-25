@@ -79,5 +79,9 @@ class Relax_data_base_class(UnitTestCase):
             spin = cdp.mol[0].res[i].spin[0]
 
             # Relaxation data.
-            self.assertEqual(spin.ri_data[ri_id], self.Ap4Aase_600_NOE_val[i])
-            self.assertEqual(spin.ri_data_err[ri_id], self.Ap4Aase_600_NOE_err[i])
+            if self.Ap4Aase_600_NOE_val[i] == None:
+                self.assert_(not hasattr(spin, 'ri_data'))
+                self.assert_(not hasattr(spin, 'ri_data_err'))
+            else:
+                self.assertEqual(spin.ri_data[ri_id], self.Ap4Aase_600_NOE_val[i])
+                self.assertEqual(spin.ri_data_err[ri_id], self.Ap4Aase_600_NOE_err[i])
