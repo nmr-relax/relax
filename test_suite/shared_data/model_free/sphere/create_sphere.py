@@ -115,8 +115,8 @@ for i in range(len(vectors)):
     used.append(vectors[i])
 
 # Add a Trp indole NH for luck ;)
-pdb_line(file=file, atom_num=atom_num, atom='NE1', res_num=res_num, res_name='TRP', vector=[0.0, 0.0, 0.0])
-pdb_line(file=file, atom_num=atom_num+1, atom='HE1', res_num=res_num, res_name='TRP', vector=[1/sqrt(3), 1/sqrt(3), 1/sqrt(3)])
+pdb_line(file=file, atom_num=atom_num, atom='NE1', res_num=res_num-1, res_name='GLY', vector=[0.0, 0.0, 0.0])
+pdb_line(file=file, atom_num=atom_num+1, atom='HE1', res_num=res_num-1, res_name='GLY', vector=[1/sqrt(3), 1/sqrt(3), 1/sqrt(3)])
 
 # End of PDB.
 file.write('END\n')

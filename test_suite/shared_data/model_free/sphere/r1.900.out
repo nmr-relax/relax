@@ -17,5 +17,5 @@ sphere_mol1    8          GLY         15          N            0.711182020107998
 sphere_mol1    8          GLY         16          H            None                  None                    
 sphere_mol1    9          GLY         17          N            0.7111820201079988    0.014223640402159976    
 sphere_mol1    9          GLY         18          H            None                  None                    
-sphere_mol1    10         TRP         19          NE1          0.7111820201079988    0.014223640402159976    
-sphere_mol1    10         TRP         20          HE1          None                  None                    
+sphere_mol1    9          GLY         19          NE1          0.7111820201079988    0.014223640402159976    
+sphere_mol1    9          GLY         20          HE1          None                  None                    
