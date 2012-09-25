@@ -814,13 +814,14 @@ class Relax_fit(API_base, API_common):
 
         # Print out.
         if verbose:
-            print("\n\nOver-fit spin deselection.\n")
+            print("\nOver-fit spin deselection:")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
+        deselect_flag = False
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -830,17 +831,23 @@ class Relax_fit(API_base, API_common):
             if not hasattr(spin, 'intensities'):
                 warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
                 spin.select = False
+                deselect_flag = True
                 continue
 
             # Require 3 or more data points.
             elif len(spin.intensities) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data, 3 or more data points are required'))
                 spin.select = False
+                deselect_flag = True
                 continue
 
             # Check that the number of relaxation times is complete.
             if len(spin.intensities) != len(cdp.relax_times):
                 raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.relax_times.keys()))
+
+        # Final printout.
+        if verbose and not deselect_flag:
+            print("No spins have been deselected.")
 
 
     def return_data(self, spin):
