@@ -467,7 +467,7 @@ class Model_free_main:
                     return
 
         # Execute the over-fit deselection.
-        self.overfit_deselect(data_check=False)
+        self.overfit_deselect(data_check=False, verbose=False)
 
         # Get the relaxation value from the minimise function.
         value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_id, ri_type, frq))
@@ -1932,15 +1932,18 @@ class Model_free_main:
             raise RelaxFault
 
 
-    def overfit_deselect(self, data_check=True):
+    def overfit_deselect(self, data_check=True, verbose=True):
         """Deselect spins which have insufficient data to support minimisation.
 
         @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
         @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
         """
 
         # Print out.
-        print("\nOver-fit spin deselection:")
+        if verbose:
+            print("\nOver-fit spin deselection:")
 
         # Test if sequence data exists.
         if not exists_mol_res_spin_data():
@@ -2030,7 +2033,7 @@ class Model_free_main:
                         continue
 
         # Final printout.
-        if not deselect_flag:
+        if verbose and not deselect_flag:
             print("No spins have been deselected.")
 
 
