@@ -317,9 +317,7 @@ class Mf(SystemTestCase):
 
         # Check the spin data.
         i = 0
-        print `res_nums`
         for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-            print i
             # The ID info.
             self.assertEqual(mol_name, mol_names[i])
             self.assertEqual(res_name, res_names[i])
