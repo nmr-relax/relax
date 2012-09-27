@@ -206,7 +206,7 @@ class Export_bmrb_window(wx.Frame):
         button.SetMinSize(self.button_size)
         button_sizer.Add(button, 0, 0, 0)
         self.Bind(wx.EVT_BUTTON, self.action_export, button)
-        button.SetToolTipString("Preview the NMR-STAR formatted data.")
+        button.SetToolTipString("Create the NMR-STAR formatted file for BMRB deposition.")
 
         # Spacing.
         button_sizer.AddSpacer(self.button_spacing)
