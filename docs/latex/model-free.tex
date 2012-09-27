@@ -1498,17 +1498,17 @@ For a full analysis of a protein system, the analysis may require between one to
 \newpage
 \section{The new protocol in the GUI}
 
-The model-free analysis can be performed within the GUI (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).  This analysis is that of the automated d'Auvergne protocol.  From the analysis wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}), this automated model-free analysis can be selected.  This analysis will use the new model-free protocol described in Section~\ref{sect: new model-free protocol} on page~\pageref{sect: new model-free protocol}.
+A model-free analysis can be performed within the GUI (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).  This analysis is that of the fully automated d'Auvergne protocol which can be chosen via the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Please see Section~\ref{sect: new model-free protocol} on page~\pageref{sect: new model-free protocol} for a description of this new model-free protocol.
 
-The GUI is designed to be robust -- you should be able to set up all the input data and parameters in any order, with relax giving warning is something is missing.  The analysis will only execute once everything is correctly set up.  If this is not the case, rather than starting the analysis, clicking on the \guibutton{Execute relax} button will warn about the incorrect set up, describing what the problem is.  Below, a tutorial on how to use the GUI will be presented with screenshots.
+The GUI is designed to be robust -- you should be able to set up all the input data and parameters in any order with relax returning you warnings if something is missing.  The analysis will only execute once everything is correctly set up.  If this is not the case, clicking on the \guibutton{Execute relax} button will display a warning window explaining what the issue is rather than initialising the analysis.  Despite the self-explanatory nature of the GUI a tutorial on how to use the GUI, with screenshots, will be presented below.
 
-If the \gui{Protocol mode} field is left to the \gui{Fully automated} setting then, after clicking on \guibutton{Execute relax}, the calculation can be left for one to two weeks to complete.  It is highly recommended to check the log messages in the relax controller window, at least at the start of the analysis, to make sure that all the data is being read correctly and everything is set up as desired.  All warnings should be carefully checked as these can indicate a fatal problem.  If you would like to log all the messages into a file, relax can be run with:
+If the \gui{Protocol mode} field is left to the \gui{Fully automated} setting then, after clicking on \guibutton{Execute relax}, the calculation can be left to complete.  It is highly recommended to check the log messages in the relax controller window, at least at the start of the analysis, to make sure that all the data is being read correctly and everything is set up as desired.  All warnings should be carefully checked as these can indicate a fatal problem.  If you would like to log all the messages into a file, relax can be run with:
 
 \example{\$ relax -g --log log}
 
 Note that the size of this \file{log} file could end up being in the gigabyte range for a model-free analysis.
 
-For the full analysis to complete, for a protein system this may take between one to two weeks.  To speed up the calculations, if you have access to multiple cores and/or hyper-threading, the GUI can be run using Gary Thompson's multi-processor framework (see section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor}).  For example on a dual-CPU with dual-core system, four calculations can be run simultaneously.  In this case, the GUI can be launched with:
+For the full analysis to complete, for a protein system this may take about a week.  Depending on the nature of the problem and the speed of the computer, the calculation time may be significantly shorter or longer.  To speed up the calculations, if you have access to multiple cores and/or hyper-threading, the GUI can be run using Gary Thompson's multi-processor framework (see section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor}).  For example on a dual-core, dual-CPU system, four calculations can be run simultaneously.  In this case, the GUI can be launched with:
 
 \example{\$ mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui --log log}
 
@@ -1556,7 +1556,7 @@ The \guibutton{About} button in the bottom left will bring up a window with the 
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/about}}
 \end{minipage}
 
-At this point, the results directory where all of the output files and directories will be saved can be changed.
+At this point, back in the main relax window, the results directory where all of the output files and directories will be saved can be changed.
 
 
 % Spin systems.
@@ -1634,7 +1634,7 @@ Just as in the scripting mode, the relaxation interactions need to now be define
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_define}}
 \end{minipage}
 
-For this example, directly bonded nitrogens and protons will be analysed.  So firstly the backbone NH pairs will be defined.  Leave the values at \guistring{@N} and \guistring{@H} and click on the \guibutton{Apply} button.  Then change the two spin ID strings to \guistring{@NE1} and \guistring{@HE1} to set up the tryptophan sidechain indole NH pairs and click on the \guibutton{Next} button.  Note that the regular expression \guistring{@N*} and \guistring{@H*} should not be used in this first wizard page as otherwise \prompt{@N} spins will be connected to \prompt{@HE1} spins of the same tryptophan residue and \prompt{@H} spins to \prompt{@NE1} spins.
+For this example, directly bonded nitrogens and protons will be analysed.  To start with, the backbone NH pairs will be defined.  Leave the values at \guistring{@N} and \guistring{@H} and click on the \guibutton{Apply} button.  Then change the two spin ID strings to \guistring{@NE1} and \guistring{@HE1} to set up the tryptophan sidechain indole NH pairs and click on the \guibutton{Next} button.  Note that the regular expression \guistring{@N*} and \guistring{@H*} should not be used in this first wizard page as otherwise \prompt{@N} spins will be connected to \prompt{@HE1} spins of the same tryptophan residue and \prompt{@H} spins to \prompt{@NE1} spins.
 
 Now the $\langle r^{-3} \rangle$ averaged distance of 1.02~\AA\ will be set.  Leave all settings as they are and click on \guibutton{Next}:
 
@@ -1673,9 +1673,9 @@ As nitrogen relaxation is being studied, the nuclear isotope name can be left as
 %~~~~~~~~~~~~~~~~~~~~~~~
 \subsection{d'Auvergne protocol GUI mode -- the rest of the setup}
 
-The local $\tau_m$ models and model-free models should not be modified, the reason for this is explained in section~\ref{sect: d'Auvergne protocol script variables} on page~\pageref{sect: d'Auvergne protocol script variables}.  The grid search increments defaults to \guistring{11}.  This is used in the optimisation of the individual model-free models for each spin.  This value should also not be touched unless you know what you are doing (and have read \citet{dAuvergneGooley08a}).  The number of Monte Carlo simulations can be increase but, for accurate errors estimates, it should not be less than 500 simulations.  One additional setting is the \gui{Maximum iterations}.  This is a maximum number of times the protocol will iterate before terminating.  This allows infinite loops to be broken.  The value of 30 iterations should be fine for most analyses.
+The local $\tau_m$ models and model-free models should not be modified, the reason for this is explained in section~\ref{sect: d'Auvergne protocol script variables} on page~\pageref{sect: d'Auvergne protocol script variables}.  The grid search increments defaults to \guistring{11}.  This is used in the optimisation of the individual model-free models for each spin.  This value should also not be touched unless you know what you are doing (and have read \citet{dAuvergneGooley08a}).  The number of Monte Carlo simulations can be increased but, for accurate error estimates, it should not be less than 500 simulations.  One additional setting is the \gui{Maximum iterations}.  This is a maximum number of times the protocol will iterate before terminating.  This allows infinite loops to be broken.  The value of 30 iterations should be fine for most analyses.
 
-The \gui{Protocol mode} GUI element setting of \gui{Fully automated} will not be changed for the analysis of this tutorial.  However if you are studying a system without a 3D structure, you can execute each individual component of the analysis by clicking on the \guibutton{Change} button.  This will make a window appear:
+The \gui{Protocol mode} GUI element setting of \gui{Fully automated} will not be changed for the analysis of this tutorial.  However if you are studying a system without a 3D structure, you can execute each individual component of the analysis by clicking on the \guibutton{Change} button.  This will make the protocol mode selection window appear:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/protocol_mode}}
@@ -1696,7 +1696,7 @@ Prior to executing relax, you should very carefully check the relax controller w
 \item Clicking on the \guibutton{relax controller} button on the toolbar.
 \end{itemize}
 
-These messages are very important and will indicate to you if there are any problems prior to starting the very long model-free calculation.  This information should be stored in the \file{log} file as well.  As the execution of a fully iterative and complete model-free protocol takes a very long time to finish, it is advisable to save the current relax state.  This will allow you restart the calculation without performing all of the steps detailed above.  There are numerous ways to do this (if this is not enough for you, please email the relax-users mailing list with your suggestions):
+These messages are very important and will indicate to you if there are any problems prior to starting the very long model-free calculation.  This information should be stored in the \file{log} file as well.  As the execution of a fully iterative and complete model-free protocol takes a very long time to finish, it is advisable to save the current relax state.  This will allow you restart the calculation without performing all of the steps detailed above.  Just in case you cannot work out how to do this yourself, here is a list of the different ways you can do this (if this is not enough for you, please email the relax-users mailing list with your suggestions):
 
 \begin{itemize}
 \item Selecting the \guimenuitemtwo{File}{Save relax state} menu item.
@@ -1706,12 +1706,10 @@ These messages are very important and will indicate to you if there are any prob
 \item Typing \shortcutkey{Shift+Ctrl+S} within the main relax window.
 \item Clicking on the \guibutton{Save as} button on the toolbar.
 \item Selecting the \guimenuitemthree{User functions}{state}{save} menu item.
-\item Selecting the \guimenuitemthree{User functions}{results}{write} menu item.
 \item Opening up the relax prompt window with \guimenuitemtwo{View}{relax prompt} or \shortcutkey{Ctrl+P} and using the \uf{state.save} user function.
-\item Opening up the relax prompt window with \guimenuitemtwo{View}{relax prompt} or \shortcutkey{Ctrl+P} and using the \uf{results.write} user function.
 \end{itemize}
 
-If all the messages in the relax controller or \file{log} file appear to be fine and you have saved the current relax state, then you can click on \guibutton{Execute relax}.  This will start the calculations, freeze most of the GUI and open up the relax controller to give you feedback on the progress of the calculations:
+If all the messages in the relax controller or \file{log} file appear to be fine and you have saved the current relax state, then click on \guibutton{Execute relax}.  This will start the calculations, freeze most of the GUI and open up the relax controller to give you feedback on the progress of the calculations:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_controller_executing}}
@@ -1739,6 +1737,6 @@ Once you are ready to publish your results, the very last step of the model-free
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/bmrb_export_window}}
 \end{minipage}
 
-From here you can complete the relaxation data metadata if needed, set up all the molecule information needed for a BMRB deposition, specify the softwares you have used running up to the model-free analysis and any spectral processing or relax scripts you have used.  You can also add as many citations relevant to your analysis as you wish.  The NMR-STAR formatted file can be previewed in the relax controller window via the \guibutton{Preview} button and the final file exported using the \guibutton{Export} button.
+From here you can complete the relaxation data metadata if needed, set up all the molecule information needed for a BMRB deposition, specify the softwares you have used running up to the model-free analysis and any spectral processing or relax scripts you have used.  You can also add as many citations relevant to your analysis as you wish.  The NMR-STAR formatted file can be previewed in the relax controller window via the \guibutton{Preview} button and the final file created using the \guibutton{Export} button.
 
-Then simply go to the ADIT-NMR webpage at \href{http://deposit.bmrb.wisc.edu/bmrb-adit/}{http://deposit.bmrb.wisc.edu/bmrb-adit/},  create a new BMRB deposition, upload the file you have created, and complete the deposition as needed.
+Once you are in the stage of writing up, simply go to the ADIT-NMR webpage at \href{http://deposit.bmrb.wisc.edu/bmrb-adit/}{http://deposit.bmrb.wisc.edu/bmrb-adit/},  create a new BMRB deposition, upload the file you have created, complete the deposition as needed, and add the BMRB deposition number to your paper.
