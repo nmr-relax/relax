@@ -51,7 +51,7 @@ epsilon = Tensor([[[ 0,  0,  0],
 
 
 import sys
-if sys.modules.has_key('epydoc'):
+if 'epydoc' in sys.modules.has_key:
     import VectorModule, TensorModule
     Vector = VectorModule.Vector
     isVector = VectorModule.isVector

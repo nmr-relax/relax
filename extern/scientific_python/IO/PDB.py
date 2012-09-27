@@ -663,7 +663,7 @@ class Group:
     def __str__(self):
         s = self.__class__.__name__ + ' ' + self.name + ':\n'
         for atom in self.atom_list:
-            s = s + '  ' + `atom` + '\n'
+            s = s + '  ' + repr(atom) + '\n'
         return s
     __repr__ = __str__
 
