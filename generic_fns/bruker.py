@@ -190,11 +190,11 @@ def read(ri_id=None, file=None, dir=None):
         # The labelling.
         elif row[0] == 'Labelling:':
             # Set the isotope value.
-            set_spin_isotope(isotope=row[1])
+            set_spin_isotope(isotope=row[1], force=None)
 
             # Name the spins.
             name = split('([A-Z]+)', row[1])[1]
-            name_spin(name=name)
+            name_spin(name=name, force=None)
 
         # The integration method.
         elif row[0] == 'Used integrals:':
