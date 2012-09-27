@@ -34,6 +34,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, set_sp
 from generic_fns.relax_data import pack_data, peak_intensity_type
 from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_read_file
+from physical_constants import element_from_isotope
 
 
 def convert_relax_data(data):
@@ -189,8 +190,11 @@ def read(ri_id=None, file=None, dir=None):
 
         # The labelling.
         elif row[0] == 'Labelling:':
+            # Store the isotope for later use.
+            isotope = row[1]
+
             # Set the isotope value.
-            set_spin_isotope(isotope=row[1], force=None)
+            set_spin_isotope(isotope=isotope, force=None)
 
             # Name the spins.
             name = split('([A-Z]+)', row[1])[1]
@@ -205,6 +209,11 @@ def read(ri_id=None, file=None, dir=None):
             # Peak volumes:
             if row[1] == 'area integral':
                 int_type = 'volume'
+
+    # Modify the residue numbers by adding the heteronucleus name.
+    atom_name = element_from_isotope(isotope)
+    for i in range(len(res_nums)):
+        res_nums[i] += '@' + atom_name
 
     # Pack the data.
     pack_data(ri_id, ri_type, frq, values, errors, spin_ids=res_nums)
