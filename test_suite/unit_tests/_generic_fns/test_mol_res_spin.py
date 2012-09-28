@@ -1714,7 +1714,7 @@ class Test_mol_res_spin(UnitTestCase):
 
         # The residues.
         self.assertEqual(len(sel), 3)
-        for i in xrange(3):
+        for i in range(3):
             self.assertEqual(sel[i].name, names[i])
             self.assertEqual(sel[i].num, numbers[i])
 
