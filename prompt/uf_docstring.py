@@ -28,7 +28,7 @@ from textwrap import wrap
 
 # relax module imports.
 import ansi
-import help
+import prompt.help
 from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
