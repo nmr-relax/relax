@@ -41,7 +41,6 @@ if dep_check.profile_module:
 import pstats
 from pydoc import pager
 from re import match
-from string import split, strip
 import sys
 
 # relax modules.
