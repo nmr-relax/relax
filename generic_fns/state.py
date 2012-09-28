@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,10 @@
 """Module for reading and writing the relax program state."""
 
 # Python module imports.
-from cPickle import dump, load
+try:
+    from cPickle import dump, load    # Python 2 import.
+except ImportError:
+    from pickle import dump, load    # Python 3 import.
 from re import search
 
 # relax module imports.
