@@ -379,7 +379,7 @@ class dAuvergne_protocol:
             self.conv_data.mf_vals[-1].append([])
 
             # Loop over the parameters.
-            for j in xrange(len(spin.params)):
+            for j in range(len(spin.params)):
                 # Get the parameters and values.
                 self.conv_data.mf_params[-1][-1].append(spin.params[j])
                 self.conv_data.mf_vals[-1][-1].append(getattr(spin, lower(spin.params[j])))
