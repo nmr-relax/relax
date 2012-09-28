@@ -27,7 +27,7 @@ import dep_check
 
 # Python module imports.
 import ansi
-from code import InteractiveConsole, softspace
+from code import InteractiveConsole
 from math import pi
 from os import F_OK, access, chdir, getcwd, path
 from pydoc import pager
@@ -431,10 +431,11 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     if show_script:
         try:
             file = open(script_file, 'r')
-        except IOError, warning:
+        except IOError:
             try:
                 raise RelaxError("The script file '" + script_file + "' does not exist.")
-            except AllRelaxErrors, instance:
+            except AllRelaxErrors:
+                instance = sys.exc_info()[1]
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
@@ -483,7 +484,9 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         exec_pass = False
 
     # Catch the RelaxErrors.
-    except AllRelaxErrors, instance:
+    except AllRelaxErrors:
+        instance = sys.exc_info()[1]
+
         # Unlock execution.
         status.exec_lock.release()
 
@@ -593,11 +596,9 @@ def runcode(self, code):
         exec(code, self.locals)
     except SystemExit:
         raise
-    except AllRelaxErrors, instance:
+    except AllRelaxErrors:
+        instance = sys.exc_info()[1]
         self.write(instance.__str__())
         self.write("\n")
     except:
         self.showtraceback()
-    else:
-        if softspace(sys.stdout, 0):
-            print('')
