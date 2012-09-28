@@ -2,7 +2,7 @@
 
 from os import F_OK, access
 from re import search
-from string import ascii_letters, ascii_uppercase, split
+from string import ascii_letters, ascii_uppercase
 import sys
 
 
@@ -180,7 +180,7 @@ class Validate:
             # Find the classes.
             if search("^ *class ", self.lines[i]):
                 # Split the line.
-                row = split(self.lines[i])
+                row = self.lines[i].split()
 
                 # Test if the name starts with a capital.
                 if row[1][0] in ascii_uppercase:
@@ -219,9 +219,9 @@ class Validate:
             if search("\"\"\"", line) or search("\'\'\'", line):
                 # Split the docstring line.
                 if search("\"\"\"", line):
-                    row = split(line, "\"\"\"")
+                    row = line.split("\"\"\"")
                 else:
-                    row = split(line, "\'\'\'")
+                    row = line.split("\'\'\'")
 
                 # Single line docstring.
                 if len(row) == 3:
@@ -244,7 +244,7 @@ class Validate:
                 continue
 
             # Count the empty lines.
-            row = split(line)
+            row = line.split()
             if len(row) == 0:
                 # Out of the header.
                 if in_header:
@@ -285,9 +285,9 @@ class Validate:
 
                 # Split the docstring line.
                 if search("^ *\"\"\"", self.lines[i+1]):
-                    row = split(self.lines[i+1], "\"\"\"")
+                    row = self.lines[i+1].split("\"\"\"")
                 else:
-                    row = split(self.lines[i+1], "\'\'\'")
+                    row = self.lines[i+1].split("\'\'\'")
 
                 # Loop over the docstring.
                 j = 0
@@ -308,7 +308,7 @@ class Validate:
                     continue
 
                 # Empty line.
-                row = split(self.lines[i+1+j+1])
+                row = self.lines[i+1+j+1].split()
                 if not row:
                     continue
 
@@ -345,9 +345,9 @@ class Validate:
 
                 # Split the docstring line.
                 if search("^ *\"\"\"", self.lines[i+1]):
-                    row = split(self.lines[i+1], "\"\"\"")
+                    row = self.lines[i+1].split("\"\"\"")
                 else:
-                    row = split(self.lines[i+1], "\'\'\'")
+                    row = self.lines[i+1].split("\'\'\'")
 
                 # Test for text.
                 if row[1] == '\n':
@@ -394,9 +394,9 @@ class Validate:
 
                 # Split the docstring line.
                 if search("^ *\"\"\"", self.lines[i+1]):
-                    row = split(self.lines[i+1], "\"\"\"")
+                    row = self.lines[i+1].split("\"\"\"")
                 else:
-                    row = split(self.lines[i+1], "\'\'\'")
+                    row = self.lines[i+1].split("\'\'\'")
 
                 # Single line docstring.
                 if len(row) == 3:
@@ -413,7 +413,7 @@ class Validate:
                     j = j + 1
 
                     # Empty row.
-                    row = split(self.lines[i+1+j])
+                    row = self.lines[i+1+j].split()
                     if not row:
                         continue
 
@@ -422,7 +422,7 @@ class Validate:
                         break
 
                     # Split by whitespace.
-                    row = split(self.lines[i+1+j], ' ')
+                    row = self.lines[i+1+j].split(' ')
 
                     # Indentation length.
                     length = 0
@@ -531,10 +531,10 @@ class Validate:
             # Find the classes.
             if search("^ *def ", self.lines[i]):
                 # Split the line.
-                row = split(self.lines[i], ' ')
+                row = self.lines[i].split(' ')
 
                 # Isolate the function name.
-                name = split(row[1], '(')
+                name = row[1].split('(')
 
                 # Test if the name starts with a capital.
                 if not search('[' + ascii_uppercase + ']', name[0]):
@@ -622,9 +622,9 @@ class Validate:
             if search("\"\"\"", line) or search("\'\'\'", line):
                 # Split the docstring line.
                 if search("\"\"\"", line):
-                    row = split(line, "\"\"\"")
+                    row = line.split("\"\"\"")
                 else:
-                    row = split(line, "\'\'\'")
+                    row = line.split("\'\'\'")
 
                 # Single line docstring.
                 if len(row) == 3:
@@ -641,7 +641,7 @@ class Validate:
                 continue
 
             # Skip empty lines.
-            row = split(line)
+            row = line.split()
             if not row:
                 continue
 
@@ -742,7 +742,7 @@ class Validate:
             j = 0
 
             # Skip empty lines.
-            row = split(line)
+            row = line.split()
             if not row:
                 continue
 
@@ -770,7 +770,7 @@ class Validate:
                 # Double whitespace.
                 if line[j] == ' ':
                     # Terminal whitespace.
-                    end_row = split(line[j:-1])
+                    end_row = line[j:-1].split()
                     if len(end_row) == 0:
                         break
 

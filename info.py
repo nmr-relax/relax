@@ -29,7 +29,6 @@ if hasattr(ctypes, 'windll'):
 import numpy
 from os import environ, waitpid
 import platform
-from string import split
 from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
@@ -169,7 +168,7 @@ class Info_box(object):
             # Arch.
             arch = [None, None, None]
             for i in range(3):
-                row = split(data[i+1], '\t')
+                row = data[i+1].split('\t')
                 arch[i] = row[1][:-1]
             arch.sort()
 
@@ -190,7 +189,7 @@ class Info_box(object):
             # Arch.
             arch = [None, None]
             for i in range(2):
-                row = split(data[i+1], '\t')
+                row = data[i+1].split('\t')
                 arch[i] = row[1][:-1]
             arch.sort()
 
@@ -210,7 +209,7 @@ class Info_box(object):
         else:
             file_type = data[0][:-1]
             for i in range(1, len(data)):
-                row = split(data[i], '\t')
+                row = data[i].split('\t')
                 arch[i] = row[1][:-1]
                 file_type += " %s" % arch
 
@@ -496,7 +495,7 @@ class Info_box(object):
             # Extract the info.
             for line in free_lines:
                 # Split up the line.
-                row = split(line)
+                row = line.split()
 
                 # The RAM size.
                 if row[0] == 'Mem:':
@@ -751,7 +750,7 @@ class Ref:
                 return None
 
             # First split the page range.
-            vals = split(self.pages, '-')
+            vals = self.pages.split('-')
 
             # Single page.
             if len(vals) == 1:

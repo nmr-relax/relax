@@ -36,7 +36,6 @@ if dep_check.readline_module:
     import readline
 if dep_check.runpy_module:
     import runpy
-from string import split
 import sys
 
 # relax module imports.
@@ -116,7 +115,7 @@ class Interpreter:
 
         # Split up the name.
         if search('\.', uf_name):
-            class_name, uf_name = split(uf_name, '.')
+            class_name, uf_name = uf_name.split('.')
         else:
             class_name = None
 
@@ -180,7 +179,7 @@ class Interpreter:
         for name, data in uf_info.uf_loop():
             # Split up the name.
             if search('\.', name):
-                class_name, uf_name = split(name, '.')
+                class_name, uf_name = name.split('.')
             else:
                 class_name = None
 

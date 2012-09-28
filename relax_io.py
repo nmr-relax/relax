@@ -39,7 +39,6 @@ if dep_check.devnull_import:
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext
 from re import match, search
-from string import split
 import sys
 from sys import stdin, stdout, stderr
 from warnings import warn
@@ -151,9 +150,9 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     data = []
     for i in xrange(len(file_data)):
         if sep:
-            row = split(file_data[i], sep)
+            row = file_data[i].split(sep)
         else:
-            row = split(file_data[i])
+            row = file_data[i].split()
         data.append(row)
     return data
 
@@ -715,7 +714,7 @@ def test_binary(binary):
         path = getenv('PATH')
 
         # Split PATH by the path separator.
-        path_list = split(path, pathsep)
+        path_list = path.split(pathsep)
 
         # Test that the binary exists within the system path (and exit this function instantly once it has been found).
         for path in path_list:
@@ -1069,7 +1068,7 @@ class DummyFileObject:
         """
 
         # Split up the string.
-        lines = split(self.data, '\n')
+        lines = self.data.split('\n')
 
         # Remove the last line if empty.
         if lines[-1] == '':

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,6 @@
 # Python module imports.
 from os.path import dirname
 from re import search
-from string import split
 import sys
 
 # relax module imports.
@@ -57,7 +56,7 @@ def determine_format(file):
         return 'xml'
 
     # Columnar.
-    if split(header)[0:3] == ['Num', 'Name', 'Selected']:
+    if header.split()[0:3] == ['Num', 'Name', 'Selected']:
         return 'columnar'
 
 

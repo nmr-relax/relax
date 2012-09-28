@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-from string import split, strip
-
 
 # The file data.
 file = open('testNOE.txt')
@@ -14,11 +12,11 @@ in_data = False
 index = 0
 for line in lines:
     # Split the line.
-    row = split(line, "\t")
+    row = line.split("\t")
 
     # Strip the rubbish.
     for j in range(len(row)):
-        row[j] = strip(row[j])
+        row[j] = row[j].strip()
 
     # Empty line.
     if len(row) == 0:
@@ -38,7 +36,7 @@ for line in lines:
         continue
 
     # The residue name and number.
-    res_name, res_num = split(row[0])
+    res_name, res_num = row[0].split()
 
     # The values.
     data.append([])

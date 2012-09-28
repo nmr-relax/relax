@@ -24,7 +24,6 @@
 
 # Python module imports.
 from os import sep
-from string import split
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -64,7 +63,7 @@ def fetch_icon(icon=None, size='16x16', format='png'):
     path = status.install_path + sep + 'graphics' + sep
 
     # Split up the icon code.
-    elements = split(icon, '.')
+    elements = icon.split('.')
 
     # The icon type.
     if elements[0] == 'relax':

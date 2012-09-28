@@ -22,7 +22,6 @@
 # Python module imports.
 from os import sep
 from re import search
-from string import split
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -106,7 +105,7 @@ class Relax_fit(SystemTestCase):
                 index = i + 2
 
             # Split up the lines.
-            lines[i] = split(lines[i])
+            lines[i] = lines[i].split()
 
         # Check some of the Grace data.
         self.assertEqual(len(lines[index]), 2)
@@ -132,7 +131,7 @@ class Relax_fit(SystemTestCase):
                 index = i + 2
 
             # Split up the lines.
-            lines[i] = split(lines[i])
+            lines[i] = lines[i].split()
 
         # Check for zero errors.
         self.assertEqual(len(lines[index]), 3)

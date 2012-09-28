@@ -26,7 +26,6 @@
 # Python module imports.
 import __builtin__
 from re import search
-from string import split
 from sys import stderr
 from time import asctime
 import xml.dom.minidom
@@ -112,7 +111,7 @@ class Relax_data_store(dict):
             if obj == None or isinstance(obj, str):
                 text = text + "  %s %s: %s\n" % (name, type(obj), obj)
             else:
-                text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
+                text = text + "  %s %s: %s\n" % (name, type(obj), obj.__doc__.split('\n')[0])
 
         # dict methods.
         text = text + "\n"
@@ -130,7 +129,7 @@ class Relax_data_store(dict):
             obj = getattr(self, name)
 
             # The text.
-            text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
+            text = text + "  %s %s: %s\n" % (name, type(obj), obj.__doc__.split('\n')[0])
 
         # All other objects.
         text = text + "\n"

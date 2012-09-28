@@ -5,7 +5,6 @@
 # Python module imports.
 from os import getcwd, path, waitpid, walk
 from re import search
-from string import split
 from subprocess import PIPE, Popen
 from sys import argv, exit
 
@@ -85,7 +84,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
             # Arch.
             arch = [None, None, None]
             for i in range(3):
-                row = split(data[i+1], '\t')
+                row = data[i+1].split('\t')
                 arch[i] = row[1][:-1]
             arch.sort()
 
@@ -112,7 +111,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
             # Arch.
             arch = [None, None]
             for i in range(2):
-                row = split(data[i+1], '\t')
+                row = data[i+1].split('\t')
                 arch[i] = row[1][:-1]
             arch.sort()
 
@@ -136,7 +135,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
         else:
             full_type = data[0][:-1]
             for i in range(1, len(data)):
-                row = split(data[i], '\t')
+                row = data[i].split('\t')
                 arch[i] = row[1][:-1]
                 full_type += " %s" % arch
 

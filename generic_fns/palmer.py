@@ -27,7 +27,7 @@
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
-from string import count, find, split
+from string import count, find
 from subprocess import PIPE, Popen
 import sys
 
@@ -657,19 +657,19 @@ def extract(dir, spin_id=None):
     sims = 0
     for i in range(len(mfout_lines)):
         if search('_iterations', mfout_lines[i]):
-            row = split(mfout_lines[i])
+            row = mfout_lines[i].split()
             sims = int(row[1])
 
     # Global data.
     if model_type in ['all', 'diff']:
         # Global chi-squared.
-        row = split(mfout_lines[global_chi2_pos])
+        row = mfout_lines[global_chi2_pos].split()
         cdp.chi2 = float(row[1])
 
         # Spherical diffusion tensor.
         if cdp.diff_tensor.type == 'sphere':
             # Split the lines.
-            tm_row = split(mfout_lines[diff_pos])
+            tm_row = mfout_lines[diff_pos].split()
 
             # Set the params.
             cdp.diff_tensor.tm = float(tm_row[2])
@@ -677,10 +677,10 @@ def extract(dir, spin_id=None):
         # Spheroid diffusion tensor.
         else:
             # Split the lines.
-            tm_row = split(mfout_lines[diff_pos])
-            dratio_row = split(mfout_lines[diff_pos+1])
-            theta_row = split(mfout_lines[diff_pos+2])
-            phi_row = split(mfout_lines[diff_pos+3])
+            tm_row = mfout_lines[diff_pos].split()
+            dratio_row = mfout_lines[diff_pos+1].split()
+            theta_row = mfout_lines[diff_pos+2].split()
+            phi_row = mfout_lines[diff_pos+3].split()
 
             # Set the params.
             diffusion_tensor.set([float(tm_row[2]), float(dratio_row[2]), float(theta_row[2])*2.0*pi/360.0, float(phi_row[2])*2.0*pi/360.0], ['tm', 'Dratio', 'theta', 'phi'])
@@ -693,7 +693,7 @@ def extract(dir, spin_id=None):
             continue
 
         # Get the residue number from the mfout file.
-        mfout_res_num = int(split(mfout_lines[s2_pos + pos])[0])
+        mfout_res_num = int(mfout_lines[s2_pos + pos].split()[0])
 
         # Skip the spin if the residue doesn't match.
         if mfout_res_num != res_num:
@@ -735,11 +735,11 @@ def extract(dir, spin_id=None):
 
         # Get the chi-squared data.
         if not sims:
-            row = split(mfout_lines[chi2_pos + pos])
+            row = mfout_lines[chi2_pos + pos].split()
             spin.chi2 = float(row[1])
         else:
             # The mfout chi2 position (with no sims) plus 2 (for the extra XML) plus the residue position times 22 (because of the simulated SSE rows).
-            row = split(mfout_lines[chi2_pos + 2 + 22*pos])
+            row = mfout_lines[chi2_pos + 2 + 22*pos].split()
             spin.chi2 = float(row[1])
 
         # Increment the residue position.
@@ -771,7 +771,7 @@ def get_mf_data(mfout_lines, pos):
     """
 
     # Split the line up.
-    row = split(mfout_lines[pos])
+    row = mfout_lines[pos].split()
 
     # The value and error, assuming a bug free mfout file.
     val = row[1]
@@ -780,8 +780,8 @@ def get_mf_data(mfout_lines, pos):
     # The Modelfree4 '*' column fusion bug.
     if search('\*', val) or search('\*', err):
         # Split by the '*' character.
-        val_row = split(val, '*')
-        err_row = split(err, '*')
+        val_row = val.split('*')
+        err_row = err.split('*')
 
         # The value and error (the first elements).
         val = val_row[0]
@@ -856,7 +856,7 @@ def line_positions(mfout_lines):
                     break
 
                 # Split the line up.
-                row = split(mfout_lines[i])
+                row = mfout_lines[i].split()
 
                 # S2 position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'S2':

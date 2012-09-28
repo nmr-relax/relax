@@ -21,7 +21,7 @@
 
 # Python module imports.
 from re import search
-from string import letters, lowercase, punctuation, replace, split, upper, whitespace
+from string import letters, lowercase, punctuation, replace, upper, whitespace
 import sys
 
 # Add the path to the relax base directory.
@@ -55,7 +55,7 @@ class Fetch_docstrings:
             self.uf_class = None
             if search('\.', self.uf_name):
                 # Split up the name.
-                class_name, uf_name = split(self.uf_name, '.')
+                class_name, uf_name = self.uf_name.split('.')
 
                 # Get the user function class data object.
                 self.uf_class = uf_info.get_class(class_name)
@@ -407,7 +407,7 @@ class Fetch_docstrings:
         # Modifications.
         for i in xrange(len(self.entries)):
             # Count the number of words.
-            self.entries[i].append(len(split(self.entries[i][0], ' ')))
+            self.entries[i].append(len(self.entries[i][0].split(' ')))
 
             # Accept capitalisation.
             if search(self.entries[i][0][0], lowercase):
@@ -625,7 +625,7 @@ class Fetch_docstrings:
         """Function for placing quotes within the quote environment."""
 
         # Split the word by '.
-        elements = split(self.words[index], "'")
+        elements = self.words[index].split("'")
 
         # Single word quote.
         if len(elements) == 3:
@@ -781,7 +781,7 @@ class Fetch_docstrings:
         new_text = ''
 
         # Split the string.
-        self.words = split(text, ' ')
+        self.words = text.split(' ')
 
         # Loop over the words one by one.
         for i in xrange(len(self.words)):

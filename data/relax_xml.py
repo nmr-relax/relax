@@ -34,7 +34,6 @@ try:
 except ImportError:
     float128 = float64    # Support for 32-bit numpy versions.
 from re import search
-from string import strip
 
 # Modify numpy for better output of numbers and structures.
 set_printoptions(precision=15, threshold=nan)
@@ -91,7 +90,7 @@ def node_value_to_python(elem):
     """
 
     # Remove whitespace.
-    val = strip(elem.nodeValue)
+    val = elem.nodeValue.strip()
 
     # Convert to python and return.
     return eval(val)

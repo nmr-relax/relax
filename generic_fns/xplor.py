@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -40,13 +39,13 @@ def __convert_to_id(string):
     """
 
     # Split up the string by the 'and' statements.
-    data = split(string, 'and')
+    data = string.split('and')
 
     # Loop over the data.
     relax_id = ''
     for i in range(len(data)):
         # Split by whitespace.
-        info = split(data[i])
+        info = data[i].split()
 
         # Don't know what this is!
         if len(info) != 2:
@@ -190,7 +189,7 @@ def first_parse(lines):
                         id_index = 1
 
             # The rest of the data (NOE restraint info).
-            info = split(lines[line_index][char_index+1:])
+            info = lines[line_index][char_index+1:].split()
 
             # NOE dist, lower, upper.
             noe = float(info[0])

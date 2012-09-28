@@ -27,7 +27,7 @@ from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access
 from re import search
-from string import digits, split, strip, upper
+from string import digits, upper
 from warnings import warn
 
 # relax module imports.
@@ -280,7 +280,7 @@ class Internal(Base_struct_API):
             # A new model record.
             if search('^MODEL', lines[i]):
                 try:
-                    model = int(split(lines[i])[1])
+                    model = int(lines[i].split()[1])
                 except:
                     raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file.")
 
@@ -333,7 +333,7 @@ class Internal(Base_struct_API):
         # Loop over the data.
         for i in range(len(lines)):
             num=0
-            word=split(lines[i])
+            word = lines[i].split()
             # Find the total atom number and the first model.
             if (i==0) and (len(word)==1):
                 try:
@@ -1783,10 +1783,10 @@ class MolContainer:
         """
 
         # Strip away the "'" character (for RNA, etc.).
-        element = strip(atom_name, "'")
+        element = atom_name.strip("'")
 
         # Strip away atom numbering, from the front and end.
-        element = strip(element, digits)
+        element = element.strip(digits)
 
         # Amino acid atom translation table (note, numbers have been stripped already!).
         table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CH', 'CZ'],
@@ -1911,7 +1911,7 @@ class MolContainer:
             # Loop over the fields.
             for i in range(len(fields)):
                 # Strip all whitespace.
-                fields[i] = strip(fields[i])
+                fields[i] = fields[i].strip()
 
                 # Replace nothingness with None.
                 if fields[i] == '':
@@ -1946,7 +1946,7 @@ class MolContainer:
             # Loop over the fields.
             for i in range(len(fields)):
                 # Strip all whitespace.
-                fields[i] = strip(fields[i])
+                fields[i] = fields[i].strip()
 
                 # Replace nothingness with None.
                 if fields[i] == '':
@@ -1992,7 +1992,7 @@ class MolContainer:
 
         # Initialise.
         fields = []
-        word=split(record)
+        word = record.split()
 
         # ATOM and HETATM records.
         if len(word)==4:
@@ -2005,7 +2005,7 @@ class MolContainer:
             # Loop over the fields.
             for i in range(len(fields)):
                 # Strip all whitespace.
-                fields[i] = strip(fields[i])
+                fields[i] = fields[i].strip()
 
                 # Replace nothingness with None.
                 if fields[i] == '':

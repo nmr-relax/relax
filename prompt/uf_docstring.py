@@ -24,7 +24,6 @@
 
 # Python module imports.
 from copy import deepcopy
-from string import split
 from textwrap import wrap
 
 # relax module imports.
