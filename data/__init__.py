@@ -24,7 +24,10 @@
 
 
 # Python module imports.
-import __builtin__
+try:
+    import __builtin__ as builtins    # Python 2 import.
+else:
+    import builtins    # Python 3 import.
 from re import search
 from sys import stderr
 from time import asctime
@@ -58,7 +61,7 @@ class Relax_data_store(dict):
 
     # The current data pipe.
     current_pipe = None
-    __builtin__.cdp = None
+    builtins.cdp = None
 
     # Class variable for storing the class instance.
     instance = None
@@ -173,7 +176,7 @@ class Relax_data_store(dict):
         self.instance.clear()
 
         # Reset the current data pipe.
-        __builtin__.cdp = None
+        builtins.cdp = None
 
         # Recreate the pipe bundle object.
         self.instance.pipe_bundles = {}
@@ -308,7 +311,7 @@ class Relax_data_store(dict):
         if switch:
             # Set the current data pipe.
             self.instance.current_pipe = pipe_name
-            __builtin__.cdp = self[pipe_name]
+            builtins.cdp = self[pipe_name]
 
             # Signal the switch.
             status.observers.pipe_alteration.notify()
@@ -477,7 +480,7 @@ class Relax_data_store(dict):
 
             # Set the current pipe.
             if self.current_pipe in self.keys():
-                __builtin__.cdp = self[self.current_pipe]
+                builtins.cdp = self[self.current_pipe]
 
         # Finally update the molecule, residue, and spin metadata.
         generic_fns.mol_res_spin.metadata_update()
