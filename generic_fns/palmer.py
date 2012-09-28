@@ -25,9 +25,10 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, chdir, chmod, getcwd, listdir, popen3, remove, sep, system
+from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
 from string import count, find, split
+from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -591,15 +592,15 @@ def execute(dir, force, binary):
             cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out -s ' + pdb
         else:
             cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
-        stdin, stdout, stderr = popen3(cmd)
+        pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Close the pipe.
-        stdin.close()
+        pipe.stdin.close()
 
         # Write to stdout and stderr.
-        for line in stdout.readlines():
+        for line in pipe.stdout.readlines():
             sys.stdout.write(line)
-        for line in stderr.readlines():
+        for line in pipe.stderr.readlines():
             sys.stderr.write(line)
 
     # Failure.
