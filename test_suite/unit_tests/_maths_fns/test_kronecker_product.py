@@ -91,7 +91,7 @@ class Test_kronecker_product(TestCase):
         daegT = []
 
         # The string indices.
-        indices = range(4)
+        indices = list(range(4))
         temp = indices[index1-1]
         indices[index1-1] = indices[index2-1]
         indices[index2-1] = temp
