@@ -48,8 +48,6 @@ class Bmrb(SystemTestCase):
         super(Bmrb, self).__init__(methodName)
 
         # Missing module.
-        print dep_check.bmrblib_module
-        asdf
         if not dep_check.bmrblib_module:
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Bmrblib', self._skip_type])
