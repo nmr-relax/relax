@@ -28,7 +28,7 @@ from relax_errors import RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.model_free_testing_base import Model_free_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_model_free(Model_free_base_class, TestCase):

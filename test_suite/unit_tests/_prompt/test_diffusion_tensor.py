@@ -28,7 +28,7 @@ from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNoneStr
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
