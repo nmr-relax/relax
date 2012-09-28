@@ -34,7 +34,7 @@ from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
-from pipe_container import PipeContainer
+from data.pipe_container import PipeContainer
 import generic_fns
 from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
