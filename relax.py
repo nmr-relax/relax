@@ -469,7 +469,8 @@ class RelaxParser(OptionParser):
         # Raise a clean error.
         try:
             raise relax_errors.RelaxError(message)
-        except relax_errors.AllRelaxErrors, instance:
+        except relax_errors.AllRelaxErrors:
+            instance = sys.exc_info()[1]
             sys.stderr.write(instance.__str__())
 
         # Exit.
