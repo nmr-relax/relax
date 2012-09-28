@@ -27,7 +27,7 @@ import ctypes
 if hasattr(ctypes, 'windll'):
     import ctypes.wintypes
 import numpy
-from os import environ, popen3, waitpid
+from os import environ, waitpid
 import platform
 from string import split
 from subprocess import PIPE, Popen
@@ -490,8 +490,8 @@ class Info_box(object):
         text = ''
 
         # Unix and GNU/Linux systems.
-        stdin, stdout, stderr = popen3('free -m')
-        free_lines = stdout.readlines()
+        pipe = Popen('free -m', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+        free_lines = pipe.stdout.readlines()
         if free_lines:
             # Extract the info.
             for line in free_lines:
@@ -765,7 +765,7 @@ class Ref:
             if name == 'page_last':
                 return vals[1]
 
-        raise AttributeError, name
+        raise AttributeError(name)
 
 
     def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True, status=True):
