@@ -544,8 +544,9 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         # Validate the sequence.
         try:
             generic_fns.sequence.validate_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col)
-        except RelaxInvalidSeqError, msg:
+        except RelaxInvalidSeqError:
             # Extract the message string, without the RelaxError bit.
+            msg = sys.exc_info()[1]
             string = msg.__str__()[12:-1]
 
             # Give a warning.
