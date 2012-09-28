@@ -27,7 +27,7 @@ from re import search
 from numpy import ndarray
 
 # relax module imports.
-from relax_xml import fill_object_contents, xml_to_object
+from data.relax_xml import fill_object_contents, xml_to_object
 
 
 class Element(object):
