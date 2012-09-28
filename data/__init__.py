@@ -34,11 +34,11 @@ from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
+from data.gui import Gui
 from data.pipe_container import PipeContainer
+from data.relax_xml import fill_object_contents, xml_to_object
 import generic_fns
-from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
-from relax_xml import fill_object_contents, xml_to_object
 from status import Status; status = Status()
 import version
 

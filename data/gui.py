@@ -23,8 +23,8 @@
 """Data store objects for holding all the GUI specific variables."""
 
 # relax module imports.
-from data_classes import Element, RelaxListType
-from relax_xml import xml_to_object
+from data.data_classes import Element, RelaxListType
+from data.relax_xml import xml_to_object
 
 
 class Gui(Element):
