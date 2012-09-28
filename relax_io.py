@@ -358,7 +358,8 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
                 raise RelaxError("Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + ".")
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
-    except IOError, message:
+    except IOError:
+        message = sys.exc_info()[1]
         raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
@@ -454,7 +455,8 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
             file_obj = BZ2File(file_path, 'w')
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'w')
-    except IOError, message:
+    except IOError:
+        message = sys.exc_info()[1]
         raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
@@ -508,9 +510,9 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     col_arg_names = ['spin_id_col', 'mol_name_col', 'res_name_col', 'res_num_col', 'spin_name_col', 'spin_num_col', 'data_col', 'error_col']
     for i in range(len(col_args)):
         if col_args[i] == 0:
-            raise RelaxError, "The '%s' argument cannot be zero, column numbering starts at one." % col_arg_names[i]
+            raise RelaxError("The '%s' argument cannot be zero, column numbering starts at one." % col_arg_names[i])
     if spin_id_col and (mol_name_col or res_name_col or res_num_col or spin_name_col or spin_num_col):
-        raise RelaxError, "If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None."
+        raise RelaxError("If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None.")
 
     # Minimum number of columns.
     min_col_num = max(spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
