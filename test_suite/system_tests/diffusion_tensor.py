@@ -26,7 +26,6 @@ from os import sep
 import sys
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
 from generic_fns.mol_res_spin import spin_loop
@@ -37,6 +36,7 @@ from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, two_vect_
 from relax_io import delete
 from status import Status; status = Status()
 from tempfile import mktemp
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Diffusion_tensor(SystemTestCase):

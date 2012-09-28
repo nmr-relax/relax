@@ -26,13 +26,13 @@ from os import sep
 from tempfile import mkdtemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
 from relax_errors import RelaxError
 from relax_io import test_binary
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Palmer(SystemTestCase):

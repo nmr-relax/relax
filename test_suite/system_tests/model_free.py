@@ -29,7 +29,6 @@ from shutil import copytree
 from tempfile import mkdtemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns import pipes
@@ -38,6 +37,7 @@ from generic_fns.mol_res_spin import spin_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 # Get the platform/version information.
