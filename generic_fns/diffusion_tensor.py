@@ -887,7 +887,7 @@ def map_labels(index, params, bounds, swap, inc):
     loc_inc = inc / axis_incs
 
     # Increment over the model parameters.
-    for i in xrange(n):
+    for i in range(n):
         # Parameter conversion factors.
         factor = return_conversion_factor(params[swap[i]])
 
@@ -912,7 +912,7 @@ def map_labels(index, params, bounds, swap, inc):
         # Tick locations.
         string = "{"
         val = 0.0
-        for j in xrange(axis_incs + 1):
+        for j in range(axis_incs + 1):
             string = string + " " + repr(val)
             val = val + loc_inc
         string = string + " }"
@@ -920,7 +920,7 @@ def map_labels(index, params, bounds, swap, inc):
 
         # Tick values.
         string = "{"
-        for j in xrange(axis_incs + 1):
+        for j in range(axis_incs + 1):
             string = string + "\"" + "%.2f" % vals + "\" "
             vals = vals + val_inc
         string = string + "}"
@@ -1130,7 +1130,7 @@ def set(value=None, param=None):
     orient_values = []
 
     # Loop over the parameters.
-    for i in xrange(len(param)):
+    for i in range(len(param)):
         # Get the object name.
         param[i] = return_data_name(param[i])
 

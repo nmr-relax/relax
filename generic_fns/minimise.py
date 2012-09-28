@@ -56,7 +56,7 @@ def calc(verbosity=1):
     # Monte Carlo simulation calculation.
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
-        for i in xrange(cdp.sim_number):
+        for i in range(cdp.sim_number):
             # Print out.
             if verbosity:
                 print(("Simulation " + repr(i+1)))
@@ -115,7 +115,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Monte Carlo simulation grid search.
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
-        for i in xrange(cdp.sim_number):
+        for i in range(cdp.sim_number):
             # Print out.
             if verbosity:
                 print(("Simulation " + repr(i+1)))
@@ -197,7 +197,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Monte Carlo simulation minimisation.
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
-        for i in xrange(cdp.sim_number):
+        for i in range(cdp.sim_number):
             # Print out.
             if verbosity:
                 print(("Simulation " + repr(i+1)))

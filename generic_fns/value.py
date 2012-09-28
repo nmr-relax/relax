@@ -185,7 +185,7 @@ def partition_params(val, param):
         # List of values.
         if isinstance(val, list) or isinstance(val, ndarray):
             # Parameter name.
-            for i in xrange(len(val)):
+            for i in range(len(val)):
                 params.append(param)
 
             # Parameter value.
@@ -202,7 +202,7 @@ def partition_params(val, param):
     # Multiple parameters.
     elif isinstance(param, list):
         # Loop over all parameters.
-        for i in xrange(len(param)):
+        for i in range(len(param)):
             # Spin specific parameter.
             if is_spin_param(param[i]):
                 params = spin_params

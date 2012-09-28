@@ -788,7 +788,7 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
             ave_vector = zeros(3, float64)
 
         # Loop over the individual vectors.
-        for i in xrange(len(bond_vectors)):
+        for i in range(len(bond_vectors)):
             # Unit vector.
             if unit:
                 # Normalisation factor.

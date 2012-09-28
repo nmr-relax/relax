@@ -990,7 +990,7 @@ def create_molecule(mol_name=None, mol_type=None, pipe=None):
             raise RelaxError("The molecule type '%s' must be one of %s" % (mol_type, ALLOWED_MOL_TYPES))
 
         # Test if the molecule name already exists.
-        for i in xrange(len(dp.mol)):
+        for i in range(len(dp.mol)):
             if dp.mol[i].name == mol_name:
                 raise RelaxError("The molecule '" + repr(mol_name) + "' already exists in the relax data store.")
 
@@ -1318,7 +1318,7 @@ def delete_molecule(mol_id=None):
         indices = []
 
         # Loop over the molecules.
-        for i in xrange(len(cdp.mol)):
+        for i in range(len(cdp.mol)):
             # Remove the residue is there is a match.
             if cdp.mol[i].name in molecules:
                 indices.append(i)
@@ -1369,7 +1369,7 @@ def delete_residue(res_id=None):
             indices = []
 
             # Loop over the residues of the molecule.
-            for i in xrange(len(mol.res)):
+            for i in range(len(mol.res)):
                 # Remove the residue is there is a match.
                 if mol.res[i].num in residues or mol.res[i].name in residues:
                     indices.append(i)
@@ -1417,7 +1417,7 @@ def delete_spin(spin_id=None):
             indices = []
 
             # Loop over the spins of the residue.
-            for i in xrange(len(res.spin)):
+            for i in range(len(res.spin)):
                 # Store the spin indices for deletion.
                 if res.spin[i].num in spins or res.spin[i].name in spins:
                     indices.append(i)
@@ -2404,7 +2404,7 @@ def parse_token(token, verbosity=False):
 
             # Find all '-' characters (ignoring the first character, i.e. a negative number).
             indices= []
-            for i in xrange(1, len(element)):
+            for i in range(1, len(element)):
                 if element[i] == '-':
                     indices.append(i)
 
@@ -2976,19 +2976,19 @@ def same_sequence(pipe1, pipe2):
         return False
 
     # Loop over the molecules.
-    for i in xrange(len(pipe1.mol)):
+    for i in range(len(pipe1.mol)):
         # Different number of residues.
         if len(pipe1.mol[i].res) != len(pipe2.mol[i].res):
             return False
 
         # Loop over the residues.
-        for j in xrange(len(pipe1.mol[i].res)):
+        for j in range(len(pipe1.mol[i].res)):
             # Different number of spins.
             if len(pipe1.mol[i].res[j].spin) != len(pipe2.mol[i].res[j].spin):
                 return False
 
             # Loop over the spins.
-            for k in xrange(len(pipe1.mol[i].res[j].spin)):
+            for k in range(len(pipe1.mol[i].res[j].spin)):
                 # Different spin numbers.
                 if pipe1.mol[i].res[j].spin[k].num != pipe2.mol[i].res[j].spin[k].num:
                     return False
@@ -3350,17 +3350,17 @@ def spin_index_loop(selection=None, pipe=None):
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol_index in xrange(len(dp.mol)):
+    for mol_index in range(len(dp.mol)):
         # Alias the molecule container.
         mol = dp.mol[mol_index]
 
         # Loop over the residues.
-        for res_index in xrange(len(dp.mol[mol_index].res)):
+        for res_index in range(len(dp.mol[mol_index].res)):
             # Alias the residue container.
             res = dp.mol[mol_index].res[res_index]
 
             # Loop over the spins.
-            for spin_index in xrange(len(dp.mol[mol_index].res[res_index].spin)):
+            for spin_index in range(len(dp.mol[mol_index].res[res_index].spin)):
                 # Alias the spin container.
                 spin = dp.mol[mol_index].res[res_index].spin[spin_index]
 

@@ -193,7 +193,7 @@ def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
     written = False
 
     # Loop over the frequencies.
-    for j in xrange(num_frq):
+    for j in range(num_frq):
         # Set the data to None.
         r1, r2, noe = None, None, None
 
@@ -654,7 +654,7 @@ def extract(dir, spin_id=None):
 
     # Find out if simulations were carried out.
     sims = 0
-    for i in xrange(len(mfout_lines)):
+    for i in range(len(mfout_lines)):
         if search('_iterations', mfout_lines[i]):
             row = split(mfout_lines[i])
             sims = int(row[1])
@@ -799,7 +799,7 @@ def get_mf_data(mfout_lines, pos):
             fused = True
 
             # Loop over each fused number.
-            for i in xrange(num):
+            for i in range(num):
                 # Find the index of the first '.'.
                 index = find(element, '.')
 
