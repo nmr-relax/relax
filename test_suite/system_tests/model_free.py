@@ -307,7 +307,7 @@ class Mf(SystemTestCase):
         res_nums.append(i)
         res_nums.append(i)
         spin_names = ["N", "H"] * 9 + ["NE1", "HE1"]
-        spin_nums = range(1, 21)
+        spin_nums = list(range(1, 21))
         isotopes = ["15N", "1H"] * 10
         csa = [-172e-6, None] * 10
         select = [True, False] * 10
