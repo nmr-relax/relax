@@ -31,19 +31,19 @@ from unittest import TestSuite
 from relax_errors import RelaxError
 
 # relax GUI test module imports.
-from bmrb import Bmrb
-from bruker import Bruker
-from consistency_tests import Ct
-from dead_uf_pages import Dead_uf_pages
-from frame_order import Frame_order
-from interatomic import Interatomic
-from jw_mapping import Jw_mapping
-from model_free import Mf
-from n_state_model import N_state_model
-from noe import Noe
-from pipes import Pipes
-from rx import Rx
-from state import State
+from test_suite.gui_tests.bmrb import Bmrb
+from test_suite.gui_tests.bruker import Bruker
+from test_suite.gui_tests.consistency_tests import Ct
+from test_suite.gui_tests.dead_uf_pages import Dead_uf_pages
+from test_suite.gui_tests.frame_order import Frame_order
+from test_suite.gui_tests.interatomic import Interatomic
+from test_suite.gui_tests.jw_mapping import Jw_mapping
+from test_suite.gui_tests.model_free import Mf
+from test_suite.gui_tests.n_state_model import N_state_model
+from test_suite.gui_tests.noe import Noe
+from test_suite.gui_tests.pipes import Pipes
+from test_suite.gui_tests.rx import Rx
+from test_suite.gui_tests.state import State
 from test_suite.gui_tests.test_user_functions import User_functions
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
