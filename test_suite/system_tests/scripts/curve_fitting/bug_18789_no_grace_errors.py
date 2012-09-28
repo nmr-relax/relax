@@ -64,7 +64,7 @@ times = [
 ]
 
 # Loop over the spectra.
-for i in xrange(len(names)):
+for i in range(len(names)):
     # Load the peak intensities.
     spectrum.read_intensities(file=names[i]+'.xpk', dir=data_path, spectrum_id=names[i], int_method='height')
 

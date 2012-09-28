@@ -96,7 +96,7 @@ class Mf(SystemTestCase):
         self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
 
         # Loop over the molecules.
-        for i in xrange(len(pipe_12.mol)):
+        for i in range(len(pipe_12.mol)):
             # Test the objects.
             print("Comparison of the objects of the molecule:")
             self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
@@ -105,7 +105,7 @@ class Mf(SystemTestCase):
             self.assertEqual(len(pipe_12.mol[i].res), len(pipe_13.mol[i].res))
 
             # Loop over the residues.
-            for j in xrange(len(pipe_12.mol[i].res)):
+            for j in range(len(pipe_12.mol[i].res)):
                 # Ok, really don't need to do a full comparison of all 162 residues for this test!
                 if j > 10:
                     break
@@ -118,13 +118,13 @@ class Mf(SystemTestCase):
                 self.assertEqual(len(pipe_12.mol[i].res[j].spin), len(pipe_13.mol[i].res[j].spin))
 
                 # Loop over the spins.
-                for k in xrange(len(pipe_12.mol[i].res[j].spin)):
+                for k in range(len(pipe_12.mol[i].res[j].spin)):
                     # Test the objects.
                     print("Comparison of the objects of the spin:")
                     self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
 
         # Loop over the interatomic data containers.
-        for i in xrange(len(pipe_12.interatomic)):
+        for i in range(len(pipe_12.interatomic)):
             # Test the objects.
             print("Comparison of the objects of the molecule:")
             self.object_comparison(obj1=pipe_12.interatomic[i], obj2=pipe_13.interatomic[i])
@@ -1990,7 +1990,7 @@ class Mf(SystemTestCase):
 
         # Loop over the residues of the original data.
         j = 0
-        for i in xrange(len(cdp.mol[0].res)):
+        for i in range(len(cdp.mol[0].res)):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
@@ -2155,7 +2155,7 @@ class Mf(SystemTestCase):
             self.assertEqual(cdp.frq[ri_id], frq[ri_id])
 
         # Loop over the residues of the original data.
-        for i in xrange(len(cdp.mol[0].res)):
+        for i in range(len(cdp.mol[0].res)):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
@@ -2306,7 +2306,7 @@ class Mf(SystemTestCase):
             self.assertEqual(cdp.frq[ri_id], frq[ri_id])
 
         # Loop over the residues of the original data.
-        for i in xrange(len(cdp.mol[0].res)):
+        for i in range(len(cdp.mol[0].res)):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
@@ -2619,7 +2619,7 @@ class Mf(SystemTestCase):
         file.close()
 
         # Test the rest of the lines.
-        for i in xrange(len(test_lines)):
+        for i in range(len(test_lines)):
             # Skip the second line, as it contains the date and hence should not be the same.
             # Also skip the third line, as the pipe names are different.
             if i == 1 or i == 2:

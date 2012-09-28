@@ -77,9 +77,9 @@ class Palmer(SystemTestCase):
             te = [[None, None, None], [0.0, 1.952, None], [None, None, None]]    # Portland C compiler modelfree4 version.
             rex = [[None, None, None], [None, None, None], [4.308, 4.278, None]]
         chi2 = [[36.6223, 20.3954, None], [36.6223, 20.3299, None], [1.9763, 0.6307, None]]
-        for model_index in xrange(3):
+        for model_index in range(3):
             print(("Model " + repr(models[model_index])))
-            for spin_index in xrange(3):
+            for spin_index in range(3):
                 print(("Spin " + repr(spin_names[spin_index])))
 
                 # Get the spin.
@@ -113,7 +113,7 @@ class Palmer(SystemTestCase):
         te = [None, None]
         rex = [0.005, 0.404]
         chi2 = [1.7966, 0.7389]
-        for spin_index in xrange(3):
+        for spin_index in range(3):
             # Get the spin.
             spin = return_spin(spin_names[spin_index], pipe='aic')
 
@@ -181,9 +181,9 @@ class Palmer(SystemTestCase):
         chi2 = [[143.6773, 105.1767, 61.6684], [40.9055, 57.1562, 48.4927], [143.6773, 105.1767, 61.6684]]
 
         # Checks for model m1, m2, and m3 mfout file reading.
-        for model_index in xrange(3):
+        for model_index in range(3):
             print(("Model " + repr(models[model_index])))
-            for spin_index in xrange(3):
+            for spin_index in range(3):
                 print(("Spin " + repr(spin_names[spin_index])))
 
                 # Get the spin.
@@ -220,7 +220,7 @@ class Palmer(SystemTestCase):
             chi2 = [7.254, 8.0437, 0.5327]
 
         # Checks for the final mfout file reading.
-        for spin_index in xrange(3):
+        for spin_index in range(3):
             # Get the spin.
             spin = return_spin(spin_names[spin_index], pipe='aic')
 

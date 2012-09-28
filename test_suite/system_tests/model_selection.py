@@ -43,7 +43,7 @@ class Modsel(SystemTestCase):
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Loop over the data pipes.
-        for i in xrange(2):
+        for i in range(2):
             # Create the data pipe.
             self.interpreter.pipe.create(pipe_list[i], 'mf')
 

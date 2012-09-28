@@ -51,7 +51,7 @@ class Generic(SystemTestCase):
         s2 = [0.9, 0.7, None]
 
         # Loop over the data pipes to create and fill.
-        for i in xrange(3):
+        for i in range(3):
             # Create the data pipe.
             self.interpreter.pipe.create(pipe_list[i], 'mf')
 

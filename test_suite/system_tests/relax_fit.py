@@ -100,7 +100,7 @@ class Relax_fit(SystemTestCase):
         file.close()
 
         # Loop over all lines.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             # Find the "@target G0.S0" line.
             if search('@target', lines[i]):
                 index = i + 2
@@ -126,7 +126,7 @@ class Relax_fit(SystemTestCase):
         file.close()
 
         # Loop over all lines.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             # Find the "@target G0.S0" line.
             if search('@target', lines[i]):
                 index = i + 2

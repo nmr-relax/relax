@@ -59,7 +59,7 @@ class Load_spins(SystemTestCase):
 
         # Loop over the spin containers, testing each.
         self.assertEqual(len(cdp.mol[0].res[0].spin), 32)
-        for i in xrange(len(cdp.mol[0].res[0].spin)):
+        for i in range(len(cdp.mol[0].res[0].spin)):
             self.assertEqual(cdp.mol[0].res[0].spin[i].num, nums[i])
             self.assertEqual(cdp.mol[0].res[0].spin[i].name, names[i])
             self.assertEqual(cdp.mol[0].res[0].spin[i].element, elements[i])

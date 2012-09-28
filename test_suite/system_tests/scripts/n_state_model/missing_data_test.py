@@ -34,7 +34,7 @@ self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 align_list = ['Dy', 'Tb', 'Tm', 'Er']
 
 # Load the RDCs and PCSs.
-for i in xrange(len(align_list)):
+for i in range(len(align_list)):
     # The RDC.
     if i != 1:
         self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
