@@ -36,7 +36,6 @@ except ImportError:
 from re import match
 import sys
 import time
-from types import ClassType
 
 # relax module imports.
 import ansi
@@ -1023,7 +1022,7 @@ def all_errors(names):
         object = globals()[name]
 
         # Skip over all non error class objects.
-        if not (isinstance(object, ClassType) or isinstance(object, type(type))) or not match('Relax', name):
+        if not (isinstance(object, type(RelaxError)) or isinstance(object, type(type))) or not match('Relax', name):
             continue
 
         # Tuple of all the errors.
