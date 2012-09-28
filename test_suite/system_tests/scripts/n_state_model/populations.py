@@ -84,7 +84,7 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.6
 self._execute_uf(uf_name='calc')
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2) > 1e-15:
-    raise RelaxError, "The chi2 at the solution is not zero!"
+    raise RelaxError("The chi2 at the solution is not zero!")
 
 
 # The population model opt.

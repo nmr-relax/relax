@@ -53,7 +53,7 @@ def back_calc(align_id=None):
 
     # Arg check.
     if align_id and align_id not in cdp.align_ids:
-        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+        raise RelaxError("The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids))
 
     # Convert the align IDs to an array, or take all IDs.
     if align_id:
