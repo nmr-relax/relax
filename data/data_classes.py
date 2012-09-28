@@ -25,7 +25,6 @@
 # Python module imports.
 from re import search
 from numpy import ndarray
-from types import ListType
 
 # relax module imports.
 from relax_xml import fill_object_contents, xml_to_object
@@ -166,7 +165,7 @@ class Element(object):
 
 
 
-class RelaxListType(ListType):
+class RelaxListType(list):
     """An empty list type container."""
 
     def __init__(self):
@@ -226,7 +225,7 @@ class RelaxListType(ListType):
         list_element.setAttribute('desc', self.list_desc)
 
         # Blacklisted objects.
-        blacklist = ['list_name', 'list_desc', 'element_name', 'element_desc', 'blacklist'] + list(self.__dict__.keys() + RelaxListType.__dict__.keys() + self.__class__.__dict__.keys() + list.__dict__.keys() + ListType.__dict__.keys())
+        blacklist = ['list_name', 'list_desc', 'element_name', 'element_desc', 'blacklist'] + list(self.__dict__.keys() + RelaxListType.__dict__.keys() + self.__class__.__dict__.keys() + list.__dict__.keys() + list.__dict__.keys())
 
         # Add all simple python objects within the list to the list element.
         fill_object_contents(doc, list_element, object=self, blacklist=blacklist)

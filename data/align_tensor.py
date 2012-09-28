@@ -24,7 +24,6 @@ from re import search
 from math import cos, sin
 from numpy import array, dot, eye, float64, identity, transpose, zeros
 from numpy.linalg import det, eig, eigvals
-from types import ListType
 
 # relax module imports.
 from data_classes import Element
@@ -924,7 +923,7 @@ def dependency_generator():
 # Alignment tensor specific data.
 #################################
 
-class AlignTensorList(ListType):
+class AlignTensorList(list):
     """List type data container for holding all the alignment tensors.
 
     The elements of the list should be AlignTensorData instances.
@@ -1292,7 +1291,7 @@ class AlignTensorData(Element):
 
 
 
-class AlignTensorSimList(ListType):
+class AlignTensorSimList(list):
     """Empty data container for Monte Carlo simulation alignment tensor data."""
 
     def __init__(self, param_name, align_element):
@@ -1310,7 +1309,7 @@ class AlignTensorSimList(ListType):
         """Set the value."""
 
         # Set the value.
-        ListType.__setitem__(self, index, value)
+        list.__setitem__(self, index, value)
 
         # Then update the other lists.
         self.align_element._AlignTensorData__update_sim_set(self.param_name, index)
@@ -1337,4 +1336,4 @@ class AlignTensorSimList(ListType):
         """Set the value for an untouchable MC data structure."""
 
         # Set the value.
-        ListType.__setitem__(self, index, value)
+        list.__setitem__(self, index, value)
