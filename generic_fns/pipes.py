@@ -26,7 +26,7 @@
 # Python module imports
 try:
     import __builtin__ as builtins    # Python 2 import.
-else:
+except ImportError:
     import builtins    # Python 3 import.
 import sys
 
