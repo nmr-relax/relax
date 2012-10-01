@@ -1529,4 +1529,4 @@ if __name__ == '__main__':
     if 1:
 
         s = Structure('~/Programs/MMTK/main/MMTK/Database/PDB/insulin.pdb')
-        print s
+        print(s)

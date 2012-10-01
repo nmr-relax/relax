@@ -317,7 +317,7 @@ class FortranFormat:
 if __name__ == '__main__':
     f = FortranFormat("'!!',D10.3,F10.3,G10.3,'!!'")
     l = FortranLine([1.5707963, 3.14159265358, 2.71828], f)
-    print str(l)
+    print(str(l))
     f = FortranFormat("F12.0")
     l = FortranLine('2.1D2', f)
-    print l[0]
+    print(l[0])
