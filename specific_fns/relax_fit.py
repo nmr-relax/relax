@@ -31,13 +31,13 @@ from re import match, search
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from dep_check import C_module_exp_fn
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

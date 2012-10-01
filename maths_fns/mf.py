@@ -26,15 +26,15 @@ from numpy import dot, float64, ones, sum, transpose, zeros
 
 # relax module imports.
 from relax_errors import RelaxError
-from direction_cosine import *
-from weights import *
-from correlation_time import *
-from jw_mf_comps import *
-from jw_mf import *
-from ri_comps import *
-from ri_prime import *
-from ri import *
-from chi2 import *
+from maths_fns.direction_cosine import *
+from maths_fns.weights import *
+from maths_fns.correlation_time import *
+from maths_fns.jw_mf_comps import *
+from maths_fns.jw_mf import *
+from maths_fns.ri_comps import *
+from maths_fns.ri_prime import *
+from maths_fns.ri import *
+from maths_fns.chi2 import *
 
 
 class Mf:

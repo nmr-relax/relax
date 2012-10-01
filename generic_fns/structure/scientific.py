@@ -35,10 +35,10 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from api_base import Base_struct_API
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, tokenise
+from generic_fns.structure.api_base import Base_struct_API
 from relax_errors import RelaxError, RelaxPdbLoadError
 from relax_io import file_root
 from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning

@@ -32,10 +32,9 @@ from re import search
 import string
 
 # relax module imports.
-from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
-from generic_fns.angles import fold_spherical_angles
+from generic_fns.angles import fold_spherical_angles, wrap_angles
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, return_spin, spin_loop
 from maths_fns.coord_transform import cartesian_to_spherical

@@ -24,8 +24,6 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
@@ -34,6 +32,8 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
 import specific_fns
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

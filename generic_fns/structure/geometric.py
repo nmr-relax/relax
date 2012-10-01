@@ -30,8 +30,8 @@ from warnings import warn
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
+from generic_fns.structure.internal import Internal
 from generic_fns.structure.mass import centre_of_mass
-from internal import Internal
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import get_file_path, open_write_file

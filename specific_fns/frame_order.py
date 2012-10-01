@@ -32,8 +32,6 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
@@ -46,6 +44,8 @@ from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 
 
 class Frame_order(API_base, API_common):
