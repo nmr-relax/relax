@@ -23,7 +23,12 @@
 """The module of all the objects used to hold the user function details."""
 
 # Python module imports.
-import wx
+import dep_check
+if dep_check.wx_module:
+    from wx import DD_DEFAULT_STYLE, FileSelectorDefaultWildcardStr
+else:
+    DD_DEFAULT_STYLE = -1
+    FileSelectorDefaultWildcardStr = -1
 
 # relax module imports.
 from graphics import IMAGE_PATH
@@ -386,7 +391,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=wx.FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=wx.DD_DEFAULT_STYLE, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
