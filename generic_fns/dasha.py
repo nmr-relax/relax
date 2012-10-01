@@ -25,7 +25,6 @@
 # Python module imports.
 from math import pi
 from os import F_OK, access, chdir, getcwd, sep
-from string import lower
 from subprocess import PIPE, Popen
 import sys
 
@@ -496,7 +495,7 @@ def extract(dir):
                 continue
 
             # Set the parameter to None.
-            setattr(spin, lower(param), None)
+            setattr(spin, param.lower(), None)
 
     # Extract the chi-squared values.
     file_name = dir + sep+'chi2.out'

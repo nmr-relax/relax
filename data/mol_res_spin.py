@@ -25,7 +25,6 @@
 # Python module imports.
 import numpy
 from re import match, search
-from string import lower
 
 # relax module imports.
 from data.prototype import Prototype
@@ -111,7 +110,7 @@ class SpinContainer(Prototype):
 
         # Loop over the parameters, converting them to lowercase.
         for i in range(len(self.params)):
-            self.params[i] = lower(self.params[i])
+            self.params[i] = self.params[i].lower()
 
 
     def _back_compat_hook_ri_data(self):

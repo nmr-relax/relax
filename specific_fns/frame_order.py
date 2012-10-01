@@ -29,7 +29,6 @@ from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, eye, float64, ones, transpose, zeros
 from re import search
-from string import upper
 from warnings import warn
 
 # relax module imports.
@@ -359,9 +358,9 @@ class Frame_order(API_base, API_common):
                     axis_sim_neg = axes_sim_neg[:, i]
 
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%label[i].upper(), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num, origin=cdp.pivot, scale=size)
+                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%label[i].upper(), sim_vectors=axis_sim_neg, res_num=res_num, origin=cdp.pivot, scale=size)
 
 
         # The cone object.

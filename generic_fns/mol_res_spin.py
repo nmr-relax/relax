@@ -37,7 +37,6 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array, float64
 from re import split
-from string import count, replace, upper
 import sys
 from textwrap import fill
 from warnings import warn
@@ -524,15 +523,15 @@ def bmrb_read(star):
         mol_name = data['mol_name']
         if mol_name:
             # Round brackets.
-            mol_name = replace(mol_name, '(', '')
-            mol_name = replace(mol_name, ')', '')
+            mol_name = mol_name.replace('(', '')
+            mol_name = mol_name.replace(')', '')
 
             # Square brackets.
-            mol_name = replace(mol_name, '[', '')
-            mol_name = replace(mol_name, ']', '')
+            mol_name = mol_name.replace('[', '')
+            mol_name = mol_name.replace(']', '')
 
             # Commas.
-            mol_name = replace(mol_name, ',', ' ')
+            mol_name = mol_name.replace(',', ' ')
 
         # The molecule type.
         mol_type = data['mol_type']
@@ -2351,7 +2350,7 @@ def one_letter_code(res_names):
         # Aa match.
         match = False
         for i in range(len(aa_table)):
-            if upper(res) == aa_table[i][1]:
+            if res.upper() == aa_table[i][1]:
                 seq = seq + aa_table[i][2]
                 match = True
                 break
@@ -3494,7 +3493,7 @@ def tokenise(selection):
         #   No spin identification characters are allowed.
         #   First character must be '#'.
         #   Only 1 '#' allowed.
-        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or count(mol_info, '#') != 1:
+        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or mol_info.count('#') != 1:
             raise RelaxError("Invalid molecule selection '%s'." % mol_info)
 
         # ID.
@@ -3511,7 +3510,7 @@ def tokenise(selection):
     # Residue identifier.
     if res_info:
         # Only max 1 '&' allowed.
-        if count(res_info, '&') > 1:
+        if res_info.count('&') > 1:
             raise RelaxError("Only one '&' boolean operator is supported for the residue component of individual spin IDs.")
 
         # Split by '&'.
@@ -3524,7 +3523,7 @@ def tokenise(selection):
             #   No spin identification characters are allowed.
             #   First character must be ':'.
             #   Only 1 ':' allowed.
-            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or count(res_token[i], ':') != 1:
+            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or res_token[i].count(':') != 1:
                 raise RelaxError("Invalid residue selection '%s'." % res_info)
 
             # Strip.
@@ -3545,7 +3544,7 @@ def tokenise(selection):
     # Spin identifier.
     if spin_info:
         # Only max 1 '&' allowed.
-        if count(spin_info, '&') > 1:
+        if spin_info.count('&') > 1:
             raise RelaxError("Only one '&' boolean operator is supported for the spin component of individual spin IDs.")
 
         # Split by '&'.
@@ -3558,7 +3557,7 @@ def tokenise(selection):
             #   No residue identification characters are allowed.
             #   First character must be '@'.
             #   Only 1 '@' allowed.
-            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or count(spin_token[i], '@') != 1:
+            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or spin_token[i].count('@') != 1:
                 raise RelaxError("Invalid spin selection '%s'." % spin_info)
 
             # Strip.

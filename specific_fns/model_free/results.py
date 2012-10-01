@@ -27,7 +27,6 @@ from data.diff_tensor import DiffTensorSimList
 from math import pi
 from numpy import float64, array, transpose
 from re import search
-from string import lower, replace
 import sys
 
 # relax module imports.
@@ -220,7 +219,7 @@ class Results:
                         params[i] = 'local_tm'
 
                     # Lower case conversion.
-                    params[i] = lower(params[i])
+                    params[i] = params[i].lower()
 
             # Set up the model-free model.
             self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
@@ -297,7 +296,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     cdp.warning = None
                 else:
-                    cdp.warning = replace(spin_line[col['warn']], '_', ' ')
+                    cdp.warning = spin_line[col['warn']].replace('_', ' ')
 
             # Minimisation details (individual residue results).
             else:
@@ -309,7 +308,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     spin.warning = None
                 else:
-                    spin.warning = replace(spin_line[col['warn']], '_', ' ')
+                    spin.warning = spin_line[col['warn']].replace('_', ' ')
 
             # Interatomic distances.
             try:
@@ -476,7 +475,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     cdp.warning_sim.append(None)
                 else:
-                    cdp.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
+                    cdp.warning_sim.append(spin_line[col['warn']].replace('_', ' '))
 
             # Minimisation details (individual residue results).
             else:
@@ -488,7 +487,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     spin.warning_sim.append(None)
                 else:
-                    spin.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
+                    spin.warning_sim.append(spin_line[col['warn']].replace('_', ' '))
 
 
     def _load_relax_data(self, spin_line, col, data_set, spin, verbosity=1):

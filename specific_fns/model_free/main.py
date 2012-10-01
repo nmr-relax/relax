@@ -24,7 +24,6 @@ from copy import deepcopy
 from math import pi
 from numpy import float64, array, identity, transpose, zeros
 from re import match, search
-from string import replace, split
 import sys
 from types import MethodType
 from warnings import warn

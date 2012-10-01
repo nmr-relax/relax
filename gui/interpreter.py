@@ -25,7 +25,6 @@
 # Python module imports.
 from Queue import Queue
 from re import search
-from string import split
 import sys
 from threading import Thread
 from time import sleep

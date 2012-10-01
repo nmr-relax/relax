@@ -25,7 +25,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 import sys
 import wx
 

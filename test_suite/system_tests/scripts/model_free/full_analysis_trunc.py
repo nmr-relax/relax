@@ -143,7 +143,6 @@ The final black-box model-free results will be placed in the file 'final/results
 # Python module imports.
 from os import getcwd, listdir, sep
 from re import search
-from string import lower
 
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
