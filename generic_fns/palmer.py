@@ -27,6 +27,7 @@
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
+from stat import S_IEXEC
 from subprocess import PIPE, Popen
 import sys
 
@@ -166,7 +167,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     run = open_write_file('run.sh', dir, force)
     create_run(run, binary=binary, dir=dir)
     run.close()
-    chmod(dir + sep+'run.sh', 0755)
+    chmod(dir + sep+'run.sh', S_IEXEC)
 
 
 def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
