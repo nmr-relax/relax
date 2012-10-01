@@ -369,7 +369,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
         # Bad data in column.
         try:
             res_num = eval(data[res_num_col-1])
-            if not (is_none(res_num, raise_error=False) or is_int(res_num, raise_error=False)):
+            if not (res_num == None or is_int(res_num, raise_error=False)):
                 raise ValueError
         except:
             raise RelaxInvalidSeqError(data, "the residue number data '%s' is invalid" % data[res_num_col-1])
@@ -388,7 +388,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
         # Bad data in column.
         try:
             res_num = eval(data[res_num_col-1])
-            if not (is_none(res_num, raise_error=False) or is_int(res_num, raise_error=False)):
+            if not (res_num == None or is_int(res_num, raise_error=False)):
                 raise ValueError
         except:
             raise RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
