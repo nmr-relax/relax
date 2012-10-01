@@ -27,16 +27,16 @@ import sys
 import dep_check
 
 # Formatting.
-from formatting import subtitle, summary_line, title
+from test_suite.formatting import subtitle, summary_line, title
 
 # Import the test suite categories.
 if dep_check.wx_module:
-    from gui_tests import GUI_test_runner
-from system_tests import System_test_runner
-from unit_tests.unit_test_runner import Unit_test_runner
+    from test_suite.gui_tests import GUI_test_runner
+from test_suite.system_tests import System_test_runner
+from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
-from relax_test_runner import GuiTestRunner, RelaxTestRunner
+from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
 
