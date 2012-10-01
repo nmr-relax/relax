@@ -131,7 +131,7 @@ class Info_box(object):
         """
 
         # Calculate the number of spaces needed.
-        spaces = (width - len(string)) / 2
+        spaces = int((width - len(string)) / 2)
 
         # The new string.
         string = spaces * ' ' + string
