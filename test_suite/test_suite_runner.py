@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -186,7 +186,11 @@ class Test_suite_runner:
 
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result'):
-            summary_line("Synopsis", self.system_result and self.unit_result and self.gui_result)
+            if self.gui_result == "skip":
+                status = self.system_result and self.unit_result
+            else:
+                status = self.system_result and self.unit_result and self.gui_result
+            summary_line("Synopsis", status)
 
         # End.
         print('\n\n')
@@ -227,8 +231,13 @@ class Test_suite_runner:
 
         # Nothing missing.
         if not missing_modules:
-            # Print out.
-            print("No tests skipped due to missing modules.\n")
+            # Except for the wx module!
+            if not dep_check.wx_module:
+                print("All GUI tests skipped due to the missing wxPython module, no other tests skipped due to missing modules.\n")
+
+            # Normal printout.
+            else:
+                print("No tests skipped due to missing modules.\n")
 
             # The skip the table.
             return
