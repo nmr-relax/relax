@@ -112,7 +112,9 @@ class Interpreter(object):
             apply(fn, args, kwds)
 
         # Catch all RelaxErrors.
-        except AllRelaxErrors, instance:
+        except AllRelaxErrors:
+            instance = sys.exc_info()[1]
+
             # Display a dialog with the error.
             gui_raise(instance, raise_flag=False)
 
@@ -303,7 +305,9 @@ class Interpreter_thread(Thread):
                 apply(fn, args, kwds)
 
             # Catch all RelaxErrors.
-            except AllRelaxErrors, instance:
+            except AllRelaxErrors:
+                instance = sys.exc_info()[1]
+
                 # Display a dialog with the error.
                 wx.CallAfter(gui_raise, instance, raise_flag=False)
 

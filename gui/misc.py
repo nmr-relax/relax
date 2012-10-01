@@ -307,7 +307,9 @@ def protected_exec(fn, *args, **kargs):
         apply(fn, args, kargs)
 
     # Catch RelaxErrors.
-    except AllRelaxErrors, instance:
+    except AllRelaxErrors:
+        instance = sys.exc_info()[1]
+
         # Raise the error in debugging mode.
         if status.debug:
             raise

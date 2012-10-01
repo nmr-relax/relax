@@ -910,7 +910,9 @@ class Uf_page(Wiz_page):
                         data.append(vals)
 
             # Catch all RelaxErrors.
-            except AllRelaxErrors, instance:
+            except AllRelaxErrors:
+                instance = sys.exc_info()[1]
+
                 # Signal the failure to the wizard.
                 self.setup_fail = True
 
