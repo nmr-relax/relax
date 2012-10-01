@@ -44,6 +44,7 @@ from sys import stdin, stdout, stderr
 from warnings import warn
 
 # relax module imports.
+from check_types import is_filetype
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -331,7 +332,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     """
 
     # A file descriptor object.
-    if isinstance(file_name, file):
+    if is_filetype(file_name):
         # Nothing to do here!
         return file_name
 
@@ -392,7 +393,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     """
 
     # A file descriptor object.
-    if isinstance(file_name, file):
+    if is_filetype(file_name):
         # Nothing to do here!
         return file_name
 
