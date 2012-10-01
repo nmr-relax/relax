@@ -49,7 +49,7 @@ def readArray(filename):
         if len(line) == 0 and len(data) > 0:
             break
         if line[0] != '#':
-            data.append(map(eval, string.split(line)))
+            data.append(map(eval, line.split()))
     a = Numeric.array(data)
     if a.shape[0] == 1 or a.shape[1] == 1:
         a = Numeric.ravel(a)
@@ -68,7 +68,7 @@ def readFloatArray(filename):
     data = []
     for line in TextFile(filename):
         if line[0] != '#':
-            data.append(map(string.atof, string.split(line)))
+            data.append(map(string.atof, line.split()))
     a = Numeric.array(data)
     if a.shape[0] == 1 or a.shape[1] == 1:
         a = Numeric.ravel(a)
@@ -87,7 +87,7 @@ def readIntegerArray(filename):
     data = []
     for line in TextFile(filename):
         if line[0] != '#':
-            data.append(map(string.atoi, string.split(line)))
+            data.append(map(string.atoi, line.split()))
     a = Numeric.array(data)
     if a.shape[0] == 1 or a.shape[1] == 1:
         a = Numeric.ravel(a)
