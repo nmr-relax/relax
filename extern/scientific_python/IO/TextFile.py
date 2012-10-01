@@ -13,7 +13,7 @@ import os, string, sys
 # Use the gzip module for Python version 1.5.2 or higher
 gzip = None
 try:
-    _version = map(string.atoi,
+    _version = map(int,
                    sys.version.split()[0], '.').split()
     if _version >= [1, 5, 2]:
         try:

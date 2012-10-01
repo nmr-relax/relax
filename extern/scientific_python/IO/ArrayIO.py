@@ -68,7 +68,7 @@ def readFloatArray(filename):
     data = []
     for line in TextFile(filename):
         if line[0] != '#':
-            data.append(map(string.atof, line.split()))
+            data.append(map(float, line.split()))
     a = Numeric.array(data)
     if a.shape[0] == 1 or a.shape[1] == 1:
         a = Numeric.ravel(a)

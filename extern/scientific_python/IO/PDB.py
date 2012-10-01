@@ -1313,7 +1313,7 @@ class Structure:
         element = data['element']
         if element != '':
             try:
-                string.atoi(element)
+                int(element)
             except ValueError:
                 atom_data['element'] = element
         residue_data = {'residue_name': data['residue_name']}

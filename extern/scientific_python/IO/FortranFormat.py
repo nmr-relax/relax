@@ -174,7 +174,7 @@ class FortranLine:
                     # e.g.: pdb2myd.ent.Z chain: - model: 0 : CONECT*****
                     # catch this and set value to None
                     try:
-                        value = string.atoi(s)
+                        value = int(s)
                     except:
                         value = None
             elif type == 'D' or type == 'E' or type == 'F' or type == 'G':
@@ -186,7 +186,7 @@ class FortranLine:
                     value = 0.
                 else:
                     try:
-                        value = string.atof(s)
+                        value = float(s)
                     except:
                         value = None
             if value is not None:
@@ -256,7 +256,7 @@ class FortranFormat:
         while format and format[0] != ')':
             n = 0
             while format[0] in string.digits:
-                n = 10*n + string.atoi(format[0])
+                n = 10*n + int(format[0])
                 format = format[1:]
             if n == 0: n = 1
             type = format[0].upper()
@@ -291,12 +291,12 @@ class FortranFormat:
                 else:
                     dot = field.find('.')
                     if dot > 0:
-                        length = string.atoi(field[:dot])
-                        fraction = string.atoi(field[dot+1:])
+                        length = int(field[:dot])
+                        fraction = int(field[dot+1:])
                         field = (type, length, fraction)
                     else:
                         if field:
-                            length = string.atoi(field)
+                            length = int(field)
                         else:
                             length = 1
                         field = (type, length)
