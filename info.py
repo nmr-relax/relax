@@ -323,6 +323,7 @@ class Info_box(object):
         package.append('bmrblib')
         status.append(dep_check.bmrblib_module)
         try:
+            dep_check.bmrblib.__path__[0]
             version.append('Unknown')
             path.append(dep_check.bmrblib.__path__[0])
         except:
