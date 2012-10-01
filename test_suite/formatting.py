@@ -58,7 +58,7 @@ def summary_line(name, passed, width=64):
     sys.stdout.write(name + " ")
 
     # Dots.
-    for j in xrange(width - len(name)):
+    for j in range(width - len(name)):
         sys.stdout.write(".")
 
     # Passed.
