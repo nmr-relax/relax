@@ -23,7 +23,10 @@
 """A threaded version of the relax interpreter for use by the GUI."""
 
 # Python module imports.
-from Queue import Queue
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 from re import search
 import sys
 from threading import Thread
