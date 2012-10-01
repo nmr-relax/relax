@@ -181,12 +181,13 @@ def get_common_prefix(path1, path2):
     """
 
     result_path = []
-    for elem1, elem2 in map(None, path1, path2):
-        if elem1 == None or elem2 == None:
+    size = min(len(path1), len(path2))
+    for i in range(size):
+        if path1[i] == None or path2[i] == None:
             break
 
-        if elem1 == elem2:
-          result_path.append(elem1)
+        if path1[i] == path2[i]:
+          result_path.append(path1[i])
     return result_path
 
 
