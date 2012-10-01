@@ -22,10 +22,8 @@
 # Module docstring.
 """Module for handling the molecule, residue, and spin sequence."""
 
-# Python module imports
-from types import IntType, NoneType
-
 # relax module imports.
+from arg_check import is_int
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_id_to_data_list, spin_loop
 import pipes
@@ -371,7 +369,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
         # Bad data in column.
         try:
             res_num = eval(data[res_num_col-1])
-            if not (isinstance(res_num, NoneType) or isinstance(res_num, IntType)):
+            if not (is_none(res_num, raise_error=False) or is_int(res_num, raise_error=False)):
                 raise ValueError
         except:
             raise RelaxInvalidSeqError(data, "the residue number data '%s' is invalid" % data[res_num_col-1])
@@ -390,7 +388,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
         # Bad data in column.
         try:
             res_num = eval(data[res_num_col-1])
-            if not (isinstance(res_num, NoneType) or isinstance(res_num, IntType)):
+            if not (is_none(res_num, raise_error=False) or is_int(res_num, raise_error=False)):
                 raise ValueError
         except:
             raise RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
