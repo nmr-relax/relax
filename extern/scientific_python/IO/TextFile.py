@@ -71,7 +71,8 @@ class TextFile:
                 else:
                     try:
                         self.file = open(filename, mode)
-                    except IOError, details:
+                    except IOError:
+                        details = sys.exc_info()[1]
                         if isinstance(details, type(())):
                             details = details + (filename,)
                         raise IOError(details)
@@ -88,7 +89,8 @@ class TextFile:
                 else:
                     try:
                         self.file = open(filename, mode)
-                    except IOError, details:
+                    except IOError:
+                        details = sys.exc_info()[1]
                         if isinstance(details, type(())):
                             details = details + (filename,)
                         raise IOError(details)
