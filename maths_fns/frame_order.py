@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -126,7 +126,7 @@ class Frame_order:
             raise RelaxError("The full_in_ref_frame argument " + repr(self.full_in_ref_frame) + " must be supplied.")
 
         # Tensor set up.
-        self.num_tensors = len(self.full_tensors) / 5
+        self.num_tensors = int(len(self.full_tensors) / 5)
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
 
         # The rotation to the Frame Order eigenframe.
