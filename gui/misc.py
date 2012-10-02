@@ -130,7 +130,7 @@ def bitmap_setup(path):
 
     # Unset the mask if an alpha mask is detected (only on GNU/Linux and MS Windows).
     if bitmap.HasAlpha() and status.wx_info["os"] != "darwin":
-        bitmap.SetMaskColour(None)
+        bitmap.SetMaskColour(wx.Colour(alpha=wx.ALPHA_OPAQUE))
 
     # Return the bitmap object.
     return bitmap
