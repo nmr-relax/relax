@@ -47,7 +47,8 @@ def determine_format(file):
     # Header line.
     header = file.readline()
     header = header[:-1]    # Strip the trailing newline.
-    header = str(header)    # Convert to a string type.
+    if hasattr(header, 'decode'):     # Python 3 byte type conversion.
+        header = header.decode()
 
     # Be nice and go back to the start of the file.
     file.seek(0)
