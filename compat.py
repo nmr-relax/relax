@@ -25,8 +25,11 @@
 # Python module imports.
 import sys
 
+# The Python version.
+py_version = sys.version_info[0]
+
 # Python 3 work-arounds.
-if sys.version_info[0] == 3:
+if py_version == 3:
     # Python 3 only imports.
     import builtins
 
