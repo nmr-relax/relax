@@ -2452,9 +2452,6 @@ def parse_token(token, verbosity=False):
                 # Append the element.
                 id_list.append(element)
 
-    # Sort the list.
-    id_list.sort()
-
     # Return the identifying list.
     return id_list
 
