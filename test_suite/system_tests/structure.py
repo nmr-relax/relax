@@ -644,7 +644,7 @@ class Structure(SystemTestCase):
 
         i = 0
         for mol in cdp.structure.structural_data[0].mol:
-            self.assertEqual(mol.file_name, files[i/2])
+            self.assertEqual(mol.file_name, files[int(i/2)])
             self.assertEqual(mol.file_path, path)
             self.assertEqual(mol.file_model, 1)
             self.assertEqual(mol.file_mol_num, i%2+1)  # Odd i, num=1, even i, num=2.
