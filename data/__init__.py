@@ -573,4 +573,7 @@ class Relax_data_store(dict):
             self[pipe].to_xml(xmldoc, pipe_element)
 
         # Write out the XML file.
-        file.write(xmldoc.toprettyxml(indent='    '))
+        text = xmldoc.toprettyxml(indent='    ')
+        if hasattr(text, 'encode'):    # Python 3 string support.
+            text = text.encode()
+        file.write(text)
