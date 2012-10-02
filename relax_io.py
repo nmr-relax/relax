@@ -1039,8 +1039,17 @@ class DummyFileObject:
     def __init__(self):
         """Set up the dummy object to act as a file object."""
 
-        # Initialise an object for adding the string from all write calls to.
-        self.data = ''
+        # Initialise for Python 2.
+        if py_version == 2:
+            self.data = ''
+            self._newline = '\n'
+            self._empty = ''
+
+        # Initialise for Python 3.
+        elif py_version == 3:
+            self.data = b''
+            self._newline = b'\n'
+            self._empty = b''
 
         # Set the closed flag.
         self.closed = False
@@ -1079,15 +1088,15 @@ class DummyFileObject:
         """
 
         # Split up the string.
-        lines = self.data.split('\n')
+        lines = self.data.split(self._newline)
 
         # Remove the last line if empty.
-        if lines[-1] == '':
+        if lines[-1] == self._empty:
             lines.pop()
 
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
         for i in range(len(lines)):
-            lines[i] = lines[i] + '\n'
+            lines[i] = lines[i] + self._newline
 
         # Return the file lines.
         return lines
