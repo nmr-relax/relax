@@ -2683,7 +2683,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
     """
 
     # Handle Unicode.
-    if isinstance(selection, unicode):
+    if is_unicode(selection):
         selection = str(selection)
 
     # The data pipe.
