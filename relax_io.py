@@ -150,16 +150,22 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
     data = []
     for i in range(len(file_data)):
+        # Python 3 support - conversion of bytes type objects to strings.
+        if hasattr(file_data[i], 'decode'):
+            file_data[i] = file_data[i].decode()
+
         if sep:
             row = file_data[i].split(sep)
         else:
             row = file_data[i].split()
         data.append(row)
-    return data
 
     # Close the file.
     if not file_data:
         file.close()
+
+    # Return the data.
+    return data
 
 
 def file_root(file_path):
