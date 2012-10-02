@@ -208,7 +208,7 @@ class Test_suite_runner:
             test = status.skipped_tests[i]
 
             # Initialise in needed.
-            if not system_count.has_key(test[1]):
+            if not test[1] in system_count:
                 system_count[test[1]] = 0
                 unit_count[test[1]] = 0
                 gui_count[test[1]] = 0
