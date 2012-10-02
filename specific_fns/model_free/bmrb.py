@@ -175,7 +175,7 @@ class Bmrb:
 
                 # No spin?!?
                 if spin == None:
-                    raise(RelaxError("The spin '%s' does not exist." % spin_id))
+                    raise RelaxError("The spin '%s' does not exist." % spin_id) 
 
                 # Loop over and set the model-free parameters.
                 for j in range(len(mf_params)):
