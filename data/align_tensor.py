@@ -127,7 +127,7 @@ def calc_A_diag(A):
     abs_vals = abs(vals).tolist()
     Axx_index = abs_vals.index(min(abs_vals))
     Azz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Axx_index, Azz_index))
     last_index.pop(min(Axx_index, Azz_index))
     Ayy_index = last_index[0]
@@ -238,7 +238,7 @@ def calc_eigvals(A):
     abs_vals = abs(vals).tolist()
     x_index = abs_vals.index(min(abs_vals))
     z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(x_index, z_index))
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
@@ -377,7 +377,7 @@ def calc_S_diag(tensor):
     abs_vals = abs(vals).tolist()
     Sxx_index = abs_vals.index(min(abs_vals))
     Szz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Sxx_index, Szz_index))
     last_index.pop(min(Sxx_index, Szz_index))
     Syy_index = last_index[0]
@@ -609,7 +609,7 @@ def calc_P_diag(tensor):
     abs_vals = abs(vals).tolist()
     Pxx_index = abs_vals.index(min(abs_vals))
     Pzz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Pxx_index, Pzz_index))
     last_index.pop(min(Pxx_index, Pzz_index))
     Pyy_index = last_index[0]
@@ -792,7 +792,7 @@ def calc_rotation(A):
     abs_vals = abs(vals).tolist()
     x_index = abs_vals.index(min(abs_vals))
     z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(x_index, z_index))
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
