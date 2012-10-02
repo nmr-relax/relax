@@ -147,7 +147,7 @@ def bmrb_read(star, sample_conditions=None):
     # Get the relaxation data.
     for data in star.relaxation.loop():
         # Store the keys.
-        keys = data.keys()
+        keys = list(data.keys())
 
         # Sample conditions do not match (remove the $ sign).
         if 'sample_cond_list_label' in keys and sample_conditions and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
@@ -177,7 +177,7 @@ def bmrb_read(star, sample_conditions=None):
         bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names, isotopes=data['isotope'], elements=data['atom_types'])
 
         # The attached protons.
-        if data.has_key('atom_names_2'):
+        if 'atom_names_2' in data:
             # Generate the proton spins.
             bmrb.generate_sequence(N, spin_names=data['atom_names_2'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names, isotopes=data['isotope_2'], elements=data['atom_types_2'])
 
@@ -324,7 +324,7 @@ def bmrb_write(star):
         used_index = -ones(len(cdp.ri_ids))
         for i in range(len(cdp.ri_ids)):
             # Data exists.
-            if cdp.ri_ids[i] in spin.ri_data.keys():
+            if cdp.ri_ids[i] in list(spin.ri_data.keys()):
                 ri_data_list[i].append(str(spin.ri_data[cdp.ri_ids[i]]))
                 ri_data_err_list[i].append(str(spin.ri_data_err[cdp.ri_ids[i]]))
             else:
@@ -546,9 +546,9 @@ def delete(ri_id=None):
     # Loop over the spins, deleting the relaxation data and errors when present.
     for spin in spin_loop():
         # Data deletion.
-        if hasattr(spin, 'ri_data') and spin.ri_data.has_key(ri_id):
+        if hasattr(spin, 'ri_data') and ri_id in spin.ri_data:
             del spin.ri_data[ri_id]
-        if hasattr(spin, 'ri_data_err') and spin.ri_data_err.has_key(ri_id):
+        if hasattr(spin, 'ri_data_err') and ri_id in spin.ri_data_err:
             del spin.ri_data_err[ri_id]
 
         # Prune empty structures.
@@ -558,15 +558,15 @@ def delete(ri_id=None):
             del spin.ri_data_err
 
     # Delete the metadata.
-    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and cdp.exp_info.temp_calibration.has_key(ri_id):
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and ri_id in cdp.exp_info.temp_calibration:
         del cdp.exp_info.temp_calibration[ri_id]
         if len(cdp.exp_info.temp_calibration) == 0:
             del cdp.exp_info.temp_calibration
-    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and cdp.exp_info.temp_control.has_key(ri_id):
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and ri_id in cdp.exp_info.temp_control:
         del cdp.exp_info.temp_control[ri_id]
         if len(cdp.exp_info.temp_control) == 0:
             del cdp.exp_info.temp_control
-    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and cdp.exp_info.peak_intensity_type.has_key(ri_id):
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and ri_id in cdp.exp_info.peak_intensity_type:
         del cdp.exp_info.peak_intensity_type[ri_id]
         if len(cdp.exp_info.peak_intensity_type) == 0:
             del cdp.exp_info.peak_intensity_type
@@ -1059,16 +1059,16 @@ def return_value(spin, data_type, bc=False):
 
     # Relaxation data.
     data = None
-    if not bc and hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in spin.ri_data.keys():
+    if not bc and hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in list(spin.ri_data.keys()):
         data = spin.ri_data[data_type]
 
     # Back calculated relaxation data
-    if bc and hasattr(spin, 'ri_data_bc') and spin.ri_data_bc != None and data_type in spin.ri_data_bc.keys():
+    if bc and hasattr(spin, 'ri_data_bc') and spin.ri_data_bc != None and data_type in list(spin.ri_data_bc.keys()):
         data = spin.ri_data_bc[data_type]
 
     # Relaxation errors.
     error = None
-    if hasattr(spin, 'ri_data_err') and spin.ri_data_err != None and data_type in spin.ri_data_err.keys():
+    if hasattr(spin, 'ri_data_err') and spin.ri_data_err != None and data_type in list(spin.ri_data_err.keys()):
         error = spin.ri_data_err[data_type]
 
     # Return the data.
