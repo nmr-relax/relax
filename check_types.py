@@ -47,3 +47,16 @@ def is_filetype(obj):
     # Old style check.
     else:
         return isinstance(obj, file)
+
+
+def is_unicode(obj):
+    """Check if the given Python object is a unicode string.
+
+    @param obj:     The Python object.
+    @type obj:      anything
+    @return:        True if the object is a unicode string, False otherwise.
+    @rtype:         bool
+    """
+
+    # Check using the unicode type (set in the compat module for Python 3).
+    return isinstance(obj, unicode)

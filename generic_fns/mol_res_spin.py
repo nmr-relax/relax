@@ -42,6 +42,7 @@ from textwrap import fill
 from warnings import warn
 
 # relax module imports.
+from check_types import is_unicode
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import exp_info, pipes, relax_re
 from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
@@ -80,7 +81,7 @@ class Selection(object):
         """
 
         # Handle Unicode.
-        if isinstance(select_string, unicode):
+        if is_unicode(select_string):
             select_string = str(select_string)
 
         self._union = None
