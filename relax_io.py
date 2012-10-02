@@ -152,7 +152,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     data = []
     for i in range(len(file_data)):
         # Python 3 support - conversion of bytes type objects to strings.
-        if py_version == 3:
+        if py_version == 3 and hasattr(file_data[i], 'decode'):
             file_data[i] = file_data[i].decode()
 
         if sep:
