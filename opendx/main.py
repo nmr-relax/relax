@@ -25,7 +25,6 @@
 
 # Python module imports.
 from os import system
-import string
 
 # relax module imports.
 from opendx import isosurface_3D
@@ -78,7 +77,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
         raise RelaxError("The axis increment value needs to be greater than 1.")
 
     # Space type.
-    if string.lower(map_type) == "iso3d":
+    if map_type.lower() == "iso3d":
         if len(params) != 3:
             raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
 
