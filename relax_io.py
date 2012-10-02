@@ -45,6 +45,7 @@ from warnings import warn
 
 # relax module imports.
 from check_types import is_filetype
+from compat import py_version
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -151,7 +152,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     data = []
     for i in range(len(file_data)):
         # Python 3 support - conversion of bytes type objects to strings.
-        if hasattr(file_data[i], 'decode'):
+        if py_version == 3:
             file_data[i] = file_data[i].decode()
 
         if sep:
