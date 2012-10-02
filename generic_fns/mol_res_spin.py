@@ -3026,7 +3026,7 @@ def set_spin_element(spin_id=None, element=None, pipe=None, force=False):
 
     # Check.
     if element not in valid_names:
-        raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
+        raise RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)) 
 
     # The data pipe.
     if pipe == None:
@@ -3072,7 +3072,7 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
 
     # Check.
     if isotope not in supported_types:
-        raise(RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope))
+        raise RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope) 
 
     # The data pipe.
     if pipe == None:
