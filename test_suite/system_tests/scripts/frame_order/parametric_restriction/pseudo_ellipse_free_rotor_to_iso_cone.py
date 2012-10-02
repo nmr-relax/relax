@@ -47,7 +47,7 @@ ds.angles = []
 for i in range(INC):
     # Switch data pipes.
     ds.angles.append(get_angle(i, incs=INC, deg=True))
-    self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%s_deg' % ds.angles[-1])
+    self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%.1f_deg' % ds.angles[-1])
 
     # Data init.
     cdp.ave_pos_alpha  = cdp.ave_pos_alpha2  = 0.0
