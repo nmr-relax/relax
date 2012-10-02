@@ -170,7 +170,7 @@ def object_to_xml(doc, elem, value=None):
         # The converted dict.
         ieee_obj = {}
         conv = False
-        for key in value.keys():
+        for key in list(value.keys()):
             if arg_check.check_float(value[key]):
                 ieee_obj[key] = floatAsByteArray(value[key])
                 conv = True
