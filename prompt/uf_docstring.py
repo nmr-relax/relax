@@ -142,7 +142,7 @@ def create_table(label):
         # Loop.
         while True:
             # The average column width.
-            ave_width = free_space_wrap / num_cols_wrap
+            ave_width = int(free_space_wrap / num_cols_wrap)
 
             # Debugging printout.
             if status.debug:
