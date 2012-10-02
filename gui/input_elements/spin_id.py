@@ -85,7 +85,7 @@ class Spin_id:
 
         # The combo choices, if not supplied.
         if combo_choices == None or combo_choices == []:
-            combo_choices = ['@N', '@C', '@H', '@O', '@P']
+            combo_choices = ['@N', '@N*', '@C', '@C*', '@H', '@H*', '@O', '@O*', '@P', '@P*']
 
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)

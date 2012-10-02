@@ -42,7 +42,7 @@ def view():
     cdp.vmd_scene = VMD.Scene()
 
     # Add the molecules to the scene.
-    for i in xrange(len(cdp.structure.structures)):
+    for i in range(len(cdp.structure.structures)):
         cdp.vmd_scene.addObject(VMD.Molecules(cdp.structure.structures[i]))
 
     # View the scene.

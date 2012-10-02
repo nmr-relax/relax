@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -91,7 +91,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
         weights.append(pN)
 
     # Back-calculate the PCS.
-    for c in xrange(N):
+    for c in range(N):
         val = val + weights[c] * dj[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average PCS.
@@ -153,7 +153,7 @@ def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
         weights.append(pN)
 
     # Back-calculate the PCS gradient element.
-    for c in xrange(N):
+    for c in range(N):
         grad = grad + weights[c] * dj[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average PCS gradient element.

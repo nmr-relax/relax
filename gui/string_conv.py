@@ -26,7 +26,6 @@
 # Python module imports.
 from math import pow
 from numpy import ndarray
-from string import split
 
 # relax module imports.
 from status import Status; status = Status()
@@ -55,7 +54,7 @@ def convert_to_float(string):
     """
 
     # Break the number up.
-    entries = split('*')
+    entries = string.split('*')
 
     # The first part of the number.
     a = entries[0]

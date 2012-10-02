@@ -189,7 +189,7 @@ class Rx(GuiTestCase):
             # Go to the next page.
             analysis.wizard._go_next(None)
 
-            # Set the delay time.
+            # Set the delay ime.
             page = analysis.wizard.get_page(analysis.page_indices['relax_time'])
             page.uf_args['time'].SetValue(float_to_gui(ncyc[i]*time))
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -133,7 +133,7 @@ class Sequence_base_class(UnitTestCase):
         dp = pipes.get_pipe('orig')
 
         # Test the entire sequence.
-        for i in xrange(len(self.Ap4Aase_res_num)):
+        for i in range(len(self.Ap4Aase_res_num)):
             self.assertEqual(dp.mol[0].res[i].num, self.Ap4Aase_res_num[i])
             self.assertEqual(dp.mol[0].res[i].name, self.Ap4Aase_res_name[i])
 
@@ -163,10 +163,14 @@ class Sequence_base_class(UnitTestCase):
 
         # Get the md5sum of the file.
         file_md5 = md5()
-        file_md5.update(file.read())
+        text = file.read()
+        if hasattr(text, 'encode'):    # Python 3 encoding fix.
+            text = text.encode()
+        file_md5.update(text)
 
         # Test the md5sum.
-        self.assertEqual(file_md5.digest(), '\xc7\xa0\xd0i\xa54|f\xcc1\xd6|\xe7\x82#:')
+        digest = file_md5.digest()
+        self.assertEqual(digest, b'\xc7\xa0\xd0i\xa54|f\xcc1\xd6|\xe7\x82#:')
 
         # Close the file.
         file.close()

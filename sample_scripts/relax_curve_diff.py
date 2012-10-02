@@ -1,6 +1,6 @@
-###############################################################################
+##############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -95,8 +95,8 @@ def calc_ave_sd():
 
         # Loop over the intensities.
         index = 0
-        for i in xrange(len(spin.intensities)):
-            for j in xrange(len(spin.intensities[i])):
+        for i in range(len(spin.intensities)):
+            for j in range(len(spin.intensities[i])):
                 # Add the difference between the measured and fitted intensity to the diff array.
                 diff_array[index] = diff_array[index] + (spin.intensities[i][j] - spin.fit_int[i])
 
@@ -121,8 +121,8 @@ def calc_ave_sd():
 
         # Loop over the intensities.
         index = 0
-        for i in xrange(len(spin.intensities)):
-            for j in xrange(len(spin.intensities[i])):
+        for i in range(len(spin.intensities)):
+            for j in range(len(spin.intensities[i])):
                 # Calculate the sum of squares.
                 sd_array[index] = sd_array[index] + ((spin.intensities[i][j] - spin.fit_int[i]) - diff_array[index])**2
 
@@ -214,7 +214,7 @@ def grace_plot(ave, sd):
     file.write("@type xy\n")
 
     # Loop over the individual time points.
-    for i in xrange(len(cdp.num_spectra)):
+    for i in range(len(cdp.num_spectra)):
         # Loop over the spins.
         for spin in spin_loop():
             # Skip deselected spins.
@@ -236,7 +236,7 @@ def grace_plot(ave, sd):
     file.write("@type xy\n")
 
     # Loop over the individual time points.
-    for i in xrange(len(cdp.num_spectra)):
+    for i in range(len(cdp.num_spectra)):
         # Loop over the spins.
         for spin in spin_loop():
             # Skip deselected spins.
@@ -260,8 +260,8 @@ def grace_plot(ave, sd):
 
     # Loop over the data.
     index = 0
-    for i in xrange(len(cdp.num_spectra)):
-        for j in xrange(cdp.num_spectra[i]):
+    for i in range(len(cdp.num_spectra)):
+        for j in range(cdp.num_spectra[i]):
             # Grace data point.
             file.write("%-30s%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(ave[index]), repr(sd[index])))
 

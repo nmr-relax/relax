@@ -74,7 +74,7 @@ self._execute_uf(uf_name='n_state_model.number_of_states', N=5)
 self._execute_uf(uf_name='n_state_model.ref_domain', ref='C')
 
 # Set the initial parameter values to the actual values (the grid search is too expensive).
-for i in xrange(5):
+for i in range(5):
     self._execute_uf(0.2, 'p'+repr(i), uf_name='value.set')
     self._execute_uf(0.0, 'alpha'+repr(i), uf_name='value.set')
     self._execute_uf(pi/4-pi/8*i, 'beta'+repr(i), uf_name='value.set')

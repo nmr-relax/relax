@@ -30,8 +30,8 @@ from warnings import warn
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
+from generic_fns.structure.internal import Internal
 from generic_fns.structure.mass import centre_of_mass
-from internal import Internal
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import get_file_path, open_write_file
@@ -51,7 +51,7 @@ def angles_regular(inc=None):
     # Generate the increment values of u.
     u = zeros(inc, float64)
     val = 1.0 / float(inc)
-    for i in xrange(inc):
+    for i in range(inc):
         u[i] = float(i) * val
 
     # Generate the increment values of v.
@@ -84,13 +84,13 @@ def angles_uniform(inc=None):
     # Generate the increment values of u.
     u = zeros(inc, float64)
     val = 1.0 / float(inc)
-    for i in xrange(inc):
+    for i in range(inc):
         u[i] = float(i) * val
 
     # Generate the increment values of v.
     v = zeros(inc/2+2, float64)
     val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
+    for i in range(1, inc/2+1):
         v[i] = float(i-1) * val + val/2.0
     v[-1] = 1.0
 
@@ -434,7 +434,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     mol = structure.get_molecule('diff_tensor')
 
     # Loop over the pipes.
-    for pipe_index in xrange(len(pipe_list)):
+    for pipe_index in range(len(pipe_list)):
         # Get the pipe container.
         pipe = pipes.get_pipe(pipe_list[pipe_index])
 
@@ -1129,9 +1129,9 @@ def vect_dist_spherical_angles(inc=20, distribution='uniform'):
     vectors = []
 
     # Loop over the longitudinal lines.
-    for j in xrange(len(phi)):
+    for j in range(len(phi)):
         # Loop over the latitudinal lines.
-        for i in xrange(len(theta)):
+        for i in range(len(theta)):
             # X coordinate.
             x = cos(theta[i]) * sin(phi[j])
 

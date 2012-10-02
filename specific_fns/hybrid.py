@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,8 +27,8 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.sequence import compare_sequence
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
-import setup
 from relax_warnings import RelaxDeselectWarning
+import specific_fns.setup
 
 
 class Hybrid:
@@ -175,7 +175,7 @@ class Hybrid:
             model_statistics = setup.get_specific_fn('model_stats', pipes.get_type(pipe))
 
             # Loop over the instances.
-            #for i in xrange(num):
+            #for i in range(num):
             # Get the statistics.
             k, n, chi2 = model_statistics(model_info=model_info, spin_id=spin_id, global_stats=global_stats)
 

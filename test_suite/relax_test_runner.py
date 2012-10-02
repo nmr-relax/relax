@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ import dep_check
 try:
     from cStringIO import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 import sys
 try:
     from unittest import TextTestResult    # Python 2.7 and above.

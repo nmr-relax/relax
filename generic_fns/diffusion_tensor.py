@@ -32,10 +32,9 @@ from re import search
 import string
 
 # relax module imports.
-from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
-from generic_fns.angles import fold_spherical_angles
+from generic_fns.angles import fold_spherical_angles, wrap_angles
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, return_spin, spin_loop
 from maths_fns.coord_transform import cartesian_to_spherical
@@ -887,7 +886,7 @@ def map_labels(index, params, bounds, swap, inc):
     loc_inc = inc / axis_incs
 
     # Increment over the model parameters.
-    for i in xrange(n):
+    for i in range(n):
         # Parameter conversion factors.
         factor = return_conversion_factor(params[swap[i]])
 
@@ -912,7 +911,7 @@ def map_labels(index, params, bounds, swap, inc):
         # Tick locations.
         string = "{"
         val = 0.0
-        for j in xrange(axis_incs + 1):
+        for j in range(axis_incs + 1):
             string = string + " " + repr(val)
             val = val + loc_inc
         string = string + " }"
@@ -920,7 +919,7 @@ def map_labels(index, params, bounds, swap, inc):
 
         # Tick values.
         string = "{"
-        for j in xrange(axis_incs + 1):
+        for j in range(axis_incs + 1):
             string = string + "\"" + "%.2f" % vals + "\" "
             vals = vals + val_inc
         string = string + "}"
@@ -1130,7 +1129,7 @@ def set(value=None, param=None):
     orient_values = []
 
     # Loop over the parameters.
-    for i in xrange(len(param)):
+    for i in range(len(param)):
         # Get the object name.
         param[i] = return_data_name(param[i])
 

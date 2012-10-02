@@ -66,9 +66,9 @@ Example::
 
 from extern.scientific_python.IO.TextFile import TextFile
 from extern.scientific_python.IO.FortranFormat import FortranFormat, FortranLine
+from extern.scientific_python.IO.PDBExportFilters import export_filters
 from extern.scientific_python.Geometry import Vector, Tensor
 from extern.scientific_python import N
-from PDBExportFilters import export_filters
 import copy, string
 
 #
@@ -162,7 +162,7 @@ class PDBFile:
             self.file = TextFile(file_or_filename, mode)
         else:
             self.file = file_or_filename
-        self.output = string.lower(mode[0]) == 'w'
+        self.output = mode[0].lower() == 'w'
         self.export_filter = None
         if subformat is not None:
             export = export_filters.get(subformat, None)
@@ -200,49 +200,49 @@ class PDBFile:
             line = self.file.readline()
             if not line: return ('END', '')
             if line[-1] == '\n': line = line[:-1]
-            line = string.strip(line)
+            line = line.strip()
             if line: break
-        line = string.ljust(line, 80)
-        type = string.strip(line[:6])
+        line = line.ljust(80)
+        type = line[:6].strip()
         if type == 'ATOM' or type == 'HETATM':
             line = FortranLine(line, atom_format)
             data = {'serial_number': line[1],
                     'name': line[2],
-                    'alternate': string.strip(line[3]),
-                    'residue_name': string.strip(line[4]),
-                    'chain_id': string.strip(line[5]),
+                    'alternate': line[3].strip(),
+                    'residue_name': line[4].strip(),
+                    'chain_id': line[5].strip(),
                     'residue_number': line[6],
-                    'insertion_code': string.strip(line[7]),
+                    'insertion_code': line[7].strip(),
                     'position': Vector(line[8:11]),
                     'occupancy': line[11],
                     'temperature_factor': line[12],
-                    'segment_id': string.strip(line[13]),
-                    'element': string.strip(line[14]),
-                    'charge': string.strip(line[15])}
+                    'segment_id': line[13].strip(),
+                    'element': line[14].strip(),
+                    'charge': line[15].strip()}
             return type, data
         elif type == 'ANISOU':
             line = FortranLine(line, anisou_format)
             data = {'serial_number': line[1],
                     'name': line[2],
-                    'alternate': string.strip(line[3]),
-                    'residue_name': string.strip(line[4]),
-                    'chain_id': string.strip(line[5]),
+                    'alternate': line[3].strip(),
+                    'residue_name': line[4].strip(),
+                    'chain_id': line[5].strip(),
                     'residue_number': line[6],
-                    'insertion_code': string.strip(line[7]),
+                    'insertion_code': line[7].strip(),
                     'u': 1.e-4*Tensor([[line[8], line[11], line[12]],
                                        [line[11], line[9], line[13]],
                                        [line[12], line[13], line[10]]]),
-                    'segment_id': string.strip(line[14]),
-                    'element': string.strip(line[15]),
-                    'charge': string.strip(line[16])}
+                    'segment_id': line[14].strip(),
+                    'element': line[15].strip(),
+                    'charge': line[16].strip()}
             return type, data
         elif type == 'TER':
             line = FortranLine(line, ter_format)
             data = {'serial_number': line[1],
-                    'residue_name': string.strip(line[2]),
-                    'chain_id': string.strip(line[3]),
+                    'residue_name': line[2].strip(),
+                    'chain_id': line[3].strip(),
                     'residue_number': line[4],
-                    'insertion_code': string.strip(line[5])}
+                    'insertion_code': line[5].strip()}
             return type, data
         elif type == 'CONECT':
             line = FortranLine(line, conect_format)
@@ -314,7 +314,7 @@ class PDBFile:
             line = line + [data.get('serial_number', 1),
                            data.get('name'),
                            data.get('alternate', ''),
-                           string.rjust(data.get('residue_name', ''), 3),
+                           data.get('residue_name', '').rjust(3),
                            data.get('chain_id', ''),
                            data.get('residue_number', 1),
                            data.get('insertion_code', ''),
@@ -322,7 +322,7 @@ class PDBFile:
                            data.get('occupancy', 0.),
                            data.get('temperature_factor', 0.),
                            data.get('segment_id', ''),
-                           string.rjust(data.get('element', ''), 2),
+                           data.get('element', '').rjust(2),
                            data.get('charge', '')]
         elif type == 'ANISOU':
             format = anisou_format
@@ -332,18 +332,18 @@ class PDBFile:
             line = line + [data.get('serial_number', 1),
                            data.get('name'),
                            data.get('alternate', ''),
-                           string.rjust(data.get('residue_name'), 3),
+                           data.get('residue_name').rjust(3),
                            data.get('chain_id', ''),
                            data.get('residue_number', 1),
                            data.get('insertion_code', '')] \
                         + u \
                         + [data.get('segment_id', ''),
-                           string.rjust(data.get('element', ''), 2),
+                           data.get('element', '').rjust(2),
                            data.get('charge', '')]
         elif type == 'TER':
             format = ter_format
             line = line + [data.get('serial_number', 1),
-                           string.rjust(data.get('residue_name'), 3),
+                           data.get('residue_name').rjust(3),
                            data.get('chain_id', ''),
                            data.get('residue_number', 1),
                            data.get('insertion_code', '')]
@@ -391,7 +391,7 @@ class PDBFile:
         @type text: C{str}
         """
         while text:
-            eol = string.find(text, '\n')
+            eol = text.find('\n')
             if eol == -1:
                 eol = len(text)
             self.file.write('REMARK %s \n' % text[:eol])
@@ -419,7 +419,7 @@ class PDBFile:
             type = 'HETATM'
         else:
             type = 'ATOM'
-        name = string.upper(name)
+        name = name.upper()
         if element != '' and len(element) == 1 and name and name[0] == element:
             name = ' ' + name
         self.data['name'] = name
@@ -445,7 +445,7 @@ class PDBFile:
                          information in order to use different atom or
                          residue names in terminal residues.
         """
-        name  = string.upper(name)
+        name  = name.upper()
         if self.export_filter is not None:
             name, number = self.export_filter.processResidue(name, number,
                                                              terminus)
@@ -544,7 +544,7 @@ class Atom:
                 self.properties['element'] = name[0]
             else:
                 self.properties['element'] = name[0:2]
-        self.name = string.strip(name)
+        self.name = name.strip()
         self.parent = None
 
     def __getitem__(self, item):
@@ -663,7 +663,7 @@ class Group:
     def __str__(self):
         s = self.__class__.__name__ + ' ' + self.name + ':\n'
         for atom in self.atom_list:
-            s = s + '  ' + `atom` + '\n'
+            s = s + '  ' + repr(atom) + '\n'
         return s
     __repr__ = __str__
 
@@ -765,8 +765,8 @@ class AminoAcidResidue(Residue):
         @rtype: C{bool}
         """
         return self.name == 'NME' \
-               or self.atoms.has_key('OXT') \
-               or self.atoms.has_key('OT2')
+               or 'OXT' in self.atoms \
+               or 'OT2' in self.atoms
 
     def isNTerminus(self):
         """
@@ -775,8 +775,8 @@ class AminoAcidResidue(Residue):
         nitrogen atom of the peptide group. C{False} otherwise.
         @rtype: C{bool}
         """
-        return self.atoms.has_key('1HT') or self.atoms.has_key('2HT') \
-               or self.atoms.has_key('3HT')
+        return '1HT' in self.atoms or '2HT' in self.atoms \
+               or '3HT' in self.atoms
 
     def addAtom(self, atom):
         Residue.addAtom(self, atom)
@@ -808,7 +808,7 @@ class NucleotideResidue(Residue):
 
     def __init__(self, name, atoms = None, number = None):
         self.pdbname = name
-        name = string.strip(name)
+        name = name.strip()
         if name[0] != 'D' and name[0] != 'R':
             name = 'D' + name
         Residue.__init__(self, name, atoms, number)
@@ -831,7 +831,7 @@ class NucleotideResidue(Residue):
         @returns: C{True} if the residue has an atom named O2*
         @rtype: C{bool}
         """
-        return self.atoms.has_key('O2*') or self.atoms.has_key("O2'")
+        return 'O2*' in self.atoms or "O2'" in self.atoms
 
     def hasDesoxyribose(self):
         """
@@ -845,14 +845,14 @@ class NucleotideResidue(Residue):
         @returns: C{True} if the residue has a phosphate group
         @rtype: C{bool}
         """
-        return self.atoms.has_key('P')
+        return 'P' in self.atoms
 
     def hasTerminalH(self):
         """
         @returns: C{True} if the residue has a 3-terminal H atom
         @rtype: C{bool}
         """
-        return self.atoms.has_key('H3T')
+        return 'H3T' in self.atoms
 
     def writeToFile(self, file):
         close = 0
@@ -1270,7 +1270,7 @@ class Structure:
     def deleteResidue(self, residue):
         self.residues.remove(residue)
         delete = None
-        for type, mlist in self.molecules.items():
+        for type, mlist in list(self.molecules.items()):
             try:
                 mlist.remove(residue)
             except ValueError:
@@ -1313,7 +1313,7 @@ class Structure:
         element = data['element']
         if element != '':
             try:
-                string.atoi(element)
+                int(element)
             except ValueError:
                 atom_data['element'] = element
         residue_data = {'residue_name': data['residue_name']}
@@ -1370,7 +1370,7 @@ class Structure:
             elif type == 'HEADER':
                 self.pdb_code = data['pdb_code']
             elif type == 'CRYST1':
-                for name, value in data.items():
+                for name, value in list(data.items()):
                     setattr(self, name, value)
                 self.space_group = self.space_group.strip()
             elif type[:-1] == 'SCALE':
@@ -1422,9 +1422,9 @@ class Structure:
                         atom_data, residue_data, chain_data = \
                                    self.extractData(data)
                         if type == 'ATOM':
-                            atom = apply(Atom, (), atom_data)
+                            atom = Atom(*(), **atom_data)
                         else:
-                            atom = apply(HetAtom, (), atom_data)
+                            atom = HetAtom(*(), **atom_data)
                         new_chain = chain is None or \
                                     not chain.isCompatible(chain_data,
                                                            residue_data)
@@ -1480,18 +1480,18 @@ class Structure:
         if self.alternate != 'A':
             s = s + ", alternate_code = " + repr(self.alternate)
         s = s + "):\n"
-        for name, list in [("Peptide", self.peptide_chains),
+        for name, datalist in [("Peptide", self.peptide_chains),
                            ("Nucleotide", self.nucleotide_chains)]:
-            for c in list:
+            for c in datalist:
                 s = s + "  " + name + " chain "
                 if c.segment_id:
                     s = s + c.segment_id + " "
                 elif c.chain_id:
                     s = s + c.chain_id + " "
                 s = s + "of length " + repr(len(c)) + "\n"
-        for name, list in self.molecules.items():
-            s = s + "  " + repr(len(list)) + " " + name + " molecule"
-            if len(list) == 1:
+        for name, datalist in list(self.molecules.items()):
+            s = s + "  " + repr(len(datalist)) + " " + name + " molecule"
+            if len(datalist) == 1:
                 s = s + "\n"
             else:
                 s = s + "s\n"
@@ -1529,4 +1529,4 @@ if __name__ == '__main__':
     if 1:
 
         s = Structure('~/Programs/MMTK/main/MMTK/Database/PDB/insulin.pdb')
-        print s
+        print(s)

@@ -24,10 +24,10 @@ from os import sep
 import sys
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Generic(SystemTestCase):
@@ -51,7 +51,7 @@ class Generic(SystemTestCase):
         s2 = [0.9, 0.7, None]
 
         # Loop over the data pipes to create and fill.
-        for i in xrange(3):
+        for i in range(3):
             # Create the data pipe.
             self.interpreter.pipe.create(pipe_list[i], 'mf')
 

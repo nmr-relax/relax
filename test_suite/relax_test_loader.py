@@ -1,6 +1,6 @@
 ################################################################################
 #                                                                              #
-# Copyright (C) 2011 Edward d'Auvergne                                         #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                    #
 #                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
@@ -56,7 +56,7 @@ class RelaxTestLoader(TestLoader):
             test_case = testCaseClass(testCaseNames[i])
 
             # Skip.
-            if status.skipped_tests and testCaseNames[i] in zip(*status.skipped_tests)[0]:
+            if status.skipped_tests and testCaseNames[i] in list(zip(*status.skipped_tests))[0]:
                 continue
 
             # Append the test case.

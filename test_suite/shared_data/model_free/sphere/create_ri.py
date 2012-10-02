@@ -34,20 +34,25 @@ pipe.create('sphere', 'mf')
 # Load a PDB file.
 structure.read_pdb('sphere.pdb')
 
-# Load the backbone amide nitrogen spins from the structure.
+# Load the backbone amide nitrogen and proton spins from the structure.
 structure.load_spins(spin_id='@N')
-
-# Load the NH vectors.
-structure.vectors(spin_id='@N', attached='H', ave=False)
+structure.load_spins(spin_id='@H')
+structure.load_spins(spin_id='@NE1')
+structure.load_spins(spin_id='@HE1')
+spin.isotope('15N', spin_id='@N*')
+spin.isotope('1H', spin_id='@H*')
 
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
 diffusion_tensor.init(10e-9)
 
-# Set the CSA and bond lengths.
-value.set(val=-172e-6, param='csa')
-value.set(val=1.02e-10, param='r')
-value.set('15N', 'heteronuc_type')
-value.set('1H', 'proton_type')
+# Define the magnetic dipole-dipole relaxation interaction.
+dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+dipole_pair.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
+dipole_pair.unit_vectors()
+
+# Define the chemical shift relaxation interaction.
+value.set(-172 * 1e-6, 'csa', spin_id='@N*')
 
 # Set the model-free parameters.
 value.set(val=0.8, param='s2')
@@ -66,6 +71,10 @@ relax_data.back_calc(ri_id='R2_500',  ri_type='R2',  frq=500e6)
 
 # Generate the errors.
 for spin in spin_loop():
+    # No relaxation data.
+    if not spin.select:
+        continue
+
     # Loop over the relaxation data.
     for ri_id in cdp.ri_ids:
         # Set up the error relaxation data structure if needed.

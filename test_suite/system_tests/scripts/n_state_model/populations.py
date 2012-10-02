@@ -45,7 +45,7 @@ self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 align_list = ['Dy', 'Tb', 'Tm', 'Er']
 
 # Load the RDCs and PCSs.
-for i in xrange(len(align_list)):
+for i in range(len(align_list)):
     # The RDC (skip the list at index 1, as this has zero data and now causes a RelaxError).
     if i != 1:
         self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
@@ -84,7 +84,7 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.6
 self._execute_uf(uf_name='calc')
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2) > 1e-15:
-    raise RelaxError, "The chi2 at the solution is not zero!"
+    raise RelaxError("The chi2 at the solution is not zero!")
 
 
 # The population model opt.

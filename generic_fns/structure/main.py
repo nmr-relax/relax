@@ -26,7 +26,6 @@ from numpy import array, dot, float64, ndarray, zeros
 from numpy.linalg import norm
 from os import F_OK, access
 from re import search
-from string import replace
 import sys
 from warnings import warn
 
@@ -258,11 +257,11 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
 
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
-            mol_name = replace(mol_name, '+', '')
+            mol_name = mol_name.replace('+', '')
         if res_name and search('\+', res_name):
-            res_name = replace(res_name, '+', '')
+            res_name = res_name.replace('+', '')
         if atom_name and search('\+', atom_name):
-            atom_name = replace(atom_name, '+', '')
+            atom_name = atom_name.replace('+', '')
 
         # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
         id = generate_spin_id(res_num=res_num, res_name=None, spin_name=atom_name)
@@ -376,11 +375,11 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
 
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
-            mol_name = replace(mol_name, '+', '')
+            mol_name = mol_name.replace('+', '')
         if res_name and search('\+', res_name):
-            res_name = replace(res_name, '+', '')
+            res_name = res_name.replace('+', '')
         if atom_name and search('\+', atom_name):
-            atom_name = replace(atom_name, '+', '')
+            atom_name = atom_name.replace('+', '')
 
         # Generate a spin ID for the current atom.
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
@@ -788,7 +787,7 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
             ave_vector = zeros(3, float64)
 
         # Loop over the individual vectors.
-        for i in xrange(len(bond_vectors)):
+        for i in range(len(bond_vectors)):
             # Unit vector.
             if unit:
                 # Normalisation factor.

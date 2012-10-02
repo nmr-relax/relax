@@ -14,12 +14,12 @@
    height="480"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.1 r9760"
    sodipodi:docname="sequence.svg"
    style="display:inline"
-   inkscape:export-filename="/data/relax/branches/bieri_gui/graphics/wizards/sequence.png"
-   inkscape:export-xdpi="37.5"
-   inkscape:export-ydpi="37.5">
+   inkscape:export-filename="sequence.png"
+   inkscape:export-xdpi="112.5"
+   inkscape:export-ydpi="112.5">
   <defs
      id="defs4">
     <linearGradient
@@ -522,14 +522,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="233.33109"
+     inkscape:cx="235.33109"
      inkscape:cy="238.38835"
      inkscape:document-units="px"
      inkscape:current-layer="g4039"
      showgrid="true"
-     inkscape:window-width="1396"
+     inkscape:window-width="1400"
      inkscape:window-height="981"
-     inkscape:window-x="-1"
+     inkscape:window-x="-3"
      inkscape:window-y="-3"
      inkscape:window-maximized="1"
      inkscape:object-paths="false"
@@ -591,7 +591,7 @@
        sodipodi:cy="205"
        sodipodi:rx="75"
        sodipodi:ry="75"
-       d="m 440,205 a 75,75 0 1 1 -150,0 75,75 0 1 1 150,0 z"
+       d="m 440,205 c 0,41.42136 -33.57864,75 -75,75 -41.42136,0 -75,-33.57864 -75,-75 0,-41.42136 33.57864,-75 75,-75 41.42136,0 75,33.57864 75,75 z"
        transform="matrix(0.82904127,0,0,0.82904127,-191.3468,-35.896986)" />
   </g>
   <g
@@ -642,7 +642,7 @@
        sodipodi:cy="275"
        sodipodi:rx="114.33629"
        sodipodi:ry="185"
-       d="M 235.45664,130.1459 A 114.33629,185 0 1 1 84.185609,143.06666"
+       d="m 235.45664,130.1459 c 49.44316,63.55426 57.68309,179.92855 18.4044,259.92925 C 214.58236,470.07586 142.65909,483.40835 93.215932,419.8541 43.772775,356.29984 35.532845,239.92555 74.811534,159.92485 c 2.908694,-5.92427 6.039265,-11.55424 9.374075,-16.85819"
        transform="matrix(0.94250261,0.52652246,-0.06170906,0.1635802,-26.925063,1.59081)"
        sodipodi:start="5.3837189"
        sodipodi:end="10.218764"

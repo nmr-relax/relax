@@ -31,9 +31,9 @@ pipes = ['m1', 'm2', 'm3', 'm4', 'm5']
 
 # Construct the CV pipes.
 cv_pipes = []
-for i in xrange(len(pipes)):
+for i in range(len(pipes)):
     cv_pipes.append([])
-    for j in xrange(len(ri_ids)):
+    for j in range(len(ri_ids)):
         cv_pipes[i].append(pipes[i] + "_" + ri_ids[j])
 
 print("\n\n\n\n")
@@ -42,9 +42,9 @@ print("##################")
 print("\n")
 
 # Loop over the pipes for single-item-out cross-validation.
-for i in xrange(len(pipes)):
+for i in range(len(pipes)):
     # Loop over the relaxation data.
-    for j in xrange(len(ri_ids)):
+    for j in range(len(ri_ids)):
         # Nuclei type
         nuclei('N')
 
@@ -55,7 +55,7 @@ for i in xrange(len(pipes)):
         sequence.read('noe.500.out', res_num_col=1)
 
         # Create the calibration set by loading all relaxation data except the index 'i'.
-        for k in xrange(len(ri_ids)):
+        for k in range(len(ri_ids)):
             if k == i:
                 continue
             relax_data.read(ri_ids[k], ri_types[k], frqs[k], file_names[k])
@@ -90,9 +90,9 @@ print("#################")
 print("\n")
 
 # Load all the pipes.
-for i in xrange(len(pipes)):
+for i in range(len(pipes)):
     # Loop over the relaxation data.
-    for j in xrange(len(ri_ids)):
+    for j in range(len(ri_ids)):
         # Switch to the relevent data pipe.
         pipe.switch(cv_pipes[i][j])
 
@@ -127,7 +127,7 @@ pipe.switch('cv')
 
 # Delete the relaxation data copied over to the 'cv' data pipe and then load all the data.
 delete(data_type='relax_data')
-for i in xrange(len(ri_ids)):
+for i in range(len(ri_ids)):
     relax_data.read(ri_ids[i], ri_types[i], frqs[i], file_names[i])
 
 # Minimise the selected model using all relaxation data.

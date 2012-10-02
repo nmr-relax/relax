@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -112,7 +112,7 @@ def dchi2(dchi2, M, data, back_calc_vals, back_calc_grad, errors):
     grad = -2.0 * dot(1.0 / (errors**2) * (data - back_calc_vals), transpose(back_calc_grad))
 
     # Pack the elements.
-    for i in xrange(M):
+    for i in range(M):
         dchi2[i] = grad[i]
 
 
@@ -205,10 +205,10 @@ def d2chi2(d2chi2, M, data, back_calc_vals, back_calc_grad, back_calc_hess, erro
     """
 
     # Calculate the chi-squared Hessian.
-    for j in xrange(M):
-        for k in xrange(M):
+    for j in range(M):
+        for k in range(M):
             d2chi2[j, k] = 0.0
-            for i in xrange(len(data)):
+            for i in range(len(data)):
                 d2chi2[j, k] = d2chi2[j, k] + 2.0 / (errors[i]**2) * (back_calc_grad[j, i] * back_calc_grad[k, i] - (data[i] - back_calc_vals[i]) * back_calc_hess[j, k, i])
 
 
@@ -262,7 +262,7 @@ def d2chi2_element(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, bac
     # Calculate the chi-squared Hessian.
     # This is faster than the above sums, and having the errors term first appears to minimise roundoff errors.
     d2chi2 = 0.0
-    for i in xrange(len(data)):
+    for i in range(len(data)):
         d2chi2 = d2chi2 + 2.0 / (errors[i]**2) * (back_calc_grad_j[i] * back_calc_grad_k[i] - (data[i] - back_calc_vals[i]) * back_calc_hess_jk[i])
 
     # Return the {j, k} element.

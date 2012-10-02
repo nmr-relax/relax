@@ -29,12 +29,9 @@ from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, eye, float64, ones, transpose, zeros
 from re import search
-from string import upper
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
@@ -47,6 +44,8 @@ from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 
 
 class Frame_order(API_base, API_common):
@@ -359,9 +358,9 @@ class Frame_order(API_base, API_common):
                     axis_sim_neg = axes_sim_neg[:, i]
 
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%label[i].upper(), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num, origin=cdp.pivot, scale=size)
+                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%label[i].upper(), sim_vectors=axis_sim_neg, res_num=res_num, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
@@ -1018,7 +1017,7 @@ class Frame_order(API_base, API_common):
             if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
                 # Change the default increment numbers.
                 if not isinstance(inc, list):
-                    incs[i] = incs[i] / 2 + 1
+                    incs[i] = int(incs[i] / 2) + 1
 
                 # The distribution type and end point.
                 dist_type = 'acos'
@@ -1386,7 +1385,7 @@ class Frame_order(API_base, API_common):
             sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Copy and append the data.
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 
@@ -1402,7 +1401,7 @@ class Frame_order(API_base, API_common):
             sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Copy and append the data.
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 

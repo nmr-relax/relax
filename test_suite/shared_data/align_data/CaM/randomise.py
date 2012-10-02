@@ -1,7 +1,6 @@
 """Script of randomising the RDC and PCS data."""
 
 from random import gauss
-from string import split
 
 
 # The errors.
@@ -29,7 +28,7 @@ pales_file.write("FORMAT %5d     %6s       %6s        %5d     %6s       %6s    %
 # Loop over the RDC data.
 for line in rdc_file.readlines():
     # Split the line up.
-    row = split(line)
+    row = line.split()
 
     # Randomise the value.
     val = gauss(float(row[2]), SIGMA_RDC)
@@ -44,7 +43,7 @@ for line in rdc_file.readlines():
 # Loop over the PCS data.
 for line in pcs_file.readlines():
     # Split the line up.
-    row = split(line)
+    row = line.split()
 
     # Randomise the value.
     val = gauss(float(row[5]), SIGMA_PCS)

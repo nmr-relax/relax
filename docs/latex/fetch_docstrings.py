@@ -21,14 +21,15 @@
 
 # Python module imports.
 from re import search
-from string import letters, lowercase, punctuation, replace, split, upper, whitespace
+from string import ascii_letters, ascii_lowercase, punctuation, whitespace
 import sys
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
 sys.path[0] = '../..'
 
-# Import the program relax.
+# relax module imports.
+from graphics import fetch_icon
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
@@ -50,6 +51,15 @@ class Fetch_docstrings:
 
         # Loop over the user functions.
         for self.uf_name, self.uf in uf_info.uf_loop():
+            # The user function class.
+            self.uf_class = None
+            if search('\.', self.uf_name):
+                # Split up the name.
+                class_name, uf_name = self.uf_name.split('.')
+
+                # Get the user function class data object.
+                self.uf_class = uf_info.get_class(class_name)
+
             # Reset the table count for each user function.
             self.uf_table_count = 1
 
@@ -74,17 +84,17 @@ class Fetch_docstrings:
         """
 
         # Allow line breaks after the opening bracket.
-        text = replace(text, "(", "(\linebreak[0]")
+        text = text.replace("(", "(\linebreak[0]")
 
         # Allow line breaks after periods (but not in numbers).
-        for char in letters:
-            text = replace(text, ".%s" % char, ".\linebreak[0]%s" % char)
+        for char in ascii_letters:
+            text = text.replace(".%s" % char, ".\linebreak[0]%s" % char)
 
         # Allow line breaks after equal signs.
-        text = replace(text, "=", "=\linebreak[0]")
+        text = text.replace("=", "=\linebreak[0]")
 
         # Remove the backslash to prevent is processing.
-        text = replace(text, "\linebreak", "linebreak")
+        text = text.replace("\linebreak", "linebreak")
 
         # Return the modified text.
         return text
@@ -210,12 +220,12 @@ class Fetch_docstrings:
         # Some whitespace.
         self.file.write("\n\n")
 
-        # Add a spaced out rule.
-        self.file.write("\\vspace{20pt}\n")
-        self.file.write("\\rule{\columnwidth}{2pt}\n")
-        self.file.write("\\vspace{-30pt}\n")
+        # Start a new column for each user function and add a rule to the top.
+        self.file.write("\\pagebreak[4]\n")
+        self.file.write("\\rule{\columnwidth}{1pt}\n")
 
-        # The title.
+        # The title (with less spacing).
+        self.file.write("\\vspace{-20pt}\n")
         self.uf_name_latex = self.uf_name
 
         # LaTeX formatting.
@@ -223,11 +233,29 @@ class Fetch_docstrings:
         self.uf_name_latex = self.word_formatting(self.uf_name_latex, bold=True)
 
         # Allow for hyphenation.
-        self.uf_name_latex = replace(self.uf_name_latex, '.', '\-.')
-        self.uf_name_latex = replace(self.uf_name_latex, '\_', '\-\_')
+        self.uf_name_latex = self.uf_name_latex.replace('.', '\-.')
+        self.uf_name_latex = self.uf_name_latex.replace('\_', '\-\_')
 
-        # Write out the title.
-        self.file.write("\subsection{%s}\n\n" % self.uf_name_latex)
+        # Write out the title (with label).
+        self.file.write("\subsection{%s} \label{uf: %s}\n" % (self.uf_name_latex, self.uf_name))
+
+        # Add the user function class icon.
+        if self.uf_class:
+            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format=None)
+            if icon:
+                self.file.write("\includegraphics[bb=0 0 18 18]{%s} \hfill " % icon)
+            else:
+                self.file.write("\hfill ")
+
+        # Add the user function icon.
+        icon = fetch_icon(self.uf.gui_icon, size='128x128', format=None)
+        if icon:
+            self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n" % icon)
+        else:
+            self.file.write("\n")
+
+        # End.
+        self.file.write("\n")
 
 
     def indexing(self, index, bold=False):
@@ -246,7 +274,7 @@ class Fetch_docstrings:
             end_string = '}'
 
         # Loop over the indices.
-        for i in xrange(len(self.entries)):
+        for i in range(len(self.entries)):
             # Find triple word entries.
             if index+2 < len(self.words) and self.entries[i][2] == 3 and search(self.entries[i][0], self.words[index] + ' ' + self.words[index+1] + ' ' + self.words[index+2]):
                 self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
@@ -377,13 +405,13 @@ class Fetch_docstrings:
         self.entries.append(['XEasy', 'software!XEasy'])
 
         # Modifications.
-        for i in xrange(len(self.entries)):
+        for i in range(len(self.entries)):
             # Count the number of words.
-            self.entries[i].append(len(split(self.entries[i][0], ' ')))
+            self.entries[i].append(len(self.entries[i][0].split(' ')))
 
             # Accept capitalisation.
-            if search(self.entries[i][0][0], lowercase):
-                self.entries[i][0] = '[' + upper(self.entries[i][0][0]) + self.entries[i][0][0] + ']' + self.entries[i][0][1:]
+            if search(self.entries[i][0][0], ascii_lowercase):
+                self.entries[i][0] = '[' + self.entries[i][0][0].upper() + self.entries[i][0][0] + ']' + self.entries[i][0][1:]
 
             # Add a carrot to the start of the match string.
             self.entries[i][0] = '^' + self.entries[i][0]
@@ -393,7 +421,7 @@ class Fetch_docstrings:
 
         # Reverse sort by word count.
         self.entries.sort(reverse=1)
-        for i in xrange(len(self.entries)):
+        for i in range(len(self.entries)):
             self.entries[i].reverse()
 
 
@@ -408,37 +436,37 @@ class Fetch_docstrings:
         string = self.safe_replacement(string, 'pi', '$\pi$')
 
         # Less than.
-        string = replace(string, ' < ', ' $<$ ')
+        string = string.replace(' < ', ' $<$ ')
 
         # Less than or equal.
-        string = replace(string, ' <= ', ' $\le$ ')
+        string = string.replace(' <= ', ' $\le$ ')
 
         # Much less than.
-        string = replace(string, ' << ', ' $<<$ ')
+        string = string.replace(' << ', ' $<<$ ')
 
         # Greater than.
-        string = replace(string, ' > ', ' $>$ ')
+        string = string.replace(' > ', ' $>$ ')
 
         # Greater than or equal.
-        string = replace(string, ' >= ', ' $\ge$ ')
+        string = string.replace(' >= ', ' $\ge$ ')
 
         # Much greater than.
-        string = replace(string, ' >> ', ' $>>$ ')
+        string = string.replace(' >> ', ' $>>$ ')
 
         # 1st, 2nd, etc.
-        string = replace(string, '1st', '1$^\mathrm{st}$')
-        string = replace(string, '2nd', '2$^\mathrm{nd}$')
-        string = replace(string, '3rd', '3$^\mathrm{rd}$')
-        string = replace(string, '4th', '4$^\mathrm{th}$')
-        string = replace(string, '5th', '5$^\mathrm{th}$')
-        string = replace(string, '6th', '6$^\mathrm{th}$')
-        string = replace(string, '7th', '7$^\mathrm{th}$')
-        string = replace(string, '8th', '8$^\mathrm{th}$')
-        string = replace(string, '9th', '9$^\mathrm{th}$')
-        string = replace(string, '0th', '0$^\mathrm{th}$')
-        string = replace(string, '1th', '1$^\mathrm{th}$')
-        string = replace(string, '2th', '2$^\mathrm{th}$')
-        string = replace(string, '3th', '3$^\mathrm{th}$')
+        string = string.replace('1st', '1$^\mathrm{st}$')
+        string = string.replace('2nd', '2$^\mathrm{nd}$')
+        string = string.replace('3rd', '3$^\mathrm{rd}$')
+        string = string.replace('4th', '4$^\mathrm{th}$')
+        string = string.replace('5th', '5$^\mathrm{th}$')
+        string = string.replace('6th', '6$^\mathrm{th}$')
+        string = string.replace('7th', '7$^\mathrm{th}$')
+        string = string.replace('8th', '8$^\mathrm{th}$')
+        string = string.replace('9th', '9$^\mathrm{th}$')
+        string = string.replace('0th', '0$^\mathrm{th}$')
+        string = string.replace('1th', '1$^\mathrm{th}$')
+        string = string.replace('2th', '2$^\mathrm{th}$')
+        string = string.replace('3th', '3$^\mathrm{th}$')
 
 
         # Relaxation data.
@@ -469,10 +497,10 @@ class Fetch_docstrings:
         #####################
 
         # J(w), J(0), J(wX), J(wH).
-        string = replace(string, 'J(w)', '$J(\omega)$')
-        string = replace(string, 'J(0)', '$J(0)$')
-        string = replace(string, 'J(wX)', '$J(\omega_X)$')
-        string = replace(string, 'J(wH)', '$J(\omega_H)$')
+        string = string.replace('J(w)', '$J(\omega)$')
+        string = string.replace('J(0)', '$J(0)$')
+        string = string.replace('J(wX)', '$J(\omega_X)$')
+        string = string.replace('J(wH)', '$J(\omega_H)$')
 
 
         # Diffusion tensor parameters.
@@ -550,7 +578,7 @@ class Fetch_docstrings:
         in_quote = 0
 
         # Loop over the characters.
-        for i in xrange(len(string)):
+        for i in range(len(string)):
             # Find the quote marks.
             if search('\'', string[i]):
                 # Swap the opening ' with `.
@@ -573,21 +601,21 @@ class Fetch_docstrings:
         """Function for handling LaTeX special characters."""
 
         # Damned backslashes.
-        string = replace(string, '\\', 'This is a backslash to be replaced at the end of this functioN')
+        string = string.replace('\\', 'This is a backslash to be replaced at the end of this functioN')
 
         # List of special characters (prefix a backslash).
         for char in "#$%&_{}":
-            string = replace(string, char, '\\'+char)
+            string = string.replace(char, '\\'+char)
 
         # Doubly special characters (prefix a backslash and postfix '{}').
         for char in "^~":
-            string = replace(string, char, '\\'+char+'{}')
+            string = string.replace(char, '\\'+char+'{}')
 
         # Damned backslashes!
-        string = replace(string, 'This is a backslash to be replaced at the end of this functioN', '$\\backslash$')
+        string = string.replace('This is a backslash to be replaced at the end of this functioN', '$\\backslash$')
 
         # Add a backslash to where it really should be.
-        string = replace(string, 'linebreak[0]', '\linebreak[0]')
+        string = string.replace('linebreak[0]', '\linebreak[0]')
 
         # Return the new text.
         return string
@@ -597,7 +625,7 @@ class Fetch_docstrings:
         """Function for placing quotes within the quote environment."""
 
         # Split the word by '.
-        elements = split(self.words[index], "'")
+        elements = self.words[index].split("'")
 
         # Single word quote.
         if len(elements) == 3:
@@ -627,79 +655,79 @@ class Fetch_docstrings:
         # Combos (if only RE could be used!)
 
         # A number out the front.
-        string = replace(string,    '0'+text,           '0'+latex)
-        string = replace(string,    '1'+text,           '1'+latex)
-        string = replace(string,    '2'+text,           '2'+latex)
-        string = replace(string,    '3'+text,           '3'+latex)
-        string = replace(string,    '4'+text,           '4'+latex)
-        string = replace(string,    '5'+text,           '5'+latex)
-        string = replace(string,    '6'+text,           '6'+latex)
-        string = replace(string,    '7'+text,           '7'+latex)
-        string = replace(string,    '8'+text,           '8'+latex)
-        string = replace(string,    '9'+text,           '9'+latex)
+        string = string.replace('0'+text,           '0'+latex)
+        string = string.replace('1'+text,           '1'+latex)
+        string = string.replace('2'+text,           '2'+latex)
+        string = string.replace('3'+text,           '3'+latex)
+        string = string.replace('4'+text,           '4'+latex)
+        string = string.replace('5'+text,           '5'+latex)
+        string = string.replace('6'+text,           '6'+latex)
+        string = string.replace('7'+text,           '7'+latex)
+        string = string.replace('8'+text,           '8'+latex)
+        string = string.replace('9'+text,           '9'+latex)
 
         # In a sentence.
-        string = replace(string,    ' '+text+',',       ' '+latex+',')
-        string = replace(string,    ' '+text+'.',       ' '+latex+'.')
-        string = replace(string,    ' '+text+' ',       ' '+latex+' ')
-        string = replace(string,    ' '+text+';',       ' '+latex+';')
-        string = replace(string,    ' '+text+':',       ' '+latex+':')
+        string = string.replace(' '+text+',',       ' '+latex+',')
+        string = string.replace(' '+text+'.',       ' '+latex+'.')
+        string = string.replace(' '+text+' ',       ' '+latex+' ')
+        string = string.replace(' '+text+';',       ' '+latex+';')
+        string = string.replace(' '+text+':',       ' '+latex+':')
 
         # In lists [].
-        string = replace(string,    '['+text+']',       '['+latex+']')
-        string = replace(string,    '['+text+' ',       '['+latex+' ')
-        string = replace(string,    '['+text+',',       '['+latex+',')
-        string = replace(string,    '['+text+';',       '['+latex+';')
-        string = replace(string,    ' '+text+']',       ' '+latex+']')
+        string = string.replace('['+text+']',       '['+latex+']')
+        string = string.replace('['+text+' ',       '['+latex+' ')
+        string = string.replace('['+text+',',       '['+latex+',')
+        string = string.replace('['+text+';',       '['+latex+';')
+        string = string.replace(' '+text+']',       ' '+latex+']')
 
         # In lists ().
-        string = replace(string,    '('+text+')',       '('+latex+')')
-        string = replace(string,    '('+text+' ',       '('+latex+' ')
-        string = replace(string,    '('+text+',',       '('+latex+',')
-        string = replace(string,    '('+text+';',       '('+latex+';')
-        string = replace(string,    ' '+text+')',       ' '+latex+')')
+        string = string.replace('('+text+')',       '('+latex+')')
+        string = string.replace('('+text+' ',       '('+latex+' ')
+        string = string.replace('('+text+',',       '('+latex+',')
+        string = string.replace('('+text+';',       '('+latex+';')
+        string = string.replace(' '+text+')',       ' '+latex+')')
 
         # In lists {}.
-        string = replace(string,    '{'+text+' ',       '{'+latex+' ')
-        string = replace(string,    '{'+text+',',       '{'+latex+',')
-        string = replace(string,    '{'+text+';',       '{'+latex+';')
-        string = replace(string,    ' '+text+'\\',      ' '+latex+'\\')
+        string = string.replace('{'+text+' ',       '{'+latex+' ')
+        string = string.replace('{'+text+',',       '{'+latex+',')
+        string = string.replace('{'+text+';',       '{'+latex+';')
+        string = string.replace(' '+text+'\\',      ' '+latex+'\\')
 
         # Quoted.
-        string = replace(string,    '`'+text+'\'',      '`'+latex+'\'')
-        string = replace(string,    '`'+text+' ',       '`'+latex+' ')
-        string = replace(string,    '`'+text+',',       '`'+latex+',')
-        string = replace(string,    '`'+text+'.',       '`'+latex+'.')
-        string = replace(string,    '`'+text+';',       '`'+latex+';')
-        string = replace(string,    ' '+text+'\'',      ' '+latex+'\'')
+        string = string.replace('`'+text+'\'',      '`'+latex+'\'')
+        string = string.replace('`'+text+' ',       '`'+latex+' ')
+        string = string.replace('`'+text+',',       '`'+latex+',')
+        string = string.replace('`'+text+'.',       '`'+latex+'.')
+        string = string.replace('`'+text+';',       '`'+latex+';')
+        string = string.replace(' '+text+'\'',      ' '+latex+'\'')
 
         # End of the line.
-        substring = replace(string[-len(text)-1:],    ' '+text,      ' '+latex)
+        substring = string[-len(text)-1:].replace(' '+text,      ' '+latex)
         string = string[0:-len(text)-1] + substring
 
-        substring = replace(string[-len(text)-1:],    '.'+text,      '.'+latex)
+        substring = string[-len(text)-1:].replace('.'+text,      '.'+latex)
         string = string[0:-len(text)-1] + substring
 
-        string = replace(string,    ' '+text+'\n',      ' '+latex+'\n')
-        string = replace(string,    '.'+text+'\n',      '.'+latex+'\n')
+        string = string.replace(' '+text+'\n',      ' '+latex+'\n')
+        string = string.replace('.'+text+'\n',      '.'+latex+'\n')
 
         # Maths
-        string = replace(string,    ' '+text+'\^',      ' '+latex+'\^')
-        string = replace(string,    '('+text+'\^',      '('+latex+'\^')
-        string = replace(string,    '\n'+text+'\^',     '\n'+latex+'\^')
+        string = string.replace(' '+text+'\^',      ' '+latex+'\^')
+        string = string.replace('('+text+'\^',      '('+latex+'\^')
+        string = string.replace('\n'+text+'\^',     '\n'+latex+'\^')
 
         # At the start of the line.
         if search('^'+text+'['+punctuation+']', string) or search('^'+text+'['+whitespace+']', string) or search('\n'+text+'['+punctuation+']', string) or search('\n'+text+'['+whitespace+']', string):
-            string = replace(string,    text+' ',           latex+' ')
-            string = replace(string,    text+',',           latex+',')
-            string = replace(string,    text+'.',           latex+'.')
-            string = replace(string,    text+';',           latex+';')
-            string = replace(string,    text+']',           latex+']')
-            string = replace(string,    text+')',           latex+')')
-            string = replace(string,    text+'^',           latex+'^')
-            string = replace(string,    text+'\\',          latex+'\\')
-            string = replace(string,    text+'\'',          latex+'\'')
-            string = replace(string,    text+'\n',          latex+'\n')
+            string = string.replace(text+' ',           latex+' ')
+            string = string.replace(text+',',           latex+',')
+            string = string.replace(text+'.',           latex+'.')
+            string = string.replace(text+';',           latex+';')
+            string = string.replace(text+']',           latex+']')
+            string = string.replace(text+')',           latex+')')
+            string = string.replace(text+'^',           latex+'^')
+            string = string.replace(text+'\\',          latex+'\\')
+            string = string.replace(text+'\'',          latex+'\'')
+            string = string.replace(text+'\n',          latex+'\n')
 
 
         # Return the string.
@@ -753,10 +781,10 @@ class Fetch_docstrings:
         new_text = ''
 
         # Split the string.
-        self.words = split(text, ' ')
+        self.words = text.split(' ')
 
         # Loop over the words one by one.
-        for i in xrange(len(self.words)):
+        for i in range(len(self.words)):
             # Indexing.
             self.indexing(i, bold=bold)
 

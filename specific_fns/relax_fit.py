@@ -31,13 +31,13 @@ from re import match, search
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from dep_check import C_module_exp_fn
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -94,7 +94,7 @@ class Relax_fit(API_base, API_common):
         param_vector = []
 
         # Loop over the model parameters.
-        for i in xrange(len(spin.params)):
+        for i in range(len(spin.params)):
             # Relaxation rate.
             if spin.params[i] == 'Rx':
                 if sim_index != None:
@@ -146,7 +146,7 @@ class Relax_fit(API_base, API_common):
             return scaling_matrix
 
         # Loop over the parameters.
-        for i in xrange(len(spin.params)):
+        for i in range(len(spin.params)):
             # Relaxation rate.
             if spin.params[i] == 'Rx':
                 pass
@@ -402,7 +402,7 @@ class Relax_fit(API_base, API_common):
         j = 0
 
         # Loop over the parameters.
-        for k in xrange(len(spin.params)):
+        for k in range(len(spin.params)):
             # Relaxation rate.
             if spin.params[k] == 'Rx':
                 # Rx >= 0.
@@ -725,7 +725,7 @@ class Relax_fit(API_base, API_common):
                 # Reconstruct the error data structure.
                 lm_error = zeros(len(spin.relax_times), float64)
                 index = 0
-                for k in xrange(len(spin.relax_times)):
+                for k in range(len(spin.relax_times)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 
@@ -803,17 +803,25 @@ class Relax_fit(API_base, API_common):
                 spin.warning = warning
 
 
-    def overfit_deselect(self):
-        """Deselect spins which have insufficient data to support minimisation."""
+    def overfit_deselect(self, data_check=True, verbose=True):
+        """Deselect spins which have insufficient data to support minimisation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
+        """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        if verbose:
+            print("\nOver-fit spin deselection:")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
+        deselect_flag = False
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -823,17 +831,23 @@ class Relax_fit(API_base, API_common):
             if not hasattr(spin, 'intensities'):
                 warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
                 spin.select = False
+                deselect_flag = True
                 continue
 
             # Require 3 or more data points.
             elif len(spin.intensities) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data, 3 or more data points are required'))
                 spin.select = False
+                deselect_flag = True
                 continue
 
             # Check that the number of relaxation times is complete.
             if len(spin.intensities) != len(cdp.relax_times):
-                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.spectrum_ids))
+                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.relax_times.keys()))
+
+        # Final printout.
+        if verbose and not deselect_flag:
+            print("No spins have been deselected.")
 
 
     def return_data(self, spin):

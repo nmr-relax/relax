@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 from unittest import TestCase
 
 # relax module imports.
-import molecule
+from test_suite.unit_tests._generic_fns import molecule
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 
 

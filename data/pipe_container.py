@@ -24,15 +24,15 @@ from re import match
 from warnings import warn
 
 # relax module imports.
-from align_tensor import AlignTensorList
-from diff_tensor import DiffTensorData
-from exp_info import ExpInfo
+from data.align_tensor import AlignTensorList
+from data.diff_tensor import DiffTensorData
+from data.exp_info import ExpInfo
+from data.interatomic import InteratomList
+from data.mol_res_spin import MoleculeList
+from data.prototype import Prototype
+from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 import generic_fns
-from interatomic import InteratomList
-from mol_res_spin import MoleculeList
-from prototype import Prototype
 from relax_errors import RelaxFromXMLNotEmptyError
-from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 from relax_warnings import RelaxWarning
 
 

@@ -31,6 +31,7 @@ from warnings import warn
 import generic_fns
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
 from generic_fns import pipes
+from generic_fns.result_files import add_result_file
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from relax_io import get_file_path, open_write_file, test_binary
 from relax_warnings import RelaxWarning
@@ -211,18 +212,23 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 y_err = [y_err]
 
             # A new spin type (one data set per spin type).
-            if not data_list and not data_dict and spin.name not in spin_names:
-                # Append a new set structure.
-                data[0].append([])
+            if not data_list and not data_dict:
+                if spin.name not in spin_names:
+                    # Append a new set structure.
+                    data[0].append([])
 
-                # Append the label.
-                set_labels.append("%s spins. " % spin.name + set_label)
+                    # Append the label.
+                    set_labels.append("%s spins. " % spin.name + set_label)
 
-                # Add the spin name to the list.
-                spin_names.append(spin.name)
+                    # Add the spin name to the list.
+                    spin_names.append(spin.name)
 
-                # The set index.
-                index = i * len(spin_names) + spin_names.index(spin.name)
+                    # The set index.
+                    index = i * len(spin_names) + spin_names.index(spin.name)
+
+                # Existing spin type, so change the index to match the correct data category (fix for bug #20120, https://gna.org/bugs/?20120).
+                else:
+                    index = spin_names.index(spin.name)
 
             # Loop over the points.
             for j in range(len(x_val)):
@@ -416,11 +422,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     file.close()
 
     # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    cdp.result_files.append(['grace', 'Grace', file_path])
-    status.observers.result_file.notify()
-
+    add_result_file(type='grace', label='Grace', file=file_path)
 
 
 def write_xy_data(data, file=None, graph_type=None, norm=False):
@@ -683,8 +685,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         if symbols:
             file.write("@    s%i symbol %i\n" % (i, symbols[i]))
         else:
-            # The symbol number (between 1 and 10).
-            num = (i+1) - (i+1) / 11 * 10
+            # The symbol number (cycle between 1 and 10).
+            num = i % 10 + 1
 
             # Write out.
             file.write("@    s%i symbol %i\n" % (i, num))

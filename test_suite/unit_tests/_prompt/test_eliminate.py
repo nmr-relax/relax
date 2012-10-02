@@ -27,8 +27,8 @@ from prompt.interpreter import Interpreter
 from relax_errors import RelaxNoneFunctionError, RelaxNoneTupleError
 
 # Unit test imports.
-from container import Container
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.container import Container
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 

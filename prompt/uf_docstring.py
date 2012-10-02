@@ -24,12 +24,11 @@
 
 # Python module imports.
 from copy import deepcopy
-from string import split
 from textwrap import wrap
 
 # relax module imports.
 import ansi
-import help
+import prompt.help
 from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -141,9 +140,9 @@ def create_table(label):
         col_wrap = [True] * num_cols
 
         # Loop.
-        while 1:
+        while True:
             # The average column width.
-            ave_width = free_space_wrap / num_cols_wrap
+            ave_width = int(free_space_wrap / num_cols_wrap)
 
             # Debugging printout.
             if status.debug:

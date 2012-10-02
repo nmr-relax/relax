@@ -179,7 +179,7 @@ def format_table(table):
         col_wrap = [True] * num_cols
 
         # Loop.
-        while 1:
+        while True:
             # The average column width.
             ave_width = free_space_wrap / num_cols_wrap
 
@@ -307,7 +307,9 @@ def protected_exec(fn, *args, **kargs):
         apply(fn, args, kargs)
 
     # Catch RelaxErrors.
-    except AllRelaxErrors, instance:
+    except AllRelaxErrors:
+        instance = sys.exc_info()[1]
+
         # Raise the error in debugging mode.
         if status.debug:
             raise

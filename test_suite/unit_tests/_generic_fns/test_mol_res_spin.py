@@ -899,8 +899,8 @@ class Test_mol_res_spin(UnitTestCase):
 
         # Check the list elements.
         self.assertEqual(len(list), 2)
-        self.assertEqual(list[0], 'CA')
-        self.assertEqual(list[1], 'N')
+        self.assertEqual(list[0], 'N')
+        self.assertEqual(list[1], 'CA')
 
 
     def test_parse_token_multi_element_num_name(self):
@@ -1714,7 +1714,7 @@ class Test_mol_res_spin(UnitTestCase):
 
         # The residues.
         self.assertEqual(len(sel), 3)
-        for i in xrange(3):
+        for i in range(3):
             self.assertEqual(sel[i].name, names[i])
             self.assertEqual(sel[i].num, numbers[i])
 

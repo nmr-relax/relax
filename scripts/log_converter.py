@@ -45,7 +45,7 @@ for line in lines:
         continue
 
     # The 'Changed paths' line.
-    if search('^Changed', line):
+    if search('^Changed paths:', line):
         continue
 
     # Files and svn message.

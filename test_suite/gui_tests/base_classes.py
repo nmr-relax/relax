@@ -25,7 +25,10 @@
 # Python module imports.
 from math import pi    # This is needed for relax scripts as pi is located in the relax prompt namespace.
 from os import sep
-import Queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 from shutil import rmtree
 from tempfile import mktemp, mkdtemp
 from unittest import TestCase
@@ -152,7 +155,7 @@ class GuiTestCase(TestCase):
             self.fail()
 
         # No exception.
-        except Queue.Empty:
+        except queue.Empty:
             pass
 
 

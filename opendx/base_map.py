@@ -64,7 +64,7 @@ class Base_Map:
         self.map_bounds = []
         self.return_conversion_factor = []
         self.return_units = []
-        for i in xrange(self.n):
+        for i in range(self.n):
             self.map_bounds.append(get_specific_fn('map_bounds', cdp.pipe_type))
             self.return_conversion_factor.append(get_specific_fn('return_conversion_factor', cdp.pipe_type))
             self.return_units.append(get_specific_fn('return_units', cdp.pipe_type))
@@ -76,7 +76,7 @@ class Base_Map:
         self.get_param_names()
 
         # Specific function setup (for diffusion tensor parameters).
-        for i in xrange(self.n):
+        for i in range(self.n):
             if self.diff_params[i]:
                 self.map_bounds[i] = diffusion_tensor.map_bounds
                 self.return_conversion_factor[i] = diffusion_tensor.return_conversion_factor
@@ -91,7 +91,7 @@ class Base_Map:
 
         # Get the default map bounds.
         self.bounds = zeros((self.n, 2), float64)
-        for i in xrange(self.n):
+        for i in range(self.n):
             # Get the bounds for the parameter i.
             bounds = self.map_bounds[i](self.param_names[i], self.spin_id)
 
@@ -219,7 +219,7 @@ class Base_Map:
 
         # Calculate the coordinate values.
         coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
-        for i in xrange(self.n):
+        for i in range(self.n):
             point_file.write("%-15.5g" % coords[i])
         point_file.write("1\n")
 
@@ -248,10 +248,10 @@ class Base_Map:
 
         # Corners.
         self.corners = "{[0"
-        for i in xrange(self.n - 1):
+        for i in range(self.n - 1):
             self.corners = self.corners + " 0"
         self.corners = self.corners + "] [" + repr(self.inc)
-        for i in xrange(self.n - 1):
+        for i in range(self.n - 1):
             self.corners = self.corners + " "  + repr(self.inc)
         self.corners = self.corners + "]}"
 
@@ -281,7 +281,7 @@ class Base_Map:
         self.param_names = []
 
         # Loop over the parameters.
-        for i in xrange(self.n):
+        for i in range(self.n):
             # Get the parameter name.
             name = self.return_data_name(self.params[i])
 
@@ -315,7 +315,7 @@ class Base_Map:
         loc_inc = float(self.inc) / float(self.axis_incs)
 
         # Loop over the parameters
-        for i in xrange(self.n):
+        for i in range(self.n):
             # Parameter conversion factors.
             factor = self.return_conversion_factor[i](self.param_names[i])
 
@@ -338,7 +338,7 @@ class Base_Map:
             val_inc = (self.bounds[i, 1] - self.bounds[i, 0]) / (self.axis_incs * factor)
 
             string = ""
-            for j in xrange(self.axis_incs + 1):
+            for j in range(self.axis_incs + 1):
                 string = string + "\"" + "%.2f" % vals + "\" "
                 vals = vals + val_inc
             self.tick_values.append("{" + string + "}")
@@ -346,7 +346,7 @@ class Base_Map:
             # Tick locations.
             string = ""
             val = 0.0
-            for j in xrange(self.axis_incs + 1):
+            for j in range(self.axis_incs + 1):
                 string = string + " " + repr(val)
                 val = val + loc_inc
             self.tick_locations.append("{" + string + " }")

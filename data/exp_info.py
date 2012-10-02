@@ -23,7 +23,7 @@
 """Module holding the experimental information data container."""
 
 # relax module imports.
-from data_classes import RelaxListType, Element
+from data.data_classes import RelaxListType, Element
 from relax_errors import RelaxError
 
 

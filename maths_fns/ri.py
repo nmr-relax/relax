@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,8 +21,8 @@
 
 
 # relax module imports.
-from ri_comps import r1_comps, dr1_comps, d2r1_comps
-from ri_prime import func_ri_prime
+from maths_fns.ri_comps import r1_comps, dr1_comps, d2r1_comps
+from maths_fns.ri_prime import func_ri_prime
 
 
 # Calculate the NOE value.

@@ -24,7 +24,11 @@
 
 # Python module imports.
 from os import sep
-import wx
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_OPEN
+else:
+    FD_OPEN = -1
 
 # relax module imports.
 from generic_fns import spectrum
@@ -124,7 +128,7 @@ table.add_row(["Volumes", "All replicated + variance averaging", "One sigma per 
 uf.desc[-1].add_table(table.label)
 # Peak heights with baseplane noise RMSD.
 uf.desc.append(Desc_container("Peak heights with baseplane noise RMSD"))
-uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd() user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.")
+uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.")
 # Peak heights with partially replicated spectra.
 uf.desc.append(Desc_container("Peak heights with partially replicated spectra"))
 uf.desc[-1].add_paragraph("When spectra are replicated, the variance for a single spin at a single replicated spectra set is calculated by the formula")
@@ -207,7 +211,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the intensity data.",
-    wiz_filesel_style = wx.FD_OPEN
+    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

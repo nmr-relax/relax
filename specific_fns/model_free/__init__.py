@@ -35,16 +35,16 @@ __all__ = [ 'bmrb',
 ]
 
 # relax module imports.
-from bmrb import Bmrb
 from generic_fns import diffusion_tensor, relax_data
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
 from physical_constants import N15_CSA, NH_BOND_LENGTH
-from pymol import Pymol
-from results import Results
 from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common
+from specific_fns.model_free.bmrb import Bmrb
+from specific_fns.model_free.main import Model_free_main
+from specific_fns.model_free.mf_minimise import Mf_minimise
+from specific_fns.model_free.molmol import Molmol
+from specific_fns.model_free.pymol import Pymol
+from specific_fns.model_free.results import Results
 
 
 class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_common):

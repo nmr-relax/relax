@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,9 +21,6 @@
 
 """Script for converting the model-free results into a CSV table."""
 
-
-# Python module imports.
-from string import replace
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop

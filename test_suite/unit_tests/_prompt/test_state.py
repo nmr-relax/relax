@@ -28,7 +28,7 @@ from test_suite.unit_tests.state_testing_base import State_base_class
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
  
 class Test_state(State_base_class, TestCase):

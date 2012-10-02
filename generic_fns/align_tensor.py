@@ -31,8 +31,8 @@ from re import search
 import sys
 
 # relax module imports.
-from angles import wrap_angles
 from data.align_tensor import AlignTensorList
+from generic_fns.angles import wrap_angles
 from generic_fns import pipes
 from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
@@ -626,7 +626,7 @@ def get_tensor_index(tensor, pipe=None):
     index = None
 
     # Loop over the tensors.
-    for i in xrange(len(dp.align_tensors)):
+    for i in range(len(dp.align_tensors)):
         if dp.align_tensors[i].name == tensor:
             index = i
 
@@ -653,7 +653,7 @@ def get_tensor_object(tensor, pipe=None):
     data = None
 
     # Loop over the tensors.
-    for i in xrange(len(cdp.align_tensors)):
+    for i in range(len(cdp.align_tensors)):
         if cdp.align_tensors[i].name == tensor:
             data = cdp.align_tensors[i]
 
@@ -930,7 +930,7 @@ def map_labels(index, params, bounds, swap, inc):
     loc_inc = inc / axis_incs
 
     # Increment over the model parameters.
-    for i in xrange(n):
+    for i in range(n):
         # Parameter conversion factors.
         factor = return_conversion_factor(params[swap[i]])
 
@@ -955,7 +955,7 @@ def map_labels(index, params, bounds, swap, inc):
         # Tick locations.
         string = "{"
         val = 0.0
-        for j in xrange(axis_incs + 1):
+        for j in range(axis_incs + 1):
             string = string + " " + repr(val)
             val = val + loc_inc
         string = string + " }"
@@ -963,7 +963,7 @@ def map_labels(index, params, bounds, swap, inc):
 
         # Tick values.
         string = "{"
-        for j in xrange(axis_incs + 1):
+        for j in range(axis_incs + 1):
             string = string + "\"" + "%.2f" % vals + "\" "
             vals = vals + val_inc
         string = string + "}"
@@ -1043,17 +1043,17 @@ def matrix_angles(basis_set=0, tensors=None):
         sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
     sys.stdout.write(":\n")
     sys.stdout.write("%8s" % '')
-    for i in xrange(tensor_num):
+    for i in range(tensor_num):
         sys.stdout.write("%8i" % i)
     sys.stdout.write("\n")
 
     # First loop.
-    for i in xrange(tensor_num):
+    for i in range(tensor_num):
         # Print out.
         sys.stdout.write("%8i" % i)
 
         # Second loop.
-        for j in xrange(tensor_num):
+        for j in range(tensor_num):
             # Dot product.
             delta = dot(matrix[i], matrix[j])
 
@@ -1411,7 +1411,7 @@ def set(tensor=None, value=None, param=None, errors=False):
     orient_values = []
 
     # Loop over the parameters.
-    for i in xrange(len(param)):
+    for i in range(len(param)):
         # Get the object name.
         param[i] = return_data_name(param[i])
 

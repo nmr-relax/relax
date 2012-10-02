@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,10 @@
 """Module for reading and writing the relax program state."""
 
 # Python module imports.
-from cPickle import dump, load
+try:
+    from cPickle import dump, load    # Python 2 import.
+except ImportError:
+    from pickle import dump, load    # Python 3 import.
 from re import search
 
 # relax module imports.
@@ -46,12 +49,14 @@ def determine_format(file):
     # 1st line.
     header = file.readline()
     header = header[:-1]    # Strip the trailing newline.
+    if hasattr(header, 'decode'):     # Python 3 byte type conversion.
+        header = header.decode()
 
     # Be nice and go back to the start of the file.
     file.seek(0)
 
     # XML.
-    if search("<\?xml", header):
+    if search(r"<\?xml", header):
         return 'xml'
 
     # Pickle.

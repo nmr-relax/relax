@@ -1,9 +1,180 @@
 % Reduced spectral density mapping.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Reduced spectral density mapping}
+\chapter{Reduced spectral density mapping} \label{ch: J(w) mapping}
 \index{reduced spectral density mapping|textbf}
 
-\textbf{\textit{Please write me!}}
+% Introduction.
+%%%%%%%%%%%%%%%
 
-Until this chapter is written please look at the sample script \texttt{`jw\_mapping.py'}.
+\section{Introduction to reduced spectral density mapping}
+
+The reduced spectral density mapping analysis is often performed when the system under study is not suitable for model-free analysis, or as a last resort if a model-free analysis fails.  The aim is to convert the relaxation data into three $J(\omega)$ values for the given field strength.  Interpretation of this data, although slightly less convoluted than the relaxation data, is still plagued by problems related to non-spherical diffusion and much care must be taken when making conclusions.  A full understanding of the model-free analysis and the effect of diffusion tensor anisotropy and rhombicity allows for better interpretation of the raw numbers.
+
+To understand how reduced spectral density mapping is implemented in relax, the sample script will be worked through.  This analysis type is not implemented in the GUI yet, though it shouldn't be too hard if anyone would like to contribute this and have a reference added to Chapter~\ref{ch: citations}, the citations chapter.
+
+
+% The sample script.
+%%%%%%%%%%%%%%%%%%%%
+
+\section{J(w) mapping script mode -- the sample script}
+
+\begin{exampleenv}
+\# Create the data pipe. \\
+pipe.create(pipe\_name=`my\_protein', pipe\_type=`jw') \\
+ \\
+\# Set up the 15N spins. \\
+sequence.read(file=`noe.600.out', res\_num\_col=1, res\_name\_col=2) \\
+spin.name(name=`N') \\
+spin.element(element=`N') \\
+spin.isotope(isotope=`15N', spin\_id=`@N') \\
+ \\
+\# Load the 15N relaxation data. \\
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+ \\
+\# Generate 1H spins for the magnetic dipole-dipole relaxation interaction. \\
+sequence.attach\_protons() \\
+ \\
+\# Define the magnetic dipole-dipole relaxation interaction. \\
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+ \\
+\# Define the chemical shift relaxation interaction. \\
+value.set(val=-172 * 1e-6, param=`csa') \\
+ \\
+\# Select the frequency. \\
+jw\_mapping.set\_frq(frq=600.0 * 1e6) \\
+ \\
+\# Reduced spectral density mapping. \\
+calc() \\
+ \\
+\# Monte Carlo simulations (well, bootstrapping as this is a calculation and not a fit!). \\
+monte\_carlo.setup(number=500) \\
+monte\_carlo.create\_data() \\
+calc() \\
+monte\_carlo.error\_analysis() \\
+ \\
+\# Create grace files. \\
+grace.write(y\_data\_type=`j0', file=`j0.agr', force=True) \\
+grace.write(y\_data\_type=`jwx', file=`jwx.agr', force=True) \\
+grace.write(y\_data\_type=`jwh', file=`jwh.agr', force=True) \\
+ \\
+\# View the grace files. \\
+grace.view(file=`j0.agr') \\
+grace.view(file=`jwx.agr') \\
+grace.view(file=`jwh.agr') \\
+ \\
+\# Write out the values. \\
+value.write(param=`j0', file=`j0.txt', force=True) \\
+value.write(param=`jwx', file=`jwx.txt', force=True) \\
+value.write(param=`jwh', file=`jwh.txt', force=True) \\
+ \\
+\# Finish. \\
+results.write(file=`results', force=True) \\
+state.save(`save', force=True)
+\end{exampleenv}
+
+
+
+% Data pipe and spin system setup.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{J(w) mapping script mode -- data pipe and spin system setup}
+
+The steps for setting up relax and the data model concept are described in full detail in Chapter~\ref{ch: data model}.  The first step, as for all analyses in relax, is to create a data pipe for storing all the data:
+
+\begin{exampleenv}
+pipe.create(pipe\_name=`my\_protein', pipe\_type=`jw')
+\end{exampleenv}
+
+Then, in this example, the $^{15}$N spins are created from one of the NOE relaxation data files (Chapter~\ref{ch: NOE}):
+
+\begin{exampleenv}
+sequence.read(file=`noe.600.out', res\_num\_col=1, res\_name\_col=2) \\
+spin.name(name=`N') \\
+spin.element(element=`N') \\
+spin.isotope(isotope=`15N', spin\_id=`@N')
+\end{exampleenv}
+
+Skipping the relaxation data loading, the next part of the analysis is to create protons attached to the nitrogens for the magnetic dipole-dipole relaxation interaction:
+
+\begin{exampleenv}
+sequence.attach\_protons()
+\end{exampleenv}
+
+This is needed to define the magnetic dipole-dipole interaction which governs relaxation.
+
+
+
+% Relaxation data loading.
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{J(w) mapping script mode -- relaxation data loading}
+
+The loading of relaxation data is straight forward.  This is performed prior to the creation of the proton spins so that the data is loaded only into the $^{15}$N spin containers and not both spins for each residue.  Only data for a single field strength can be loaded:
+
+\begin{exampleenv}
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4)
+\end{exampleenv}
+
+The frequency of the data must also be explicitly specified:
+
+\begin{exampleenv}
+jw\_mapping.set\_frq(frq=600.0 * 1e6) \\
+\end{exampleenv}
+
+
+
+% Relaxation interactions.
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{J(w) mapping script mode -- relaxation interactions}
+
+Prior to calculating the $J(\omega)$ values, the physical interactions which govern relaxation of the spins must be defined.  For the magnetic dipole-dipole relaxation interaction, the user functions are:
+
+\begin{exampleenv}
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10)
+\end{exampleenv}
+
+For the chemical shift relaxation interaction, the user function call is:
+
+\begin{exampleenv}
+value.set(val=-172 * 1e-6, param=`csa')
+\end{exampleenv}
+
+
+
+% Calculation and error propagation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{J(w) mapping script mode -- calculation and error propagation}
+
+Optimisation for this analysis is not needed as this is a direct calculation.  Therefore the $J(\omega)$ values are simply calculated with the call:
+
+\begin{exampleenv}
+calc()
+\end{exampleenv}
+
+The propagation of errors is more complicated.  The Monte Carlo simulation framework of relax can be used to propagate the relaxation data errors to the spectral density errors.  As this is a direct calculation, this collapses into the standard bootstrapping method.  The normal Monte Carlo user functions can be called:
+
+\begin{exampleenv}
+monte\_carlo.setup(number=500) \\
+monte\_carlo.create\_data() \\
+calc() \\
+monte\_carlo.error\_analysis()
+\end{exampleenv}
+
+In this case, the \uf{monte\_carlo.initial\_values} user function call is not required.
+
+
+% Visualisation and data output.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{J(w) mapping script mode -- visualisation and data output}
+
+The rest of the script is used to output the results to 2D Grace files for visualisation (the \uf{grace.view} user function calls will launch Grace with the created files), and the output of the values into plain text files.
