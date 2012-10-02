@@ -903,7 +903,7 @@ class FieldLine:
                 self.nodes[i]['t'] /= length
         # add corner tag to all nodes
         for i, node in enumerate(self.nodes):
-            if not node.has_key('corner'):
+            if not 'corner' in node:
                 self.nodes[i]['corner'] = False
  
     def get_position(self, t):

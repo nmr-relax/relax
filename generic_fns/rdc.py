@@ -138,7 +138,7 @@ def convert(value, align_id, to_intern=False):
 
     # The conversion factor.
     factor = 1.0
-    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == '2D':
+    if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == '2D':
         # Convert from 2D to D.
         if to_intern:
             factor = 2.0
@@ -268,17 +268,17 @@ def delete(align_id=None):
         cdp.rdc_ids.pop(cdp.rdc_ids.index(id))
 
         # The data type.
-        if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(id):
+        if hasattr(cdp, 'rdc_data_types') and id in cdp.rdc_data_types:
             cdp.rdc_data_types.pop(id)
 
         # The interatomic data.
         for interatom in interatomic_loop():
             # The data.
-            if hasattr(interatom, 'rdc') and interatom.rdc.has_key(id):
+            if hasattr(interatom, 'rdc') and id in interatom.rdc:
                 interatom.rdc.pop(id)
 
             # The error.
-            if hasattr(interatom, 'rdc_err') and interatom.rdc_err.has_key(id):
+            if hasattr(interatom, 'rdc_err') and id in interatom.rdc_err:
                 interatom.rdc_err.pop(id)
 
         # Clean the global data.
@@ -333,13 +333,13 @@ def q_factors(spin_id=None):
             interatom_count += 1
 
             # Data checks.
-            if hasattr(interatom, 'rdc') and interatom.rdc.has_key(align_id):
+            if hasattr(interatom, 'rdc') and align_id in interatom.rdc:
                 rdc_data = True
-            if hasattr(interatom, 'rdc_bc') and interatom.rdc_bc.has_key(align_id):
+            if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
                 rdc_bc_data = True
 
             # Skip containers without RDC data.
-            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not interatom.rdc.has_key(align_id) or interatom.rdc[align_id] == None or not interatom.rdc_bc.has_key(align_id) or interatom.rdc_bc[align_id] == None:
+            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or interatom.rdc[align_id] == None or not align_id in interatom.rdc_bc or interatom.rdc_bc[align_id] == None:
                 continue
 
             # Get the spins.
@@ -453,7 +453,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     # Store the data type as global data (need for the conversion of RDC data).
     if not hasattr(cdp, 'rdc_data_types'):
         cdp.rdc_data_types = {}
-    if not cdp.rdc_data_types.has_key(align_id):
+    if not align_id in cdp.rdc_data_types:
         cdp.rdc_data_types[align_id] = data_type
 
     # Spin specific data.

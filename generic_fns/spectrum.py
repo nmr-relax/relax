@@ -314,7 +314,7 @@ def __errors_repl(verbosity=0):
             continue
 
         # Skip replicated spectra which already have been used.
-        if cdp.var_I.has_key(id) and cdp.var_I[id] != 0.0:
+        if id in cdp.var_I and cdp.var_I[id] != 0.0:
             continue
 
         # The replicated spectra.
@@ -345,7 +345,7 @@ def __errors_repl(verbosity=0):
             # Missing data.
             missing = False
             for j in range(num_spectra):
-                if not spin.intensities.has_key(spectra[j]):
+                if not spectra[j] in spin.intensities:
                     missing = True
             if missing:
                 continue
@@ -374,7 +374,7 @@ def __errors_repl(verbosity=0):
                 print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
 
             # Sum of variances (for average).
-            if not cdp.var_I.has_key(id):
+            if not id in cdp.var_I:
                 cdp.var_I[id] = 0.0
             cdp.var_I[id] = cdp.var_I[id] + var_I
             count = count + 1
@@ -557,7 +557,7 @@ def delete(spectrum_id=None):
     cdp.spectrum_ids.pop(cdp.spectrum_ids.index(spectrum_id))
 
     # The ncproc parameter.
-    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+    if hasattr(cdp, 'ncproc') and spectrum_id in cdp.ncproc:
         del cdp.ncproc[spectrum_id]
 
     # Replicates.
@@ -578,15 +578,15 @@ def delete(spectrum_id=None):
                 break
 
     # Errors.
-    if hasattr(cdp, 'sigma_I') and cdp.sigma_I.has_key(spectrum_id):
+    if hasattr(cdp, 'sigma_I') and spectrum_id in cdp.sigma_I:
         del cdp.sigma_I[spectrum_id]
-    if hasattr(cdp, 'var_I') and cdp.var_I.has_key(spectrum_id):
+    if hasattr(cdp, 'var_I') and spectrum_id in cdp.var_I:
         del cdp.var_I[spectrum_id]
 
     # Loop over the spins.
     for spin in spin_loop():
         # Intensity data.
-        if hasattr(spin, 'intensities') and spin.intensities.has_key(spectrum_id):
+        if hasattr(spin, 'intensities') and spectrum_id in spin.intensities:
             del spin.intensities[spectrum_id]
 
 

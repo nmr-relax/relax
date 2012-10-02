@@ -516,7 +516,7 @@ class Internal(Base_struct_API):
 
         # Loop over all atoms to find the indices.
         for index in res_atoms:
-            if indices.has_key(mol.atom_name[index]):
+            if mol.atom_name[index] in indices:
                 indices[mol.atom_name[index]] = index
 
         # Connect the atom pairs.

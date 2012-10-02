@@ -318,7 +318,7 @@ class dAuvergne_protocol:
         if not isinstance(self.diff_tensor_grid_inc, dict):
             raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should be a dictionary." % self.diff_tensor_grid_inc)
         for tensor in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
-            if not self.diff_tensor_grid_inc.has_key(tensor):
+            if not tensor in self.diff_tensor_grid_inc:
                 raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the '%s' key." % (self.diff_tensor_grid_inc, tensor))
             if not isinstance(self.diff_tensor_grid_inc[tensor], int):
                 raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  The value corresponding to the key '%s' should be an integer." % (self.diff_tensor_grid_inc, tensor))
