@@ -516,7 +516,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         raise RelaxError("If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None.")
 
     # Minimum number of columns.
-    min_col_num = max(spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+    min_col_num = max(filter(None, [spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col]))
 
     # Extract the data from the file.
     if not file_data:
