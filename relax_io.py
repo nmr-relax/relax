@@ -149,7 +149,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
 
     # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
     data = []
-    for i in xrange(len(file_data)):
+    for i in range(len(file_data)):
         if sep:
             row = file_data[i].split(sep)
         else:
@@ -673,7 +673,7 @@ def strip(data, comments=True):
     new = []
 
     # Loop over the data.
-    for i in xrange(len(data)):
+    for i in range(len(data)):
         # Empty lines.
         if len(data[i]) == 0:
             continue
@@ -1079,7 +1079,7 @@ class DummyFileObject:
             lines.pop()
 
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             lines[i] = lines[i] + '\n'
 
         # Return the file lines.

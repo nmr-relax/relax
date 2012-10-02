@@ -42,7 +42,7 @@ times = [
 ]
 
 # Loop over the spectra.
-for i in xrange(len(times)):
+for i in range(len(times)):
     # Load the peak intensities.
     spectrum.read_intensities(file='heights_R1.txt', spectrum_id=names[i], int_method='height', res_num_col=2, res_name_col=1, int_col=i+3)
 

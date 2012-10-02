@@ -192,7 +192,7 @@ times = [ \\
 ] \\
  \\
 \# Loop over the spectra. \\
-for i in xrange(len(names)): \\
+for i in range(len(names)): \\
 \hspace*{4ex} \# Load the peak intensities. \\
 \hspace*{4ex} spectrum.read\_intensities(file=names[i]+`.list', dir=data\_path, spectrum\_id=names[i], int\_method=`height') \\
  \\

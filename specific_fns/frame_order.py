@@ -1385,7 +1385,7 @@ class Frame_order(API_base, API_common):
             sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Copy and append the data.
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 
@@ -1401,7 +1401,7 @@ class Frame_order(API_base, API_common):
             sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Copy and append the data.
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 

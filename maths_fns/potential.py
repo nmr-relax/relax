@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -51,7 +51,7 @@ def quad_pot(values, pot, lower, upper):
     """
 
     # Loop over the x values.
-    for i in xrange(len(values)):
+    for i in range(len(values)):
         # First condition.
         if values[i] > upper[i]:
             pot[i] = (values[i] - upper[i])**2

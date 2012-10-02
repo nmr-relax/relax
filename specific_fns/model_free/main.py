@@ -63,7 +63,7 @@ class Model_free_main:
             return
 
         # Loop over the model-free parameters.
-        for j in xrange(len(spin.params)):
+        for j in range(len(spin.params)):
             # Local tm.
             if spin.params[j] == 'local_tm' and spin.local_tm == None:
                 return spin.params[j]
@@ -246,7 +246,7 @@ class Model_free_main:
                     continue
 
                 # Loop over the model-free parameters.
-                for i in xrange(len(spin.params)):
+                for i in range(len(spin.params)):
                     # local tm.
                     if spin.params[i] == 'local_tm':
                         if sim_index == None:
@@ -322,7 +322,7 @@ class Model_free_main:
                         raise RelaxError("Unknown parameter.")
 
         # Replace all instances of None with 0.0 to allow the list to be converted to a numpy array.
-        for i in xrange(len(param_vector)):
+        for i in range(len(param_vector)):
             if param_vector[i] == None:
                 param_vector[i] = 0.0
 
@@ -410,7 +410,7 @@ class Model_free_main:
                     continue
 
                 # Loop over the model-free parameters.
-                for k in xrange(len(spin.params)):
+                for k in range(len(spin.params)):
                     # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
                     if spin.params[k] == 'local_tm' or search('^t', spin.params[k]):
                         scaling_matrix[i, i] = ti_scaling
@@ -559,7 +559,7 @@ class Model_free_main:
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
-        for i in xrange(len(params)):
+        for i in range(len(params)):
             # Invalid parameter flag.
             invalid_param = 0
 
@@ -572,7 +572,7 @@ class Model_free_main:
 
                 # Does the array contain S2s.
                 s2s_flag = 0
-                for j in xrange(len(params)):
+                for j in range(len(params)):
                     if params[j] == 's2s':
                         s2s_flag = 1
                 if s2s_flag:
@@ -587,7 +587,7 @@ class Model_free_main:
 
                 # Does the array contain the parameter S2.
                 s2_flag = 0
-                for j in xrange(len(params)):
+                for j in range(len(params)):
                     if params[j] == 's2':
                         s2_flag = 1
                 if not s2_flag:
@@ -616,7 +616,7 @@ class Model_free_main:
 
                 # Does the array contain the parameter S2f.
                 s2f_flag = 0
-                for j in xrange(len(params)):
+                for j in range(len(params)):
                     if params[j] == 's2f':
                         s2f_flag = 1
                 if not s2f_flag:
@@ -631,7 +631,7 @@ class Model_free_main:
 
                 # Does the array contain the parameter S2 or S2s.
                 flag = 0
-                for j in xrange(len(params)):
+                for j in range(len(params)):
                     if params[j] == 's2' or params[j] == 's2f':
                         flag = 1
                 if not flag:
@@ -2360,7 +2360,7 @@ class Model_free_main:
             sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Get the object.
                 object = getattr(cdp, object_name)
 
@@ -2381,7 +2381,7 @@ class Model_free_main:
                 sim_object = getattr(cdp.diff_tensor, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(cdp.sim_number):
+                for j in range(cdp.sim_number):
                     # Copy and append the data.
                     sim_object.append(deepcopy(getattr(cdp.diff_tensor, object_name)))
 
@@ -2404,7 +2404,7 @@ class Model_free_main:
                     sim_object = getattr(spin, sim_object_name)
 
                     # Loop over the simulations.
-                    for j in xrange(cdp.sim_number):
+                    for j in range(cdp.sim_number):
                         # Copy and append the data.
                         sim_object.append(deepcopy(getattr(spin, object_name)))
 
@@ -2420,7 +2420,7 @@ class Model_free_main:
                     sim_object = getattr(spin, sim_object_name)
 
                     # Loop over the simulations.
-                    for j in xrange(cdp.sim_number):
+                    for j in range(cdp.sim_number):
                         # Copy and append the data.
                         sim_object.append(deepcopy(getattr(spin, object_name)))
 

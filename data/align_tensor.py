@@ -933,7 +933,7 @@ class AlignTensorList(list):
 
         text = "Alignment tensors.\n\n"
         text = text + "%-8s%-20s\n" % ("Index", "Name")
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-20s\n" % (i, self[i].name)
         text = text + "\nThese can be accessed by typing 'pipe.align_tensor[index]'.\n"
         return text
@@ -974,7 +974,7 @@ class AlignTensorList(list):
 
         # Loop over the tensors.
         names = []
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             names.append(self[i].name)
 
         # Return the list.
@@ -1001,7 +1001,7 @@ class AlignTensorList(list):
         fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
 
         # Loop over the tensors.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for a single tensor.
             tensor_element = doc.createElement('align_tensor')
             tensor_list_element.appendChild(tensor_element)

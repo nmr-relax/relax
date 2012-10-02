@@ -108,7 +108,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Alias the line.
             line = self.lines[i]
 
@@ -121,7 +121,7 @@ class Validate:
             in_args = 0
 
             # Loop over the characters of the line.
-            for j in xrange(len(line)):
+            for j in range(len(line)):
                 # Start of the arguments.
                 if line[j] == '(':
                     in_args = in_args + 1
@@ -176,7 +176,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the classes.
             if search("^ *class ", self.lines[i]):
                 # Split the line.
@@ -276,7 +276,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the functions.
             if search("^ *def ", self.lines[i]):
                 # Skip functions without docstrings!
@@ -336,7 +336,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the classes.
             if search("^ *def ", self.lines[i]):
                 # Skip functions without docstrings!
@@ -385,7 +385,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the classes.
             if search("^ *def ", self.lines[i]):
                 # Skip functions without docstrings!
@@ -468,7 +468,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Alias the line.
             line = self.lines[i]
 
@@ -479,7 +479,7 @@ class Validate:
                 bad_spacing = 0
 
                 # Loop over the characters of the line.
-                for j in xrange(len(line)):
+                for j in range(len(line)):
                     # Start of the arguments.
                     if line[j] == '(':
                         in_args = in_args + 1
@@ -527,7 +527,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the classes.
             if search("^ *def ", self.lines[i]):
                 # Split the line.
@@ -564,7 +564,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the functions.
             if search("^ *def ", self.lines[i]) and search("\(", self.lines[i]):
                 # Count the number of blank lines before it.
@@ -611,7 +611,7 @@ class Validate:
         in_array = 0
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Alias the line.
             line = self.lines[i]
 
@@ -700,7 +700,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the functions.
             if search("^ *def ", self.lines[i]) and search("\(", self.lines[i]):
                 # Test that the next line has the text """ or ''' (and split the docstring line).
@@ -733,7 +733,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Alias the line.
             line = self.lines[i]
 
@@ -822,7 +822,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the whitespace.
             if search("\t", self.lines[i]):
                 # Initial printout.
@@ -874,7 +874,7 @@ class Validate:
         ok = 1
 
         # Loop over the file.
-        for i in xrange(len(self.lines)):
+        for i in range(len(self.lines)):
             # Find the whitespace.
             if search(" $", self.lines[i]):
                 # Initial printout.
