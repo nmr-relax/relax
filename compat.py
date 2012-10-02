@@ -28,6 +28,16 @@ import sys
 # The Python version.
 py_version = sys.version_info[0]
 
+# Python 2 hacks.
+if py_version == 2:
+    # Python 2 only imports.
+    import __builtin__
+
+    # Switch all range() calls to xrange() for increased speed and memory reduction.
+    # This should work as all range() usage for Python 3 in relax must match the old xrange() usage.
+    __builtin__.range = __builtin__.xrange
+
+
 # Python 3 work-arounds.
 if py_version == 3:
     # Python 3 only imports.
