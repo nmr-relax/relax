@@ -28,7 +28,7 @@ from os import system
 import string
 
 # relax module imports.
-import opendx.isosurface_3D
+from opendx import isosurface_3D
 from relax_errors import RelaxError
 from relax_io import test_binary
 
