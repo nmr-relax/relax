@@ -1045,11 +1045,11 @@ class DummyFileObject:
             self._newline = '\n'
             self._empty = ''
 
-        # Initialise for Python 3.
+        # Initialise for Python 3 (inside a eval statements to allow Python 2.5 and lower to parse this and run).
         elif py_version == 3:
-            self.data = b''
-            self._newline = b'\n'
-            self._empty = b''
+            self.data = eval("b''")
+            self._newline = eval("b'\n'")
+            self._empty = eval("b''")
 
         # Set the closed flag.
         self.closed = False
