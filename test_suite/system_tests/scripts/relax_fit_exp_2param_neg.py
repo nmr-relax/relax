@@ -60,7 +60,7 @@ times = [
 # Load the data twice to test data deletion.
 for iter in range(2):
     # Loop over the spectra.
-    for i in xrange(len(names)):
+    for i in range(len(names)):
         # Load the peak intensities.
         spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
 
