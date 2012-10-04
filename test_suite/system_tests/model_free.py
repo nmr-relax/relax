@@ -269,6 +269,13 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
 
 
+    def test_bug_20213_asn_sidechain(self):
+        """Bug #20213 catch, the model selection failure due to the presence of Asp and Gln sidechain N spins."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20213_asn_sidechain.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
