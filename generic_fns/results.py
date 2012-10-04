@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,6 @@
 # Python module imports.
 from os.path import dirname
 from re import search
-from string import split
 import sys
 
 # relax module imports.
@@ -48,16 +47,18 @@ def determine_format(file):
     # Header line.
     header = file.readline()
     header = header[:-1]    # Strip the trailing newline.
+    if hasattr(header, 'decode'):     # Python 3 byte type conversion.
+        header = header.decode()
 
     # Be nice and go back to the start of the file.
     file.seek(0)
 
     # XML.
-    if search("<\?xml", header):
+    if search(r"<\?xml", header):
         return 'xml'
 
     # Columnar.
-    if split(header)[0:3] == ['Num', 'Name', 'Selected']:
+    if header.split()[0:3] == ['Num', 'Name', 'Selected']:
         return 'columnar'
 
 

@@ -23,9 +23,11 @@
 """A threaded version of the relax interpreter for use by the GUI."""
 
 # Python module imports.
-from Queue import Queue
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 from re import search
-from string import split
 import sys
 from threading import Thread
 from time import sleep
@@ -113,7 +115,9 @@ class Interpreter(object):
             apply(fn, args, kwds)
 
         # Catch all RelaxErrors.
-        except AllRelaxErrors, instance:
+        except AllRelaxErrors:
+            instance = sys.exc_info()[1]
+
             # Display a dialog with the error.
             gui_raise(instance, raise_flag=False)
 
@@ -192,6 +196,8 @@ class Interpreter(object):
         @type args:     any arguments
         @param kwds:    The user function keyword arguments.
         @type kwds:     any keyword arguments
+        @return:        Whether the user function was successfully applied or not (though as this is asynchronous, this cannot be checked so True will always be returned.
+        @rtype:         bool
         """
 
         # Debugging.
@@ -203,6 +209,9 @@ class Interpreter(object):
 
         # Call the thread's method.
         self._interpreter_thread.queue(fn, *args, **kwds)
+
+        # Cannot judge if the user function was successful.
+        return True
 
 
 
@@ -299,7 +308,9 @@ class Interpreter_thread(Thread):
                 apply(fn, args, kwds)
 
             # Catch all RelaxErrors.
-            except AllRelaxErrors, instance:
+            except AllRelaxErrors:
+                instance = sys.exc_info()[1]
+
                 # Display a dialog with the error.
                 wx.CallAfter(gui_raise, instance, raise_flag=False)
 

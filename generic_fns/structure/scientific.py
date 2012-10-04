@@ -35,10 +35,10 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from api_base import Base_struct_API
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, tokenise
+from generic_fns.structure.api_base import Base_struct_API
 from relax_errors import RelaxError, RelaxPdbLoadError
 from relax_io import file_root
 from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -694,7 +694,7 @@ class Scientific_data(Base_struct_API):
             model_load_num = model_load_num + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name, file_name=file, file_path=path)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=list(range(1, len(mol_conts[0])+1)), set_mol_name=new_mol_name, file_name=file, file_path=path)
 
         # Loading worked.
         return True

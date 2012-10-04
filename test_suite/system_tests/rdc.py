@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,10 +27,10 @@
 from os import sep
 
 # relax module imports.
-from base_classes import SystemTestCase
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import count_spins
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Rdc(SystemTestCase):

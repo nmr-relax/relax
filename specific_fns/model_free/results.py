@@ -27,7 +27,6 @@ from data.diff_tensor import DiffTensorSimList
 from math import pi
 from numpy import float64, array, transpose
 from re import search
-from string import lower, replace, split
 import sys
 
 # relax module imports.
@@ -214,13 +213,13 @@ class Results:
 
             # Loop over and convert the parameters.
             if params:
-                for i in xrange(len(params)):
+                for i in range(len(params)):
                     # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
                     if params[i] == 'tm':
                         params[i] = 'local_tm'
 
                     # Lower case conversion.
-                    params[i] = lower(params[i])
+                    params[i] = params[i].lower()
 
             # Set up the model-free model.
             self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
@@ -297,7 +296,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     cdp.warning = None
                 else:
-                    cdp.warning = replace(spin_line[col['warn']], '_', ' ')
+                    cdp.warning = spin_line[col['warn']].replace('_', ' ')
 
             # Minimisation details (individual residue results).
             else:
@@ -309,7 +308,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     spin.warning = None
                 else:
-                    spin.warning = replace(spin_line[col['warn']], '_', ' ')
+                    spin.warning = spin_line[col['warn']].replace('_', ' ')
 
             # Interatomic distances.
             try:
@@ -461,7 +460,7 @@ class Results:
             # Minimisation details (global minimisation results).
             if model_type == 'diff' or model_type == 'all':
                 # The simulation index.
-                index = int(split(data_set, '_')[1])
+                index = int(data_set.split('_')[1])
 
                 # Already loaded.
                 if len(cdp.chi2_sim) == index + 1:
@@ -476,7 +475,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     cdp.warning_sim.append(None)
                 else:
-                    cdp.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
+                    cdp.warning_sim.append(spin_line[col['warn']].replace('_', ' '))
 
             # Minimisation details (individual residue results).
             else:
@@ -488,7 +487,7 @@ class Results:
                 if spin_line[col['warn']] == 'None':
                     spin.warning_sim.append(None)
                 else:
-                    spin.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
+                    spin.warning_sim.append(spin_line[col['warn']].replace('_', ' '))
 
 
     def _load_relax_data(self, spin_line, col, data_set, spin, verbosity=1):
@@ -527,7 +526,7 @@ class Results:
         errors = []
 
         # Loop over the relaxation data of the residue.
-        for i in xrange(len(ri_labels)):
+        for i in range(len(ri_labels)):
             # Determine the data and error columns for this relaxation data set.
             data_col = col['frq'] + i + 1
             error_col = col['frq'] + len(ri_labels) + i + 1
@@ -721,7 +720,7 @@ class Results:
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
                 # Extract the number from the data_set string.
-                sim_num = split(data_set, '_')
+                sim_num = data_set.split('_')
                 try:
                     sim_num = int(sim_num[1])
                 except:
@@ -803,7 +802,7 @@ class Results:
         col = {}
 
         # Loop over the columns.
-        for i in xrange(len(header)):
+        for i in range(len(header)):
             # Residue info (for relax 1.2).
             if header[i] == 'Num':
                 col['num'] = i

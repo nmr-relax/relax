@@ -80,7 +80,7 @@ def ave_rdc_5D(dj, vect, N, A, weights=None):
         weights.append(pN)
 
     # Back-calculate the RDC.
-    for c in xrange(N):
+    for c in range(N):
         val = val + weights[c] * (vect[c, 0]**2 - vect[c, 2]**2)*A[0] + (vect[c, 1]**2 - vect[c, 2]**2)*A[1] + 2.0*vect[c, 0]*vect[c, 1]*A[2] + 2.0*vect[c, 0]*vect[c, 2]*A[3] + 2.0*vect[c, 1]*vect[c, 2]*A[4]
 
     # Return the average RDC.
@@ -157,7 +157,7 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None, absolute=False):
         weights.append(pN)
 
     # Back-calculate the RDC.
-    for c in xrange(N):
+    for c in range(N):
         val = val + weights[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average RDC.
@@ -224,7 +224,7 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None, absolute=False
         weights.append(pN)
 
     # Back-calculate the RDC gradient element.
-    for c in xrange(N):
+    for c in range(N):
         grad = grad + weights[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average RDC gradient element.

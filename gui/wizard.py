@@ -160,7 +160,7 @@ class Wiz_page(wx.Panel):
         """
 
         # Execute.
-        self.exec_status = protected_exec(self.on_execute)
+        self.exec_status = self.on_execute()
 
         # Execution failure.
         if not self.exec_status:
@@ -318,6 +318,8 @@ class Wiz_page(wx.Panel):
         This method is called when terminating the wizard or hitting the apply button.
         """
 
+        return True
+
 
     def on_init(self):
         """To be over-ridden if an action is to be performed when a page is newly displayed.
@@ -331,7 +333,6 @@ class Wiz_page(wx.Panel):
 
         This method is called when moving to the next page of the wizard.
         """
-
 
 
 
@@ -472,6 +473,17 @@ class Wiz_window(wx.Dialog):
 
         # Bind some events.
         self.Bind(wx.EVT_CLOSE, self._handler_close)
+
+
+    def _apply(self, event=None):
+        """Execute the current page's 'Apply' method.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the current page's apply() method.
+        self._pages[self._current_page]._apply()
 
 
     def _build_buttons(self):

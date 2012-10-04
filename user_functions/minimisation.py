@@ -22,9 +22,6 @@
 # Module docstring.
 """The minimisation user function definitions."""
 
-# Python module imports.
-from string import split
-
 # relax module imports.
 from generic_fns import minimise
 from graphics import WIZARD_IMAGE_PATH

@@ -848,7 +848,7 @@ class FieldLine:
         if i == maxn:
             print maxn, 'integration steps exceeded at', pretty_vec(p)
         if l >= maxr:
-            print 'integration boundary',str(maxr),'exceeded at',pretty_vec(p)
+            print 'integration boundary', str(maxr), 'exceeded at', pretty_vec(p)
         return nodes
  
     def __is_loop(self, nodes, path_close_tol):
@@ -903,7 +903,7 @@ class FieldLine:
                 self.nodes[i]['t'] /= length
         # add corner tag to all nodes
         for i, node in enumerate(self.nodes):
-            if not node.has_key('corner'):
+            if not 'corner' in node:
                 self.nodes[i]['corner'] = False
  
     def get_position(self, t):
@@ -1177,7 +1177,7 @@ class Field:
             d = vabs(r)
             r /= d
             if d != 0.:
-                p = rot([0,1], quad[2])
+                p = rot([0, 1], quad[2])
                 pr = sc.dot(p, r)
                 Fxy += (((5.*pr**2 - 1.) * r - 2.*pr * p) *
                     3.*quad[3] / (4.*pi * d**4))

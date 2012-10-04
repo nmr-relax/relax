@@ -28,7 +28,7 @@ from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNo
 from test_suite.unit_tests.structure_testing_base import Structure_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_structure(Structure_base_class, TestCase):

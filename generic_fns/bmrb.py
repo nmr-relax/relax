@@ -33,6 +33,7 @@ import dep_check
 from generic_fns import exp_info
 from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_residue, return_spin, set_spin_element, set_spin_isotope
 from generic_fns.pipes import cdp_name
+from generic_fns.result_files import add_result_file
 from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
@@ -288,7 +289,4 @@ def write(file=None, dir=None, version='3.1', force=False):
 
     # Add the file to the results file list.
     if isinstance(file, str):
-        if not hasattr(cdp, 'result_files'):
-            cdp.result_files = []
-        cdp.result_files.append(['text', 'BMRB', file])
-        status.observers.result_file.notify()
+        add_result_file(type='text', label='BMRB', file=file)

@@ -141,7 +141,7 @@ def package(target, source, env):
                 continue
 
             # Add the files in the current directory to the archive.
-            for i in xrange(len(files)):
+            for i in range(len(files)):
                 # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
                 if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]) or search("\.obj$", files[i]) or search("\.lib$", files[i]) or search("\.exp$", files[i]):
                     continue

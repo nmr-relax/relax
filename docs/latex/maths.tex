@@ -1,17 +1,17 @@
 % Values, gradients, and Hessians.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Values, gradients, and Hessians} \label{ch: values, gradients, and Hessians}
+\chapter{Optimisation of relaxation data -- values, gradients, and Hessians} \label{ch: values, gradients, and Hessians}
 
 
 
 % Introduction.
 %%%%%%%%%%%%%%%
 
-\section{Introduction}
+\section{Introduction to the mathematics behind the optimisation of relaxation data}
 
 
-A word of warning before reading this chapter, the topics covered here are quite advanced and are not necessary for understanding how to either use relax or to implement any of the data analysis techniques present within relax.  The material of this chapter is intended as an in-depth explanation of the mathematics involved in the optimisation of the parameters of the model-free models.  As such it contains the chi-squared equation, relaxation equations, spectral density functions, and diffusion tensor equations as well as their gradients (the vector of first partial derivatives) and Hessians (the matrix of second partial derivatives).  All these equations are used in the optimisation of models $m0$ to $m9$; models $tm0$ to $tm9$; the ellipsoidal, spheroidal, and spherical diffusion tensors; and the combination of the diffusion tensor and the model-free models.
+A word of warning before reading this chapter, the topics covered here are quite advanced and are not necessary for understanding how to either use relax or to implement any of the data analysis techniques present within relax.  The material of this chapter is intended as an in-depth explanation of the mathematics involved in the optimisation of the parameters of the model-free models, or any theory involving relaxation data.  As such it contains the chi-squared equation, relaxation equations, spectral density functions, and diffusion tensor equations as well as their gradients (the vector of first partial derivatives) and Hessians (the matrix of second partial derivatives).  All these equations are used in the optimisation of model-free models $m0$ to $m9$; models $tm0$ to $tm9$; the ellipsoidal, spheroidal, and spherical diffusion tensors; and the combination of the diffusion tensor and the model-free models.  They also apply to all other theories involving the base $\Rone$, $\Rtwo$, and steady-state NOE relaxation rates.
 
 
 
@@ -179,7 +179,7 @@ For the single residue models of $\Mfset_i$ and $\Localset_i$ the chi-squared va
 
 % Gradient construction figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.9\textwidth, bb=143 399 494 777]{images/gradient.eps.gz}}
+\centerline{\includegraphics[width=0.9\textwidth, bb=143 399 494 777]{images/gradient}}
 \caption[The construction of the model-free gradient.]{The construction of the model-free gradient $\nabla \chi^2$ for the global model $\Space$.  For each residue $i$ a different vector $\nabla \chi^2_i$ is constructed.  The first element of the vector represented by the symbol $\partial \Diffset$ (the orange block) is the sub-vector of chi-squared partial derivatives with respect to each of the diffusion tensor parameters $\Diffset_j$.  The rest of the elements, grouped into blocks for each residue denoted by the symbol $\partial \Mfset_i$, are the sub-vectors of chi-squared partial derivatives with respect to each of the model-free parameters $\Mfset_i^j$.  For the residue dependent vector $\nabla \chi^2_i$ the partial derivatives with respect to the model-free parameters of $\Mfset_j$ where $i \ne j$ are zero.  These blocks are left uncoloured.  The complete gradient of $\Space$ is the sum of the vectors $\nabla \chi^2_i$.}\label{fig: gradient construction}
 \end{figure}
 
@@ -213,7 +213,7 @@ The model-free parameter set $\Mfset_i$ is even simpler.  In Figure~\ref{fig: gr
 
 % Hessian kite figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=61 11 585 789]{images/kite.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=61 11 585 789]{images/kite}}
 \caption[The model-free Hessian kite.]{The model-free Hessian kite -- a demonstration of the construction of the model-free Hessian $\nabla^2 \chi^2$ for the global model $\Space$.  For each residue $i$ a different matrix $\nabla^2 \chi^2_i$ is constructed.  The first element of the matrix represented by the two symbols $\partial \Diffset$ (the red block) is the sub-matrix of chi-squared second partial derivatives with respect to the diffusion tensor parameters $\Diffset_j$ and $\Diffset_k$.  The orange blocks are the sub-matrices of chi-squared second partial derivatives with respect to the diffusion parameter $\Diffset_j$ and the model-free parameter $\Mfset_i^k$.  The yellow blocks are the sub-matrices of chi-squared second partial derivatives with respect to the model-free parameters $\Mfset_i^j$ and $\Mfset_i^k$.  For the residue dependent matrix $\nabla^2 \chi^2_i$ the second partial derivatives with respect to the model-free parameters $\Mfset_l^j$ and $\Mfset_l^k$ where $i \ne l$ are zero.  In addition, the second partial derivatives with respect to the model-free parameters $\Mfset_i^j$ and $\Mfset_l^k$ where $i \ne l$ are also zero.  These blocks of sub-matrices are left uncoloured.  The complete Hessian of $\Space$ is the sum of the matrices $\nabla^2 \chi^2_i$.}\label{fig: Hessian kite}
 \end{figure}
 
@@ -235,7 +235,7 @@ The dependency chain which was outlined in the model-free chapter -- that the ch
 
 % Dependency figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 226 110]{images/dependencies.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 226 110]{images/dependencies}}
 \caption[$\chi^2$ dependencies of the values, gradients, and Hessians.]{Dependencies between the $\chi^2$, transformed relaxation, relaxation, and spectral density equations, gradients, and Hessians.}\label{fig: dependencies}
 \end{figure}
 

@@ -1,6 +1,6 @@
 The following is a checklist for the migration from Python 2.x to Python 3.x.  Only changes which allow relax to run on both versions will currently be applied.  This is performed by the 2to3 program that comes with Python 3.x and the syntax used is:
 
-2to3 -w relax . -f xxx
+2to3 -w . -f xxx
 
 where xxx is the transformation being applied.
 
@@ -83,7 +83,7 @@ This needs to be carefully checked before committing.
 -x long \
 -x numliterals \
 -x xrange \
-relax .
+.
 
 
 Deadly 3.0 update command
@@ -96,4 +96,4 @@ Deadly 3.0 update command
 -f long \
 -f numliterals \
 -f xrange \
-relax .
+.

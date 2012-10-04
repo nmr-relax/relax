@@ -54,7 +54,7 @@ TODO: Split out runner part from search part.
 """
 
 from copy import copy
-import os, re, string, sys, unittest, traceback
+import os, re, sys, unittest, traceback
 from optparse import OptionParser
 from textwrap import dedent
 
@@ -181,12 +181,13 @@ def get_common_prefix(path1, path2):
     """
 
     result_path = []
-    for elem1, elem2 in map(None, path1, path2):
-        if elem1 == None or elem2 == None:
+    size = min(len(path1), len(path2))
+    for i in range(size):
+        if path1[i] == None or path2[i] == None:
             break
 
-        if elem1 == elem2:
-          result_path.append(elem1)
+        if path1[i] == path2[i]:
+          result_path.append(path1[i])
     return result_path
 
 
@@ -371,7 +372,7 @@ class Test_finder:
 
                 # Build the class name from the file name.
                 module_name = os.path.splitext(file_name)[0]
-                class_name = string.upper(module_name[0]) + module_name[1:]
+                class_name = module_name[0].upper() + module_name[1:]
 
                 # Load the test case into the test suite.
                 test_case = load_test_case(dir_path, module_name, class_name)

@@ -165,8 +165,8 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
             raise RelaxError("No pipes are available for use in model selection in the array " + repr(pipes[0]) + ".")
 
         # Loop over the data pipes.
-        for i in xrange(len(pipes)):
-            for j in xrange(len(pipes[i])):
+        for i in range(len(pipes)):
+            for j in range(len(pipes[i])):
                 # Specific functions.
                 model_loop[pipes[i][j]] = get_specific_fn('model_loop', get_type(pipes[i][j]))
                 model_type[pipes[i][j]] = get_specific_fn('model_type', get_type(pipes[i][j]))
@@ -175,8 +175,8 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
                 skip_function[pipes[i][j]] = get_specific_fn('skip_function', get_type(pipes[i][j]))
 
         # The model loop should be the same for all data pipes!
-        for i in xrange(len(pipes)):
-            for j in xrange(len(pipes[i])):
+        for i in range(len(pipes)):
+            for j in range(len(pipes[i])):
                 if model_loop[pipes[0][j]] != model_loop[pipes[i][j]]:
                     raise RelaxError("The models for each data pipes should be the same.")
         model_loop = model_loop[pipes[0][0]]
@@ -186,15 +186,15 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
 
         # Global vs. local models.
         global_flag = False
-        for i in xrange(len(pipes)):
-            for j in xrange(len(pipes[i])):
+        for i in range(len(pipes)):
+            for j in range(len(pipes[i])):
                 if model_type[pipes[i][j]]() == 'global':
                     global_flag = True
 
     # All other model selection setup.
     else:
         # Loop over the data pipes.
-        for i in xrange(len(pipes)):
+        for i in range(len(pipes)):
             # Specific functions.
             model_loop[pipes[i]] = get_specific_fn('model_loop', get_type(pipes[i]))
             model_type[pipes[i]] = get_specific_fn('model_type', get_type(pipes[i]))
@@ -209,7 +209,7 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
 
         # Global vs. local models.
         global_flag = False
-        for j in xrange(len(pipes)):
+        for j in range(len(pipes)):
             if model_type[pipes[j]]() == 'global':
                 global_flag = True
 
@@ -225,14 +225,14 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
         best_crit = 1e300
 
         # Loop over the pipes.
-        for j in xrange(len(pipes)):
+        for j in range(len(pipes)):
             # Single-item-out cross validation.
             if method == 'CV':
                 # Sum of chi-squared values.
                 sum_crit = 0.0
 
                 # Loop over the validation samples and sum the chi-squared values.
-                for k in xrange(len(pipes[j])):
+                for k in range(len(pipes[j])):
                     # Alias the data pipe name.
                     pipe = pipes[j][k]
 

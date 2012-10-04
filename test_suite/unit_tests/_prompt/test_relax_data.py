@@ -28,7 +28,7 @@ from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntEr
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_relax_data(Relax_data_base_class, TestCase):

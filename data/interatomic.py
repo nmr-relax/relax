@@ -27,9 +27,9 @@ from re import match
 
 # relax module imports.
 import generic_fns
-from prototype import Prototype
+from data.prototype import Prototype
+from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
-from relax_xml import fill_object_contents, object_to_xml, xml_to_object
 import specific_fns
 
 
@@ -127,7 +127,7 @@ class InteratomList(list):
 
         # The data.
         text += "%-25s%-25s%-25s" % ("Index", "Spin ID 1", "Spin ID 2") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text += "%-25i%-25s%-25s\n\n" % (i, self[i].spin_id1, self[i].spin_id2)
 
         return text
@@ -205,7 +205,7 @@ class InteratomList(list):
         return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
 
         # Loop over the containers.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for this container and add it to the higher level element.
             interatom_element = doc.createElement('interatomic')
             element.appendChild(interatom_element)

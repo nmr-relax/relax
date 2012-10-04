@@ -58,9 +58,10 @@ times = [
 ]
 
 # Loop over the spectra.
-for i in xrange(len(names)):
-    # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
+for i in range(len(names)):
+    # Load the peak intensities (first the backbone NH, then the tryptophan indole NH).
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height', heteronuc='N', proton='HN')
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height', heteronuc='NE1', proton='HE1')
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])

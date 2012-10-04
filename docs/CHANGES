@@ -1,3 +1,219 @@
+Version 2.1.1
+(21 September 2012, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.1.1
+
+    Features:
+        * Creation of extensive tutorials for both the script and GUI modes for the NOE, R1 and R2, model-free chapters with screenshots in of the GUI in operation.
+        * Restored support for multiple spin types in the NOE, R1 and R2 analyses allowing, for example, tryptophan sidechain indole NE1 data to be analysed.
+        * The activation and expansion of the consistency testing chapter to the user manual.
+        * The completion of the reduced spectral density mapping chapter of the user manual.
+        * Improvements to the user function section of the user manual with better visual separation and the inclusion of the icons used in the GUI.
+        * Creation of the relax data model chapter of the user manual to explain how to set up data in relax in all UI modes (with screenshots in the GUI mode).
+        * Creation of the citations chapter of the user manual to help users properly cite the parts of relax that they use.
+        * A complete rewrite of the relaxation curve-fitting chapter of the relax manual.
+        * General improvements and expansions throughout the user manual (the manual is now 15 Mb compared to 4.3 Mb for relax 2.1.0).
+
+
+    Changes:
+        * Modified the model-free optimisation final printout to be more multi-processor friendly.  The message saying that the optimised chi2 is an improvement or not now includes the spin ID string if present.  This is more informative for the multi-processor mpi4py printouts.
+        * Added the use of the program 'nice' to the model-free GUI tutorial in the user manual.
+        * Removed the out of date and useless README file for the HTML version of the user manual.
+        * Added a BMRB section to the end of the model-free chapter of the user manual.
+        * Massive expansion of the model-free chapter of the user manual including script and GUI tutorials.  The model-free chapter now has step-by-step tutorials for both the prompt/script mode and GUI mode for the new automated model-free protocol (the d'Auvergne protocol).  This includes a large set of screenshots for the GUI mode.
+        * Created the User_functions.test_value_set GUI test demonstrating the failure of the value.set user function.
+        * Modified the dauvergne_protocol sample script to handle tryptophan indole NE1 data.
+        * The graphics.fetch_icon() function argument 'format' can now be set to None.  This will return the file path without the extension.
+        * Improvements to the duplicate user manual title finding script.
+        * Created a simple shell script to find duplicate titles in the relax user manual.  This is important for the HTML version of the manual as duplicated titles causes HTML pages to be overwritten.  For example all chapters, sections and subsections titled "Introduction" will load the introduction.html file which will contain the text of the last section with that title!
+        * Additions to the scripting section of the relaxation curve-fitting chapter of the user manual.
+        * A small edit to the intro chapter for the multi-processor operation and logging.
+        * Added some labelling to the infrastructure chapter of the user manual for referencing.
+        * A number of updates and edits to the intro chapter of the user manual.  The model-free GUI screenshot has been shifted to the intro chapter in preparation for a full tutorial with screenshots in the model-free chapter.
+        * Updated the data model chapter of the user manual to cover the handling of protons.  This change includes the modification of the PDB reading screenshot to demonstrate the reading of a specific model and the naming of the molecule.
+        * All of the GUI strings and text are now formatted with a small sans serif font in the user manual.  This is because in the GUI, a sans serif font is almost always used be default.
+        * Modified the User_functions.test_structure_pdb_read() GUI test to catch another bug.  This is a bug recently introduced with the fixes to the other sequence editor GUI window problems.
+        * Created the User_functions.test_structure_pdb_read GUI test for checking the sequence editor window.  This new user function GUI testing class is to be used for testing out the special GUI elements not invoked within the unit testing.  The test_structure_pdb_read() test specifically shows a number of failures of the sequence editor window.
+        * Modified the operation of the sequence GUI element to have access to the sequence editor window.  This is to allow this GUI element to be blasted within the test suite.
+        * Improvements to the descriptions of the structure.read_xyz user function arguments.
+        * Improvements to the descriptions of the structure.read_pdb user function arguments.
+        * Added @HE1 to the spin ID list of the structure.load_spins user function.  This is only seen in the GUI.
+        * Created the new generic_fns.result_files for standardising the handling of results files.  This fixes the bug where results files are repetitively added to the list.  All of the code touching cdp.result_files now uses this module instead.
+        * Updated the scripting section of the intro chapter of the user manual for non-technical users.
+        * Expanded the spin ID list for the structure.load_spins user function.  This now includes the spins "@N", "@NE1", "@C", "@H", "@O", "@P", ":A@C2", ":A@C8", ":G@N1",":G@C8", ":C@C5", ":C@C5", ":U@N3", ":U@C5", ":U@C6".
+        * Changed the RelaxError for missing relaxation times in the relaxation curve-fitting analyses.
+        * Modified the test_bug_20152_read_dc_file() GUI test to catch the RelaxError.  This error is because of the old PDC format.
+        * Created the test_bug_20152_read_dc_file() GUI test for catching bug #20152 (https://gna.org/bugs/?20152).  This includes truncated data taken from the bug report (with data for only the first 3 residues).
+        * Set up the Bruker Dynamics Center system tests as GUI tests.  This is in preparation for catching bug #20152 (https://gna.org/bugs/?20152).
+        * Re-added Dominique Marion's solvent suppression to the NMRPipe script in the curve-fitting chapter.
+        * A few small edits of the relaxation curve-fitting chapter.  This is to reinforce the exact time of the relaxation time period.
+        * Added some text to explain why test only J(0) is discussed whereas the script also calculated F_R2 and F_eta.  This was suggested by Edward d'Auvergne in a post at:https://mail.gna.org/public/relax-devel/2012-09/msg00044.html.
+        * Big clean up of the Bibtex bibliography file for the relax user manual.
+        * Small edits of the consistency testing figure caption in the relax user manual.
+        * Editing and a number of fixes/cleanups for the consistency testing chapter of the user manual.
+        * Editing of the "Values, gradients, and Hessians" chapter of the user manual to make it fit better.  The context of this chapter has been specified by changing the title to "Optimisation of relaxation data -- values, gradients, and Hessians" and the intro text has been updated.  As this chapter is no longer straight after the model-free chapter, this is needed.
+        * Made a small correction to a reference such that a superscript is correctly displayed.
+        * Added the bounding box and a centerline command to the code for the figure for consistency testing.  This follows two remarks by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00030.html and https://mail.gna.org/public/relax-devel/2012-09/msg00032.html.
+        * Added more text to describe the consistency testing approach.  Also includes a very basic point by point protocol for consistency testing.  This was proposed by by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00028.html.  This also follows a discussion started by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00019.html.
+        * Added some text to describe the consistency testing example figure.  This follows a discussion started by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00019.html.
+        * Added a modified version of Figure 1 from Morin and Gagne (JBNMR, 2009 (http://dx.doi.org/10.1007/s10858-009-9381-4)).  File formats are .agr (xmgrace), eps (gzipped), and png.  This follows a discussion started by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00019.html.
+        * Added a directory for placing consistency testing graphics.  This follows a discussion started by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00019.html.
+        * Corrected the bibliography entries whih were still in plain text and not as a Latex \cite call.  Also renamed the MorinGagne09 entry to MorinGagne09a as there is now also MorinGagne09b.  This was proposed by Edward d'Auvergne in a post at https://mail.gna.org/public/relax-devel/2012-09/msg00025.html.
+        * Added the DOI to reference Morin11 and fixed indentation (10.1016/j.pnmrs.2010.12.003).  This follows a comment by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00022.html.
+        * Deletion of the relax version LaTeX file - this is automatically created anyway.
+        * Added text to detail the usage of the consistency testing script.  This text was modified from the corresponding text for jw_mapping.  This follows a discussion started by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00019.html.
+        * Added some text and a reference to the consistency testing chapter.  This follows a discussion started by Edward d'Auvergne at https://mail.gna.org/public/relax-devel/2012-09/msg00019.html.
+        * Editing of the nmrPipe script in the Rx curve-fitting chapter of the manual.
+        * Some editing of the NOE chapter of the relax user manual.
+        * The old R1 and R2 analysis screenshots have been shifted to the intro chapter.
+        * Editing of the relax data model chapter of the user manual.
+        * Large expansion and lots of editing of the relaxation curve-fitting chapter of the user manual.  The GUI section has been added which includes step-by-step instructions on how to use relax,illustrated with screenshots at each step.  There has been general editing of the whole of the chapter as well.
+        * Added a tonne of GUI screenshots of an R1 analysis.  These will be used in the relaxation curve-fitting chapter of the user manual.
+        * Added some Grace plots from an NOE analysis for use in the user manual.
+        * Small edits of the relax data model chapter of the user manual.
+        * Editing of the relaxation curve-fitting and NOE chapters of the user manual.  This is to synchronise the format of the two chapters, and includes the swapping of text between them.
+        * Added trp indole NH loading into the relaxation curve-fitting sample script.
+        * Large edits of the consistency testing chapter of the user manual.
+        * Activated the consistency testing chapter of the user manual.
+        * Added a LaTeX label to the J(w) mapping chapter.
+        * Added the other consistency testing references to the citation chapter of the manual.
+        * Added the Fushman et al., 1998 reference.
+        * Fix for the Farrow et al., 1995 DOI number.
+        * Changed the order of the Rx curve-fitting and NOE chapters in the relax manual.  This is because the NOE chapter references passages from the Rx curve-fitting chapter, so it's more logical to have the Rx curve-fitting chapter first.
+        * Clean up of a paragraph of the data model chapter of the user manual.
+        * Improved the consistency in the user manual by using the new LaTeX commands.  These changes are throughout the manual and affect all the text of user functions, menu items, prompt examples, GUI elements, files, directories, etc.
+        * Removed some '()' text from the end of the user functions in the user function documentation.
+        * Added some more LaTeX functions for formatting consistency.
+        * Defined a new set of LaTeX commands for prompt/script/GUI strings and elements for the user manual.  These will be used to regularize the text throughout the manual, as this is currently quite mixed up.
+        * More rearrangements of data model and NOE chapters of the relax manual.  The GUI spin deselection part of the NOE chapter has been shifted into the data model chapter.  And the GUI loading of spins from a sequence file section has been completed.
+        * Added screenshots of the spin viewer spin loading wizard sequence.read page.
+        * Redesign of the data model chapter of the user manual.  This includes the moving of all of the spin viewer window text and screenshots from the NOE chapter.
+        * Shifted the spin viewer screenshots into their own directory.
+        * Changed the "View->Spin view" menu item to "View->Spin viewer".
+        * Created a directory for screenshots of the spin viewer window operation.
+        * The NOE auto-analysis GUI test now checks the support for Trp indole N data as well.
+        * The spectrum.read_intensities user function now prints out a list of the intensities read in.  This is for better user feedback as to what the user function has actually done.
+        * Created the GUI wizard _apply() method for executing the current page's _apply() method.  This is for the GUI tests to simulate a click on the 'Apply' button.
+        * Removed a debugging print out.
+        * Modified the NOE system test to catch bug #20120 (https://gna.org/bugs/?20120).
+        * Lots of editing of the NOE chapter of the user manual.
+        * Significant update of the NOE chapter of the user manual.  The sample script used in this chapter was incredibly out of date.
+        * Modified the NOE system test to test the usage of Trp indole 15N data.  This is to catch bug #20119 (https://gna.org/bugs/index.php?20119).
+        * Added some Trp peak data (backbone and indole N) to the Sparky steady-state NOE peak lists.  This is in preparation for the modification of the NOE system test to catch bug #20119(https://gna.org/bugs/index.php?20119).
+        * Modified the NOE sample script to include Trp indole NH data.
+        * Added a step-by-step tutorial for the GUI NOE auto-analysis to the user manual.  This includes 22 screenshots of all the steps.
+        * Added a section label.
+        * Added some Sparky info to the Rx curve-fitting chapter of the user manual.
+        * Allowed the raggedbottom LaTeX setting as this is better for the screenshot layout in the user manual.
+        * Added the nth package for the user manual LaTeX compilation.
+        * The NOE chapter now points to the recommendations in the Rx fitting chapter.
+        * Added a new section called 'From spectra to peak intensities' to the Rx fitting chapter of the manual.  This adds a number of recommendations for high quality relaxation rates.
+        * Added the Viles et al., 2001 reference.
+        * Small description edit for the relax_data.temp_control user function.
+        * Added a LaTeX label to the NOE chapter of the user manual.
+        * Added a paragraph to the model-free chapter of the user manual explaining the J(w) equation forms.
+        * Added a label to the data model chapter of the user manual.
+        * Created an initial rough version of the RSDM chapter of the user manual.
+        * Better figure layout in the NOE chapter of the user manual.
+        * The relax data model chapter of the user manual now uses the higher quality graphics.
+        * Some more high quality graphics.
+        * Added more high resolution graphics for use in the relax user manual.
+        * Expanded the size of the specific analysis graphics - mainly for use in the relax user manual.
+        * Added the specific analysis graphics to the start of each chapter of the relax user manual.
+        * Small edit of the 'Citations' chapter of the relax user manual.
+        * Added EPS versions of the specific analysis graphics for use in the user manual.
+        * Added the Fushman et al., 1999 reference for consistency testing to the intro chapter of the user manual.
+        * More chapter cross referencing in the relax user manual.
+        * Added the Horne 2007 paper to the 'Citations' chapter of the user manual.  Whitespace has also been cleaned up, and a chapter label added.
+        * Added the Horne 2007 paper to the 'Supported NMR theories' subsection of the user manual intro.
+        * Shortened the Literature subsection of the intro chapter to point to the citations chapter.  This part of the user manual is now redundant.
+        * Small edits of the relax user manual.
+        * Edits to the abbreviations chapter of the relax user manual.
+        * Added another abbreviation.
+        * Expansion of the abbreviations chapter of the relax user manual.
+        * Added a tonne of DOI numbers to the relax user manual bibliography.  This will simplify accessing these references for the user.
+        * Added and fixed DOI numbers for many bibliographic entries.
+        * The LaTeX bibliography style for PhD theses now includes the DOI hyperlink.  This is for the user manual.
+        * Slight modification of the DOI hyperlink formatting bibliography style for the user manual.
+        * Modified the relax LaTeX bibliography style file relax.bst to convert DOI numbers to hyperlinks.  This is to add links to the references within the relax user manual.
+        * Created the new 'Citations' chapter of the relax user manual.  This is to clearly outline to the user the citations required for the various components of relax.
+        * Added the Fushman 1999 reference and a few formatting fixes in other references.
+        * Improvements to the 'Supported NMR theories' section of the user manual introduction.  This includes the addition of the Morin and Gagne 2009 reference.
+        * Added the Morin and Gagne 2009 reference for the consistency testing.
+        * Added some more abbreviations to the relax user manual.
+        * Created a new chapter for the relax user manual titled 'The relax data model'.
+        * Fix for the pipe editor window screenshot width in the relax manual.
+        * Converted some more wizard graphics to the EPS format for the user manual.
+        * Updates and small expansion of the intro chapter of the relax user manual.
+        * The user manual now specifies the repository revision if a non-tagged version is built.  This enables easier tracking and editing of the manual.
+        * Updates to the generic_fns.mol_res_spin.id_string_doc documentation structure.
+        * Updated the screenshot of the pipe editor window.
+        * Created EPS versions of a number of wizard graphics for use in the user manual.
+        * Removed some now useless whitespace from the top of each user function subsection of the manual.
+        * Redesigned the formatting of the user function chapter of the relax manual.  The fetch_docstrings.py now forces each user function to start in a new column.  This increases the size of the manual, but makes the reading of the user function documentation much easier.  The user function class and function icons (128x128 format) are now placed between the top bar and the subsection title and are left and right justified.  This prettification simply allows the user functions to be more quickly identified.
+        * Large expansion of the relax icon set.  All 128x128 versions of the icons used by the user functions have been added as both PNG and gzipped EPS files.  A few gzipped SVG and non-sized icons have been added as well.
+        * Large expansion of the Oxygen icons within relax.  All 128x128 versions of the icons used by the user functions have been added as both PNG and gzipped EPS files.  A number of gzipped SVG icons has been added as well.
+        * Modified the graphics.fetch_icon function to return different file formats.  This will be used for the relax manual where eps.gz files are required.
+        * Improvements to the final section of the relaxation curve-fitting chapter.  The Xmgrace screenshot and page references for the user functions have been added.
+        * Added screenshots of Xmgrace displaying relaxation curves.
+        * The fetch_docstrings.py now adds LaTeX labels to each user function section.  This has the form of 'uf: ' followed by the user function name, and is for referencing purposes within the main text.
+        * Rewrote the relaxation curve-fitting chapter of the relax manual.  This chapter was quite out of date and was of no use to modern relax versions.
+        * Redesign of how the GPL license is presented to the user.  The old prompt.gpl module with the version 2 of the license has been deleted.  Now the text form the docs/COPYING file is passed through pydoc.pager for the './relax --licence' and the prompt mode GPL object, and is simply printed to STDOUT for the GUI help system.
+        * Import clean ups for the N-state model specific module.
+        * Added the 'unit' argument to the dipole_pair.read_dist and dipole_pair.set_dist user functions.  This is to allow distances in Angstroms to be read into relax and converted to meters.
+
+
+    Bugfixes:
+        * Fix for bug #20189 (https://gna.org/bugs/?20189).  The Sequence GUI element can not handle values of None.
+        * The citations chapter is now included in the HTML version of the user manual.  For some reason, a file named 'cite.tex' cannot be handled by latex2html.
+        * The latex2html compilation of the user manual now ignores the \bibitem{} commands.  This is needed for the HTML version of the user manual.
+        * Fixed a section titled 'Introduction' clashing with the intro chapter of the user manual.
+        * Fixes for the user function icons in the HTML version of the user manual.  These icons are now placed on the correct HTML page.
+        * Removed the text '.eps.gz' from all of the LaTeX included graphics in the user manual.  This allows latex2html to select and use the PNG images instead, producing much better graphics for the online manual (http://www.nmr-relax.com/manual/index.html).
+        * Fix for the graphics.fetch_icon() function for when no file format is specified.
+        * Elimination of all duplicated chapter, section and subsection titles in the user manual.  This fixes bug #20185 (https://gna.org/bugs/?20185).
+        * The HTML files for the user manual now have longer names - this is needed for removing the duplicates.
+        * Fix for the duplicate title finding script - the LaTeX and HTML mode alternatives are no longer mixed up.
+        * Fix for bug #20177 (https://gna.org/bugs/?20177).  This was simply a lower precision OS/Python/numpy combination causing a test suite failure - there are no practical effects and only the precision of the system/GUI test has been lowered.
+        * Another bug fix for the sequence GUI editor window.  This bug was being triggered by the User_functions.test_structure_pdb_read() GUI test which now passes.
+        * Small fix for the User_functions.test_structure_pdb_read() GUI test.
+        * Fix for bug #20184 (https://gna.org/bugs/?20184).  The behaviour of the gui.string_conv.gui_to_int() and related functions has changed in the last few months and the Sequence_window() GUI element has not changed to match.  This has been fixed and the User_functions.test_structure_pdb_read() GUI test now passes.
+        * Fixes for the User_functions.test_structure_pdb_read() GUI test.
+        * Fix for bug #20183 (https://gna.org/bugs/?20183) - the failure of the sequence editor window.  The problem was that fields which could be either single values or lists (or tuples) of values were not properly handled.
+        * Fix for bug #20182 (https://gna.org/bugs/?20182) - the sequence element window ordering issue.  The sequence element window now has the parent wx.Window element set.  This prevents the main relax window from being set as the parent and hence coming to the front after the sequence element window is launched from a user function window.
+        * Fix for bug #20181 (https://gna.org/bugs/?20181) - the GUI sequence editor window TypeError problem.
+        * Window ordering bug fix for the user function windows launched from the spin viewer window.  The spin viewer window no longer hides behind the main relax window after the launch of the user function.
+        * Bug fix for the repetition of Monte Carlo simulations in the relaxation curve-fitting analyses.  This is in the specific analysis API, so will allow all analysis types to repeat Monte Carlo simulations for error analysis.
+        * MS Windows fix - the NOE system and GUI tests are now less strict in checking the errors.
+        * Proper bug fix for storing the execution status of wizard and user function pages.  This allows the test suite to pass again.  The execution status is now properly returned from the wizard pages run synchronously (and always set to True for asynchronous calls).
+        * Fix for bug #20173 (https://gna.org/bugs/?20173).  The palmer.create user function should have been checking that the diffusion tensor had been initialised.  This is now being performed.
+        * Bug fix for the execution of wizard pages - the execution status is now observed.  This fixes bug #20152 (https://gna.org/bugs/?20152).  The problem was that the execution status was being lost in the protected_exec() function.  However as relax errors are caught in the GUI interpreter anyway and the status is returned normally, the protected_exec() wrapper was removed.
+        * Bug fix for the creation of the user function GUI pages - the (a)synchronous arg is now observed.  This argument was being ignored, which in some wizards was causing user function calls to be asynchronous.  This can result in racing related crashes.
+        * The bruker.read user function now throws a RelaxError when old PDC files are detected.  This is a partial fix for bug #20152 (https://gna.org/bugs/?20152).
+        * Fixed the newlines in the sample script in the consistency testing chapter.
+        * Fixed the bounding box for the consistency testing figure and also fixed some Latex unfriendly code.  Problems were spotted by Edward d'Auvergne in a post at https://mail.gna.org/public/relax-devel/2012-09/msg00039.html.
+        * Fixed a bibliography entry label problem.  This was spotted by Edward d'Auvergne in a post at:https://mail.gna.org/public/relax-devel/2012-09/msg00040.html.
+        * Bug fix for the creation of 2D graphs via grace.write for when many data sets exist.  The algorithm for setting the Grace symbol number to be between 1 and 10 was broken!
+        * Fix for bug #20133 (https://gna.org/bugs/?20133) - this was simply a missing import.
+        * Fix for the spin.create user function documentation - the prompt examples were wrong.
+        * Bug fix for the generic_fns.grace.get_data() function.  This was just recently introduced and was triggered by the Relax_fit.test_bug_12670_12679 system test.
+        * Fix for bug #20120 (https://gna.org/bugs/?20120), the bad Grace plots with multiple spin types.  The grace data assembly function was not setting the correct index for when a spin type changes to a preexisting type.
+        * Bug fix for the reading of Sparky peak lists.  Spin names with numbers at the end were not being correctly identified.  This fix allows Trp indole NE1-HE1 data to be loaded.
+        * Bug fix for the loading of peak intensities via spectrum.read_intensities.  The user function could not be applied twice, preventing the loading of data from different spin systems such as Trp indole NH data.
+        * Another fix for the relax_data.temp_control description.
+        * Fix for the incomplete relax_data.temp_control user function description.
+        * Spell fix for the relax_data.temp_calibration user function description.
+        * Fixes for the referencing in the J(w) mapping chapter of the user manual.
+        * Fixed some citations in the newly introduced model-free J(w) paragraph.
+        * Fixed a bunch of links in the development chapter of the user manual.
+        * Small fix for the sample script in the relaxation curve-fitting chapter of the relax manual.
+        * Small fix for the sample script in the NOE chapter of the relax manual.
+        * Bug fix for the RDC Q factor calculations for when the dipolar constants are not all the same.  Now instead of a RelaxError, a warning is given and the Q factor normalised by 2Da^2(4 + 3R)/5 is skipped.  This allows long range and mixed nuclear pairs to be supported.
+        * Import additions to fix the epydoc import of the 'sconstruct' script for the API documentation.
+        * Epydoc docstring fixes for the API documentation.
+        * Import fix for the epydoc building of the API documentation.
+
+
+
 Version 2.1.0
 (12 July 2012, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.1.0

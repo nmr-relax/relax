@@ -86,7 +86,9 @@ def install(target, source, env):
     try:
         print(("\nCopying all files in " + repr(getcwd()) + " to " + repr(env['RELAX_PATH']) + "."))
         copytree(getcwd(), env['RELAX_PATH'])
-    except OSError, message:
+    except OSError:
+        message = sys.exc_info()[1]
+
         # Failure message.
         sys.stderr.write("Cannot install relax, " + message.__doc__ + "\n")
 

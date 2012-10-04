@@ -208,7 +208,7 @@ class API_common:
         return count_spins()
 
 
-    def _overfit_deselect_dummy(self):
+    def _overfit_deselect_dummy(self, data_check=True, verbose=True):
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 
@@ -516,10 +516,6 @@ class API_common:
                 # Name for the simulation object.
                 sim_object_name = object_name + '_sim'
 
-                # Test if the simulation object already exists.
-                if hasattr(spin, sim_object_name):
-                    raise RelaxError("Monte Carlo parameter values have already been set.")
-
 
         # Set the Monte Carlo parameter values.
         #######################################
@@ -542,7 +538,7 @@ class API_common:
                 sim_object = getattr(spin, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(cdp.sim_number):
+                for j in range(cdp.sim_number):
                     # Copy and append the data.
                     sim_object.append(deepcopy(getattr(spin, object_name)))
 
@@ -558,7 +554,7 @@ class API_common:
                 sim_object = getattr(spin, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(cdp.sim_number):
+                for j in range(cdp.sim_number):
                     # Copy and append the data.
                     sim_object.append(deepcopy(getattr(spin, object_name)))
 

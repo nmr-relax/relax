@@ -6,11 +6,15 @@
 \index{model-free analysis|textbf}
 
 
+\begin{figure*}[h]
+\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/model_free/model_free_600x600}
+\end{figure*}
+
 
 % Theory.
 %%%%%%%%%
 
-\section{Theory}
+\section{Model-free theory}
 
 
 
@@ -114,6 +118,7 @@ The relaxation equations are themselves dependent on the calculation of the spec
 
 \noindent where $S^2_f$ and $\tau_f$ are the amplitude and timescale of the faster of the two motions whereas $S^2_s$ and $\tau_s$ are those of the slower motion.  $S^2_f$ and $S^2_s$ are related by the formula $S^2 = S^2_f \cdot S^2_s$.
 
+If these forms of the model-free spectral density functions are unfamiliar, that is because these are the numerically stabilised forms presented in \citet{dAuvergneGooley08a}.  The original model-free spectral density functions presented in \citet{LipariSzabo82a} and \citet{Clore90a} are not the most numerically stable form of these equations.  An important problem encountered in optimisation is round-off error in which machine precision influences the result of mathematical operations.  The double reciprocal $\tau^{-1} = \tau_m^{-1} + \tau_e^{-1}$ used in the equations are operations which are particularly susceptible to round-off error, especially when $\tau_e \ll \tau_m$.  By incorporating these reciprocals into the model-free spectral density functions and then simplifying the equations this source of round-off error can be eliminated, giving relax an edge over other model-free optimisation softwares.
 
 
 % Brownian rotational diffusion.
@@ -744,9 +749,9 @@ This can be done by supplying the optimisation algorithm with the scaled rather 
 % The sample script.
 %~~~~~~~~~~~~~~~~~~~
 
-\subsection{The sample script}
+\subsection{Single model-free model script mode -- the sample script}
 
-The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \texttt{`model\_free/single\_model.py'}.  The text of the script is:
+The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \file{model\_free/single\_model.py}.  The text of the script is:
 
 \begin{exampleenv}
 \# Script for model-free analysis. \\
@@ -809,12 +814,12 @@ state.save(`save', force=True)
 % The explanation.
 %~~~~~~~~~~~~~~~~~
 
-\subsection{Explanation}
+\subsection{Single model-free model script mode -- explanation}
 
 The above script consists of three major sections:
 
 \begin{description}
-\item[Loading of data] Firstly a data pipe called `m4' is created to hold all of the analysis data.  Then the $^{15}$N spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the `noe.500.out' file, assuming that only residue numbers and names are present and are in the first and second columns respectively.  The options of this \texttt{sequence.read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.  The $^{15}$N spin is then set up using the `spin' user functions.  The next part is to load all of the relaxation data, to set up the initial diffusion tensor, create the $^1$H spins required for the magnetic dipole-dipole interaction, and to set up the magnetic dipole-dipole and CSA relaxation mechanisms.  Finally the model-free model `m4' is chosen.
+\item[Loading of data] Firstly a data pipe called \promptstring{m4} is created to hold all of the analysis data.  Then the $^{15}$N spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the \file{noe.500.out} file, assuming that only residue numbers and names are present and are in the first and second columns respectively.  The options of this \uf{sequence.read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.  The $^{15}$N spin is then set up using the \uf{spin} user functions.  The next part is to load all of the relaxation data, to set up the initial diffusion tensor, create the $^1$H spins required for the magnetic dipole-dipole interaction, and to set up the magnetic dipole-dipole and CSA relaxation mechanisms.  Finally the model-free model \promptstring{m4} is chosen.
 \item[Optimisation] The optimisation of model-free models requires an initial grid search to find a position close to the minimum, followed by the high precision Newton optimisation together with the Method of Multipliers constraint algorithm \citep{dAuvergneGooley08a}.  Errors are propagated from the relaxation data to the model-free parameters via Monte Carlo simulations which is a multi-step process in relax (designed for flexibility and to teach how the simulations are constructed and carried out).
 \item[Data output] The last stage consists of writing out the XML formatted results file which contains all of the data in the current data pipe, as well as the XML formatted save file which contains not only the current data pipe data but all of the relax data store data.  Both files can be loaded back into relax later on.
 \end{description}
@@ -830,9 +835,9 @@ The above script consists of three major sections:
 % The sample script.
 %~~~~~~~~~~~~~~~~~~~
 
-\subsection{The sample script}
+\subsection{All model-free models script mode -- the sample script}
 
-The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual spins is \texttt{`model\_free/mf\_multimodel.py'}.  The important parts of the script are:
+The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual spins is \file{model\_free/mf\_multimodel.py}.  The important parts of the script are:
 
 \begin{exampleenv}
 \# Set the data pipe names (also the names of preset model-free models). \\
@@ -894,9 +899,9 @@ state.save(`save', force=True)
 % The explanation.
 %~~~~~~~~~~~~~~~~~
 
-\subsection{Explanation}
+\subsection{All model-free models script mode -- explanation}
 
-The above script is very similar in spirit to the previous single model script in section~\ref{sect: single mf model} on page~\pageref{sect: single mf model}.  The major difference is that this script loops over all of the model-free models, saving all of the results in the \texttt{`save.bz2'} file.
+The above script is very similar in spirit to the previous single model script in section~\ref{sect: single mf model} on page~\pageref{sect: single mf model}.  The major difference is that this script loops over all of the model-free models, saving all of the results in the \file{save.bz2} file.
 
 
 
@@ -909,9 +914,9 @@ The above script is very similar in spirit to the previous single model script i
 % The sample script.
 %~~~~~~~~~~~~~~~~~~~
 
-\subsection{The sample script}
+\subsection{Model-free model selection script mode -- the sample script}
 
-The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \texttt{`model\_free/modsel.py'}.  The text of the script is:
+The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \file{model\_free/modsel.py}.  The text of the script is:
 
 \begin{exampleenv}
 \# Set the data pipe names. \\
@@ -942,9 +947,9 @@ results.write(file=`results', force=True)
 % The explanation.
 %~~~~~~~~~~~~~~~~~
 
-\subsection{Explanation}
+\subsection{Model-free model selection script mode -- explanation}
 
-This script is designed to be used in conjunction with the \texttt{`model\_free/mf\_multimodel.py'} script in the previous section.  It will load all of the results files from the previous script and then perform the following:
+This script is designed to be used in conjunction with the \file{model\_free/mf\_multimodel.py} script in the previous section.  It will load all of the results files from the previous script and then perform the following:
 
 \begin{description}
 \item[Model-free model elimination]  The optimisation of model-free models performed by the previous script will fail for certain data sets together with certain models.  To ensure that these models are never selected, they are removed from the analysis (see \citet{dAuvergneGooley06}).
@@ -963,15 +968,15 @@ These three sample scripts describe the basic components of model-free analysis.
 
 % Mandel et al., 1995 figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 539]{images/model_free/mandel95.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 539]{images/model_free/mandel95}}
 \caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{A schematic of the model-free optimisation protocol of \citet{Mandel95}.  This specific protocol is for single field strength data.  The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.  The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each spin $i$ are optimised and 500 Monte Carlo simulations executed.  Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.  These steps are repeated for all spins of the molecule.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).} \label{fig: Mandel et al.}
 \end{figure}
 
 By presenting a systematic methodology for obtaining a consistent model-free description of the dynamics of the system, the manuscript of \citet{Mandel95} revolutionised the application of model-free analysis.  The full protocol is presented in Figure~\ref{fig: Mandel et al.}.
 
-All of the data analysis techniques required for this protocol can be implemented within relax.  The chi-squared distributions required for the chi-squared tests are constructed by Modelfree4 from the Monte Carlo simulations.  If the optimisation algorithms and Monte Carlo simulations built into relax are utilised, then the relax script will need to construct the chi-squared distributions from the results as this is not yet coded into relax.  The specific step-up hypothesis testing model selection of \citet{Mandel95} is available through the \texttt{model\_selection} user function.  Coding the rest of the protocol into a script should be straightforward.
+All of the data analysis techniques required for this protocol can be implemented within relax.  The chi-squared distributions required for the chi-squared tests are constructed by Modelfree4 from the Monte Carlo simulations.  If the optimisation algorithms and Monte Carlo simulations built into relax are utilised, then the relax script will need to construct the chi-squared distributions from the results as this is not yet coded into relax.  The specific step-up hypothesis testing model selection of \citet{Mandel95} is available through the \uf{model\_selection} user function.  Coding the rest of the protocol into a script should be straightforward.
 
-To implement this analysis, a number of scripts would need to be written.  There is no sample script in relax for performing this analysis.  The simple sample scripts from above would need to be extended.  For example a starting script for determining the initial diffusion tensor estimates based on the R1/R2 ratio of \citet{Kay89} would have to be written.  The tensor from this script could then be feed into the \texttt{`model\_free/mf\_multimodel.py'} script, followed by the \texttt{`model\_free/modsel.py'} script, and then a third script written to optimise the diffusion tensor.  A master script could be written first run the initial diffusion tensor script, then to iteratively execute the last three scripts until convergence, and finally to select the best diffusion model (see Figure~\ref{fig: Mandel et al.}).  Alternatively, these could all be combined into one super script.
+To implement this analysis, a number of scripts would need to be written.  There is no sample script in relax for performing this analysis.  The simple sample scripts from above would need to be extended.  For example a starting script for determining the initial diffusion tensor estimates based on the R1/R2 ratio of \citet{Kay89} would have to be written.  The tensor from this script could then be feed into the \file{model\_free/mf\_multimodel.py} script, followed by the \file{model\_free/modsel.py} script, and then a third script written to optimise the diffusion tensor.  A master script could be written first run the initial diffusion tensor script, then to iteratively execute the last three scripts until convergence, and finally to select the best diffusion model (see Figure~\ref{fig: Mandel et al.}).  Alternatively, these could all be combined into one super script.
 
 
 
@@ -986,11 +991,12 @@ Ever since the original Lipari and Szabo papers \citep{LipariSzabo82a, LipariSza
 
 % The diffusion seeded paradigm figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 437 523]{images/model_free/init_diff_est.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 437 523]{images/model_free/init_diff_est}}
 \caption[Model-free analysis using the diffusion seeded paradigm]{A schematic of model-free analysis using the diffusion seeded paradigm -- the initial diffusion tensor estimate -- together with AIC model selection and model elimination.  The initial estimates of the parameters of $\Diffset$ are held constant while model-free models $m0$ to $m9$ (\ref{model: m0}--\ref{model: m9}) of the set $\Mfset_i$ for each spin system $i$ are optimised, model elimination applied to remove failed models, and AIC model selection used to determine the best model.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The entire iterative process is repeated for each of the Brownian diffusion models.  Finally AIC model selection is used to determine the best description of the dynamics of the molecule by selecting between the global models $\Space$ including the sphere, oblate spheroid, prolate spheroid, and ellipsoid.  Once the solution has been found, Monte Carlo simulations can be utilised for error analysis.} \label{fig: init diff estimate}
 \end{figure}
 
 Again this protocol is not implemented in the relax sample scripts.  This would have to be implemented in exactly the same manner as described in the previous section, but using the AIC model selection build into relax.  Constructing this set of scripts, or a single master script, would be much easier than the \citet{Mandel95} protocol as Modelfree4 would not need to be used, and the handling of F-tests and chi-squared tests is avoided.
+
 
 
 % The new model-free optimisations protocol.
@@ -999,10 +1005,13 @@ Again this protocol is not implemented in the relax sample scripts.  This would 
 \section{The new model-free optimisation protocol}
 \label{sect: new model-free protocol}
 
+Here a new, fully automated model-free optimisation protocol will be presented.  This protocol, defined in \citet{dAuvergneGooley07} and \citet{dAuvergneGooley08b}, is significantly different from all those that came before, reversing the diffusion seeded paradigm as detailed below.  Within relax it is referred to as the ``new protocol'' or the ``d'Auvergne protocol''.  The later name is to allow for more advanced protocols to be developed and added to relax by adventurous users in the future.
+
+
 % The model-free models.
 %~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The model-free models}
+\subsection{The new protocol -- model-free models}
 
 The study of the dynamics of a macromolecule using model-free analysis to interpret the $\Rone$ and $\Rtwo$ relaxation rates together with the steady-state heteronuclear NOE brings two distinct, yet linked physical theories into play.  The Brownian rotational diffusion of the molecule is the major contributor to relaxation.  Although having less of an influence on relaxation the internal dynamics of individual nuclei within the molecule is nevertheless significant.  The model-free description of the internal motion and the global diffusion of the entire molecule are theories which are linked due to their dependence on the same relaxation data.  The model-free models for individual spin system constructed from the original and extended model-free theories \citep{LipariSzabo82a, LipariSzabo82b, Clore90a} are assembled using parametric restrictions, the dropping of insignificant parameters, and the addition of the chemical exchange parameter $R_{ex}$.  Labelled as $m0$ to $m9$ (Models~\ref{model: m0}--\ref{model: m9} on page \pageref{model: m9}) these models are an extended list of those in \citep{Fushman97, Orekhov99b, Korzhnev01, Zhuravleva04}.
 
@@ -1011,7 +1020,7 @@ The study of the dynamics of a macromolecule using model-free analysis to interp
 % The diffusion tensor.
 %~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The diffusion tensor}
+\subsection{The new protocol -- the diffusion tensor}
 
 
 % The ellipsoid.
@@ -1072,6 +1081,7 @@ In \citet{Bruschweiler95} and further investigated in \citet{Lee97}, a methodolo
 \begin{htmlonly}
     \subsection{The universal solution $U$}
 \end{htmlonly}
+\label{sect: universal solution}
 
 The complex model-free problem, in which the motions of each spin are both mathematically and statistically dependent on the diffusion tensor and vice versa, was formulated using set theory in \citet{dAuvergneGooley07}.  This paper is important for understanding the entire concept of the new protocol in relax and for truly grasping the complexity of the model-free problem.  The solution $\widehat\Univset$ to the model-free problem was derived as an element of the universal set $\Univset$, the union of the diverse model-free parameter spaces $\Space$.  Each set $\Space$ was constructed from the union of the model-free models $\Mfset$ for all spins and the diffusion parameter set $\Diffset$.  A single parameter loss on a single spin shifts optimisation to a different space $\Space$.  Ever since the seminal work of \citet{Kay89} the model-free problem has been tackled by first finding an initial estimate of the diffusion tensor and then determining the model-free dynamics of the system (see Sections~\ref{sect: Mandel 1995} on page~\pageref{sect: Mandel 1995} and~\ref{sect: diffusion seeded paradigm} on page~\pageref{sect: diffusion seeded paradigm}).  This diffusion seeded paradigm is now highly evolved and much theory has emerged to improve this path to the solution $\widehat\Univset$.  The technique can, at times, suffer from a number of issues including the two minima problem of the spheroid diffusion tensor parameter space, the appearance of artificial chemical exchange \citep{Tjandra96}, the appearance of artificial nanosecond motions \citep{Schurr94}, and the hiding of internal nanosecond motions caused by the violation of the rigidity assumption \citep{Orekhov95b, Orekhov99b, Orekhov99a}.
 
@@ -1084,7 +1094,7 @@ The complex model-free problem, in which the motions of each spin are both mathe
 
 % New model-free optimisation protocol figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol.eps.gz}}
+\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol}}
 \caption[A schematic of the new model-free optimisation protocol]{A schematic of the new model-free optimisation protocol.  Initially models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9}) of the set $\Localset_i$ for each spin system $i$ are optimised, model elimination used to remove failed models, and AIC model selection used to pick the best model.  Once all the $\Localset_i$ have been determined for the system the the local $\tau_m$ parameter is removed, the model-free parameters are held fixed, and the global diffusion parameters of $\Diffset$ are optimised.  These parameters are used as input for the central part of the schematic which follows the same procedure as that of Figure~\ref{fig: init diff estimate}.  Convergence is however precisely defined as identical models $\Space$, identical $\chi^2$ values, and identical parameters $\theta$ between two iterations.  The universal solution $\widehat\Univset$, the best description of the dynamics of the molecule, is determined using AIC model selection to select between the local $\tau_m$ models for all spins, the sphere, oblate spheroid, prolate spheroid, ellipsoid, and possibly hybrid models whereby multiple diffusion tensors have been applied to different parts of the molecule.} \label{fig: new protocol}
 \end{figure}
 
@@ -1105,13 +1115,19 @@ The first step of the \citet{Butterwick04} protocol is the reduced spectral dens
 The new model-free protocol built into relax utilises the core foundation of the \citet{Butterwick04} protocol yet its divergent implementation is designed to solve the universal equation of \citet{dAuvergneGooley07} to find $\widehat\Univset$ (Equation~\ref{eq: universal solution}).  Models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9} on page \pageref{model: tm0}) in which no global diffusion parameters exist are employed to significantly collapse the complexity of the problem.  Model-free minimisation \citep{dAuvergneGooley08a}, model elimination \citep{dAuvergneGooley06}, and then AIC\index{model selection!AIC} model selection \citep{Akaike73, dAuvergneGooley03} can be carried out in the absence of the influence of global parameters.  By removing the local $\tau_m$ parameter and holding the model-free parameter values constant these models can then be used to optimise the diffusion parameters of $\Diffset$.  Model-free optimisation, model elimination, AIC model selection, and optimisation of the global model $\Space$ is iterated until convergence.  The iterations allow for sliding between different universes $\Space$ to enable the collapse of model complexity, to refine the diffusion tensor, and to find the solution within the universal set $\Univset$.  The last step is the AIC model selection between the different diffusion models.  Because the AIC criterion approximates the Kullback-Leibler discrepancy \citep{KullbackLeibler51}, central to the universal solution of Equation~\eqref{eq: universal solution}, it was chosen for all three model selection steps over BIC model selection \citep{Schwarz78, dAuvergneGooley03, Chen04}.  The new protocol avoids the problem of under-fitting\index{under-fitting} whereby artificial motions appear, avoids the problems involved in finding the initial diffusion tensor within $\Diffset$, and avoids the problem of hidden internal nanosecond motions and the inability to slide between universes to get to $\widehat\Univset$ (see \citet{dAuvergneGooley07} for more details).  The full protocol is summarised in Figure~\ref{fig: new protocol}.
 
 
+% Script UI.
+%%%%%%%%%%%%
+
+\newpage
+\section{The new protocol in the prompt/script UI mode}
+
 
 % The sample script.
 %~~~~~~~~~~~~~~~~~~~
 
-\subsection{The sample script}
+\subsection{d'Auvergne protocol script mode -- the sample script}
 
-The sample script for performing this new analysis is \texttt{`model\_free/dauvergne\_protocol.py'}.  The full script is given below as the docstring at the start explains the practical implementation of the protocol:
+The sample script for performing this new analysis is \file{sample\linebreak[0]{}\_scripts\linebreak[0]{}/model\linebreak[0]{}\_free\linebreak[0]{}/dauvergne\linebreak[0]{}\_protocol\linebreak[0]{}.py}.  The full script is replicated below.  The docstring at the start of the script explains the practical implementation of the full protocol.  If your copy of the \file{dauvergne\_protocol.py} script taken from the same relax version as this manual does not match the text below, please contact the relax developers via the relax-devel mailing list\index{mailing list!relax-devel} (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  To use this script, copy it to a dedicated directory containing your PDB file and relaxation data files.  The protocol will produce many files and directories, so it is best that these are placed within a dedicated and results directory.  The contents of the script are:
 
 \begin{exampleenv}
 """Script for black-box model-free analysis. \\
@@ -1270,46 +1286,49 @@ CONV\_LOOP = True \\
 \# The following sequence of user function calls can be changed as needed. \\
  \\
 \# Create the data pipe. \\
-name = ``mf (\%s)'' \% asctime(localtime()) \\
-pipe.create(name, `mf') \\
+pipe\_bundle = ``mf (\%s)'' \% asctime(localtime()) \\
+name = ``origin - '' + pipe\_bundle \\
+pipe.create(name, `mf', bundle=pipe\_bundle) \\
  \\
 \# Load the PDB file. \\
-structure.read\_pdb(`1f3y.pdb') \\
+structure.read\_pdb(`1f3y.pdb', set\_mol\_name=`Ap4Aase', read\_model=3) \\
  \\
-\# Set up the 15N and 1H spins. \\
+\# Set up the 15N and 1H spins (both backbone and Trp indole sidechains). \\
 structure.load\_spins(`@N', ave\_pos=True) \\
+structure.load\_spins(`@NE1', ave\_pos=True) \\
 structure.load\_spins(`@H', ave\_pos=True) \\
-spin.isotope(`15N', spin\_id=`@N') \\
-spin.isotope(`1H', spin\_id=`@H') \\
+structure.load\_spins(`@HE1', ave\_pos=True) \\
+spin.isotope(`15N', spin\_id=`@N*') \\
+spin.isotope(`1H', spin\_id=`@H*') \\
  \\
 \# Set up the 15N spins (alternative to the structure-based approach). \\
-\#sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None) \\
-\#spin.name(`N') \\
-\#spin.element(element=`N', spin\_id=`@N') \\
-\#spin.isotope(`15N', spin\_id=`@N') \\
+\#sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
+\#spin.element(element=`N', spin\_id=`@N*') \\
+\#spin.isotope(`15N', spin\_id=`@N*') \\
  \\
 \# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach). \\
 \#sequence.attach\_protons() \\
  \\
 \# Load the relaxation data. \\
-relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=599.719*1e6, file=`r2.600.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=599.719*1e6, file=`noe.600.out', mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.208*1e6, file=`r1.500.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.208*1e6, file=`r2.500.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.208*1e6, file=`noe.500.out', mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=599.719*1e6, file=`r2.600.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=599.719*1e6, file=`noe.600.out', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
+relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.208*1e6, file=`r1.500.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
+relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.208*1e6, file=`r2.500.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
+relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.208*1e6, file=`noe.500.out', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
  \\
 \# Deselect spins to be excluded (including unresolved and specifically excluded spins). \\
-deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=None, spin\_num\_col=None, spin\_name\_col=None, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
+deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
 deselect.read(file=`exclude', spin\_id\_col=1) \\
  \\
 \# Define the magnetic dipole-dipole relaxation interaction. \\
 dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+dipole\_pair.define(spin\_id1=`@NE1', spin\_id2=`@HE1', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N*', spin\_id2=`@H*', ave\_dist=1.02 * 1e-10) \\
 dipole\_pair.unit\_vectors() \\
  \\
 \# Define the chemical shift relaxation interaction. \\
-value.set(-172 * 1e-6, `csa', spin\_id=`@N') \\
+value.set(-172 * 1e-6, `csa', spin\_id=`@N*') \\
  \\
  \\
  \\
@@ -1317,46 +1336,407 @@ value.set(-172 * 1e-6, `csa', spin\_id=`@N') \\
 \#\#\#\#\#\#\#\#\#\#\#\# \\
  \\
 \# Do not change! \\
-dAuvergne\_protocol(pipe\_name=name, diff\_model=DIFF\_MODEL, mf\_models=MF\_MODELS, local\_tm\_models=LOCAL\_TM\_MODELS, grid\_inc=GRID\_INC, min\_algor=MIN\_ALGOR, mc\_sim\_num=MC\_NUM, conv\_loop=CONV\_LOOP) \\
+dAuvergne\_protocol(pipe\_name=name, pipe\_bundle=pipe\_bundle, diff\_model=DIFF\_MODEL, mf\_models=MF\_MODELS, local\_tm\_models=LOCAL\_TM\_MODELS, grid\_inc=GRID\_INC, min\_algor=MIN\_ALGOR, mc\_sim\_num=MC\_NUM, conv\_loop=CONV\_LOOP) \\
 \end{exampleenv}
 
 
-% The explanation.
-%~~~~~~~~~~~~~~~~~
+% The analysis variables.
+%~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Explanation}
+\subsection{d'Auvergne protocol script mode -- analysis variables} \label{sect: d'Auvergne protocol script variables}
 
-The initialisation of data in this script is almost identical to that of the sample script for a single model free model in section~\ref{sect: single mf model} on page~\pageref{sect: single mf model}.  Once the data is set up, then the data pipe as well as a number of user defined variables are passed into the \texttt{`dAuvergne\_protocol'} class.  This script needs to be executed multiple times for each of the diffusion models.
+At the start of the script you will notice a number of \pycode{Analysis variables}.  Unless you know what you are doing, you should only change the \pycode{DIFF\_MODEL} variable to the following:
 
-For a full analysis of a protein system, the analysis may require between one to two weeks to complete.  The analysis is performed as described in the previous sections and summarised in Figure~\ref{fig: new protocol}.  If you are curious, the implementation is within a very large relax script found at \texttt{`auto\_analyses/dauvergne\_protocol.py'} (which must never be changed).  This auto-analyses script hides all of the complexity of the analysis from the sample script.
+\begin{description}
+\item[\pystring{local\_tm}:]  This is the first diffusion model which must be optimised prior to optimising any of the other diffusion models.  It consists of the local $\tau_m$ models (equations~\ref{model: tm0} to~\ref{model: tm9} on page~\pageref{model: tm0}).
+\item[\pystring{sphere}:]  This second diffusion model is that of isotropic Brownian diffusion.
+\item[\pystring{prolate}:]  This third diffusion model is that of the prolate axially-symmetric rotor.
+\item[\pystring{oblate}:]  This fourth diffusion model is that of the oblate axially-symmetric rotor.
+\item[\pystring{ellipsoid}:]  This fifth diffusion model is that of fully rhombic Brownian diffusion (see \citet{Perrin34,Perrin36} for the original theory).
+\item[\pystring{final}:]  This is a special value which will finalise the analysis by selecting the best diffusion model to describe your system and to perform Monte Carlo simulations for error propagation.
+\end{description}
+
+The \pycode{MF\_MODELS} and  \pycode{LOCAL\_TM\_MODELS} variables specify which model-free models will be used in the analysis.  But, as the full protocol behind this script which is designed to find the solution of the universal set $\Univset$ (see section~\ref{sect: universal solution} on page~\pageref{sect: universal solution}) expects that all these models are present, you should not change these variables.  If you do remove some model-free models, you should fully expect to see artificial motions which you will not be able to distinguish from the real molecular motions.
+
+The next variables \pycode{GRID\_INC} and \pycode{MIN\_ALGOR} are related to the optimisation of the model-free models.  These should also not be touched unless you fully understand the consequences (and have read \citet{dAuvergneGooley08a}).  The variable \pycode{MC\_NUM} specifies the number of Monte Carlo simulations.  This number can be increased but, for realistic parameter errors in your publication, it should not set lower than 500 simulations.
+
+Finally the \pycode{CONV\_LOOP} variable is designed to make your life easier.  If left at the value of \pycode{True}, the script will iterate until convergence (see Figure~2 in \citet{dAuvergneGooley08b} to understand this concept).  If changed to \pycode{False}, then you will need to run the script manually for the 15 or so iterations of each diffusion model, and then repeat this for all diffusion models II to V.
+
+
+% Initialisation of the data pipe.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol script mode -- data pipe initialisation}
+
+The next part of the script between the \pycode{Analysis variables} and execution sets up a data pipe with all of the spin information and relaxation data to pass into the automated protocol.  The data pipe is created in the lines:
+
+\begin{exampleenv}
+pipe\_bundle = ``mf (\%s)'' \% asctime(localtime()) \\
+name = ``origin - '' + pipe\_bundle \\
+pipe.create(name, `mf', bundle=pipe\_bundle)
+\end{exampleenv}
+
+Firstly a data pipe bundle name is created containing the date and time at the point the script is first executed.  This pipe bundle is used to group together all of the data pipes created automatically by the protocol.  See section~\ref{sect: data pipe bundles} on page~\pageref{sect: data pipe bundles} for more details.
+
+The data pipe name used for this initial setup is set to \pycode{origin - mf (x)} where \pycode{x} is the data and time again.  This name is unique and will not clash with the data pipes created within the protocol.  The \uf{pipe.create} command will create the data pipe and add it to a new pipe bundle.
+
+
+% Spin systems.
+%~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol script mode -- setting up the spin systems}
+
+To see how to set up the spin system data in all possible situations, please see Chapter~\ref{ch: data model} for a thorough description.  Here two different methods are presented.  The first is by extracting the spins from a PDB file which is first loaded with:
+
+\example{structure.read\_pdb(`1f3y.pdb', set\_mol\_name=`Ap4Aase', read\_model=3)}
+\index{PDB}
+
+This will read the \nth{3} model from the 1F3Y PDB file and name the single molecule as \pystring{Ap4Aase}.  The $^{15}$N and $^1$H spins for the backbone and tryptophan indole sidechain are extracted from the structure with the user functions:
+
+\begin{exampleenv}
+structure.load\_spins(`@N', ave\_pos=True) \\
+structure.load\_spins(`@NE1', ave\_pos=True) \\
+structure.load\_spins(`@H', ave\_pos=True) \\
+structure.load\_spins(`@HE1', ave\_pos=True)
+\end{exampleenv}
+
+As the PDB file does not contain isotope information, this is set with the user functions:
+
+\begin{exampleenv}
+spin.isotope(`15N', spin\_id=`@N*') \\
+spin.isotope(`1H', spin\_id=`@H*')
+\end{exampleenv}
+
+The spin ID \pystring{@N*} uses regular expression and will match both the \pystring{N} and \pystring{NE1} spins.
+
+The alternative approach is if a structure is missing.  This is the commented out code:
+
+\begin{exampleenv}
+\# Set up the 15N spins (alternative to the structure-based approach). \\
+\#sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
+\#spin.element(element=`N', spin\_id=`@N*') \\
+\#spin.isotope(`15N', spin\_id=`@N*') \\
+ \\
+\# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach). \\
+\#sequence.attach\_protons()
+\end{exampleenv}
+
+To use this, you will need to place comments (the \pycode{\#} character) in front of the previous \uf{structure.read\_pdb}, \uf{structure.load\_spins} and \uf{spin.isotope} user functions.  Then uncomment the \uf{sequence.\linebreak[0]{}read}, \uf{spin.\linebreak[0]{}element}, \uf{spin.\linebreak[0]{}isotope} and \uf{sequence.\linebreak[0]{}attach\linebreak[0]{}\_protons} user functions.  The $^{15}$N spins will be extracted from the \file{noe.500.out} file.  The \uf{spin.\linebreak[0]{}element} and \uf{spin.\linebreak[0]{}isotope} user functions set the information required for relax to understand which relaxation mechanisms are active.  Finally the \uf{sequence.\linebreak[0]{}attach\linebreak[0]{}\_protons} user function will automatically attach protons to all nitrogen spin systems.  As this method is devoid of atomic positional information, the N-H bonds are absent and the diffusion models requiring structural information (the spheroids and ellipsoid) must be skipped.
+
+
+% Loading the data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol script mode -- loading the data}
+
+The next step is to load the relaxation data for each spin system.  The sample script assumes that the NOE, $\Rone$ and $\Rtwo$ data was generated using relax.  One of the six user function calls is:
+
+\example{relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7)}
+
+This pattern is repeated for all of the relaxation data files loaded.  The important points are that each relaxation data set must have its own unique identification string (\pycode{ri\_id}), the relaxation data type specified (\pycode{ri\_type}) and the frequency in Hertz (not MHz) specified.  Note that the frequency must be the exact value -- see the \pycode{sfrq} parameter in the Varian \file{procpar} file or the \pycode{SFO1} parameter in the Bruker \file{acqus} file.
+
+
+% Deselection.
+%~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol script mode -- deselection}
+
+The sample script now presents the deselection of spins using two different files:
+
+\begin{exampleenv}
+deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
+deselect.read(file=`exclude', spin\_id\_col=1)
+\end{exampleenv}
+
+The \file{unresolved} file contains a list of spins which are unresolved in all spectra.  If relax has been used for calculating the NOE and fitting the relaxation curves, then this step is not needed as the relaxation data files will not have any data for the spins deselected in those analyses.  The second file \file{exclude} is a list of spin ID strings (see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID}) of spins that for which ever reason are to be excluded from the analysis.
+
+
+% The relaxation interactions.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol script mode -- relaxation interactions}
+
+The next step is to fully specify all of the relaxation interactions active on the spins of interest.  Firstly the magnetic dipole-dipole interaction is defined between directly bonded nitrogens and protons:
+
+\begin{exampleenv}
+dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+dipole\_pair.define(spin\_id1=`@NE1', spin\_id2=`@HE1', direct\_bond=True) \\
+dipole\_pair.set\_dist(spin\_id1=`@N*', spin\_id2=`@H*', ave\_dist=1.02 * 1e-10) \\
+dipole\_pair.unit\_vectors()
+\end{exampleenv}
+
+The regular expression \pystring{@N*} and \pystring{@H*} cannot be used with the \uf{dipole\linebreak[0]{}\_pair.\linebreak[0]{}} define user function as otherwise \prompt{@N} spins will be connected to \prompt{@HE1} spins of the same tryptophan residue and \prompt{@H} spins to \prompt{@NE1} spins.  The average interatomic distance is set to 1.02 \AA ngstrom (though the \uf{dipole\linebreak[0]{}\_pair.\linebreak[0]{}set\linebreak[0]{}\_dist} user function expects the units of meters).  The \uf{dipole\linebreak[0]{}\_pair.\linebreak[0]{}unit\linebreak[0]{}\_vectors} is used to calculate the averaged unit vector between the two atoms.
+
+Secondly the chemical shift anisotropy (CSA) relaxation mechanism is defined via the single command:
+
+\example{value.set(-172 * 1e-6, `csa', spin\_id=`@N*')}
+
+If your system does not experience CSA relaxation, the value can be set to zero.
+
+
+% Execution.
+%~~~~~~~~~~~
+\subsection{d'Auvergne protocol script mode -- execution}
+
+Once the data is set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{dAuvergne\linebreak[0]{}\_protocol} class.  This is the final line of the script:
+
+\example{dAuvergne\_protocol(pipe\_name=name, pipe\_bundle=pipe\_bundle, diff\_model=DIFF\_MODEL, mf\_models=MF\_MODELS, local\_tm\_models=LOCAL\_TM\_MODELS, grid\_inc=GRID\_INC, min\_algor=MIN\_ALGOR, mc\_sim\_num=MC\_NUM, conv\_loop=CONV\_LOOP)}
+
+This script needs to be executed multiple times, once for each of the diffusion models.  For example if the \pycode{DIFF\_MODEL} variable is set to \pystring{ellipsoid}, you can run relax with:
+
+\example{\$ relax --tee log.ellipsoid dauvergne\_protocol.py}
+
+You should use a different log file for each diffusion model, though relax will prevent you from overwriting an old log file.  Note that the \file{log.*} files for each diffusion model may end up being a few gigabytes in size.
+
+For a full analysis of a protein system, the analysis may require between one to two weeks to complete.  This can be speed up using Gary Thompson's multi-processor code (see section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor}).  The analysis is performed as described in the previous sections and summarised in Figure~\ref{fig: new protocol}.  If you are curious, the implementation is within a very large relax script called \file{auto\linebreak[0]{}\_analyses/\linebreak[0]{}dauvergne\linebreak[0]{}\_protocol.py} (which must never be changed).  This automatic analysis script hides all of the complexity of the full protocol from the sample script.
 
 
 
-% GUI.
-%%%%%%
+% d'Auvergne protocol in the GUI.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{The GUI auto-analysis}
+\newpage
+\section{The new protocol in the GUI}
 
-% Model-free analysis screenshot
-\begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_mf.eps.gz}}
-\caption[GUI screenshot -- Model-free analysis]{Screenshot of the relax GUI interface -- the automated model-free analysis.  The analysis is fully automated via a new model-free protocol as described in detail in Chapter~\ref{ch: model-free}.  Clicking on the `About' button in the bottom left hand corner will give a full description of the protocol.  For using this interface or any of the modern-day model-free protocols, data from at least two magnetic field strengths must be without question collected.}\label{fig: screenshot: model-free analysis}
-\end{figure}
+A model-free analysis can be performed within the GUI (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).  This analysis is that of the fully automated d'Auvergne protocol which can be chosen via the analysis selection wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  Please see Section~\ref{sect: new model-free protocol} on page~\pageref{sect: new model-free protocol} for a description of this new model-free protocol.
 
-From the analysis wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}), the automated model-free analysis can be selected.  This analysis will use the new model-free protocol described in Section~\ref{sect: new model-free protocol} on page~\pageref{sect: new model-free protocol}.  Once the analysis is initialised, the screen should look like Figure~\ref{fig: screenshot: model-free analysis}.  The `About' button in the bottom left will bring up a window with the same description as given in the sample script.  After reading this chapter, the use of this GUI analysis should be self explanatory (if not, then please consider filing a bug report at \href{https://gna.org/bugs/?func=additem\&group=relax}{https://gna.org/bugs/?func=additem\&group=relax} or a support request at \href{https://gna.org/support/?func=additem\&group=relax}{https://gna.org/support/?func=additem\&group=relax}).  The GUI is designed to be robust -- you should be able to set up all the input data and parameters in any order, with relax giving warning is something is missing.  The analysis will only execute once everything is correctly set up.  If this is not the case, rather than starting the analysis, clicking on the `Execute relax' button will warn about the incorrect set up, describing what the problem is.
+The GUI is designed to be robust -- you should be able to set up all the input data and parameters in any order with relax returning you warnings if something is missing.  The analysis will only execute once everything is correctly set up.  If this is not the case, clicking on the \guibutton{Execute relax} button will display a warning window explaining what the issue is rather than initialising the analysis.  Despite the self-explanatory nature of the GUI a tutorial on how to use the GUI, with screenshots, will be presented below.
 
-If the `Protocol mode' field is left to the `Fully automated' setting then, after clicking on `Execute relax', the calculation can be left for one to two weeks to complete.  It is highly recommended to check the log messages in the relax controller window, at least at the start of the analysis, to make sure that all the data is being read correctly and everything is set up as desired.  All warnings should be carefully checked as these can indicate a fatal problem.  If you would like to log all the messages into a file, relax can be run with:
+If the \gui{Protocol mode} field is left to the \gui{Fully automated} setting then, after clicking on \guibutton{Execute relax}, the calculation can be left to complete.  It is highly recommended to check the log messages in the relax controller window, at least at the start of the analysis, to make sure that all the data is being read correctly and everything is set up as desired.  All warnings should be carefully checked as these can indicate a fatal problem.  If you would like to log all the messages into a file, relax can be run with:
 
-\example{\$ relax -g --log my.log}
+\example{\$ relax -g --log log}
 
-Note that the size of this log file could end up being in the gigabyte range for a model-free analysis.  To speed up the calculations, if you have access to multiple cores and/or hyper-threading, the GUI can be run using Gary Thompson's multi-processor framework.  For example on a dual-CPU with dual-core system, four calculations can be run simultaneously.  In this case, the GUI can be launched with:
+Note that the size of this \file{log} file could end up being in the gigabyte range for a model-free analysis.
 
-\example{\$ mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui}
+For the full analysis to complete, for a protein system this may take about a week.  Depending on the nature of the problem and the speed of the computer, the calculation time may be significantly shorter or longer.  To speed up the calculations, if you have access to multiple cores and/or hyper-threading, the GUI can be run using Gary Thompson's multi-processor framework (see section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor}).  For example on a dual-core, dual-CPU system, four calculations can be run simultaneously.  In this case, the GUI can be launched with:
 
-This assumes that OpenMPI and the Python mpi4py module have been installed on your system.  If this is successful, you should only see a single relax GUI window (and not five windows) and in the relax controller, you should see text similar to:
+\example{\$ mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui --log log}
+
+This assumes that OpenMPI and the Python mpi4py module have been installed on your system, and relax is installed into the \directory{/usr/local/bin/} directory.  If this is successful, you should only see a single relax GUI window (and not five windows) and in the relax controller, you should see text similar to:
 
 \example{Processor fabric:  MPI 2.1 running via mpi4py with 4 slave processors \& 1 master.  Using Open MPI 1.4.3.}
 
-If you are using a different MPI implementation, please see the documentation of that implementation to see how to launch a program in MPI mode.
+If you are using a different MPI implementation, please see the documentation of that implementation to see how to launch a program in MPI mode.  Finally as the calculation takes so long, we will run the calculations at a lower priority so that the computer is not slowed down too much and remains responsive.  Therefore this model-free GUI analysis tutorial will be launched with the full command:
 
-Upon completion of the analysis, the save and results files for the final result will be located in the \texttt{`final'} directory within the selected results directory.  The results files will consist of text files for each of the spin specific model-free parameters, 2D Grace plots of the model-free parameters, PyMOL and MOLMOL macros for superimposing the model-free parameter values onto the 3D structure of the molecule, and a PDB representation of the final diffusion tensor.  Further visualisations of the results are possible via the \texttt{`User functions'} menu entry.  For example to generate a 2D plot of order parameters for one of the other diffusion tensor results, the pipe editor window can be used to switch data pipes to the other diffusion models and then the \texttt{`User functions->grace->write'} menu item can be selected to create the plot.
+\example{\$ nice -n 15 mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui --log log}
+
+
+% Initialisation of the data pipe.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- data pipe initialisation}
+
+First launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}) and click on the model-free analysis button.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/analysis_wizard1}}
+\end{minipage}
+
+Click on the \guibutton{Next} button and on the second page click on the \guibutton{Start} button.  The text in the second page need not be changed.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/analysis_wizard2}}
+\end{minipage}
+
+
+% General setup.
+%~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- general setup}
+
+Once the analysis is initialised, the screen should look like:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/blank}}
+\end{minipage}
+
+The \guibutton{About} button in the bottom left will bring up a window with the same description as given in the sample script:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/about}}
+\end{minipage}
+
+At this point, back in the main relax window, the results directory where all of the output files and directories will be saved can be changed.
+
+
+% Spin systems.
+%~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- setting up the spin systems}
+
+The model-free dynamics is at the level of the spins -- relaxation affects individual nuclei.  In the main model-free tab you will see the \gui{Spin systems} GUI element.  Clicking on the \guibutton{Spin editor} button to the right of this element will launch the spin editor window.
+
+In this tutorial, the \nth{3} model of the PDB file \file{1f3y.pdb} will be used to extract the spin system information.  The molecule will be named \guistring{Ap4Aase}.  For details on how to create the spin containers necessary for this analysis, please see section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} (or analyses lacking structural data in section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file} for sequence files).
+
+Note that for this tutorial, the protein backbone spins \guistring{@N} and \guistring{@H} as well as the tryptophan sidechain indole \guistring{@NE1} and \guistring{@HE1} spins should be loaded in the spin viewer window.
+
+
+% Unresolved spins.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- unresolved spins}
+
+To deselect all unwanted spins, please read section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins} for all the necessary instructions for how to do this in the GUI.
+
+
+% Loading the data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- loading the data}
+
+The relaxation data can either come from plain columnar formatted text files (such as if relax was used for the NOE, $\Rone$ and $\Rtwo$ analyses) or from the Bruker Dynamics Centre.  For the former, click on the \guibutton{Add} button in the \gui{Relaxation data list} GUI element.  This route will be used for this tutorial.  For the later, click on the \guibutton{Add Bruker} button.  After clicking on \guibutton{Add}, you will see the relaxation data loading wizard:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_file}}
+\end{minipage}
+
+In this first page, the unique relaxation data identification string (\guistring{r2\_500}), the relaxation data type (\guistring{R2}), the frequency in Hertz (\guistring{500208174.2}) and the file (\guistring{r2.500.out}) are specified.  If your data comes from another program, you many need to change the values in the \gui{Free format file settings} element.  Click on \guibutton{Next} to load the data from the file.
+
+The next wizard pages are for loading the metadata which is used in the BioMagResBank deposition of your final results.  The first is how the peak intensities were measured, either peak heights or volumes.  Select the appropriate value, then click on \guibutton{Next}.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_intensity}}
+\end{minipage}
+
+Then the temperature control method is given.  For more details, please read the documentation provided in the wizard and see section~\ref{sect: temperature control and calibration} on page~\pageref{sect: temperature control and calibration}.  Click on \guibutton{Next} to continue.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_temp_control}}
+\end{minipage}
+
+The temperature calibration method can finally be specified.  Again, see section~\ref{sect: temperature control and calibration} on page~\pageref{sect: temperature control and calibration} for the full details.  Click on the \guibutton{Finish} button to close the wizard.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_temp_calibration}}
+\end{minipage}
+
+After you have repeated this for the NOE, $\Rone$ and $\Rtwo$ at both 500 and 600 MHz, you should now see:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/analysis_tab_full}}
+\end{minipage}
+
+Check that the metadata has been properly entered by clicking on the \guibutton{View metadata} button in the \gui{Relaxation data list} GUI element:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/metadata}}
+\end{minipage}
+
+
+% The relaxation interactions.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- relaxation interactions}
+
+Just as in the scripting mode, the relaxation interactions need to now be defined.  The first is the magnetic diole-dipole interaction.  All coupled nitrogen and proton spins should already be loaded at this point.  Click on the \guibutton{Dipolar relaxation} button in the model-free tab in the main relax window to launch the magnetic dipole-dipole interaction wizard:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_define}}
+\end{minipage}
+
+For this example, directly bonded nitrogens and protons will be analysed.  To start with, the backbone NH pairs will be defined.  Leave the values at \guistring{@N} and \guistring{@H} and click on the \guibutton{Apply} button.  Then change the two spin ID strings to \guistring{@NE1} and \guistring{@HE1} to set up the tryptophan sidechain indole NH pairs and click on the \guibutton{Next} button.  Note that the regular expression \guistring{@N*} and \guistring{@H*} should not be used in this first wizard page as otherwise \prompt{@N} spins will be connected to \prompt{@HE1} spins of the same tryptophan residue and \prompt{@H} spins to \prompt{@NE1} spins.
+
+Now the $\langle r^{-3} \rangle$ averaged distance of 1.02~\AA\ will be set.  Leave all settings as they are and click on \guibutton{Next}:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_distance}}
+\end{minipage}
+
+If multiple models have been loaded in the previous steps, then the unit vectors between each model need to be calculated.  For a model-free analysis multiple unit vectors must be averaged to a single vector -- current model-free theory is based on the assumption of a single vector orientation.  Therefore the averaged vector flag must be left on \guistring{True}.  Click on \guibutton{Finish} to terminate the set up of the magnetic dipole-dipole interactions:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_unit_vector}}
+\end{minipage}
+
+Secondly the chemical shift anisotropy (CSA) relaxation mechanism needs to be defined.  Click on the \guibutton{CSA relaxation} button in the model-free tab in the main relax window.  An averaged CSA value of -172~ppm will be used for all spins, so simply click on \guibutton{Ok} to finish.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/csa_wizard}}
+\end{minipage}
+
+
+% The spin isotopes.
+%~~~~~~~~~~~~~~~~~~~
+
+\subsection{d'Auvergne protocol GUI mode -- spin isotopes}
+
+As the PDB file contains no isotope information, this needs to now be specified.  First click on the \guibutton{X isotope} button to set the nuclear isotope type of the heteronuclei:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/x_isotope}}
+\end{minipage}
+
+As nitrogen relaxation is being studied, the nuclear isotope name can be left as \guistring{15N} and the spin ID string to \guistring{@N*}.  Therefore simply click on the \guibutton{Ok} button.  Exactly the same procedure can be used for the proton with the \guibutton{H isotope} button.
+
+
+% The rest of the setup.
+%~~~~~~~~~~~~~~~~~~~~~~~
+\subsection{d'Auvergne protocol GUI mode -- the rest of the setup}
+
+The local $\tau_m$ models and model-free models should not be modified, the reason for this is explained in section~\ref{sect: d'Auvergne protocol script variables} on page~\pageref{sect: d'Auvergne protocol script variables}.  The grid search increments defaults to \guistring{11}.  This is used in the optimisation of the individual model-free models for each spin.  This value should also not be touched unless you know what you are doing (and have read \citet{dAuvergneGooley08a}).  The number of Monte Carlo simulations can be increased but, for accurate error estimates, it should not be less than 500 simulations.  One additional setting is the \gui{Maximum iterations}.  This is a maximum number of times the protocol will iterate before terminating.  This allows infinite loops to be broken.  The value of 30 iterations should be fine for most analyses.
+
+The \gui{Protocol mode} GUI element setting of \gui{Fully automated} will not be changed for the analysis of this tutorial.  However if you are studying a system without a 3D structure, you can execute each individual component of the analysis by clicking on the \guibutton{Change} button.  This will make the protocol mode selection window appear:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/protocol_mode}}
+\end{minipage}
+
+From this you can first select the \gui{Local $\tau$m} model, then the \gui{Sphere} and finally the \gui{Final} mode, clicking on \guibutton{Execute relax} between each selection.
+
+
+% Execution.
+%~~~~~~~~~~~
+\subsection{d'Auvergne protocol GUI mode -- execution}
+
+Prior to executing relax, you should very carefully check the relax controller window for any strange messages, warnings or errors.  You can open this window in three ways:
+
+\begin{itemize}
+\item Selecting the \guimenuitemtwo{View}{Controller} menu item.
+\item Typing \shortcutkey{Ctrl+Z} within the main relax window.
+\item Clicking on the \guibutton{relax controller} button on the toolbar.
+\end{itemize}
+
+These messages are very important and will indicate to you if there are any problems prior to starting the very long model-free calculation.  This information should be stored in the \file{log} file as well.  As the execution of a fully iterative and complete model-free protocol takes a very long time to finish, it is advisable to save the current relax state.  This will allow you restart the calculation without performing all of the steps detailed above.  Just in case you cannot work out how to do this yourself, here is a list of the different ways you can do this (if this is not enough for you, please email the relax-users mailing list with your suggestions):
+
+\begin{itemize}
+\item Selecting the \guimenuitemtwo{File}{Save relax state} menu item.
+\item Typing \shortcutkey{Ctrl+S} within the main relax window.
+\item Clicking on the \guibutton{Save relax state} button on the toolbar.
+\item Selecting the \guimenuitemtwo{File}{Save as...} menu item.
+\item Typing \shortcutkey{Shift+Ctrl+S} within the main relax window.
+\item Clicking on the \guibutton{Save as} button on the toolbar.
+\item Selecting the \guimenuitemthree{User functions}{state}{save} menu item.
+\item Opening up the relax prompt window with \guimenuitemtwo{View}{relax prompt} or \shortcutkey{Ctrl+P} and using the \uf{state.save} user function.
+\end{itemize}
+
+If all the messages in the relax controller or \file{log} file appear to be fine and you have saved the current relax state, then click on \guibutton{Execute relax}.  This will start the calculations, freeze most of the GUI and open up the relax controller to give you feedback on the progress of the calculations:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_controller_executing}}
+\end{minipage}
+
+At the start of the protocol, you should again check the messages carefully to be sure that relax is operating as you would expect.  There may be very important \prompt{RelaxWarnings} that will require you to quit relax and start the analysis all over again.
+
+
+% Completion.
+%~~~~~~~~~~~~
+\subsection{d'Auvergne protocol GUI mode -- completion}
+
+Upon completion of the analysis, the save and results files for the final result will be located in the \directory{final} directory within the selected results directory.  The results files will consist of text files for each of the spin specific model-free parameters, 2D Grace plots of the model-free parameters, PyMOL and MOLMOL macros for superimposing the model-free parameter values onto the 3D structure of the molecule, and a PDB representation of the final diffusion tensor.
+
+Further visualisations of the results are possible via the \guimenuitemone{User functions} menu entry.  For example to generate a 2D plot of order parameters for one of the other diffusion tensor results, the pipe editor window can be used to switch data pipes to the other diffusion models and then the \guimenuitemthree{User functions}{grace}{write} menu item can be selected to create the plot.
+
+
+% BMRB.
+%~~~~~~
+\subsection{d'Auvergne protocol GUI mode -- BMRB deposition}
+
+Once you are ready to publish your results, the very last step of the model-free analysis is to create a NMR-STAR formatted file for \href{http://www.bmrb.wisc.edu/}{BioMagResBank} submission for each model-free analysis you perform.  This can be accomplished using the BMRB export window.  Simply select the \guimenuitemtwo{File}{Export for BMRB deposition} menu item.  You will then see the BMRB export window:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/bmrb_export_window}}
+\end{minipage}
+
+From here you can complete the relaxation data metadata if needed, set up all the molecule information needed for a BMRB deposition, specify the softwares you have used running up to the model-free analysis and any spectral processing or relax scripts you have used.  You can also add as many citations relevant to your analysis as you wish.  The NMR-STAR formatted file can be previewed in the relax controller window via the \guibutton{Preview} button and the final file created using the \guibutton{Export} button.
+
+Once you are in the stage of writing up, simply go to the ADIT-NMR webpage at \href{http://deposit.bmrb.wisc.edu/bmrb-adit/}{http://deposit.bmrb.wisc.edu/bmrb-adit/},  create a new BMRB deposition, upload the file you have created, complete the deposition as needed, and add the BMRB deposition number to your paper.

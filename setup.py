@@ -39,7 +39,6 @@ from os import getcwd, listdir, sep, walk
 from os.path import relpath, sep
 from re import search
 from setuptools import setup
-from string import replace, split
 import sys
 
 # relax module imports.
@@ -115,7 +114,7 @@ class Setup:
         cwd = getcwd()
         for (dirpath, dirnames, filenames) in walk(cwd):
             # Skip .svn directories.
-            split_path = split(dirpath, sep)
+            split_path = dirpath.split(sep)
             if '.svn' in split_path:
                 continue
 
@@ -177,7 +176,7 @@ class Setup:
         cwd = getcwd()
         for (dirpath, dirnames, filenames) in walk(cwd):
             # Skip .svn directories.
-            split_path = split(dirpath, sep)
+            split_path = dirpath.split(sep)
             if '.svn' in split_path:
                 continue
 
@@ -196,7 +195,7 @@ class Setup:
             if rel_path == '.':
                 module_path = ''
             else:
-                module_path = replace(rel_path, sep, '.')
+                module_path = rel_path.replace(sep, '.')
                 if module_path:
                     module_path += '.'
 

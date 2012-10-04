@@ -24,7 +24,10 @@
 """Module containing the results queue objects."""
 
 # Python module imports.
-import Queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 import sys
 import threading
 import traceback

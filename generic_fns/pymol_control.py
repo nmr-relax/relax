@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -38,6 +38,7 @@ from time import sleep
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
+from generic_fns.result_files import add_result_file
 from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_axis_angle
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
@@ -512,10 +513,7 @@ def macro_write(data_type=None, style="classic", colour_start_name=None, colour_
     file.close()
 
     # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    cdp.result_files.append(['pymol', 'PyMOL', file_path])
-    status.observers.result_file.notify()
+    add_result_file(type='pymol', label='PyMOL', file=file_path)
 
 
 def tensor_pdb(file=None):

@@ -34,6 +34,7 @@ except ImportError:
     float128 = float64    # Support for 32-bit numpy versions.
 
 # relax module imports.
+from check_types import is_filetype
 from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNoneTupleError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError, RelaxNoneValListValError, RelaxValListValError
 from relax_io import DummyFileObject
 from types import FunctionType, MethodType
@@ -916,7 +917,7 @@ def is_str_or_inst(arg, name=None, can_be_none=False, raise_error=True):
         return True
 
     # Check for a string.
-    if isinstance(arg, str) or isinstance(arg, file) or isinstance(arg, DummyFileObject):
+    if isinstance(arg, str) or is_filetype(arg) or isinstance(arg, DummyFileObject):
         return True
 
     # Fail.

@@ -14,8 +14,11 @@
    height="600"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="pipe.svg">
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="pipe.svg"
+   inkscape:export-filename="pipe.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <linearGradient
@@ -2540,15 +2543,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0413374"
-     inkscape:cx="101.11419"
+     inkscape:cx="103.0348"
      inkscape:cy="341.18086"
      inkscape:document-units="px"
      inkscape:current-layer="g5766"
      showgrid="false"
      units="pt"
-     inkscape:window-width="1396"
+     inkscape:window-width="1400"
      inkscape:window-height="981"
-     inkscape:window-x="-1"
+     inkscape:window-x="-3"
      inkscape:window-y="-3"
      inkscape:window-maximized="1"
      inkscape:object-paths="true"
@@ -2569,7 +2572,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

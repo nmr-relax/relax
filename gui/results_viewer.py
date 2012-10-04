@@ -24,7 +24,6 @@
 """Module containing the base class for the results frame."""
 
 # Python module imports.
-from string import lower, upper
 import wx
 from wx.lib import buttons
 

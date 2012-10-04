@@ -28,8 +28,8 @@ from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntList
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
-from container import Container
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.container import Container
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_minimisation(Minimisation_base_class, TestCase):

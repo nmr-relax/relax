@@ -25,9 +25,10 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, chdir, chmod, getcwd, listdir, popen3, remove, sep, system
+from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
-from string import count, find, split
+from stat import S_IEXEC
+from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -35,7 +36,7 @@ from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import diffusion_tensor, pipes
 from physical_constants import return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 
@@ -166,7 +167,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     run = open_write_file('run.sh', dir, force)
     create_run(run, binary=binary, dir=dir)
     run.close()
-    chmod(dir + sep+'run.sh', 0755)
+    chmod(dir + sep+'run.sh', S_IEXEC)
 
 
 def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
@@ -193,7 +194,7 @@ def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
     written = False
 
     # Loop over the frequencies.
-    for j in xrange(num_frq):
+    for j in range(num_frq):
         # Set the data to None.
         r1, r2, noe = None, None, None
 
@@ -262,6 +263,10 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     @keyword frq:           The spectrometer frequencies.
     @type frq:              list of float
     """
+
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
 
     # Set the diffusion tensor specific values.
     if cdp.diff_tensor.type == 'sphere':
@@ -501,6 +506,10 @@ def create_run(file, binary=None, dir=None):
     @type dir:          str
     """
 
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
+
     file.write("#! /bin/sh\n")
     file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
@@ -526,6 +535,10 @@ def execute(dir, force, binary):
                     binary.
     @type binary:   str
     """
+
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
 
     # The current directory.
     orig_dir = getcwd()
@@ -579,15 +592,15 @@ def execute(dir, force, binary):
             cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out -s ' + pdb
         else:
             cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
-        stdin, stdout, stderr = popen3(cmd)
+        pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Close the pipe.
-        stdin.close()
+        pipe.stdin.close()
 
         # Write to stdout and stderr.
-        for line in stdout.readlines():
+        for line in pipe.stdout.readlines():
             sys.stdout.write(line)
-        for line in stderr.readlines():
+        for line in pipe.stderr.readlines():
             sys.stderr.write(line)
 
     # Failure.
@@ -615,6 +628,10 @@ def extract(dir, spin_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
+
     # The directory.
     if dir == None:
         dir = pipes.cdp_name()
@@ -638,21 +655,21 @@ def extract(dir, spin_id=None):
 
     # Find out if simulations were carried out.
     sims = 0
-    for i in xrange(len(mfout_lines)):
+    for i in range(len(mfout_lines)):
         if search('_iterations', mfout_lines[i]):
-            row = split(mfout_lines[i])
+            row = mfout_lines[i].split()
             sims = int(row[1])
 
     # Global data.
     if model_type in ['all', 'diff']:
         # Global chi-squared.
-        row = split(mfout_lines[global_chi2_pos])
+        row = mfout_lines[global_chi2_pos].split()
         cdp.chi2 = float(row[1])
 
         # Spherical diffusion tensor.
         if cdp.diff_tensor.type == 'sphere':
             # Split the lines.
-            tm_row = split(mfout_lines[diff_pos])
+            tm_row = mfout_lines[diff_pos].split()
 
             # Set the params.
             cdp.diff_tensor.tm = float(tm_row[2])
@@ -660,10 +677,10 @@ def extract(dir, spin_id=None):
         # Spheroid diffusion tensor.
         else:
             # Split the lines.
-            tm_row = split(mfout_lines[diff_pos])
-            dratio_row = split(mfout_lines[diff_pos+1])
-            theta_row = split(mfout_lines[diff_pos+2])
-            phi_row = split(mfout_lines[diff_pos+3])
+            tm_row = mfout_lines[diff_pos].split()
+            dratio_row = mfout_lines[diff_pos+1].split()
+            theta_row = mfout_lines[diff_pos+2].split()
+            phi_row = mfout_lines[diff_pos+3].split()
 
             # Set the params.
             diffusion_tensor.set([float(tm_row[2]), float(dratio_row[2]), float(theta_row[2])*2.0*pi/360.0, float(phi_row[2])*2.0*pi/360.0], ['tm', 'Dratio', 'theta', 'phi'])
@@ -676,7 +693,7 @@ def extract(dir, spin_id=None):
             continue
 
         # Get the residue number from the mfout file.
-        mfout_res_num = int(split(mfout_lines[s2_pos + pos])[0])
+        mfout_res_num = int(mfout_lines[s2_pos + pos].split()[0])
 
         # Skip the spin if the residue doesn't match.
         if mfout_res_num != res_num:
@@ -718,11 +735,11 @@ def extract(dir, spin_id=None):
 
         # Get the chi-squared data.
         if not sims:
-            row = split(mfout_lines[chi2_pos + pos])
+            row = mfout_lines[chi2_pos + pos].split()
             spin.chi2 = float(row[1])
         else:
             # The mfout chi2 position (with no sims) plus 2 (for the extra XML) plus the residue position times 22 (because of the simulated SSE rows).
-            row = split(mfout_lines[chi2_pos + 2 + 22*pos])
+            row = mfout_lines[chi2_pos + 2 + 22*pos].split()
             spin.chi2 = float(row[1])
 
         # Increment the residue position.
@@ -754,7 +771,7 @@ def get_mf_data(mfout_lines, pos):
     """
 
     # Split the line up.
-    row = split(mfout_lines[pos])
+    row = mfout_lines[pos].split()
 
     # The value and error, assuming a bug free mfout file.
     val = row[1]
@@ -763,8 +780,8 @@ def get_mf_data(mfout_lines, pos):
     # The Modelfree4 '*' column fusion bug.
     if search('\*', val) or search('\*', err):
         # Split by the '*' character.
-        val_row = split(val, '*')
-        err_row = split(err, '*')
+        val_row = val.split('*')
+        err_row = err.split('*')
 
         # The value and error (the first elements).
         val = val_row[0]
@@ -775,7 +792,7 @@ def get_mf_data(mfout_lines, pos):
     fused = False
     for element in row:
         # Count the number of '.' characters.
-        num = count(element, '.')
+        num = element.count('.')
 
         # Catch two or more '.' characters.
         if num > 1:
@@ -783,9 +800,9 @@ def get_mf_data(mfout_lines, pos):
             fused = True
 
             # Loop over each fused number.
-            for i in xrange(num):
+            for i in range(num):
                 # Find the index of the first '.'.
-                index = find(element, '.')
+                index = element.find('.')
 
                 # The first number (index + decimal point + 3 decimal chars).
                 new_row.append(element[0:index+4])
@@ -839,7 +856,7 @@ def line_positions(mfout_lines):
                     break
 
                 # Split the line up.
-                row = split(mfout_lines[i])
+                row = mfout_lines[i].split()
 
                 # S2 position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'S2':

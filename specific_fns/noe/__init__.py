@@ -28,9 +28,9 @@ __all__ = [ 'main',
             'pymol']
 
 # relax module imports.
-from main import Noe_main
 from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common
+from specific_fns.noe.main import Noe_main
 
 
 class Noe(Noe_main, API_base, API_common):

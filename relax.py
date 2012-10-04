@@ -39,14 +39,13 @@ from os import F_OK, access, getpid, putenv
 if dep_check.profile_module:
     import profile
 import pstats
+from pydoc import pager
 from re import match
-from string import split, strip
 import sys
 
 # relax modules.
 from info import Info_box
 from multi import Application_callback, load_multiprocessor
-from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
@@ -56,6 +55,9 @@ import version
 
 # Modify the environmental variables.
 putenv('PDBVIEWER', 'vmd')
+
+# Python 2 and 3 work-arounds.
+import compat
 
 
 def start(mode=None, profile_flag=False):
@@ -436,7 +438,9 @@ class Relax:
     def licence(self):
         """Function for displaying the licence."""
 
-        help(gpl)
+        # Present the GPL using paging.
+        file = open('docs/COPYING')
+        pager(file.read())
 
 
     def test_mode(self):
@@ -467,7 +471,8 @@ class RelaxParser(OptionParser):
         # Raise a clean error.
         try:
             raise relax_errors.RelaxError(message)
-        except relax_errors.AllRelaxErrors, instance:
+        except relax_errors.AllRelaxErrors:
+            instance = sys.exc_info()[1]
             sys.stderr.write(instance.__str__())
 
         # Exit.

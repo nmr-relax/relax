@@ -29,11 +29,13 @@ try:
     bz2 = True
 except ImportError:
     bz2 = False
-from cPickle import dump
+try:
+    from cPickle import dump    # Python 2 import.
+except ImportError:
+    from pickle import dump    # Python 3 import.
 from re import match
 import sys
 import time
-from types import ClassType
 
 # relax module imports.
 import ansi
@@ -349,7 +351,7 @@ class RelaxInvalidError(BaseArgError):
 class RelaxArgNotInListError(BaseArgError):
     def __init__(self, name, value, list):
         self.text = "The " + name + " argument " + repr(value) + " is neither "
-        for i in xrange(len(list)-1):
+        for i in range(len(list)-1):
             self.text = self.text + repr(list[i]) + ', '
         self.text = self.text + 'nor ' + repr(list[-1]) + "."
 
@@ -1012,7 +1014,7 @@ def all_errors(names):
     """Function for returning all the RelaxErrors to allow the AllRelaxError object to be created."""
 
     # Empty list.
-    list = None
+    list = []
 
     # Loop over all objects of this module.
     for name in names:
@@ -1020,17 +1022,14 @@ def all_errors(names):
         object = globals()[name]
 
         # Skip over all non error class objects.
-        if not (isinstance(object, ClassType) or isinstance(object, type(type))) or not match('Relax', name):
+        if not (isinstance(object, type(RelaxError)) or isinstance(object, type(type))) or not match('Relax', name):
             continue
 
-        # Tuple of all the errors.
-        if list == None:
-            list = object,
-        else:
-            list = list, object
+        # Append to the list.
+        list.append(object)
 
     # Return the list of RelaxErrors
     return list
 
-# Initialise the AllRelaxErrors structure so it can be imported.
-AllRelaxErrors = all_errors(dir())
+# Initialise the AllRelaxErrors structure, as a tuple for the except statements, so it can be imported.
+AllRelaxErrors = tuple(all_errors(dir()))

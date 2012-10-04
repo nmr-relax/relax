@@ -22,10 +22,6 @@
 # Module docstring.
 """Module for building documentation."""
 
-# Python module imports.
-from string import split, strip
-
-
 # Some constants.
 TITLE = 3
 SECTION = 2
@@ -44,13 +40,13 @@ def strip_lead(text):
     """
 
     # Split by newline.
-    lines = split(text, '\n')
+    lines = text.split('\n')
 
     # Find the minimum whitespace.
     min_white = 1000
     for line in lines:
         # Empty lines.
-        if strip(line) == '':
+        if line.strip() == '':
             continue
 
         # Count the whitespace for the current line.

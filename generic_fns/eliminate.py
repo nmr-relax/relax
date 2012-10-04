@@ -80,7 +80,7 @@ def eliminate(function=None, args=None):
 
             # Loop over the parameters.
             flag = False
-            for j in xrange(len(names)):
+            for j in range(len(names)):
                 # Eliminate function.
                 if eliminate(names[j], values[j], model_info, args):
                     flag = True
@@ -95,7 +95,7 @@ def eliminate(function=None, args=None):
 
         else:
             # Loop over the simulations.
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Get the parameter names and values.
                 names = get_param_names(model_info)
                 values = get_param_values(model_info, sim_index=j)
@@ -110,7 +110,7 @@ def eliminate(function=None, args=None):
 
                 # Loop over the parameters.
                 flag = False
-                for k in xrange(len(names)):
+                for k in range(len(names)):
                     # Eliminate function.
                     if eliminate(names[k], values[k], model_info, args, sim=j):
                         flag = True

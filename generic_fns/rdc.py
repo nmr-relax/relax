@@ -53,7 +53,7 @@ def back_calc(align_id=None):
 
     # Arg check.
     if align_id and align_id not in cdp.align_ids:
-        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+        raise RelaxError("The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids))
 
     # Convert the align IDs to an array, or take all IDs.
     if align_id:
@@ -138,7 +138,7 @@ def convert(value, align_id, to_intern=False):
 
     # The conversion factor.
     factor = 1.0
-    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == '2D':
+    if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == '2D':
         # Convert from 2D to D.
         if to_intern:
             factor = 2.0
@@ -268,17 +268,17 @@ def delete(align_id=None):
         cdp.rdc_ids.pop(cdp.rdc_ids.index(id))
 
         # The data type.
-        if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(id):
+        if hasattr(cdp, 'rdc_data_types') and id in cdp.rdc_data_types:
             cdp.rdc_data_types.pop(id)
 
         # The interatomic data.
         for interatom in interatomic_loop():
             # The data.
-            if hasattr(interatom, 'rdc') and interatom.rdc.has_key(id):
+            if hasattr(interatom, 'rdc') and id in interatom.rdc:
                 interatom.rdc.pop(id)
 
             # The error.
-            if hasattr(interatom, 'rdc_err') and interatom.rdc_err.has_key(id):
+            if hasattr(interatom, 'rdc_err') and id in interatom.rdc_err:
                 interatom.rdc_err.pop(id)
 
         # Clean the global data.
@@ -327,18 +327,19 @@ def q_factors(spin_id=None):
         interatom_count = 0
         rdc_data = False
         rdc_bc_data = False
+        norm2_flag = True
         for interatom in interatomic_loop():
             # Increment the counter.
             interatom_count += 1
 
             # Data checks.
-            if hasattr(interatom, 'rdc') and interatom.rdc.has_key(align_id):
+            if hasattr(interatom, 'rdc') and align_id in interatom.rdc:
                 rdc_data = True
-            if hasattr(interatom, 'rdc_bc') and interatom.rdc_bc.has_key(align_id):
+            if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
                 rdc_bc_data = True
 
             # Skip containers without RDC data.
-            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not interatom.rdc.has_key(align_id) or interatom.rdc[align_id] == None or not interatom.rdc_bc.has_key(align_id) or interatom.rdc_bc[align_id] == None:
+            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or interatom.rdc[align_id] == None or not align_id in interatom.rdc_bc or interatom.rdc_bc[align_id] == None:
                 continue
 
             # Get the spins.
@@ -357,8 +358,9 @@ def q_factors(spin_id=None):
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
-            if dj and dj_new != dj:
-                raise RelaxError("All the RDCs must come from the same nucleus type.")
+            if norm2_flag and dj != None and dj_new != dj:
+                warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                norm2_flag = False
             else:
                 dj = dj_new
 
@@ -377,20 +379,25 @@ def q_factors(spin_id=None):
             return
 
         # Normalisation factor of 2Da^2(4 + 3R)/5.
-        D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
-        Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
-        Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
-        if Da == 0:
-            R = nan
-        else:
-            R = Dr / Da
-        norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
-        if Da == 0.0:
-            norm = 1e-15
+        if norm2_flag:
+            D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
+            Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
+            Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
+            if Da == 0:
+                R = nan
+            else:
+                R = Dr / Da
+            norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+            if Da == 0.0:
+                norm = 1e-15
 
-        # The Q-factor for the alignment.
-        Q = sqrt(sse / N / norm)
-        cdp.q_factors_rdc[align_id] = Q
+            # The Q-factor for the alignment.
+            cdp.q_factors_rdc[align_id] = sqrt(sse / N / norm)
+
+        else:
+            cdp.q_factors_rdc[align_id] = 0.0
+
+        # The second Q-factor definition.
         cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
 
     # The total Q-factor.
@@ -446,7 +453,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     # Store the data type as global data (need for the conversion of RDC data).
     if not hasattr(cdp, 'rdc_data_types'):
         cdp.rdc_data_types = {}
-    if not cdp.rdc_data_types.has_key(align_id):
+    if not align_id in cdp.rdc_data_types:
         cdp.rdc_data_types[align_id] = data_type
 
     # Spin specific data.

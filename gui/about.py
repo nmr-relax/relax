@@ -24,7 +24,6 @@
 from copy import deepcopy
 from numpy import uint8, zeros
 from os import sep
-from string import split
 import webbrowser
 import wx
 import wx.html
@@ -326,7 +325,7 @@ class About_base(wx.Frame):
         self.offset(10)
 
         # Draw.
-        lines = split(wrapped_text, '\n')
+        lines = wrapped_text.split('\n')
         for line in lines:
             # Find and break out the URLs from the text.
             text_elements, url = self.split_refs(line)

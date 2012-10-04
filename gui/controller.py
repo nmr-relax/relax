@@ -24,7 +24,10 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
-from Queue import Queue
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 import sys
 import wx
 import wx.stc
@@ -423,7 +426,7 @@ class Controller(wx.Frame):
 
         # Finished.
         key = self.analysis_key()
-        if key and status.auto_analysis.has_key(key) and status.auto_analysis[key].fin:
+        if key and key in status.auto_analysis and status.auto_analysis[key].fin:
             # Stop the timer.
             if self.timer.IsRunning():
                 self.timer.Stop()
@@ -446,11 +449,11 @@ class Controller(wx.Frame):
             return
 
         # No key, so reset.
-        if not key or not status.auto_analysis.has_key(key):
+        if not key or not key in status.auto_analysis:
             wx.CallAfter(self.main_gauge.SetValue, 0)
 
         # Key present, but analysis not started.
-        if key and status.auto_analysis.has_key(key) and not status.auto_analysis[key].fin:
+        if key and key in status.auto_analysis and not status.auto_analysis[key].fin:
             # Fill the Rx gauges.
             if hasattr(self, 'mc_gauge_rx'):
                 wx.CallAfter(self.mc_gauge_rx.SetValue, 0)
@@ -474,14 +477,14 @@ class Controller(wx.Frame):
             return
 
         # Loaded a finished state, so fill all gauges and return.
-        elif not status.auto_analysis.has_key(key) and cdp_name() == 'final':
+        elif not key in status.auto_analysis and cdp_name() == 'final':
             wx.CallAfter(self.mc_gauge_mf.SetValue, 100)
             wx.CallAfter(self.progress_gauge_mf.SetValue, 100)
             wx.CallAfter(self.main_gauge.SetValue, 100)
             return
 
         # Nothing to do.
-        if not status.auto_analysis.has_key(key):
+        if not key in status.auto_analysis:
             wx.CallAfter(self.mc_gauge_mf.SetValue, 0)
             wx.CallAfter(self.progress_gauge_mf.SetValue, 0)
             wx.CallAfter(self.main_gauge.SetValue, 0)
@@ -533,7 +536,7 @@ class Controller(wx.Frame):
             return
 
         # Nothing to do.
-        if not status.auto_analysis.has_key(key):
+        if not key in status.auto_analysis:
             wx.CallAfter(self.mc_gauge_rx.SetValue, 0)
             wx.CallAfter(self.main_gauge.SetValue, 0)
             return

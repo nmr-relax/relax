@@ -487,7 +487,8 @@ class Processor(object):
                 raise
 
             # Handle all errors nicely.
-            except Exception, e:
+            except Exception:
+                e = sys.exc_info()[1]
                 self.callback.handle_exception(self, e)
 
         # Execution of the slave processor.

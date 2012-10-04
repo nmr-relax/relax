@@ -28,10 +28,13 @@ pipe.create('NOE', 'noe')
 # Load the backbone amide 15N spins from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
 structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@NE1')
 
 # Load the reference spectrum and saturated spectrum peak intensities.
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
+spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='N', proton='HN')
+spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='NE1', proton='HE1')
+spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='N', proton='HN')
+spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='NE1', proton='HE1')
 
 # Set the spectrum types.
 noe.spectrum_type('ref', 'ref_ave')

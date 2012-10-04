@@ -24,7 +24,10 @@
 
 
 # Python module imports
-import __builtin__
+try:
+    import __builtin__ as builtins    # Python 2 import.
+except ImportError:
+    import builtins    # Python 3 import.
 import sys
 
 # relax module imports.
@@ -237,7 +240,7 @@ def delete(pipe_name=None):
             # Set the current data pipe to None if it is the deleted data pipe.
             if ds.current_pipe == pipe:
                 ds.current_pipe = None
-                __builtin__.cdp = None
+                builtins.cdp = None
 
     # Release the lock.
     finally:
@@ -398,8 +401,7 @@ def pipe_names(bundle=None):
 
     # Initialise.
     names = []
-    pipes = ds.keys()
-    pipes.sort()
+    pipes = sorted(ds.keys())
 
     # Loop over the pipes.
     for pipe in pipes:
@@ -429,7 +431,7 @@ def switch(pipe_name=None):
 
         # Switch the current data pipe.
         ds.current_pipe = pipe_name
-        __builtin__.cdp = get_pipe()
+        builtins.cdp = get_pipe()
 
     # Release the lock.
     finally:

@@ -2,7 +2,7 @@
 
 # Copyright 2004-2011, Edward d'Auvergne
 
-from math import acos, cos, pi, sin
+from math import acos, cos, pi, sin, sqrt
 
 
 def pdb_line(file=None, atom_num=0, atom=None, res_num=0, res_name=None, vector=None):
@@ -66,8 +66,8 @@ for i in range(len(u)):
 ###########################################
 
 vectors = []
-for i in xrange(len(u)):
-    for j in xrange(len(u)):
+for i in range(len(u)):
+    for j in range(len(u)):
         # X coordinate.
         x = sin(theta[i]) * cos(phi[j])
 
@@ -113,6 +113,10 @@ for i in range(len(vectors)):
 
     # Add the vector to the used vector list.
     used.append(vectors[i])
+
+# Add a Trp indole NH for luck ;)
+pdb_line(file=file, atom_num=atom_num, atom='NE1', res_num=res_num-1, res_name='GLY', vector=[0.0, 0.0, 0.0])
+pdb_line(file=file, atom_num=atom_num+1, atom='HE1', res_num=res_num-1, res_name='GLY', vector=[1/sqrt(3), 1/sqrt(3), 1/sqrt(3)])
 
 # End of PDB.
 file.write('END\n')

@@ -23,8 +23,12 @@
 """The dipole_pair user function definitions."""
 
 # Python module imports.
+import dep_check
 from os import sep
-import wx
+if dep_check.wx_module:
+    from wx import FD_OPEN
+else:
+    FD_OPEN = -1
 
 # relax module imports.
 from generic_fns import pipes, dipole_pair
@@ -95,7 +99,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the averaged distance data.",
-    wiz_filesel_style = wx.FD_OPEN
+    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -104,6 +108,16 @@ uf.add_keyarg(
     desc_short = "directory name",
     desc = "The directory where the file is located.",
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "unit",
+    default = "meter",
+    py_type = "str",
+    desc_short = "distance unit",
+    desc = "The unit of distance (the default is 'meter').",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["meter", "Angstrom"],
+    wiz_read_only = True
 )
 uf.add_keyarg(
     name = "spin_id1_col",
@@ -142,13 +156,13 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly defined.")
+uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly defined.  The default measurement unit is 'meter' but this can be changed to 'Angstrom'.")
 uf.desc[-1].add_paragraph("This user function allows these r^-3 averaged interatomic distances to be read from a file.  This is useful in the case when the dipole-dipole distances vary, replacing the need to call the dipole_pair.set_dist user function many times.  The format of the file should be columnar, with the two spin ID strings in two separate columns and the averaged distances in any other.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To load the distances from the fifth column of the 'distances' file, and where the spin IDs are in the first and second columns, type one of the following:")
+uf.desc[-1].add_paragraph("To load the distances in meters from the fifth column of the 'distances' file, and where the spin IDs are in the first and second columns, type one of the following:")
 uf.desc[-1].add_prompt("relax> dipole_pair.read_dist('distances', 1, 2, 5)")
-uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', spin_id1_col=1, spin_id2_col=2, data_col=5)")
+uf.desc[-1].add_prompt("relax> dipole_pair.read_dist(file='distances', unit='meter', spin_id1_col=1, spin_id2_col=2, data_col=5)")
 uf.backend = dipole_pair.read_dist
 uf.menu_text = "&read_dist"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -181,17 +195,28 @@ uf.add_keyarg(
     name = "ave_dist",
     default = NH_BOND_LENGTH,
     py_type = "float",
-    desc_short = "averaged interatomic distance (meters)",
-    desc = "The r^-3 averaged distance between the two spins to be used in the magnetic dipole constant."
+    desc_short = "averaged interatomic distance",
+    desc = "The r^-3 averaged distance between the two spins to be used in the magnetic dipole constant, defaulting to meters."
+)
+uf.add_keyarg(
+    name = "unit",
+    default = "meter",
+    py_type = "str",
+    desc_short = "distance unit",
+    desc = "The unit of distance (the default is 'meter').",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["meter", "Angstrom"],
+    wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly supplied.  This user function allows these distances to be set up.")
+uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly supplied.  This user function allows these distances to be set up.  The default measurement unit is 'meter' but this can be changed to 'Angstrom'.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the N-H distance for protein the 15N heteronuclear relaxation mechanism to 1.02 Angstrom, type one of the following:")
 uf.desc[-1].add_prompt("relax> dipole_pair.set_dist('@N', '@H', 1.02 * 1e-10)")
-uf.desc[-1].add_prompt("relax> dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)")
+uf.desc[-1].add_prompt("relax> dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10, unit='meter')")
+uf.desc[-1].add_prompt("relax> dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02, unit='Angstrom')")
 uf.backend = dipole_pair.set_dist
 uf.menu_text = "&set_dist"
 uf.gui_icon = "oxygen.actions.edit-rename"

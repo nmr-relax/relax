@@ -37,12 +37,12 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array, float64
 from re import split
-from string import count, replace, strip, upper
 import sys
 from textwrap import fill
 from warnings import warn
 
 # relax module imports.
+from check_types import is_unicode
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import exp_info, pipes, relax_re
 from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
@@ -60,8 +60,8 @@ ALLOWED_MOL_TYPES = ['protein',
 """The list of allowable molecule types."""
 
 id_string_doc = Desc_container("Spin ID string documentation")
-id_string_doc.add_paragraph("The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.")
-id_string_doc.add_paragraph("If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.")
+id_string_doc.add_paragraph("The identification string is composed of three components: the molecule ID token beginning with the '#' character, the residue ID token beginning with the ':' character, and the atom or spin system ID token beginning with the '@' character.  Each token can be composed of multiple elements - one per spin - separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full ID string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.")
+id_string_doc.add_paragraph("If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.  If only the molecule ID component is specified, then all spins of the molecule will match.")
 id_string_doc.add_paragraph("Regular expression can be used to select spins.  For example the string '@H*' will select the protons 'H', 'H2', 'H98'.")
 
 
@@ -81,7 +81,7 @@ class Selection(object):
         """
 
         # Handle Unicode.
-        if isinstance(select_string, unicode):
+        if is_unicode(select_string):
             select_string = str(select_string)
 
         self._union = None
@@ -524,15 +524,15 @@ def bmrb_read(star):
         mol_name = data['mol_name']
         if mol_name:
             # Round brackets.
-            mol_name = replace(mol_name, '(', '')
-            mol_name = replace(mol_name, ')', '')
+            mol_name = mol_name.replace('(', '')
+            mol_name = mol_name.replace(')', '')
 
             # Square brackets.
-            mol_name = replace(mol_name, '[', '')
-            mol_name = replace(mol_name, ']', '')
+            mol_name = mol_name.replace('[', '')
+            mol_name = mol_name.replace(']', '')
 
             # Commas.
-            mol_name = replace(mol_name, ',', ' ')
+            mol_name = mol_name.replace(',', ' ')
 
         # The molecule type.
         mol_type = data['mol_type']
@@ -990,7 +990,7 @@ def create_molecule(mol_name=None, mol_type=None, pipe=None):
             raise RelaxError("The molecule type '%s' must be one of %s" % (mol_type, ALLOWED_MOL_TYPES))
 
         # Test if the molecule name already exists.
-        for i in xrange(len(dp.mol)):
+        for i in range(len(dp.mol)):
             if dp.mol[i].name == mol_name:
                 raise RelaxError("The molecule '" + repr(mol_name) + "' already exists in the relax data store.")
 
@@ -1318,7 +1318,7 @@ def delete_molecule(mol_id=None):
         indices = []
 
         # Loop over the molecules.
-        for i in xrange(len(cdp.mol)):
+        for i in range(len(cdp.mol)):
             # Remove the residue is there is a match.
             if cdp.mol[i].name in molecules:
                 indices.append(i)
@@ -1369,7 +1369,7 @@ def delete_residue(res_id=None):
             indices = []
 
             # Loop over the residues of the molecule.
-            for i in xrange(len(mol.res)):
+            for i in range(len(mol.res)):
                 # Remove the residue is there is a match.
                 if mol.res[i].num in residues or mol.res[i].name in residues:
                     indices.append(i)
@@ -1417,7 +1417,7 @@ def delete_spin(spin_id=None):
             indices = []
 
             # Loop over the spins of the residue.
-            for i in xrange(len(res.spin)):
+            for i in range(len(res.spin)):
                 # Store the spin indices for deletion.
                 if res.spin[i].num in spins or res.spin[i].name in spins:
                     indices.append(i)
@@ -1974,7 +1974,7 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
                         spin._spin_ids.pop(spin._spin_ids.index(spin_id))
 
                     # Remove the IDs from the look up table.
-                    if dp.mol._spin_id_lookup.has_key(spin_id):
+                    if spin_id in dp.mol._spin_id_lookup:
                         dp.mol._spin_id_lookup.pop(spin_id)
 
 
@@ -2193,8 +2193,8 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
     @type name:         str
     @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
     @type pipe:         str
-    @keyword force:     A flag which if True will cause the named spin to be renamed.
-    @type force:        bool
+    @keyword force:     A flag which if True will cause the named spin to be renamed.  If None, then the warning messages will not mention the need to change this flag to rename.
+    @type force:        bool or None
     """
 
     # The data pipe.
@@ -2209,8 +2209,11 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
     try:
         # Rename the matching spins.
         for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
-            if spin.name and not force:
-                warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+            if spin.name and force != True:
+                if force == False:
+                    warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+                else:
+                    warn(RelaxWarning("The spin '%s' is already named." % id))
             else:
                 spin.name = name
 
@@ -2348,7 +2351,7 @@ def one_letter_code(res_names):
         # Aa match.
         match = False
         for i in range(len(aa_table)):
-            if upper(res) == aa_table[i][1]:
+            if res.upper() == aa_table[i][1]:
                 seq = seq + aa_table[i][2]
                 match = True
                 break
@@ -2397,11 +2400,11 @@ def parse_token(token, verbosity=False):
         # Loop over the elements.
         for element in elements:
             # Strip all leading and trailing whitespace.
-            element = strip(element)
+            element = element.strip()
 
             # Find all '-' characters (ignoring the first character, i.e. a negative number).
             indices= []
-            for i in xrange(1, len(element)):
+            for i in range(1, len(element)):
                 if element[i] == '-':
                     indices.append(i)
 
@@ -2448,9 +2451,6 @@ def parse_token(token, verbosity=False):
 
                 # Append the element.
                 id_list.append(element)
-
-    # Sort the list.
-    id_list.sort()
 
     # Return the identifying list.
     return id_list
@@ -2644,7 +2644,7 @@ def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so assume there is no spin.
-    if not dp.mol._spin_id_lookup.has_key(spin_id):
+    if spin_id not in dp.mol._spin_id_lookup:
         return None
 
     # The indices from the look up table.
@@ -2680,7 +2680,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
     """
 
     # Handle Unicode.
-    if isinstance(selection, unicode):
+    if is_unicode(selection):
         selection = str(selection)
 
     # The data pipe.
@@ -2810,7 +2810,7 @@ def return_spin_indices(spin_id=None, pipe=None):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so switch to selection matching.
-    if not dp.mol._spin_id_lookup.has_key(spin_id):
+    if spin_id not in dp.mol._spin_id_lookup:
         # Parse the selection string.
         select_obj = Selection(spin_id)
 
@@ -2973,19 +2973,19 @@ def same_sequence(pipe1, pipe2):
         return False
 
     # Loop over the molecules.
-    for i in xrange(len(pipe1.mol)):
+    for i in range(len(pipe1.mol)):
         # Different number of residues.
         if len(pipe1.mol[i].res) != len(pipe2.mol[i].res):
             return False
 
         # Loop over the residues.
-        for j in xrange(len(pipe1.mol[i].res)):
+        for j in range(len(pipe1.mol[i].res)):
             # Different number of spins.
             if len(pipe1.mol[i].res[j].spin) != len(pipe2.mol[i].res[j].spin):
                 return False
 
             # Loop over the spins.
-            for k in xrange(len(pipe1.mol[i].res[j].spin)):
+            for k in range(len(pipe1.mol[i].res[j].spin)):
                 # Different spin numbers.
                 if pipe1.mol[i].res[j].spin[k].num != pipe2.mol[i].res[j].spin[k].num:
                     return False
@@ -3024,7 +3024,7 @@ def set_spin_element(spin_id=None, element=None, pipe=None, force=False):
 
     # Check.
     if element not in valid_names:
-        raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
+        raise RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)) 
 
     # The data pipe.
     if pipe == None:
@@ -3050,8 +3050,8 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
     @type isotope:      str
     @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
     @type pipe:         str
-    @keyword force:     A flag which if True will cause the isotope type to be changed.
-    @type force:        bool
+    @keyword force:     A flag which if True will cause the isotope type to be changed.  If None, then the warning messages will not mention the need to change this flag to rename.
+    @type force:        bool or None
     """
 
     # Types currently supported in relax.
@@ -3070,7 +3070,7 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
 
     # Check.
     if isotope not in supported_types:
-        raise(RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope))
+        raise RelaxError("The nuclear isotope type '%s' is currently not supported." % isotope) 
 
     # The data pipe.
     if pipe == None:
@@ -3081,8 +3081,11 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
 
     # Set the isotope type for the matching spins.
     for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
-        if hasattr(spin, 'isotope') and spin.isotope and not force:
-            warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
+        if hasattr(spin, 'isotope') and spin.isotope and force != True:
+            if force == False:
+                warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
+            else:
+                warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set." % id))
         else:
             spin.isotope = isotope
 
@@ -3344,17 +3347,17 @@ def spin_index_loop(selection=None, pipe=None):
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol_index in xrange(len(dp.mol)):
+    for mol_index in range(len(dp.mol)):
         # Alias the molecule container.
         mol = dp.mol[mol_index]
 
         # Loop over the residues.
-        for res_index in xrange(len(dp.mol[mol_index].res)):
+        for res_index in range(len(dp.mol[mol_index].res)):
             # Alias the residue container.
             res = dp.mol[mol_index].res[res_index]
 
             # Loop over the spins.
-            for spin_index in xrange(len(dp.mol[mol_index].res[res_index].spin)):
+            for spin_index in range(len(dp.mol[mol_index].res[res_index].spin)):
                 # Alias the spin container.
                 spin = dp.mol[mol_index].res[res_index].spin[spin_index]
 
@@ -3488,7 +3491,7 @@ def tokenise(selection):
         #   No spin identification characters are allowed.
         #   First character must be '#'.
         #   Only 1 '#' allowed.
-        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or count(mol_info, '#') != 1:
+        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or mol_info.count('#') != 1:
             raise RelaxError("Invalid molecule selection '%s'." % mol_info)
 
         # ID.
@@ -3505,7 +3508,7 @@ def tokenise(selection):
     # Residue identifier.
     if res_info:
         # Only max 1 '&' allowed.
-        if count(res_info, '&') > 1:
+        if res_info.count('&') > 1:
             raise RelaxError("Only one '&' boolean operator is supported for the residue component of individual spin IDs.")
 
         # Split by '&'.
@@ -3518,7 +3521,7 @@ def tokenise(selection):
             #   No spin identification characters are allowed.
             #   First character must be ':'.
             #   Only 1 ':' allowed.
-            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or count(res_token[i], ':') != 1:
+            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or res_token[i].count(':') != 1:
                 raise RelaxError("Invalid residue selection '%s'." % res_info)
 
             # Strip.
@@ -3539,7 +3542,7 @@ def tokenise(selection):
     # Spin identifier.
     if spin_info:
         # Only max 1 '&' allowed.
-        if count(spin_info, '&') > 1:
+        if spin_info.count('&') > 1:
             raise RelaxError("Only one '&' boolean operator is supported for the spin component of individual spin IDs.")
 
         # Split by '&'.
@@ -3552,7 +3555,7 @@ def tokenise(selection):
             #   No residue identification characters are allowed.
             #   First character must be '@'.
             #   Only 1 '@' allowed.
-            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or count(spin_token[i], '@') != 1:
+            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or spin_token[i].count('@') != 1:
                 raise RelaxError("Invalid spin selection '%s'." % spin_info)
 
             # Strip.

@@ -150,7 +150,7 @@ class FortranLine:
         @returns: C{True} if the line contains only whitespace
         @rtype: C{bool}
         """
-        return len(string.strip(self.text)) == 0
+        return len(self.text.strip()) == 0
 
     def _input(self):
         text = self.text
@@ -165,7 +165,7 @@ class FortranLine:
             if type == 'A':
                 value = s
             elif type == 'I':
-                s = string.strip(s)
+                s = s.strip()
                 if len(s) == 0:
                     value = 0
                 else:
@@ -174,19 +174,19 @@ class FortranLine:
                     # e.g.: pdb2myd.ent.Z chain: - model: 0 : CONECT*****
                     # catch this and set value to None
                     try:
-                        value = string.atoi(s)
+                        value = int(s)
                     except:
                         value = None
             elif type == 'D' or type == 'E' or type == 'F' or type == 'G':
-                s = string.lower(string.strip(s))
-                n = string.find(s, 'd')
+                s = s.strip().lower()
+                n = s.find('d')
                 if n >= 0:
                     s = s[:n] + 'e' + s[n+1:]
                 if len(s) == 0:
                     value = 0.
                 else:
                     try:
-                        value = string.atof(s)
+                        value = float(s)
                     except:
                         value = None
             if value is not None:
@@ -212,22 +212,22 @@ class FortranLine:
                     if value is None:
                         s = ''
                     elif type == 'I':
-                        s = `value`
+                        s = repr(value)
                     elif type == 'D':
-                        s = ('%'+`length`+'.'+`fraction`+'e') % value
-                        n = string.find(s, 'e')
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'e') % value
+                        n = s.find('e')
                         s = s[:n] + 'D' + s[n+1:]
                     elif type == 'E':
-                        s = ('%'+`length`+'.'+`fraction`+'e') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'e') % value
                     elif type == 'F':
-                        s = ('%'+`length`+'.'+`fraction`+'f') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'f') % value
                     elif type == 'G':
-                        s = ('%'+`length`+'.'+`fraction`+'g') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'g') % value
                     else:
                         raise ValueError('Not yet implemented')
-                    s = string.upper(s)
+                    s = s.upper()
                     self.text = self.text + ((length*' ')+s)[-length:]
-        self.text = string.rstrip(self.text)
+        self.text = self.text.rstrip()
 
 #
 # The class FortranFormat represents a format specification.
@@ -252,34 +252,34 @@ class FortranFormat:
         @param nested: I{for internal use}
         """
         fields = []
-        format = string.strip(format)
+        format = format.strip()
         while format and format[0] != ')':
             n = 0
             while format[0] in string.digits:
-                n = 10*n + string.atoi(format[0])
+                n = 10*n + int(format[0])
                 format = format[1:]
             if n == 0: n = 1
-            type = string.upper(format[0])
+            type = format[0].upper()
             if type == "'":
-                eof = string.find(format, "'", 1)
+                eof = format.find("'", 1)
                 text = format[1:eof]
                 format = format[eof+1:]
             else:
-                format = string.strip(format[1:])
+                format = format[1:].strip()
             if type == '(':
                 subformat = FortranFormat(format, 1)
                 fields = fields + n*subformat.fields
                 format = subformat.rest
-                eof = string.find(format, ',')
+                eof = format.find(',')
                 if eof >= 0:
                     format = format[eof+1:]
             else:
-                eof = string.find(format, ',')
+                eof = format.find(',')
                 if eof >= 0:
                     field = format[:eof]
                     format = format[eof+1:]
                 else:
-                    eof = string.find(format, ')')
+                    eof = format.find(')')
                     if eof >= 0:
                         field = format[:eof]
                         format = format[eof+1:]
@@ -289,14 +289,14 @@ class FortranFormat:
                 if type == "'":
                     field = (type, text)
                 else:
-                    dot = string.find(field, '.')
+                    dot = field.find('.')
                     if dot > 0:
-                        length = string.atoi(field[:dot])
-                        fraction = string.atoi(field[dot+1:])
+                        length = int(field[:dot])
+                        fraction = int(field[dot+1:])
                         field = (type, length, fraction)
                     else:
                         if field:
-                            length = string.atoi(field)
+                            length = int(field)
                         else:
                             length = 1
                         field = (type, length)
@@ -317,7 +317,7 @@ class FortranFormat:
 if __name__ == '__main__':
     f = FortranFormat("'!!',D10.3,F10.3,G10.3,'!!'")
     l = FortranLine([1.5707963, 3.14159265358, 2.71828], f)
-    print str(l)
+    print(str(l))
     f = FortranFormat("F12.0")
     l = FortranLine('2.1D2', f)
-    print l[0]
+    print(l[0])

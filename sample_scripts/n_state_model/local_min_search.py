@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -61,12 +61,12 @@ for rand_index in range(200):
 
     # Random array.
     probs = zeros(cdp.N, float64)
-    for j in xrange(cdp.N):
+    for j in range(cdp.N):
         probs[j] = uniform(0, 1)
     probs = probs / norm(probs)
 
     # Set the random probabilities.
-    for j in xrange(cdp.N):
+    for j in range(cdp.N):
         value.set(probs[j], 'p'+`j`)
 
     # Reset the tensors.

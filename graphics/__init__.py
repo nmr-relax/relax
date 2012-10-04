@@ -24,7 +24,6 @@
 
 # Python module imports.
 from os import sep
-from string import split
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -36,7 +35,7 @@ IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'misc' + sep
 WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
 
 
-def fetch_icon(icon=None, size='16x16'):
+def fetch_icon(icon=None, size='16x16', format='png'):
     """Return the path to the specified icon.
 
     The icon code consists of two parts separated by the '.' character.  These are:
@@ -46,12 +45,14 @@ def fetch_icon(icon=None, size='16x16'):
 
     To specify the 'graphics/oxygen_icons/16x16/actions/document-open.png' icon, the icon code string would therefore be 'oxygen.actions.document-open'.
 
-    @keyword icon:  The special icon code.
-    @type icon:     str
-    @keyword size:  The icon size to fetch.
-    @type size:     str
-    @return:        The icon path, for example 'oxygen_icons/16x16/actions/document-open.png'.
-    @rtype:         str
+    @keyword icon:      The special icon code.
+    @type icon:         str
+    @keyword size:      The icon size to fetch.
+    @type size:         str
+    @keyword format:    The format of the icon, defaulting to PNG images.  This can be changed to 'eps.gz' for example, or None for no file ending.
+    @type format:       str
+    @return:            The icon path, for example 'oxygen_icons/16x16/actions/document-open.png'.
+    @rtype:             str
     """
 
     # No icon.
@@ -62,7 +63,7 @@ def fetch_icon(icon=None, size='16x16'):
     path = status.install_path + sep + 'graphics' + sep
 
     # Split up the icon code.
-    elements = split(icon, '.')
+    elements = icon.split('.')
 
     # The icon type.
     if elements[0] == 'relax':
@@ -80,7 +81,14 @@ def fetch_icon(icon=None, size='16x16'):
         path += elements[1] + sep
 
     # The file.
-    path += "%s.png" % elements[-1]
+    if format == None:
+        path += elements[-1]
+    elif format == 'png':
+        path += "%s.png" % elements[-1]
+    elif format == 'eps.gz':
+        path += "%s.eps.gz" % elements[-1]
+    else:
+        raise RelaxError("The icon format '%s' is unknown." % format)
 
     # Return the path.
     return path

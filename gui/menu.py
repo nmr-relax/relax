@@ -25,12 +25,11 @@
 
 # Python module imports.
 from re import search
-from string import split
+import sys
 import wx
 
 # relax module imports.
 from graphics import fetch_icon
-from prompt.gpl import gpl
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
@@ -107,7 +106,7 @@ class Menu:
         # The 'View' menu entries.
         menu = wx.Menu()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_CONTROLLER, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.preferences_system_performance))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_SPIN_VIEW, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_SPIN_VIEW, text="&Spin viewer\tCtrl+T", icon=paths.icon_16x16.spin))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_RESULTS, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PIPE_EDIT, text="&Data pipe editor\tCtrl+D", icon=paths.icon_16x16.pipe))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PROMPT, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
@@ -217,7 +216,9 @@ class Menu:
         """
 
         # Print the GPL to STDOUT.
-        print(gpl.__doc__)
+        file = open('docs/COPYING')
+        for line in file.readlines():
+            sys.stdout.write(line)
 
         # Show the relax controller.
         self.gui.show_controller(event)

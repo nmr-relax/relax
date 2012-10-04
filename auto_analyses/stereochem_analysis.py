@@ -57,10 +57,10 @@ This script is split into multiple stages:
 
 # Python module imports.
 from math import pi, sqrt
-from os import F_OK, access, getcwd, popen3, sep
+from os import F_OK, access, getcwd, sep
 from random import randint
 from re import search
-from string import split
+from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -268,9 +268,9 @@ class Stereochem_analysis:
             data = []
             for j in range(1, len(noe_lines)):
                 # Split the lines.
-                ens = int(split(noe_lines[j])[0])
-                noe_viol = float(split(noe_lines[j])[1])
-                q_rdc = float(split(rdc_lines[j])[1])
+                ens = int(noe_lines[j].split()[0])
+                noe_viol = float(noe_lines[j].split()[1])
+                q_rdc = float(rdc_lines[j].split()[1])
 
                 # The NOE Q-factor.
                 q_noe = sqrt(noe_viol/self.noe_norm)
@@ -404,7 +404,7 @@ class Stereochem_analysis:
                 noe_viols = []
                 for j in range(1, len(lines)):
                     # Extract the violation.
-                    viol = float(split(lines[j])[1])
+                    viol = float(lines[j].split()[1])
                     noe_viols.append(viol)
 
                     # Add to the data structure.
@@ -414,8 +414,8 @@ class Stereochem_analysis:
                 dist.append(self.generate_distribution(noe_viols, inc=self.bucket_num, upper=self.upper_lim_noe, lower=self.lower_lim_noe))
 
             # Headers.
-            write_xy_header(file=grace_curve, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', 'NOE violation (Angstrom\S2\N)'], axis_min=[0, 0], axis_max=[self.num_ens, 200], legend_pos=[0.3, 0.8])
-            write_xy_header(file=grace_dist, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['NOE violation (Angstrom\S2\N)', 'Frequency'], axis_min=[0, 0], axis_max=[200, 0.2], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_curve, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', 'NOE violation (Angstrom\\S2\\N)'], axis_min=[0, 0], axis_max=[self.num_ens, 200], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['NOE violation (Angstrom\\S2\\N)', 'Frequency'], axis_min=[0, 0], axis_max=[200, 0.2], legend_pos=[1.1, 0.8])
 
             # Write the data.
             write_xy_data([data], file=grace_curve, graph_type='xy')
@@ -450,7 +450,7 @@ class Stereochem_analysis:
                 values = []
                 for j in range(1, len(lines)):
                     # Extract the violation.
-                    value = float(split(lines[j])[1])
+                    value = float(lines[j].split()[1])
                     values.append(value)
 
                     # Add to the data structure.
@@ -501,15 +501,15 @@ class Stereochem_analysis:
                 # Loop over the data.
                 for j in range(1, len(noe_lines)):
                     # Split the lines.
-                    noe_viol = float(split(noe_lines[j])[1])
-                    q_factor = float(split(rdc_lines[j])[1])
+                    noe_viol = float(noe_lines[j].split()[1])
+                    q_factor = float(rdc_lines[j].split()[1])
 
                     # Add the xy pair.
                     data[i].append([noe_viol, q_factor])
                     data_scaled[i].append([sqrt(noe_viol/self.noe_norm), q_factor])
 
             # Write the data.
-            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\\S2\\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
             write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[1, 1], legend_pos=[1.1, 0.8])
             write_xy_data([data], file=grace_file, graph_type='xy')
             write_xy_data([data_scaled], file=grace_file_scaled, graph_type='xy')
@@ -541,7 +541,7 @@ class Stereochem_analysis:
             self.interpreter.pipe.create("noe_viol_%s" % config, "N-state")
 
             # Read the first structure.
-            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
             # Load all protons as the sequence.
             self.interpreter.structure.load_spins("@H*", ave_pos=False)
@@ -572,7 +572,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
                 # Get the atomic positions.
                 self.interpreter.structure.get_pos(ave_pos=False)
@@ -630,7 +630,7 @@ class Stereochem_analysis:
             self.interpreter.pipe.create("rdc_analysis_%s" % config, "N-state")
 
             # Read the first structure.
-            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
             # Load all spins as the sequence.
             self.interpreter.structure.load_spins(ave_pos=False)
@@ -670,7 +670,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
                 # Get the positional information, then load the CH vectors.
                 self.interpreter.structure.get_pos(ave_pos=False)
@@ -768,32 +768,32 @@ class Stereochem_analysis:
                     continue
 
                 # Open the Molmol pipe.
-                stdin, stdout, stderr = popen3("molmol -t -f -", 'w', 0)
+                pipe = Popen("molmol -t -f -", shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
                 # Init all.
-                stdin.write("InitAll yes\n")
+                pipe.stdin.write("InitAll yes\n")
 
                 # Read the PDB.
-                stdin.write("ReadPdb " + self.results_dir+sep+file_in + "\n")
+                pipe.stdin.write("ReadPdb " + self.results_dir+sep+file_in + "\n")
 
                 # Fitting to mean.
-                stdin.write("Fit to_first 'selected'\n")
-                stdin.write("Fit to_mean 'selected'\n")
+                pipe.stdin.write("Fit to_first 'selected'\n")
+                pipe.stdin.write("Fit to_mean 'selected'\n")
 
                 # Write the result.
-                stdin.write("WritePdb " + self.results_dir+sep+file_out + "\n")
+                pipe.stdin.write("WritePdb " + self.results_dir+sep+file_out + "\n")
 
                 # End Molmol.
-                stdin.close()
+                pipe.stdin.close()
 
                 # Get STDOUT and STDERR.
-                sys.stdout.write(stdout.read())
+                sys.stdout.write(pipe.stdout.read())
                 if self.log:
-                    log.write(stderr.read())
+                    log.write(pipe.stderr.read())
 
                 # Close the pipe.
-                stdout.close()
-                stderr.close()
+                pipe.stdout.close()
+                pipe.stderr.close()
 
                 # Open the superimposed file in relax.
                 self.interpreter.reset()

@@ -38,10 +38,10 @@ from generic_fns.interatomic import interatomic_loop, return_interatom_list
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi import Processor_box
-from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
+from specific_fns.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 
 
 
@@ -159,7 +159,7 @@ class Mf_minimise:
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(spin.params)):
+                for j in range(len(spin.params)):
                     # Local tm.
                     if spin.params[j] == 'local_tm':
                         if sim_index == None:
@@ -347,16 +347,21 @@ class Mf_minimise:
             if (model_type == 'diff' or model_type == 'all') and hasattr(cdp, 'chi2'):
                 chi2 = cdp.chi2
 
+            # Spin text.
+            spin_text = ''
+            if spin != None and hasattr(spin, '_spin_ids') and len(spin._spin_ids):
+                spin_text = " for the spin '%s'" % spin._spin_ids[0]
+
             # No improvement.
             if chi2 != None and func >= chi2:
-                print("Discarding the optimisation results, the optimised chi-squared value is higher than the current value (%s >= %s)." % (func, chi2))
+                print("Discarding the optimisation results%s, the optimised chi-squared value is higher than the current value (%s >= %s)." % (spin_text, func, chi2))
 
                 # Exit!
                 return
 
             # New minimum.
             else:
-                print("Storing the optimisation results, the optimised chi-squared value is lower than the current value (%s < %s)." % (func, chi2))
+                print("Storing the optimisation results%s, the optimised chi-squared value is lower than the current value (%s < %s)." % (spin_text, func, chi2))
 
         # Disassemble the parameter vector.
         self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
@@ -514,7 +519,7 @@ class Mf_minimise:
         # Diagonal scaling of minimisation options.
         lower_new = []
         upper_new = []
-        for i in xrange(num_params):
+        for i in range(num_params):
             lower_new.append(lower[i] / scaling_matrix[i, i])
             upper_new.append(upper[i] / scaling_matrix[i, i])
 
@@ -605,7 +610,7 @@ class Mf_minimise:
         """
 
         # Loop over the model-free parameters.
-        for i in xrange(len(spin.params)):
+        for i in range(len(spin.params)):
             # Local tm.
             if spin.params[i] == 'local_tm':
                 lower.append(1.0 * 1e-9)
@@ -866,7 +871,7 @@ class Mf_minimise:
                 old_i = i
 
                 # Loop over the model-free parameters.
-                for l in xrange(len(spin.params)):
+                for l in range(len(spin.params)):
                     # Local tm.
                     if spin.params[l] == 'local_tm':
                         if upper_time_limit:
@@ -898,7 +903,7 @@ class Mf_minimise:
 
                         # S2 <= S2f and S2 <= S2s.
                         if spin.params[l] == 's2':
-                            for m in xrange(len(spin.params)):
+                            for m in range(len(spin.params)):
                                 if spin.params[m] == 's2f' or spin.params[m] == 's2s':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
@@ -916,7 +921,7 @@ class Mf_minimise:
 
                         # tf <= ts.
                         if spin.params[l] == 'ts':
-                            for m in xrange(len(spin.params)):
+                            for m in range(len(spin.params)):
                                 if spin.params[m] == 'tf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = 1.0
@@ -1062,7 +1067,7 @@ class Mf_minimise:
             data_store.num_params = [len(spin.params)]
 
         # Loop over the number of data sets.
-        for j in xrange(num_data_sets):
+        for j in range(num_data_sets):
             # Set the spin index and get the spin, if not already set.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = j
@@ -1158,7 +1163,7 @@ class Mf_minimise:
                 data_store.param_values.append(self._assemble_param_vector(model_type='mf'))
 
         # Convert to numpy arrays.
-        for k in xrange(len(data_store.ri_data)):
+        for k in range(len(data_store.ri_data)):
             data_store.ri_data[k] = array(data_store.ri_data[k], float64)
             data_store.ri_data_err[k] = array(data_store.ri_data_err[k], float64)
 
@@ -1697,7 +1702,7 @@ class Mf_minimise:
         # Loop over the minimisation instances.
         #######################################
 
-        for i in xrange(num_instances):
+        for i in range(num_instances):
             # Get the spin container if required.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = None
@@ -1777,13 +1782,13 @@ class Mf_minimise:
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 # Total number of ri.
                 number_ri = 0
-                for k in xrange(len(ri_data_err)):
+                for k in range(len(ri_data_err)):
                     number_ri = number_ri + len(ri_data_err[k])
 
                 # Reconstruct the error data structure.
                 lm_error = zeros(number_ri, float64)
                 index = 0
-                for k in xrange(len(ri_data_err)):
+                for k in range(len(ri_data_err)):
                     lm_error[index:index+len(ri_data_err[k])] = ri_data_err[k]
                     index = index + len(ri_data_err[k])
 

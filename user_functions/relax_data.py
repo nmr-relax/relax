@@ -24,7 +24,12 @@
 
 # Python module imports.
 from os import sep
-import wx
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_OPEN, FD_SAVE
+else:
+    FD_OPEN = -1
+    FD_SAVE = -1
 
 # relax module imports.
 from generic_fns import pipes, relax_data
@@ -283,7 +288,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the relaxation data.",
-    wiz_filesel_style = wx.FD_OPEN
+    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -421,7 +426,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("For the proper measurement of relaxation data, per-experiment temperature calibration is essential.  This user function is not for inputting standard MeOH/ethylene glycol/etc. calibration of a spectrometer - this temperature setting is of no use when you are running experiments which pump in large amounts of power into the probe head.")
-uf.desc[-1].add_paragraph("The R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol sepectrometer calibration.  However the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.")
+uf.desc[-1].add_paragraph("The R1 experiment should be about the same temperature as a HSQC and hence be close to the standard MeOH/ethylene glycol spectrometer calibration.  However the R2 CPMG or spin lock and, to a lesser extent, the NOE pre-saturation pump a lot more power into the probe head.  The power differences can either cause the temperature in the sample to be too high or too low.  This is unpredictable as the thermometer used by the VT unit is next to the coils in the probe head and not inside the NMR sample.  So the VT unit tries to control the temperature inside the probe head rather than in the NMR sample.  However between the thermometer and the sample is the water of the sample, the glass of the NMR tube, the air gap where the VT unit controls air flow and the outside components of the probe head protecting the electronics.  If the sample, the probe head or the VT unit is changed, this will have a different affect on the per-experiment temperature.  The VT unit responds differently under different conditions and may sometimes over or under compensate by a couple of degrees.  Therefore each relaxation data set from each spectrometer requires a per-experiment calibration.")
 uf.desc[-1].add_paragraph("Specifying the per-experiment calibration method is needed for BMRB data deposition.  The currently allowed methods are:")
 uf.desc[-1].add_list_element("'methanol',")
 uf.desc[-1].add_list_element("'monoethylene glycol',")
@@ -466,7 +471,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("For the proper measurement of relaxation data, explicit temperature control techniques are essential.  A number of factors can cause significant temperature fluctuations between individual relaxation experiments.  This includes the daily temperature cycle of the room housing the spectrometer, different amounts of power for the individual experiments, .  The best methods for eliminating such problems are single scan interleaving and the application of off-resonance temperature compensation")
+uf.desc[-1].add_paragraph("For the proper measurement of relaxation data, explicit temperature control techniques are essential.  A number of factors can cause significant temperature fluctuations between individual relaxation experiments.  This includes the daily temperature cycle of the room housing the spectrometer, different amounts of power for the individual experiments, etc.")
 uf.desc[-1].add_paragraph("The best methods for eliminating such problems are single scan interleaving and temperature compensation block.  Single scan interleaving is the most powerful technique for averaging the temperature fluctuations not only across different experiments, but also across the entire measurement time.  The application of off-resonance temperature compensation blocks at the start of the experiment is useful for the R2 and will normalise the temperature between the individual experiments, but single scan or single fid interleaving is nevertheless required for normalising the temperature across the entire measurement.")
 uf.desc[-1].add_paragraph("Specifying the temperature control method is needed for BMRB data deposition.  The currently allowed methods are:")
 uf.desc[-1].add_list_element("'single scan interleaving',")
@@ -534,7 +539,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_style = wx.FD_SAVE
+    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

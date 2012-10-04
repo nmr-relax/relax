@@ -402,13 +402,13 @@ class Auto_model_free(Base_analysis):
             # The message skeleton.
             msg = "Spin '%s' - %s (try the %s user function)." % (spin_id, "%s", "%s")
 
-            # Test if the CSA value has been set.
-            if not hasattr(spin, 'csa') or spin.csa == None:
-                missing.append(msg % ("CSA data", "value.set"))
-
             # Test if the nuclear isotope type has been set.
             if not hasattr(spin, 'isotope') or spin.isotope == None:
                 missing.append(msg % ("nuclear isotope data", "spin.isotope"))
+
+            # Test if the CSA value has been set for the heteronuclei.
+            if spin.isotope in ['15N', '13C'] and (not hasattr(spin, 'csa') or spin.csa == None):
+                missing.append(msg % ("CSA data", "value.set"))
 
         # Interatomic data container variables.
         for interatom in interatomic_loop():
@@ -693,8 +693,8 @@ class Auto_model_free(Base_analysis):
 
         # Create the dipole_pair.set_dist page.
         page = uf_store['dipole_pair.set_dist'].create_page(self.dipole_wizard)
-        page.SetValue('spin_id1', '@N')
-        page.SetValue('spin_id2', '@H')
+        page.SetValue('spin_id1', '@N*')
+        page.SetValue('spin_id2', '@H*')
         page.SetValue('ave_dist', NH_BOND_LENGTH)
         self.dipole_wizard.add_page(page)
 
@@ -718,7 +718,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        uf_store['spin.isotope'](isotope='15N', spin_id='@N')
+        uf_store['spin.isotope'](isotope='15N', spin_id='@N*')
 
 
     def spin_isotope_proton(self, event=None):
@@ -729,7 +729,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        uf_store['spin.isotope'](isotope='1H', spin_id='@H')
+        uf_store['spin.isotope'](isotope='1H', spin_id='@H*')
 
 
     def sync_ds(self, upload=False):
@@ -789,7 +789,7 @@ class Auto_model_free(Base_analysis):
         val = get_specific_fn('default_value')('csa')
 
         # Call the user function.
-        uf_store['value.set'](val=val, param='csa')
+        uf_store['value.set'](val=val, param='csa', spin_id='@N*')
 
 
 

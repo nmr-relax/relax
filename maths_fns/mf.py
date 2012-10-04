@@ -26,15 +26,15 @@ from numpy import dot, float64, ones, sum, transpose, zeros
 
 # relax module imports.
 from relax_errors import RelaxError
-from direction_cosine import *
-from weights import *
-from correlation_time import *
-from jw_mf_comps import *
-from jw_mf import *
-from ri_comps import *
-from ri_prime import *
-from ri import *
-from chi2 import *
+from maths_fns.direction_cosine import *
+from maths_fns.weights import *
+from maths_fns.correlation_time import *
+from maths_fns.jw_mf_comps import *
+from maths_fns.jw_mf import *
+from maths_fns.ri_comps import *
+from maths_fns.ri_prime import *
+from maths_fns.ri import *
+from maths_fns.chi2 import *
 
 
 class Mf:
@@ -239,7 +239,7 @@ class Mf:
 
         # Create the data array used to store data.
         self.data = []
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
             # Total number of ri.
             self.total_num_ri = self.total_num_ri + num_ri[i]
 
@@ -256,7 +256,7 @@ class Mf:
             self.data[i].frq_list = zeros((num_frq[i], 5), float64)
             self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
             self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
-            for j in xrange(num_frq[i]):
+            for j in range(num_frq[i]):
                 frqH = 2.0 * pi * frq[i][j]
                 frqX = frqH / g_ratio
                 self.data[i].frq_list[j, 1] = frqX
@@ -264,7 +264,7 @@ class Mf:
                 self.data[i].frq_list[j, 3] = frqH
                 self.data[i].frq_list[j, 4] = frqH + frqX
             self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
-            for j in xrange(self.diff_data.num_indices):
+            for j in range(self.diff_data.num_indices):
                 self.data[i].frq_list_ext[:,:, j] = self.data[i].frq_list
                 self.data[i].frq_sqrd_list_ext[:,:, j] = self.data[i].frq_sqrd_list
 
@@ -330,7 +330,7 @@ class Mf:
 
             # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
             missing_r1 = 0
-            for j in xrange(self.data[i].num_ri):
+            for j in range(self.data[i].num_ri):
                 if self.data[i].ri_labels[j] == 'NOE' and self.data[i].noe_r1_table[j] == None:
                     missing_r1 = 1
             if missing_r1:
@@ -419,7 +419,7 @@ class Mf:
 
         # Calculate the NOE values.
         data.ri = data.ri_prime * 1.0
-        for m in xrange(data.num_ri):
+        for m in range(data.num_ri):
             if data.create_ri[m]:
                 data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
 
@@ -473,7 +473,7 @@ class Mf:
 
         # Calculate the NOE values.
         data.ri = data.ri_prime * 1.0
-        for m in xrange(data.num_ri):
+        for m in range(data.num_ri):
             if data.create_ri[m]:
                 data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
 
@@ -504,7 +504,7 @@ class Mf:
         self.total_chi2 = 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -537,7 +537,7 @@ class Mf:
 
             # Calculate the NOE values.
             data.ri = data.ri_prime * 1.0
-            for m in xrange(data.num_ri):
+            for m in range(data.num_ri):
                 if data.create_ri[m]:
                     data.create_ri[m](data, m, data.remap_table[m], data.get_r1, data.param_values)
 
@@ -571,7 +571,7 @@ class Mf:
         self.total_chi2 = 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -604,7 +604,7 @@ class Mf:
 
             # Calculate the NOE values.
             data.ri = data.ri_prime * 1.0
-            for m in xrange(data.num_ri):
+            for m in range(data.num_ri):
                 if data.create_ri[m]:
                     data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
 
@@ -642,7 +642,7 @@ class Mf:
             data.calc_djw_comps(data, params)
 
         # Loop over the gradient.
-        for j in xrange(data.total_num_params):
+        for j in range(data.total_num_params):
             # Calculate the spectral density gradients.
             if data.calc_djw[j]:
                 data.djw = data.calc_djw[j](data, params, j)
@@ -657,7 +657,7 @@ class Mf:
 
             # Loop over the relaxation values and modify the NOE gradients.
             data.dri[j] = data.dri_prime[j]
-            for m in xrange(data.num_ri):
+            for m in range(data.num_ri):
                 if data.create_dri[m]:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
@@ -703,7 +703,7 @@ class Mf:
         self.diff_data.calc_dti(data, self.diff_data)
 
         # Loop over the gradient.
-        for j in xrange(data.total_num_params):
+        for j in range(data.total_num_params):
             # Calculate the spectral density gradients.
             if data.calc_djw[j]:
                 data.djw = data.calc_djw[j](data, params, j)
@@ -718,7 +718,7 @@ class Mf:
 
             # Loop over the relaxation values and modify the NOE gradients.
             data.dri[j] = data.dri_prime[j]
-            for m in xrange(data.num_ri):
+            for m in range(data.num_ri):
                 if data.create_dri[m]:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
@@ -758,7 +758,7 @@ class Mf:
         self.total_dchi2 = self.total_dchi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
 
             # Set self.data[i] to data.
             data = self.data[i]
@@ -779,7 +779,7 @@ class Mf:
                 data.calc_djw_comps(data, data.param_values)
 
             # Loop over the gradient.
-            for j in xrange(data.total_num_params):
+            for j in range(data.total_num_params):
                 # Calculate the spectral density gradients.
                 if data.calc_djw[j]:
                     data.djw = data.calc_djw[j](data, data.param_values, j)
@@ -794,7 +794,7 @@ class Mf:
 
                 # Loop over the relaxation values and modify the NOE gradients.
                 data.dri[j] = data.dri_prime[j]
-                for m in xrange(data.num_ri):
+                for m in range(data.num_ri):
                     if data.create_dri[m]:
                         data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
@@ -840,7 +840,7 @@ class Mf:
         self.total_dchi2 = self.total_dchi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -860,7 +860,7 @@ class Mf:
                 data.calc_djw_comps(data, params)
 
             # Loop over the gradient.
-            for j in xrange(data.total_num_params):
+            for j in range(data.total_num_params):
                 # Calculate the spectral density gradients.
                 if data.calc_djw[j]:
                     data.djw = data.calc_djw[j](data, params, j)
@@ -875,7 +875,7 @@ class Mf:
 
                 # Loop over the relaxation values and modify the NOE gradients.
                 data.dri[j] = data.dri_prime[j]
-                for m in xrange(data.num_ri):
+                for m in range(data.num_ri):
                     if data.create_dri[m]:
                         data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
@@ -917,8 +917,8 @@ class Mf:
             params = dot(params, self.scaling_matrix)
 
         # Loop over the lower triangle of the Hessian.
-        for j in xrange(data.total_num_params):
-            for k in xrange(j + 1):
+        for j in range(data.total_num_params):
+            for k in range(j + 1):
                 # Calculate the spectral density Hessians.
                 if data.calc_d2jw[j][k]:
                     data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
@@ -934,7 +934,7 @@ class Mf:
 
                 # Loop over the relaxation values and modify the NOE Hessians.
                 data.d2ri[j, k] = data.d2ri_prime[j, k]
-                for m in xrange(data.num_ri):
+                for m in range(data.num_ri):
                     if data.create_d2ri[m]:
                         data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
@@ -970,8 +970,8 @@ class Mf:
         self.diff_data.params = params[0:1]
 
         # Loop over the lower triangle of the Hessian.
-        for j in xrange(data.total_num_params):
-            for k in xrange(j + 1):
+        for j in range(data.total_num_params):
+            for k in range(j + 1):
                 # Calculate the spectral density Hessians.
                 if data.calc_d2jw[j][k]:
                     data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
@@ -987,7 +987,7 @@ class Mf:
 
                 # Loop over the relaxation values and modify the NOE Hessians.
                 data.d2ri[j, k] = data.d2ri_prime[j, k]
-                for m in xrange(data.num_ri):
+                for m in range(data.num_ri):
                     if data.create_d2ri[m]:
                         data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
@@ -1024,7 +1024,7 @@ class Mf:
         self.total_d2chi2 = self.total_d2chi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -1041,8 +1041,8 @@ class Mf:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
             # Loop over the lower triangle of the Hessian.
-            for j in xrange(data.total_num_params):
-                for k in xrange(j + 1):
+            for j in range(data.total_num_params):
+                for k in range(j + 1):
                     # Calculate the spectral density Hessians.
                     if data.calc_d2jw[j][k]:
                         data.d2jw = data.calc_d2jw[j][k](data, data.param_values, j, k)
@@ -1058,7 +1058,7 @@ class Mf:
 
                     # Loop over the relaxation values and modify the NOE Hessians.
                     data.d2ri[j, k] = data.d2ri_prime[j, k]
-                    for m in xrange(data.num_ri):
+                    for m in range(data.num_ri):
                         if data.create_d2ri[m]:
                             data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
@@ -1098,7 +1098,7 @@ class Mf:
         self.total_d2chi2 = self.total_d2chi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_spins):
+        for i in range(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -1115,8 +1115,8 @@ class Mf:
                self.diff_data.calc_d2ti(data, self.diff_data)
 
             # Loop over the lower triangle of the Hessian.
-            for j in xrange(data.total_num_params):
-                for k in xrange(j + 1):
+            for j in range(data.total_num_params):
+                for k in range(j + 1):
                     # Calculate the spectral density Hessians.
                     if data.calc_d2jw[j][k]:
                         data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
@@ -1132,7 +1132,7 @@ class Mf:
 
                     # Loop over the relaxation values and modify the NOE Hessians.
                     data.d2ri[j, k] = data.d2ri_prime[j, k]
-                    for m in xrange(data.num_ri):
+                    for m in range(data.num_ri):
                         if data.create_d2ri[m]:
                             data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
@@ -1499,7 +1499,7 @@ class Mf:
             ri_end_index = 0
 
             # Loop over the residues.
-            for i in xrange(self.num_spins):
+            for i in range(self.num_spins):
                 # Set self.data[i] to data.
                 data = self.data[i]
 
@@ -1524,7 +1524,7 @@ class Mf:
             ri_end_index = 0
 
             # Loop over the residues.
-            for i in xrange(self.num_spins):
+            for i in range(self.num_spins):
                 # Set self.data[i] to data.
                 data = self.data[i]
 
@@ -1588,10 +1588,10 @@ class Mf:
         # Create empty spectral density gradient and Hessian function data structures.
         data.calc_djw = []
         data.calc_d2jw = []
-        for i in xrange(data.total_num_params):
+        for i in range(data.total_num_params):
             data.calc_djw.append(None)
             data.calc_d2jw.append([])
-            for j in xrange(data.total_num_params):
+            for j in range(data.total_num_params):
                 data.calc_d2jw[i].append(None)
 
 
@@ -1600,7 +1600,7 @@ class Mf:
 
         if data.equations == 'mf_orig':
             # Find the indices of the model-free parameters.
-            for i in xrange(data.num_params):
+            for i in range(data.num_params):
                 if data.param_types[i] == 's2':
                     data.s2_li = num_diff_params + i
                     data.s2_i = self.param_index + i
@@ -1943,7 +1943,7 @@ class Mf:
 
         elif data.equations == 'mf_ext':
             # Find the indices of the model-free parameters.
-            for i in xrange(data.num_params):
+            for i in range(data.num_params):
                 if data.param_types[i] == 's2f':
                     data.s2f_li = num_diff_params + i
                     data.s2f_i = self.param_index + i
@@ -2290,7 +2290,7 @@ class Mf:
 
         elif data.equations == 'mf_ext2':
             # Find the indices of the model-free parameters.
-            for i in xrange(data.num_params):
+            for i in range(data.num_params):
                 if data.param_types[i] == 's2f':
                     data.s2f_li = num_diff_params + i
                     data.s2f_i = self.param_index + i
@@ -2661,7 +2661,7 @@ class Mf:
         data.get_r1, data.get_dr1, data.get_d2r1 = [], [], []
 
         # Fill the structures with None.
-        for i in xrange(data.num_ri):
+        for i in range(data.num_ri):
             data.create_dip_func.append(None)
             data.create_dip_grad.append(None)
             data.create_dip_hess.append(None)
@@ -2687,7 +2687,7 @@ class Mf:
         # Select the functions for the calculation of ri_prime, dri_prime, and d2ri_prime components.
         #############################################################################################
 
-        for i in xrange(data.num_ri):
+        for i in range(data.num_ri):
             # The R1 equations.
             if data.ri_labels[i] == 'R1':
                 data.create_csa_func[i] = comp_r1_csa_const
@@ -2745,7 +2745,7 @@ class Mf:
             data.create_ri_prime = func_ri_prime_rex
 
         # dri_prime and d2ri_prime.
-        for i in xrange(data.total_num_params):
+        for i in range(data.total_num_params):
             # Diffusion tensor parameters are the only parameters.
             if self.model_type == 'diff':
                 # Gradient.
@@ -2753,7 +2753,7 @@ class Mf:
 
                 # Hessian.
                 data.create_d2ri_prime.append([])
-                for j in xrange(data.total_num_params):
+                for j in range(data.total_num_params):
                     data.create_d2ri_prime[i].append(func_d2ri_djwidjwj_prime)
 
                 # Skip to the next parameter index.
@@ -2771,7 +2771,7 @@ class Mf:
 
                 # Hessian.
                 data.create_d2ri_prime.append([])
-                for j in xrange(data.total_num_params):
+                for j in range(data.total_num_params):
                     # Residue specific parameter index.
                     index2 = j - num_diff_params
                     if index2 < 0:
@@ -2800,7 +2800,7 @@ class Mf:
 
                 # Hessian.
                 data.create_d2ri_prime.append([])
-                for j in xrange(data.total_num_params):
+                for j in range(data.total_num_params):
                     # Residue specific parameter index.
                     index2 = j - num_diff_params
                     if index2 < 0:
@@ -2829,7 +2829,7 @@ class Mf:
 
                 # Hessian.
                 data.create_d2ri_prime.append([])
-                for j in xrange(data.total_num_params):
+                for j in range(data.total_num_params):
                     # Residue specific parameter index.
                     index2 = j - num_diff_params
                     if index2 < 0:
@@ -2858,7 +2858,7 @@ class Mf:
 
                 # Hessian.
                 data.create_d2ri_prime.append([])
-                for j in xrange(data.total_num_params):
+                for j in range(data.total_num_params):
                     # Residue specific parameter index.
                     index2 = j - num_diff_params
                     if index2 < 0:
@@ -2898,7 +2898,7 @@ class Mf:
             # Calculate the dipolar and CSA constant components.
             comp_dip_const_func(data, data.bond_length)
             comp_csa_const_func(data, data.csa)
-            for i in xrange(data.num_ri):
+            for i in range(data.num_ri):
                 data.dip_comps_func[i] = data.dip_const_func
                 if data.create_dip_func[i]:
                     data.dip_comps_func[i] = data.create_dip_func[i](data.dip_const_func)
@@ -2922,7 +2922,7 @@ class Mf:
 
             # Calculate the CSA constant.
             comp_csa_const_func(data, data.csa)
-            for i in xrange(data.num_ri):
+            for i in range(data.num_ri):
                 if data.create_csa_func[i]:
                     data.csa_comps_func[i] = data.create_csa_func[i](data.csa_const_func[data.remap_table[i]])
 
@@ -2943,7 +2943,7 @@ class Mf:
 
             # Calculate the dipolar constant.
             comp_dip_const_func(data, data.bond_length)
-            for i in xrange(data.num_ri):
+            for i in range(data.num_ri):
                 data.dip_comps_func[i] = data.dip_const_func
                 if data.create_dip_func[i]:
                     data.dip_comps_func[i] = data.create_dip_func[i](data.dip_const_func)

@@ -14,13 +14,19 @@
 @STRING{anstat      = "Ann. Stat."}
 
 % Applied Magnetic Resonance.
-@STRING{amr      = "Appl. Magn. Reson."}
+@STRING{amr         = "Appl. Magn. Reson."}
 
 % Biochemistry.
 @STRING{biochem     = "Biochemistry"}
 
 % Biometrika.
 @STRING{biometrika  = "Biometrika"}
+
+% Biophysical journal.
+@STRING{bj          = "Biophys. J."}
+
+% Chemistry - A European Journal.
+@STRING{cej         = "Chem. Eur. J."}
 
 % The Computer Journal.
 @STRING{cj          = "Comp. J."}
@@ -86,7 +92,7 @@
 
 @Book{Abragam61,
   Author         = {Abragam, Anatole},
-  Title          = {The {P}rinciples of {N}uclear {M}agnetism},
+  Title          = {The Principles of Nuclear Magnetism},
   Publisher      = {Clarendon Press},
   Address        = {Oxford},
   year           = 1961
@@ -163,6 +169,7 @@
                    Support, Non-U.S. Gov't ; Research Support, U.S. Gov't,
                    P.H.S. ; Rotation},
   language       = {eng},
+  doi            = {10.1006/jmre.2000.2113},
   medline-aid    = {10.1006/jmre.2000.2113 [doi] ; S109078070092113X [pii]},
   medline-ci     = {Copyright 2000 Academic Press.},
   medline-da     = {20001025},
@@ -235,6 +242,7 @@
                    Support, Non-U.S. Gov't ; Research Support, U.S. Gov't,
                    P.H.S.},
   language       = {eng},
+  doi            = {10.1006/jmre.1999.1839},
   medline-aid    = {10.1006/jmre.1999.1839 [doi] ; S1090780799918396 [pii]},
   medline-ci     = {Copyright 1999 Academic Press.},
   medline-da     = {20000316},
@@ -315,6 +323,7 @@
                    Sequence Alignment ; *Signal Transduction ;
                    Thermodynamics ; Titrimetry},
   language       = {eng},
+  doi            = {10.1016/s0022-2836(02)00282-6},
   medline-aid    = {10.1016/S0022-2836(02)00282-6 [doi] ;
                    S0022-2836(02)00282-6 [pii]},
   medline-ci     = {(c) 2002 Elsevier Science Ltd.},
@@ -410,13 +419,14 @@
   medline-so     = {Biochemistry 1992 Jun 16;31(23):5269-78.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=1606151},
-  year           = 1992
+  year           = 1992,
+  doi            = {10.1021/bi00138a005}
 }
 
 @Book{BellomoPreziosi94,
   Author         = {Bellomo, N. and Preziosi, L.},
-  Title          = {Modelling {M}athematical {M}ethods and {S}cientific
-                   {C}omputation},
+  Title          = {Modelling Mathematical Methods and Scientific
+                   Computation},
   Publisher      = {CRC Press},
   Series         = {CRC Mathematical Modelling Series},
   Address        = {Boca Raton, FL.},
@@ -424,20 +434,20 @@
 }
 
 @Article{Bieri11,
-   Author = {Bieri, Michael and d’Auvergne, Edward and Gooley, Paul},
-   Affiliation = {Department of Biochemistry and Molecular Biology, Bio21 Molecular Science and Biotechnology Institute, The University of Melbourne, Parkville, VIC 3010, Australia},
-   Title = {relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of ps-ns and μs motion of proteins},
-   Journal = jbnmr,
-   Publisher = {Springer Netherlands},
-   issn = {0925-2738},
-   keyword = {Physics and Astronomy},
-   pages = {147-155},
-   volume = {50},
-   issue = {2},
-   url = {http://dx.doi.org/10.1007/s10858-011-9509-1},
-   note = {10.1007/s10858-011-9509-1},
-   abstract = {Investigation of protein dynamics on the ps-ns and μs-ms timeframes provides detailed insight into the mechanisms of enzymes and the binding properties of proteins. Nuclear magnetic resonance (NMR) is an excellent tool for studying protein dynamics at atomic resolution. Analysis of relaxation data using model-free analysis can be a tedious and time consuming process, which requires good knowledge of scripting procedures. The software relaxGUI was developed for fast and simple model-free analysis and is fully integrated into the software package relax. It is written in Python and uses wxPython to build the graphical user interface (GUI) for maximum performance and multi-platform use. This software allows the analysis of NMR relaxation data with ease and the generation of publication quality graphs as well as color coded images of molecular structures. The interface is designed for simple data analysis and management. The software was tested and validated against the command line version of relax.},
-   year = {2011}
+  Author = {Bieri, Michael and d’Auvergne, Edward and Gooley, Paul},
+  Affiliation = {Department of Biochemistry and Molecular Biology, Bio21 Molecular Science and Biotechnology Institute, The University of Melbourne, Parkville, VIC 3010, Australia},
+  Title = {relax{GUI}: a new software for fast and simple {NMR} relaxation data analysis and calculation of ps-ns and $\mu$s motion of proteins},
+  Journal = jbnmr,
+  Publisher = {Springer Netherlands},
+  issn = {0925-2738},
+  keyword = {Physics and Astronomy},
+  pages = {147-155},
+  volume = {50},
+  issue = {2},
+  url = {http://dx.doi.org/10.1007/s10858-011-9509-1},
+  doi = {10.1007/s10858-011-9509-1},
+  abstract = {Investigation of protein dynamics on the ps-ns and μs-ms timeframes provides detailed insight into the mechanisms of enzymes and the binding properties of proteins. Nuclear magnetic resonance (NMR) is an excellent tool for studying protein dynamics at atomic resolution. Analysis of relaxation data using model-free analysis can be a tedious and time consuming process, which requires good knowledge of scripting procedures. The software relaxGUI was developed for fast and simple model-free analysis and is fully integrated into the software package relax. It is written in Python and uses wxPython to build the graphical user interface (GUI) for maximum performance and multi-platform use. This software allows the analysis of NMR relaxation data with ease and the generation of publication quality graphs as well as color coded images of molecular structures. The interface is designed for simple data analysis and management. The software was tested and validated against the command line version of relax.},
+  year = {2011}
 }
    
 @Article{Blackledge98,
@@ -539,7 +549,8 @@
   publisher      = {American Physical Soc},
   size           = {34 p.},
   sourceid       = {ISI:A1948UB29800004},
-  year           = 1948
+  year           = 1948,
+  doi            = {10.1103/PhysRev.73.679}
 }
 
 @Article{Bracken99,
@@ -615,6 +626,7 @@
                    P.H.S. ; *Saccharomyces cerevisiae Proteins ;
                    Temperature},
   language       = {eng},
+  doi            = {s0022-2836(98)92429-9},
   medline-aid    = {S0022-2836(98)92429-9 [pii] ; 10.1006/jmbi.1998.2429
                    [doi]},
   medline-ci     = {Copyright 1999 Academic Press Limited.},
@@ -646,9 +658,9 @@
 
 @Article{Broyden70,
   Author         = {Broyden, C. G.},
-  Title          = {The {C}onvergence of a {C}lass of {D}ouble-rank
-                   {M}inimization {A}lgorithms 1. {G}eneral
-                   {C}onsiderations},
+  Title          = {The Convergence of a Class of Double-rank
+                   Minimization Algorithms 1. {G}eneral
+                   Considerations},
   Journal        = jima,
   Volume         = {6},
   Number         = {1},
@@ -729,7 +741,8 @@
   medline-so     = {Science 1995 May 12;268(5212):886-9.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=7754375},
-  year           = 1995
+  year           = 1995,
+  doi            = {10.1126/science.7754375}
 }
 
 @Book{BurnhamAnderson98,
@@ -876,6 +889,7 @@
                    Thymus/chemistry/*metabolism ; Sequence Homology, Amino
                    Acid ; Thermus thermophilus/enzymology},
   language       = {eng},
+  doi            = {10.1016/j.jmb.2004.03.055},
   medline-aid    = {10.1016/j.jmb.2004.03.055 [doi] ; S0022283604003572
                    [pii]},
   medline-da     = {20040528},
@@ -964,6 +978,7 @@
                    ; Research Support, U.S. Gov't, P.H.S. ; Software ;
                    Tetrahydrofolate Dehydrogenase/chemistry ; Time Factors},
   language       = {eng},
+  doi            = {10.1023/b:jnmr.0000032504.70912.58},
   medline-aid    = {10.1023/B:JNMR.0000032504.70912.58 [doi] ; 5266056
                    [pii]},
   medline-da     = {20040623},
@@ -1122,7 +1137,8 @@
   publisher      = {Amer Chemical Soc},
   size           = {3 p.},
   sourceid       = {ISI:A1990DH27700070},
-  year           = 1990
+  year           = 1990,
+  doi            = {10.1021/ja00168a070}
 }
 
 @Article{Cordier98,
@@ -1221,7 +1237,8 @@
   School         = {Biochemistry and Molecular Biology, University of
                    Melbourne. http://eprints.infodiv.unimelb.edu.au/archive/00002799/},
   url            = {http://eprints.infodiv.unimelb.edu.au/archive/00002799/},
-  year           = 2006
+  year           = 2006,
+  doi            = {10187/2281}
 }
 
 @Article{dAuvergneGooley03,
@@ -1295,7 +1312,8 @@
   medline-so     = {J Biomol NMR 2003 Jan;25(1):25-39.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=12566997},
-  year           = 2003
+  year           = 2003,
+  doi            = {10.1023/a:1021902006114}
 }
 
 @Article{dAuvergneGooley06,
@@ -1350,6 +1368,7 @@
                    University of Melbourne, Parkville, Victoria, 3010,
                    Australia, edward@nmr-relax.com.},
   language       = {eng},
+  doi            = {10.1007/s10858-006-9007-z},
   medline-aid    = {10.1007/s10858-006-9007-z [doi]},
   medline-da     = {20060704},
   medline-dep    = {20060622},
@@ -1417,6 +1436,7 @@
   keywords       = {Magnetic Resonance Spectroscopy/*methods ; *Models,
                    Theoretical ; Proteins/chemistry ; Thermodynamics},
   language       = {eng},
+  doi            = {10.1039/b702202f},
   medline-aid    = {10.1039/b702202f [doi]},
   medline-da     = {20070620},
   medline-dcom   = {20070823},
@@ -1504,6 +1524,7 @@
                    Biomolecular/*methods ; Rhodobacter
                    capsulatus/chemistry ; *Rotation},
   language       = {eng},
+  doi            = {10.1007/s10858-007-9214-2},
   medline-aid    = {10.1007/s10858-007-9214-2 [doi]},
   medline-crdt   = {2007/12/19 09:00},
   medline-da     = {20080109},
@@ -1587,6 +1608,7 @@
                    Protein/chemistry ; Peptide Fragments/chemistry ;
                    Protein Structure, Secondary ; *Rotation},
   language       = {eng},
+  doi            = {10.1007/s10858-007-9213-3},
   medline-aid    = {10.1007/s10858-007-9213-3 [doi]},
   medline-crdt   = {2007/12/19 09:00},
   medline-da     = {20080109},
@@ -1776,9 +1798,9 @@
 
 @Article{Einstein05,
   Author         = {Einstein, A.},
-  Title          = {\"Uber die von der molekularkinetischen Theorie der
-                   W\"arme geforderte Bewegung von in ruhenden
-                   Fl\"ussigkeiten suspendierten Teilchen (The motion of
+  Title          = {{\"U}ber die von der molekularkinetischen {T}heorie der
+                   {W}\"arme geforderte {B}ewegung von in ruhenden
+                   {F}l\"ussigkeiten suspendierten {T}eilchen ({T}he motion of
                    elements suspended in static liquids as claimed in the
                    molecular kinetic theory of heat)},
   Journal        = ap,
@@ -1803,66 +1825,67 @@
   publisher      = {Wiley-V C H Verlag GMBH},
   size           = {12 p.},
   sourceid       = {ISI:000201991500005},
-  year           = 1905
+  year           = 1905,
+  doi            = {10.1002/andp.19053220806}
 }
 
 
-@article{Erdelyi11,
-Author = {Erdelyi, Mate and d'Auvergne, Edward and Navarro-Vazquez, Armando and
-   Leonov, Andrei and Griesinger, Christian},
-Title = {{Dynamics of the Glycosidic Bond: Conformational Space of Lactose}},
-Journal = {{Chemistry-A European Journal}},
-Year = {{2011}},
-Volume = {{17}},
-Number = {{34}},
-Pages = {{9368-9376}},
-Month = {{AUG 16}},
-Abstract = {{The dynamics of the glycosidic bond of lactose was studied by a
-   paramagnetic tagging-based NMR technique, which allowed the collection
-   of an unusually large series of NMR data for a single compound. By the
-   use of distance-and orientation-dependent residual dipolar couplings and
-   pseudocontact shifts, the simultaneous fitting of the probabilities of
-   computed conformations and the orientation of the magnetic
-   susceptibility tensor of a series of lanthanide complexes of lactose
-   show that its glycosidic bond samples syn/syn, anti/syn and syn/anti
-   phi/psi regions of the conformational space in water. The analysis
-   indicates a higher reliability of pseudocontact shift data as compared
-   to residual dipolar couplings with the presently available weakly
-   orienting paramagnetic tagging technique. The method presented herein
-   allows for an improved understanding of the dynamic behaviour of
-   oligosaccharides.}},
-Publisher = {{WILEY-BLACKWELL}},
-Address = {{COMMERCE PLACE, 350 MAIN ST, MALDEN 02148, MA USA}},
-Type = {{Article}},
-Language = {{English}},
-Affiliation = {{Griesinger, C (Reprint Author), Max Planck Inst Biophys Chem, NMR Based Struct Biol, Fassberg 11, D-37077 Gottingen, Germany.
-   Erdelyi, Mate; d'Auvergne, Edward; Leonov, Andrei; Griesinger, Christian, Max Planck Inst Biophys Chem, NMR Based Struct Biol, D-37077 Gottingen, Germany.
-   Erdelyi, Mate, Gothenburg Univ, Dept Chem, S-41124 Gothenburg, Sweden.
-   Erdelyi, Mate, Gothenburg Univ, Swedish NMR Ctr, S-41124 Gothenburg, Sweden.
-   Navarro-Vazquez, Armando, Univ Vigo, Dept Organ Chem, Vigo, Spain.}},
-DOI = {{10.1002/chem.201100854}},
-ISSN = {{0947-6539}},
-Keywords = {{glycosidic bonds; molecular dynamics; NMR spectroscopy;
-   oligosaccharides; paramagnetism}},
-Keywords-Plus = {{RICIN-B-CHAIN; RESIDUAL DIPOLAR COUPLINGS; MODEL-FREE; CONVENIENT
-   SYNTHESIS; MOLECULAR MECHANICS; WEAK ALIGNMENT; FORCE-FIELD; NMR;
-   FLEXIBILITY; PROTEINS}},
-Subject-Category = {{Chemistry}},
-Web of Science-Category = {{Chemistry, Multidisciplinary}},
-Author-Email = {{cigr@nmr.mpibpc.mpg.de}},
-Funding-Acknowledgement = {{Max Planck Society; Swedish Research Council\{{[}\}2004-3073, 2007-4407];
-   Spanish Ministerio de Ciencia e Innovacin; Xunta de Galicia (Conselleria
-   de Educacion)\{{[}\}2009/071]}},
-Funding-Text = {{This work was supported by the Max Planck Society (to C.G.) and the
-   Swedish Research Council (2004-3073, 2007-4407 to M.E.). A.N.V thanks
-   Spanish Ministerio de Ciencia e Innovacin for a ``Ramon y Cajal\{''\}
-   research contract and Xunta de Galicia/FEDER (Conselleria de Educacion
-   2009/071) for financial support.}},
-Number-of-Cited-References = {{62}},
-Times-Cited = {{0}},
-Journal-ISO = {{Chem.-Eur. J.}},
-Doc-Delivery-Number = {{818VR}},
-Unique-ID = {{ISI:000294784400016}},
+@Article{Erdelyi11,
+  Author = {Erdelyi, Mate and d'Auvergne, Edward and Navarro-Vazquez, Armando and
+     Leonov, Andrei and Griesinger, Christian},
+  Title = {Dynamics of the Glycosidic Bond: Conformational Space of Lactose},
+  Journal = cej,
+  Year = {2011},
+  Volume = {17},
+  Number = {34},
+  Pages = {9368-9376},
+  Month = {AUG 16},
+  Abstract = {The dynamics of the glycosidic bond of lactose was studied by a
+     paramagnetic tagging-based NMR technique, which allowed the collection
+     of an unusually large series of NMR data for a single compound. By the
+     use of distance-and orientation-dependent residual dipolar couplings and
+     pseudocontact shifts, the simultaneous fitting of the probabilities of
+     computed conformations and the orientation of the magnetic
+     susceptibility tensor of a series of lanthanide complexes of lactose
+     show that its glycosidic bond samples syn/syn, anti/syn and syn/anti
+     phi/psi regions of the conformational space in water. The analysis
+     indicates a higher reliability of pseudocontact shift data as compared
+     to residual dipolar couplings with the presently available weakly
+     orienting paramagnetic tagging technique. The method presented herein
+     allows for an improved understanding of the dynamic behaviour of
+     oligosaccharides.},
+  Publisher = {WILEY-BLACKWELL},
+  Address = {COMMERCE PLACE, 350 MAIN ST, MALDEN 02148, MA USA},
+  Type = {Article},
+  Language = {English},
+  Affiliation = {Griesinger, C (Reprint Author), Max Planck Inst Biophys Chem, NMR Based Struct Biol, Fassberg 11, D-37077 Gottingen, Germany.
+     Erdelyi, Mate; d'Auvergne, Edward; Leonov, Andrei; Griesinger, Christian, Max Planck Inst Biophys Chem, NMR Based Struct Biol, D-37077 Gottingen, Germany.
+     Erdelyi, Mate, Gothenburg Univ, Dept Chem, S-41124 Gothenburg, Sweden.
+     Erdelyi, Mate, Gothenburg Univ, Swedish NMR Ctr, S-41124 Gothenburg, Sweden.
+     Navarro-Vazquez, Armando, Univ Vigo, Dept Organ Chem, Vigo, Spain.},
+  DOI = {10.1002/chem.201100854},
+  ISSN = {0947-6539},
+  Keywords = {glycosidic bonds; molecular dynamics; NMR spectroscopy;
+     oligosaccharides; paramagnetism},
+  Keywords-Plus = {RICIN-B-CHAIN; RESIDUAL DIPOLAR COUPLINGS; MODEL-FREE; CONVENIENT
+     SYNTHESIS; MOLECULAR MECHANICS; WEAK ALIGNMENT; FORCE-FIELD; NMR;
+     FLEXIBILITY; PROTEINS},
+  Subject-Category = {Chemistry},
+  Web of Science-Category = {Chemistry, Multidisciplinary},
+  Author-Email = {cigr@nmr.mpibpc.mpg.de},
+  Funding-Acknowledgement = {Max Planck Society; Swedish Research Council\{{[}\}2004-3073, 2007-4407];
+     Spanish Ministerio de Ciencia e Innovacin; Xunta de Galicia (Conselleria
+     de Educacion)\{{[}\}2009/071]},
+  Funding-Text = {This work was supported by the Max Planck Society (to C.G.) and the
+     Swedish Research Council (2004-3073, 2007-4407 to M.E.). A.N.V thanks
+     Spanish Ministerio de Ciencia e Innovacin for a ``Ramon y Cajal\{''\}
+     research contract and Xunta de Galicia/FEDER (Conselleria de Educacion
+     2009/071) for financial support.},
+  Number-of-Cited-References = {62},
+  Times-Cited = {0},
+  Journal-ISO = {Chem.-Eur. J.},
+  Doc-Delivery-Number = {818VR},
+  Unique-ID = {ISI:000294784400016},
 }
 
 @Article{Farrow94,
@@ -1997,7 +2020,8 @@ Unique-ID = {{ISI:000294784400016}},
                    protein drk.},
   month          = {Sep},
   sourceid       = {ISI:A1995RY39200006},
-  year           = 1995
+  year           = 1995,
+  doi            = {10.1007/bf00211779}
 }
 
 @Article{Favro60,
@@ -2046,7 +2070,8 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {American Physical Soc},
   size           = {10 p.},
   sourceid       = {ISI:A1960WB79800009},
-  year           = 1960
+  year           = 1960,
+  doi            = {10.1103/PhysRev.119.53}
 }
 
 @Article{Fletcher70,
@@ -2180,7 +2205,36 @@ Unique-ID = {{ISI:000294784400016}},
   medline-so     = {J Mol Biol 1997 Feb 14;266(1):173-94.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=9054979},
-  year           = 1997
+  year           = 1997,
+  doi            = {10.1006/jmbi.1996.0771}
+}
+
+@Article{Fushman98,
+  author = {Fushman, David and Tjandra, Nico and Cowburn, David},
+  title = {Direct Measurement of 15{N} Chemical Shift Anisotropy in Solution},
+  journal = jacs,
+  volume = {120},
+  number = {42},
+  pages = {10947-10952},
+  year = {1998},
+  doi = {10.1021/ja981686m},
+  URL = {http://pubs.acs.org/doi/abs/10.1021/ja981686m},
+  eprint = {http://pubs.acs.org/doi/pdf/10.1021/ja981686m},
+  abstract = { The magnitude and orientation of the 15N chemical shift anisotropy (CSA) tensors are determined for human ubiquitin in solution from 15N relaxation data at 600, 500, and 360 MHz. The analysis uses the model-independent approach [Fushman, D.; Cowburn, D. J. Am. Chem. Soc. 1998, 120, 7109-10] based on a ratio, $\eta$/R2, of the cross correlation ($\eta$) between 15N CSA and 15N-1H dipolar interaction and of the rate (R2) of 15N transverse relaxation. Since the $\eta$/R2 ratio does not contain any direct dependence on protein dynamics, the present approach is free from assumptions about overall and local motions. The 15N CSA values fall in the range -125 to -216 ppm, with the average value of -157 $\pm$ 19 ppm; the average angle between the NH bond and the unique principal axis of the 15N CSA tensor was 15.7 $\pm$ 5.0$^\circ$ (range 6-26$^\circ$). The results indicate the importance of residue-specific 15N CSA for accurate analysis of dynamics from relaxation data, and provide access to the CSA in solution, which may be structurally useful. }
+}
+
+@Article{Fushman99,
+  author = {Fushman, D. and Tjandra, N. and Cowburn, D.},
+  title = {An Approach to Direct Determination of Protein Dynamics from {15N} {NMR} Relaxation at Multiple Fields, Independent of Variable {15N} Chemical Shift Anisotropy and Chemical Exchange Contributions},
+  journal = jacs,
+  volume = {121},
+  number = {37},
+  pages = {8577-8582},
+  year = {1999},
+  doi = {10.1021/ja9904991},
+  URL = {http://pubs.acs.org/doi/abs/10.1021/ja9904991},
+  eprint = {http://pubs.acs.org/doi/pdf/10.1021/ja9904991},
+  abstract = { An approach to protein dynamics analysis from 15N relaxation data is demonstrated, based on multiple-field relaxation data. This provides a direct, residue-specific determination of both the spectral density components, the 15N chemical shift anisotropy (CSA) and the conformational exchange contribution to the 15N line width. Measurements of R1, R2, and 15N{1H} NOE are used. The approach is free from any assumption about the values of the CSA or of the conformational exchange. Using this approach, the spectral densities, the values of 15N CSA, and the conformational exchange contribution to the 15N line width are directly determined from the relaxation data for human ubiquitin, collected at 360, 500, and 600 MHz. The spectral densities are analyzed in terms of the order parameter and the correlation time of local motion, using an axially symmetric overall rotational diffusion model. The residue-specific values of 15N CSA and the spectral densities obtained using this approach are in agreement with those derived previously [Fushman, Tjandra, and Cowburn. J. Am. Chem. Soc. 1998, 120, 10947−10952] from CSA/dipolar cross-correlation analysis. Accurate determination of spectral densities and order parameters from 15N relaxation may be accomplished by analysis of multiple-field data without assumption of constant CSA or zero chemical exchange contributions. }
 }
 
 @Article{Gagne98,
@@ -2274,7 +2328,7 @@ Unique-ID = {{ISI:000294784400016}},
 
 @Book{GMW81,
   Author         = {Gill, P. E. and Murray, W. and Wright, M. H.},
-  Title          = {Practical {O}ptimization},
+  Title          = {Practical Optimization},
   Publisher      = {Academic Press},
   year           = 1981
 }
@@ -2318,6 +2372,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Support, U.S. Gov't, P.H.S. ; Signal
                    Transduction/physiology ; Solutions ; *Thermodynamics},
   language       = {eng},
+  doi            = {10.1021/bi050149t},
   medline-aid    = {10.1021/bi050149t [doi]},
   medline-da     = {20050712},
   medline-dcom   = {20051011},
@@ -2374,6 +2429,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {AMER MATHEMATICAL SOC},
   size           = {0 p.},
   sourceid       = {ISI:A1970G560200003},
+  doi            = {10.1090/s0025-5718-1970-0258249-6},
   year           = 1970
 }
 
@@ -2447,6 +2503,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Research Support, Non-U.S. Gov't ; Research Support,
                    U.S. Gov't, Non-P.H.S. ; Zinc/metabolism},
   language       = {eng},
+  doi            = {10.1021/bi952524v},
   medline-aid    = {10.1021/bi952524v [doi] ; bi952524v [pii]},
   medline-da     = {19960916},
   medline-dcom   = {19960916},
@@ -2559,6 +2616,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Protein Disulfide-Isomerase/*chemistry ; Protein
                    Structure, Secondary ; Vibrio cholerae/*enzymology},
   language       = {eng},
+  doi            = {10.1016/j.jmb.2007.05.067},
   medline-aid    = {S0022-2836(07)00707-3 [pii] ;
                    10.1016/j.jmb.2007.05.067 [doi]},
   medline-da     = {20070730},
@@ -2712,6 +2770,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Biometrika Trust},
   size           = {11 p.},
   sourceid       = {ISI:A1989AE13400012},
+  doi            = {10.1093/biomet/76.2.297},
   year           = 1989
 }
 
@@ -2849,6 +2908,7 @@ Unique-ID = {{ISI:000294784400016}},
   medline-so     = {Biochemistry 1989 Nov 14;28(23):8972-9.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=2690953},
+  doi            = {10.1021/bi00449a003},
   year           = 1989
 }
 
@@ -3105,6 +3165,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Pergamon-Elsevier Science Ltd},
   size           = {70 p.},
   sourceid       = {ISI:000167376800001},
+  doi            = {10.1016/s0079-6565(00)00028-5},
   year           = 2001
 }
 
@@ -3200,6 +3261,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Inst Mathematical Statistics},
   size           = {8 p.},
   sourceid       = {ISI:A1951UM01800005},
+  doi            = {10.1214/aoms/1177729694},
   year           = 1951
 }
 
@@ -3372,6 +3434,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Kluwer Academic Publ},
   size           = {12 p.},
   sourceid       = {ISI:A1997XF93700006},
+  doi            = {10.1023/a:1018631009583},
   year           = 1997
 }
 
@@ -3439,6 +3502,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Trans-Activators/*chemistry/genetics/metabolism ;
                    *Transcription Factors},
   language       = {eng},
+  doi            = {10.1021/bi9526802},
   medline-aid    = {10.1021/bi9526802 [doi] ; bi9526802 [pii]},
   medline-da     = {19960605},
   medline-dcom   = {19960605},
@@ -3479,7 +3543,7 @@ Unique-ID = {{ISI:000294784400016}},
 
 @Book{LinhartZucchini86,
   Author         = {H Linhart and W Zucchini},
-  Title          = {{M}odel {S}election},
+  Title          = {Model Selection},
   Publisher      = {John Wiley \& Sons, Inc.},
   Series         = {Wiley Series in Probability and Mathematical
                    Statistics},
@@ -3532,7 +3596,8 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Amer Chemical Soc},
   size           = {14 p.},
   sourceid       = {ISI:A1982PC82900009},
-  year           = 1982
+  year           = 1982,
+  doi            = {10.1021/ja00381a009}
 }
 
 @Article{LipariSzabo82b,
@@ -3603,7 +3668,8 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Amer Chemical Soc},
   size           = {12 p.},
   sourceid       = {ISI:A1982PC82900010},
-  year           = 1982
+  year           = 1982,
+  doi            = {10.1021/ja00381a010}
 }
 
 @Article{Luginbuhl97,
@@ -3654,6 +3720,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Proteins/*chemistry/metabolism ; Research Support,
                    Non-U.S. Gov't ; Solutions},
   language       = {eng},
+  doi            = {10.1021/bi963161h},
   medline-aid    = {10.1021/bi963161h [doi] ; bi963161h [pii]},
   medline-da     = {19970710},
   medline-dcom   = {19970710},
@@ -3734,6 +3801,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Proteins/chemistry/genetics ; Research Support,
                    Non-U.S. Gov't},
   language       = {eng},
+  doi            = {10.1021/bi952761y},
   medline-aid    = {10.1021/bi952761y [doi] ; bi952761y [pii]},
   medline-da     = {19960806},
   medline-dcom   = {19960806},
@@ -3761,7 +3829,7 @@ Unique-ID = {{ISI:000294784400016}},
 @Article{Mandel96,
   Author         = {Mandel, A. M. and Akke, M. and Palmer, 3rd, A. G.},
   Title          = {Dynamics of ribonuclease {H}: {T}emperature dependence
-                   of motions on multiple time scales.},
+                   of motions on multiple time scales},
   Journal        = biochem,
   Volume         = {35},
   Number         = {50},
@@ -3813,6 +3881,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Non-U.S. Gov't ; Research Support, U.S. Gov't, P.H.S. ;
                    Ribonuclease H, Calf Thymus/*chemistry ; Thermodynamics},
   language       = {eng},
+  doi            = {10.1021/bi962089k},
   medline-aid    = {10.1021/bi962089k [doi] ; bi962089k [pii]},
   medline-da     = {19970123},
   medline-dcom   = {19970123},
@@ -3907,7 +3976,8 @@ Unique-ID = {{ISI:000294784400016}},
   medline-so     = {J Mol Biol 1995 Feb 10;246(1):144-63.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=7531772},
-  year           = 1995
+  year           = 1995,
+  doi            = {10.1006/jmbi.1994.0073}
 }
 
 @Article{Marquardt63,
@@ -3917,6 +3987,7 @@ Unique-ID = {{ISI:000294784400016}},
   Journal        = siamj,
   Volume         = {11},
   Pages          = {431-441},
+  doi            = {10.1137/0111030},
   year           = 1963
 }
 
@@ -4116,19 +4187,20 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {ASSOC COMPUTING MACHINERY},
   size           = {22 p.},
   sourceid       = {ISI:A1994PR44200004},
+  doi            = {10.1145/192115.192132},
   year           = 1994
 }
 
 @Book{Nelson67,
   Author         = {Edward Nelson},
-  Title          = {Dynamical {T}heories of {B}rownian {M}otion},
+  Title          = {Dynamical Theories of {B}rownian Motion},
   Publisher      = {Princeton University Press},
   year           = 1967
 }
 
 @Book{NocedalWright99,
   Author         = {Nocedal, J. and Wright, S. J.},
-  Title          = {Numerical {O}ptimization},
+  Title          = {Numerical Optimization},
   Publisher      = {Springer-Verlag},
   Series         = {Springer Series in Operations Research},
   Address        = {New York},
@@ -4149,11 +4221,52 @@ Unique-ID = {{ISI:000294784400016}},
   year           = 1999
 }
 
+@Article{Morin11,
+  author = {Morin, S.},
+  title = {A practical guide to protein dynamics from $^{15}${N} spin relaxation in solution},
+  journal = pnmrs,
+  year = {2011},
+  volume = {59},
+  number = {3},
+  pages = {245-262},
+  month = oct,
+  doi = {10.1016/j.pnmrs.2010.12.003}
+}
+
+@Article{MorinGagne09a,
+  author = {Morin, S. and Gagn{\'e}, S.},
+  affiliation = {Université Laval Département de Biochimie et de Microbiologie and PROTEO Bureau 3252, 1030 Avenue de la Médecine Québec QC G1V 0A6 Canada},
+  title = {Simple tests for the validation of multiple field spin relaxation data},
+  journal = jbnmr,
+  publisher = {Springer Netherlands},
+  issn = {0925-2738},
+  keyword = {Physics and Astronomy},
+  pages = {361-372},
+  volume = {45},
+  issue = {4},
+  url = {http://dx.doi.org/10.1007/s10858-009-9381-4},
+  doi = {10.1007/s10858-009-9381-4},
+  abstract = {15N spin relaxation data is widely used to extract detailed dynamic information regarding bond vectors such as the amide N-H bond of the protein backbone. Analysis is typically carried using the Lipari-Szabo model-free approach. Even though the original model-free equation can be determined from single field R1 , R2 and NOE , over-determination of more complex motional models is dependent on the recording of multiple field datasets. This is especially important for the characterization of conformational exchange which affects R2 in a field dependent manner. However, severe artifacts can be introduced if inconsistencies arise between experimental setups with different magnets (or samples). Here, we propose the use of simple tests as validation tools for the assessment of consistency between different datasets recorded at multiple magnetic fields. Synthetic data are used to show the effects of inconsistencies on the proposed tests. Moreover, an analysis of data currently deposited in the BMRB is performed. Finally, two cases from our laboratory are presented. These tests are implemented in the open-source program relax , and we propose their use as a routine check-up for assessment of multiple field dataset consistency prior to any analysis such as model-free calculations. We believe this will aid in the extraction of higher quality dynamics information from 15N spin relaxation data.},
+  year = {2009}
+}
+
+@Article{MorinGagne09b,
+  author = {Morin, S. and Gagn{\'e}, S. M.},
+  title = {{NMR} dynamics of {PSE}-4 $\beta$-lactamase: An interplay of ps-ns order and $\mu$s-ms motions in the active site},
+  journal = bj,
+  year = {2009},
+  volume = {96},
+  number = {11},
+  pages = {4681-4691},
+  month = jun,
+  doi = {10.1016/j.bpj.2009.02.068}
+}
+
 @Article{Orekhov99b,
   Author         = {Orekhov, V. Y. and Korzhnev, D. M. and Diercks, T. and
                    Kessler, H. and Arseniev, A. S.},
-  Title          = {H-1-{N}-15 {NMR} dynamic study of an isolated
-                   alpha-helical peptide (1-36)- bacteriorhodopsin reveals
+  Title          = {{H}-1-{N}-15 {NMR} dynamic study of an isolated
+                   alpha-helical peptide (1-36)bacteriorhodopsin reveals
                    the equilibrium helix-coil transitions},
   Journal        = jbnmr,
   Volume         = {14},
@@ -4253,6 +4366,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Kluwer Academic Publ},
   size           = {12 p.},
   sourceid       = {ISI:000082504900005},
+  doi            = {10.1023/a:1008356809071},
   year           = 1999
 }
 
@@ -4340,6 +4454,7 @@ Unique-ID = {{ISI:000294784400016}},
   medline-so     = {J Biomol Struct Dyn 1999 Aug;17(1):157-74.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=10496429},
+  doi            = {10.1080/07391102.1999.10508348},
   year           = 1999
 }
 
@@ -4406,7 +4521,8 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Springer Verlag},
   size           = {8 p.},
   sourceid       = {ISI:A1995TR35000012},
-  year           = 1995
+  year           = 1995,
+  doi            = {10.1007/bf03162365}
 }
 
 @Article{Orekhov95b,
@@ -4518,6 +4634,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Escom Sci Publ BV},
   size           = {10 p.},
   sourceid       = {ISI:A1995RY39200001},
+  doi            = {10.1007/BF00211774},
   year           = 1995
 }
 
@@ -4755,7 +4872,8 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Amer Chemical Soc},
   size           = {10 p.},
   sourceid       = {ISI:A1991FP84400001},
-  year           = 1991
+  year           = 1991,
+  doi            = {10.1021/ja00012a001}
 }
 
 @Article{Pawley01,
@@ -4860,6 +4978,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {E D P Sciences},
   size           = {15 p.},
   sourceid       = {ISI:000201621900071},
+  doi            = {10.1051/jphysrad:01934005010049700},
   year           = 1934
 }
 
@@ -4894,6 +5013,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {E D P Sciences},
   size           = {11 p.},
   sourceid       = {ISI:000201622100001},
+  doi            = {10.1051/jphysrad:01936007010100},
   year           = 1936
 }
 
@@ -4994,6 +5114,7 @@ Unique-ID = {{ISI:000294784400016}},
   medline-so     = {J Magn Reson B 1994 Nov;105(3):211-24.},
   medline-stat   = {MEDLINE},
   url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=7850167},
+  doi            = {10.1006/jmrb.1994.1127},
   year           = 1994
 }
 
@@ -5025,6 +5146,7 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {Inst Mathematical Statistics},
   size           = {4 p.},
   sourceid       = {ISI:A1978EQ63300014},
+  doi            = {10.1214/aos/1176344136},
   year           = 1978
 }
 
@@ -5059,11 +5181,12 @@ Unique-ID = {{ISI:000294784400016}},
   publisher      = {AMER MATHEMATICAL SOC},
   size           = {0 p.},
   sourceid       = {ISI:A1970I876100016},
+  doi            = {10.1090/s0025-5718-1970-0274029-x},
   year           = 1970
 }
 
 @Article{Smith02,
-  Author         = {Smith, P.C. and Firestein, S. and Hunt, J.F.},
+  Author         = {Smith, P. C. and Firestein, S. and Hunt, J. F.},
   Title          = {The crystal structure of the olfactory marker protein
                    at 2.3 {A} resolution.},
   Journal        = jmb,
@@ -5126,6 +5249,7 @@ Unique-ID = {{ISI:000294784400016}},
                    Research Support, U.S. Gov't, P.H.S. ;
                    Selenium/metabolism ; Signal Transduction},
   language       = {eng},
+  doi            = {10.1016/s0022-2836(02)00242-5},
   medline-aid    = {10.1016/S0022-2836(02)00242-5 [doi] ;
                    S0022-2836(02)00242-5 [pii]},
   medline-ci     = {(c) 2002 Elsevier Science Ltd.},
@@ -5324,60 +5448,60 @@ Unique-ID = {{ISI:000294784400016}},
 }
 
 @Article{Sun11,
-Author = {Sun, H. and d'Auvergne, E. J. and Reinscheid, U. M. and Dias, L. C. and Andrade, C. K. Z. and Rocha, Rafael O. and Griesinger, C.},
-Title = {Bijvoet in Solution Reveals Unexpected Stereoselectivity in a Michael Addition},
-Journal = {{Chemistry-A European Journal}},
-Year = {{2011}},
-Volume = {{17}},
-Number = {{6}},
-Pages = {{1811-1817}},
-Abstract = {{The absolute configuration of small crystallizable molecules can be
-   determined with anomalous X-ray diffraction as shown by Bijvoet in 1951.
-   For the majority of compounds that can neither be crystallized nor
-   easily be converted into crystallizable derivatives, stereocontrolled
-   organic synthesis is still required to establish their absolute
-   configuration. In this contribution, a new fundamental methodology for
-   resolving the absolute configuration will be presented that does not
-   require crystallization. With residual dipolar coupling enhanced NMR
-   spectroscopy, ensembles of a limited number of structures are created
-   reflecting the correct conformations and relative configuration.
-   Subsequently, from these ensembles, optical rotation dispersion}},
-Publisher = {{WILEY-BLACKWELL}},
-Address = {{COMMERCE PLACE, 350 MAIN ST, MALDEN 02148, MA USA}},
-Type = {{Article}},
-Language = {{English}},
-Affiliation = {{Reinscheid, UM (Reprint Author), Max Planck Inst Biophys Chem, Dept NMR Based Struct Biol, Fassberg 11, D-37077 Gottingen, Germany.
-   Sun, Han; d'Auvergne, Edward J.; Reinscheid, Uwe M.; Griesinger, Christian, Max Planck Inst Biophys Chem, Dept NMR Based Struct Biol, D-37077 Gottingen, Germany.
-   Dias, Luiz Carlos, Univ Estadual Campinas, Inst Quim, Lab Sintese Organ, BR-13084971 Campinas, SP, Brazil.
-   Andrade, Carlos Kleber Z.; Rocha, Rafael Oliveira, Univ Brasilia, Inst Quim, Lab Quim Metodol \& Organ Sintet, BR-70904970 Brasilia, DF, Brazil.}},
-DOI = {{10.1002/chem.201002520}},
-ISSN = {{0947-6539}},
-Keywords = {{configuration determination; Michael addition; niobium; NMR
-   spectroscopy; optical rotation dispersion}},
-Keywords-Plus = {{DENSITY-FUNCTIONAL THEORY; CONSISTENT FORCE-FIELD;
-   ALPHA,BETA-UNSATURATED KETONES; ORGANIC-SYNTHESIS; OPTICAL-ROTATION;
-   ENHANCED NMR; MODEL-FREE; STEREOCHEMISTRY; CONFIGURATION; OPTIMIZATION}},
-Subject-Category = {{Chemistry}},
-Web of Science-Category = {{Chemistry, Multidisciplinary}},
-Author-Email = {{urei@nmr.mpibpc.mpg.de
-   ldias@iqm.unicamp.br
-   ckleber@unb.br
-   rafaelrocha@unb.br
-   cigr@nmr.mpibpc.mpg.de}},
-Funding-Acknowledgement = {{IQ-UnB; IQ-UNICAMP; CAPES; CNPq; FINATEC; CT-Infra\{{[}\}0970/01]; Max
-   Planck Society; Deutsche Forschungsgemeinschaft\{{[}\}GRK 782, FOR 934];
-   Fonds der Chemischen Industrie}},
-Funding-Text = {{R.O.R.. C.K.Z.A., and L.C.D. thank IQ-UnB, IQ-UNICAMP, CAPES, CNPq,
-   FINATEC, CT-Infra 0970/01 and C.G. thanks the Max Planck Society, the
-   Deutsche Forschungsgemeinschaft (GRK 782 and FOR 934) and the Fonds der
-   Chemischen Industrie for financial support. The authors thank Prof.
-   Michael Reggelin for the ORD measurement and Dr. Burkhard Luy for
-   providing the PAN gel.}},
-Number-of-Cited-References = {{38}},
-Times-Cited = {{3}},
-Journal-ISO = {{Chem.-Eur. J.}},
-Doc-Delivery-Number = {{727GW}},
-Unique-ID = {{ISI:000287787100012}},
+  Author = {Sun, H. and d'Auvergne, E. J. and Reinscheid, U. M. and Dias, L. C. and Andrade, C. K. Z. and Rocha, Rafael O. and Griesinger, C.},
+  Title = {Bijvoet in Solution Reveals Unexpected Stereoselectivity in a Michael Addition},
+  Journal = cej,
+  Year = {2011},
+  Volume = {17},
+  Number = {6},
+  Pages = {1811-1817},
+  Abstract = {The absolute configuration of small crystallizable molecules can be
+     determined with anomalous X-ray diffraction as shown by Bijvoet in 1951.
+     For the majority of compounds that can neither be crystallized nor
+     easily be converted into crystallizable derivatives, stereocontrolled
+     organic synthesis is still required to establish their absolute
+     configuration. In this contribution, a new fundamental methodology for
+     resolving the absolute configuration will be presented that does not
+     require crystallization. With residual dipolar coupling enhanced NMR
+     spectroscopy, ensembles of a limited number of structures are created
+     reflecting the correct conformations and relative configuration.
+     Subsequently, from these ensembles, optical rotation dispersion},
+  Publisher = {WILEY-BLACKWELL},
+  Address = {COMMERCE PLACE, 350 MAIN ST, MALDEN 02148, MA USA},
+  Type = {Article},
+  Language = {English},
+  Affiliation = {Reinscheid, UM (Reprint Author), Max Planck Inst Biophys Chem, Dept NMR Based Struct Biol, Fassberg 11, D-37077 Gottingen, Germany.
+     Sun, Han; d'Auvergne, Edward J.; Reinscheid, Uwe M.; Griesinger, Christian, Max Planck Inst Biophys Chem, Dept NMR Based Struct Biol, D-37077 Gottingen, Germany.
+     Dias, Luiz Carlos, Univ Estadual Campinas, Inst Quim, Lab Sintese Organ, BR-13084971 Campinas, SP, Brazil.
+     Andrade, Carlos Kleber Z.; Rocha, Rafael Oliveira, Univ Brasilia, Inst Quim, Lab Quim Metodol \& Organ Sintet, BR-70904970 Brasilia, DF, Brazil.},
+  DOI = {10.1002/chem.201002520},
+  ISSN = {0947-6539},
+  Keywords = {configuration determination; Michael addition; niobium; NMR
+     spectroscopy; optical rotation dispersion},
+  Keywords-Plus = {DENSITY-FUNCTIONAL THEORY; CONSISTENT FORCE-FIELD;
+     ALPHA,BETA-UNSATURATED KETONES; ORGANIC-SYNTHESIS; OPTICAL-ROTATION;
+     ENHANCED NMR; MODEL-FREE; STEREOCHEMISTRY; CONFIGURATION; OPTIMIZATION},
+  Subject-Category = {Chemistry},
+  Web of Science-Category = {Chemistry, Multidisciplinary},
+  Author-Email = {urei@nmr.mpibpc.mpg.de
+     ldias@iqm.unicamp.br
+     ckleber@unb.br
+     rafaelrocha@unb.br
+     cigr@nmr.mpibpc.mpg.de},
+  Funding-Acknowledgement = {IQ-UnB; IQ-UNICAMP; CAPES; CNPq; FINATEC; CT-Infra\{{[}\}0970/01]; Max
+     Planck Society; Deutsche Forschungsgemeinschaft\{{[}\}GRK 782, FOR 934];
+     Fonds der Chemischen Industrie},
+  Funding-Text = {R.O.R.. C.K.Z.A., and L.C.D. thank IQ-UnB, IQ-UNICAMP, CAPES, CNPq,
+     FINATEC, CT-Infra 0970/01 and C.G. thanks the Max Planck Society, the
+     Deutsche Forschungsgemeinschaft (GRK 782 and FOR 934) and the Fonds der
+     Chemischen Industrie for financial support. The authors thank Prof.
+     Michael Reggelin for the ORD measurement and Dr. Burkhard Luy for
+     providing the PAN gel.},
+  Number-of-Cited-References = {38},
+  Times-Cited = {3},
+  Journal-ISO = {Chem.-Eur. J.},
+  Doc-Delivery-Number = {727GW},
+  Unique-ID = {ISI:000287787100012},
 }
 
 @Article{Tjandra95b,
@@ -5650,6 +5774,7 @@ Unique-ID = {{ISI:000287787100012}},
   publisher      = {Escom Sci Publ BV},
   size           = {12 p.},
   sourceid       = {ISI:A1996VW19200005},
+  doi            = {10.1007/bf00410326},
   year           = 1996
 }
 
@@ -5857,6 +5982,22 @@ Unique-ID = {{ISI:000287787100012}},
   year           = 1970
 }
 
+@Article{Viles01,
+  author = {Viles, John and Duggan, Brendan and Zaborowski, Eduardo and Schwarzinger, Stephan and Huntley, James and Kroon, Gerard and Dyson, H.Jane and Wright, Peter},
+  title = {Potential bias in {NMR} relaxation data introduced by peak intensity analysis and curve fitting methods},
+  journal = jbnmr,
+  publisher = {Springer Netherlands},
+  issn = {0925-2738},
+  keyword = {Physics and Astronomy},
+  pages = {1-9},
+  volume = {21},
+  issue = {1},
+  url = {http://dx.doi.org/10.1023/A:1011966718826},
+  doi = {10.1023/A:1011966718826},
+  abstract = {We present an evaluation of the accuracy and precision of relaxation rates calculated using a variety of methods, applied to data sets obtained for several very different protein systems. We show that common methods of data evaluation, such as the determination of peak heights and peak volumes, may be subject to bias, giving incorrect values for quantities such as R1 and R2. For example, one common method of peak-height determination, using a search routine to obtain the peak-height maximum in successive spectra, may be a source of significant systematic error in the relaxation rate. The alternative use of peak volumes or of a fixed coordinate position for the peak height in successive spectra gives more accurate results, particularly in cases where the signal/noise is low, but these methods have inherent problems of their own. For example, volumes are difficult to quantitate for overlapped peaks. We show that with any method of sampling the peak intensity, the choice of a 2- or 3-parameter equation to fit the exponential relaxation decay curves can dramatically affect both the accuracy and precision of the calculated relaxation rates. In general, a 2-parameter fit of relaxation decay curves is preferable. However, for very low intensity peaks a 3 parameter fit may be more appropriate.},
+  year = {2001}
+}
+
 @Article{Wallach67,
   Author         = {Wallach, Daniel},
   Title          = {Effect of internal rotation on angular correlation
@@ -5982,6 +6123,7 @@ Unique-ID = {{ISI:000287787100012}},
   publisher      = {Amer Inst Physics},
   size           = {0 p.},
   sourceid       = {ISI:A19624141B00048},
+  doi            = {10.1063/1.1701390},
   year           = 1962
 }
 
@@ -5998,6 +6140,7 @@ Unique-ID = {{ISI:000287787100012}},
                    University of Maryland School of Medicine, Baltimore,
                    Maryland 21201, USA.},
   language       = {eng},
+  doi            = {10.1007/s10858-005-1281-7},
   medline-aid    = {10.1007/s10858-005-1281-7 [doi]},
   medline-da     = {20051013},
   medline-edat   = {2005/10/14 09:00},
@@ -6133,6 +6276,7 @@ Unique-ID = {{ISI:000287787100012}},
                    aeruginosa/chemistry/*metabolism ; Research Support,
                    Non-U.S. Gov't ; Temperature ; Thermodynamics},
   language       = {eng},
+  doi            = {10.1016/j.jmb.2004.08.001},
   medline-aid    = {10.1016/j.jmb.2004.08.001 [doi] ;
                    S0022-2836(04)00955-6 [pii]},
   medline-da     = {20040914},
@@ -6164,7 +6308,7 @@ Unique-ID = {{ISI:000287787100012}},
 
 @Article{Zucchini00,
   Author         = {Zucchini, W.},
-  Title          = {An {I}ntroduction to {M}odel {S}election.},
+  Title          = {An Introduction to Model Selection.},
   Journal        = jmp,
   Volume         = {44},
   Number         = {1},
@@ -6190,6 +6334,7 @@ Unique-ID = {{ISI:000287787100012}},
                    Academic Press.},
   authoraddress  = {University of Gottingen},
   language       = {ENG},
+  doi            = {10.1006/jmps.1999.1276},
   medline-aid    = {10.1006/jmps.1999.1276 [doi] ; jmps.1999.1276 [pii]},
   medline-da     = {20000327},
   medline-edat   = {2000/03/29},

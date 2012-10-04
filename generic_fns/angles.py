@@ -126,9 +126,9 @@ def fold_spherical_angles(theta, phi, theta_lower=0, theta_upper=2*pi, theta_win
 
     # Check the bounds and window.
     if theta_window - (theta_upper - theta_lower) > 1e-7:
-        raise RelaxError, "The theta angle lower and upper bounds [%s, %s] do not match the window size of %s." % (theta_lower, theta_upper, theta_window)
+        raise RelaxError("The theta angle lower and upper bounds [%s, %s] do not match the window size of %s." % (theta_lower, theta_upper, theta_window))
     if phi_window - (phi_upper - phi_lower) > 1e-7:
-        raise RelaxError, "The phi angle lower and upper bounds [%s, %s] do not match the window size of %s." % (phi_lower, phi_upper, phi_window)
+        raise RelaxError("The phi angle lower and upper bounds [%s, %s] do not match the window size of %s." % (phi_lower, phi_upper, phi_window))
 
     # First wrap the angles.
     theta = wrap_angles(theta, theta_lower, theta_upper, theta_window)
@@ -181,7 +181,7 @@ def wrap_angles(angle, lower, upper, window=2*pi):
 
     # Check the bounds and window.
     if window - (upper - lower) > 1e-7:
-        raise RelaxError, "The lower and upper bounds [%s, %s] do not match the window size of %s." % (lower, upper, window)
+        raise RelaxError("The lower and upper bounds [%s, %s] do not match the window size of %s." % (lower, upper, window))
 
     # Keep wrapping until the angle is within the limits.
     while True:
