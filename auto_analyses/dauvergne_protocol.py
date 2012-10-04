@@ -22,7 +22,6 @@
 # Python module imports.
 from os import F_OK, access, getcwd, listdir, sep
 from re import search
-from string import lower
 from time import sleep
 
 # relax module imports.
@@ -319,7 +318,7 @@ class dAuvergne_protocol:
         if not isinstance(self.diff_tensor_grid_inc, dict):
             raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should be a dictionary." % self.diff_tensor_grid_inc)
         for tensor in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
-            if not self.diff_tensor_grid_inc.has_key(tensor):
+            if not tensor in self.diff_tensor_grid_inc:
                 raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the '%s' key." % (self.diff_tensor_grid_inc, tensor))
             if not isinstance(self.diff_tensor_grid_inc[tensor], int):
                 raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  The value corresponding to the key '%s' should be an integer." % (self.diff_tensor_grid_inc, tensor))
@@ -379,10 +378,10 @@ class dAuvergne_protocol:
             self.conv_data.mf_vals[-1].append([])
 
             # Loop over the parameters.
-            for j in xrange(len(spin.params)):
+            for j in range(len(spin.params)):
                 # Get the parameters and values.
                 self.conv_data.mf_params[-1][-1].append(spin.params[j])
-                self.conv_data.mf_vals[-1][-1].append(getattr(spin, lower(spin.params[j])))
+                self.conv_data.mf_vals[-1][-1].append(getattr(spin, spin.params[j].lower()))
 
         # No need for tests.
         if self.round == 1:

@@ -50,7 +50,7 @@ def back_calc(align_id=None):
 
     # Arg check.
     if align_id and align_id not in cdp.align_ids:
-        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+        raise RelaxError("The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids))
 
     # Convert the align IDs to an array, or take all IDs.
     if align_id:
@@ -345,17 +345,17 @@ def delete(align_id=None):
         cdp.pcs_ids.pop(cdp.pcs_ids.index(id))
 
         # The data type.
-        if hasattr(cdp, 'pcs_data_types') and cdp.pcs_data_types.has_key(id):
+        if hasattr(cdp, 'pcs_data_types') and id in cdp.pcs_data_types:
             cdp.pcs_data_types.pop(id)
 
         # The spin data.
         for spin in spin_loop():
             # The data.
-            if hasattr(spin, 'pcs') and spin.pcs.has_key(id):
+            if hasattr(spin, 'pcs') and id in spin.pcs:
                 spin.pcs.pop(id)
 
             # The error.
-            if hasattr(spin, 'pcs_err') and spin.pcs_err.has_key(id):
+            if hasattr(spin, 'pcs_err') and id in spin.pcs_err:
                 spin.pcs_err.pop(id)
 
         # Clean the global data.
@@ -410,13 +410,13 @@ def q_factors(spin_id=None):
             spin_count += 1
 
             # Data checks.
-            if hasattr(spin, 'pcs') and spin.pcs.has_key(align_id):
+            if hasattr(spin, 'pcs') and align_id in spin.pcs:
                 pcs_data = True
-            if hasattr(spin, 'pcs_bc') and spin.pcs_bc.has_key(align_id):
+            if hasattr(spin, 'pcs_bc') and align_id in spin.pcs_bc:
                 pcs_bc_data = True
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not spin.pcs.has_key(align_id) or spin.pcs[align_id] == None or not spin.pcs_bc.has_key(align_id) or spin.pcs_bc[align_id] == None:
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs or spin.pcs[align_id] == None or not align_id in spin.pcs_bc or spin.pcs_bc[align_id] == None:
                 continue
 
             # Sum of squares.

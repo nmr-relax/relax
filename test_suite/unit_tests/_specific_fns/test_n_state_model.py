@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -57,7 +57,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
         # Check the vector.
         self.assertEqual(len(param_vector), len(vector_true))
-        for i in xrange(len(param_vector)):
+        for i in range(len(param_vector)):
             self.assertEqual(param_vector[i], vector_true[i])
 
 

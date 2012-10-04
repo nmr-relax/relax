@@ -24,7 +24,6 @@
 
 # Python module imports.
 from os import F_OK, access, sep
-from string import split
 from subprocess import PIPE, Popen
 
 # relax module imports.
@@ -55,10 +54,10 @@ def revision():
     # Loop over the output lines.
     for line in pipe.stdout.readlines():
         # Split up the line.
-        row = split(line)
+        row = line.split()
 
         # The revision.
-        if row[0] == 'Revision:':
+        if len(row) and row[0] == 'Revision:':
             return row[1]
 
 
@@ -83,10 +82,10 @@ def url():
     # Loop over the output lines.
     for line in pipe.stdout.readlines():
         # Split up the line.
-        row = split(line)
+        row = line.split()
 
         # The revision.
-        if row[0] == 'URL:':
+        if len(row) and row[0] == 'URL:':
             return row[1]
 
 

@@ -21,7 +21,7 @@ data_paths = [dir + 'noe.dat', dir + 'R1.dat', dir + 'R2.dat']
 self._execute_uf(uf_name='sequence.read', file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
 # Read the data.
-for i in xrange(len(ri_ids)):
+for i in range(len(ri_ids)):
     self._execute_uf(uf_name='relax_data.read', ri_id=ri_ids[i], ri_type=ri_type[i], frq=frq[i], file=data_paths[i], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 # Set the spin information.

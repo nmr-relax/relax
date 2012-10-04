@@ -681,7 +681,7 @@ def bitpatternToFloat(string, endian='big'):
 
     # Convert the bit pattern into a byte array (of integers).
     bytes = []
-    for i in xrange(8):
+    for i in range(8):
         bytes.append(bitpatternToInt(string[i*8:i*8+8], endian=sys.byteorder))
 
     # Pack the byte array into a float and return it.
@@ -716,7 +716,7 @@ def bitpatternToInt(string, endian='big'):
 
     # Calculate the integer corresponding to the string.
     int_val = 0
-    for i in xrange(len(string)):
+    for i in range(len(string)):
         if int(string[i]):
             int_val = int_val + 2**i
 

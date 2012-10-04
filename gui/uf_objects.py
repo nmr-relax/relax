@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 import wx
 from wx.lib import scrolledpanel
 
@@ -83,7 +82,7 @@ def build_uf_menus(parent=None, menubar=None):
     for name, data in uf_info.uf_loop():
         # Split up the name.
         if search('\.', name):
-            class_name, uf_name = split(name, '.')
+            class_name, uf_name = name.split('.')
         else:
             class_name = None
 
@@ -111,8 +110,7 @@ def build_uf_menus(parent=None, menubar=None):
                 class_list.append(class_name)
 
             # Create the user function menu entry.
-            uf_id = wx.NewId()
-            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
         # No sub menu.
         else:
@@ -122,8 +120,7 @@ def build_uf_menus(parent=None, menubar=None):
                 class_item = None
 
             # The menu item.
-            uf_id = wx.NewId()
-            menu.AppendItem(build_menu_item(menu, id=uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+            menu.AppendItem(build_menu_item(menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
 
         # New menu.
         if menu_index == 0 and not search(pattern, name):
@@ -131,7 +128,7 @@ def build_uf_menus(parent=None, menubar=None):
             menu_index = 1
 
         # Bind the menu item to the parent.
-        parent.Bind(wx.EVT_MENU, uf_store[name], id=uf_id)
+        parent.Bind(wx.EVT_MENU, parent.uf_call, id=uf_store[name]._uf_id)
 
     # Add the very last sub menu.
     if class_item != None:
@@ -251,17 +248,24 @@ class Uf_object(object):
         # Initialise the wizard storage.
         self.wizard = None
 
+        # Create a unique wx ID for the user function.
+        self._uf_id = wx.NewId()
 
-    def create_page(self, wizard=None, sync=False):
+
+    def create_page(self, wizard=None, sync=None):
         """Create the user function wizard page GUI object.
 
         @keyword wizard:    The parent wizard.
         @type wizard:       Wiz_window instance
         @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
-        @type sync:         bool
+        @type sync:         None or bool
         @return:            The user function page object.
         @rtype:             Uf_page instance
         """
+
+        # Overwrite (a)synchronous operation.
+        if sync != None:
+            self._sync = sync
 
         # Initialise and return the page.
         return Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
@@ -789,11 +793,13 @@ class Uf_page(Wiz_page):
 
         # Synchronous execution.
         if self.sync or status.gui_uf_force_sync:
-            interpreter.apply(uf, *args, **kwds)
+            return_status = interpreter.apply(uf, *args, **kwds)
+            return return_status
 
         # Asynchronous execution.
         else:
             interpreter.queue(uf, *args, **kwds)
+            return True
 
 
     def on_back(self):
@@ -827,7 +833,7 @@ class Uf_page(Wiz_page):
 
             # Skip execution when a Combo_list does not have enough elements.
             if self.uf_data.kargs[i]['wiz_combo_list_min'] != None and kargs[name] == None:
-                return
+                return True
 
         # Handle the free file format args.
         if 'free_file_format' in self.uf_args:
@@ -857,11 +863,14 @@ class Uf_page(Wiz_page):
             print(self._intro_text(keys, values))
 
         # Execute the user function.
-        self.execute(self.name, **kargs)
+        return_status = self.execute(self.name, **kargs)
 
         # Bring the controller to the front.
         if status.show_gui and self.uf_data.display:
             wx.CallAfter(app.gui.controller.Raise)
+
+        # Return the status.
+        return return_status
 
 
     def on_next(self):
@@ -901,7 +910,9 @@ class Uf_page(Wiz_page):
                         data.append(vals)
 
             # Catch all RelaxErrors.
-            except AllRelaxErrors, instance:
+            except AllRelaxErrors:
+                instance = sys.exc_info()[1]
+
                 # Signal the failure to the wizard.
                 self.setup_fail = True
 
@@ -951,3 +962,18 @@ class Uf_storage(dict):
 
         # Already instantiated, so return the instance.
         return self._instance
+
+
+    def get_uf(self, id=0):
+        """Return the name of the user function corresponding to the given wx ID.
+
+        @keyword id:    The unique wx ID number.
+        @type id:       int
+        @return:        The name of the user function.
+        @rtype:         str
+        """
+
+        # Loop over the elements, returning the name when a match occurs.
+        for name in self.keys():
+            if self[name]._uf_id == id:
+                return name

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,16 +27,16 @@ import sys
 import dep_check
 
 # Formatting.
-from formatting import subtitle, summary_line, title
+from test_suite.formatting import subtitle, summary_line, title
 
 # Import the test suite categories.
 if dep_check.wx_module:
-    from gui_tests import GUI_test_runner
-from system_tests import System_test_runner
-from unit_tests.unit_test_runner import Unit_test_runner
+    from test_suite.gui_tests import GUI_test_runner
+from test_suite.system_tests import System_test_runner
+from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
-from relax_test_runner import GuiTestRunner, RelaxTestRunner
+from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
 
@@ -186,7 +186,11 @@ class Test_suite_runner:
 
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result'):
-            summary_line("Synopsis", self.system_result and self.unit_result and self.gui_result)
+            if self.gui_result == "skip":
+                status = self.system_result and self.unit_result
+            else:
+                status = self.system_result and self.unit_result and self.gui_result
+            summary_line("Synopsis", status)
 
         # End.
         print('\n\n')
@@ -204,7 +208,7 @@ class Test_suite_runner:
             test = status.skipped_tests[i]
 
             # Initialise in needed.
-            if not system_count.has_key(test[1]):
+            if not test[1] in system_count:
                 system_count[test[1]] = 0
                 unit_count[test[1]] = 0
                 gui_count[test[1]] = 0
@@ -227,8 +231,13 @@ class Test_suite_runner:
 
         # Nothing missing.
         if not missing_modules:
-            # Print out.
-            print("No tests skipped due to missing modules.\n")
+            # Except for the wx module!
+            if not dep_check.wx_module:
+                print("All GUI tests skipped due to the missing wxPython module, no other tests skipped due to missing modules.\n")
+
+            # Normal printout.
+            else:
+                print("No tests skipped due to missing modules.\n")
 
             # The skip the table.
             return

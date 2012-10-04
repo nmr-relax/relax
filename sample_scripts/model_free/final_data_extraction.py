@@ -7,11 +7,6 @@
 
 # Extract Data to Table
 
-#create a table file
-
-# Python module imports.
-from string import replace
-
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
@@ -136,9 +131,6 @@ grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', force=True)
 ##################################################################################################
 
 # Create S2 Macro for PyMol 
-
-# Python module imports.
-from string import replace
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop

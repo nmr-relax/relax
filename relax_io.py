@@ -39,12 +39,13 @@ if dep_check.devnull_import:
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext
 from re import match, search
-from string import split
 import sys
 from sys import stdin, stdout, stderr
 from warnings import warn
 
 # relax module imports.
+from check_types import is_filetype
+from compat import py_version
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -149,17 +150,23 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
 
     # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
     data = []
-    for i in xrange(len(file_data)):
+    for i in range(len(file_data)):
+        # Python 3 support - conversion of bytes type objects to strings.
+        if py_version == 3 and hasattr(file_data[i], 'decode'):
+            file_data[i] = file_data[i].decode()
+
         if sep:
-            row = split(file_data[i], sep)
+            row = file_data[i].split(sep)
         else:
-            row = split(file_data[i])
+            row = file_data[i].split()
         data.append(row)
-    return data
 
     # Close the file.
     if not file_data:
         file.close()
+
+    # Return the data.
+    return data
 
 
 def file_root(file_path):
@@ -332,7 +339,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     """
 
     # A file descriptor object.
-    if isinstance(file_name, file):
+    if is_filetype(file_name):
         # Nothing to do here!
         return file_name
 
@@ -359,7 +366,8 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
                 raise RelaxError("Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + ".")
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
-    except IOError, message:
+    except IOError:
+        message = sys.exc_info()[1]
         raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
@@ -392,7 +400,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     """
 
     # A file descriptor object.
-    if isinstance(file_name, file):
+    if is_filetype(file_name):
         # Nothing to do here!
         return file_name
 
@@ -455,7 +463,8 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
             file_obj = BZ2File(file_path, 'w')
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'w')
-    except IOError, message:
+    except IOError:
+        message = sys.exc_info()[1]
         raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
@@ -509,12 +518,12 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     col_arg_names = ['spin_id_col', 'mol_name_col', 'res_name_col', 'res_num_col', 'spin_name_col', 'spin_num_col', 'data_col', 'error_col']
     for i in range(len(col_args)):
         if col_args[i] == 0:
-            raise RelaxError, "The '%s' argument cannot be zero, column numbering starts at one." % col_arg_names[i]
+            raise RelaxError("The '%s' argument cannot be zero, column numbering starts at one." % col_arg_names[i])
     if spin_id_col and (mol_name_col or res_name_col or res_num_col or spin_name_col or spin_num_col):
-        raise RelaxError, "If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None."
+        raise RelaxError("If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None.")
 
     # Minimum number of columns.
-    min_col_num = max(spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+    min_col_num = max(filter(None, [spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col]))
 
     # Extract the data from the file.
     if not file_data:
@@ -543,8 +552,9 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         # Validate the sequence.
         try:
             generic_fns.sequence.validate_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col)
-        except RelaxInvalidSeqError, msg:
+        except RelaxInvalidSeqError:
             # Extract the message string, without the RelaxError bit.
+            msg = sys.exc_info()[1]
             string = msg.__str__()[12:-1]
 
             # Give a warning.
@@ -670,7 +680,7 @@ def strip(data, comments=True):
     new = []
 
     # Loop over the data.
-    for i in xrange(len(data)):
+    for i in range(len(data)):
         # Empty lines.
         if len(data[i]) == 0:
             continue
@@ -715,7 +725,7 @@ def test_binary(binary):
         path = getenv('PATH')
 
         # Split PATH by the path separator.
-        path_list = split(path, pathsep)
+        path_list = path.split(pathsep)
 
         # Test that the binary exists within the system path (and exit this function instantly once it has been found).
         for path in path_list:
@@ -1029,8 +1039,17 @@ class DummyFileObject:
     def __init__(self):
         """Set up the dummy object to act as a file object."""
 
-        # Initialise an object for adding the string from all write calls to.
-        self.data = ''
+        # Initialise for Python 2.
+        if py_version == 2:
+            self.data = ''
+            self._newline = '\n'
+            self._empty = ''
+
+        # Initialise for Python 3.
+        elif py_version == 3:
+            self.data = b''
+            self._newline = b'\n'
+            self._empty = b''
 
         # Set the closed flag.
         self.closed = False
@@ -1069,15 +1088,15 @@ class DummyFileObject:
         """
 
         # Split up the string.
-        lines = split(self.data, '\n')
+        lines = self.data.split(self._newline)
 
         # Remove the last line if empty.
-        if lines[-1] == '':
+        if lines[-1] == self._empty:
             lines.pop()
 
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
-        for i in xrange(len(lines)):
-            lines[i] = lines[i] + '\n'
+        for i in range(len(lines)):
+            lines[i] = lines[i] + self._newline
 
         # Return the file lines.
         return lines

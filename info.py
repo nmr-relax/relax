@@ -27,9 +27,8 @@ import ctypes
 if hasattr(ctypes, 'windll'):
     import ctypes.wintypes
 import numpy
-from os import environ, popen3, waitpid
+from os import environ, waitpid
 import platform
-from string import split
 from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
@@ -132,7 +131,7 @@ class Info_box(object):
         """
 
         # Calculate the number of spaces needed.
-        spaces = (width - len(string)) / 2
+        spaces = int((width - len(string)) / 2)
 
         # The new string.
         string = spaces * ' ' + string
@@ -169,7 +168,7 @@ class Info_box(object):
             # Arch.
             arch = [None, None, None]
             for i in range(3):
-                row = split(data[i+1], '\t')
+                row = data[i+1].split('\t')
                 arch[i] = row[1][:-1]
             arch.sort()
 
@@ -190,7 +189,7 @@ class Info_box(object):
             # Arch.
             arch = [None, None]
             for i in range(2):
-                row = split(data[i+1], '\t')
+                row = data[i+1].split('\t')
                 arch[i] = row[1][:-1]
             arch.sort()
 
@@ -210,7 +209,7 @@ class Info_box(object):
         else:
             file_type = data[0][:-1]
             for i in range(1, len(data)):
-                row = split(data[i], '\t')
+                row = data[i].split('\t')
                 arch[i] = row[1][:-1]
                 file_type += " %s" % arch
 
@@ -324,6 +323,7 @@ class Info_box(object):
         package.append('bmrblib')
         status.append(dep_check.bmrblib_module)
         try:
+            dep_check.bmrblib.__path__[0]
             version.append('Unknown')
             path.append(dep_check.bmrblib.__path__[0])
         except:
@@ -490,13 +490,13 @@ class Info_box(object):
         text = ''
 
         # Unix and GNU/Linux systems.
-        stdin, stdout, stderr = popen3('free -m')
-        free_lines = stdout.readlines()
+        pipe = Popen('free -m', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+        free_lines = pipe.stdout.readlines()
         if free_lines:
             # Extract the info.
             for line in free_lines:
                 # Split up the line.
-                row = split(line)
+                row = line.split()
 
                 # The RAM size.
                 if row[0] == 'Mem:':
@@ -674,7 +674,7 @@ class Info_box(object):
         """
 
         # 64-bit versions.
-        if environ.has_key('PROCESSOR_ARCHITEW6432'):
+        if 'PROCESSOR_ARCHITEW6432' in environ:
             arch = environ['PROCESSOR_ARCHITEW6432']
 
         # Default 32-bit.
@@ -751,7 +751,7 @@ class Ref:
                 return None
 
             # First split the page range.
-            vals = split(self.pages, '-')
+            vals = self.pages.split('-')
 
             # Single page.
             if len(vals) == 1:
@@ -765,7 +765,7 @@ class Ref:
             if name == 'page_last':
                 return vals[1]
 
-        raise AttributeError, name
+        raise AttributeError(name)
 
 
     def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True, status=True):

@@ -28,7 +28,7 @@ from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxList
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_n_state_model(N_state_model_base_class, TestCase):

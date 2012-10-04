@@ -28,10 +28,10 @@ from re import search
 from tempfile import mktemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Bmrb(SystemTestCase):
@@ -44,13 +44,13 @@ class Bmrb(SystemTestCase):
         @type methodName:       str
         """
 
+        # Execute the base class method.
+        super(Bmrb, self).__init__(methodName)
+
         # Missing module.
         if not dep_check.bmrblib_module:
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Bmrblib', self._skip_type])
-
-        # Execute the base class method.
-        super(Bmrb, self).__init__(methodName)
 
 
     def setUp(self):

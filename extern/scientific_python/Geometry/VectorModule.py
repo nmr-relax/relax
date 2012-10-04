@@ -62,11 +62,11 @@ class Vector:
     __deepcopy__ = __copy__
 
     def __repr__(self):
-        return 'Vector(%s,%s,%s)' % (`self.array[0]`,\
-                                     `self.array[1]`, `self.array[2]`)
+        return 'Vector(%s,%s,%s)' % (repr(self.array[0]),\
+                                     repr(self.array[1]), repr(self.array[2]))
 
     def __str__(self):
-        return `list(self.array)`
+        return repr(list(self.array))
 
     def __add__(self, other):
         return Vector(self.array+other.array)

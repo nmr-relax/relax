@@ -27,12 +27,12 @@ from os import listdir, sep
 from tempfile import mkdtemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
 from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class N_state_model(SystemTestCase):
@@ -470,7 +470,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2 / 1e6, 1745860.0485368515 / 1e6)
+        self.assertAlmostEqual(cdp.chi2 / 1e6, 1745860.0485368515 / 1e6, 6)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
 
@@ -484,7 +484,7 @@ class N_state_model(SystemTestCase):
 
             # Check for simulation data.
             self.assert_(hasattr(spin, 'pcs_sim'))
-            self.assert_(spin.pcs_sim.has_key(key))
+            self.assert_(key in spin.pcs_sim)
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
@@ -497,7 +497,7 @@ class N_state_model(SystemTestCase):
 
             # Check for simulation data.
             self.assert_(hasattr(interatom, 'rdc_sim'))
-            self.assert_(interatom.rdc_sim.has_key(key))
+            self.assert_(key in interatom.rdc_sim)
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):

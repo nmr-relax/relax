@@ -24,8 +24,8 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, chdir, getcwd, popen3, sep
-from string import lower
+from os import F_OK, access, chdir, getcwd, sep
+from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -414,22 +414,22 @@ def execute(dir, force, binary):
             raise RelaxFileError('dasha script', 'dasha_script')
 
         # Execute Dasha.
-        stdin, stdout, stderr = popen3(binary)
+        pipe = Popen(binary, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Get the contents of the script and pump it into Dasha.
         script = open('dasha_script')
         lines = script.readlines()
         script.close()
         for line in lines:
-            stdin.write(line)
+            pipe.stdin.write(line)
 
         # Close the pipe.
-        stdin.close()
+        pipe.stdin.close()
 
         # Write to stdout and stderr.
-        for line in stdout.readlines():
+        for line in pipe.stdout.readlines():
             sys.stdout.write(line)
-        for line in stderr.readlines():
+        for line in pipe.stderr.readlines():
             sys.stderr.write(line)
 
     # Failure.
@@ -495,7 +495,7 @@ def extract(dir):
                 continue
 
             # Set the parameter to None.
-            setattr(spin, lower(param), None)
+            setattr(spin, param.lower(), None)
 
     # Extract the chi-squared values.
     file_name = dir + sep+'chi2.out'

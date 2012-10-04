@@ -47,7 +47,7 @@ elif ds.diff_type == 'spheroid':
 elif ds.diff_type == 'ellipsoid':
     diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), angle_units='rad', fixed=False)
 else:
-    raise RelaxError, "The diffusion type '%s' is unknown." % ds.diff_type
+    raise RelaxError("The diffusion type '%s' is unknown." % ds.diff_type)
 
 # Create the proton spins.
 sequence.attach_protons()

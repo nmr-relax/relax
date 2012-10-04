@@ -149,10 +149,10 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will add a new spin data container to the relax data storage object.  The same spin number cannot be used more than once.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("The following sequence of commands will generate the sequence 1 C4, 2 C9, 3 C15:")
-uf.desc[-1].add_prompt("relax> spin.create(1, 'C4')")
-uf.desc[-1].add_prompt("relax> spin.create(2, 'C9')")
-uf.desc[-1].add_prompt("relax> spin.create(3, 'C15')")
+uf.desc[-1].add_paragraph("The following sequence of commands will add the spins 1 C4, 2 C9, 3 C15 to residue number 10:")
+uf.desc[-1].add_prompt("relax> spin.create('C4',  1, res_num=10)")
+uf.desc[-1].add_prompt("relax> spin.create('C9',  2, res_num=10)")
+uf.desc[-1].add_prompt("relax> spin.create('C15', 3, res_num=10)")
 uf.backend = create_spin
 uf.menu_text = "c&reate"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"

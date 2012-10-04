@@ -25,7 +25,6 @@
 
 # Python module imports.
 from os import sep
-from string import lower
 import sys
 import wx
 
@@ -209,7 +208,7 @@ class Auto_rx(Base_analysis):
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)), width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.label, self.label.lower()), width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
         self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)

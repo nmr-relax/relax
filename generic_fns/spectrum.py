@@ -28,13 +28,14 @@
 from math import sqrt
 from re import split
 import string
+import sys
 from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
-from relax_io import extract_data, read_spin_data, strip
+from relax_io import extract_data, read_spin_data, strip, write_data
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -313,11 +314,11 @@ def __errors_repl(verbosity=0):
             continue
 
         # Skip replicated spectra which already have been used.
-        if cdp.var_I.has_key(id) and cdp.var_I[id] != 0.0:
+        if id in cdp.var_I and cdp.var_I[id] != 0.0:
             continue
 
         # The replicated spectra.
-        for j in xrange(len(cdp.replicates)):
+        for j in range(len(cdp.replicates)):
             if id in cdp.replicates[j]:
                 spectra = cdp.replicates[j]
 
@@ -343,21 +344,21 @@ def __errors_repl(verbosity=0):
 
             # Missing data.
             missing = False
-            for j in xrange(num_spectra):
-                if not spin.intensities.has_key(spectra[j]):
+            for j in range(num_spectra):
+                if not spectra[j] in spin.intensities:
                     missing = True
             if missing:
                 continue
 
             # Average intensity.
             ave_intensity = 0.0
-            for j in xrange(num_spectra):
+            for j in range(num_spectra):
                 ave_intensity = ave_intensity + spin.intensities[spectra[j]]
             ave_intensity = ave_intensity / num_spectra
 
             # Sum of squared errors.
             SSE = 0.0
-            for j in xrange(num_spectra):
+            for j in range(num_spectra):
                 SSE = SSE + (spin.intensities[spectra[j]] - ave_intensity) ** 2
 
             # Variance.
@@ -373,7 +374,7 @@ def __errors_repl(verbosity=0):
                 print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
 
             # Sum of variances (for average).
-            if not cdp.var_I.has_key(id):
+            if not id in cdp.var_I:
                 cdp.var_I[id] = 0.0
             cdp.var_I[id] = cdp.var_I[id] + var_I
             count = count + 1
@@ -556,7 +557,7 @@ def delete(spectrum_id=None):
     cdp.spectrum_ids.pop(cdp.spectrum_ids.index(spectrum_id))
 
     # The ncproc parameter.
-    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+    if hasattr(cdp, 'ncproc') and spectrum_id in cdp.ncproc:
         del cdp.ncproc[spectrum_id]
 
     # Replicates.
@@ -577,15 +578,15 @@ def delete(spectrum_id=None):
                 break
 
     # Errors.
-    if hasattr(cdp, 'sigma_I') and cdp.sigma_I.has_key(spectrum_id):
+    if hasattr(cdp, 'sigma_I') and spectrum_id in cdp.sigma_I:
         del cdp.sigma_I[spectrum_id]
-    if hasattr(cdp, 'var_I') and cdp.var_I.has_key(spectrum_id):
+    if hasattr(cdp, 'var_I') and spectrum_id in cdp.var_I:
         del cdp.var_I[spectrum_id]
 
     # Loop over the spins.
     for spin in spin_loop():
         # Intensity data.
-        if hasattr(spin, 'intensities') and spin.intensities.has_key(spectrum_id):
+        if hasattr(spin, 'intensities') and spectrum_id in spin.intensities:
             del spin.intensities[spectrum_id]
 
 
@@ -860,11 +861,12 @@ def intensity_sparky(file_data=None, int_col=None):
         x_assign, h_assign = split('-', line[0])
 
         # The proton info.
-        h_name = split('([A-Z]+)', h_assign)[-2]
+        h_row = split('([A-Z]+)', h_assign)
+        h_name = h_row[-2] + h_row[-1]
 
         # The heteronucleus info.
         x_row = split('([A-Z]+)', x_assign)
-        x_name = x_row[-2]
+        x_name = x_row[-2] + x_row[-1]
 
         # The residue number.
         try:
@@ -1001,7 +1003,7 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
     return data
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
+def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -1036,6 +1038,8 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
+    @keyword verbose:       A flag which if True will cause all relaxation data loaded to be printed out.
+    @type verbose:          bool
     """
 
     # Test if the current data pipe exists.
@@ -1103,16 +1107,15 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         cdp.spectrum_ids = []
         if ncproc != None:
             cdp.ncproc = {}
-    if spectrum_id in cdp.spectrum_ids:
-        raise RelaxError("The spectrum identification string '%s' already exists." % spectrum_id)
-    else:
+    if not spectrum_id in cdp.spectrum_ids:
         cdp.spectrum_ids.append(spectrum_id)
         if ncproc != None:
             cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
+    data = []
     data_flag = False
-    for i in xrange(len(intensity_data)):
+    for i in range(len(intensity_data)):
         # Extract the data.
         H_name, X_name, spin_id, intensity, line = intensity_data[i]
 
@@ -1145,6 +1148,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Switch the flag.
         data_flag = True
 
+        # Append the data for printing out.
+        data.append([spin_id, repr(intensity)])
+
     # No data.
     if not data_flag:
         # Delete all the data.
@@ -1152,6 +1158,12 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Raise the error.
         raise RelaxError("No data could be loaded from the peak list")
+
+    # Print out.
+    if verbose:
+        print("\nThe following intensities have been loaded into the relax data store:\n")
+        write_data(out=sys.stdout, headings=["Spin_ID", "Intensity"], data=data)
+
 
 
 def replicated(spectrum_ids=None):
@@ -1189,16 +1201,16 @@ def replicated(spectrum_ids=None):
 
     # Check if the spectrum IDs are already in the list.
     found = False
-    for i in xrange(len(cdp.replicates)):
+    for i in range(len(cdp.replicates)):
         # Loop over all elements of the first.
-        for j in xrange(len(spectrum_ids)):
+        for j in range(len(spectrum_ids)):
             if spectrum_ids[j] in cdp.replicates[i]:
                 found = True
 
         # One of the spectrum IDs already have a replicate specified.
         if found:
             # Add the remaining replicates to the list and quit this function.
-            for j in xrange(len(spectrum_ids)):
+            for j in range(len(spectrum_ids)):
                 if spectrum_ids[j] not in cdp.replicates[i]:
                     cdp.replicates[i].append(spectrum_ids[j])
 

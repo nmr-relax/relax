@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -269,7 +269,7 @@ def ri_comps(data, params):
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_func[i] = data.create_dip_jw_func[i](data.jw, data.remap_table[i])
 
@@ -292,7 +292,7 @@ def ri_comps_rex(data, params):
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_func[i] = data.create_dip_jw_func[i](data.jw, data.remap_table[i])
 
@@ -322,7 +322,7 @@ def ri_comps_r(data, params):
     comp_dip_const_func(data, params[data.r_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if data.create_dip_func[i]:
@@ -353,7 +353,7 @@ def ri_comps_csa(data, params):
     comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_func[i] = data.create_dip_jw_func[i](data.jw, data.remap_table[i])
 
@@ -386,7 +386,7 @@ def ri_comps_r_csa(data, params):
     comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if data.create_dip_func[i]:
@@ -421,7 +421,7 @@ def ri_comps_r_rex(data, params):
     comp_dip_const_func(data, params[data.r_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if data.create_dip_func[i]:
@@ -456,7 +456,7 @@ def ri_comps_csa_rex(data, params):
     comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_func[i] = data.create_dip_jw_func[i](data.jw, data.remap_table[i])
 
@@ -494,7 +494,7 @@ def ri_comps_r_csa_rex(data, params):
     comp_csa_const_func(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_func[i] = data.dip_const_func
         if data.create_dip_func[i]:
@@ -563,7 +563,7 @@ def dri_comps(data, params):
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_grad[i] = data.create_dip_jw_grad[i](data.djw, data.remap_table[i])
 
@@ -586,7 +586,7 @@ def dri_comps_rex(data, params):
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_grad[i] = data.create_dip_jw_grad[i](data.djw, data.remap_table[i])
 
@@ -616,7 +616,7 @@ def dri_comps_r(data, params):
     comp_dip_const_grad(data, params[data.r_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if data.create_dip_grad[i]:
@@ -647,7 +647,7 @@ def dri_comps_csa(data, params):
     comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_grad[i] = data.create_dip_jw_grad[i](data.djw, data.remap_table[i])
 
@@ -680,7 +680,7 @@ def dri_comps_r_csa(data, params):
     comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if data.create_dip_grad[i]:
@@ -715,7 +715,7 @@ def dri_comps_r_rex(data, params):
     comp_dip_const_grad(data, params[data.r_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if data.create_dip_grad[i]:
@@ -750,7 +750,7 @@ def dri_comps_csa_rex(data, params):
     comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_grad[i] = data.create_dip_jw_grad[i](data.djw, data.remap_table[i])
 
@@ -788,7 +788,7 @@ def dri_comps_r_csa_rex(data, params):
     comp_csa_const_grad(data, params[data.csa_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_grad[i] = data.dip_const_grad
         if data.create_dip_grad[i]:
@@ -856,7 +856,7 @@ def d2ri_comps(data, params):
     """
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_hess[i] = data.create_dip_jw_hess[i](data.d2jw, data.remap_table[i])
 
@@ -882,7 +882,7 @@ def d2ri_comps_r(data, params):
     comp_dip_const_hess(data, params[data.r_i])
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_hess[i] = data.dip_const_hess
         if data.create_dip_hess[i]:
@@ -913,7 +913,7 @@ def d2ri_comps_csa(data, params):
     comp_csa_const_hess(data, params)
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar J(w) components
         data.dip_jw_comps_hess[i] = data.create_dip_jw_hess[i](data.d2jw, data.remap_table[i])
 
@@ -946,7 +946,7 @@ def d2ri_comps_r_csa(data, params):
     comp_csa_const_hess(data, params)
 
     # Loop over the relaxation values.
-    for i in xrange(data.num_ri):
+    for i in range(data.num_ri):
         # Dipolar constant components.
         data.dip_comps_hess[i] = data.dip_const_hess
         if data.create_dip_hess[i]:
@@ -1019,7 +1019,7 @@ def calc_fixed_csa(data):
                               3
     """
 
-    for j in xrange(data.num_frq):
+    for j in range(data.num_frq):
         data.csa_const_fixed[j] = data.frq_sqrd_list[j, 1] / 3.0
 
 
@@ -1107,7 +1107,7 @@ def comp_csa_const_func(data, csa):
                                 3
     """
 
-    for i in xrange(data.num_frq):
+    for i in range(data.num_frq):
         data.csa_const_func[i] = data.csa_const_fixed[i] * csa**2
 
 
@@ -1125,7 +1125,7 @@ def comp_csa_const_grad(data, csa):
                                 3
     """
 
-    for i in xrange(data.num_frq):
+    for i in range(data.num_frq):
         data.csa_const_grad[i] = 2.0 * data.csa_const_fixed[i] * csa
 
 
@@ -1143,7 +1143,7 @@ def comp_csa_const_hess(data, params):
                               3
     """
 
-    for i in xrange(data.num_frq):
+    for i in range(data.num_frq):
         data.csa_const_hess[i] = 2.0 * data.csa_const_fixed[i]
 
 

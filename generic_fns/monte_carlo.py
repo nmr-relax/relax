@@ -79,10 +79,10 @@ def create_data(method=None):
         if isinstance(data, list) or isinstance(data, ndarray):
             # Loop over the Monte Carlo simulations.
             random = []
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Randomise the data.
                 random.append([])
-                for k in xrange(len(data)):
+                for k in range(len(data)):
                     # No data or errors.
                     if data[k] == None or error[k] == None:
                         random[j].append(None)
@@ -95,7 +95,7 @@ def create_data(method=None):
         if isinstance(data, dict):
             # Loop over the Monte Carlo simulations.
             random = []
-            for j in xrange(cdp.sim_number):
+            for j in range(cdp.sim_number):
                 # Randomise the data.
                 random.append({})
                 for id in data.keys():
@@ -172,11 +172,11 @@ def error_analysis(prune=0.0):
             num = int(float(n) * 0.5 * prune)
 
             # Remove the lower tail.
-            for i in xrange(num):
+            for i in range(num):
                 indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
             # Remove the upper tail.
-            for i in xrange(n-num, n):
+            for i in range(n-num, n):
                 indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
         # Loop over the parameters.
@@ -193,7 +193,7 @@ def error_analysis(prune=0.0):
             if param_array[0] != None:
                 # The total number of simulations.
                 n = 0
-                for i in xrange(len(param_array)):
+                for i in range(len(param_array)):
                     # Skip deselected simulations.
                     if not select_sim[i]:
                         continue
@@ -207,7 +207,7 @@ def error_analysis(prune=0.0):
 
                 # Calculate the sum of the parameter value for all simulations.
                 Xsum = 0.0
-                for i in xrange(len(param_array)):
+                for i in range(len(param_array)):
                     # Skip deselected simulations.
                     if not select_sim[i]:
                         continue
@@ -227,7 +227,7 @@ def error_analysis(prune=0.0):
 
                 # Calculate the sum part of the standard deviation.
                 sd = 0.0
-                for i in xrange(len(param_array)):
+                for i in range(len(param_array)):
                     # Skip deselected simulations.
                     if not select_sim[i]:
                         continue

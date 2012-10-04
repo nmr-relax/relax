@@ -24,15 +24,14 @@ from re import search
 from math import cos, sin
 from numpy import array, dot, eye, float64, identity, transpose, zeros
 from numpy.linalg import det, eig, eigvals
-from types import ListType
 
 # relax module imports.
-from data_classes import Element
+from compat import py_version
+from data.data_classes import Element
+from data.relax_xml import fill_object_contents, xml_to_object
 from float import nan
 from maths_fns.rotation_matrix import R_to_euler_zyz
 from relax_errors import RelaxError
-from relax_xml import fill_object_contents, xml_to_object
-
 
 
 def calc_A(Axx, Ayy, Azz, Axy, Axz, Ayz):
@@ -129,7 +128,7 @@ def calc_A_diag(A):
     abs_vals = abs(vals).tolist()
     Axx_index = abs_vals.index(min(abs_vals))
     Azz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Axx_index, Azz_index))
     last_index.pop(min(Axx_index, Azz_index))
     Ayy_index = last_index[0]
@@ -240,7 +239,7 @@ def calc_eigvals(A):
     abs_vals = abs(vals).tolist()
     x_index = abs_vals.index(min(abs_vals))
     z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(x_index, z_index))
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
@@ -379,7 +378,7 @@ def calc_S_diag(tensor):
     abs_vals = abs(vals).tolist()
     Sxx_index = abs_vals.index(min(abs_vals))
     Szz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Sxx_index, Szz_index))
     last_index.pop(min(Sxx_index, Szz_index))
     Syy_index = last_index[0]
@@ -611,7 +610,7 @@ def calc_P_diag(tensor):
     abs_vals = abs(vals).tolist()
     Pxx_index = abs_vals.index(min(abs_vals))
     Pzz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Pxx_index, Pzz_index))
     last_index.pop(min(Pxx_index, Pzz_index))
     Pyy_index = last_index[0]
@@ -794,7 +793,7 @@ def calc_rotation(A):
     abs_vals = abs(vals).tolist()
     x_index = abs_vals.index(min(abs_vals))
     z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(x_index, z_index))
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
@@ -924,7 +923,7 @@ def dependency_generator():
 # Alignment tensor specific data.
 #################################
 
-class AlignTensorList(ListType):
+class AlignTensorList(list):
     """List type data container for holding all the alignment tensors.
 
     The elements of the list should be AlignTensorData instances.
@@ -935,7 +934,7 @@ class AlignTensorList(ListType):
 
         text = "Alignment tensors.\n\n"
         text = text + "%-8s%-20s\n" % ("Index", "Name")
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-20s\n" % (i, self[i].name)
         text = text + "\nThese can be accessed by typing 'pipe.align_tensor[index]'.\n"
         return text
@@ -976,7 +975,7 @@ class AlignTensorList(ListType):
 
         # Loop over the tensors.
         names = []
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             names.append(self[i].name)
 
         # Return the list.
@@ -1000,10 +999,10 @@ class AlignTensorList(ListType):
         tensor_list_element.setAttribute('desc', 'Alignment tensor list')
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(list(self.__class__.__dict__.keys()) + list(list.__dict__.keys())))
 
         # Loop over the tensors.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for a single tensor.
             tensor_element = doc.createElement('align_tensor')
             tensor_list_element.appendChild(tensor_element)
@@ -1130,14 +1129,26 @@ class AlignTensorData(Element):
                 target_obj.append_untouchable_item(fn(*deps))
 
 
-    def __update_sim_set(self, param_name, index):
+    def __update_sim_set(self, param_name, slice_obj):
         """Update the Monte Carlo simulation data lists when a simulation value is set.
 
         @param param_name:  The MC sim parameter name which is being set.
         @type param_name:   str
-        @param index:       The index of the Monte Carlo simulation which was set.
-        @type index:        int
+        @param slice_obj:   For Python 2, the index of the Monte Carlo simulation which was set.  Or for Python 3, a slice object.
+        @type slice_obj:    int or slice object
         """
+
+        # Python 3 support.
+        if py_version == 3:
+            if slice_obj.start != slice_obj.stop:
+                raise RelaxError("The slice object %s cannot be handled." % slice_obj)
+
+            # The index of the object.
+            index = slice_obj.start
+
+        # Python 2.
+        else:
+            index = slice_obj
 
         # Loop over the targets.
         for target, update_if_set, depends in dependency_generator():
@@ -1183,7 +1194,7 @@ class AlignTensorData(Element):
                 target_obj = getattr(self, target+'_sim')
 
                 # Calculate and set the value.
-                target_obj.set_untouchable_item(index, fn(*deps))
+                target_obj.set_untouchable_item(slice_obj, fn(*deps))
 
 
     def __update_object(self, param_name, target, update_if_set, depends, category):
@@ -1292,7 +1303,7 @@ class AlignTensorData(Element):
 
 
 
-class AlignTensorSimList(ListType):
+class AlignTensorSimList(list):
     """Empty data container for Monte Carlo simulation alignment tensor data."""
 
     def __init__(self, param_name, align_element):
@@ -1306,14 +1317,14 @@ class AlignTensorSimList(ListType):
         self.align_element = align_element
 
 
-    def __setitem__(self, index, value):
+    def __setitem__(self, slice_obj, value):
         """Set the value."""
 
         # Set the value.
-        ListType.__setitem__(self, index, value)
+        list.__setitem__(self, slice_obj, value)
 
         # Then update the other lists.
-        self.align_element._AlignTensorData__update_sim_set(self.param_name, index)
+        self.align_element._AlignTensorData__update_sim_set(self.param_name, slice_obj)
 
 
     def append(self, value):
@@ -1333,8 +1344,9 @@ class AlignTensorSimList(ListType):
         self[len(self):len(self)] = [value]
 
 
-    def set_untouchable_item(self, index, value):
+    def set_untouchable_item(self, slice_obj, value):
         """Set the value for an untouchable MC data structure."""
 
         # Set the value.
-        ListType.__setitem__(self, index, value)
+        print(slice_obj)
+        list.__setitem__(self, slice_obj, value)

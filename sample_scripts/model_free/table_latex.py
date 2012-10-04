@@ -34,9 +34,6 @@ with the command:
 \input{results}
 """
 
-# Python module imports.
-from string import replace
-
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 
@@ -171,7 +168,7 @@ class Latex:
         # Loop over the spin systems.
         for spin, spin_id in spin_loop(return_id=True):
             # The spin ID string.
-            spin_id = replace(spin_id, '&', '\&')
+            spin_id = spin_id.replace('&', '\&')
             self.file.write("%-20s & " % (spin_id))
 
             # The spin is not selected.

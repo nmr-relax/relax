@@ -62,7 +62,7 @@ for round in range(len(files)):
     # Loop over the cones.
     for i in range(INC):
         # Switch data pipes.
-        self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%s_deg' % get_angle(i, incs=INC, deg=True))
+        self._execute_uf(uf_name='pipe.switch', pipe_name='cone_%.1f_deg' % get_angle(i, incs=INC, deg=True))
 
         # Data init.
         for j in range(len(params)):

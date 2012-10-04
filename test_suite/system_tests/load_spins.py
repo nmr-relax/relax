@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,9 +24,9 @@ from os import sep
 import sys
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Load_spins(SystemTestCase):
@@ -59,7 +59,7 @@ class Load_spins(SystemTestCase):
 
         # Loop over the spin containers, testing each.
         self.assertEqual(len(cdp.mol[0].res[0].spin), 32)
-        for i in xrange(len(cdp.mol[0].res[0].spin)):
+        for i in range(len(cdp.mol[0].res[0].spin)):
             self.assertEqual(cdp.mol[0].res[0].spin[i].num, nums[i])
             self.assertEqual(cdp.mol[0].res[0].spin[i].name, names[i])
             self.assertEqual(cdp.mol[0].res[0].spin[i].element, elements[i])

@@ -28,7 +28,7 @@ from relax_errors import RelaxError, RelaxNoneValListValError, RelaxNoneStrError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_value(Value_base_class, TestCase):

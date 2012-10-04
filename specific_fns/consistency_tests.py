@@ -25,8 +25,6 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
@@ -35,6 +33,8 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from relax_warnings import RelaxDeselectWarning
 import specific_fns
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -286,17 +286,25 @@ class Consistency_tests(API_base, API_common):
     default_value_doc.add_table(_table.label)
 
 
-    def overfit_deselect(self):
-        """Deselect spins which have insufficient data to support calculation."""
+    def overfit_deselect(self, data_check=True, verbose=True):
+        """Deselect spins which have insufficient data to support calculation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
+        """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        if verbose:
+            print("\nOver-fit spin deselection:")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
+        deselect_flag = False
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -306,19 +314,27 @@ class Consistency_tests(API_base, API_common):
             if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
+                deselect_flag = True
+                continue
 
             # Require 3 or more data points.
             else:
                 # Count the points.
                 data_points = 0
                 for id in cdp.ri_ids:
-                    if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
+                    if id in spin.ri_data and spin.ri_data[id] != None:
                         data_points += 1
 
                 # Not enough.
                 if data_points < 3:
                     warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                     spin.select = False
+                    deselect_flag = True
+                    continue
+
+        # Final printout.
+        if verbose and not deselect_flag:
+            print("No spins have been deselected.")
 
 
     return_data_name_doc = Desc_container("Consistency testing data type string matching patterns")

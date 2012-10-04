@@ -27,7 +27,7 @@ from prompt.interpreter import Interpreter
 from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_select(TestCase):

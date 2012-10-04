@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 from warnings import warn
 
 # relax module imports.
@@ -95,7 +94,7 @@ def parse_noe_restraints(lines, proton1_col=None, proton2_col=None, lower_col=No
     data = []
     for line in lines:
         # Split the line.
-        row = split(line, sep)
+        row = line.split(sep)
 
         # Header lines:
         if len(row) < 4:

@@ -978,15 +978,15 @@ class Displacements:
         """
 
         # Initialise structures if necessary.
-        if not self._translation_vector.has_key(model_from):
+        if not model_from in self._translation_vector:
             self._translation_vector[model_from] = {}
-        if not self._translation_distance.has_key(model_from):
+        if not model_from in self._translation_distance:
             self._translation_distance[model_from] = {}
-        if not self._rotation_matrix.has_key(model_from):
+        if not model_from in self._rotation_matrix:
             self._rotation_matrix[model_from] = {}
-        if not self._rotation_axis.has_key(model_from):
+        if not model_from in self._rotation_axis:
             self._rotation_axis[model_from] = {}
-        if not self._rotation_angle.has_key(model_from):
+        if not model_from in self._rotation_angle:
             self._rotation_angle[model_from] = {}
 
         # The Kabsch algorithm.
@@ -1023,15 +1023,15 @@ class Displacements:
             model_to = int(pair_node.getAttribute('model_to'))
 
             # Initialise structures if necessary.
-            if not self._translation_vector.has_key(model_from):
+            if not model_from in self._translation_vector:
                 self._translation_vector[model_from] = {}
-            if not self._translation_distance.has_key(model_from):
+            if not model_from in self._translation_distance:
                 self._translation_distance[model_from] = {}
-            if not self._rotation_matrix.has_key(model_from):
+            if not model_from in self._rotation_matrix:
                 self._rotation_matrix[model_from] = {}
-            if not self._rotation_axis.has_key(model_from):
+            if not model_from in self._rotation_axis:
                 self._rotation_axis[model_from] = {}
-            if not self._rotation_angle.has_key(model_from):
+            if not model_from in self._rotation_angle:
                 self._rotation_angle[model_from] = {}
 
             # A temporary container to place the Python objects into.
@@ -1112,7 +1112,7 @@ class ModelList(list):
 
         text = "Models.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Model number") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].num) + "\n"
         return text
 
@@ -1131,7 +1131,7 @@ class ModelList(list):
         # Otherwise append an empty ModelContainer.
         else:
             # Test if the model number already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 if self[i].num == model_num:
                     raise RelaxError("The model '" + repr(model_num) + "' already exists.")
 
@@ -1199,7 +1199,7 @@ class ModelList(list):
         """
 
         # Loop over the models.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for this model and add it to the higher level element.
             model_element = doc.createElement('model')
             element.appendChild(model_element)
@@ -1312,7 +1312,7 @@ class MolList(list):
 
         text = "Molecules.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].mol_name) + "\n"
         return text
 
@@ -1333,7 +1333,7 @@ class MolList(list):
         # Otherwise append an empty MolContainer.
         else:
             # Test if the molecule already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 if self[i].mol_name == mol_name:
                     raise RelaxError("The molecule '%s' already exists." % mol_name)
 
@@ -1383,9 +1383,9 @@ class MolList(list):
         for mol_node in mol_nodes:
             # Some imports (here to break circular import issues).
             if id == 'internal':
-                from internal import MolContainer
+                from generic_fns.structure.internal import MolContainer
             elif id == 'scientific':
-                from scientific import MolContainer
+                from generic_fns.structure.scientific import MolContainer
 
             # Initialise a MolContainer instance.
             mol_cont = MolContainer()
@@ -1412,6 +1412,6 @@ class MolList(list):
         """
 
         # Loop over the molecules.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Add the molecule data.
             self[i].to_xml(doc, element)

@@ -73,27 +73,6 @@ class Macro:
         @type spin_id:          str
         """
 
-        # Test the validity of the data (only a single spin per residue).
-        #################################################################
-
-        # Init some variables.
-        prev_res_num = None
-        num = 0
-
-        # Loop over the spins.
-        for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-            # No relaxation data, so skip.
-            if not hasattr(spin, 'ri_data'):
-                continue
-
-            # More than one spin.
-            if prev_res_num == res_num:
-                raise RelaxError("Only a single spin per residue is allowed for the classic macro style.")
-
-            # Update the previous residue number.
-            prev_res_num = res_num
-
-
         # Generate the macro header.
         ############################
 
@@ -114,8 +93,9 @@ class Macro:
                 if not hasattr(spin, 's2') or spin.s2 == None:
                     continue
 
-                # S2 width and colour.
-                self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                # S2 width and colour for the backbone NH.
+                if spin.name == 'N':
+                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
 
         # S2f.
@@ -128,13 +108,15 @@ class Macro:
                 if not spin.select:
                     continue
 
-                # Colour residues which don't have an S2f value white.
-                if not hasattr(spin, 's2f') or spin.s2f == None:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                # The backbone NH.
+                if spin.name == 'N':
+                    # Colour residues which don't have an S2f value white.
+                    if not hasattr(spin, 's2f') or spin.s2f == None:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
-                # S2f width and colour.
-                else:
-                    self.classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
+                    # S2f width and colour.
+                    else:
+                        self.classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
 
 
         # S2s.
@@ -147,13 +129,15 @@ class Macro:
                 if not spin.select:
                     continue
 
-                # Colour residues which don't have an S2s value white.
-                if not hasattr(spin, 's2s') or spin.s2s == None:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                # The backbone NH.
+                if spin.name == 'N':
+                    # Colour residues which don't have an S2s value white.
+                    if not hasattr(spin, 's2s') or spin.s2s == None:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
-                # S2s width and colour.
-                else:
-                    self.classic_order_param(res_num, spin.s2s, colour_start, colour_end, colour_list)
+                    # S2s width and colour.
+                    else:
+                        self.classic_order_param(res_num, spin.s2s, colour_start, colour_end, colour_list)
 
 
         # Amplitude of fast motions.
@@ -172,25 +156,27 @@ class Macro:
                 else:
                     model = spin.model
 
-                # S2f width and colour (for models m5 to m8).
-                if hasattr(spin, 's2f') and spin.s2f != None:
-                    self.classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
+                # The backbone NH.
+                if spin.name == 'N':
+                    # S2f width and colour (for models m5 to m8).
+                    if hasattr(spin, 's2f') and spin.s2f != None:
+                        self.classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
 
-                # S2 width and colour (for models m1 and m3).
-                elif model == 'm1' or model == 'm3':
-                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    # S2 width and colour (for models m1 and m3).
+                    elif model == 'm1' or model == 'm3':
+                        self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
-                # S2 width and colour (for models m2 and m4 when te <= 200 ps).
-                elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
-                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    # S2 width and colour (for models m2 and m4 when te <= 200 ps).
+                    elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
+                        self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
-                # White bonds (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    # White bonds (for models m2 and m4 when te > 200 ps).
+                    elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
-                # Catch errors.
-                else:
-                    raise RelaxFault
+                    # Catch errors.
+                    else:
+                        raise RelaxFault
 
 
         # Amplitude of slow motions.
@@ -209,17 +195,19 @@ class Macro:
                 else:
                     model = spin.model
 
-                # S2 width and colour (for models m5 to m8).
-                if hasattr(spin, 'ts') and spin.ts != None:
-                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                # The backbone NH.
+                if spin.name == 'N':
+                    # S2 width and colour (for models m5 to m8).
+                    if hasattr(spin, 'ts') and spin.ts != None:
+                        self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
-                # S2 width and colour (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and spin.te > 200 * 1e-12:
-                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    # S2 width and colour (for models m2 and m4 when te > 200 ps).
+                    elif (model == 'm2' or model == 'm4') and spin.te > 200 * 1e-12:
+                        self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
-                # White bonds for fast motions.
-                else:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    # White bonds for fast motions.
+                    else:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
         # te.
         #####
@@ -235,8 +223,9 @@ class Macro:
                 if not hasattr(spin, 'te') or spin.te == None:
                     continue
 
-                # te width and colour.
-                self.classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
+                # te width and colour (backbone NH).
+                if spin.name == 'N':
+                    self.classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
 
 
         # tf.
@@ -253,8 +242,9 @@ class Macro:
                 if not hasattr(spin, 'tf') or spin.tf == None:
                     continue
 
-                # tf width and colour.
-                self.classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
+                # tf width and colour (backbone NH).
+                if spin.name == 'N':
+                    self.classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
 
 
         # ts.
@@ -277,8 +267,9 @@ class Macro:
                 if colour_end == None:
                     colour_end = 'black'
 
-                # ts width and colour.
-                self.classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
+                # ts width and colour (backbone NH).
+                if spin.name == 'N':
+                    self.classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
 
 
         # Timescale of fast motions.
@@ -297,18 +288,20 @@ class Macro:
                 else:
                     model = spin.model
 
-                # tf width and colour (for models m5 to m8).
-                if hasattr(spin, 'tf') and spin.tf != None:
-                    self.classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
+                # The backbone NH.
+                if spin.name == 'N':
+                    # tf width and colour (for models m5 to m8).
+                    if hasattr(spin, 'tf') and spin.tf != None:
+                        self.classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
 
-                # te width and colour (for models m2 and m4 when te <= 200 ps).
-                elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
-                    self.classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
+                    # te width and colour (for models m2 and m4 when te <= 200 ps).
+                    elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
+                        self.classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
 
-                # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
-                # Colour these bonds white.
-                else:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
+                    # Colour these bonds white.
+                    else:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Timescale of slow motions.
@@ -333,17 +326,19 @@ class Macro:
                 if colour_end == None:
                     colour_end = 'black'
 
-                # ts width and colour (for models m5 to m8).
-                if hasattr(spin, 'ts') and spin.ts != None:
-                    self.classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
+                # The backbone NH.
+                if spin.name == 'N':
+                    # ts width and colour (for models m5 to m8).
+                    if hasattr(spin, 'ts') and spin.ts != None:
+                        self.classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
 
-                # te width and colour (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
-                    self.classic_correlation_time(res_num, spin.te / 10.0, colour_start, colour_end, colour_list)
+                    # te width and colour (for models m2 and m4 when te > 200 ps).
+                    elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
+                        self.classic_correlation_time(res_num, spin.te / 10.0, colour_start, colour_end, colour_list)
 
-                # White bonds for the rest.
-                else:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    # White bonds for the rest.
+                    else:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Rex.
@@ -356,13 +351,15 @@ class Macro:
                 if not spin.select:
                     continue
 
-                # Residues which chemical exchange.
-                if hasattr(spin, 'rex') and spin.rex != None:
-                    self.classic_rex(res_num, spin.rex, colour_start, colour_end, colour_list)
+                # The backbone NH.
+                if spin.name == 'N':
+                    # Residues which chemical exchange.
+                    if hasattr(spin, 'rex') and spin.rex != None:
+                        self.classic_rex(res_num, spin.rex, colour_start, colour_end, colour_list)
 
-                # White bonds for the rest.
-                else:
-                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    # White bonds for the rest.
+                    else:
+                        self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Unknown data type.

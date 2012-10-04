@@ -27,7 +27,6 @@
 from os import F_OK, access, getcwd, sep
 import platform
 from re import search
-from string import split
 import sys
 from textwrap import wrap
 from time import sleep
@@ -83,7 +82,7 @@ class Main(wx.Frame):
 
         # Store the wxPython info for os/machine/version specific hacks.
         status.wx_info = {}
-        status.wx_info["version"] = split(wx.__version__, '.')
+        status.wx_info["version"] = wx.__version__.split('.')
         status.wx_info["minor"] = "%s.%s" % (status.wx_info["version"][0], status.wx_info["version"][1])
         status.wx_info["os"] = sys.platform
         status.wx_info["build"] = None
@@ -869,6 +868,23 @@ class Main(wx.Frame):
             # Execute the analysis page specific update methods.
             if hasattr(page, 'sync_ds'):
                 page.sync_ds(upload)
+
+
+    def uf_call(self, event=None):
+        """Catch the user function call to properly specify the parent window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The user function ID.
+        uf_id = event.GetId()
+
+        # Get the user function name.
+        name = uf_store.get_uf(uf_id)
+
+        # Call the user function GUI object.
+        uf_store[name](event=event, wx_parent=self)
 
 
     def update_status_bar(self):

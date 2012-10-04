@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,11 +25,11 @@ from os import sep
 from tempfile import mktemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, return_spin
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Structure(SystemTestCase):
@@ -177,7 +177,7 @@ class Structure(SystemTestCase):
 
         # Test the atomic data.
         mol = cdp.structure.structural_data[0].mol[0]
-        for i in xrange(len(mol.atom_name)):
+        for i in range(len(mol.atom_name)):
             self.assertEqual(mol.atom_name[i], atom_name[i])
             self.assertEqual(mol.bonded[i], bonded[i])
             self.assertEqual(mol.chain_id[i], chain_id[i])
@@ -644,7 +644,7 @@ class Structure(SystemTestCase):
 
         i = 0
         for mol in cdp.structure.structural_data[0].mol:
-            self.assertEqual(mol.file_name, files[i/2])
+            self.assertEqual(mol.file_name, files[int(i/2)])
             self.assertEqual(mol.file_path, path)
             self.assertEqual(mol.file_model, 1)
             self.assertEqual(mol.file_mol_num, i%2+1)  # Odd i, num=1, even i, num=2.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -74,10 +74,14 @@ class Relax_data_base_class(UnitTestCase):
         self.assertEqual(cdp.ri_ids[0], ri_id)
 
         # Test the spin specific data.
-        for i in xrange(len(cdp.mol[0].res)):
+        for i in range(len(cdp.mol[0].res)):
             # The spin container.
             spin = cdp.mol[0].res[i].spin[0]
 
             # Relaxation data.
-            self.assertEqual(spin.ri_data[ri_id], self.Ap4Aase_600_NOE_val[i])
-            self.assertEqual(spin.ri_data_err[ri_id], self.Ap4Aase_600_NOE_err[i])
+            if self.Ap4Aase_600_NOE_val[i] == None:
+                self.assert_(not hasattr(spin, 'ri_data'))
+                self.assert_(not hasattr(spin, 'ri_data_err'))
+            else:
+                self.assertEqual(spin.ri_data[ri_id], self.Ap4Aase_600_NOE_val[i])
+                self.assertEqual(spin.ri_data_err[ri_id], self.Ap4Aase_600_NOE_err[i])

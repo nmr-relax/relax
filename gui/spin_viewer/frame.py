@@ -302,6 +302,23 @@ class Spin_view_window(wx.Frame):
         self.bar.Realize()
 
 
+    def uf_call(self, event=None):
+        """Catch the user function call to properly specify the parent window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The user function ID.
+        uf_id = event.GetId()
+
+        # Get the user function name.
+        name = uf_store.get_uf(uf_id)
+
+        # Call the user function GUI object.
+        uf_store[name](event=event, wx_parent=self)
+
+
     def update_pipes(self, event=None):
         """Update the spin view data pipe selector.
 

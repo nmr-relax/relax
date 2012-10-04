@@ -21,15 +21,13 @@ geometrical objects such as spheres and planes.
 # Pretend that Vector and Tensor are defined directly
 # in Scientific.Geometry.
 
-import VectorModule
+from extern.scientific_python.Geometry import VectorModule
 Vector = VectorModule.Vector
 isVector = VectorModule.isVector
-del VectorModule
 
-import TensorModule
+from extern.scientific_python.Geometry import TensorModule
 Tensor = TensorModule.Tensor
 isTensor = TensorModule.isTensor
-del TensorModule
 
 # Some useful constants
 ex = Vector(1., 0., 0.)
@@ -51,8 +49,7 @@ epsilon = Tensor([[[ 0,  0,  0],
 
 
 import sys
-if sys.modules.has_key('epydoc'):
-    import VectorModule, TensorModule
+if 'epydoc' in sys.modules:
     Vector = VectorModule.Vector
     isVector = VectorModule.isVector
     vm_name = VectorModule.__name__
