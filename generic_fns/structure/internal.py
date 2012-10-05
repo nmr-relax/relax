@@ -37,7 +37,7 @@ from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
 from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
-from relax_io import file_root, open_read_file
+from relax_io import file_root, open_read_file, readlines
 from relax_warnings import RelaxWarning
 
 
@@ -262,10 +262,8 @@ class Internal(Base_struct_API):
         @rtype:             tuple of int and array of str
         """
 
-        # Open the file.
-        file = open_read_file(file_path)
-        lines = file.readlines()
-        file.close()
+        # Read the lines from the file.
+        lines = readlines(file_path)
 
         # Check for empty files.
         if lines == []:
@@ -316,10 +314,8 @@ class Internal(Base_struct_API):
         @rtype:             tuple of int and array of str
         """
 
-        # Open the file.
-        file = open_read_file(file_path)
-        lines = file.readlines()
-        file.close()
+        # Read the lines from the file.
+        lines = readlines(file_path)
 
         # Check for empty files.
         if lines == []:
