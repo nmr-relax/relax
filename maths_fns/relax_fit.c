@@ -193,7 +193,7 @@ static PyMethodDef relax_fit_methods[] = {
     static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
         "relax_fit",         /* m_name */
-        "Relaxation curve-fitting C module",  /* m_doc */
+        "Relaxation curve-fitting C module.",  /* m_doc */
         -1,                  /* m_size */
         relax_fit_methods,   /* m_methods */
         NULL,                /* m_reload */
@@ -203,15 +203,13 @@ static PyMethodDef relax_fit_methods[] = {
     };
 #endif
 
-/* Create the module */
-#if PY_MAJOR_VERSION >= 3
-    m = PyModule_Create(&moduledef);
-#endif
-
 /* Initialise as a Python module */
 PyMODINIT_FUNC
 #if PY_MAJOR_VERSION >= 3
     PyInit_relax_fit(void)
+    {
+        return PyModule_Create(&moduledef);
+    }
 #else
     initrelax_fit(void)
     {
