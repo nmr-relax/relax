@@ -665,6 +665,34 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         raise RelaxError("No corresponding data could be found within the file.")
 
 
+def readlines(file_path):
+    """Open the file given by the file path and returning a list of strings for each line.
+
+    The method is needed as bz2 compressed files return lists of byte strings and no longer normal
+    strings in Python 3!  This might be a temporary workaround to a temporary bug.
+
+
+    @param file_path:   The path of the file to open and read.
+    @type file_path:    str
+    @return:            The list of lines.
+    @rtype:             list of str
+    """
+
+    # Open the file.
+    file = open_read_file(file_path)
+    lines = file.readlines()
+    file.close()
+
+    # Convert the data from byte strings if needed.
+    if len(lines) and isinstance(lines[0], bytes):
+        for i in range(len(lines)):
+            print(dir(lines[i]))
+            lines[i] = lines[i].decode()
+
+    # Return the list of strings.
+    return lines
+
+
 def strip(data, comments=True):
     """Remove all comment and empty lines from the file data structure.
 
