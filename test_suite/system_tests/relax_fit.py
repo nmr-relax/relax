@@ -110,7 +110,7 @@ class Relax_fit(SystemTestCase):
         # Check some of the Grace data.
         self.assertEqual(len(lines[index]), 2)
         self.assertEqual(lines[index][0], '0.004')
-        self.assertEqual(lines[index][1], '487178.0')
+        self.assertEqual(lines[index][1], '487178.000000000000000')
 
 
     def test_bug_18789(self):
