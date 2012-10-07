@@ -232,7 +232,7 @@ class Test_suite_runner:
         # Nothing missing.
         if not missing_modules:
             # Except for the wx module!
-            if not dep_check.wx_module:
+            if not dep_check.wx_module and hasattr(self, 'gui_result'):
                 print("All GUI tests skipped due to the missing wxPython module, no other tests skipped due to missing modules.\n")
 
             # Normal printout.
