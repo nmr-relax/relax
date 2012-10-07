@@ -898,9 +898,6 @@ class DiffTensorData(Element):
             # Get all the dependencies if possible.
             missing_dep = 0
             deps = []
-            print()
-            print(target)
-            print(depends)
             for dep_name in depends:
                 # Modify the dependency name.
                 if dep_name not in ['type', 'spheroid_type']:
