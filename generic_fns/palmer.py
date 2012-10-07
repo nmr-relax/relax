@@ -599,7 +599,7 @@ def execute(dir, force, binary):
 
         # Write to stdout.
         for line in pipe.stdout.readlines():
-            # Decode Python 3 byte streams.
+            # Decode Python 3 byte arrays.
             if hasattr(line, 'decode'):
                 line = line.decode()
 
@@ -608,7 +608,7 @@ def execute(dir, force, binary):
 
         # Write to stderr.
         for line in pipe.stderr.readlines():
-            # Decode Python 3 byte streams.
+            # Decode Python 3 byte arrays.
             if hasattr(line, 'decode'):
                 line = line.decode()
 
