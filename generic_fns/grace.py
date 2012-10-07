@@ -468,7 +468,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                     continue
 
                 # X and Y data.
-                file.write("%-30s %-30s" % (point[0], point[1]/norm_fact))
+                file.write("%-30s %-30.15f" % (point[0], point[1]/norm_fact))
 
                 # The dx and dy errors.
                 if graph_type in ['xydx', 'xydy', 'xydxdy']:
@@ -478,7 +478,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                         error = 0.0
 
                     # Write the error.
-                    file.write(" %-30s" % (error/norm_fact))
+                    file.write(" %-30.15f" % (error/norm_fact))
 
                 # The dy errors of xydxdy.
                 if graph_type == 'xydxdy':
@@ -488,7 +488,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                         error = 0.0
 
                     # Write the error.
-                    file.write(" %-30s" % (error/norm_fact))
+                    file.write(" %-30.15f" % (error/norm_fact))
 
                 # The comment if given.
                 try:
