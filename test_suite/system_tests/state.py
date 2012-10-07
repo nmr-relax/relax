@@ -41,25 +41,6 @@ class State(SystemTestCase):
         self.tmpfile = mktemp()
 
 
-    def test_state_pickle(self):
-        """Test the saving, loading, and second saving and loading of the program state in pickled format."""
-
-        # Create a data pipe.
-        self.interpreter.pipe.create('test', 'mf')
-
-        # Save the state.
-        self.interpreter.state.save(self.tmpfile, pickle=True, force=True)
-
-        # Load the state.
-        self.interpreter.state.load(self.tmpfile, force=True)
-
-        # Save the state.
-        self.interpreter.state.save(self.tmpfile, dir=None, pickle=True, force=True)
-
-        # Load the state.
-        self.interpreter.state.load(self.tmpfile, force=True)
-
-
     def test_state_xml(self):
         """Test the saving, loading, and second saving and loading of the program state in XML format."""
 
@@ -67,13 +48,13 @@ class State(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Save the state.
-        self.interpreter.state.save(self.tmpfile, pickle=False, force=True)
+        self.interpreter.state.save(self.tmpfile, force=True)
 
         # Load the state.
         self.interpreter.state.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.interpreter.state.save(self.tmpfile, pickle=False, force=True)
+        self.interpreter.state.save(self.tmpfile, force=True)
 
         # Load the state.
         self.interpreter.state.load(self.tmpfile, force=True)
