@@ -1077,5 +1077,4 @@ class DiffTensorSimList(list):
         """Set the value for an untouchable MC data structure."""
 
         # Set the value.
-        print(slice_obj)
-        list.__setitem__(self, slice_obj, value)
+        list.__setitem__(self, slice_obj, [value])
