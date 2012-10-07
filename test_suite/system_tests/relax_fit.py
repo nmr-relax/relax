@@ -26,6 +26,7 @@ from tempfile import mkdtemp
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError
@@ -35,6 +36,22 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Relax_fit(SystemTestCase):
     """Class for testing various aspects specific to relaxation curve-fitting."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Relax_fit, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.C_module_exp_fn:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Relaxation curve-fitting C module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
