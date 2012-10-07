@@ -898,6 +898,9 @@ class DiffTensorData(Element):
             # Get all the dependencies if possible.
             missing_dep = 0
             deps = []
+            print()
+            print(target)
+            print(depends)
             for dep_name in depends:
                 # Modify the dependency name.
                 if dep_name not in ['type', 'spheroid_type']:
@@ -1076,5 +1079,8 @@ class DiffTensorSimList(list):
     def set_untouchable_item(self, slice_obj, value):
         """Set the value for an untouchable MC data structure."""
 
+        # Python 3 fix - the value needs to now be a list?!
+        value = [value]
+
         # Set the value.
-        list.__setitem__(self, slice_obj, [value])
+        list.__setitem__(self, slice_obj, value)

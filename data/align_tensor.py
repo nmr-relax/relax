@@ -1347,5 +1347,8 @@ class AlignTensorSimList(list):
     def set_untouchable_item(self, slice_obj, value):
         """Set the value for an untouchable MC data structure."""
 
+        # Python 3 fix - the value needs to now be a list?!
+        value = [value]
+
         # Set the value.
-        list.__setitem__(self, slice_obj, [value])
+        list.__setitem__(self, slice_obj, value)
