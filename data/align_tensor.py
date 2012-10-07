@@ -24,6 +24,7 @@ from re import search
 from math import cos, sin
 from numpy import array, dot, eye, float64, identity, transpose, zeros
 from numpy.linalg import det, eig, eigvals
+import sys
 
 # relax module imports.
 from compat import py_version
@@ -1348,7 +1349,8 @@ class AlignTensorSimList(list):
         """Set the value for an untouchable MC data structure."""
 
         # Python 3 fix - the value needs to now be a list?!
-        value = [value]
+        if sys.version_info[0] >= 3:
+            value = [value]
 
         # Set the value.
         list.__setitem__(self, slice_obj, value)
