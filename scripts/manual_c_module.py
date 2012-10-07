@@ -6,17 +6,27 @@ from os import system
 
 
 # The target.
-target = '~ python3.2'
+target = 'python3.2'
+path = '/data/python/'
 
 # The list of build commands to run.
 cmd = []
 
+# Python.h.
+include = '%s/include/%s/' % (path, target)
+if target == 'python3.2':
+    include = '%s/include/python3.2m/' % path
+elif target == 'python3.3':
+    include = '%s/include/python3.3m/' % path
+
+# numpy includes.
+numpy_include = '%s/lib/%s/site-packages/numpy/core/include/' % (path, target)
+
 # Python 3.2 installed in the home directory.
-if target == '~ python3.2':
-    cmd.append("gcc -o maths_fns/c_chi2.os -c -I~/include/python3.2m -I~/lib/python3.2/site-packages/numpy/core/include -fPIC maths_fns/c_chi2.c")
-    cmd.append("gcc -o maths_fns/exponential.os -c -I~/include/python3.2m -I~/lib/python3.2/site-packages/numpy/core/include -fPIC maths_fns/exponential.c")
-    cmd.append("gcc -o maths_fns/relax_fit.os -c -I~/include/python3.2m -I~/lib/python3.2/site-packages/numpy/core/include -fPIC maths_fns/relax_fit.c")
-    cmd.append("gcc -o maths_fns/relax_fit.so -shared maths_fns/c_chi2.os maths_fns/exponential.os maths_fns/relax_fit.os")
+cmd.append("gcc -o maths_fns/c_chi2.os -c -I%s -I%s -fPIC maths_fns/c_chi2.c" % (include, numpy_include))
+cmd.append("gcc -o maths_fns/exponential.os -c -I%s -I%s -fPIC maths_fns/exponential.c" % (include, numpy_include))
+cmd.append("gcc -o maths_fns/relax_fit.os -c -I%s -I%s -fPIC maths_fns/relax_fit.c" % (include, numpy_include))
+cmd.append("gcc -o maths_fns/relax_fit.so -shared maths_fns/c_chi2.os maths_fns/exponential.os maths_fns/relax_fit.os")
 
 
 # Execute the commands.
