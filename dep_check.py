@@ -118,6 +118,15 @@ except ImportError:
     gzip_module = False
     gzip_module_message = message.args[0]
 
+# IO module.
+try:
+    import io
+    io_module = True
+except ImportError:
+    message = sys.exc_info()[1]
+    io_module = False
+    io_module_message = message.args[0]
+
 # Devnull.
 try:
     import os
