@@ -395,6 +395,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
             else:
                 file_obj = gzip.GzipFile(file_path, 'r')
 
+    # Cannot open.
     except IOError:
         message = sys.exc_info()[1]
         raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
@@ -484,14 +485,43 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
     # Open the file for writing.
     try:
+        # Print out.
         if verbosity:
             print(("Opening the file " + repr(file_path) + " for writing."))
+
+        # Uncompressed text.
         if compress_type == 0:
             file_obj = open(file_path, 'w')
+
+        # Bzip2 compressed text.
         elif compress_type == 1:
-            file_obj = bz2.BZ2File(file_path, 'w')
+            # Python 3.3 text mode.
+            if sys.version_info[0] == 3 and sys.version_info[1] >= 3:
+                file_obj = bz2.open(file_path, 'wt')
+
+            # Python 3.0, 3.1 and 3.2 text mode.
+            elif sys.version_info[0] == 3 and sys.version_info[1] < 3:
+                file_obj = io.TextIOWrapper(Bzip2Fixed(file_path, 'w'))
+
+            # Python 2 text mode.
+            else:
+                file_obj = bz2.BZ2File(file_path, 'w')
+
+        # Gzipped compressed text.
         elif compress_type == 2:
-            file_obj = gzip.GzipFile(file_path, 'w')
+            # Python 3.3 text mode.
+            if sys.version_info[0] == 3 and sys.version_info[1] >= 3:
+                file_obj = gzip.open(file_path, 'wt')
+
+            # Python 3.0, 3.1 and 3.2 text mode.
+            elif sys.version_info[0] == 3 and sys.version_info[1] < 3:
+                file_obj = io.TextIOWrapper(GzipFixed(file_path, 'w'))
+
+            # Python 2 text mode.
+            else:
+                file_obj = gzip.GzipFile(file_path, 'w')
+
+    # Cannot open.
     except IOError:
         message = sys.exc_info()[1]
         raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
