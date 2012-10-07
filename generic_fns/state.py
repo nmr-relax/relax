@@ -23,10 +23,6 @@
 """Module for reading and writing the relax program state."""
 
 # Python module imports.
-try:
-    from cPickle import dump, load    # Python 2 import.
-except ImportError:
-    from pickle import dump, load    # Python 3 import.
 from re import search
 
 # relax module imports.
@@ -35,33 +31,6 @@ from generic_fns.reset import reset
 from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
 from status import Status; status = Status()
-
-
-def determine_format(file):
-    """Determine the format of the state file.
-
-    @keyword file:  The file object representing the state file.
-    @type file:     file object
-    @return:        The state format.  This can be 'xml' or 'pickle'.
-    @rtype:         str or None
-    """
-
-    # 1st line.
-    header = file.readline()
-    header = header[:-1]    # Strip the trailing newline.
-    if hasattr(header, 'decode'):     # Python 3 byte type conversion.
-        header = header.decode()
-
-    # Be nice and go back to the start of the file.
-    file.seek(0)
-
-    # XML.
-    if search(r"<\?xml", header):
-        return 'xml'
-
-    # Pickle.
-    elif search("ccopy_reg", header):
-        return 'pickle'
 
 
 def load_pickle(file):
@@ -120,9 +89,6 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
     # Open the file for reading.
     file = open_read_file(file_name=state, dir=dir, verbosity=verbosity)
 
-    # Determine the format of the file.
-    format = determine_format(file)
-
     # Reset.
     if force:
         reset()
@@ -131,17 +97,8 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
     if not ds.is_empty():
         raise RelaxError("The relax data store is not empty.")
 
-    # XML state.
-    if format == 'xml':
-        ds.from_xml(file)
-
-    # Pickled state.
-    elif format == 'pickle':
-        load_pickle(file)
-
-    # Bad state file.
-    else:
-        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
+    # Restore from the XML.
+    ds.from_xml(file)
 
     # Signal a change in the current data pipe.
     status.observers.pipe_alteration.notify()
@@ -150,7 +107,7 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
     status.observers.state_load.notify()
 
 
-def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, pickle=False):
+def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False):
     """Function for saving the program state.
 
     @keyword state:         The saved state file.
@@ -170,13 +127,8 @@ def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, 
     # Open the file for writing.
     file = open_write_file(file_name=state, dir=dir, verbosity=verbosity, force=force, compress_type=compress_type)
 
-    # Pickle the data class and write it to file
-    if pickle:
-        dump(ds, file, 1)
-
-    # Otherwise save as XML.
-    else:
-        ds.to_xml(file)
+    # Save as XML.
+    ds.to_xml(file)
 
     # Close the file.
     file.close()
