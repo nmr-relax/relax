@@ -47,7 +47,6 @@ from warnings import warn
 
 # relax module imports.
 from check_types import is_filetype
-from compat import py_version
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -154,7 +153,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     data = []
     for i in range(len(file_data)):
         # Python 3 support - conversion of bytes type objects to strings.
-        if py_version == 3 and hasattr(file_data[i], 'decode'):
+        if hasattr(file_data[i], 'decode'):
             file_data[i] = file_data[i].decode()
 
         if sep:
@@ -695,34 +694,6 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         raise RelaxError("No corresponding data could be found within the file.")
 
 
-def readlines(file_path):
-    """Open the file given by the file path and returning a list of strings for each line.
-
-    The method is needed as bz2 compressed files return lists of byte strings and no longer normal
-    strings in Python 3!  This might be a temporary workaround to a temporary bug.
-
-
-    @param file_path:   The path of the file to open and read.
-    @type file_path:    str
-    @return:            The list of lines.
-    @rtype:             list of str
-    """
-
-    # Open the file.
-    file = open_read_file(file_path)
-    lines = file.readlines()
-    file.close()
-
-    # Convert the data from byte strings if needed.
-    if len(lines) and isinstance(lines[0], bytes):
-        for i in range(len(lines)):
-            print(dir(lines[i]))
-            lines[i] = lines[i].decode()
-
-    # Return the list of strings.
-    return lines
-
-
 def strip(data, comments=True):
     """Remove all comment and empty lines from the file data structure.
 
@@ -1097,17 +1068,8 @@ class DummyFileObject:
     def __init__(self):
         """Set up the dummy object to act as a file object."""
 
-        # Initialise for Python 2.
-        if py_version == 2:
-            self.data = ''
-            self._newline = '\n'
-            self._empty = ''
-
-        # Initialise for Python 3 (inside a eval statements to allow Python 2.5 and lower to parse this and run).
-        elif py_version == 3:
-            self.data = eval("b''")
-            self._newline = eval("b'\n'")
-            self._empty = eval("b''")
+        # Initialise an object for adding the string from all write calls to.
+        self.data = ''
 
         # Set the closed flag.
         self.closed = False
@@ -1146,15 +1108,15 @@ class DummyFileObject:
         """
 
         # Split up the string.
-        lines = self.data.split(self._newline)
+        lines = self.data.split('\n')
 
         # Remove the last line if empty.
-        if lines[-1] == self._empty:
+        if lines[-1] == '':
             lines.pop()
 
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
         for i in range(len(lines)):
-            lines[i] = lines[i] + self._newline
+            lines[i] = lines[i] + '\n'
 
         # Return the file lines.
         return lines
