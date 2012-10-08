@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003--2012 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -47,8 +47,7 @@ def fix(element, fixed):
             raise RelaxNoTensorError('diffusion')
 
         # Set the fixed flag.
-        cdp.diff_tensor.fixed = fixed
-
+        cdp.diff_tensor.set_fixed(fixed)
 
     # All spins.
     if element == 'all_spins' or element == 'all':
