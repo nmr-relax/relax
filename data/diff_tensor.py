@@ -937,7 +937,7 @@ class DiffTensorData(Element):
                         value = fn(*args[i])
 
                         # Set the attribute.
-                        self.__dict__[target+'_sim'][i] = value
+                        self.__dict__[target+'_sim']._set(value=value, sim_index=i)
 
 
     def fixed(self, flag):
@@ -1122,11 +1122,8 @@ class DiffTensorSimList(list):
             for i in range(elements):
                 self._append(None)
 
-        # Alias the __setitem__() method.
-        self.__setitem__ = self.__setitem_orig__
 
-
-    def __setitem_orig__(self, slice_obj, value):
+    def __setitem__(self, slice_obj, value):
         """This is a read-only object!"""
 
         raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
@@ -1152,14 +1149,8 @@ class DiffTensorSimList(list):
         @type sim_index:    int
         """
 
-        # Alias the base class method.
-        self.__setitem__ = list.__setitem__
-
         # Execute the base class method.
-        self[sim_index] = value
-
-        # Unalias.
-        self.__setitem__ = self.__setitem_orig__
+        super(DiffTensorSimList, self).__setitem__(sim_index, value)
 
 
     def append(self, value):
