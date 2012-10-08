@@ -23,7 +23,6 @@
 """Module for the creation and processing of model-free results files."""
 
 # Python module imports.
-from data.diff_tensor import DiffTensorSimList
 from math import pi
 from numpy import float64, array, transpose
 from re import search
@@ -626,7 +625,7 @@ class Results:
         file_data = file_data[1:]
 
         # Sort the column numbers.
-        col = self._read_col_numbers(header)
+        col = self._read_1_2_col_numbers(header)
 
         # Test the file.
         if len(col) < 2:
@@ -660,6 +659,20 @@ class Results:
             # Sequence.
             self._generate_sequence(file_line, col, verbosity)
 
+        # Count the number of simulations.
+        for file_line in file_data:
+            # The data set.
+            data_set = file_line[col['data_set']]
+
+            # Simulation number.
+            if data_set != 'value' and data_set != 'error':
+                # Extract the number from the data_set string.
+                sim_num = data_set.split('_')
+                try:
+                    sim_num = int(sim_num[1])
+                except:
+                    raise RelaxError("The simulation number '%s' is invalid." % sim_num)
+        cdp.sim_number = sim_num + 1
 
         # Loop over the lines of the file data.
         for file_line in file_data:
@@ -744,17 +757,21 @@ class Results:
 
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
-                self._set_diff_tensor(file_line, col, data_set, verbosity)
+                self._read_1_2_set_diff_tensor(file_line, col, data_set, verbosity, sim_num=sim_num)
                 diff_data_set = True
 
             # Diffusion tensor errors.
             elif data_set == 'error' and not diff_error_set:
-                self._set_diff_tensor(file_line, col, data_set, verbosity)
+                self._read_1_2_set_diff_tensor(file_line, col, data_set, verbosity, sim_num=sim_num)
                 diff_error_set = True
 
             # Diffusion tensor simulation data.
             elif data_set != 'value' and data_set != 'error' and sim_num != diff_sim_set:
-                self._set_diff_tensor(file_line, col, data_set, verbosity)
+                # Set up the diffusion tensor.
+                if not hasattr(cdp.diff_tensor, '_sim_num') or cdp.diff_tensor._sim_num == None:
+                    cdp.diff_tensor.set_sim_num(cdp.sim_number)
+
+                self._read_1_2_set_diff_tensor(file_line, col, data_set, verbosity, sim_num=sim_num)
                 diff_sim_set = sim_num
 
             # Model type.
@@ -789,7 +806,7 @@ class Results:
             cdp.sim_state = False
 
 
-    def _read_col_numbers(self, header):
+    def _read_1_2_col_numbers(self, header):
         """Determine the column indices from the header line.
 
         @param header:      The header line.
@@ -911,19 +928,19 @@ class Results:
         return col
 
 
-    def _set_diff_tensor(self, spin_line, col, data_set, verbosity=1):
+    def _read_1_2_set_diff_tensor(self, spin_line, col, data_set, verbosity=1, sim_num=None):
         """Set up the diffusion tensor.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
         @param col:         The column indices.
         @type col:          dict of int
-        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
-                            a number).
+        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is a number).
         @type data_set:     str
-        @keyword verbosity: A variable specifying the amount of information to print.  The higher
-                            the value, the greater the verbosity.
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
+        @keyword sim_num:   The Monte Carlo simulation index.
+        @type sim_num:      int or None
         """
 
         # The diffusion tensor type.
@@ -955,16 +972,12 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                cdp.diff.tm_err = tm
+                cdp.diff_tensor.set(param='tm', value=tm, category='err')
 
             # Simulation values.
             else:
-                # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff_tensor, 'tm_sim'):
-                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
-
-                # Append the value.
-                cdp.diff_tensor.tm_sim.append(tm)
+                # Set the value.
+                cdp.diff_tensor.set(param='tm', value=tm, category='sim', sim_index=sim_num)
 
 
         # Spheroid.
@@ -989,28 +1002,18 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                cdp.diff_tensor.tm_err = tm
-                cdp.diff_tensor.Da_err = Da
-                cdp.diff_tensor.theta_err = theta
-                cdp.diff_tensor.phi_err = phi
+                cdp.diff_tensor.set(param='tm', value=tm, category='err')
+                cdp.diff_tensor.set(param='Da', value=Da, category='err')
+                cdp.diff_tensor.set(param='theta', value=theta, category='err')
+                cdp.diff_tensor.set(param='phi', value=phi, category='err')
 
             # Simulation values.
             else:
-                # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff, 'tm_sim'):
-                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
-                if not hasattr(cdp.diff, 'Da_sim'):
-                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
-                if not hasattr(cdp.diff, 'theta_sim'):
-                    cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor)
-                if not hasattr(cdp.diff, 'phi_sim'):
-                    cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor)
-
-                # Append the value.
-                cdp.diff_tensor.tm_sim.append(tm)
-                cdp.diff_tensor.Da_sim.append(Da)
-                cdp.diff_tensor.theta_sim.append(theta)
-                cdp.diff_tensor.phi_sim.append(phi)
+                # Set the values.
+                cdp.diff_tensor.set(param='tm', value=tm, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='Da', value=Da, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='theta', value=theta, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='phi', value=phi, category='sim', sim_index=sim_num)
 
 
         # Ellipsoid.
@@ -1037,37 +1040,22 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                cdp.diff_tensor.tm_err = tm
-                cdp.diff_tensor.Da_err = Da
-                cdp.diff_tensor.Dr_err = Dr
-                cdp.diff_tensor.alpha_err = alpha
-                cdp.diff_tensor.beta_err = beta
-                cdp.diff_tensor.gamma_err = gamma
+                cdp.diff_tensor.set(param='tm', value=tm, category='err')
+                cdp.diff_tensor.set(param='Da', value=Da, category='err')
+                cdp.diff_tensor.set(param='Dr', value=Dr, category='err')
+                cdp.diff_tensor.set(param='alpha', value=alpha, category='err')
+                cdp.diff_tensor.set(param='beta', value=beta, category='err')
+                cdp.diff_tensor.set(param='gamma', value=gamma, category='err')
 
             # Simulation values.
             else:
-                # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff_tensor, 'tm_sim'):
-                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'Da_sim'):
-                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'Dr_sim'):
-                    cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'alpha_sim'):
-                    cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'beta_sim'):
-                    cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'gamma_sim'):
-                    cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor)
-
-                # Append the value.
-                cdp.diff_tensor.tm_sim.append(tm)
-                cdp.diff_tensor.Da_sim.append(Da)
-                cdp.diff_tensor.Dr_sim.append(Dr)
-                cdp.diff_tensor.alpha_sim.append(alpha)
-                cdp.diff_tensor.beta_sim.append(beta)
-                cdp.diff_tensor.gamma_sim.append(gamma)
-
+                # Set the values.
+                cdp.diff_tensor.set(param='tm', value=tm, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='Da', value=Da, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='Dr', value=Dr, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='alpha', value=alpha, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='beta', value=beta, category='sim', sim_index=sim_num)
+                cdp.diff_tensor.set(param='gamma', value=gamma, category='sim', sim_index=sim_num)
 
         # Set the diffusion tensor.
         if data_set == 'value' and diff_type:
