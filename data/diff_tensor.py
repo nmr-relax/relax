@@ -1000,6 +1000,22 @@ class DiffTensorData(Element):
         fill_object_contents(doc, tensor_element, object=self, blacklist=['type'] + list(self.__class__.__dict__.keys()))
 
 
+    def type(self, value):
+        """Set the diffusion tensor type.
+
+        @param value:   The diffusion tensor type.  This can be one of 'sphere', 'spheroid' or 'ellipsoid'.
+        @type value:    str
+        """
+
+        # Checks.
+        allowed = ['sphere', 'spheroid', 'ellipsoid']
+        if value not in allowed:
+            raise RelaxError("The diffusion tensor type '%s' must be one of %s." % (value, allowed))
+
+        # Set the type.
+        self.__dict__['type'] = value
+
+
 
 class DiffTensorSimList(list):
     """Empty data container for Monte Carlo simulation diffusion tensor data."""

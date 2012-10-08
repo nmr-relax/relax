@@ -523,7 +523,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
     """
 
     # The diffusion type.
-    cdp.diff_tensor.type = 'ellipsoid'
+    cdp.diff_tensor.type('ellipsoid')
 
     # (tm, Da, Dr, alpha, beta, gamma).
     if param_types == 0:
@@ -1552,7 +1552,7 @@ def sphere(params=None, time_scale=None, param_types=None):
     """
 
     # The diffusion type.
-    cdp.diff_tensor.type = 'sphere'
+    cdp.diff_tensor.type('sphere')
 
     # tm.
     if param_types == 0:
@@ -1596,7 +1596,7 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
     """
 
     # The diffusion type.
-    cdp.diff_tensor.type = 'spheroid'
+    cdp.diff_tensor.type('spheroid')
 
     # Spheroid diffusion type.
     allowed_types = [None, 'oblate', 'prolate']
