@@ -663,66 +663,6 @@ class DiffTensorData(Element):
         raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
 
 
-    def _update_sim_append(self, param_name, index):
-        """Update the Monte Carlo simulation data lists when a simulation value is appended.
-
-        @param param_name:  The MC sim parameter name which is being appended to.
-        @type param_name:   str
-        @param index:       The index of the Monte Carlo simulation which was set.
-        @type index:        int
-        """
-
-        # Loop over the targets.
-        for target, update_if_set, depends in dependency_generator(self.type):
-            # Only update if the parameter name is within the 'update_if_set' list.
-            if not param_name in update_if_set:
-                continue
-
-            # Get the function for calculating the value.
-            fn = globals()['calc_'+target]
-
-            # Get all the dependencies if possible.
-            missing_dep = 0
-            deps = ()
-            for dep_name in depends:
-                # Modify the dependency name.
-                if dep_name not in ['type', 'spheroid_type']:
-                    dep_name = dep_name+'_sim'
-
-                # Test if the MC sim object exists.
-                if not hasattr(self, dep_name):
-                    missing_dep = 1
-                    break
-
-                # Get the MC dependency.
-                dep_obj = getattr(self, dep_name)
-
-                # The diffusion tensor type.
-                if dep_name in ['type', 'spheroid_type']:
-                    deps = deps+(dep_obj,)
-                    continue
-
-                # Test if the MC sim dependency is long enough.
-                if len(dep_obj) <= index:
-                    missing_dep = 1
-                    break
-
-                # Place the value corresponding to the index into the 'deps' array.
-                deps = deps+(dep_obj[index],)
-
-            # Only update the MC simulation object if its dependencies exist.
-            if not missing_dep:
-                # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
-                if not target+'_sim' in self.__dict__:
-                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
-
-                # Get the target object.
-                target_obj = getattr(self, target+'_sim')
-
-                # Calculate and set the value.
-                target_obj.append_untouchable_item(fn(*deps))
-
-
     def _update_sim_set(self, param_name, slice_obj):
         """Update the Monte Carlo simulation data lists when a simulation value is set.
 
