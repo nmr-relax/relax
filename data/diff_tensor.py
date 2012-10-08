@@ -645,6 +645,8 @@ class DiffTensorData(Element):
             Dratio  =  Dpar / Dper.
         """
 
+        raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
+
         # Get the base parameter name and determine the object category ('val', 'err', or 'sim').
         if search('_err$', name):
             category = 'err'
@@ -1048,7 +1050,9 @@ class DiffTensorSimList(list):
 
 
     def __setitem__(self, slice_obj, value):
-        """Set the value."""
+        """This is a read-only object!"""
+
+        raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
 
         # Set the value.
         list.__setitem__(self, slice_obj, value)
