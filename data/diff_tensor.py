@@ -636,6 +636,9 @@ class DiffTensorData(Element):
         # Initialise the spheroid type flag.
         self.__dict__['_spheroid_type'] = False
 
+        # The number of simulations.
+        self.__dict__['_sim_num'] = None
+
 
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
@@ -886,17 +889,14 @@ class DiffTensorData(Element):
 
             # Only create the MC simulation object if its dependencies exist.
             if not missing_dep:
-                # The number of simulations.
-                num_sim = len(self.__dict__[update_if_set[0]+'_sim'])
-
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
-                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self, elements=num_sim)
+                    self.__dict__[target+'_sim'] = DiffTensorSimList(elements=self._sim_num)
 
                 # Repackage the deps structure.
                 args = []
                 skip = False
-                for i in range(num_sim):
+                for i in range(self._sim_num):
                     args.append(())
 
                     # Loop over the dependent structures.
@@ -915,7 +915,7 @@ class DiffTensorData(Element):
 
                 # Loop over the sims and set the values.
                 if not skip:
-                    for i in range(num_sim):
+                    for i in range(self._sim_num):
                         # Calculate the value.
                         value = fn(*args[i])
 
@@ -980,11 +980,22 @@ class DiffTensorData(Element):
 
         # Set a simulation value.
         else:
+            # Check that the simulation number has been set.
+            if self._sim_num == None:
+                raise RelaxError("The diffusion tensor simulation number has not yet been specified, therefore a simulation value cannot be set.")
+
+            # The simulation parameter name.
+            sim_param = param+'_sim'
+
+            # No object, so create it.
+            if not hasattr(self, sim_param):
+                self.__dict__[sim_param] = DiffTensorSimList(elements=self._sim_num)
+
             # The object.
-            obj = getattr(self, param+'_sim')
+            obj = getattr(self, sim_param)
 
             # Set the value.
-            obj[sim_index] = value
+            obj._set(value=value, sim_index=sim_index)
 
         # Flag for the spheroid type.
         if param == 'spheroid_type' and value:
@@ -997,6 +1008,21 @@ class DiffTensorData(Element):
         # Update the data structures.
         for target, update_if_set, depends in dependency_generator(self.type):
             self._update_object(param, target, update_if_set, depends, category)
+
+
+    def set_sim_num(self, sim_number=None):
+        """Set the number of Monte Carlo simulations for the construction of the simulation structures.
+
+        @keyword sim_number:    The number of Monte Carlo simulations.
+        @type sim_number:       int
+        """
+
+        # Check if not already set.
+        if self._sim_num != None:
+            raise RelaxError("The number of simulations has already been set.")
+
+        # Store the value.
+        self.__dict__['_sim_num'] = sim_number
 
 
     def set_type(self, value):
@@ -1056,10 +1082,6 @@ class DiffTensorSimList(list):
             if name in list(self.__class__.__dict__.keys()) or name in dir(list):
                 continue
 
-            # Skip the diff_element object.
-            if name == 'diff_element':
-                continue
-
             # Get the object.
             value = getattr(self, name)
 
@@ -1070,66 +1092,60 @@ class DiffTensorSimList(list):
         return new_obj
 
 
-    def __init__(self, param_name, diff_element, elements=None):
+    def __init__(self, elements=None):
         """Initialise the Monte Carlo simulation parameter list.
 
-        This function makes the parameter name and parent object accessible to the functions of this
-        list object.
-
-        @param param_name:      The name of the parameter.
-        @type param_name:       str
-        @param diff_element:    The parent class.
-        @type diff_element:     DiffTensorData element
         @keyword elements:      The optional number of elements to initialise the length of the list
                                 to.
         @type elements:         None or int
         """
 
-        # Initialise.
-        self.param_name = param_name
-        self.diff_element = diff_element
-
         # Initialise a length.
         if elements:
             for i in range(elements):
-                self.append(None)
+                self._append(None)
+
+        # Alias the __setitem__() method.
+        self.__setitem__ = self.__setitem_orig__
 
 
-    def __setitem__(self, slice_obj, value):
+    def __setitem_orig__(self, slice_obj, value):
         """This is a read-only object!"""
 
         raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
 
-        # Set the value.
-        list.__setitem__(self, slice_obj, value)
 
-        # Then update the other lists.
-        self.diff_element._update_sim_set(self.param_name, slice_obj)
+    def _append(self, value):
+        """The secret append method.
+
+        @param value:   The value to append to the list.
+        @type value:    anything
+        """
+
+        # Execute the base class method.
+        super(DiffTensorSimList, self).append(value)
+
+
+    def _set(self, value=None, sim_index=None):
+        """Replacement secret method for __setitem__().
+
+        @keyword value:     The value to set.
+        @type value:        anything
+        @keyword sim_index: The index of the simulation value to set.
+        @type sim_index:    int
+        """
+
+        # Alias the base class method.
+        self.__setitem__ = list.__setitem__
+
+        # Execute the base class method.
+        self[sim_index] = value
+
+        # Unalias.
+        self.__setitem__ = self.__setitem_orig__
 
 
     def append(self, value):
-        """Replacement function for the normal self.append() method."""
+        """This is a read-only object!"""
 
-        # Append the value to the list.
-        self[len(self):len(self)] = [value]
-
-        # Update the other MC lists.
-        self.diff_element._update_sim_append(self.param_name, len(self)-1)
-
-
-    def append_untouchable_item(self, value):
-        """Append the value for an untouchable MC data structure."""
-
-        # Append the value to the list.
-        self[len(self):len(self)] = [value]
-
-
-    def set_untouchable_item(self, slice_obj, value):
-        """Set the value for an untouchable MC data structure."""
-
-        # Python 3 fix - the value needs to now be a list?!
-        if sys.version_info[0] >= 3:
-            value = [value]
-
-        # Set the value.
-        list.__setitem__(self, slice_obj, value)
+        raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
