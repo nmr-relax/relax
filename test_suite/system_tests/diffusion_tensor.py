@@ -430,7 +430,7 @@ class Diffusion_tensor(SystemTestCase):
         # Check that this is indeed a copy.
         self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[4], 9.02e-8)
         self.assertEqual(sphere2_pipe.diff_tensor.Diso_sim[4], 1/(6*9.02e-8))
-        sphere_pipe.diff_tensor.tm_sim[4] = 8.88e-8
+        sphere_pipe.diff_tensor.set(param='tm', value=8.88e-8, category='sim', sim_index=4)
         self.assertEqual(sphere_pipe.diff_tensor.tm_sim[4], 8.88e-8)
         self.assertEqual(sphere_pipe.diff_tensor.Diso_sim[4], 1/(6*8.88e-8))
         self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[4], 9.02e-8)
