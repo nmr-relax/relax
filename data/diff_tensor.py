@@ -1116,7 +1116,7 @@ class DiffTensorData(Element):
         tensor_element.setAttribute('type', self.type)
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_element, object=self, blacklist=['type'] + list(self.__class__.__dict__.keys()))
+        fill_object_contents(doc, tensor_element, object=self, blacklist=['type', 'is_empty'] + list(self.__class__.__dict__.keys()))
 
 
 
