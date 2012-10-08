@@ -964,14 +964,27 @@ class DiffTensorData(Element):
 
         # Check the type.
         if category not in ['val', 'err', 'sim']:
-            raise RelaxError("The category of the parameter '%s' is incorrectly set to %s." % (param, category))
+            raise RelaxError("The category of the parameter '%s' is incorrectly set to %s - it must be one of 'val', 'err' or 'sim'." % (param, category))
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param in self.__mod_attr__:
             raise RelaxError("The object '%s' is not a modifiable attribute." % param)
 
-        # Set the attribute normally.
-        self.__dict__[param] = value
+        # Set a parameter value.
+        if category == 'val':
+            self.__dict__[param] = value
+
+        # Set an error.
+        elif category == 'err':
+            self.__dict__[param+'_err'] = value
+
+        # Set a simulation value.
+        else:
+            # The object.
+            obj = getattr(self, param+'_sim')
+
+            # Set the value.
+            obj[sim_index] = value
 
         # Flag for the spheroid type.
         if param == 'spheroid_type' and value:
