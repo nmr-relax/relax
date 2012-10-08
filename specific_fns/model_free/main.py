@@ -1424,7 +1424,7 @@ class Model_free_main:
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in dp_from.diff_tensor.__mod_attr__:
+                for data_name in dp_from.diff_tensor._mod_attr:
                     # Get the original object.
                     data_from = None
                     if hasattr(dp_from.diff_tensor, data_name):
