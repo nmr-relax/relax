@@ -2085,7 +2085,7 @@ class Model_free_main:
             if cdp.diff_tensor.type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
-                    cdp.diff_tensor.tm_err = error
+                    cdp.diff_tensor.set(param='tm', value=error, category='err')
 
                 # Increment.
                 inc = inc + 1
@@ -2094,13 +2094,13 @@ class Model_free_main:
             elif cdp.diff_tensor.type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
-                    cdp.diff_tensor.tm_err = error
+                    cdp.diff_tensor.set(param='tm', value=error, category='err')
                 elif index == 1:
-                    cdp.diff_tensor.Da_err = error
+                    cdp.diff_tensor.set(param='Da', value=error, category='err')
                 elif index == 2:
-                    cdp.diff_tensor.theta_err = error
+                    cdp.diff_tensor.set(param='theta', value=error, category='err')
                 elif index == 3:
-                    cdp.diff_tensor.phi_err = error
+                    cdp.diff_tensor.set(param='phi', value=error, category='err')
 
                 # Increment.
                 inc = inc + 4
@@ -2109,17 +2109,17 @@ class Model_free_main:
             elif cdp.diff_tensor.type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
-                    cdp.diff_tensor.tm_err = error
+                    cdp.diff_tensor.set(param='tm', value=error, category='err')
                 elif index == 1:
-                    cdp.diff_tensor.Da_err = error
+                    cdp.diff_tensor.set(param='Da', value=error, category='err')
                 elif index == 2:
-                    cdp.diff_tensor.Dr_err = error
+                    cdp.diff_tensor.set(param='Dr', value=error, category='err')
                 elif index == 3:
-                    cdp.diff_tensor.alpha_err = error
+                    cdp.diff_tensor.set(param='alpha', value=error, category='err')
                 elif index == 4:
-                    cdp.diff_tensor.beta_err = error
+                    cdp.diff_tensor.set(param='beta', value=error, category='err')
                 elif index == 5:
-                    cdp.diff_tensor.gamma_err = error
+                    cdp.diff_tensor.set(param='gamma', value=error, category='err')
 
                 # Increment.
                 inc = inc + 6
