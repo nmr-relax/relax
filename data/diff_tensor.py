@@ -580,17 +580,19 @@ class DiffTensorData(Element):
     """An empty data container for the diffusion tensor elements."""
 
     # List of modifiable attributes.
-    _mod_attr = ['type',
-                    'fixed',
-                    'spheroid_type',
-                    'tm',       'tm_sim',       'tm_err',
-                    'Da',       'Da_sim',       'Da_err',
-                    'Dr',       'Dr_sim',       'Dr_err',
-                    'theta',    'theta_sim',    'theta_err',
-                    'phi',      'phi_sim',      'phi_err',
-                    'alpha',    'alpha_sim',    'alpha_err',
-                    'beta',     'beta_sim',     'beta_err',
-                    'gamma',    'gamma_sim',    'gamma_err']
+    _mod_attr = [
+        'type',
+        'fixed',
+        'spheroid_type',
+        'tm',       'tm_sim',       'tm_err',
+        'Da',       'Da_sim',       'Da_err',
+        'Dr',       'Dr_sim',       'Dr_err',
+        'theta',    'theta_sim',    'theta_err',
+        'phi',      'phi_sim',      'phi_err',
+        'alpha',    'alpha_sim',    'alpha_err',
+        'beta',     'beta_sim',     'beta_err',
+        'gamma',    'gamma_sim',    'gamma_err'
+    ]
 
     def __deepcopy__(self, memo):
         """Replacement deepcopy method."""
@@ -598,30 +600,45 @@ class DiffTensorData(Element):
         # Make a new object.
         new_obj = self.__class__.__new__(self.__class__)
 
+        # Initialise it.
+        new_obj.__init__()
+
+        # Copy over the simulation number.
+        new_obj.__dict__['_sim_num'] = self._sim_num
+
         # Loop over all modifiable objects in self and make deepcopies of them.
         for name in self._mod_attr:
             # Skip if missing from the object.
             if not hasattr(self, name):
                 continue
 
+            # The category.
+            if search('_err$', name):
+                category = 'err'
+                param = name.replace('_err', '')
+            elif search('_sim$', name):
+                category = 'sim'
+                param = name.replace('_sim', '')
+            else:
+                category = 'val'
+                param = name
+
             # Get the object.
             value = getattr(self, name)
 
+            # Normal parameters.
+            if category == 'val':
+                new_obj.set(param=param, value=deepcopy(value, memo))
 
-            # Replace the object with a deepcopy of it.
-            setattr(new_obj, name, deepcopy(value, memo))
+            # Errors.
+            elif category == 'err':
+                new_obj.set(param=param, value=deepcopy(value, memo), category='err')
 
-            # Place the new class object into the namespace of DiffTensorSimList objects.
-            if isinstance(value, DiffTensorSimList):
-                # Get the new list.
-                new_value = getattr(new_obj, name)
-
-                # Place the new class object into the namespace of DiffTensorSimList objects.
-                new_value.diff_element = new_obj
-
+            # Simulation objects objects.
+            else:
                 # Recreate the list elements.
                 for i in range(len(value)):
-                    new_value.append(value[i])
+                    new_obj.set(param=param, value=value[i], category='sim', sim_index=i)
 
         # Return the new object.
         return new_obj
