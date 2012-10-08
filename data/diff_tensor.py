@@ -1018,15 +1018,13 @@ class DiffTensorSimList(list):
     def __init__(self, elements=None):
         """Initialise the Monte Carlo simulation parameter list.
 
-        @keyword elements:      The optional number of elements to initialise the length of the list
-                                to.
+        @keyword elements:      The number of elements to initialise the length of the list to.
         @type elements:         None or int
         """
 
         # Initialise a length.
-        if elements:
-            for i in range(elements):
-                self._append(None)
+        for i in range(elements):
+            self._append(None)
 
 
     def __setitem__(self, slice_obj, value):
