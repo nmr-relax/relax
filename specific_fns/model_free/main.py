@@ -22,22 +22,17 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import float64, array, identity, transpose, zeros
+from numpy import float64, array, identity, zeros
 from re import match, search
-import sys
 from types import MethodType
 from warnings import warn
 
 # relax module imports.
 import arg_check
-from data.diff_tensor import DiffTensorSimList
-from float import isNaN, isInf
-from generic_fns import diffusion_tensor, interatomic, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_index_loop, spin_loop
-from maths_fns.mf import Mf
-from minfx.generic import generic_minimise
+from generic_fns import diffusion_tensor, interatomic, pipes, sequence
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_fns
-from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
