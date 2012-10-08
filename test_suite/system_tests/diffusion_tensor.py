@@ -77,30 +77,30 @@ class Diffusion_tensor(SystemTestCase):
 
         # Some fake MC simulations (for the sphere).
         self.interpreter.pipe.switch('sphere')
-        cdp.diff_tensor.tm_err = 10e-11
-        cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
+        cdp.diff_tensor.set(param='tm', value=10e-11, category='err')
+        #cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
         tm_sim = [8.98e-8, 8.99e-8, 9.00e-7, 9.01e-8, 9.02e-8]
         for i in range(5):
-            cdp.diff_tensor.tm_sim[i] = tm_sim[i]
+            cdp.diff_tensor.set(param='tm', value=tm_sim[i], category='sim', sim_index=i)
 
         # Reset some values.
-        cdp.diff_tensor.tm_sim[0] = 9.00e-8
+        cdp.diff_tensor.set(param='tm', value=9.00e-8, category='sim', sim_index=0)
 
 
         # Some fake MC simulations (for the spheroid).
         self.interpreter.pipe.switch('spheroid')
 
         # Initialise the data structures.
-        cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor, elements=5)
 
         # Set some errors.
-        cdp.diff_tensor.Da_err = 1000000
-        cdp.diff_tensor.theta_err = 0.01
-        cdp.diff_tensor.tm_err = 1e-11
-        cdp.diff_tensor.phi_err = 0.01
+        cdp.diff_tensor.set(param='Da', value=1000000, category='err')
+        cdp.diff_tensor.set(param='theta', value=0.01, category='err')
+        cdp.diff_tensor.set(param='tm', value=1e-11, category='err')
+        cdp.diff_tensor.set(param='phi', value=0.01, category='err')
 
         # The sim data.
         Da_sim = [-12000000., -11000000., -10000000., -9000000., -8000000.]
@@ -108,26 +108,26 @@ class Diffusion_tensor(SystemTestCase):
         tm_sim = [5.4e-09, 4.8e-09, 5e-09, 5.4e-09, 5.8e-09]
         phi_sim = [2.5, 2.6, 2.7, 2.8, 100]
         for i in range(5):
-            cdp.diff_tensor.Da_sim[i] = Da_sim[i]
-            cdp.diff_tensor.theta_sim[i] = theta_sim[i]
-            cdp.diff_tensor.tm_sim[i] = tm_sim[i]
-            cdp.diff_tensor.phi_sim[i] = phi_sim[i]
+            cdp.diff_tensor.set(param='Da', value=Da_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='theta', value=theta_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='tm', value=tm_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='phi', value=phi_sim[i], category='sim', sim_index=i)
 
         # Reset some values.
-        cdp.diff_tensor.tm_sim[0] = 4.4e-9
-        cdp.diff_tensor.phi_sim[4] = 2.9
+        cdp.diff_tensor.set(param='tm', value=4.4e-9, category='sim', sim_index=0)
+        cdp.diff_tensor.set(param='phi', value=2.9, category='sim', sim_index=4)
 
 
         # Some fake MC simulations (for the ellipsoid).
         self.interpreter.pipe.switch('ellipsoid')
 
         # Initialise the data structures.
-        cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor, elements=5)
-        cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor, elements=5)
+        #cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor, elements=5)
 
         # The sim data.
         Dr_sim = [0.28, 0.29, 0.3, 0.31, 0.32]
@@ -137,16 +137,16 @@ class Diffusion_tensor(SystemTestCase):
         beta_sim = [295.0/360*2*pi, 292.5/360*2*pi, 290.0/360*2*pi, 289.5/360*2*pi, 288.0/360*2*pi]
         gamma_sim = [102.0/360*2*pi, 101.0/360*2*pi, 0, 99.0/360*2*pi, 98.0/360*2*pi]
         for i in range(5):
-            cdp.diff_tensor.Dr_sim[i] = Dr_sim[i]
-            cdp.diff_tensor.tm_sim[i] = tm_sim[i]
-            cdp.diff_tensor.Da_sim[i] = Da_sim[i]
-            cdp.diff_tensor.alpha_sim[i] = alpha_sim[i]
-            cdp.diff_tensor.beta_sim[i] = beta_sim[i]
-            cdp.diff_tensor.gamma_sim[i] = gamma_sim[i]
+            cdp.diff_tensor.set(param='Dr', value=Dr_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='tm', value=tm_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='Da', value=Da_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='alpha', value=alpha_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='beta', value=beta_sim[i], category='sim', sim_index=i)
+            cdp.diff_tensor.set(param='gamma', value=gamma_sim[i], category='sim', sim_index=i)
 
         # Reset some values.
-        cdp.diff_tensor.tm_sim[0] = 8.98e-8
-        cdp.diff_tensor.gamma_sim[2] = 100.0/360*2*pi
+        cdp.diff_tensor.set(param='tm', value=8.98e-8, category='sim', sim_index=0)
+        cdp.diff_tensor.set(param='gamma', value=100.0/360*2*pi, category='sim', sim_index=2)
 
 
     def tearDown(self):

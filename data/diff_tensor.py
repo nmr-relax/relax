@@ -647,36 +647,6 @@ class DiffTensorData(Element):
 
         raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
 
-        # Get the base parameter name and determine the object category ('val', 'err', or 'sim').
-        if search('_err$', name):
-            category = 'err'
-            param_name = name[:-4]
-        elif search('_sim$', name):
-            category = 'sim'
-            param_name = name[:-4]
-        else:
-            category = 'val'
-            param_name = name
-
-        # Test if the attribute that is trying to be set is modifiable.
-        if not param_name in self.__mod_attr__:
-            raise RelaxError("The object " + repr(name) + " is not a modifiable attribute.")
-
-        # Set the attribute normally.
-        self.__dict__[name] = value
-
-        # Flag for the spheroid type.
-        if name == 'spheroid_type' and value:
-            self.__dict__['__spheroid_type'] = True
-
-        # Skip the updating process for certain objects.
-        if name in ['type', 'fixed', 'spheroid_type']:
-            return
-
-        # Update the data structures.
-        for target, update_if_set, depends in dependency_generator(self.type):
-            self.__update_object(param_name, target, update_if_set, depends, category)
-
 
     def __update_sim_append(self, param_name, index):
         """Update the Monte Carlo simulation data lists when a simulation value is appended.
@@ -977,6 +947,43 @@ class DiffTensorData(Element):
 
         # Recreate all the other data structures.
         xml_to_object(diff_tensor_node, self, file_version=file_version)
+
+
+    def set(self, param=None, value=None, category='val', sim_index=None):
+        """Set a diffusion tensor parameter.
+
+        @keyword param:     The name of the parameter to set.
+        @type param:        str
+        @keyword value:     The parameter value.
+        @type value:        anything
+        @keyword category:  The type of parameter to set.  This can be 'val' for the normal parameter, 'err' for the parameter error, or 'sim' for Monte Carlo or other simulated parameters.
+        @type category:     str
+        @keyword sim_index: The index for a Monte Carlo simulation for simulated parameter.
+        @type sim_index:    int or None
+        """
+
+        # Check the type.
+        if category not in ['val', 'err', 'sim']:
+            raise RelaxError("The category of the parameter '%s' is incorrectly set to %s." % (param, category))
+
+        # Test if the attribute that is trying to be set is modifiable.
+        if not param in self.__mod_attr__:
+            raise RelaxError("The object '%s' is not a modifiable attribute." % param)
+
+        # Set the attribute normally.
+        self.__dict__[param] = value
+
+        # Flag for the spheroid type.
+        if param == 'spheroid_type' and value:
+            self.__dict__['__spheroid_type'] = True
+
+        # Skip the updating process for certain objects.
+        if param in ['type', 'fixed', 'spheroid_type']:
+            return
+
+        # Update the data structures.
+        for target, update_if_set, depends in dependency_generator(self.type):
+            self.__update_object(param, target, update_if_set, depends, category)
 
 
     def set_type(self, value):
