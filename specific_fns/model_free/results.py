@@ -120,7 +120,7 @@ class Results:
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:
-            cdp.diff_tensor.fixed = diff_fixed
+            cdp.diff_tensor.set_fixed(diff_fixed)
 
         # Set the spin specific fixed flags.
         for spin, id in spin_loop(return_id=True):
