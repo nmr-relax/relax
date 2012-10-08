@@ -78,7 +78,7 @@ class Diffusion_tensor(SystemTestCase):
         # Some fake MC simulations (for the sphere).
         self.interpreter.pipe.switch('sphere')
         cdp.diff_tensor.set(param='tm', value=10e-11, category='err')
-        #cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
+        cdp.diff_tensor.set_sim_num(5)
         tm_sim = [8.98e-8, 8.99e-8, 9.00e-7, 9.01e-8, 9.02e-8]
         for i in range(5):
             cdp.diff_tensor.set(param='tm', value=tm_sim[i], category='sim', sim_index=i)
@@ -90,12 +90,6 @@ class Diffusion_tensor(SystemTestCase):
         # Some fake MC simulations (for the spheroid).
         self.interpreter.pipe.switch('spheroid')
 
-        # Initialise the data structures.
-        #cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor, elements=5)
-
         # Set some errors.
         cdp.diff_tensor.set(param='Da', value=1000000, category='err')
         cdp.diff_tensor.set(param='theta', value=0.01, category='err')
@@ -103,6 +97,7 @@ class Diffusion_tensor(SystemTestCase):
         cdp.diff_tensor.set(param='phi', value=0.01, category='err')
 
         # The sim data.
+        cdp.diff_tensor.set_sim_num(5)
         Da_sim = [-12000000., -11000000., -10000000., -9000000., -8000000.]
         theta_sim = [1.70, 1.65, 1.6, 1.55, 1.50]
         tm_sim = [5.4e-09, 4.8e-09, 5e-09, 5.4e-09, 5.8e-09]
@@ -121,15 +116,8 @@ class Diffusion_tensor(SystemTestCase):
         # Some fake MC simulations (for the ellipsoid).
         self.interpreter.pipe.switch('ellipsoid')
 
-        # Initialise the data structures.
-        #cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor, elements=5)
-        #cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor, elements=5)
-
         # The sim data.
+        cdp.diff_tensor.set_sim_num(5)
         Dr_sim = [0.28, 0.29, 0.3, 0.31, 0.32]
         tm_sim = [8.97e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
         Da_sim = [5.02e6, 5.01e6, 5.00e6, 4.99e6, 4.98e6]
