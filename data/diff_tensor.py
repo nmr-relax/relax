@@ -631,7 +631,7 @@ class DiffTensorData(Element):
         """Initialise a few instance variables."""
 
         # Set the initial diffusion type to None.
-        self.type = None
+        self.__dict__['type'] = None
 
         # Initialise the spheroid type flag.
         self.__dict__['__spheroid_type'] = False
