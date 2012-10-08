@@ -672,7 +672,8 @@ class Results:
                     sim_num = int(sim_num[1])
                 except:
                     raise RelaxError("The simulation number '%s' is invalid." % sim_num)
-        cdp.sim_number = sim_num + 1
+        if sim_num != None:
+            cdp.sim_number = sim_num + 1
 
         # Loop over the lines of the file data.
         for file_line in file_data:
