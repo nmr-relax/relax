@@ -953,6 +953,16 @@ class DiffTensorData(Element):
                         self.__dict__[target+'_sim'][i] = value
 
 
+    def fixed(self, flag):
+        """Set if the diffusion tensor should be fixed during optimisation or not.
+
+        @param flag:    The fixed flag.
+        @type flag:     bool
+        """
+
+        self.__dict__['fixed'] = flag
+
+
     def from_xml(self, diff_tensor_node, file_version=1):
         """Recreate the diffusion tensor data structure from the XML diffusion tensor node.
 
