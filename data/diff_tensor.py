@@ -556,7 +556,7 @@ def dependency_generator(diff_type):
         yield ('tensor_diag',   ['tm', 'Da'],                   ['type', 'Dpar', 'Dper'])
         yield ('rotation',      ['theta', 'phi'],               ['type', 'spheroid_type', 'theta', 'phi'])
         yield ('tensor',        ['tm', 'Da', 'theta', 'phi'],   ['rotation', 'tensor_diag'])
-        yield ('spheroid_type', ['Da'],                         ['Da', 'spheroid_type', '__spheroid_type'])
+        yield ('spheroid_type', ['Da'],                         ['Da', 'spheroid_type', '_spheroid_type'])
 
     # Ellipsoidal diffusion.
     elif diff_type == 'ellipsoid':
@@ -580,7 +580,7 @@ class DiffTensorData(Element):
     """An empty data container for the diffusion tensor elements."""
 
     # List of modifiable attributes.
-    __mod_attr__ = ['type',
+    _mod_attr = ['type',
                     'fixed',
                     'spheroid_type',
                     'tm',       'tm_sim',       'tm_err',
@@ -599,7 +599,7 @@ class DiffTensorData(Element):
         new_obj = self.__class__.__new__(self.__class__)
 
         # Loop over all modifiable objects in self and make deepcopies of them.
-        for name in self.__mod_attr__:
+        for name in self._mod_attr:
             # Skip if missing from the object.
             if not hasattr(self, name):
                 continue
@@ -634,7 +634,7 @@ class DiffTensorData(Element):
         self.__dict__['type'] = None
 
         # Initialise the spheroid type flag.
-        self.__dict__['__spheroid_type'] = False
+        self.__dict__['_spheroid_type'] = False
 
 
     def __setattr__(self, name, value):
@@ -648,7 +648,7 @@ class DiffTensorData(Element):
         raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
 
 
-    def __update_sim_append(self, param_name, index):
+    def _update_sim_append(self, param_name, index):
         """Update the Monte Carlo simulation data lists when a simulation value is appended.
 
         @param param_name:  The MC sim parameter name which is being appended to.
@@ -708,7 +708,7 @@ class DiffTensorData(Element):
                 target_obj.append_untouchable_item(fn(*deps))
 
 
-    def __update_sim_set(self, param_name, slice_obj):
+    def _update_sim_set(self, param_name, slice_obj):
         """Update the Monte Carlo simulation data lists when a simulation value is set.
 
         @param param_name:  The MC sim parameter name which is being set.
@@ -783,7 +783,7 @@ class DiffTensorData(Element):
                     target_obj.set_untouchable_item(slice_obj, fn(*deps))
 
 
-    def __update_object(self, param_name, target, update_if_set, depends, category):
+    def _update_object(self, param_name, target, update_if_set, depends, category):
         """Function for updating the target object, its error, and the MC simulations.
 
         If the base name of the object is not within the 'update_if_set' list, this function returns
@@ -967,7 +967,7 @@ class DiffTensorData(Element):
             raise RelaxError("The category of the parameter '%s' is incorrectly set to %s - it must be one of 'val', 'err' or 'sim'." % (param, category))
 
         # Test if the attribute that is trying to be set is modifiable.
-        if not param in self.__mod_attr__:
+        if not param in self._mod_attr:
             raise RelaxError("The object '%s' is not a modifiable attribute." % param)
 
         # Set a parameter value.
@@ -988,7 +988,7 @@ class DiffTensorData(Element):
 
         # Flag for the spheroid type.
         if param == 'spheroid_type' and value:
-            self.__dict__['__spheroid_type'] = True
+            self.__dict__['_spheroid_type'] = True
 
         # Skip the updating process for certain objects.
         if param in ['type', 'fixed', 'spheroid_type']:
@@ -996,7 +996,7 @@ class DiffTensorData(Element):
 
         # Update the data structures.
         for target, update_if_set, depends in dependency_generator(self.type):
-            self.__update_object(param, target, update_if_set, depends, category)
+            self._update_object(param, target, update_if_set, depends, category)
 
 
     def set_type(self, value):
@@ -1104,7 +1104,7 @@ class DiffTensorSimList(list):
         list.__setitem__(self, slice_obj, value)
 
         # Then update the other lists.
-        self.diff_element._DiffTensorData__update_sim_set(self.param_name, slice_obj)
+        self.diff_element._update_sim_set(self.param_name, slice_obj)
 
 
     def append(self, value):
@@ -1114,7 +1114,7 @@ class DiffTensorSimList(list):
         self[len(self):len(self)] = [value]
 
         # Update the other MC lists.
-        self.diff_element._DiffTensorData__update_sim_append(self.param_name, len(self)-1)
+        self.diff_element._update_sim_append(self.param_name, len(self)-1)
 
 
     def append_untouchable_item(self, value):
