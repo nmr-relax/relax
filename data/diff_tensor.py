@@ -940,16 +940,6 @@ class DiffTensorData(Element):
                         self.__dict__[target+'_sim']._set(value=value, sim_index=i)
 
 
-    def fixed(self, flag):
-        """Set if the diffusion tensor should be fixed during optimisation or not.
-
-        @param flag:    The fixed flag.
-        @type flag:     bool
-        """
-
-        self.__dict__['fixed'] = flag
-
-
     def from_xml(self, diff_tensor_node, file_version=1):
         """Recreate the diffusion tensor data structure from the XML diffusion tensor node.
 
@@ -1065,6 +1055,16 @@ class DiffTensorData(Element):
         # Update the data structures.
         for target, update_if_set, depends in dependency_generator(self.type):
             self._update_object(param, target, update_if_set, depends, category)
+
+
+    def set_fixed(self, flag):
+        """Set if the diffusion tensor should be fixed during optimisation or not.
+
+        @param flag:    The fixed flag.
+        @type flag:     bool
+        """
+
+        self.__dict__['fixed'] = flag
 
 
     def set_sim_num(self, sim_number=None):

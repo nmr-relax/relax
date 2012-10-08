@@ -797,7 +797,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     cdp.diff_tensor = DiffTensorData()
 
     # Set the fixed flag.
-    cdp.diff_tensor.fixed(fixed)
+    cdp.diff_tensor.set_fixed(fixed)
 
     # Spherical diffusion.
     if isinstance(params, float):
