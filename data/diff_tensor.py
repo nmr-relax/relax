@@ -1115,8 +1115,14 @@ class DiffTensorData(Element):
         tensor_element.setAttribute('desc', 'Diffusion tensor')
         tensor_element.setAttribute('type', self.type)
 
+        # The blacklist.
+        blacklist = ['type', 'is_empty'] + list(self.__class__.__dict__.keys())
+        for name in dir(self):
+            if name not in self._mod_attr:
+                blacklist.append(name)
+
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_element, object=self, blacklist=['type', 'is_empty'] + list(self.__class__.__dict__.keys()))
+        fill_object_contents(doc, tensor_element, object=self, blacklist=blacklist)
 
 
 
