@@ -684,7 +684,7 @@ def extract(dir, spin_id=None):
             tm_row = mfout_lines[diff_pos].split()
 
             # Set the params.
-            cdp.diff_tensor.tm = float(tm_row[2])
+            cdp.diff_tensor.set(param='tm', value=float(tm_row[2]))
 
         # Spheroid diffusion tensor.
         else:

@@ -22,22 +22,17 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import float64, array, identity, transpose, zeros
+from numpy import float64, array, identity, zeros
 from re import match, search
-import sys
 from types import MethodType
 from warnings import warn
 
 # relax module imports.
 import arg_check
-from data.diff_tensor import DiffTensorSimList
-from float import isNaN, isInf
-from generic_fns import diffusion_tensor, interatomic, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_index_loop, spin_loop
-from maths_fns.mf import Mf
-from minfx.generic import generic_minimise
+from generic_fns import diffusion_tensor, interatomic, pipes, sequence
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_fns
-from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -1429,7 +1424,7 @@ class Model_free_main:
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in dp_from.diff_tensor.__mod_attr__:
+                for data_name in dp_from.diff_tensor._mod_attr:
                     # Get the original object.
                     data_from = None
                     if hasattr(dp_from.diff_tensor, data_name):
@@ -2090,7 +2085,7 @@ class Model_free_main:
             if cdp.diff_tensor.type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
-                    cdp.diff_tensor.tm_err = error
+                    cdp.diff_tensor.set(param='tm', value=error, category='err')
 
                 # Increment.
                 inc = inc + 1
@@ -2099,13 +2094,13 @@ class Model_free_main:
             elif cdp.diff_tensor.type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
-                    cdp.diff_tensor.tm_err = error
+                    cdp.diff_tensor.set(param='tm', value=error, category='err')
                 elif index == 1:
-                    cdp.diff_tensor.Da_err = error
+                    cdp.diff_tensor.set(param='Da', value=error, category='err')
                 elif index == 2:
-                    cdp.diff_tensor.theta_err = error
+                    cdp.diff_tensor.set(param='theta', value=error, category='err')
                 elif index == 3:
-                    cdp.diff_tensor.phi_err = error
+                    cdp.diff_tensor.set(param='phi', value=error, category='err')
 
                 # Increment.
                 inc = inc + 4
@@ -2114,17 +2109,17 @@ class Model_free_main:
             elif cdp.diff_tensor.type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
-                    cdp.diff_tensor.tm_err = error
+                    cdp.diff_tensor.set(param='tm', value=error, category='err')
                 elif index == 1:
-                    cdp.diff_tensor.Da_err = error
+                    cdp.diff_tensor.set(param='Da', value=error, category='err')
                 elif index == 2:
-                    cdp.diff_tensor.Dr_err = error
+                    cdp.diff_tensor.set(param='Dr', value=error, category='err')
                 elif index == 3:
-                    cdp.diff_tensor.alpha_err = error
+                    cdp.diff_tensor.set(param='alpha', value=error, category='err')
                 elif index == 4:
-                    cdp.diff_tensor.beta_err = error
+                    cdp.diff_tensor.set(param='beta', value=error, category='err')
                 elif index == 5:
-                    cdp.diff_tensor.gamma_err = error
+                    cdp.diff_tensor.set(param='gamma', value=error, category='err')
 
                 # Increment.
                 inc = inc + 6
@@ -2369,21 +2364,13 @@ class Model_free_main:
 
         # Diffusion tensor parameters and non spin specific minimisation statistics.
         if model_type == 'diff' or model_type == 'all':
-            # Loop over the parameters.
+            # Set up the number of simulations.
+            cdp.diff_tensor.set_sim_num(cdp.sim_number)
+
+            # Loop over the parameters, setting the initial simulation values to those of the parameter value.
             for object_name in diff_params:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Create the simulation object.
-                setattr(cdp.diff_tensor, sim_object_name, [])
-
-                # Get the simulation object.
-                sim_object = getattr(cdp.diff_tensor, sim_object_name)
-
-                # Loop over the simulations.
                 for j in range(cdp.sim_number):
-                    # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(cdp.diff_tensor, object_name)))
+                    cdp.diff_tensor.set(param=object_name, value=deepcopy(getattr(cdp.diff_tensor, object_name)), category='sim', sim_index=j)
 
         # Spin specific parameters.
         if model_type != 'diff':

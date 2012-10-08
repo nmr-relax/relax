@@ -23,6 +23,7 @@
 """Module for the specific analysis of the N-state dynamic model."""
 
 # Python module imports.
+from copy import deepcopy
 from math import acos, cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid
@@ -565,19 +566,19 @@ class N_state_model(API_base, API_common):
 
                 # Normal tensors.
                 if sim_index == None:
-                    cdp.align_tensors[i].Axx = param_vector[5*tensor_num]
-                    cdp.align_tensors[i].Ayy = param_vector[5*tensor_num+1]
-                    cdp.align_tensors[i].Axy = param_vector[5*tensor_num+2]
-                    cdp.align_tensors[i].Axz = param_vector[5*tensor_num+3]
-                    cdp.align_tensors[i].Ayz = param_vector[5*tensor_num+4]
+                    cdp.align_tensors[i].set(param='Axx', value=param_vector[5*tensor_num])
+                    cdp.align_tensors[i].set(param='Ayy', value=param_vector[5*tensor_num+1])
+                    cdp.align_tensors[i].set(param='Axy', value=param_vector[5*tensor_num+2])
+                    cdp.align_tensors[i].set(param='Axz', value=param_vector[5*tensor_num+3])
+                    cdp.align_tensors[i].set(param='Ayz', value=param_vector[5*tensor_num+4])
 
                 # Monte Carlo simulated tensors.
                 else:
-                    cdp.align_tensors[i].Axx_sim[sim_index] = param_vector[5*tensor_num]
-                    cdp.align_tensors[i].Ayy_sim[sim_index] = param_vector[5*tensor_num+1]
-                    cdp.align_tensors[i].Axy_sim[sim_index] = param_vector[5*tensor_num+2]
-                    cdp.align_tensors[i].Axz_sim[sim_index] = param_vector[5*tensor_num+3]
-                    cdp.align_tensors[i].Ayz_sim[sim_index] = param_vector[5*tensor_num+4]
+                    cdp.align_tensors[i].set(param='Axx', value=param_vector[5*tensor_num], category='sim', sim_index=sim_index)
+                    cdp.align_tensors[i].set(param='Ayy', value=param_vector[5*tensor_num+1], category='sim', sim_index=sim_index)
+                    cdp.align_tensors[i].set(param='Axy', value=param_vector[5*tensor_num+2], category='sim', sim_index=sim_index)
+                    cdp.align_tensors[i].set(param='Axz', value=param_vector[5*tensor_num+3], category='sim', sim_index=sim_index)
+                    cdp.align_tensors[i].set(param='Ayz', value=param_vector[5*tensor_num+4], category='sim', sim_index=sim_index)
 
                 # Increase the tensor number.
                 tensor_num += 1
@@ -2313,7 +2314,10 @@ class N_state_model(API_base, API_common):
 
             # Set the error.
             tensor = align_tensor.return_tensor(index=tensor_index, skip_fixed=True)
-            return setattr(tensor, names[param_index]+'_err', error)
+            tensor.set(param=names[param_index], value=error, category='err')
+
+            # Return the object.
+            return getattr(tensor, names[param_index]+'_err')
 
 
     def set_param_values(self, param=None, value=None, spin_id=None, force=True):
@@ -2391,20 +2395,13 @@ class N_state_model(API_base, API_common):
                 if cdp.align_tensors[i].fixed:
                     continue
 
-                # Loop over all the parameter names.
+                # Set up the number of simulations.
+                cdp.align_tensors[i].set_sim_num(cdp.sim_number)
+
+                # Loop over all the parameter names, setting the initial simulation values to those of the parameter value.
                 for object_name in names:
-                    # Name for the simulation object.
-                    sim_object_name = object_name + '_sim'
-
-                    # Create the simulation object.
-                    setattr(cdp.align_tensors[i], sim_object_name, [])
-
-                    # Get the simulation object.
-                    sim_object = getattr(cdp.align_tensors[i], sim_object_name)
-
-                    # Set the initial simulation values to the optimised tensor parameter values.
                     for j in range(cdp.sim_number):
-                        sim_object.append(getattr(cdp.align_tensors[i], object_name))
+                        cdp.align_tensors[i].set(param=object_name, value=deepcopy(getattr(cdp.align_tensors[i], object_name)), category='sim', sim_index=j)
 
             # Loop over all the minimisation object names.
             for object_name in min_names:

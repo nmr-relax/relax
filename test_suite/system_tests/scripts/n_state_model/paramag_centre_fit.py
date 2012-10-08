@@ -83,17 +83,17 @@ real_pos = [32.555, -19.130, 27.775]
 self._execute_uf(uf_name='paramag.centre', pos=[ 32, -19, 28], fix=False)
 
 # Set the tensor elements.
-cdp.align_tensors[0].Axx = -0.351261/2000
-cdp.align_tensors[0].Ayy = 0.556994/2000
-cdp.align_tensors[0].Axy = -0.506392/2000
-cdp.align_tensors[0].Axz = 0.560544/2000
-cdp.align_tensors[0].Ayz = -0.286367/2000
+cdp.align_tensors[0].set(param='Axx', value=-0.351261/2000)
+cdp.align_tensors[0].set(param='Ayy', value=0.556994/2000)
+cdp.align_tensors[0].set(param='Axy', value=-0.506392/2000)
+cdp.align_tensors[0].set(param='Axz', value=0.560544/2000)
+cdp.align_tensors[0].set(param='Ayz', value=-0.286367/2000)
 
-#cdp.align_tensors[0].Axx = 0.0
-#cdp.align_tensors[0].Ayy = 0.0
-#cdp.align_tensors[0].Axy = 0.0
-#cdp.align_tensors[0].Axz = 0.0
-#cdp.align_tensors[0].Ayz = 0.0
+#cdp.align_tensors[0].set(param='Axx', value=0.0)
+#cdp.align_tensors[0].set(param='Ayy', value=0.0)
+#cdp.align_tensors[0].set(param='Axy', value=0.0)
+#cdp.align_tensors[0].set(param='Axz', value=0.0)
+#cdp.align_tensors[0].set(param='Ayz', value=0.0)
 
 # Minimisation.
 #self._execute_uf(uf_name='grid_search, inc=6)

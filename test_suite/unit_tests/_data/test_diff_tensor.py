@@ -25,7 +25,7 @@ from numpy import array, dot, float64, transpose, zeros
 from unittest import TestCase
 
 # relax module imports.
-from data.diff_tensor import DiffTensorData, DiffTensorSimList
+from data.diff_tensor import DiffTensorData
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError
 
@@ -91,20 +91,17 @@ class Test_diff_tensor(TestCase):
         phi = (30 / 360.0) * 2.0 * pi
 
         # Set the diffusion type.
-        self.diff_data.type = 'spheroid'
-        self.diff_data.spheroid_type = 'oblate'
+        self.diff_data.set(param='type', value='spheroid')
+        self.diff_data.set(param='spheroid_type', value='oblate')
 
-        # Set the MC sim diffusion parameter lists.
-        self.diff_data.tm_sim = DiffTensorSimList('tm', self.diff_data)
-        self.diff_data.Da_sim = DiffTensorSimList('Da', self.diff_data)
-        self.diff_data.theta_sim = DiffTensorSimList('theta', self.diff_data)
-        self.diff_data.phi_sim = DiffTensorSimList('phi', self.diff_data)
+        # Set the number of MC sims.
+        self.diff_data.set_sim_num(1)
 
-        # Append the values.
-        self.diff_data.tm_sim.append(tm)
-        self.diff_data.Da_sim.append(Da)
-        self.diff_data.theta_sim.append(theta)
-        self.diff_data.phi_sim.append(phi)
+        # Set the initial values.
+        self.diff_data.set(param='tm', value=tm, category='sim', sim_index=0)
+        self.diff_data.set(param='Da', value=Da, category='sim', sim_index=0)
+        self.diff_data.set(param='theta', value=theta, category='sim', sim_index=0)
+        self.diff_data.set(param='phi', value=phi, category='sim', sim_index=0)
 
         # Test the set values.
         self.assertEqual(self.diff_data.type, 'spheroid')
@@ -164,14 +161,14 @@ class Test_diff_tensor(TestCase):
         phi = (5 / 360.0) * 2.0 * pi
 
         # Set the diffusion type.
-        self.diff_data.type = 'spheroid'
-        self.diff_data.spheroid_type = 'prolate'
+        self.diff_data.set(param='type', value='spheroid')
+        self.diff_data.set(param='spheroid_type', value='prolate')
 
-        # Set the diffusion parameters.
-        self.diff_data.tm_err = tm
-        self.diff_data.Da_err = Da
-        self.diff_data.theta_err = theta
-        self.diff_data.phi_err = phi
+        # Set the diffusion parameter errors.
+        self.diff_data.set(param='tm', value=tm, category='err')
+        self.diff_data.set(param='Da', value=Da, category='err')
+        self.diff_data.set(param='theta', value=theta, category='err')
+        self.diff_data.set(param='phi', value=phi, category='err')
 
         # Test the set values.
         self.assertEqual(self.diff_data.type, 'spheroid')
@@ -210,14 +207,14 @@ class Test_diff_tensor(TestCase):
         phi = (290 / 360.0) * 2.0 * pi
 
         # Set the diffusion type.
-        self.diff_data.type = 'spheroid'
-        self.diff_data.spheroid_type = 'prolate'
+        self.diff_data.set(param='type', value='spheroid')
+        self.diff_data.set(param='spheroid_type', value='prolate')
 
         # Set the diffusion parameters.
-        self.diff_data.tm = tm
-        self.diff_data.Da = Da
-        self.diff_data.theta = theta
-        self.diff_data.phi = phi
+        self.diff_data.set(param='tm', value=tm)
+        self.diff_data.set(param='Da', value=Da)
+        self.diff_data.set(param='theta', value=theta)
+        self.diff_data.set(param='phi', value=phi)
 
         # Test the set values.
         self.assertEqual(self.diff_data.type, 'spheroid')
@@ -262,20 +259,17 @@ class Test_diff_tensor(TestCase):
         """
 
         # Set the diffusion type.
-        self.diff_data.type = 'spheroid'
-        self.diff_data.spheroid_type = 'prolate'
+        self.diff_data.set(param='type', value='spheroid')
+        self.diff_data.set(param='spheroid_type', value='prolate')
 
-        # Set the MC sim diffusion parameter lists.
-        self.diff_data.tm_sim = DiffTensorSimList('tm', self.diff_data)
-        self.diff_data.Da_sim = DiffTensorSimList('Da', self.diff_data)
-        self.diff_data.theta_sim = DiffTensorSimList('theta', self.diff_data)
-        self.diff_data.phi_sim = DiffTensorSimList('phi', self.diff_data)
+        # Set the number of MC sims.
+        self.diff_data.set_sim_num(1)
 
-        # Append the initial values.
-        self.diff_data.tm_sim.append(2e-9)
-        self.diff_data.Da_sim.append(1e5)
-        self.diff_data.theta_sim.append(0.0)
-        self.diff_data.phi_sim.append(2.0 * pi)
+        # Set the initial values.
+        self.diff_data.set(param='tm', value=2e-9, category='sim', sim_index=0)
+        self.diff_data.set(param='Da', value=1e5, category='sim', sim_index=0)
+        self.diff_data.set(param='theta', value=0.0, category='sim', sim_index=0)
+        self.diff_data.set(param='phi', value=2.0 * pi, category='sim', sim_index=0)
 
         # The new MC sim parameter values.
         tm = 0.5e-9
@@ -284,10 +278,10 @@ class Test_diff_tensor(TestCase):
         phi = 0.0
 
         # Set the MC sim parameter values (overwriting the initial values).
-        self.diff_data.tm_sim[0] = tm
-        self.diff_data.Da_sim[0] = Da
-        self.diff_data.theta_sim[0] = theta
-        self.diff_data.phi_sim[0] = phi
+        self.diff_data.set(param='tm', value=tm, category='sim', sim_index=0)
+        self.diff_data.set(param='Da', value=Da, category='sim', sim_index=0)
+        self.diff_data.set(param='theta', value=theta, category='sim', sim_index=0)
+        self.diff_data.set(param='phi', value=phi, category='sim', sim_index=0)
 
         # Test the set values.
         self.assertEqual(self.diff_data.type, 'spheroid')
@@ -322,10 +316,10 @@ class Test_diff_tensor(TestCase):
         """
 
         # Set the diffusion type.
-        self.diff_data.type = 'sphere'
+        self.diff_data.set(param='type', value='sphere')
 
         # Set the tm value to 10 ns.
-        self.diff_data.tm = 1e-8
+        self.diff_data.set(param='tm', value=1e-8)
 
         # Test that the tm parameter has been set correctly.
         self.assert_(hasattr(self.diff_data, 'tm'))
