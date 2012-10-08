@@ -658,12 +658,7 @@ class DiffTensorData(Element):
 
 
     def __setattr__(self, name, value):
-        """Function for calculating the parameters, unit vectors, and tensors on the fly.
-
-        The equations for the parameters Dper, Dpar, and Dratio are::
-
-            Dratio  =  Dpar / Dper.
-        """
+        """Make this object read-only."""
 
         raise RelaxError("The diffusion tensor is a read-only object.  The diffusion tensor set() method must be used instead.")
 
