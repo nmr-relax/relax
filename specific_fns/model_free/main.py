@@ -2364,21 +2364,13 @@ class Model_free_main:
 
         # Diffusion tensor parameters and non spin specific minimisation statistics.
         if model_type == 'diff' or model_type == 'all':
-            # Loop over the parameters.
+            # Set up the number of simulations.
+            cdp.diff_tensor.set_sim_num(cdp.sim_number)
+
+            # Loop over the parameters, setting the initial simulation values to those of the parameter value.
             for object_name in diff_params:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Create the simulation object.
-                setattr(cdp.diff_tensor, sim_object_name, [])
-
-                # Get the simulation object.
-                sim_object = getattr(cdp.diff_tensor, sim_object_name)
-
-                # Loop over the simulations.
                 for j in range(cdp.sim_number):
-                    # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(cdp.diff_tensor, object_name)))
+                    cdp.diff_tensor.set(param=object_name, value=deepcopy(getattr(cdp.diff_tensor, object_name)), category='sim', sim_index=j)
 
         # Spin specific parameters.
         if model_type != 'diff':
