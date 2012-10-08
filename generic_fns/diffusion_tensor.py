@@ -124,7 +124,7 @@ def bmrb_read(star):
     cdp.diff_tensor = DiffTensorData()
 
     # Set the fixed flag.
-    cdp.diff_tensor.fixed(True)
+    cdp.diff_tensor.set_fixed(True)
 
     # Sphere.
     if data['geometric_shape'] == 'sphere':
