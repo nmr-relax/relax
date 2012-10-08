@@ -696,8 +696,8 @@ def fold_angles(sim_index=None):
             # Fold phi inside 0 and pi.
             if cdp.diff_tensor.phi >= pi:
                 theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.phi)
-                cdp.diff_tensor.theta = theta
-                cdp.diff_tensor.phi = phi
+                cdp.diff_tensor.set(param='theta', value=theta)
+                cdp.diff_tensor.set(param='phi', value=phi)
 
         # Simulated theta and phi values.
         else:
