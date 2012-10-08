@@ -960,10 +960,50 @@ class DiffTensorData(Element):
         """
 
         # First set the diffusion type.  Doing this first is essential for the proper reconstruction of the object.
-        setattr(self, 'type', str(diff_tensor_node.getAttribute('type')))
+        self.__dict__['type'] = str(diff_tensor_node.getAttribute('type'))
 
-        # Recreate all the other data structures.
-        xml_to_object(diff_tensor_node, self, file_version=file_version)
+        # A temporary object to pack the structures from the XML data into.
+        temp_obj = Element()
+
+        # Recreate all the other data structures (into the temporary object).
+        xml_to_object(diff_tensor_node, temp_obj, file_version=file_version)
+
+        # Loop over all modifiable objects in the temporary object and make soft copies of them.
+        for name in self._mod_attr:
+            # Skip if missing from the object.
+            if not hasattr(temp_obj, name):
+                continue
+
+            # The category.
+            if search('_err$', name):
+                category = 'err'
+                param = name.replace('_err', '')
+            elif search('_sim$', name):
+                category = 'sim'
+                param = name.replace('_sim', '')
+            else:
+                category = 'val'
+                param = name
+
+            # Get the object.
+            value = getattr(temp_obj, name)
+
+            # Normal parameters.
+            if category == 'val':
+                self.set(param=param, value=value)
+
+            # Errors.
+            elif category == 'err':
+                self.set(param=param, value=value, category='err')
+
+            # Simulation objects objects.
+            else:
+                # Recreate the list elements.
+                for i in range(len(value)):
+                    self.set(param=param, value=value[i], category='sim', sim_index=i)
+
+        # Delete the temporary object.
+        del temp_obj
 
 
     def set(self, param=None, value=None, category='val', sim_index=None):
