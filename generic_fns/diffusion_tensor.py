@@ -715,7 +715,7 @@ def fold_angles(sim_index=None):
         if sim_index == None:
             # Fold alpha inside 0 and pi.
             if cdp.diff_tensor.alpha >= pi:
-                cdp.diff_tensor.alpha = cdp.diff_tensor.alpha - pi
+                cdp.diff_tensor.set(param='alpha', value=cdp.diff_tensor.alpha - pi)
 
             # Fold beta inside 0 and pi.
             if cdp.diff_tensor.beta >= pi:
