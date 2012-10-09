@@ -23,7 +23,28 @@
 """Temporary module for allowing relax to support both Python 2 and 3."""
 
 # Python module imports.
+from copy import deepcopy
+import os
+import platform
 import sys
+
+
+# The operating system.
+SYSTEM = platform.uname()[0]
+
+
+def sorted(data):
+    """Python 2.3 and earlier replacement function for the builtin sorted() function."""
+
+    # Make a copy of the data.
+    new_data = deepcopy(data)
+
+    # Sort.
+    new_data.sort()
+
+    # Return the new data.
+    return new_data
+
 
 # The Python version.
 py_version = sys.version_info[0]
@@ -36,6 +57,21 @@ if py_version == 2:
     # Switch all range() calls to xrange() for increased speed and memory reduction.
     # This should work as all range() usage for Python 3 in relax must match the old xrange() usage.
     __builtin__.range = __builtin__.xrange
+
+    # The sorted() builtin function for Python 2.3 and earlier.
+    if sys.version_info[1] <= 3:
+        setattr(__builtin__, 'sorted', sorted)
+
+    # The os.devnull object for Python 2.3 and earlier.
+    if sys.version_info[1] <= 3:
+        if SYSTEM == 'Linux':
+            os.devnull = '/dev/null'
+        elif SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
+            os.devnull = 'nul'
+        elif SYSTEM == 'Darwin':
+            os.devnull = 'Dev:Null'
+        else:
+            os.devnull = None
 
 
 # Python 3 work-arounds.
