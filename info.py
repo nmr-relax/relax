@@ -22,10 +22,18 @@
 # Module docstring.
 """Module containing the introductory text container."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
-import ctypes
-if hasattr(ctypes, 'windll'):
-    import ctypes.wintypes
+if dep_check.ctypes_module:
+    import ctypes
+    from ctypes import Structure
+    if hasattr(ctypes, 'windll'):
+        import ctypes.wintypes
+else:
+    ctypes = None
+    Structure = object
 import numpy
 from os import environ, waitpid
 import platform
@@ -34,7 +42,6 @@ import sys
 from textwrap import wrap
 
 # relax module imports.
-import dep_check
 from status import Status; status = Status()
 from version import version, version_full
 
@@ -695,7 +702,7 @@ class Info_box(object):
 
 
 
-class MemoryStatusEx(ctypes.Structure):
+class MemoryStatusEx(Structure):
     """Special object for obtaining hardware info in MS Windows."""
 
     if hasattr(ctypes, 'windll'):
