@@ -171,7 +171,7 @@ class Sequence_base_class(UnitTestCase):
         # Test the md5sum.
         digest = file_md5.digest()
         if sys.version_info[0] == 3:
-            self.assertEqual(digest, eval("b'\xc7\xa0\xd0i\xa54|f\xcc1\xd6|\xe7\x82#:'"))
+            self.assertEqual(digest, eval("b'\\xc7\\xa0\\xd0i\\xa54|f\\xcc1\\xd6|\\xe7\\x82#:'"))
         else:
             self.assertEqual(digest, '\xc7\xa0\xd0i\xa54|f\xcc1\xd6|\xe7\x82#:')
 
