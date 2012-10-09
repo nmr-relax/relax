@@ -34,6 +34,10 @@ def execute_sh(cmd, log=sys.stdout, err=sys.stderr):
     for line in pipe.stderr.readlines():
         err.write(line)
 
+    # Flush.
+    log.flush()
+    err.flush()
+
 
 # The Python versions to be tested.
 PY_VER = [
@@ -62,9 +66,9 @@ ERR = open('python_multiversion_test_suite.err', 'w')
 for version in PY_VER:
     # A header.
     header = "\n\n\n\n\n"
-    header += "#################\n"
+    header += "##################\n"
     header += "### Python %s ###\n" % version
-    header += "#################\n\n\n\n"
+    header += "##################\n\n\n\n"
     LOG.write(header)
     ERR.write(header)
 
