@@ -25,6 +25,7 @@ from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -32,6 +33,22 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Peak_lists(SystemTestCase):
     """TestCase class for the functional tests for the support of different peak intensity files."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Peak_lists, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.C_module_exp_fn and methodName in ['test_bug_17276_peak_lists', 'test_ccpn_analysis']:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
