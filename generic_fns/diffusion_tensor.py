@@ -208,7 +208,7 @@ def bmrb_write(star):
             attached_isotope_list.append(None)
 
         # Other info.
-        isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
+        isotope_list.append(int(spin.isotope.strip(string.ascii_letters)))
         element_list.append(spin.element)
 
     # Convert the molecule names into the entity IDs.

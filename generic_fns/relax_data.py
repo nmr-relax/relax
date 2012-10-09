@@ -150,7 +150,7 @@ def bmrb_read(star, sample_conditions=None):
         keys = list(data.keys())
 
         # Sample conditions do not match (remove the $ sign).
-        if 'sample_cond_list_label' in keys and sample_conditions and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
+        if 'sample_cond_list_label' in keys and sample_conditions and data['sample_cond_list_label'].replace('$', '') != sample_conditions:
             continue
 
         # Create the labels.
@@ -332,7 +332,7 @@ def bmrb_write(star):
                 ri_data_err_list[i].append(None)
 
         # Other info.
-        isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
+        isotope_list.append(int(spin.isotope.strip(string.ascii_letters)))
         element_list.append(spin.element)
 
     # Convert the molecule names into the entity IDs.
