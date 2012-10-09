@@ -32,6 +32,9 @@ import dep_check
 # Python module imports.
 if dep_check.bz2_module:
     import bz2
+    from bz2 import BZ2File
+else:
+    BZ2File = object
 if dep_check.gzip_module:
     import gzip
 if dep_check.devnull_import:
@@ -1149,7 +1152,7 @@ class DummyFileObject:
 
 
 
-class Bzip2Fixed(bz2.BZ2File):
+class Bzip2Fixed(BZ2File):
     """Incredibly nasty hack for bzip2 files support in Python 3.0, 3.1 and 3.2."""
 
     def flush(self):

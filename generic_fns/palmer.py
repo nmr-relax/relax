@@ -23,12 +23,17 @@
 """Module for interfacing with Art Palmer's Modelfree 4 program."""
 
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
 from stat import S_IEXEC
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -554,6 +559,10 @@ def execute(dir, force, binary):
 
     # Catch failures and return to the correct directory.
     try:
+        # Python 2.3 and earlier.
+        if Popen == None:
+            raise RelaxError("The subprocess module is not available in this version of Python.")
+
         # Test if the 'mfin' input file exists.
         if not access('mfin', F_OK):
             raise RelaxFileError('mfin input', 'mfin')

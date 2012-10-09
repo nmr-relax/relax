@@ -22,10 +22,15 @@
 # Module docstring.
 """Module for interfacing with Dasha."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from math import pi
 from os import F_OK, access, chdir, getcwd, sep
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -412,6 +417,10 @@ def execute(dir, force, binary):
         # Test if the 'dasha_script' script file exists.
         if not access('dasha_script', F_OK):
             raise RelaxFileError('dasha script', 'dasha_script')
+
+        # Python 2.3 and earlier.
+        if Popen == None:
+            raise RelaxError("The subprocess module is not available in this version of Python.")
 
         # Execute Dasha.
         pipe = Popen(binary, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)

@@ -27,7 +27,10 @@ from copy import deepcopy
 from math import cos, pi, sin
 from numpy import cross, float64, int32, ones, transpose, zeros
 from numpy.linalg import norm, svd
-from operator import itemgetter
+try:
+    from operator import itemgetter
+except ImportError:
+    pass
 from re import search
 import string
 

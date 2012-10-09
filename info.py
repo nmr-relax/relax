@@ -37,7 +37,9 @@ else:
 import numpy
 from os import environ, waitpid
 import platform
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
 
@@ -155,6 +157,10 @@ class Info_box(object):
         @return:        The single line file type information string.
         @rtype:         str
         """
+
+        # Python 2.3 and earlier.
+        if Popen == None:
+            return ''
 
         # MS Windows (has no 'file' command or libmagic, so return nothing).
         if hasattr(ctypes, 'windll'):
@@ -501,6 +507,10 @@ class Info_box(object):
         @return:            The info string.
         @rtype:             str
         """
+
+        # Python 2.3 and earlier.
+        if Popen == None:
+            return ''
 
         # Init.
         text = ''
