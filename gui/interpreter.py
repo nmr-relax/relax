@@ -303,21 +303,22 @@ class Interpreter_thread(Thread):
             # Execution lock.
             status.exec_lock.acquire('gui', mode='interpreter thread')
 
-            # Execute the user function, catching errors.
+            # Execute the user function, catching errors (the nested try-except statements within the try-finally statements are for Python 2.4 and earlier support).
             try:
-                apply(fn, args, kwds)
+                try:
+                    apply(fn, args, kwds)
 
-            # Catch all RelaxErrors.
-            except AllRelaxErrors:
-                instance = sys.exc_info()[1]
+                # Catch all RelaxErrors.
+                except AllRelaxErrors:
+                    instance = sys.exc_info()[1]
 
-                # Display a dialog with the error.
-                wx.CallAfter(gui_raise, instance, raise_flag=False)
+                    # Display a dialog with the error.
+                    wx.CallAfter(gui_raise, instance, raise_flag=False)
 
-            # Handle all other errors.
-            except:
-                # Print the exception.
-                print_exc()
+                # Handle all other errors.
+                except:
+                    # Print the exception.
+                    print_exc()
 
             # Release the lock.
             finally:
