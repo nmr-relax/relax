@@ -2621,12 +2621,12 @@ class Mf(SystemTestCase):
         file.close()
 
         # Read the results file for Python 3.2+.
-        if sys.version_info[0] >= 3 and sys.version_info[0] >= 2:
+        if sys.version_info[0] >= 3 and sys.version_info[1] >= 2:
             file = open_read_file(file_name='final_results_trunc_2.1_py3', dir=path)
 
         # Read the results file for Python 3.1.
-        if sys.version_info[0] >= 3 and sys.version_info[0] == 1:
-            file = open_read_file(file_name='final_results_trunc_1.3_v2', dir=path)
+        elif sys.version_info[0] >= 3 and sys.version_info[1] == 1:
+            file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
 
         # Read the results file for Python 2.7.3+ (excluding Python 3).
         elif dep_check.xml_type == 'internal' and sys.version_info[0] >= 2 and sys.version_info[1] >= 7 and sys.version_info[2] >= 3:
