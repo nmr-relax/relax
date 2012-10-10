@@ -229,7 +229,10 @@ class Mf(SystemTestCase):
             self.assertEqual(type(sub_obj1), type(sub_obj2))
 
             # Check that they are equal (converting to strings to avoid comparison nastiness).
-            self.assertEqual(str(sub_obj1), str(sub_obj2))
+            if isinstance(sub_obj1, dict):
+                self.assertEqual(sub_obj1, sub_obj2)
+            else:
+                self.assertEqual(str(sub_obj1), str(sub_obj2))
 
 
     def test_bug_14872_unicode_selection(self):
