@@ -126,8 +126,9 @@ class Controller(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
 
         # The relax intro printout, to mimic the prompt/script interface.
-        info = Info_box()
-        print(info.intro_text())
+        if not status.test_mode:
+            info = Info_box()
+            print(info.intro_text())
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('controller', self.update_controller, method_name='update_controller')
