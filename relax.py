@@ -30,6 +30,9 @@
 #                                                                             #
 ###############################################################################
 
+# Python 2 and 3 work-arounds.
+import compat
+
 # Dependency checks.
 import dep_check
 
@@ -55,9 +58,6 @@ import version
 
 # Modify the environmental variables.
 putenv('PDBVIEWER', 'vmd')
-
-# Python 2 and 3 work-arounds.
-import compat
 
 
 def start(mode=None, profile_flag=False):

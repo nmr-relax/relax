@@ -80,7 +80,7 @@ class Align_tensor(SystemTestCase):
             self.interpreter.align_tensor.reduction(full_tensor=self.full_list[i], red_tensor=self.red_list[i])
 
         # Reset some values.
-        cdp.align_tensors[2].Axx = 1
+        cdp.align_tensors[2].set(param='Axx', value=1)
 
 
     def test_to_and_from_xml(self):

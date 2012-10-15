@@ -25,6 +25,7 @@ import wx
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import cdp_name
 from status import Status; status = Status()
@@ -38,6 +39,22 @@ from gui.wizard import Wiz_window
 
 class Rx(GuiTestCase):
     """Class for testing various aspects specific to the R1 and R2 analyses."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Rx, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.C_module_exp_fn:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
+
 
     def check_curve_fitting(self):
         """Check the results of the curve-fitting."""

@@ -90,7 +90,9 @@ class Test_scientific(UnitTestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(list(res.atoms.keys()), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+        atom_keys = list(res.atoms.keys())
+        atom_keys.sort()
+        self.assertEqual(atom_keys, ['1HA', '2HA', 'C', 'CA', 'H', 'N', 'O'])   # Sorted key comparison needed as key order is not preserved in Python 3.
 
 
     def test___residue_loop_selection(self):
@@ -114,7 +116,9 @@ class Test_scientific(UnitTestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(list(res.atoms.keys()), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+        atom_keys = list(res.atoms.keys())
+        atom_keys.sort()
+        self.assertEqual(atom_keys, ['1HA', '2HA', 'C', 'CA', 'H', 'N', 'O'])   # Sorted key comparison needed as key order is not preserved in Python 3.
 
 
     def test___residue_loop_selection_no_match(self):

@@ -23,10 +23,6 @@
 """A threaded version of the relax interpreter for use by the GUI."""
 
 # Python module imports.
-try:
-    from queue import Queue
-except ImportError:
-    from Queue import Queue
 from re import search
 import sys
 from threading import Thread
@@ -35,6 +31,7 @@ from traceback import print_exc
 import wx
 
 # relax module imports.
+from compat import Queue
 from prompt import interpreter
 from relax_errors import AllRelaxErrors
 from status import Status; status = Status()
@@ -303,21 +300,22 @@ class Interpreter_thread(Thread):
             # Execution lock.
             status.exec_lock.acquire('gui', mode='interpreter thread')
 
-            # Execute the user function, catching errors.
+            # Execute the user function, catching errors (the nested try-except statements within the try-finally statements are for Python 2.4 and earlier support).
             try:
-                apply(fn, args, kwds)
+                try:
+                    apply(fn, args, kwds)
 
-            # Catch all RelaxErrors.
-            except AllRelaxErrors:
-                instance = sys.exc_info()[1]
+                # Catch all RelaxErrors.
+                except AllRelaxErrors:
+                    instance = sys.exc_info()[1]
 
-                # Display a dialog with the error.
-                wx.CallAfter(gui_raise, instance, raise_flag=False)
+                    # Display a dialog with the error.
+                    wx.CallAfter(gui_raise, instance, raise_flag=False)
 
-            # Handle all other errors.
-            except:
-                # Print the exception.
-                print_exc()
+                # Handle all other errors.
+                except:
+                    # Print the exception.
+                    print_exc()
 
             # Release the lock.
             finally:

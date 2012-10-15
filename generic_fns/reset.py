@@ -19,6 +19,13 @@
 #                                                                             #
 ###############################################################################
 
+# Dependencies.
+import dep_check
+
+# Python module imports.
+if dep_check.wx_module:
+    import wx
+
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 
@@ -28,3 +35,15 @@ def reset():
 
     # Run the relax data storage object reset method.
     ds.__reset__()
+
+    # Clean up and reset the GUI.
+    if dep_check.wx_module:
+        # The wx application.
+        app = wx.GetApp()
+
+        # Nothing to do.
+        if app == None or not hasattr(app, 'gui'):
+            return
+
+        # Call the GUI reset.
+        app.gui.reset()

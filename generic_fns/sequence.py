@@ -243,12 +243,13 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         create_molecule(mol_name=mol_name, pipe=pipe)
 
     # A new residue.
-    if not return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe):
+    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)
+    if not curr_res or ((res_num != None and curr_res.num != res_num) or (res_name != None and curr_res.name != res_name)):
         create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
 
     # A new spin.
     curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
-    if not curr_spin:
+    if not curr_spin or ((spin_num != None and curr_spin.num != spin_num) or (spin_name != None and curr_spin.name != spin_name)):
         # Add the spin.
         curr_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name, pipe=pipe)
 

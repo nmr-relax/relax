@@ -1420,12 +1420,17 @@ class Frame_order(API_base, API_common):
 
         # Loop over the reduced tensors.
         for i, tensor in self._tensor_loop(red=True):
-            # Set the reduced tensor simulation data.
-            tensor.Axx_sim = sim_data[5*i + 0]
-            tensor.Ayy_sim = sim_data[5*i + 1]
-            tensor.Axy_sim = sim_data[5*i + 2]
-            tensor.Axz_sim = sim_data[5*i + 3]
-            tensor.Ayz_sim = sim_data[5*i + 4]
+            # Set the simulation number.
+            tensor.set_sim_num(cdp.sim_number)
+
+            # Loop over the simulations.
+            for j in range(cdp.sim_number):
+                # Set the reduced tensor simulation data.
+                tensor.set(param='Axx', value=sim_data[5*i + 0][j], category='sim', sim_index=j)
+                tensor.set(param='Ayy', value=sim_data[5*i + 1][j], category='sim', sim_index=j)
+                tensor.set(param='Axy', value=sim_data[5*i + 2][j], category='sim', sim_index=j)
+                tensor.set(param='Axz', value=sim_data[5*i + 3][j], category='sim', sim_index=j)
+                tensor.set(param='Ayz', value=sim_data[5*i + 4][j], category='sim', sim_index=j)
 
 
     def sim_return_param(self, model_info, index):

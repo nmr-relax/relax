@@ -22,9 +22,14 @@
 # Module docstring.
 """Module for interfacing with Molmol."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from os import sep
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 from time import sleep
 
 # relax module imports.
@@ -83,6 +88,10 @@ class Molmol:
 
         # Test that the Molmol binary exists.
         test_binary('molmol')
+
+        # Python 2.3 and earlier.
+        if Popen == None:
+            raise RelaxError("The subprocess module is not available in this version of Python.")
 
         # Open Molmol as a pipe.
         self.molmol = Popen(['molmol', '-f', '-'], stdin=PIPE).stdin

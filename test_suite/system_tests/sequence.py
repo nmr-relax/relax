@@ -267,3 +267,34 @@ class Sequence(SystemTestCase):
 
         # Read the sequence.
         self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+
+
+    def test_sequence_copy(self):
+        """Test the sequence.copy user function."""
+
+        # First create some spins.
+        self.interpreter.spin.create(spin_name='A', spin_num=1, res_num=1)
+        self.interpreter.spin.create(spin_name='A', spin_num=2, res_num=1)
+        self.interpreter.spin.create(spin_name='B', spin_num=3, res_num=1)
+        self.interpreter.spin.create(spin_name='B2', spin_num=4, res_num=1)
+        self.interpreter.spin.create(spin_name='A', spin_num=1, res_num=2)
+        self.interpreter.spin.create(spin_name='A', spin_num=2, res_num=2)
+        self.interpreter.spin.create(spin_name='B', spin_num=3, res_num=2)
+        self.interpreter.spin.create(spin_name='B2', spin_num=4, res_num=2)
+
+        # Create a new data pipe to copy to.
+        self.interpreter.pipe.create('seq copy test', 'mf')
+
+        # Copy the sequence.
+        self.interpreter.sequence.copy(pipe_from='mf')
+
+        # Alias the data pipes.
+        pipe1 = ds['mf']
+        pipe2 = ds['seq copy test']
+
+        # Check the residue count.
+        self.assertEqual(len(pipe1.mol[0].res), len(pipe2.mol[0].res))
+
+        # Check the spin counts.
+        for i in range(len(pipe1.mol[0].res)):
+            self.assertEqual(len(pipe1.mol[0].res[i].spin), len(pipe2.mol[0].res[i].spin))

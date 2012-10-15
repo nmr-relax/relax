@@ -513,6 +513,26 @@ class Main(wx.Frame):
         open_file(file)
 
 
+    def reset(self):
+        """Reset the GUI."""
+
+        # Close some GUI windows, if open.
+        windows = ['pipe_editor', 'relax_prompt', 'results_viewer', 'spin_viewer']
+        for window in windows:
+            if hasattr(self, window):
+                # Get the object.
+                win_obj = getattr(self, window)
+
+                # Close the window.
+                win_obj.Close()
+
+        # Flush all wx events to make sure the GUI is ready for the next test.
+        wx.Yield()
+
+        # Reset the relax controller.
+        self.controller.reset()
+
+
     def run_test_suite(self, event=None, categories=['system', 'unit', 'gui']):
         """Execute the full test suite.
 

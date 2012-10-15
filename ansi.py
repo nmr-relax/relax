@@ -22,8 +22,14 @@
 # Module docstring.
 """Module containing ANSI escape sequences and helper functions for colour terminal output."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
-import ctypes
+if dep_check.ctypes_module:
+    import ctypes
+else:
+    ctypes = None
 import sys
 
 # The relax prompt.

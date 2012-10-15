@@ -22,9 +22,14 @@
 # Module docstring.
 """Module for relax version information."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from os import F_OK, access, sep
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 
 # relax module imports.
 from status import Status; status = Status()
@@ -42,6 +47,10 @@ def revision():
 
     # Does the base directory exist (i.e. is this a checked out copy).
     if not access(status.install_path+sep+'.svn', F_OK):
+        return
+
+    # Python 2.3 and earlier.
+    if Popen == None:
         return
 
     # Try to run 'svn info'.
@@ -70,6 +79,10 @@ def url():
 
     # Does the base directory exist (i.e. is this a checked out copy).
     if not access(status.install_path+sep+'.svn', F_OK):
+        return
+
+    # Python 2.3 and earlier.
+    if Popen == None:
         return
 
     # Try to run 'svn info'.

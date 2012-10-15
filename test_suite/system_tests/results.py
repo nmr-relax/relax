@@ -36,7 +36,7 @@ class Results(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create a data pipe.
-        self.interpreter.pipe.create('test', 'relax_fit')
+        self.interpreter.pipe.create('test', 'mf')
 
         # Create a temporary file name.
         ds.tmpfile = mktemp()
