@@ -23,10 +23,6 @@
 """A threaded version of the relax interpreter for use by the GUI."""
 
 # Python module imports.
-try:
-    from queue import Queue
-except ImportError:
-    from Queue import Queue
 from re import search
 import sys
 from threading import Thread
@@ -35,6 +31,7 @@ from traceback import print_exc
 import wx
 
 # relax module imports.
+from compat import Queue
 from prompt import interpreter
 from relax_errors import AllRelaxErrors
 from status import Status; status = Status()

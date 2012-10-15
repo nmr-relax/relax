@@ -26,15 +26,12 @@
 from os import F_OK, access
 from os.path import sep
 import platform
-try:
-    from queue import Queue
-except ImportError:
-    from Queue import Queue
 from re import search
 import sys
 from threading import Lock, RLock
 
 # relax module imports.
+from compat import Queue
 from relax_errors import RelaxError
 
 

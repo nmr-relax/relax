@@ -24,15 +24,12 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
-try:
-    from queue import Queue
-except ImportError:
-    from Queue import Queue
 import sys
 import wx
 import wx.stc
 
 # relax module imports.
+from compat import Queue
 from generic_fns.pipes import cdp_name
 from relax_io import SplitIO
 from status import Status; status = Status()
