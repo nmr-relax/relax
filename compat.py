@@ -31,6 +31,7 @@ if sys.version_info[0] == 2:
     from Queue import Queue as Queue2
 else:
     from queue import Queue as Queue3
+    Queue2 = Queue3
 import threading
 
 
