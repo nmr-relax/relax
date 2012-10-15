@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 Edward d'Auvergne
+ * Copyright (C) 2006-2012 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
