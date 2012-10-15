@@ -22,6 +22,7 @@
 # Python module imports.
 import os
 import sys
+import wx
 
 # Dependency checks.
 import dep_check
@@ -36,6 +37,8 @@ from test_suite.system_tests import System_test_runner
 from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
+from gui.interpreter import Interpreter
+from gui.relax_gui import Main
 from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
@@ -109,8 +112,27 @@ class Test_suite_runner:
 
         # Run the tests.
         if dep_check.wx_module:
+            # Set up the GUI if needed (i.e. not in GUI mode already).
+            app = wx.GetApp()
+            if app == None:
+                # Initialise.
+                app = wx.App(redirect=False)
+
+                # Build the GUI.
+                app.gui = Main(parent=None, id=-1, title="")
+
+            # Execute the GUI tests.
             gui_runner = GUI_test_runner()
             self.gui_result = gui_runner.run(self.tests, runner=self.runner)
+
+            # Clean up for the GUI, if not in GUI mode.
+            if status.test_mode:
+                # Terminate the interpreter thread to allow the tests to cleanly exit.
+                interpreter = Interpreter()
+                interpreter.exit()
+
+                # Stop the GUI main loop.
+                app.ExitMainLoop()
 
         # No wx module installed.
         else:

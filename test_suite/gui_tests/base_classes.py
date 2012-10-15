@@ -185,20 +185,8 @@ class GuiTestCase(TestCase):
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()
 
-        # Get the wx app, if it exists.
+        # Get the wx app.
         self.app = wx.GetApp()
-
-        # Create the app if needed.
-        if self.app == None:
-            # Initialise.
-            self.app = wx.App(redirect=False)
-
-            # relax GUI imports (here to prevent a circular import from the test suite in the GUI).
-            if dep_check.wx_module:
-                from gui.relax_gui import Main
-
-            # Build the GUI.
-            self.app.gui = Main(parent=None, id=-1, title="")
 
 
     def tearDown(self):
