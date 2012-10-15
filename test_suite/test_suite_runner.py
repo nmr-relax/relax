@@ -19,13 +19,14 @@
 #                                                                             #
 ###############################################################################
 
+# Dependency checks.
+import dep_check
+
 # Python module imports.
 import os
 import sys
-import wx
-
-# Dependency checks.
-import dep_check
+if dep_check.wx_module:
+    import wx
 
 # Formatting.
 from test_suite.formatting import subtitle, summary_line, title
@@ -37,8 +38,9 @@ from test_suite.system_tests import System_test_runner
 from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
-from gui.interpreter import Interpreter
-from gui.relax_gui import Main
+if dep_check.wx_module:
+    from gui.interpreter import Interpreter
+    from gui.relax_gui import Main
 from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
