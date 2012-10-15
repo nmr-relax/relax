@@ -451,8 +451,9 @@ class Main(wx.Frame):
             if hasattr(self, 'taskbar_icon'):
                 self.taskbar_icon.Destroy()
 
-            # End application.
-            wx.Exit()
+            # End the GUI main loop.
+            app = wx.GetApp()
+            app.ExitMainLoop()
 
 
     def init_data(self):
