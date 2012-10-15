@@ -55,12 +55,16 @@ This script is split into multiple stages:
         Q_total^2 = Q_NOE^2 + Q_RDC^2.
 """
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from math import pi, sqrt
 from os import F_OK, access, getcwd, sep
 from random import randint
 from re import search
-from subprocess import PIPE, Popen
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
