@@ -27,7 +27,6 @@
 # Python module imports.
 from math import sqrt
 from re import split
-import string
 import sys
 from warnings import warn
 
@@ -777,9 +776,9 @@ def intensity_nmrview(file_data=None, int_col=None):
         # The residue number
         res_num = ''
         try:
-            res_num = string.strip(line[1], '{')
-            res_num = string.strip(res_num, '}')
-            res_num = string.split(res_num, '.')
+            res_num = line[1].strip('{')
+            res_num = res_num.strip('}')
+            res_num = res_num.split('.')
             res_num = res_num[0]
         except ValueError:
             raise RelaxError("The peak list is invalid.")
@@ -787,15 +786,15 @@ def intensity_nmrview(file_data=None, int_col=None):
         # Nuclei names.
         x_name = ''
         if line[8]!='{}':
-            x_name = string.strip(line[8], '{')
-            x_name = string.strip(x_name, '}')
-            x_name = string.split(x_name, '.')
+            x_name = line[8].strip('{')
+            x_name = x_name.strip('}')
+            x_name = x_name.split('.')
             x_name = x_name[1]
         h_name = ''
         if line[1]!='{}':
-            h_name = string.strip(line[1], '{')
-            h_name = string.strip(h_name, '}')
-            h_name = string.split(h_name, '.')
+            h_name = line[1].strip('{')
+            h_name = h_name.strip('}')
+            h_name = h_name.split('.')
             h_name = h_name[1]
 
         # Intensity.

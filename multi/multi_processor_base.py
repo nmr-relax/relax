@@ -33,10 +33,6 @@ including, for example:
 """
 
 # Python module imports.
-try:
-    import queue
-except ImportError:
-    import Queue as queue
 from copy import copy
 import math
 import sys

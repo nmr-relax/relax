@@ -23,12 +23,17 @@
 """Module for interfacing with Art Palmer's Modelfree 4 program."""
 
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
 from stat import S_IEXEC
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -554,6 +559,10 @@ def execute(dir, force, binary):
 
     # Catch failures and return to the correct directory.
     try:
+        # Python 2.3 and earlier.
+        if Popen == None:
+            raise RelaxError("The subprocess module is not available in this version of Python.")
+
         # Test if the 'mfin' input file exists.
         if not access('mfin', F_OK):
             raise RelaxFileError('mfin input', 'mfin')
@@ -597,10 +606,22 @@ def execute(dir, force, binary):
         # Close the pipe.
         pipe.stdin.close()
 
-        # Write to stdout and stderr.
+        # Write to stdout.
         for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
             sys.stdout.write(line)
+
+        # Write to stderr.
         for line in pipe.stderr.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
             sys.stderr.write(line)
 
     # Failure.
@@ -672,7 +693,7 @@ def extract(dir, spin_id=None):
             tm_row = mfout_lines[diff_pos].split()
 
             # Set the params.
-            cdp.diff_tensor.tm = float(tm_row[2])
+            cdp.diff_tensor.set(param='tm', value=float(tm_row[2]))
 
         # Spheroid diffusion tensor.
         else:

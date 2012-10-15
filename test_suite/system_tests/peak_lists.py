@@ -25,6 +25,7 @@ from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -32,6 +33,22 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Peak_lists(SystemTestCase):
     """TestCase class for the functional tests for the support of different peak intensity files."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Peak_lists, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.C_module_exp_fn and methodName in ['test_bug_17276_peak_lists', 'test_ccpn_analysis']:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -151,8 +168,8 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spectrum.read_intensities(file="cNTnC.xpk", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], -0.1694)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities.values()[0], -0.1142)
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], -0.1694)
+        self.assertEqual(list(cdp.mol[0].res[1].spin[0].intensities.values())[0], -0.1142)
 
 
     def test_read_peak_list_sparky(self):
@@ -169,10 +186,10 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spectrum.read_intensities(file="ref_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 6262)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities.values()[0], 148614)
-        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities.values()[0], 166842)
-        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities.values()[0], 128690)
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], 6262)
+        self.assertEqual(list(cdp.mol[0].res[1].spin[0].intensities.values())[0], 148614)
+        self.assertEqual(list(cdp.mol[0].res[2].spin[0].intensities.values())[0], 166842)
+        self.assertEqual(list(cdp.mol[0].res[3].spin[0].intensities.values())[0], 128690)
 
 
     def test_read_peak_list_xeasy(self):
@@ -206,25 +223,25 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[ 0].spin[0].intensities.values()[0], 9.714e+03)
-        self.assertEqual(cdp.mol[0].res[ 1].spin[0].intensities.values()[0], 7.919e+03)
-        self.assertEqual(cdp.mol[0].res[ 2].spin[0].intensities.values()[0], 1.356e+04)
-        self.assertEqual(cdp.mol[0].res[ 3].spin[0].intensities.values()[0], 9.884e+03)
-        self.assertEqual(cdp.mol[0].res[ 4].spin[0].intensities.values()[0], 2.041e+04)
-        self.assertEqual(cdp.mol[0].res[ 5].spin[0].intensities.values()[0], 9.305e+03)
-        self.assertEqual(cdp.mol[0].res[ 6].spin[0].intensities.values()[0], 3.154e+04)
-        self.assertEqual(cdp.mol[0].res[ 7].spin[0].intensities.values()[0], 9.180e+03)
-        self.assertEqual(cdp.mol[0].res[ 9].spin[0].intensities.values()[0], 1.104e+04)
-        self.assertEqual(cdp.mol[0].res[10].spin[0].intensities.values()[0], 7.680e+03)
-        self.assertEqual(cdp.mol[0].res[11].spin[0].intensities.values()[0], 5.206e+03)
-        self.assertEqual(cdp.mol[0].res[12].spin[0].intensities.values()[0], 2.863e+04)
-        self.assertEqual(cdp.mol[0].res[14].spin[0].intensities.values()[0], 9.271e+03)
-        self.assertEqual(cdp.mol[0].res[15].spin[0].intensities.values()[0], 7.919e+03)
-        self.assertEqual(cdp.mol[0].res[16].spin[0].intensities.values()[0], 9.962e+03)
-        self.assertEqual(cdp.mol[0].res[17].spin[0].intensities.values()[0], 1.260e+04)
-        self.assertEqual(cdp.mol[0].res[18].spin[0].intensities.values()[0], 1.545e+04)
-        self.assertEqual(cdp.mol[0].res[19].spin[0].intensities.values()[0], 1.963e+04)
-        self.assertEqual(cdp.mol[0].res[20].spin[0].intensities.values()[0], 1.918e+04)
+        self.assertEqual(list(cdp.mol[0].res[ 0].spin[0].intensities.values())[0], 9.714e+03)
+        self.assertEqual(list(cdp.mol[0].res[ 1].spin[0].intensities.values())[0], 7.919e+03)
+        self.assertEqual(list(cdp.mol[0].res[ 2].spin[0].intensities.values())[0], 1.356e+04)
+        self.assertEqual(list(cdp.mol[0].res[ 3].spin[0].intensities.values())[0], 9.884e+03)
+        self.assertEqual(list(cdp.mol[0].res[ 4].spin[0].intensities.values())[0], 2.041e+04)
+        self.assertEqual(list(cdp.mol[0].res[ 5].spin[0].intensities.values())[0], 9.305e+03)
+        self.assertEqual(list(cdp.mol[0].res[ 6].spin[0].intensities.values())[0], 3.154e+04)
+        self.assertEqual(list(cdp.mol[0].res[ 7].spin[0].intensities.values())[0], 9.180e+03)
+        self.assertEqual(list(cdp.mol[0].res[ 9].spin[0].intensities.values())[0], 1.104e+04)
+        self.assertEqual(list(cdp.mol[0].res[10].spin[0].intensities.values())[0], 7.680e+03)
+        self.assertEqual(list(cdp.mol[0].res[11].spin[0].intensities.values())[0], 5.206e+03)
+        self.assertEqual(list(cdp.mol[0].res[12].spin[0].intensities.values())[0], 2.863e+04)
+        self.assertEqual(list(cdp.mol[0].res[14].spin[0].intensities.values())[0], 9.271e+03)
+        self.assertEqual(list(cdp.mol[0].res[15].spin[0].intensities.values())[0], 7.919e+03)
+        self.assertEqual(list(cdp.mol[0].res[16].spin[0].intensities.values())[0], 9.962e+03)
+        self.assertEqual(list(cdp.mol[0].res[17].spin[0].intensities.values())[0], 1.260e+04)
+        self.assertEqual(list(cdp.mol[0].res[18].spin[0].intensities.values())[0], 1.545e+04)
+        self.assertEqual(list(cdp.mol[0].res[19].spin[0].intensities.values())[0], 1.963e+04)
+        self.assertEqual(list(cdp.mol[0].res[20].spin[0].intensities.values())[0], 1.918e+04)
 
 
     def test_read_peak_list_xeasy_2(self):
@@ -238,7 +255,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 1.532e+04)
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], 1.532e+04)
 
 
     def test_read_peak_list_xeasy_3(self):
@@ -252,7 +269,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', int_method='height')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 6.877e+03)
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], 6.877e+03)
 
 
     def test_read_peak_list_xeasy_4(self):
@@ -266,4 +283,4 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 7.123e+03)
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], 7.123e+03)

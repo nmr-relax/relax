@@ -90,7 +90,7 @@ def angles_uniform(inc=None):
     # Generate the increment values of v.
     v = zeros(inc/2+2, float64)
     val = 1.0 / float(inc/2)
-    for i in range(1, inc/2+1):
+    for i in range(1, int(inc/2)+1):
         v[i] = float(i-1) * val + val/2.0
     v[-1] = 1.0
 

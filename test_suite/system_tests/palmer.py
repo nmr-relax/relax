@@ -27,6 +27,7 @@ from tempfile import mkdtemp
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
 from relax_errors import RelaxError
@@ -37,6 +38,22 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Palmer(SystemTestCase):
     """Class for testing various aspects specific to model-free analysis using the program 'Modelfree4'."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the subprocess module is not available (Python 2.3 and earlier).
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Palmer, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.subprocess_module:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'subprocess', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""

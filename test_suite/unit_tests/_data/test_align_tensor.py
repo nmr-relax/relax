@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from numpy import array
 from unittest import TestCase
 
 # relax module imports.
-from data.align_tensor import AlignTensorData, AlignTensorSimList
+from data.align_tensor import AlignTensorData
 from generic_fns.align_tensor import kappa
 from relax_errors import RelaxError
 
@@ -72,19 +72,15 @@ class Test_align_tensor(TestCase):
         Axz = -1.89157 / kappa() * 1.02e-10**3
         Ayz = 19.2561 / kappa() * 1.02e-10**3
 
-        # Set the MC sim alignment parameter lists.
-        self.align_data.Axx_sim = AlignTensorSimList('Axx', self.align_data)
-        self.align_data.Ayy_sim = AlignTensorSimList('Ayy', self.align_data)
-        self.align_data.Axy_sim = AlignTensorSimList('Axy', self.align_data)
-        self.align_data.Axz_sim = AlignTensorSimList('Axz', self.align_data)
-        self.align_data.Ayz_sim = AlignTensorSimList('Ayz', self.align_data)
+        # Set the number of MC sims.
+        self.align_data.set_sim_num(1)
 
-        # Append the values.
-        self.align_data.Axx_sim.append(Axx)
-        self.align_data.Ayy_sim.append(Ayy)
-        self.align_data.Axy_sim.append(Axy)
-        self.align_data.Axz_sim.append(Axz)
-        self.align_data.Ayz_sim.append(Ayz)
+        # Set the values.
+        self.align_data.set(param='Axx', value=Axx, category='sim', sim_index=0)
+        self.align_data.set(param='Ayy', value=Ayy, category='sim', sim_index=0)
+        self.align_data.set(param='Axy', value=Axy, category='sim', sim_index=0)
+        self.align_data.set(param='Axz', value=Axz, category='sim', sim_index=0)
+        self.align_data.set(param='Ayz', value=Ayz, category='sim', sim_index=0)
 
         # Test the set values.
         self.assertEqual(self.align_data.Axx_sim[0], Axx)
@@ -133,11 +129,11 @@ class Test_align_tensor(TestCase):
         Ayz = 0.2 / kappa() * 1.02e-10**3
 
         # Set the diffusion parameters.
-        self.align_data.Axx_err = Axx
-        self.align_data.Ayy_err = Ayy
-        self.align_data.Axy_err = Axy
-        self.align_data.Axz_err = Axz
-        self.align_data.Ayz_err = Ayz
+        self.align_data.set(param='Axx', value=Axx, category='err')
+        self.align_data.set(param='Ayy', value=Ayy, category='err')
+        self.align_data.set(param='Axy', value=Axy, category='err')
+        self.align_data.set(param='Axz', value=Axz, category='err')
+        self.align_data.set(param='Ayz', value=Ayz, category='err')
 
         # Test the set values.
         self.assertEqual(self.align_data.Axx_err, Axx)
@@ -176,11 +172,11 @@ class Test_align_tensor(TestCase):
         Ayz = 19.2561 / kappa() * 1.02e-10**3
 
         # Set the diffusion parameters.
-        self.align_data.Axx = Axx
-        self.align_data.Ayy = Ayy
-        self.align_data.Axy = Axy
-        self.align_data.Axz = Axz
-        self.align_data.Ayz = Ayz
+        self.align_data.set(param='Axx', value=Axx)
+        self.align_data.set(param='Ayy', value=Ayy)
+        self.align_data.set(param='Axy', value=Axy)
+        self.align_data.set(param='Axz', value=Axz)
+        self.align_data.set(param='Ayz', value=Ayz)
 
         # Test the set values.
         self.assertEqual(self.align_data.Axx, Axx)
@@ -219,19 +215,15 @@ class Test_align_tensor(TestCase):
             - Ayz: 0.2 Hz
         """
 
-        # Set the MC sim alignment parameter lists.
-        self.align_data.Axx_sim = AlignTensorSimList('Axx', self.align_data)
-        self.align_data.Ayy_sim = AlignTensorSimList('Ayy', self.align_data)
-        self.align_data.Axy_sim = AlignTensorSimList('Axy', self.align_data)
-        self.align_data.Axz_sim = AlignTensorSimList('Axz', self.align_data)
-        self.align_data.Ayz_sim = AlignTensorSimList('Ayz', self.align_data)
+        # Set the number of MC sims.
+        self.align_data.set_sim_num(1)
 
         # Append the initial values.
-        self.align_data.Axx_sim.append(-16.6278 / kappa() * 1.02e-10**3)
-        self.align_data.Ayy_sim.append(6.13037 / kappa() * 1.02e-10**3)
-        self.align_data.Axy_sim.append(7.65639 / kappa() * 1.02e-10**3)
-        self.align_data.Axz_sim.append(-1.89157 / kappa() * 1.02e-10**3)
-        self.align_data.Ayz_sim.append(19.2561 / kappa() * 1.02e-10**3)
+        self.align_data.set(param='Axx', value=-16.6278 / kappa() * 1.02e-10**3, category='sim', sim_index=0)
+        self.align_data.set(param='Ayy', value=6.13037 / kappa() * 1.02e-10**3, category='sim', sim_index=0)
+        self.align_data.set(param='Axy', value=7.65639 / kappa() * 1.02e-10**3, category='sim', sim_index=0)
+        self.align_data.set(param='Axz', value=-1.89157 / kappa() * 1.02e-10**3, category='sim', sim_index=0)
+        self.align_data.set(param='Ayz', value=19.2561 / kappa() * 1.02e-10**3, category='sim', sim_index=0)
 
         # The new MC sim parameter values.
         Axx = 0.3 / kappa() * 1.02e-10**3
@@ -241,11 +233,11 @@ class Test_align_tensor(TestCase):
         Ayz = 0.2 / kappa() * 1.02e-10**3
 
         # Set the MC sim parameter values (overwriting the initial values).
-        self.align_data.Axx_sim[0] = Axx
-        self.align_data.Ayy_sim[0] = Ayy
-        self.align_data.Axy_sim[0] = Axy
-        self.align_data.Axz_sim[0] = Axz
-        self.align_data.Ayz_sim[0] = Ayz
+        self.align_data.set(param='Axx', value=Axx, category='sim', sim_index=0)
+        self.align_data.set(param='Ayy', value=Ayy, category='sim', sim_index=0)
+        self.align_data.set(param='Axy', value=Axy, category='sim', sim_index=0)
+        self.align_data.set(param='Axz', value=Axz, category='sim', sim_index=0)
+        self.align_data.set(param='Ayz', value=Ayz, category='sim', sim_index=0)
 
         # Test the set values.
         self.assertEqual(self.align_data.Axx_sim[0], Axx)
@@ -269,7 +261,7 @@ class Test_align_tensor(TestCase):
         """Test the setting of the Axx parameter."""
 
         # Set the Axx value to 0.0001.
-        self.align_data.Axx = 0.0001
+        self.align_data.set(param='Axx', value=0.0001)
 
         # Test that the Axx parameter has been set correctly.
         self.assert_(hasattr(self.align_data, 'Axx'))
