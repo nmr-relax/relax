@@ -27,10 +27,6 @@ from copy import deepcopy
 from math import cos, pi, sin
 from numpy import cross, float64, int32, ones, transpose, zeros
 from numpy.linalg import norm, svd
-try:
-    from operator import itemgetter
-except ImportError:
-    pass
 from re import search
 import string
 
@@ -1693,16 +1689,16 @@ def tensor_eigen_system(tensor):
         D_diag[i, i] = Di[i]
 
     # Reordering structure.
-    tup_struct = []
+    reorder_data = []
     for i in range(3):
-        tup_struct.append((i, Di[i]))
+        reorder_data.append([Di[i], i])
+    reorder_data.sort()
 
     # The indices.
-    reorder_data = sorted(tup_struct, key=itemgetter(1))
     reorder = zeros(3, int)
     Di_sort = zeros(3, float)
     for i in range(3):
-        reorder[i], Di_sort[i] = reorder_data[i]
+        Di_sort[i], reorder[i] = reorder_data[i]
 
     # Reorder columns.
     R_new = zeros((3, 3), float64)
