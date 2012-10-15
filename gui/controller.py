@@ -24,15 +24,12 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
-try:
-    from queue import Queue
-except ImportError:
-    from Queue import Queue
 import sys
 import wx
 import wx.stc
 
 # relax module imports.
+from compat import Queue
 from generic_fns.pipes import cdp_name
 from relax_io import SplitIO
 from status import Status; status = Status()
@@ -126,8 +123,9 @@ class Controller(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
 
         # The relax intro printout, to mimic the prompt/script interface.
-        info = Info_box()
-        print(info.intro_text())
+        if not status.test_mode:
+            info = Info_box()
+            print(info.intro_text())
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('controller', self.update_controller, method_name='update_controller')
@@ -332,6 +330,30 @@ class Controller(wx.Frame):
         if not status.exec_lock.locked() and self.timer.IsRunning():
             self.timer.Stop()
             self.update_gauge()
+
+
+    def reset(self):
+        """Reset the relax controller to its initial state."""
+
+        # Stop the timer.
+        if self.timer.IsRunning():
+            self.timer.Stop()
+
+        # Reset the Rx gauges.
+        if hasattr(self, 'mc_gauge_rx'):
+            wx.CallAfter(self.mc_gauge_rx.SetValue, 0)
+
+        # Reset the model-free gauges.
+        if hasattr(self, 'mc_gauge_mf'):
+            wx.CallAfter(self.mc_gauge_mf.SetValue, 0)
+        if hasattr(self, 'progress_gauge_mf'):
+            wx.CallAfter(self.progress_gauge_mf.SetValue, 0)
+
+        # Reset the main gauge.
+        wx.CallAfter(self.main_gauge.SetValue, 0)
+
+        # Clear the log.
+        wx.CallAfter(self.log_panel.clear)
 
 
     def setup_frame(self):
@@ -689,6 +711,19 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.on_goto_start(event)
         elif event.ControlDown() and event.GetKeyCode() == 317:
             self.on_goto_end(event)
+
+
+    def clear(self):
+        """Remove all text from the log."""
+
+        # Turn of the read only state.
+        self.SetReadOnly(False)
+
+        # Remove all text.
+        self.ClearAll()
+
+        # Make the control read only again.
+        self.SetReadOnly(True)
 
 
     def find(self, event):

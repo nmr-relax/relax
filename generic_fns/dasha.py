@@ -22,10 +22,15 @@
 # Module docstring.
 """Module for interfacing with Dasha."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from math import pi
 from os import F_OK, access, chdir, getcwd, sep
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -413,6 +418,10 @@ def execute(dir, force, binary):
         if not access('dasha_script', F_OK):
             raise RelaxFileError('dasha script', 'dasha_script')
 
+        # Python 2.3 and earlier.
+        if Popen == None:
+            raise RelaxError("The subprocess module is not available in this version of Python.")
+
         # Execute Dasha.
         pipe = Popen(binary, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
@@ -421,15 +430,32 @@ def execute(dir, force, binary):
         lines = script.readlines()
         script.close()
         for line in lines:
+            # Encode to a Python 3 byte array.
+            if hasattr(line, 'encode'):
+                line = line.encode()
+
+            # Write out.
             pipe.stdin.write(line)
 
         # Close the pipe.
         pipe.stdin.close()
 
-        # Write to stdout and stderr.
+        # Write to stdout.
         for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
             sys.stdout.write(line)
+
+        # Write to stderr.
         for line in pipe.stderr.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
             sys.stderr.write(line)
 
     # Failure.

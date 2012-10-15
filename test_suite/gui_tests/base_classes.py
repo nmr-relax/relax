@@ -241,16 +241,3 @@ class GuiTestCase(TestCase):
 
         # Reset relax.
         reset()
-
-        # Close some GUI windows, if open.
-        windows = ['pipe_editor', 'relax_prompt', 'results_viewer', 'spin_viewer']
-        for window in windows:
-            if hasattr(self.app.gui, window):
-                # Get the object.
-                win_obj = getattr(self.app.gui, window)
-
-                # Close the window.
-                win_obj.Close()
-
-        # Flush all wx events to make sure the GUI is ready for the next test.
-        wx.Yield()

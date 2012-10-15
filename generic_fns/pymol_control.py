@@ -31,7 +31,9 @@ if dep_check.pymol_module:
 from math import pi
 from numpy import float64, transpose, zeros
 from os import sep
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 from tempfile import mktemp
 from time import sleep
 
@@ -113,6 +115,10 @@ class Pymol:
         if self.exec_mode == 'external':
             # Test that the PyMOL binary exists.
             test_binary('pymol')
+
+            # Python 2.3 and earlier.
+            if Popen == None:
+                raise RelaxError("The subprocess module is not available in this version of Python.")
 
             # Open PyMOL as a pipe.
             self.pymol = Popen(['pymol', '-qpK'], stdin=PIPE).stdin

@@ -89,7 +89,7 @@ class Bmrb:
                 return item[1]
 
             # No whitespace.
-            if string.replace(item[0], ' ', '') == name:
+            if item[0].replace(' ', '') == name:
                 return item[1]
 
         # Should not be here!
@@ -116,7 +116,7 @@ class Bmrb:
             keys = data.keys()
 
             # Sample conditions do not match (remove the $ sign).
-            if 'sample_cond_list_label' in keys and sample_conditions and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
+            if 'sample_cond_list_label' in keys and sample_conditions and data['sample_cond_list_label'].replace('$', '') != sample_conditions:
                 continue
 
             # Global data.
@@ -485,7 +485,7 @@ class Bmrb:
 
             # The nuclear isotope.
             if hasattr(spin, 'isotope'):
-                isotope_list.append(int(string.strip(spin.isotope, string.ascii_letters)))
+                isotope_list.append(int(spin.isotope.strip(string.ascii_letters)))
             else:
                 isotope_list.append(None)
 

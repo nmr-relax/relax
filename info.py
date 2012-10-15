@@ -22,19 +22,28 @@
 # Module docstring.
 """Module containing the introductory text container."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
-import ctypes
-if hasattr(ctypes, 'windll'):
-    import ctypes.wintypes
+if dep_check.ctypes_module:
+    import ctypes
+    from ctypes import Structure
+    if hasattr(ctypes, 'windll'):
+        import ctypes.wintypes
+else:
+    ctypes = None
+    Structure = object
 import numpy
 from os import environ, waitpid
 import platform
-from subprocess import PIPE, Popen
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
 
 # relax module imports.
-import dep_check
 from status import Status; status = Status()
 from version import version, version_full
 
@@ -148,6 +157,10 @@ class Info_box(object):
         @return:        The single line file type information string.
         @rtype:         str
         """
+
+        # Python 2.3 and earlier.
+        if Popen == None:
+            return ''
 
         # MS Windows (has no 'file' command or libmagic, so return nothing).
         if hasattr(ctypes, 'windll'):
@@ -426,6 +439,15 @@ class Info_box(object):
         except:
             path.append('')
 
+        # IO.
+        package.append('io')
+        status.append(dep_check.io_module)
+        version.append('')
+        try:
+            path.append(dep_check.io.__file__)
+        except:
+            path.append('')
+
         # devnull.
         package.append('os.devnull')
         status.append(dep_check.devnull_import)
@@ -485,6 +507,10 @@ class Info_box(object):
         @return:            The info string.
         @rtype:             str
         """
+
+        # Python 2.3 and earlier.
+        if Popen == None:
+            return ''
 
         # Init.
         text = ''
@@ -686,7 +712,7 @@ class Info_box(object):
 
 
 
-class MemoryStatusEx(ctypes.Structure):
+class MemoryStatusEx(Structure):
     """Special object for obtaining hardware info in MS Windows."""
 
     if hasattr(ctypes, 'windll'):

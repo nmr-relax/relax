@@ -76,7 +76,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.")
-uf.desc[-1].add_paragraph("Both the XML and pickled saved state formats are supported and automatically determined.  For more advanced users, file descriptor objects are also supported.  If the force flag is set to True, then the relax data store will be reset prior to the loading of the saved state.")
+uf.desc[-1].add_paragraph("For more advanced users, file descriptor objects are supported.  If the force flag is set to True, then the relax data store will be reset prior to the loading of the saved state.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("The following commands will load the state saved in the file 'save'.")
@@ -133,16 +133,9 @@ uf.add_keyarg(
     desc_short = "force flag",
     desc = "A boolean flag which if set to True will cause the file to be overwritten."
 )
-uf.add_keyarg(
-    name = "pickle",
-    default = False,
-    py_type = "bool",
-    desc_short = "pickle flag",
-    desc = "A flag which if true will cause the state file to be a pickled object rather than the default XML format."
-)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will place the program state - the relax data store - into a file for later reloading or reference.  The default format is an XML formatted file, but this can be changed to a Python pickled object through the pickle flag.  Note, the pickle format is not human readable and often is not compatible with newer relax versions.")
+uf.desc[-1].add_paragraph("This will place the program state - the relax data store - into a file for later reloading or reference.  The default format is an XML formatted file.")
 uf.desc[-1].add_paragraph("The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compression type which can be set to")
 uf.desc[-1].add_item_list_element("0", "No compression (no file extension).")
 uf.desc[-1].add_item_list_element("1", "bzip2 compression ('.bz2' file extension).")

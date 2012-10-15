@@ -185,7 +185,7 @@ class Relax_fit(API_base, API_common):
         scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
 
         # The keys.
-        keys = spin.intensities.keys()
+        keys = list(spin.intensities.keys())
 
         # The peak intensities and times.
         values = []
@@ -342,7 +342,7 @@ class Relax_fit(API_base, API_common):
                 elif search('^I', spin.params[i]):
                     # Find the ID of the first time point.
                     min_time = min(cdp.relax_times.values())
-                    for key in cdp.relax_times.keys():
+                    for key in list(cdp.relax_times.keys()):
                         if cdp.relax_times[key] == min_time:
                             id = key
                             break
@@ -544,7 +544,7 @@ class Relax_fit(API_base, API_common):
             raise RelaxNoModelError
 
         # Loop over the spectral time points.
-        for id in cdp.relax_times.keys():
+        for id in list(cdp.relax_times.keys()):
             # Back calculate the value.
             value = self._back_calc(spin=spin, relax_time_id=id)
 
@@ -690,7 +690,7 @@ class Relax_fit(API_base, API_common):
             ######################################
 
             # The keys.
-            keys = spin.intensities.keys()
+            keys = list(spin.intensities.keys())
 
             # The peak intensities and times.
             values = []
@@ -846,7 +846,7 @@ class Relax_fit(API_base, API_common):
 
             # Check that the number of relaxation times is complete.
             if len(spin.intensities) != len(cdp.relax_times):
-                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.relax_times.keys()))
+                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), list(spin.intensities.keys()), list(cdp.relax_times.keys())))
 
         # Final printout.
         if verbose and not deselect_flag:
