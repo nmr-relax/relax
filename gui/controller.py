@@ -352,9 +352,6 @@ class Controller(wx.Frame):
         # Reset the main gauge.
         wx.CallAfter(self.main_gauge.SetValue, 0)
 
-        # Clear the log.
-        wx.CallAfter(self.log_panel.clear)
-
 
     def setup_frame(self):
         """Set up the relax controller frame.
