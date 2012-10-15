@@ -37,15 +37,15 @@ class Test_relax_re(TestCase):
         """Test the proper behaviour of the generic_fns.relax_re.search() function."""
 
         # Test a number of calls which should return True.
-        self.assertTrue(self.relax_re_fns.search('H', 'H'))
-        self.assertTrue(self.relax_re_fns.search('H*', 'H'))
-        self.assertTrue(self.relax_re_fns.search('H*', 'H1'))
-        self.assertTrue(self.relax_re_fns.search('H1', 'H1'))
-        self.assertTrue(self.relax_re_fns.search('^H*', 'H'))
-        self.assertTrue(self.relax_re_fns.search('^H*$', 'H'))
-        self.assertTrue(self.relax_re_fns.search('^H*$', 'H'))
+        self.assertEqual(True, self.relax_re_fns.search('H', 'H'))
+        self.assertEqual(True, self.relax_re_fns.search('H*', 'H'))
+        self.assertEqual(True, self.relax_re_fns.search('H*', 'H1'))
+        self.assertEqual(True, self.relax_re_fns.search('H1', 'H1'))
+        self.assertEqual(True, self.relax_re_fns.search('^H*', 'H'))
+        self.assertEqual(True, self.relax_re_fns.search('^H*$', 'H'))
+        self.assertEqual(True, self.relax_re_fns.search('^H*$', 'H'))
 
         # Test a number of calls which should return False.
-        self.assertFalse(self.relax_re_fns.search('H*', 'NH'))
-        self.assertFalse(self.relax_re_fns.search('H', 'HN'))
-        self.assertFalse(self.relax_re_fns.search('H', 'H1'))
+        self.assertEqual(False, self.relax_re_fns.search('H*', 'NH'))
+        self.assertEqual(False, self.relax_re_fns.search('H', 'HN'))
+        self.assertEqual(False, self.relax_re_fns.search('H', 'H1'))
