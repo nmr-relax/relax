@@ -220,23 +220,11 @@ class Fetch_docstrings:
         # Some whitespace.
         self.file.write("\n\n")
 
-        # Add a spaced out rule.
+        # Start a new column for each user function and add a rule to the top.
         self.file.write("\\pagebreak[4]\n")
-        self.file.write("\\rule{\columnwidth}{2pt}\n")
-        self.file.write("\\vspace{10pt}\n")
+        self.file.write("\\rule{\columnwidth}{1pt}\n")
 
-        # Add the user function class icon.
-        if self.uf_class:
-            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format='eps.gz')
-            if icon:
-                self.file.write("\includegraphics[bb=0 0 18 18]{%s} \hfill " % icon)
-
-        # Add the user function icon.
-        icon = fetch_icon(self.uf.gui_icon, size='128x128', format='eps.gz')
-        if icon:
-            self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n\n" % icon)
-
-        # The title.
+        # The title (with less spacing).
         self.file.write("\\vspace{-20pt}\n")
         self.uf_name_latex = self.uf_name
 
@@ -250,6 +238,24 @@ class Fetch_docstrings:
 
         # Write out the title (with label).
         self.file.write("\subsection{%s} \label{uf: %s}\n" % (self.uf_name_latex, self.uf_name))
+
+        # Add the user function class icon.
+        if self.uf_class:
+            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format=None)
+            if icon:
+                self.file.write("\includegraphics[bb=0 0 18 18]{%s} \hfill " % icon)
+            else:
+                self.file.write("\hfill ")
+
+        # Add the user function icon.
+        icon = fetch_icon(self.uf.gui_icon, size='128x128', format=None)
+        if icon:
+            self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n" % icon)
+        else:
+            self.file.write("\n")
+
+        # End.
+        self.file.write("\n")
 
 
     def indexing(self, index, bold=False):

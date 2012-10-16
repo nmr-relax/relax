@@ -693,8 +693,8 @@ class Auto_model_free(Base_analysis):
 
         # Create the dipole_pair.set_dist page.
         page = uf_store['dipole_pair.set_dist'].create_page(self.dipole_wizard)
-        page.SetValue('spin_id1', '@N')
-        page.SetValue('spin_id2', '@H')
+        page.SetValue('spin_id1', '@N*')
+        page.SetValue('spin_id2', '@H*')
         page.SetValue('ave_dist', NH_BOND_LENGTH)
         self.dipole_wizard.add_page(page)
 
@@ -718,7 +718,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        uf_store['spin.isotope'](isotope='15N', spin_id='@N')
+        uf_store['spin.isotope'](isotope='15N', spin_id='@N*')
 
 
     def spin_isotope_proton(self, event=None):
@@ -729,7 +729,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        uf_store['spin.isotope'](isotope='1H', spin_id='@H')
+        uf_store['spin.isotope'](isotope='1H', spin_id='@H*')
 
 
     def sync_ds(self, upload=False):

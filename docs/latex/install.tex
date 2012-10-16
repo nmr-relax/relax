@@ -34,7 +34,7 @@ Older versions of these packages may work, use them at your own risk.  If, for o
 \subsection{The source releases}
 \label{sect: source releases}
 
-Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \texttt{*.so}, \texttt{*.pyd} or \texttt{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{Scons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files.  Once Scons is installed type
+Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \file{*.so}, \file{*.pyd} or \file{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{Scons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files.  Once Scons is installed type
 
 \example{\$ scons}
 \index{scons}
@@ -47,17 +47,17 @@ in the base directory where relax has been installed and the C modules should, h
 \subsection{Installation on GNU/Linux}
 \index{GNU/Linux|textbf}
 
-To install the program relax on a GNU/Linux system download either the precompiled distribution\index{distribution archive} labelled \texttt{relax-x.x.x.GNU-Linux.\textit{arch}.tar.bz2} matching your machine architecture or the source distribution \texttt{relax-x.x.x.src.tar.bz2}.  A number of installation methods are possible.  The simplest way is to switch to the user `root', unpack and decompress the archive within the \texttt{/usr/local} directory by typing, for instance
+To install the program relax on a GNU/Linux system download either the precompiled distribution\index{distribution archive} labelled \file{relax-x.x.x.GNU-Linux.\textit{arch}.tar.bz2} matching your machine architecture or the source distribution \file{relax-x.x.x.src.tar.bz2}.  A number of installation methods are possible.  The simplest way is to switch to the user ``root'', unpack and decompress the archive within the \directory{/usr/local} directory by typing, for instance
 
 \example{\$ tar jxvf relax-x.x.x.GNU-Linux.i686.tar.bz2}
 \index{tar}
 
-then create a symbolic link in \texttt{/usr/local/bin} by moving to that directory and typing
+then create a symbolic link in \directory{/usr/local/bin} by moving to that directory and typing
 
 \example{\$ ln -s ../relax/relax .}
 \index{symbolic link}
 
-and finally possibly creating the byte-compiled Python \texttt{*.pyc} files to speed up the start time of relax by typing
+and finally possibly creating the byte-compiled Python \file{*.pyc} files to speed up the start time of relax by typing
 
 \example{\$ python -m compileall .}
 
@@ -66,7 +66,7 @@ in the relax base directory.  Alternatively if the Scons system is installed, by
 \example{\$ scons install}
 \index{scons}
 
-in the relax base directory, a directory in \texttt{/usr/local/} called \texttt{relax} will be created, all the uncompressed and untarred files will be copied into this directory, a symbolic link in \texttt{/usr/local/bin} to the file \texttt{/usr/local/relax/relax} will be created, and then finally the Python \texttt{*.pyc} files will be byte-compiled.  To change the installation path to a non-standard location the Scons script \texttt{sconstruct} in the base relax directory should be modified by changing the variable \texttt{INSTALL\_PATH} to point to the desired location.
+in the relax base directory, a directory in \directory{/usr/local/} called \file{relax} will be created, all the uncompressed and untarred files will be copied into this directory, a symbolic link in \directory{/usr/local/bin} to the file \directory{/usr/local/relax/relax} will be created, and then finally the Python \file{*.pyc} files will be byte-compiled.  To change the installation path to a non-standard location the Scons script \file{sconstruct} in the base relax directory should be modified by changing the variable \prompt{INSTALL\_PATH} to point to the desired location.
 
 
 
@@ -81,7 +81,7 @@ In addition to the above dependencies, running relax on MS Windows requires a nu
 \item[\href{http://starship.python.net/crew/theller/ctypes/}{ctypes}\index{ctypes}:]  The pyreadline package requires ctypes.
 \end{description}
 
-To install, simply download the pre-compiled binary distribution \texttt{relax-x.x.x.Win32.zip} or the source distribution \texttt{relax-x.x.x.src.zip} and extract the files to \texttt{C:$\backslash$Program Files$\backslash$relax-x.x.x}.  Then add this directory to the system environment path (in Windows XP, right click on `My Computer', go to `Properties', click on the `Advanced' tab, and click on the `Envirnment Variables' button.  Then double click on the `Path' system variable and add the text ``;C:$\backslash$Program Files$\backslash$relax-x.x.x'' to the end of variable value field.  The Python installation must also be located on the path (add the text ``;C:$\backslash$Python27'', changing the text to point to the correct directory, to the field).  To run the program from any directory inside the Windows command prompt (or dos prompt) type:
+To install, simply download the pre-compiled binary distribution \file{relax-x.x.x.Win32.zip} or the source distribution \file{relax-x.x.x.src.zip} and extract the files to \directory{C:$\backslash$Program Files$\backslash$relax-x.x.x}.  Then add this directory to the system environment path (in Windows XP, right click on \gui{My Computer}, go to \gui{Properties}, click on the \gui{Advanced} tab, and click on the \guibutton{Envirnment Variables} button.  Then double click on the \gui{Path} system variable and add the text \guistring{;C:$\backslash$Program Files$\backslash$relax-x.x.x} to the end of variable value field.  The Python installation must also be located on the path (add the text \guistring{;C:$\backslash$Python27}, changing the text to point to the correct directory, to the field).  To run the program from any directory inside the Windows command prompt (or dos prompt) type:
 
 \example{C:$\backslash$> relax}
 
@@ -105,7 +105,7 @@ Certain relax versions are available for Mac OS X within the Fink project.  Thes
 
 \example{> fink install relax-py27}
 
-The relax releases packaged within Fink can been browsed at \href{http://pdb.finkproject.org/pdb/browse.php?name=relax}{http://pdb.finkproject.org/pdb/browse.php?name=relax}. If the desired version is not available, please download the relevant source package below or contact the fink project using the `Maintainer' email address given in the relax fink pages.
+The relax releases packaged within Fink can been browsed at \href{http://pdb.finkproject.org/pdb/browse.php?name=relax}{http://pdb.finkproject.org/pdb/browse.php?name=relax}. If the desired version is not available, please download the relevant source package below or contact the fink project using the ``Maintainer'' email address given in the relax fink pages.
 
 Note that when installing via fink, all the dependencies will be automatically selected and installed as well.  Although automatic, when starting from scratch that there could be well over 250 source packages that need to be compiled (to set up the full GNU compilation chain and other libraries which are then required to build Python, numpy, scipy, etc.).  This may take anywhere between 2 days to over a week (don't forget to mention this fact to your poor sys-admin).
 
@@ -126,7 +126,7 @@ For all others systems, please use the source distribution files and the Scons s
 % Running a non-compiled version.
 \subsection{Running a non-compiled version}
 
-Compilation of the C code is not essential for running relax, however certain features of the program will be disabled.  Currently only the exponential curve-fitting for determining the $\Rone$ and $\Rtwo$ relaxation rates requires compilation.  To run relax without compilation install the dependencies detailed above, download the source distribution which should be named \texttt{relax-x.x.x.src.tar.bz2}, extract the files, and then run the file called \texttt{relax} in the base directory.
+Compilation of the C code is not essential for running relax, however certain features of the program will be disabled.  Currently only the exponential curve-fitting for determining the $\Rone$ and $\Rtwo$ relaxation rates requires compilation.  To run relax without compilation install the dependencies detailed above, download the source distribution which should be named \file{relax-x.x.x.src.tar.bz2}, extract the files, and then run the file called \file{relax} in the base directory.
 
 
 
@@ -149,7 +149,7 @@ Grace is a program for plotting two dimensional data sets in a professional look
 \subsection{OpenDX}
 \index{software!OpenDX|textbf}
 
-Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function and is executed by passing the command \texttt{dx} to the command line with various options.  The program is designed for visualising multidimensional data and can be found at \href{http://www.opendx.org/}{http://www.opendx.org/}.
+Version 4.1.3 or compatible.  OpenDX is used for viewing the output of the space mapping function and is executed by passing the command \prompt{dx} to the command line with various options.  The program is designed for visualising multidimensional data and can be found at \href{http://www.opendx.org/}{http://www.opendx.org/}.
 
 
 % Molmol.

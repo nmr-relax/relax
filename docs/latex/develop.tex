@@ -24,7 +24,7 @@ Otherwise if you are a developer type
 
 \example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/1.2 relax}
 
-replacing \texttt{xxxxx} with your Gna!\ login name.  If your version is out of date it can be updated to the latest revision by typing
+replacing \prompt{xxxxx} with your Gna!\ login name.  If your version is out of date it can be updated to the latest revision by typing
 
 \example{\$ svn up}
 
@@ -37,7 +37,7 @@ Modifications can be made to these sources.
 
 \section{Coding conventions}
 
-The following conventions should be followed at all times for any code to be accepted into the relax repository.  A Python script which tests if code meets relax's coding conventions is distributed with relax and is located at \texttt{`scripts/code\_validator'}.  The main reason for these conventions is for readability.  By using a consistent coding style and a high comment ratio, the code becomes much easier to read for non-coders and those new to Python.  It significantly decreases the barrier of entry into the relax source code for NMR spectroscopists.
+The following conventions should be followed at all times for any code to be accepted into the relax repository.  A Python script which tests if code meets relax's coding conventions is distributed with relax and is located at \file{scripts/code\_validator}.  The main reason for these conventions is for readability.  By using a consistent coding style and a high comment ratio, the code becomes much easier to read for non-coders and those new to Python.  It significantly decreases the barrier of entry into the relax source code for NMR spectroscopists.
 
 
 
@@ -45,7 +45,7 @@ The following conventions should be followed at all times for any code to be acc
 \subsection{Indentation}
 
 \index{indentation|textbf}
-Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the Python style guide found at \href{http://www.python.org/doc/essays/styleguide.html}{http://www.python.org/doc/essays/styleguide.html}.  Emacs should automatically set the tabstop correctly.  For vi add the following lines to the \texttt{vimrc} file:
+Indentation should be set to four spaces rather than a tab character.  This is the recommendation given in the Python style guide found at \href{http://www.python.org/doc/essays/styleguide.html}{http://www.python.org/doc/essays/styleguide.html}.  Emacs should automatically set the tabstop correctly.  For vi add the following lines to the \file{vimrc} file:
 
 \begin{exampleenv}
 set tabstop=4 \\
@@ -53,7 +53,7 @@ set shiftwidth=4 \\
 set expandtab
 \end{exampleenv}
 
-For UNIX systems, including Linux and Mac OS X, the \texttt{vimrc} file is \texttt{`$\sim$/.vimrc'} whereas in MS Windows the file is \texttt{`\$VIM/\_vimrc'} which is usually \texttt{`C:$\backslash$Program Files$\backslash$vim$\backslash$\_vimrc'}.  Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \texttt{vimrc} file (although typing \texttt{`:set tabstop=4'} in vim will fix it).  One solution is to edit the file \texttt{`python.vim'} which on GNU/Linux systems is located in the path \texttt{`/usr/share/vim/ftplugin/'}.  It contains the two lines
+For UNIX systems, including Linux and Mac OS X, the \file{vimrc} file is \file{$\sim$/.vimrc} whereas in MS Windows the file is \file{\$VIM/\_vimrc} which is usually \file{C:$\backslash$Program Files$\backslash$vim$\backslash$\_vimrc}.  Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \file{vimrc} file (although typing \promptstring{:set tabstop=4} in vim will fix it).  One solution is to edit the file \file{python.vim} which on GNU/Linux systems is located in the path \directory{/usr/share/vim/ftplugin/}.  It contains the two lines
 
 \begin{exampleenv}
 " Python always uses a `tabstop' of 8. \\
@@ -125,7 +125,7 @@ In relax a mixture of both camel case (eg. CamelCase)\index{camel case} and lowe
 % Variables and functions.
 \subsubsection{Variables and functions}
 
-For both variables and functions lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy $\Diff_a$ which is referenced as \texttt{cdp.diff\_tensor.Da}.  As a rule though all new variable or function names should be kept as lower case.  An example of this convention for both the variable name and function name is:
+For both variables and functions lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy $\Diff_a$ which is referenced as \prompt{cdp.diff\_tensor.Da}.  As a rule though all new variable or function names should be kept as lower case.  An example of this convention for both the variable name and function name is:
 
 \begin{footnotesize}
 \begin{verbatim}
@@ -169,7 +169,7 @@ For both variables and functions lower case with underscores between words is al
 % Classes.
 \subsubsection{Classes}
 
-For classes relax uses a mix of camel case (for example all the \texttt{RelaxError} objects) and underscores (for example \texttt{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the relax data store code.  All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \texttt{OpenDX}, the reason being that the program is called `OpenDX'.  An example is:
+For classes relax uses a mix of camel case (for example all the \prompt{RelaxError} objects) and underscores (for example \pycode{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the relax data store code.  All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \pycode{OpenDX}, the reason being that the program is called \prompt{OpenDX}.  An example is:
 
 \begin{footnotesize}
 \begin{verbatim}
@@ -198,7 +198,7 @@ class Model_free_main:
 % Long names.
 \subsubsection{Long names}
 
-If you have a look at a few relax source files, you will notice that the variable, function, and class names can be quite long.  For example the model-free function `\verb|disassemble_param_vector()|' and the RelaxError class `\verb|RelaxNoSequenceError|'.  While this is not normal for coding, it is an important component of relax as it facilitates the reading of the source code by a non-coder or someone not familiar with the codebase.  Iteration counters can be single letter variables such as `\verb|i|', `\verb|j|', `\verb|k|', etc., however for all other variables, functions, and classes please attempt to use descriptive names which are instantly identifiable.  Please minimise the amount of abbreviations used and only use those which are obvious.  For example naming the parameter vector `\verb|self.param_vector|', the relaxation data `\verb|relax_data|', the model selection class `\verb|class Model_selection|', the type of spheroidal diffusion `\verb|spheroid_type|', etc.
+If you have a look at a few relax source files, you will notice that the variable, function, and class names can be quite long.  For example the model-free function \pycode{disassemble\_param\_vector()} and the RelaxError class \pycode{RelaxNoSequenceError}.  While this is not normal for coding, it is an important component of relax as it facilitates the reading of the source code by a non-coder or someone not familiar with the codebase.  Iteration counters can be single letter variables such as \pycode{i}, \pycode{j}, \pycode{k}, etc., however for all other variables, functions, and classes please attempt to use descriptive names which are instantly identifiable.  Please minimise the amount of abbreviations used and only use those which are obvious.  For example naming the parameter vector \pycode{self.param\_vector}, the relaxation data \pycode{relax\_data}, the model selection class \pycode{class Model\_selection}, the type of spheroidal diffusion \pycode{spheroid\_type}, etc.
 
 
 
@@ -211,8 +211,8 @@ The following conventions are for general code cleanliness and readability:
 \item Trailing whitespace should be avoided, although this is not very important.
 \item All functions should be preceded by two empty lines.  The only exception is the first function of the class definition.
 \item Function arguments should be separated by a comma followed by a single space.
-\item The assignment operator should be surrounded by spaces, for example `\verb*|tm = 1e-8|'.  The exception is function arguments where for example `\verb*|self.classic_colour(res_num=None, width=0.3)|'.
-\item The comparison operators should also be surrounded by spaces, e.g.\ `\verb*| < |', `\verb*| > |', `\verb*| == |', `\verb*| <= |', `\verb*| => |', `\verb*| <> |', `\verb*| != |', `\verb*| is |', and `\verb*| in |'.
+\item The assignment operator should be surrounded by spaces, for example \verb*!tm = 1e-8!.  The exception is function arguments where for example \verb*!self.classic\_colour(res\_num=None, width=0.3)!.
+\item The comparison operators should also be surrounded by spaces, e.g.\ \verb*! < !, \verb*! > !, \verb*! == !, \verb*! <= !, \verb*! => !, \verb*! <> !, \verb*! != !, \verb*! is !, and \verb*! in !.
 \end{itemize}
 
 An example which shows most of these conventions is:
@@ -255,7 +255,7 @@ class Scientific_data(Base_struct_API):
 % Comments.
 \subsection{Comments}
 
-Comments are a very important component within relax.  In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.  The average comment density would be close to 25\%.  The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.  It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.  It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.  If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.  The comment should be descriptive of what the code below it is supposed to do.  Most importantly the comment explains why that code exists.  The script \texttt{`scripts/code\_validator'} can be used to check the comment density.
+Comments are a very important component within relax.  In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.  The average comment density would be close to 25\%.  The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.  It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.  It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.  If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.  The comment should be descriptive of what the code below it is supposed to do.  Most importantly the comment explains why that code exists.  The script \file{scripts/code\_validator} can be used to check the comment density.
 
 
 
@@ -269,7 +269,7 @@ Comments are a very important component within relax.  In the current source cod
 \subsection{Submitting changes as a patch}
 \index{patch|textbf}
 
-The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix make sure you have submitted a bug report\index{bug report} to the bug tracker\index{bug tracker} located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch -- the Unix command \texttt{diff} or the Subversion program.  The resultant file \texttt{patch} of either the \texttt{diff} or \texttt{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list\index{mailing list!relax-devel}.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log\index{commit log} message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
+The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix make sure you have submitted a bug report\index{bug report} to the bug tracker\index{bug tracker} located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch -- the Unix command \file{diff} or the Subversion program.  The resultant file \file{patch} of either the \file{diff} or \file{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list\index{mailing list!relax-devel}.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log\index{commit log} message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
 
 
 
@@ -277,7 +277,7 @@ The preferred method for submitting fixes and improvements to the relax source c
 \subsection{Modification of official releases -- creating patches with diff}
 \index{patch!diff|textbf}
 
-If your modifications have been made to the source code of one of the official relax releases (for example 1.2.2) then the Unix command \texttt{diff} can be used to create a patch.  A patch file is simply the output of the diff command run with the recursive flag and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \texttt{relax\_orig} and the modified sources in \texttt{relax\_mod} then the patch can be created by typing
+If your modifications have been made to the source code of one of the official relax releases (for example 1.2.2) then the Unix command \file{diff} can be used to create a patch.  A patch file is simply the output of the diff command run with the recursive flag and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \directory{relax\_orig} and the modified sources in \directory{relax\_mod} then the patch can be created by typing
 
 \example{\$ diff -ur relax\_orig relax\_mod > patch}
 
@@ -341,7 +341,7 @@ The second step in becoming a committer is to register to become a member of the
 If you are a relax developer and you have commit access to the repository the following conventions should be followed for all commit messages.
 
 \begin{itemize}
-\item The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\texttt{svn log}} is legible.
+\item The length of all lines in the commit log should never exceed 100 characters.  This is so that the log message viewed in either emails or by the command prompt command \mbox{\prompt{svn log}} is legible.
 
 \item The first line of the commit log should be a short description or synopsis of the changes.  If the change relates to a bug or a task, include the bug and task number using the notation \texttt{type \#num} where type is either \texttt{bug}, \texttt{task} or \texttt{support} and \texttt{num} is the id number (for example \texttt{bug \#6503}).  This terminology is important because the Gna!\ infrastructure knows how to translate this into a link to the issue.  Also include a link to the issue.
 
@@ -368,7 +368,7 @@ being located at \href{https://mail.gna.org/public/relax-commits/2006-09/msg0006
 <E1GTt6C-0005rk-8q@subversion.gna.org>) for r2593.
 
 However this was not the only place that the Scientific Python PDB data structure peptide\_chains was
-being accessed.  The chains were being accessed in the file 'generic\_fns/sequence.py' when the
+being accessed.  The chains were being accessed in the file `generic\_fns/sequence.py' when the
 sequence was being read out of the PDB file.  This has now been modified with changes similar to
 r2591 and r2593.
 \end{exampleenv}
@@ -379,7 +379,7 @@ An example of a commit message for changes relating to a task is:
 This change implements half of task \#3630 (\href{https://gna.org/task/?3630}{https://gna.org/task/?3630}).
 
 The docstring in the generic optimisation function has been modified to clear up the ambiguity cased
-by supplying the option 'None' together with Newton optimisation.
+by supplying the option `None' together with Newton optimisation.
 \end{exampleenv}
 
 One last commit message example is:
@@ -387,12 +387,12 @@ One last commit message example is:
 \begin{exampleenv}
 Added the API documentation creation (using Epydoc) to the Scons scripts.
 
-The Scons target to create the HTML API documentation is called 'api\_manual\_html'.  The
+The Scons target to create the HTML API documentation is called `api\_manual\_html'.  The
 documentation can be created by typing:
 \$ scons api\_manual\_html
 
-The function 'compile\_api\_manual\_html()' was added to the 'scons/manuals.py' file.  This function
-runs the 'epydoc' command.  All the Epydoc options are specified in that function.
+The function `compile\_api\_manual\_html()' was added to the `scons/manuals.py' file.  This function
+runs the `epydoc' command.  All the Epydoc options are specified in that function.
 \end{exampleenv}
 
 
@@ -413,26 +413,26 @@ If you are contemplating major changes, either for a bug fix, to add a completel
 \subsection{Branch creation}
 \index{repository!branch creation}
 
-If a change is likely to be disruptive or cause breakages in the program, the use of your own temporary branch is recommended.  This private branch is a complete copy of one of the main development lines wherein you can make changes without disrupting the other developers.  Although called a private branch every change is visible to all other developers and each commit will result in an automatic email to the relax-commits mailing list\index{mailing list!relax-commits}.  Other developers are even able to check out your branch and make modifications to it.  Private branches can also be used for testing ideas.  If the idea does not work the branch can be deleted from the repository (in reality the branch will always exist between the revision numbers of its creation and deletion and can always be resurrected).  For example to create a branch from the main 1.3 development line called \texttt{molmol\_macros} whereby new Molmol macros are to be written, type
+If a change is likely to be disruptive or cause breakages in the program, the use of your own temporary branch is recommended.  This private branch is a complete copy of one of the main development lines wherein you can make changes without disrupting the other developers.  Although called a private branch every change is visible to all other developers and each commit will result in an automatic email to the relax-commits mailing list\index{mailing list!relax-commits}.  Other developers are even able to check out your branch and make modifications to it.  Private branches can also be used for testing ideas.  If the idea does not work the branch can be deleted from the repository (in reality the branch will always exist between the revision numbers of its creation and deletion and can always be resurrected).  For example to create a branch from the main 1.3 development line called \prompt{molmol\_macros} whereby new Molmol macros are to be written, type
 
 \begin{exampleenv}
 \$ svn cp svn+ssh://xxxxx@svn.gna.org/svn/relax/1.3 $\backslash$ \\
  svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros
 \end{exampleenv}
 
-replacing \texttt{xxxxx} with your login name.  You can then check out your private branch by typing
+replacing \prompt{xxxxx} with your login name.  You can then check out your private branch by typing
 
 \example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
 
-which will create a directory called \texttt{molmol\_macros} containing all the relax source files.  To have the files placed into a different directory, type the name of that directory at the end of the last command.  Modifications can be made to this copy while normal development continues on the main line.
+which will create a directory called \directory{molmol\_macros} containing all the relax source files.  To have the files placed into a different directory, type the name of that directory at the end of the last command.  Modifications can be made to this copy while normal development continues on the main line.
 
 
-\subsection{Keeping the branch up to date using \texttt{svnmerge.py}}
+\subsection{Keeping the branch up to date using \file{svnmerge.py}}
 \index{svnmerge.py}
 \index{repository!keeping up to date}
 \index{repository!svnmerge.py}
 
-As you develop your branch, changes will be occurring simultaneously within the main line.  These changes should be merged into your branch on a regular basis to avoid large incompatible changes from forming between the two branches.  To simplify this process, the \texttt{svnmerge.py} script located at \href{http://www.orcaware.com/svn/wiki/Svnmerge.py}{http://www.orcaware.com/svn/wiki/Svnmerge.py} can be used.  It is best to download the trunk version from that page, unless that version is non-functional.  Once you have this script, the merging from the main line to your private branch must be initialised by typing, from within the checked out copy of your branch,
+As you develop your branch, changes will be occurring simultaneously within the main line.  These changes should be merged into your branch on a regular basis to avoid large incompatible changes from forming between the two branches.  To simplify this process, the \file{svnmerge.py} script located at \href{http://www.orcaware.com/svn/wiki/Svnmerge.py}{http://www.orcaware.com/svn/wiki/Svnmerge.py} can be used.  It is best to download the trunk version from that page, unless that version is non-functional.  Once you have this script, the merging from the main line to your private branch must be initialised by typing, from within the checked out copy of your branch,
 
 \example{\$ svnmerge.py init}
 \index{Subversion!svnmerge.py init}
@@ -457,7 +457,7 @@ If conflicts\index{Subversion!conflict} have occurred please refer to the Subver
 \subsection{Merging the branch back into the main line}
 \index{repository!merging branch back}
 
-Once you have completed the modifications desired for your branch, all changes which have occurred in the main line have been merged using \texttt{svnmerge.py}, and the changes have been approved for merging back into the main line -- then your branch can be merged.  First check out a copy of the main line,
+Once you have completed the modifications desired for your branch, all changes which have occurred in the main line have been merged using \file{svnmerge.py}, and the changes have been approved for merging back into the main line -- then your branch can be merged.  First check out a copy of the main line,
 
 \example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/1.3 relax-1.3}
 \index{Subversion!check out}
@@ -467,7 +467,7 @@ or update a previously checked out version,
 \example{\$ svn up}
 \index{Subversion!update}
 
-Then \texttt{svnmerge.py} can be utilised again.  First initialise the merging process by typing, from within the checked out copy of the main line, 
+Then \file{svnmerge.py} can be utilised again.  First initialise the merging process by typing, from within the checked out copy of the main line, 
 
 \example{\$ svnmerge.py init svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
 \index{Subversion!svnmerge.py init}
@@ -509,7 +509,7 @@ and your private branch deleted
 \section{The SCons build system}
 \index{SCons|textbf}
 
-The \href{http://www.scons.org/}{SCons} build system was chosen over other build systems including \texttt{`make'}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file `sconstruct' in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
+The \href{http://www.scons.org/}{SCons} build system was chosen over other build systems including \prompt{make}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file \file{sconstruct} in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
 
 
 
@@ -517,7 +517,7 @@ The \href{http://www.scons.org/}{SCons} build system was chosen over other build
 \subsection{SCons help}
 \index{SCons!help|textbf}
 
-Multiple functions have been built into the \texttt{`sconstruct'} script and the modules of the \texttt{`scons'} directory.  Each of these can be selected by specifying different `targets' when running SCons.  A description of each target is given by the SCons help system which is accessible by typing \texttt{`scons --help'} in the base relax directory.
+Multiple functions have been built into the \file{sconstruct} script and the modules of the \directory{scons} directory.  Each of these can be selected by specifying different ``targets'' when running SCons.  A description of each target is given by the SCons help system which is accessible by typing \prompt{scons --help} in the base relax directory.
 
 
 
@@ -526,7 +526,7 @@ Multiple functions have been built into the \texttt{`sconstruct'} script and the
 \index{C module compilation|textbf}
 \index{SCons!C module compilation|textbf}
 
-As described in the installation chapter, typing \texttt{`scons'} in the base directory will create the shared objects or dll files which are imported into Python as modules.
+As described in the installation chapter, typing \prompt{scons} in the base directory will create the shared objects or dll files which are imported into Python as modules.
 
 
 
@@ -539,7 +539,7 @@ To create the PDF version of the relax user manual type
 \example{\$ scons user\_manual\_pdf}
 \index{SCons!user manual (PDF version)|textbf}
 
-in the base directory.  SCons will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \texttt{`docs/latex'} directory.  This is dependent on the programs \texttt{`latex'}, \texttt{`makeindex'}, \texttt{`dvips'}, and \texttt{`ps2pdf'} being located within the environment's path.
+in the base directory.  SCons will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \directory{docs/latex} directory.  This is dependent on the programs \file{latex}, \file{makeindex}, \file{dvips}, and \file{ps2pdf} being located within the environment's path.
 
 
 
@@ -552,7 +552,7 @@ The HTML version of the relax user manual is made by typing
 \example{\$ scons user\_manual\_html}
 \index{SCons!user manual (HTML version)|textbf}
 
-in the base directory.  One command calling the program \texttt{`latex2html'} will be executed which will create HTML pages from the \LaTeX\ sources.
+in the base directory.  One command calling the program \file{latex2html} will be executed which will create HTML pages from the \LaTeX\ sources.
 
 
 
@@ -565,7 +565,7 @@ The HTML version of the relax API documentation is made by typing
 \example{\$ scons api\_manual\_html}
 \index{SCons!API documentation|textbf}
 
-in the base directory.  The programs Epydoc and Graphviz are required for creating this documentation.  The resultant HTML pages will be located in the director \texttt{`docs/api/index.html'}.
+in the base directory.  The programs Epydoc and Graphviz are required for creating this documentation.  The resultant HTML pages will be located in the directory \directory{docs/api}.
 
 
 
@@ -588,7 +588,7 @@ If a binary distribution does not exist for your architecture feel free to creat
 \example{\$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.3 relax}
 \index{Subversion!check out}
 
-replacing `bugman' with your user name if you are a relax developer, otherwise typing
+replacing \prompt{bugman} with your user name if you are a relax developer, otherwise typing
 
 \example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
 \index{Subversion!check out}
@@ -606,13 +606,13 @@ If the command
 \example{\$ scons clean}
 \index{SCons!clean up|textbf}
 
-is run in the base directory all Python byte compiled files \texttt{`*.pyc'}, all C object files \texttt{`*.o'} and \texttt{`*.os'}, and any backup files with the extension \texttt{`*.bak'} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \texttt{`docs/latex'} directory.
+is run in the base directory all Python byte compiled files \file{*.pyc}, all C object files \file{*.o} and \file{*.os}, and any backup files with the extension \file{*.bak} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \directory{docs/latex} directory.
 
 The more powerful command
 
 \example{\$ scons clean\_all}
 
-will, in addition to all the files removed by the \texttt{`clean'} target, remove all compiled C shared object files (\texttt{`*.so'}, \texttt{`*.dylib'}, \texttt{`*.pyd'}) and the \texttt{`build'} and \texttt{`dist'} directories created when building the Mac OS X application.
+will, in addition to all the files removed by the \prompt{clean} target, remove all compiled C shared object files (\file{*.so}, \file{*.dylib}, \file{*.pyd}) and the \prompt{build} and \prompt{dist} directories created when building the Mac OS X application.
 
 
 
@@ -644,7 +644,7 @@ relax's source code can be divided into five major areas:  the initialisation co
 
 % Core relax design figure.
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=0 -1 389 476]{images/core_design.eps.gz}}
+\centerline{\includegraphics[width=\textwidth, bb=0 -1 389 476]{images/core_design}}
 \caption{The core design of relax.} \label{fig: core design}
 \end{figure}
 
@@ -659,23 +659,23 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
 
-\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \texttt{prompt/}.
+\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \directory{prompt/}.
 
 \item[Script:]  If a script\index{script|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.  Hence the script has access to all the user functions available at the relax prompt.  This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
 
-\item[GUI:]  The graphical user interface\index{GUI|textbf} code base is located in the \texttt{gui} directory.
+\item[GUI:]  The graphical user interface\index{GUI|textbf} code base is located in the \directory{gui} directory.
 
 \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.  This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
 
-\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \texttt{generic\_fns/}.
+\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \directory{generic\_fns/}.
 
-\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \texttt{minimise()} method is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \texttt{specific\_fns/specific\_setup.py}.
+\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \module{minimise()} method is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \file{specific\_fns/specific\_setup.py}.
 
-\item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \texttt{specific\_fns/}.
+\item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \directory{specific\_fns/}.
 
-\item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \texttt{maths\_fns/}.
+\item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \directory{maths\_fns/}.
 
-\item[Data:]  The program state stored in the relax data store singleton object.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \texttt{data/\_\_init\_\_.py}.
+\item[Data:]  The program state stored in the relax data store singleton object.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data/\_\_init\_\_.py}.
 \end{description}
 
 
@@ -684,7 +684,7 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 % The mailing lists.
 %~~~~~~~~~~~~~~~~~~~
 
-\section{The mailing lists}
+\section{The mailing lists for development}
 \index{mailing list|textbf}
 
 
@@ -693,14 +693,14 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 If you would like to start a private discussion, please label your email as such.  Private messages are however strongly discouraged, only start a private conversation if you really must.
 
-If you receive a reply to a message you have sent, a bug report you have filed, etc.\ which has not been sent to the mailing list and has not been labelled as private, then the most likely explanation is that `reply-to-all' has not been used and hence the mailing list has not been included on the CC list.  If this occurs, please ask the person if the message was meant to be private and refrain from discussing any of the comments within the post.  Save these comments until after the person responds by saying that the message was private or re-sends the message to the mailing list.  Try to encourage public messages if you think that the post need not be private and if you think that it would be useful for the mailing list archives.
+If you receive a reply to a message you have sent, a bug report you have filed, etc.\ which has not been sent to the mailing list and has not been labelled as private, then the most likely explanation is that ``reply-to-all'' has not been used and hence the mailing list has not been included on the CC list.  If this occurs, please ask the person if the message was meant to be private and refrain from discussing any of the comments within the post.  Save these comments until after the person responds by saying that the message was private or re-sends the message to the mailing list.  Try to encourage public messages if you think that the post need not be private and if you think that it would be useful for the mailing list archives.
 
 For thread consistency, if you send a message which accidentally misses the mailing list, please do not then forward the previously sent message to the list.  For better readability of the mailing list archives, it is best that you create an entirely new message responding to the original post.  Just cut and paste your miss-directed message into your new message.  That way the thread will be continuous -- there will not be any messages missing from the middle of the thread in between the original post and your forwarded message.
 
 To simplify the process of checking if the message was supposed to be private, you could copy-and-paste the following message (modifying it as you see fit):
 
 \begin{exampleenv}
-Sorry in advance, but the following is the standard pre-composed response to a post not sent to the relax mailing lists and not labelled as private.  If you would like to start a private conversation about relax, please label your message as such.  If you really must start a private exchange, please respond to this message saying so.  If your message was meant to be sent to the relax mailing list, please send the message again.  For this, please copy-and-paste your message, replying to the original (i.e. no forwarding), and making sure that the mailing list is in the CC field by clicking on `reply-to-all'.
+Sorry in advance, but the following is the standard pre-composed response to a post not sent to the relax mailing lists and not labelled as private.  If you would like to start a private conversation about relax, please label your message as such.  If you really must start a private exchange, please respond to this message saying so.  If your message was meant to be sent to the relax mailing list, please send the message again.  For this, please copy-and-paste your message, replying to the original (i.e. no forwarding), and making sure that the mailing list is in the CC field by clicking on ``reply-to-all''.
 \end{exampleenv}
 
 
@@ -738,7 +738,7 @@ If you are a relax committer and see an issue which you would like to solve, ple
 % Closing an issue.
 \subsection{Closing an issue}
 
-When closing an issue (whether a bug report, a task, or a support request) a number of steps need to be taken.  The tracker status should be changed to `Done' and the issue `Closed'.  In addition, a message should be included which states the repository revision and the relax-commits mailing list archive link (with the message-id) in which the issue was solved.  If multiple commits were required, then include all the revisions and as many links as possible (if a task required many commits, the relax-commits links could be skipped).  An example is \href{https://gna.org/bugs/?7402}{bug \#7402} where the closing comment was:
+When closing an issue (whether a bug report, a task, or a support request) a number of steps need to be taken.  The tracker status should be changed to ``Done'' and the issue ``Closed''.  In addition, a message should be included which states the repository revision and the relax-commits mailing list archive link (with the message-id) in which the issue was solved.  If multiple commits were required, then include all the revisions and as many links as possible (if a task required many commits, the relax-commits links could be skipped).  An example is \href{https://gna.org/bugs/?7402}{bug \#7402} where the closing comment was:
 
 \begin{exampleenv}
 This documentation bug was fixed in r2641. The commit message is located at \href{https://mail.gna.org/public/relax-commits/2006-10/msg00073.html}{https://mail.gna.org/public/relax-commits/2006-10/msg00073.html} (Message-id: <E1GYG4l-0002kK-Jx@subversion.gna.org>).
@@ -775,7 +775,7 @@ Having a large web of links across relax's infrastructure aids in the search eng
 \begin{description}
 \item[Freecode:]  New relax releases are announced not only on the \href{https://mail.gna.org/public/relax-announce/}{relax-announce} mailing list and on the relax \href{https://gna.org/news/?group=relax}{news} pages, but also on \href{http://freecode.com/projects/nmr-relax}{Freecode}.  This used to be called Freshmeat.
 \item[The mail archive:]  This site archives all of the relax mailing lists, including \href{http://mail-archive.com/relax-announce@gna.org/}{relax-announce}, \href{http://mail-archive.com/relax-users@gna.org/}{relax-users}, \href{http://mail-archive.com/relax-devel@gna.org/}{relax-devel}, and \href{http://mail-archive.com/relax-commits@gna.org/}{relax-commits}.
-\item[Gmane:]  Pronounced as `main', the relax mailing lists are also archived at Gmane in numerous formats.  The archived relax mailing lists include relax-announce (\href{http://news.gmane.org/gmane.science.nmr.relax.announce}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.announce}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.announce}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.announce}{RSS}), relax-users (\href{http://news.gmane.org/gmane.science.nmr.relax.user}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.user}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.user}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.user}{RSS}), relax-devel (\href{http://news.gmane.org/gmane.science.nmr.relax.devel}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.devel}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.devel}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.devel}{RSS}), and relax-commits (\href{http://news.gmane.org/gmane.science.nmr.relax.scm}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.scm}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.scm}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.scm}{RSS}).
+\item[Gmane:]  Pronounced as ``main'', the relax mailing lists are also archived at Gmane in numerous formats.  The archived relax mailing lists include relax-announce (\href{http://news.gmane.org/gmane.science.nmr.relax.announce}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.announce}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.announce}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.announce}{RSS}), relax-users (\href{http://news.gmane.org/gmane.science.nmr.relax.user}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.user}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.user}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.user}{RSS}), relax-devel (\href{http://news.gmane.org/gmane.science.nmr.relax.devel}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.devel}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.devel}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.devel}{RSS}), and relax-commits (\href{http://news.gmane.org/gmane.science.nmr.relax.scm}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.scm}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.scm}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.scm}{RSS}).
 \item[CIA.vc:]  This is the open source version control informant.  CIA tracks open source projects in real-time.  The relax real-time open source activity stats page is \href{http://cia.vc/stats/project/relax}{http://cia.vc/stats/project/relax}.  This website also has pages for each of the relax developers (in alphabetical order):  \href{http://cia.vc/stats/author/bugman}{Edward d'Auvergne}, \href{http://cia.vc/stats/author/michaelbieri}{Michael Bieri}, \href{http://cia.vc/stats/author/macraild}{Chris MacRaild}, \href{http://cia.vc/stats/author/semor}{S\'ebastien Morin}, \href{http://cia.vc/stats/author/pansapiens}{Andrew Perry}, \href{http://cia.vc/stats/author/han87}{Han Sun}, \href{http://cia.vc/stats/author/varioustoxins}{Gary Thompson}.
 \item[LinuxLinks.com:]  LinuxLinks.com, the Linux portal, is a website listing many Linux software projects.  relax can be found on the \href{http://linuxlinks.com/Software/Scientific/Biology/Proteins/}{Software:\-Scientific:\-Biology:\-Proteins} page.
 \item[Softpedia:]  This is the encyclopedia of free software downloads.  The relax page on Softpedia is \href{http://linux.softpedia.com/get/Science/relax-22351.shtml}{http://linux.softpedia.com/get/Science/relax-22351.shtml}.  The relax developers pages are:  \href{http://linux.softpedia.com/developer/Edward-d-039-Auvergne-5136.html}{Edward d'Auvergne}.

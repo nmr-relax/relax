@@ -14,8 +14,14 @@
 \usepackage{longtable}
 \usepackage{tabularx}
 
+% Nth.
+\usepackage[super]{nth}
+
 % Obliterate those painful LaTeX margins!
 \usepackage{vmargin}
+
+% Better screenshot layout.
+\raggedbottom
 
 % Better Table of contents (Toc), List of figures (Lof), and List of tables (Lot).
 \usepackage{tocloft}
@@ -37,6 +43,22 @@
 \newcommand{\smallexample}[1]{\vspace{-1ex} \sloppy{\scriptsize \texttt{#1}}}
 \newcommand{\keyword}[1]{\textsf{#1}}
 \newcommand{\quotecmd}[1]{`\texttt{#1}'}
+\newcommand{\uf}[1]{\texttt{#1}}
+\newcommand{\prompt}[1]{\texttt{#1}}
+\newcommand{\promptstring}[1]{``\texttt{#1}''}
+\newcommand{\shortcutkey}[1]{``{\small \textsf{[#1]}}''}
+\newcommand{\gui}[1]{``{\small \textsf{#1}}''}
+\newcommand{\guibutton}[1]{``{\small \textsf{#1}}''}
+\newcommand{\guimenuitemone}[1]{``{\small \textsf{#1}}''}
+\newcommand{\guimenuitemtwo}[2]{``{\small \textsf{#1$\to$#2}}''}
+\newcommand{\guimenuitemthree}[3]{``{\small \textsf{#1$\to$#2$\to$#3}}''}
+\newcommand{\guistring}[1]{``{\small \textsf{#1}}''}
+\newcommand{\directory}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\texttt{#1}}
+\newcommand{\module}[1]{\texttt{#1}}
+\newcommand{\pycode}[1]{{\small \texttt{#1}}}
+\newcommand{\pystring}[1]{`{\small \texttt{#1}}'}
+\newcommand{\software}[1]{\texttt{#1}}
 
 % New environment.
 \newenvironment{exampleenv}{\footnotesize \begin{ttfamily} \sloppy}{\fussy \end{ttfamily}}
@@ -114,7 +136,7 @@
 {\LARGE \textbf{\input{relax_version}}}
 \vspace{\stretch{1}}
 
-\centerline{\includegraphics[width=\textwidth, bb=14 14 793 342]{images/ulysses.eps.gz}}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 793 342]{images/ulysses}}
 \vspace{\stretch{2}}
 
 % Subtitle.
@@ -233,14 +255,15 @@
 %%%%%%%%%%%%%%%
 
 \include{intro}
-\include{cite}
+\include{citations}
 \include{install}
 \include{infrastruct}
 \include{data_model}
-\include{noe}
 \include{curvefit}
+\include{noe}
 \include{model-free}
 \include{jw_mapping}
+\include{consistency_tests}
 \include{maths}
 \include{develop}
 \include{functions}

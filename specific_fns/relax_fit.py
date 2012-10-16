@@ -833,7 +833,7 @@ class Relax_fit(API_base, API_common):
 
             # Check that the number of relaxation times is complete.
             if len(spin.intensities) != len(cdp.relax_times):
-                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.spectrum_ids))
+                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), spin.intensities.keys(), cdp.relax_times.keys()))
 
 
     def return_data(self, spin):

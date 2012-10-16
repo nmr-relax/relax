@@ -101,6 +101,7 @@ class Sequence:
         """
 
         # Store the args.
+        self.parent = parent
         self.name = name
         self.default = default
         self.element_type = element_type
@@ -248,8 +249,23 @@ class Sequence:
             value_set = False
             if self.single_value:
                 try:
+                    # Convert.
                     value = self.convert_from_gui(value)
-                    value_set = True
+
+                    # Check that the conversion was successful.
+                    if value == None and self.can_be_none:
+                        value_set = True
+                    elif self.value_type == None:
+                        value_set = True
+                    elif self.value_type in ['float', 'num']:
+                        if isinstance(value, int) or isinstance(value, float):
+                            value_set = True
+                    elif self.value_type == 'int':
+                        if isinstance(value, int):
+                            value_set = True
+                    elif self.value_type == 'str':
+                        if isinstance(value, str):
+                            value_set = True
                 except:
                     pass
 
@@ -303,11 +319,8 @@ class Sequence:
         # The other elements.
         else:
             # Handle single values.
-            if self.single_value and isinstance(value, list):
-                if len(value) == 1:
-                    value = value[0]
-                else:
-                    raise RelaxError("The list of values '%s' cannot be converted to a single value." % value)
+            if self.single_value and isinstance(value, list) and len(value) == 1:
+                value = value[0]
 
             # Convert and set the value.
             self._field.SetValue(self.convert_to_gui_seq(value))
@@ -336,19 +349,21 @@ class Sequence:
         @type event:    wx event
         """
 
-        # Initialise the model selection window.
-        win = Sequence_window(name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
+        # Show the window.
+        self.selection_win_show()
 
-        # Set the model selector window selections.
-        win.SetValue(self.GetValue())
+        # Extract the data from the selection window once closed.
+        self.selection_win_data()
 
-        # Show the model selector window.
-        if status.show_gui:
-            win.ShowModal()
-            win.Close()
+        # Destroy the window.
+        del self.sel_win
+
+
+    def selection_win_data(self):
+        """Extract the data from the selection window."""
 
         # Get the value.
-        value = win.GetValue()
+        value = self.sel_win.GetValue()
 
         # No sequence data.
         if not len(value):
@@ -358,8 +373,20 @@ class Sequence:
         else:
             self.SetValue(value)
 
-        # Destroy the window.
-        del win
+
+    def selection_win_show(self):
+        """Show the selection window."""
+
+        # Initialise the model selection window.
+        self.sel_win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
+
+        # Set the model selector window selections.
+        self.sel_win.SetValue(self.GetValue())
+
+        # Show the model selector window.
+        if status.show_gui:
+            self.sel_win.ShowModal()
+            self.sel_win.Close()
 
 
 
@@ -392,9 +419,11 @@ class Sequence_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (150, 33)
 
-    def __init__(self, name='', seq_type='list', value_type='str', dim=None):
+    def __init__(self, parent=None, name='', seq_type='list', value_type='str', dim=None):
         """Set up the string list editor window.
 
+        @keyword parent:        The parent GUI element.
+        @type parent:           wx.Window instance or None
         @keyword name:          The name of the window.
         @type name:             str
         @keyword seq_type:      The type of Python sequence.  This should be one of 'list' or 'tuple'.
@@ -428,7 +457,7 @@ class Sequence_window(wx.Dialog):
         title = "Edit the %s values." % name
 
         # Set up the dialog.
-        wx.Dialog.__init__(self, None, id=-1, title=title)
+        wx.Dialog.__init__(self, parent, id=-1, title=title)
 
         # Initialise some values
         self.width = self.SIZE[0] - 2*self.BORDER
@@ -489,6 +518,15 @@ class Sequence_window(wx.Dialog):
         # No value.
         if values == None:
             return
+
+        # Single values.
+        try:
+            len(values)
+        except TypeError:
+            if self.seq_type == 'list':
+                values = [values]
+            elif self.seq_type == 'tuple':
+                values = (values,)
 
         # Loop over the entries.
         for i in range(len(values)):

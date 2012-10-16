@@ -1,23 +1,23 @@
 % Reduced spectral density mapping.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Reduced spectral density mapping}
+\chapter{Reduced spectral density mapping} \label{ch: J(w) mapping}
 \index{reduced spectral density mapping|textbf}
 
 % Introduction.
 %%%%%%%%%%%%%%%
 
-\section{Introduction}
+\section{Introduction to reduced spectral density mapping}
 
 The reduced spectral density mapping analysis is often performed when the system under study is not suitable for model-free analysis, or as a last resort if a model-free analysis fails.  The aim is to convert the relaxation data into three $J(\omega)$ values for the given field strength.  Interpretation of this data, although slightly less convoluted than the relaxation data, is still plagued by problems related to non-spherical diffusion and much care must be taken when making conclusions.  A full understanding of the model-free analysis and the effect of diffusion tensor anisotropy and rhombicity allows for better interpretation of the raw numbers.
 
-To understand how reduced spectral density mapping is implemented in relax, the sample script will be worked through.  This analysis type is not implemented in the GUI yet, though it shouldn't be too hard if anyone would like to contribute this and have a reference added to Chapter~\ref{ch: cite}, the citations chapter.
+To understand how reduced spectral density mapping is implemented in relax, the sample script will be worked through.  This analysis type is not implemented in the GUI yet, though it shouldn't be too hard if anyone would like to contribute this and have a reference added to Chapter~\ref{ch: citations}, the citations chapter.
 
 
 % The sample script.
 %%%%%%%%%%%%%%%%%%%%
 
-\section{The sample script}
+\section{J(w) mapping script mode -- the sample script}
 
 \begin{exampleenv}
 \# Create the data pipe. \\
@@ -81,7 +81,7 @@ state.save(`save', force=True)
 % Data pipe and spin system setup.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Data pipe and spin system setup}
+\section{J(w) mapping script mode -- data pipe and spin system setup}
 
 The steps for setting up relax and the data model concept are described in full detail in Chapter~\ref{ch: data model}.  The first step, as for all analyses in relax, is to create a data pipe for storing all the data:
 
@@ -89,7 +89,7 @@ The steps for setting up relax and the data model concept are described in full 
 pipe.create(pipe\_name=`my\_protein', pipe\_type=`jw')
 \end{exampleenv}
 
-Then, in this example, the $^{15}$N spins are created from one of the NOE relaxation data files (Chapter~\ref{}):
+Then, in this example, the $^{15}$N spins are created from one of the NOE relaxation data files (Chapter~\ref{ch: NOE}):
 
 \begin{exampleenv}
 sequence.read(file=`noe.600.out', res\_num\_col=1, res\_name\_col=2) \\
@@ -111,7 +111,7 @@ This is needed to define the magnetic dipole-dipole interaction which governs re
 % Relaxation data loading.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Relaxation data loading}
+\section{J(w) mapping script mode -- relaxation data loading}
 
 The loading of relaxation data is straight forward.  This is performed prior to the creation of the proton spins so that the data is loaded only into the $^{15}$N spin containers and not both spins for each residue.  Only data for a single field strength can be loaded:
 
@@ -132,7 +132,7 @@ jw\_mapping.set\_frq(frq=600.0 * 1e6) \\
 % Relaxation interactions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Relaxation interactions}
+\section{J(w) mapping script mode -- relaxation interactions}
 
 Prior to calculating the $J(\omega)$ values, the physical interactions which govern relaxation of the spins must be defined.  For the magnetic dipole-dipole relaxation interaction, the user functions are:
 
@@ -152,7 +152,7 @@ value.set(val=-172 * 1e-6, param=`csa')
 % Calculation and error propagation.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Calculation and error propagation}
+\section{J(w) mapping script mode -- calculation and error propagation}
 
 Optimisation for this analysis is not needed as this is a direct calculation.  Therefore the $J(\omega)$ values are simply calculated with the call:
 
@@ -169,12 +169,12 @@ calc() \\
 monte\_carlo.error\_analysis()
 \end{exampleenv}
 
-In this case, the \texttt{monte\_carlo.initial\_values} user function call is not required.
+In this case, the \uf{monte\_carlo.initial\_values} user function call is not required.
 
 
 % Visualisation and data output.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Visualisation and data output}
+\section{J(w) mapping script mode -- visualisation and data output}
 
-The rest of the script is used to output the results to 2D Grace files for visualisation (the \texttt{grace.view} user function calls will launch Grace with the created files), and the output of the values into plain text files.
+The rest of the script is used to output the results to 2D Grace files for visualisation (the \uf{grace.view} user function calls will launch Grace with the created files), and the output of the values into plain text files.

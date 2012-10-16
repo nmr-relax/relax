@@ -285,7 +285,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the atomic positions of the spins to be extracted from the loaded structures.  This is automatically performed by the structure.load_spins() user function, but if the sequence information is generated in other ways, this user function allows the structural information to be obtained.")
+uf.desc[-1].add_paragraph("This allows the atomic positions of the spins to be extracted from the loaded structures.  This is automatically performed by the structure.load_spins user function, but if the sequence information is generated in other ways, this user function allows the structural information to be obtained.")
 uf.desc[-1].add_paragraph("If averaging the atomic positions, then average position of all models will be loaded into the spin container.  Otherwise the positions from all models will be loaded separately.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -421,6 +421,7 @@ uf.add_keyarg(
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string for the selective loading of certain spins into the relax data store.",
+    wiz_combo_choices = ["@N", "@C", "@H", "@O", "@P", "@NE1", "@HE1", ":A@C2", ":A@C8", ":G@N1", ":G@C8", ":C@C5", ":C@C5", ":U@N3", ":U@C5", ":U@C6"],
     can_be_none = True
 )
 uf.add_keyarg(
@@ -484,28 +485,28 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "read_mol",
     py_type = "int_or_int_list",
-    desc_short = "read molecule number",
+    desc_short = "molecule number to read",
     desc = "If set, only the given molecule(s) will be read.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_mol_name",
     py_type = "str_or_str_list",
-    desc_short = "set molecule names",
+    desc_short = "setting of molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "read_model",
     py_type = "int_or_int_list",
-    desc_short = "read model",
-    desc = "If set, only the given model number(s) from the PDB file will be read.  This can be a single number or list of numbers.",
+    desc_short = "model to read",
+    desc = "If set, only the given model number(s) from the PDB file will be read.  Otherwise all models will be read.  This can be a single number or list of numbers.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_model_num",
     py_type = "int_or_int_list",
-    desc_short = "set model numbers",
+    desc_short = "setting of model numbers",
     desc = "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers.",
     can_be_none = True
 )
@@ -578,28 +579,28 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "read_mol",
     py_type = "int_or_int_list",
-    desc_short = "read molecule number",
+    desc_short = "molecule number to read",
     desc = "If set, only the given molecule(s) will be read.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_mol_name",
     py_type = "str_or_str_list",
-    desc_short = "set molecule names",
+    desc_short = "setting of molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "read_model",
     py_type = "int_or_int_list",
-    desc_short = "read model",
-    desc = "If set, only the given model number(s) from the PDB file will be read.  This can be a single number or list of numbers.",
+    desc_short = "model to read",
+    desc = "If set, only the given model number(s) from the PDB file will be read.  Otherwise all models will be read.  This can be a single number or list of numbers.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_model_num",
     py_type = "int_or_int_list",
-    desc_short = "set model numbers",
+    desc_short = "setting of model numbers",
     desc = "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers.",
     can_be_none = True
 )

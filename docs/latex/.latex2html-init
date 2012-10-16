@@ -47,7 +47,7 @@ $LATEX2HTML_META = "
 ";
 
 # The names of the HTML pages.
-$LONG_TITLES = 5;
+$LONG_TITLES = 8;
 
 # The level for splitting into separate HTML pages.
 $MAX_SPLIT_DEPTH = 5;
@@ -69,6 +69,7 @@ $FONT_SIZE = "12pt";
 documentstyle # [] # {}
 linebreak # []
 mbox
+bibitem
 _IGNORED_CMDS_
 
 1;	# This must be the last line

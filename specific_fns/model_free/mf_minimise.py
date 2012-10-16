@@ -347,16 +347,21 @@ class Mf_minimise:
             if (model_type == 'diff' or model_type == 'all') and hasattr(cdp, 'chi2'):
                 chi2 = cdp.chi2
 
+            # Spin text.
+            spin_text = ''
+            if spin != None and hasattr(spin, '_spin_ids') and len(spin._spin_ids):
+                spin_text = " for the spin '%s'" % spin._spin_ids[0]
+
             # No improvement.
             if chi2 != None and func >= chi2:
-                print("Discarding the optimisation results, the optimised chi-squared value is higher than the current value (%s >= %s)." % (func, chi2))
+                print("Discarding the optimisation results%s, the optimised chi-squared value is higher than the current value (%s >= %s)." % (spin_text, func, chi2))
 
                 # Exit!
                 return
 
             # New minimum.
             else:
-                print("Storing the optimisation results, the optimised chi-squared value is lower than the current value (%s < %s)." % (func, chi2))
+                print("Storing the optimisation results%s, the optimised chi-squared value is lower than the current value (%s < %s)." % (spin_text, func, chi2))
 
         # Disassemble the parameter vector.
         self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)

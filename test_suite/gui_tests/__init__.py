@@ -32,6 +32,7 @@ from relax_errors import RelaxError
 
 # relax GUI test module imports.
 from bmrb import Bmrb
+from bruker import Bruker
 from consistency_tests import Ct
 from dead_uf_pages import Dead_uf_pages
 from frame_order import Frame_order
@@ -43,6 +44,7 @@ from noe import Noe
 from pipes import Pipes
 from rx import Rx
 from state import State
+from test_suite.gui_tests.test_user_functions import User_functions
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
@@ -111,6 +113,7 @@ class GUI_test_runner:
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Bruker))
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dead_uf_pages))
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
@@ -122,6 +125,7 @@ class GUI_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
+            suite_array.append(TestLoader().loadTestsFromTestCase(User_functions))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)

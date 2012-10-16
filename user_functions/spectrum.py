@@ -124,7 +124,7 @@ table.add_row(["Volumes", "All replicated + variance averaging", "One sigma per 
 uf.desc[-1].add_table(table.label)
 # Peak heights with baseplane noise RMSD.
 uf.desc.append(Desc_container("Peak heights with baseplane noise RMSD"))
-uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd() user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.")
+uf.desc[-1].add_paragraph("When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.")
 # Peak heights with partially replicated spectra.
 uf.desc.append(Desc_container("Peak heights with partially replicated spectra"))
 uf.desc[-1].add_paragraph("When spectra are replicated, the variance for a single spin at a single replicated spectra set is calculated by the formula")

@@ -32,7 +32,7 @@ from generic_fns import value
 from generic_fns.exp_info import software_select
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, set_spin_isotope, spin_loop
 from generic_fns.relax_data import pack_data, peak_intensity_type
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_read_file
 
 
@@ -154,6 +154,16 @@ def read(ri_id=None, file=None, dir=None):
         elif in_ri_data:
             # Skip the header.
             if row[0] == 'Peak name':
+                # Catch old PDC files (to fix https://gna.org/bugs/?20152).
+                pdc_file = False
+                if ri_type == 'R1' and not search('R1', line):
+                    pdc_file = True
+                elif ri_type == 'R2' and not search('R2', line):
+                    pdc_file = True
+                if pdc_file:
+                    raise RelaxError("The old Protein Dynamics Center (PDC) files are not supported")
+
+                # Skip.
                 continue
 
             # The residue info.

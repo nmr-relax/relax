@@ -470,7 +470,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2 / 1e6, 1745860.0485368515 / 1e6)
+        self.assertAlmostEqual(cdp.chi2 / 1e6, 1745860.0485368515 / 1e6, 6)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
 

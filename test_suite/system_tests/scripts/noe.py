@@ -3,6 +3,7 @@ from os import sep
 import sys
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 
@@ -15,9 +16,14 @@ sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
+# Add the Trp 40 indole spin.
+spin.create(res_num=40, spin_name='NE1')
+
 # Load the reference spectrum and saturated spectrum peak intensities.
-spectrum.read_intensities(file='ref_ave.list', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='ref_ave')
-spectrum.read_intensities(file='sat_ave.list', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='sat_ave')
+spectrum.read_intensities(file='ref_ave.list', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='ref_ave', heteronuc='N', proton='HN')
+spectrum.read_intensities(file='ref_ave.list', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='ref_ave', heteronuc='NE1', proton='HE1')
+spectrum.read_intensities(file='sat_ave.list', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='sat_ave', heteronuc='N', proton='HN')
+spectrum.read_intensities(file='sat_ave.list', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='sat_ave', heteronuc='NE1', proton='HE1')
 
 # Set the spectrum types.
 noe.spectrum_type('ref', 'ref_ave')
@@ -46,7 +52,7 @@ value.write(param='noe', file='devnull', force=True)
 # Create grace files.
 grace.write(y_data_type='ref', file='devnull', force=True)
 grace.write(y_data_type='sat', file='devnull', force=True)
-grace.write(y_data_type='noe', file='devnull', force=True)
+grace.write(y_data_type='noe', file=ds.tmpfile, dir=None, force=True)
 
 # Write the results.
 results.write(file='devnull', dir=None, force=True)

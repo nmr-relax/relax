@@ -180,42 +180,44 @@ name = "origin - " + pipe_bundle
 pipe.create(name, 'mf', bundle=pipe_bundle)
 
 # Load the PDB file.
-structure.read_pdb('1f3y.pdb')
+structure.read_pdb('1f3y.pdb', set_mol_name='Ap4Aase', read_model=3)
 
-# Set up the 15N and 1H spins.
+# Set up the 15N and 1H spins (both backbone and Trp indole sidechains).
 structure.load_spins('@N', ave_pos=True)
+structure.load_spins('@NE1', ave_pos=True)
 structure.load_spins('@H', ave_pos=True)
-spin.isotope('15N', spin_id='@N')
-spin.isotope('1H', spin_id='@H')
+structure.load_spins('@HE1', ave_pos=True)
+spin.isotope('15N', spin_id='@N*')
+spin.isotope('1H', spin_id='@H*')
 
 # Set up the 15N spins (alternative to the structure-based approach).
-#sequence.read(file='noe.500.out', dir=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None)
-#spin.name('N')
-#spin.element(element='N', spin_id='@N')
-#spin.isotope('15N', spin_id='@N')
+#sequence.read(file='noe.500.out', dir=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+#spin.element(element='N', spin_id='@N*')
+#spin.isotope('15N', spin_id='@N*')
 
 # Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach).
 #sequence.attach_protons()
 
 # Load the relaxation data.
-relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=599.719*1e6, file='r1.600.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
-relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=599.719*1e6, file='r2.600.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
-relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=599.719*1e6, file='noe.600.out', mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
-relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.208*1e6, file='r1.500.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
-relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.208*1e6, file='r2.500.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
-relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.208*1e6, file='noe.500.out', mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=599.719*1e6, file='r1.600.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=599.719*1e6, file='r2.600.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=599.719*1e6, file='noe.600.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.208*1e6, file='r1.500.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.208*1e6, file='r2.500.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.208*1e6, file='noe.500.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
 # Deselect spins to be excluded (including unresolved and specifically excluded spins).
-deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, boolean='AND', change_all=False)
 deselect.read(file='exclude', spin_id_col=1)
 
 # Define the magnetic dipole-dipole relaxation interaction.
 dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+dipole_pair.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
+dipole_pair.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
 dipole_pair.unit_vectors()
 
 # Define the chemical shift relaxation interaction.
-value.set(-172 * 1e-6, 'csa', spin_id='@N')
+value.set(-172 * 1e-6, 'csa', spin_id='@N*')
 
 
 

@@ -29,6 +29,7 @@ import sys
 # relax module imports.
 from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.result_files import add_result_file
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
 from relax_io import get_file_path, open_write_file, read_spin_data, write_spin_data
 import specific_fns
@@ -462,10 +463,7 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     file.close()
 
     # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    cdp.result_files.append(['text', 'Text', file_path])
-    status.observers.result_file.notify()
+    add_result_file(type='text', label='Text', file=file_path)
 
 
 def write_data(param=None, file=None, bc=False, return_value=None):

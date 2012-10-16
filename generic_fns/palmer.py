@@ -35,7 +35,7 @@ from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import diffusion_tensor, pipes
 from physical_constants import return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 
@@ -262,6 +262,10 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     @keyword frq:           The spectrometer frequencies.
     @type frq:              list of float
     """
+
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
 
     # Set the diffusion tensor specific values.
     if cdp.diff_tensor.type == 'sphere':
@@ -501,6 +505,10 @@ def create_run(file, binary=None, dir=None):
     @type dir:          str
     """
 
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
+
     file.write("#! /bin/sh\n")
     file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
@@ -526,6 +534,10 @@ def execute(dir, force, binary):
                     binary.
     @type binary:   str
     """
+
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
 
     # The current directory.
     orig_dir = getcwd()
@@ -614,6 +626,10 @@ def extract(dir, spin_id=None):
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Check for the diffusion tensor.
+    if not hasattr(cdp, 'diff_tensor'):
+        raise RelaxNoTensorError('diffusion')
 
     # The directory.
     if dir == None:
