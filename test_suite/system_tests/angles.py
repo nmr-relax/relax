@@ -66,7 +66,6 @@ class Angles(SystemTestCase):
 
         # Checks for the first 12 residues.
         for i in range(12):
-            print((cdp.mol[0].res[i].spin[0]))
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
             self.assertEqual(cdp.mol[0].res[i].name, res_name[i])
