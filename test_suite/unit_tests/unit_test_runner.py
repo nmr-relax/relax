@@ -459,8 +459,6 @@ class Unit_test_runner(object):
             test_module = self.root_path
         elif test_module == os.curdir:
             test_module =  os.getcwd()
-        elif test_module == self.TEST_SUITE_ROOT:
-            test_module = self.unit_test_directory
 
         self.test_module = test_module
 

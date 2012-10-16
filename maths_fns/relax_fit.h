@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2006-2012 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -23,6 +23,11 @@
 
 /* The maximum number of spectral time points */
 #define MAXTIMES 30
+
+/* Python 2.2 and earlier support for Python C modules */
+#ifndef PyMODINIT_FUNC
+#define PyMODINIT_FUNC void
+#endif
 
 
 /****************************************/
