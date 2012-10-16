@@ -530,11 +530,11 @@ class Frame_order(API_base, API_common):
             raise RelaxError("No domains have been defined.  Please use the domain user function.")
 
         # Only support for 2 domains.
-        if len(cdp.domain.keys()) > 2:
+        if len(list(cdp.domain.keys())) > 2:
             raise RelaxError("Only two domains are supported in the frame order analysis.")
 
         # Loop over the domains.
-        for id in cdp.domain.keys():
+        for id in list(cdp.domain.keys()):
             # Reference domain.
             if id == cdp.ref_domain:
                 continue
@@ -660,13 +660,13 @@ class Frame_order(API_base, API_common):
             pcs_weight.append([])
 
             # Get the temperature for the PCS constant.
-            if cdp.temperature.has_key(align_id):
+            if align_id in cdp.temperature:
                 temp.append(cdp.temperature[align_id])
             else:
                 temp.append(0.0)
 
             # Get the spectrometer frequency in Tesla units for the PCS constant.
-            if cdp.frq.has_key(align_id):
+            if align_id in cdp.frq:
                 frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
             else:
                 frq.append(1e-10)
@@ -684,7 +684,7 @@ class Frame_order(API_base, API_common):
                     continue
 
                 # Append the PCSs to the list.
-                if align_id in spin.pcs.keys():
+                if align_id in list(spin.pcs.keys()):
                     if sim_index != None:
                         pcs[-1].append(spin.pcs_sim[align_id][sim_index])
                     else:
@@ -693,13 +693,13 @@ class Frame_order(API_base, API_common):
                     pcs[-1].append(None)
 
                 # Append the PCS errors.
-                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                if hasattr(spin, 'pcs_err') and align_id in list(spin.pcs_err.keys()):
                     pcs_err[-1].append(spin.pcs_err[align_id])
                 else:
                     pcs_err[-1].append(None)
 
                 # Append the weight.
-                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+                if hasattr(spin, 'pcs_weight') and align_id in list(spin.pcs_weight.keys()):
                     pcs_weight[-1].append(spin.pcs_weight[align_id])
                 else:
                     pcs_weight[-1].append(1.0)
@@ -871,7 +871,7 @@ class Frame_order(API_base, API_common):
                     value = interatom.rdc[align_id]
 
                 # The error.
-                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                if hasattr(interatom, 'rdc_err') and align_id in list(interatom.rdc_err.keys()):
                     error = interatom.rdc_err[align_id]
 
                 # Append the RDCs to the list.
@@ -881,13 +881,13 @@ class Frame_order(API_base, API_common):
                 rdc_err[-1].append(error)
 
                 # Append the weight.
-                if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
+                if hasattr(interatom, 'rdc_weight') and align_id in list(interatom.rdc_weight.keys()):
                     rdc_weight[-1].append(interatom.rdc_weight[align_id])
                 else:
                     rdc_weight[-1].append(1.0)
 
                 # Append the absolute value flag.
-                if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
+                if hasattr(interatom, 'absolute_rdc') and align_id in list(interatom.absolute_rdc.keys()):
                     absolute[-1].append(interatom.absolute_rdc[align_id])
                 else:
                     absolute[-1].append(False)
@@ -1096,7 +1096,7 @@ class Frame_order(API_base, API_common):
         pipes.test()
 
         # Check that the domain is defined.
-        if not hasattr(cdp, 'domain') or ref not in cdp.domain.keys():
+        if not hasattr(cdp, 'domain') or ref not in list(cdp.domain.keys()):
             raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % ref)
 
         # Test if the reference domain exists.
@@ -1636,7 +1636,7 @@ class Frame_order(API_base, API_common):
                 self.calculate()
 
             # The data.
-            if not hasattr(interatom, 'rdc_bc') or not interatom.rdc_bc.has_key(align_id):
+            if not hasattr(interatom, 'rdc_bc') or align_id not in interatom.rdc_bc:
                 data = None
             else:
                 data = interatom.rdc_bc[align_id]
@@ -1657,7 +1657,7 @@ class Frame_order(API_base, API_common):
                 self.calculate()
 
             # The data.
-            if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(align_id):
+            if not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs_bc:
                 data = None
             else:
                 data = spin.pcs_bc[align_id]
