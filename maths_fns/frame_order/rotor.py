@@ -187,7 +187,7 @@ def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref
             if error_flag:
                 pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
                 pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
-                print "%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6)
+                print("%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6))
 
 
 def pcs_pivot_motion_rotor(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):

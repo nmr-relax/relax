@@ -822,11 +822,11 @@ class Frame_order(API_base, API_common):
 
             # Check.
             if unit_vect[rdc_index] != None and len(unit_vect[rdc_index]) != num:
-                raise RelaxError, "The number of interatomic vectors for all no match:\n%s" % unit_vect
+                raise RelaxError("The number of interatomic vectors for all no match:\n%s" % unit_vect)
 
         # Missing unit vectors.
         if num == None:
-            raise RelaxError, "No interatomic vectors could be found."
+            raise RelaxError("No interatomic vectors could be found.")
 
         # Update None entries.
         for i in range(len(unit_vect)):
