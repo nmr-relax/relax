@@ -1294,7 +1294,7 @@ class Model_free_main:
         }
 
         # Return the type, if in the list.
-        if types.has_key(param):
+        if param in types:
             return types[param]
 
 
@@ -1993,7 +1993,7 @@ class Model_free_main:
                 data_points = 0
                 if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
                     for id in cdp.ri_ids:
-                        if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
+                        if id in spin.ri_data and spin.ri_data[id] != None:
                             data_points += 1
 
                 # Relaxation data must exist!

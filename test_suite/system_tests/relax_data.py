@@ -123,8 +123,8 @@ class Relax_data(SystemTestCase):
 
         # Checks.
         self.assertEqual(cdp.ri_ids, ['R1_900', 'NOE_900', 'R1_500', 'R2_500', 'NOE_500'])
-        self.assert_(not cdp.frq.has_key('R2_900'))
-        self.assert_(not cdp.ri_type.has_key('R2_900'))
+        self.assert_(not 'R2_900' in cdp.frq)
+        self.assert_(not 'R2_900' in cdp.ri_type)
         for spin in spin_loop():
             # Protons.
             if spin.name in ['H', 'HE1']:
@@ -132,8 +132,8 @@ class Relax_data(SystemTestCase):
 
             # Nitrogens.
             else:
-                self.assert_(not spin.ri_data.has_key('R2_900'))
-                self.assert_(not spin.ri_data_err.has_key('R2_900'))
+                self.assert_(not 'R2_900' in spin.ri_data)
+                self.assert_(not 'R2_900' in spin.ri_data_err)
 
         # Switch to the second pipe.
         self.interpreter.pipe.switch('delete 2')

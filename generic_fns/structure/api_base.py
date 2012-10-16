@@ -976,15 +976,15 @@ class Displacements:
         """
 
         # Initialise structures if necessary.
-        if not self._translation_vector.has_key(model_from):
+        if not model_from in self._translation_vector:
             self._translation_vector[model_from] = {}
-        if not self._translation_distance.has_key(model_from):
+        if not model_from in self._translation_distance:
             self._translation_distance[model_from] = {}
-        if not self._rotation_matrix.has_key(model_from):
+        if not model_from in self._rotation_matrix:
             self._rotation_matrix[model_from] = {}
-        if not self._rotation_axis.has_key(model_from):
+        if not model_from in self._rotation_axis:
             self._rotation_axis[model_from] = {}
-        if not self._rotation_angle.has_key(model_from):
+        if not model_from in self._rotation_angle:
             self._rotation_angle[model_from] = {}
 
         # The Kabsch algorithm.
@@ -1021,15 +1021,15 @@ class Displacements:
             model_to = int(pair_node.getAttribute('model_to'))
 
             # Initialise structures if necessary.
-            if not self._translation_vector.has_key(model_from):
+            if not model_from in self._translation_vector:
                 self._translation_vector[model_from] = {}
-            if not self._translation_distance.has_key(model_from):
+            if not model_from in self._translation_distance:
                 self._translation_distance[model_from] = {}
-            if not self._rotation_matrix.has_key(model_from):
+            if not model_from in self._rotation_matrix:
                 self._rotation_matrix[model_from] = {}
-            if not self._rotation_axis.has_key(model_from):
+            if not model_from in self._rotation_axis:
                 self._rotation_axis[model_from] = {}
-            if not self._rotation_angle.has_key(model_from):
+            if not model_from in self._rotation_angle:
                 self._rotation_angle[model_from] = {}
 
             # A temporary container to place the Python objects into.

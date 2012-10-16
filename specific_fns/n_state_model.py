@@ -931,13 +931,13 @@ class N_state_model(API_base, API_common):
             pcs_weight.append([])
 
             # Get the temperature for the PCS constant.
-            if cdp.temperature.has_key(align_id):
+            if align_id in cdp.temperature:
                 temp.append(cdp.temperature[align_id])
             else:
                 temp.append(0.0)
 
             # Get the spectrometer frequency in Tesla units for the PCS constant.
-            if cdp.frq.has_key(align_id):
+            if align_id in cdp.frq:
                 frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
             else:
                 frq.append(1e-10)
@@ -1772,7 +1772,7 @@ class N_state_model(API_base, API_common):
                 self.calculate()
 
             # The data.
-            if not hasattr(container, 'rdc_bc') or not container.rdc_bc.has_key(data_id[2]):
+            if not hasattr(container, 'rdc_bc') or not data_id[2] in container.rdc_bc:
                 data = None
             else:
                 data = container.rdc_bc[data_id[2]]
@@ -1796,7 +1796,7 @@ class N_state_model(API_base, API_common):
                 self.calculate()
 
             # The data.
-            if not hasattr(container, 'pcs_bc') or not container.pcs_bc.has_key(data_id[2]):
+            if not hasattr(container, 'pcs_bc') or not data_id[2] in container.pcs_bc:
                 data = None
             else:
                 data = container.pcs_bc[data_id[2]]

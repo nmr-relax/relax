@@ -163,10 +163,14 @@ class Sequence_base_class(UnitTestCase):
 
         # Get the md5sum of the file.
         file_md5 = md5()
-        file_md5.update(file.read())
+        text = file.read()
+        if hasattr(text, 'encode'):    # Python 3 encoding fix.
+            text = text.encode()
+        file_md5.update(text)
 
         # Test the md5sum.
-        self.assertEqual(file_md5.digest(), '\xc7\xa0\xd0i\xa54|f\xcc1\xd6|\xe7\x82#:')
+        digest = file_md5.digest()
+        self.assertEqual(digest, b'\xc7\xa0\xd0i\xa54|f\xcc1\xd6|\xe7\x82#:')
 
         # Close the file.
         file.close()

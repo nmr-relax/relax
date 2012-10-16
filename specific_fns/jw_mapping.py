@@ -306,7 +306,7 @@ class Jw_mapping(API_base, API_common):
                 # Count the points.
                 data_points = 0
                 for id in cdp.ri_ids:
-                    if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
+                    if id in spin.ri_data and spin.ri_data[id] != None:
                         data_points += 1
 
                 # Not enough.

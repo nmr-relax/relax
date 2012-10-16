@@ -674,7 +674,7 @@ class Info_box(object):
         """
 
         # 64-bit versions.
-        if environ.has_key('PROCESSOR_ARCHITEW6432'):
+        if 'PROCESSOR_ARCHITEW6432' in environ:
             arch = environ['PROCESSOR_ARCHITEW6432']
 
         # Default 32-bit.

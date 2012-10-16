@@ -484,7 +484,7 @@ class N_state_model(SystemTestCase):
 
             # Check for simulation data.
             self.assert_(hasattr(spin, 'pcs_sim'))
-            self.assert_(spin.pcs_sim.has_key(key))
+            self.assert_(key in spin.pcs_sim)
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
@@ -497,7 +497,7 @@ class N_state_model(SystemTestCase):
 
             # Check for simulation data.
             self.assert_(hasattr(interatom, 'rdc_sim'))
-            self.assert_(interatom.rdc_sim.has_key(key))
+            self.assert_(key in interatom.rdc_sim)
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
