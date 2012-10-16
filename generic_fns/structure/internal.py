@@ -31,11 +31,11 @@ from string import digits
 from warnings import warn
 
 # relax module imports.
-from api_base import Base_struct_API, ModelList, Displacements
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
+from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
 from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
 from relax_warnings import RelaxWarning

@@ -54,7 +54,7 @@ TODO: Split out runner part from search part.
 """
 
 from copy import copy
-import os, re, string, sys, unittest, traceback
+import os, re, sys, unittest, traceback
 from optparse import OptionParser
 from textwrap import dedent
 
@@ -371,7 +371,7 @@ class Test_finder:
 
                 # Build the class name from the file name.
                 module_name = os.path.splitext(file_name)[0]
-                class_name = string.upper(module_name[0]) + module_name[1:]
+                class_name = module_name[0].upper() + module_name[1:]
 
                 # Load the test case into the test suite.
                 test_case = load_test_case(dir_path, module_name, class_name)

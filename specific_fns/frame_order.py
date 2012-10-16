@@ -52,6 +52,8 @@ from relax_io import open_write_file
 from relax_warnings import RelaxWarning
 from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 
 
 class Frame_order(API_base, API_common):

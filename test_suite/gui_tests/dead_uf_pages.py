@@ -44,7 +44,8 @@ class Dead_uf_pages(GuiTestCase):
         try:
             # Call the object.
             self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
-        except RelaxNoPipeError as instance:
+        except RelaxNoPipeError:
+            instance = sys.exc_info()[1]
             sys.stderr.write(instance.__str__())
 
         # Create a data pipe.

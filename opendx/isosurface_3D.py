@@ -27,9 +27,9 @@
 from numpy import float64, zeros
 
 # relax module imports.
-from base_map import Base_Map
 from generic_fns import pipes
 from generic_fns import value
+from opendx.base_map import Base_Map
 
 
 class Iso3D(Base_Map):

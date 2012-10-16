@@ -67,7 +67,9 @@ def clean_manual_files(target, source, env):
     for file in files:
         try:
             remove(file)
-        except OSError, message:
+        except OSError:
+            message = sys.exc_info()[1]
+
             # The file does not exist.
             if message.errno == 2:
                 pass

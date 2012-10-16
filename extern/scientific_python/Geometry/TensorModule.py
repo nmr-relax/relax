@@ -208,7 +208,7 @@ class Tensor:
             ev, vectors = eigenvectors(self.array)
             return ev, Tensor(vectors)
         else:
-            raise ValueError, 'Undefined operation'
+            raise ValueError('Undefined operation')
 
     def inverse(self):
         """

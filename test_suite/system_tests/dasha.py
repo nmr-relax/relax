@@ -104,7 +104,6 @@ class Dasha(SystemTestCase):
                 continue
 
             # Check the data.
-            print spin
             self.assertEqual(spin.select, select[i])
             self.assertEqual(spin.fixed, fixed[i])
             self.assertEqual(spin.isotope, isotope[i])

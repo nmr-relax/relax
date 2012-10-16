@@ -24,15 +24,15 @@ from math import sqrt
 from numpy import array, dot, float64, ones, rank, transpose, zeros
 
 # relax module imports.
-from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
-from chi2 import chi2, dchi2_element, d2chi2_element
 from float import isNaN
-from paramag_centre import vectors_single_centre, vectors_centre_per_state
-from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
+from maths_fns.alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
+from maths_fns.chi2 import chi2, dchi2_element, d2chi2_element
+from maths_fns.paramag_centre import vectors_single_centre, vectors_centre_per_state
+from maths_fns.pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
+from maths_fns.rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from physical_constants import pcs_constant
-from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from relax_errors import RelaxError, RelaxImplementError
-from rotation_matrix import euler_to_R_zyz
 
 
 class N_state_opt:

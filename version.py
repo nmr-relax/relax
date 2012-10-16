@@ -57,7 +57,7 @@ def revision():
         row = line.split()
 
         # The revision.
-        if row[0] == 'Revision:':
+        if len(row) and row[0] == 'Revision:':
             return row[1]
 
 
@@ -85,7 +85,7 @@ def url():
         row = line.split()
 
         # The revision.
-        if row[0] == 'URL:':
+        if len(row) and row[0] == 'URL:':
             return row[1]
 
 
