@@ -421,15 +421,32 @@ def execute(dir, force, binary):
         lines = script.readlines()
         script.close()
         for line in lines:
+            # Encode to a Python 3 byte array.
+            if hasattr(line, 'encode'):
+                line = line.encode()
+
+            # Write out.
             pipe.stdin.write(line)
 
         # Close the pipe.
         pipe.stdin.close()
 
-        # Write to stdout and stderr.
+        # Write to stdout.
         for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
             sys.stdout.write(line)
+
+        # Write to stderr.
         for line in pipe.stderr.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
             sys.stderr.write(line)
 
     # Failure.

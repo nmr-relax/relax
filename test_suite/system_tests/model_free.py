@@ -26,6 +26,7 @@ import numpy
 from os import sep
 from re import search
 from shutil import copytree
+import sys
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -267,6 +268,16 @@ class Mf(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
+
+
+    def test_bug_20213_asn_sidechain(self):
+        """Bug #20213 catch, the model selection failure due to the presence of Asp and Gln sidechain N spins."""
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20213_asn_sidechain.py')
 
 
     def test_create_m4(self):
@@ -2610,8 +2621,9 @@ class Mf(SystemTestCase):
         file.close()
 
         # Read the 1.3 results file, extract the data, then close it again.
-        a, b, c = platform.python_version_tuple()
-        if (dep_check.xml_type == 'internal' and int(a) >= 2 and int(b) >= 7 and int(c) >= 3) or int(a) >= 3:
+        if sys.version_info[0] >= 3:
+            file = open_read_file(file_name='final_results_trunc_2.1_py3', dir=path)
+        elif dep_check.xml_type == 'internal' and sys.version_info[0] >= 2 and sys.version_info[1] >= 7 and sys.version_info[2] >= 3:
             file = open_read_file(file_name='final_results_trunc_1.3_v2', dir=path)
         else:
             file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
@@ -2625,20 +2637,44 @@ class Mf(SystemTestCase):
             if i == 1 or i == 2:
                 continue
 
+            # Alias the lines.
+            test = test_lines[i]
+            true = true_lines[i]
+
             # Try to convert the test line into a python object (for cross-platform support).
             try:
-                test_line = eval(test_lines[i])
+                # Process the post 2.7.3 Python XML.
+                if search('<value>', test):
+                    test = test.lstrip()
+                    test = test.replace('<value>', '')
+                    test = test.replace('</value>', '')
+                if search('<ieee_754_byte_array>', test):
+                    test = test.lstrip()
+                    test = test.replace('<ieee_754_byte_array>', '')
+                    test = test.replace('</ieee_754_byte_array>', '')
+
+                test = eval(test)
             except:
-                test_line = test_lines[i]
+                pass
 
             # Try to convert the true line into a python object (for cross-platform support).
             try:
-                true_line = eval(true_lines[i])
+                # Process the post 2.7.3 Python XML.
+                if search('<value>', true):
+                    true = true.lstrip()
+                    true = true.replace('<value>', '')
+                    true = true.replace('</value>', '')
+                if search('<ieee_754_byte_array>', true):
+                    true = true.lstrip()
+                    true = true.replace('<ieee_754_byte_array>', '')
+                    true = true.replace('</ieee_754_byte_array>', '')
+
+                true = eval(true)
             except:
-                true_line = true_lines[i]
+                pass
 
             # Test that the line is the same.
-            self.assertEqual(test_line, true_line)
+            self.assertEqual(test, true)
 
 
     def value_test(self, spin, select=True, local_tm=None, s2=None, s2f=None, s2s=None, te=None, tf=None, ts=None, rex=None, chi2=None, iter=None, f_count=None, g_count=None, h_count=None, warning=None):

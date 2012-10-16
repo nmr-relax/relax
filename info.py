@@ -426,6 +426,15 @@ class Info_box(object):
         except:
             path.append('')
 
+        # IO.
+        package.append('io')
+        status.append(dep_check.io_module)
+        version.append('')
+        try:
+            path.append(dep_check.io.__file__)
+        except:
+            path.append('')
+
         # devnull.
         package.append('os.devnull')
         status.append(dep_check.devnull_import)
