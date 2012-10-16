@@ -56,7 +56,7 @@ def clean_manual_files(target, source, env):
              "relax.toc"]
 
     # Add the LaTeX directory.
-    for i in xrange(len(files)):
+    for i in range(len(files)):
         files[i] = path.join(env['LATEX_DIR'], files[i])
 
     # LaTeX auxillary files.

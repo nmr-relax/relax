@@ -274,7 +274,7 @@ class Fetch_docstrings:
             end_string = '}'
 
         # Loop over the indices.
-        for i in xrange(len(self.entries)):
+        for i in range(len(self.entries)):
             # Find triple word entries.
             if index+2 < len(self.words) and self.entries[i][2] == 3 and search(self.entries[i][0], self.words[index] + ' ' + self.words[index+1] + ' ' + self.words[index+2]):
                 self.words[index] = self.words[index] + '\\index{' + self.entries[i][1] + end_string
@@ -405,7 +405,7 @@ class Fetch_docstrings:
         self.entries.append(['XEasy', 'software!XEasy'])
 
         # Modifications.
-        for i in xrange(len(self.entries)):
+        for i in range(len(self.entries)):
             # Count the number of words.
             self.entries[i].append(len(self.entries[i][0].split(' ')))
 
@@ -421,7 +421,7 @@ class Fetch_docstrings:
 
         # Reverse sort by word count.
         self.entries.sort(reverse=1)
-        for i in xrange(len(self.entries)):
+        for i in range(len(self.entries)):
             self.entries[i].reverse()
 
 
@@ -578,7 +578,7 @@ class Fetch_docstrings:
         in_quote = 0
 
         # Loop over the characters.
-        for i in xrange(len(string)):
+        for i in range(len(string)):
             # Find the quote marks.
             if search('\'', string[i]):
                 # Swap the opening ' with `.
@@ -784,7 +784,7 @@ class Fetch_docstrings:
         self.words = text.split(' ')
 
         # Loop over the words one by one.
-        for i in xrange(len(self.words)):
+        for i in range(len(self.words)):
             # Indexing.
             self.indexing(i, bold=bold)
 

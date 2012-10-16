@@ -1,0 +1,34 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+# Module docstring.
+"""Temporary module for allowing relax to support both Python 2 and 3."""
+
+# Python module imports.
+import sys
+
+# Python 3 work-arounds.
+if sys.version_info[0] == 3:
+    # Python 3 only imports.
+    import builtins
+
+    # The unicode conversion function - essential for the GUI in Python 2.
+    builtins.unicode = builtins.str

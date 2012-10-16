@@ -66,8 +66,8 @@ for i in range(len(u)):
 ###########################################
 
 vectors = []
-for i in xrange(len(u)):
-    for j in xrange(len(u)):
+for i in range(len(u)):
+    for j in range(len(u)):
         # X coordinate.
         x = sin(theta[i]) * cos(phi[j])
 

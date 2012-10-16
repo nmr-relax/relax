@@ -101,7 +101,7 @@ class N_state_model(API_base, API_common):
         # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
         if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
-            for i in xrange(len(cdp.align_tensors)):
+            for i in range(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
                 if cdp.align_tensors[i].align_id not in cdp.align_ids:
                     continue
@@ -143,7 +143,7 @@ class N_state_model(API_base, API_common):
 
         # The Euler angles.
         if cdp.model == '2-domain':
-            for i in xrange(cdp.N):
+            for i in range(cdp.N):
                 param_vector.append(alpha[i])
                 param_vector.append(beta[i])
                 param_vector.append(gamma[i])
@@ -161,7 +161,7 @@ class N_state_model(API_base, API_common):
                 param_vector.append(cdp.paramagnetic_centre[2])
 
         # Convert all None values to zero (to avoid conversion to NaN).
-        for i in xrange(len(param_vector)):
+        for i in range(len(param_vector)):
             if param_vector[i] == None:
                 param_vector[i] = 0.0
 
@@ -211,7 +211,7 @@ class N_state_model(API_base, API_common):
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
             factor = 0.1
-            for i in xrange(pop_start, pop_start + (cdp.N-1)):
+            for i in range(pop_start, pop_start + (cdp.N-1)):
                 scaling_matrix[i, i] = factor
 
         # The paramagnetic centre.
@@ -355,7 +355,7 @@ class N_state_model(API_base, API_common):
         vectors = zeros((cdp.N, 3), float64)
 
         # Loop over the N states.
-        for c in xrange(cdp.N):
+        for c in range(cdp.N):
             # Generate the rotation matrix.
             euler_to_R_zyz(cdp.alpha[c], cdp.beta[c], cdp.gamma[c], R)
 
@@ -554,7 +554,7 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             tensor_num = 0
-            for i in xrange(len(cdp.align_tensors)):
+            for i in range(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
                 if cdp.align_tensors[i].align_id not in cdp.align_ids:
                     continue
@@ -611,7 +611,7 @@ class N_state_model(API_base, API_common):
 
         # The probabilities for states 0 to N-1.
         if cdp.model in ['2-domain', 'population']:
-            for i in xrange(cdp.N-1):
+            for i in range(cdp.N-1):
                 probs[i] = param_vector[i]
 
             # The probability for state N.
@@ -619,7 +619,7 @@ class N_state_model(API_base, API_common):
 
         # The Euler angles.
         if cdp.model == '2-domain':
-            for i in xrange(cdp.N):
+            for i in range(cdp.N):
                 alpha[i] = param_vector[cdp.N-1 + 3*i]
                 beta[i] = param_vector[cdp.N-1 + 3*i + 1]
                 gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
@@ -750,7 +750,7 @@ class N_state_model(API_base, API_common):
         # Probability parameters.
         if cdp.model in ['2-domain', 'population']:
             # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-            for k in xrange(cdp.N - 1):
+            for k in range(cdp.N - 1):
                 # 0 <= pc <= 1.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -766,7 +766,7 @@ class N_state_model(API_base, API_common):
             # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            for i in xrange(pop_start, self._param_num()):
+            for i in range(pop_start, self._param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
             b.append(-1.0 / scaling_matrix[i, i])
@@ -792,7 +792,7 @@ class N_state_model(API_base, API_common):
             return
 
         # Loop over each alignment.
-        for align_index in xrange(len(cdp.align_ids)):
+        for align_index in range(len(cdp.align_ids)):
             # Fixed tensor.
             if cdp.align_tensors[align_index].fixed:
                 continue
@@ -1361,7 +1361,7 @@ class N_state_model(API_base, API_common):
         # Alignment tensor params.
         if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments.
-            for i in xrange(len(cdp.align_tensors)):
+            for i in range(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
                 if cdp.align_tensors[i].align_id not in cdp.align_ids:
                     continue
@@ -1586,12 +1586,12 @@ class N_state_model(API_base, API_common):
         if not cdp.params:
             # Add the probability or population weight parameters.
             if cdp.model in ['2-domain', 'population']:
-                for i in xrange(cdp.N-1):
+                for i in range(cdp.N-1):
                     cdp.params.append('p' + repr(i))
 
             # Add the Euler angle parameters.
             if cdp.model == '2-domain':
-                for i in xrange(cdp.N):
+                for i in range(cdp.N):
                     cdp.params.append('alpha' + repr(i))
                     cdp.params.append('beta' + repr(i))
                     cdp.params.append('gamma' + repr(i))
@@ -2020,7 +2020,7 @@ class N_state_model(API_base, API_common):
         if search('^[Gg]rid', min_algor):
             # Scaling.
             if scaling:
-                for i in xrange(len(param_vector)):
+                for i in range(len(param_vector)):
                     lower[i] = lower[i] / scaling_matrix[i, i]
                     upper[i] = upper[i] / scaling_matrix[i, i]
 
@@ -2386,7 +2386,7 @@ class N_state_model(API_base, API_common):
             names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
 
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
-            for i in xrange(len(cdp.align_tensors)):
+            for i in range(len(cdp.align_tensors)):
                 # Fixed tensor.
                 if cdp.align_tensors[i].fixed:
                     continue
@@ -2403,7 +2403,7 @@ class N_state_model(API_base, API_common):
                     sim_object = getattr(cdp.align_tensors[i], sim_object_name)
 
                     # Set the initial simulation values to the optimised tensor parameter values.
-                    for j in xrange(cdp.sim_number):
+                    for j in range(cdp.sim_number):
                         sim_object.append(getattr(cdp.align_tensors[i], object_name))
 
             # Loop over all the minimisation object names.
@@ -2418,7 +2418,7 @@ class N_state_model(API_base, API_common):
                 sim_object = getattr(cdp, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(cdp.sim_number):
+                for j in range(cdp.sim_number):
                     # Append None to fill the structure.
                     sim_object.append(None)
 

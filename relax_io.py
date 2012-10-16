@@ -44,6 +44,7 @@ from sys import stdin, stdout, stderr
 from warnings import warn
 
 # relax module imports.
+from check_types import is_filetype
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -148,7 +149,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
 
     # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
     data = []
-    for i in xrange(len(file_data)):
+    for i in range(len(file_data)):
         if sep:
             row = file_data[i].split(sep)
         else:
@@ -331,7 +332,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     """
 
     # A file descriptor object.
-    if isinstance(file_name, file):
+    if is_filetype(file_name):
         # Nothing to do here!
         return file_name
 
@@ -392,7 +393,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     """
 
     # A file descriptor object.
-    if isinstance(file_name, file):
+    if is_filetype(file_name):
         # Nothing to do here!
         return file_name
 
@@ -672,7 +673,7 @@ def strip(data, comments=True):
     new = []
 
     # Loop over the data.
-    for i in xrange(len(data)):
+    for i in range(len(data)):
         # Empty lines.
         if len(data[i]) == 0:
             continue
@@ -1078,7 +1079,7 @@ class DummyFileObject:
             lines.pop()
 
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             lines[i] = lines[i] + '\n'
 
         # Return the file lines.

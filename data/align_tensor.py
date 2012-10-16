@@ -127,7 +127,7 @@ def calc_A_diag(A):
     abs_vals = abs(vals).tolist()
     Axx_index = abs_vals.index(min(abs_vals))
     Azz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Axx_index, Azz_index))
     last_index.pop(min(Axx_index, Azz_index))
     Ayy_index = last_index[0]
@@ -238,7 +238,7 @@ def calc_eigvals(A):
     abs_vals = abs(vals).tolist()
     x_index = abs_vals.index(min(abs_vals))
     z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(x_index, z_index))
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
@@ -377,7 +377,7 @@ def calc_S_diag(tensor):
     abs_vals = abs(vals).tolist()
     Sxx_index = abs_vals.index(min(abs_vals))
     Szz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Sxx_index, Szz_index))
     last_index.pop(min(Sxx_index, Szz_index))
     Syy_index = last_index[0]
@@ -609,7 +609,7 @@ def calc_P_diag(tensor):
     abs_vals = abs(vals).tolist()
     Pxx_index = abs_vals.index(min(abs_vals))
     Pzz_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(Pxx_index, Pzz_index))
     last_index.pop(min(Pxx_index, Pzz_index))
     Pyy_index = last_index[0]
@@ -792,7 +792,7 @@ def calc_rotation(A):
     abs_vals = abs(vals).tolist()
     x_index = abs_vals.index(min(abs_vals))
     z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
+    last_index = list(range(3))
     last_index.pop(max(x_index, z_index))
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
@@ -933,7 +933,7 @@ class AlignTensorList(list):
 
         text = "Alignment tensors.\n\n"
         text = text + "%-8s%-20s\n" % ("Index", "Name")
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-20s\n" % (i, self[i].name)
         text = text + "\nThese can be accessed by typing 'pipe.align_tensor[index]'.\n"
         return text
@@ -987,7 +987,7 @@ class AlignTensorList(list):
 
         # Loop over the tensors.
         names = []
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             names.append(self[i].name)
 
         # Return the list.
@@ -1014,7 +1014,7 @@ class AlignTensorList(list):
         fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
 
         # Loop over the tensors.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for a single tensor.
             tensor_element = doc.createElement('align_tensor')
             tensor_list_element.appendChild(tensor_element)

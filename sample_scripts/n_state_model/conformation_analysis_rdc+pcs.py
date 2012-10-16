@@ -78,7 +78,7 @@ deselect.interatom(spin_id1=':900@C12', spin_id2=':900@H18')
 align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
 
 # Load the RDCs and PCSs.
-for i in xrange(len(align_list)):
+for i in range(len(align_list)):
     # The RDC.
     rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir='../../../align_data', spin_id1_col=1, spin_id2_col=2, data_col=i+3, error_col=None)
     rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir='../../../align_data', spin_id1_col=1, spin_id2_col=2, data_col=None, error_col=i+3)
@@ -145,7 +145,7 @@ results.write('results_fixed_rdc+pcs', dir=None, force=True)
 n_state_model.select_model(model='population')
 
 # Set to equal probabilities.
-for j in xrange(NUM_STR):
+for j in range(NUM_STR):
     value.set(1.0/NUM_STR, 'p'+`j`)
 
 # Minimisation.

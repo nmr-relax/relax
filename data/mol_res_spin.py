@@ -212,7 +212,7 @@ class SpinList(list):
 
         # Residue data.
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s%-8s%-10s" % (i, repr(self[i].num), self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j].spin[k]', where D is the relax data storage object.\n"
 
@@ -244,7 +244,7 @@ class SpinList(list):
         # Otherwise append a new SpinContainer.
         else:
             # Test if the spin number (or name if unnumbered) already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
@@ -321,7 +321,7 @@ class SpinList(list):
         return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
 
         # Loop over the spins.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for this spin and add it to the higher level element.
             spin_element = doc.createElement('spin')
             element.appendChild(spin_element)
@@ -489,7 +489,7 @@ class ResidueList(list):
 
         # Residue data.
         text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s%-8s" % (i, repr(self[i].num), self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
@@ -507,7 +507,7 @@ class ResidueList(list):
         # Otherwise append a new ResidueContainer.
         else:
             # Test if the residue number (or name if unnumbered) already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 # Residue number has been supplied.
                 if res_num != None:
                     if self[i].num == res_num:
@@ -577,7 +577,7 @@ class ResidueList(list):
         """
 
         # Loop over the residues.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for this residue and add it to the higher level element.
             res_element = doc.createElement('res')
             element.appendChild(res_element)
@@ -709,7 +709,7 @@ class MoleculeList(list):
 
         text = "Molecules.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i]', where D is the relax data storage object.\n"
         return text
@@ -726,7 +726,7 @@ class MoleculeList(list):
         # Otherwise append an empty MoleculeContainer.
         else:
             # Test if the molecule name already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 if self[i].name == mol_name:
                     raise RelaxError("The molecule '%s' already exists in the sequence." % mol_name)
 
@@ -791,7 +791,7 @@ class MoleculeList(list):
         """
 
         # Loop over the molecules.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for this molecule and add it to the higher level element.
             mol_element = doc.createElement('mol')
             element.appendChild(mol_element)

@@ -175,7 +175,7 @@ class Hybrid:
             model_statistics = setup.get_specific_fn('model_stats', pipes.get_type(pipe))
 
             # Loop over the instances.
-            #for i in xrange(num):
+            #for i in range(num):
             # Get the statistics.
             k, n, chi2 = model_statistics(model_info=model_info, spin_id=spin_id, global_stats=global_stats)
 

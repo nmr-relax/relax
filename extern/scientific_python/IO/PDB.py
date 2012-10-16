@@ -765,8 +765,8 @@ class AminoAcidResidue(Residue):
         @rtype: C{bool}
         """
         return self.name == 'NME' \
-               or self.atoms.has_key('OXT') \
-               or self.atoms.has_key('OT2')
+               or 'OXT' in self.atoms \
+               or 'OT2' in self.atoms
 
     def isNTerminus(self):
         """
@@ -775,8 +775,8 @@ class AminoAcidResidue(Residue):
         nitrogen atom of the peptide group. C{False} otherwise.
         @rtype: C{bool}
         """
-        return self.atoms.has_key('1HT') or self.atoms.has_key('2HT') \
-               or self.atoms.has_key('3HT')
+        return '1HT' in self.atoms or '2HT' in self.atoms \
+               or '3HT' in self.atoms
 
     def addAtom(self, atom):
         Residue.addAtom(self, atom)
@@ -831,7 +831,7 @@ class NucleotideResidue(Residue):
         @returns: C{True} if the residue has an atom named O2*
         @rtype: C{bool}
         """
-        return self.atoms.has_key('O2*') or self.atoms.has_key("O2'")
+        return 'O2*' in self.atoms or "O2'" in self.atoms
 
     def hasDesoxyribose(self):
         """
@@ -845,14 +845,14 @@ class NucleotideResidue(Residue):
         @returns: C{True} if the residue has a phosphate group
         @rtype: C{bool}
         """
-        return self.atoms.has_key('P')
+        return 'P' in self.atoms
 
     def hasTerminalH(self):
         """
         @returns: C{True} if the residue has a 3-terminal H atom
         @rtype: C{bool}
         """
-        return self.atoms.has_key('H3T')
+        return 'H3T' in self.atoms
 
     def writeToFile(self, file):
         close = 0
@@ -1270,7 +1270,7 @@ class Structure:
     def deleteResidue(self, residue):
         self.residues.remove(residue)
         delete = None
-        for type, mlist in self.molecules.items():
+        for type, mlist in list(self.molecules.items()):
             try:
                 mlist.remove(residue)
             except ValueError:
@@ -1370,7 +1370,7 @@ class Structure:
             elif type == 'HEADER':
                 self.pdb_code = data['pdb_code']
             elif type == 'CRYST1':
-                for name, value in data.items():
+                for name, value in list(data.items()):
                     setattr(self, name, value)
                 self.space_group = self.space_group.strip()
             elif type[:-1] == 'SCALE':
@@ -1422,9 +1422,9 @@ class Structure:
                         atom_data, residue_data, chain_data = \
                                    self.extractData(data)
                         if type == 'ATOM':
-                            atom = apply(Atom, (), atom_data)
+                            atom = Atom(*(), **atom_data)
                         else:
-                            atom = apply(HetAtom, (), atom_data)
+                            atom = HetAtom(*(), **atom_data)
                         new_chain = chain is None or \
                                     not chain.isCompatible(chain_data,
                                                            residue_data)
@@ -1480,18 +1480,18 @@ class Structure:
         if self.alternate != 'A':
             s = s + ", alternate_code = " + repr(self.alternate)
         s = s + "):\n"
-        for name, list in [("Peptide", self.peptide_chains),
+        for name, datalist in [("Peptide", self.peptide_chains),
                            ("Nucleotide", self.nucleotide_chains)]:
-            for c in list:
+            for c in datalist:
                 s = s + "  " + name + " chain "
                 if c.segment_id:
                     s = s + c.segment_id + " "
                 elif c.chain_id:
                     s = s + c.chain_id + " "
                 s = s + "of length " + repr(len(c)) + "\n"
-        for name, list in self.molecules.items():
-            s = s + "  " + repr(len(list)) + " " + name + " molecule"
-            if len(list) == 1:
+        for name, datalist in list(self.molecules.items()):
+            s = s + "  " + repr(len(datalist)) + " " + name + " molecule"
+            if len(datalist) == 1:
                 s = s + "\n"
             else:
                 s = s + "s\n"

@@ -91,17 +91,17 @@ class Iso3D(Base_Map):
         # The model identifier.
 
         # Loop over the first parameter.
-        for i in xrange((self.inc + 1)):
+        for i in range((self.inc + 1)):
             # Initial value of the second parameter.
             values[1] = self.bounds[1, 0]
 
             # Loop over the second parameter.
-            for j in xrange((self.inc + 1)):
+            for j in range((self.inc + 1)):
                 # Initial value of the third parameter.
                 values[2] = self.bounds[2, 0]
 
                 # Loop over the third parameter.
-                for k in xrange((self.inc + 1)):
+                for k in range((self.inc + 1)):
                     # Set the parameter values.
                     if self.spin_id:
                         value.set(val=values, param=self.params, spin_id=self.spin_id, force=True)

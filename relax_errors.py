@@ -351,7 +351,7 @@ class RelaxInvalidError(BaseArgError):
 class RelaxArgNotInListError(BaseArgError):
     def __init__(self, name, value, list):
         self.text = "The " + name + " argument " + repr(value) + " is neither "
-        for i in xrange(len(list)-1):
+        for i in range(len(list)-1):
             self.text = self.text + repr(list[i]) + ', '
         self.text = self.text + 'nor ' + repr(list[-1]) + "."
 

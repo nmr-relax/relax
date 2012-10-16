@@ -213,7 +213,7 @@ class Results:
 
             # Loop over and convert the parameters.
             if params:
-                for i in xrange(len(params)):
+                for i in range(len(params)):
                     # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
                     if params[i] == 'tm':
                         params[i] = 'local_tm'
@@ -526,7 +526,7 @@ class Results:
         errors = []
 
         # Loop over the relaxation data of the residue.
-        for i in xrange(len(ri_labels)):
+        for i in range(len(ri_labels)):
             # Determine the data and error columns for this relaxation data set.
             data_col = col['frq'] + i + 1
             error_col = col['frq'] + len(ri_labels) + i + 1
@@ -802,7 +802,7 @@ class Results:
         col = {}
 
         # Loop over the columns.
-        for i in xrange(len(header)):
+        for i in range(len(header)):
             # Residue info (for relax 1.2).
             if header[i] == 'Num':
                 col['num'] = i

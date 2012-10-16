@@ -94,7 +94,7 @@ class Relax_fit(API_base, API_common):
         param_vector = []
 
         # Loop over the model parameters.
-        for i in xrange(len(spin.params)):
+        for i in range(len(spin.params)):
             # Relaxation rate.
             if spin.params[i] == 'Rx':
                 if sim_index != None:
@@ -146,7 +146,7 @@ class Relax_fit(API_base, API_common):
             return scaling_matrix
 
         # Loop over the parameters.
-        for i in xrange(len(spin.params)):
+        for i in range(len(spin.params)):
             # Relaxation rate.
             if spin.params[i] == 'Rx':
                 pass
@@ -402,7 +402,7 @@ class Relax_fit(API_base, API_common):
         j = 0
 
         # Loop over the parameters.
-        for k in xrange(len(spin.params)):
+        for k in range(len(spin.params)):
             # Relaxation rate.
             if spin.params[k] == 'Rx':
                 # Rx >= 0.
@@ -725,7 +725,7 @@ class Relax_fit(API_base, API_common):
                 # Reconstruct the error data structure.
                 lm_error = zeros(len(spin.relax_times), float64)
                 index = 0
-                for k in xrange(len(spin.relax_times)):
+                for k in range(len(spin.relax_times)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 

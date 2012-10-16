@@ -231,7 +231,7 @@ class RelaxListType(list):
         fill_object_contents(doc, list_element, object=self, blacklist=blacklist)
 
         # Loop over the list.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # The element has its own to_xml() method.
             if hasattr(self[i], 'to_xml'):
                 self[i].to_xml(doc, list_element)
