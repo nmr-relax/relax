@@ -33,7 +33,7 @@ class PackageTestCase(UnitTestCase):
     def test___all__(self):
         """Check if all modules are located within the __all__ list."""
 
-        print(("The %s.__all__ list: %s" % (self.package_name, self.package.__all__)))
+        print("The %s.__all__ list: %s" % (self.package_name, self.package.__all__))
 
         # Loop over all files.
         files = listdir(self.package_path)
@@ -54,8 +54,8 @@ class PackageTestCase(UnitTestCase):
             module = file[:-3]
 
             # Print out.
-            print(("\nFile:   %s" % file))
-            print(("Checking module: %s" % module))
+            print("\nFile:   %s" % file)
+            print("Checking module: %s" % module)
 
             # Check if the module is in __all__.
             self.assert_(module in self.package.__all__)
@@ -66,8 +66,8 @@ class PackageTestCase(UnitTestCase):
             file = module + '.py'
 
             # Print out.
-            print(("\nModule: %s" % module))
-            print(("Checking file:   %s" % file))
+            print("\nModule: %s" % module)
+            print("Checking file:   %s" % file)
 
             # Check for the file.
             if access(self.package_path + sep + file, F_OK):

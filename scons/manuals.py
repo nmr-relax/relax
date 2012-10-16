@@ -78,7 +78,7 @@ def clean_manual_files(target, source, env):
             else:
                 raise
         else:
-            print(("Removing the file " + repr(file) + "."))
+            print("Removing the file " + repr(file) + ".")
 
     # Final printout.
     print("\n\n\n")
@@ -276,7 +276,7 @@ def compile_api_manual_html(target, source, env):
     #################
 
     # Print out.
-    print(("Running the command:\n$ " + epydoc_cmd + "\n\n\n"))
+    print("Running the command:\n$ " + epydoc_cmd + "\n\n\n")
 
     # System call.
     system(epydoc_cmd)

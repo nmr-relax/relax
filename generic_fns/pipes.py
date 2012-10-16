@@ -257,7 +257,7 @@ def display():
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Heading.
-        print(("%-20s%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Bundle", "Current")))
+        print("%-20s%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Bundle", "Current"))
 
         # Loop over the data pipes.
         for pipe_name in ds:

@@ -70,4 +70,4 @@ self._execute_uf(uf_name='align_tensor.display')
 
 # Print the contents of the current data pipe (for debugging Q-values).
 print(cdp)
-print((cdp.align_tensors[0]))
+print(cdp.align_tensors[0])

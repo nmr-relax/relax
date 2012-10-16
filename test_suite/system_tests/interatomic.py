@@ -47,7 +47,7 @@ class Interatomic(SystemTestCase):
         # Check the data.
         self.assertEqual(len(cdp.interatomic), 16)
         for i in range(len(cdp.interatomic)):
-            # A print out to know where the problem is.
+            # A printout to know where the problem is.
             print("Checking container:  %-30s %-30s" % (cdp.interatomic[i].spin_id1, cdp.interatomic[i].spin_id2))
 
             # The container checks.
