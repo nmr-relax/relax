@@ -290,13 +290,13 @@ def pcs_pivot_motion_rotor_qrint(sigma_i=None, full_in_ref_frame=None, r_pivot_a
     rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
 
     # Loop over the atoms.
-    for j in xrange(len(r_pivot_atom[0])):
+    for j in range(len(r_pivot_atom[0])):
         # The vector length (to the 5th power).
         length_rev = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
         length = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
 
         # Loop over the alignments.
-        for i in xrange(len(pcs_theta)):
+        for i in range(len(pcs_theta)):
             # Skip missing data.
             if missing_pcs[i, j]:
                 continue

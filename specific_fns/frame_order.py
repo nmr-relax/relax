@@ -1166,7 +1166,7 @@ class Frame_order(API_base, API_common):
             tensor.Ayz = target_fn.A_5D_bc[5*i + 4]
 
         # The RDC data.
-        for i in xrange(len(cdp.align_ids)):
+        for i in range(len(cdp.align_ids)):
             # The alignment ID.
             align_id = cdp.align_ids[i]
 

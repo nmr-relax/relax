@@ -615,7 +615,7 @@ def get_tensor_ids():
         return ids
 
     # Loop over the tensors.
-    for i in xrange(len(cdp.align_tensors)):
+    for i in range(len(cdp.align_tensors)):
         if cdp.align_tensors[i].name != None:
             ids.append(cdp.align_tensors[i].name)
 
@@ -718,7 +718,7 @@ def get_tensor_object_from_align(align_id, pipe=None):
 
     # Loop over the tensors.
     count = 0
-    for i in xrange(len(cdp.align_tensors)):
+    for i in range(len(cdp.align_tensors)):
         if hasattr(cdp.align_tensors[i], 'align_id') and cdp.align_tensors[i].align_id == align_id:
             data = cdp.align_tensors[i]
             count += 1

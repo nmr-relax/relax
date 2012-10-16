@@ -28,7 +28,7 @@ def sobol_test01 ( ):
 
 	seed = 123456789
 
-	for test in xrange(0, 10):
+	for test in range(0, 10):
 
 		[ i, seed ] = i4_uniform ( 0, 100, seed )
 		[ j, seed ] = i4_uniform ( 0, 100, seed )
@@ -63,7 +63,7 @@ def sobol_test02 ( ):
 
 	seed = 123456789
 
-	for test in xrange( 0, 10):
+	for test in range( 0, 10):
 
 		[ i, seed ] = i4_uniform ( 0, 100, seed )
 
@@ -97,7 +97,7 @@ def sobol_test03 ( ):
 
 	seed = 123456789
 
-	for test in xrange(0, 10):
+	for test in range(0, 10):
 
 		[ i, seed ] = i4_uniform ( 0, 100, seed )
 
@@ -133,7 +133,7 @@ def sobol_test04 ( ):
 
 	dim_max = 4
 
-	for dim_num in xrange( 2, dim_max+1):
+	for dim_num in range( 2, dim_max+1):
 
 		seed = 0
 		qs = prime_ge ( dim_num )
@@ -141,11 +141,11 @@ def sobol_test04 ( ):
 		print '\n  Using dimension DIM_NUM =   %d'%dim_num
 		print '\n  Seed  Seed   I4_SOBOL'
 		print '  In    Out\n'
-		for i in xrange( 0, 111):
+		for i in range( 0, 111):
 			[ r, seed_out ] = i4_sobol ( dim_num, seed )
 			if ( i <= 11 or 95 <= i ):
 				out='%6d %6d  '%(seed, seed_out )
-				for j in xrange (0, dim_num):
+				for j in range (0, dim_num):
 					out+='%10f  '%r[j]
 				print out
 			elif ( i == 12 ):
@@ -194,10 +194,10 @@ def sobol_test05 ( ):
   print '  In    Out'
   print ''
 
-  for i in xrange( 0 , 10+1):
+  for i in range( 0 , 10+1):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out= '%6d %6d  '%( seed, seed_out )
-    for j in xrange( 1 , dim_num+1):
+    for j in range( 1 , dim_num+1):
       out+= '%10f  '% r[j-1] 
     print out
     seed = seed_out
@@ -213,10 +213,10 @@ def sobol_test05 ( ):
   print '  In    Out'
   print ''
 
-  for i in xrange( 1 , 6):
+  for i in range( 1 , 6):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out='%6d %6d  '%( seed, seed_out)
-    for j in xrange( 1 , dim_num+1):
+    for j in range( 1 , dim_num+1):
       out+= '%10f  '% r[j-1] 
     print out
     seed = seed_out
@@ -231,10 +231,10 @@ def sobol_test05 ( ):
   print '  In    Out'
   print ''
 
-  for i in xrange( 0 , 11):
+  for i in range( 0 , 11):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out='%6d %6d  '%( seed, seed_out)
-    for j in xrange( 1 , dim_num+1):
+    for j in range( 1 , dim_num+1):
       out+= '%10f  '% r[j-1] 
     print out
     seed = seed_out
@@ -250,10 +250,10 @@ def sobol_test05 ( ):
   print '  In    Out'
   print ''
 
-  for i in xrange( 1 , 6):
+  for i in range( 1 , 6):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out= '%6d %6d  '%( seed, seed_out )
-    for j in xrange( 1 , dim_num+1):
+    for j in range( 1 , dim_num+1):
       out+= '%10f  '%r[j-1] 
     print out
     seed = seed_out

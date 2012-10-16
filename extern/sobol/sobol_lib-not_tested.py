@@ -136,8 +136,8 @@ def r8mat_write ( output_filename, m, n, table ):
 #
 #		 fprintf ( output_unit, '	#14.6f', table(i,j) )
 #
-	for j in xrange(0, n):
-		for i in xrange (0, m):
+	for j in range(0, n):
+		for i in range (0, m):
 			output_unit.write('	%24.16f'%table[i,j] )
 		output_unit.write('\n' )
 #
