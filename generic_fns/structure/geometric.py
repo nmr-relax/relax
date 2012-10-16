@@ -57,7 +57,7 @@ def angles_regular(inc=None):
     # Generate the increment values of v.
     v = zeros(inc/2+1, float64)
     val = 1.0 / float(inc/2)
-    for i in range(inc/2+1):
+    for i in range(int(inc/2+1)):
         v[i] = float(i) * val
 
     # Generate the distribution of spherical angles theta.
