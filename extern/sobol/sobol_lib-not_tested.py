@@ -126,8 +126,8 @@ def r8mat_write ( output_filename, m, n, table ):
 	try:
 		output_unit = open ( output_filename, 'wt' )
 	except:
-		print 'R8MAT_WRITE - Error!' 
-		print '	Could not open the output file.' 
+		print('R8MAT_WRITE - Error!') 
+		print('	Could not open the output file.') 
 		return
 #
 #	Write the data.
