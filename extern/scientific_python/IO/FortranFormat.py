@@ -212,17 +212,17 @@ class FortranLine:
                     if value is None:
                         s = ''
                     elif type == 'I':
-                        s = `value`
+                        s = repr(value)
                     elif type == 'D':
-                        s = ('%'+`length`+'.'+`fraction`+'e') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'e') % value
                         n = string.find(s, 'e')
                         s = s[:n] + 'D' + s[n+1:]
                     elif type == 'E':
-                        s = ('%'+`length`+'.'+`fraction`+'e') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'e') % value
                     elif type == 'F':
-                        s = ('%'+`length`+'.'+`fraction`+'f') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'f') % value
                     elif type == 'G':
-                        s = ('%'+`length`+'.'+`fraction`+'g') % value
+                        s = ('%'+repr(length)+'.'+repr(fraction)+'g') % value
                     else:
                         raise ValueError('Not yet implemented')
                     s = string.upper(s)

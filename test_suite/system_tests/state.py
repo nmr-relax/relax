@@ -25,10 +25,10 @@ import sys
 from tempfile import mktemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import VALID_TYPES, get_pipe
 from generic_fns.reset import reset
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class State(SystemTestCase):

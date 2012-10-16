@@ -26,12 +26,12 @@ from string import split
 from tempfile import mkdtemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Relax_fit(SystemTestCase):
@@ -100,7 +100,7 @@ class Relax_fit(SystemTestCase):
         file.close()
 
         # Loop over all lines.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             # Find the "@target G0.S0" line.
             if search('@target', lines[i]):
                 index = i + 2
@@ -126,7 +126,7 @@ class Relax_fit(SystemTestCase):
         file.close()
 
         # Loop over all lines.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             # Find the "@target G0.S0" line.
             if search('@target', lines[i]):
                 index = i + 2

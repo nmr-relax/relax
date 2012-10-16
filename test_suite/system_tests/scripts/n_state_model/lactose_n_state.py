@@ -53,7 +53,7 @@ self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@C12', spin_id2=':U
 align_list = ['Dy', 'Tb', 'Tm', 'Er']
 
 # Load the RDCs and PCSs.
-for i in xrange(len(align_list)):
+for i in range(len(align_list)):
     # The RDC.
     self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='rdc.txt', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=i+3, error_col=None)
     self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='rdc_err.txt', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=None, error_col=i+3)
@@ -92,7 +92,7 @@ self._execute_uf(uf_name='n_state_model.select_model', model=ds.model)
 
 # Set to equal probabilities.
 if ds.model == 'population':
-    for j in xrange(NUM_STR):
+    for j in range(NUM_STR):
         self._execute_uf(1.0/NUM_STR, 'p'+repr(j), uf_name='value.set')
 
 # Minimisation.

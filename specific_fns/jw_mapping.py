@@ -270,17 +270,25 @@ class Jw_mapping(API_base, API_common):
     default_value_doc.add_table(_table.label)
 
 
-    def overfit_deselect(self):
-        """Deselect spins which _have insufficient data to support calculation."""
+    def overfit_deselect(self, data_check=True, verbose=True):
+        """Deselect spins which _have insufficient data to support calculation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
+        """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        if verbose:
+            print("\nOver-fit spin deselection:")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
+        deselect_flag = False
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -290,6 +298,8 @@ class Jw_mapping(API_base, API_common):
             if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
+                deselect_flag = True
+                continue
 
             # Require 3 or more data points.
             else:
@@ -303,6 +313,12 @@ class Jw_mapping(API_base, API_common):
                 if data_points < 3:
                     warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                     spin.select = False
+                    deselect_flag = True
+                    continue
+
+        # Final printout.
+        if verbose and not deselect_flag:
+            print("No spins have been deselected.")
 
 
     return_data_name_doc = Desc_container("Reduced spectral density mapping data type string matching patterns")

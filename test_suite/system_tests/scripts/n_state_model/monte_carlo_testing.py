@@ -21,7 +21,8 @@ self._execute_uf(uf_name='pipe.create', pipe_name='MC test', pipe_type='N-state'
 self._execute_uf(uf_name='structure.read_pdb', file='sphere', dir=STRUCT_PATH)
 
 # Load the spins.
-self._execute_uf(uf_name='structure.load_spins')
+self._execute_uf(uf_name='structure.load_spins', spin_id='@N')
+self._execute_uf(uf_name='structure.load_spins', spin_id='@H')
 
 # Define the magnetic dipole-dipole relaxation interaction.
 self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)

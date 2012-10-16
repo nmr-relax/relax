@@ -58,7 +58,7 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[2], params=( 2.3
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.62495279588228071048e-04,  7.35617367964106275147e-04,  6.39754192258981332648e-05,  6.27880171180572523460e-05,  2.01197582457700226708e-04), align_id=align_list[3], param_types=2)
 
 # Load the RDCs and PCSs.
-for i in xrange(len(align_list)):
+for i in range(len(align_list)):
     # The RDC.
     if i != 1:
         self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
@@ -130,7 +130,7 @@ print("#######################\n\n\n")
 
 # Optimise each tensor again, one by one.
 self._execute_uf(uf_name='paramag.centre', fix=True)
-for i in xrange(len(align_list)):
+for i in range(len(align_list)):
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i], fixed=False)
     self._execute_uf('newton', constraints=False, max_iter=500, uf_name='minimise')
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i], fixed=True)

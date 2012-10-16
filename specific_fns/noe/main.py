@@ -140,17 +140,25 @@ class Noe_main:
             spin.noe_err = sqrt((sat_err * ref)**2 + (ref_err * sat)**2) / ref**2
 
 
-    def overfit_deselect(self):
-        """Deselect spins which have insufficient data to support calculation."""
+    def overfit_deselect(self, data_check=True, verbose=True):
+        """Deselect spins which have insufficient data to support calculation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
+        """
 
         # Print out.
-        print("\n\nOver-fit spin deselection.\n")
+        if verbose:
+            print("\nOver-fit spin deselection:")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
+        deselect_flag = False
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -160,11 +168,19 @@ class Noe_main:
             if not hasattr(spin, 'intensities') or not len(spin.intensities) == 2:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data'))
                 spin.select = False
+                deselect_flag = True
+                continue
 
             # Check for sufficient errors.
             elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
                 warn(RelaxDeselectWarning(spin_id, 'missing errors'))
                 spin.select = False
+                deselect_flag = True
+                continue
+
+        # Final printout.
+        if verbose and not deselect_flag:
+            print("No spins have been deselected.")
 
 
     return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")

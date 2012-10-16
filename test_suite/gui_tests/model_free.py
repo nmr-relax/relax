@@ -115,6 +115,11 @@ class Mf(GuiTestCase):
         analysis.setup_dipole_pair()
 
         # Dipole-dipole interaction wizard:  The dipole_pair.define, dipole_pair.set_dist, and dipole_pair.unit_vectors user functions.
+        analysis.dipole_wizard._apply()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+        page = analysis.dipole_wizard.get_page(0)
+        page.uf_args['spin_id1'].SetValue(str_to_gui("@NE1"))
+        page.uf_args['spin_id2'].SetValue(str_to_gui("@HE1"))
         analysis.dipole_wizard._go_next()
         interpreter.flush()    # Required because of the asynchronous uf call.
         analysis.dipole_wizard._go_next()
@@ -176,10 +181,11 @@ class Mf(GuiTestCase):
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_max_iterations = 1000
 
         # Execute relax.
-        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
+        state = analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
 
         # Wait for execution to complete.
-        analysis.thread.join()
+        if hasattr(analysis, 'thread'):
+            analysis.thread.join()
 
         # Flush all wx events.
         wx.Yield()
@@ -202,12 +208,22 @@ class Mf(GuiTestCase):
         self.assertAlmostEqual(cdp.chi2, 4e-19)
 
         # The spin ID info.
-        mol_names = ["sphere_mol1"] * 9*2
-        res_names = ["GLY"] * 9*2
-        res_nums = [val for pair in zip(range(1, 10), range(1, 10)) for val in pair]
-        spin_names = ["N", "H"] * 9
-        spin_nums = numpy.array(range(9*2)) * 2 + 1
-        spin_nums = range(1, 20)
+        mol_names = ["sphere_mol1"] * 20
+        res_names = ["GLY"] * 20
+        res_nums = []
+        for i in range(1, 10):
+            res_nums.append(i)
+            res_nums.append(i)
+        res_nums.append(i)
+        res_nums.append(i)
+        spin_names = ["N", "H"] * 9 + ["NE1", "HE1"]
+        spin_nums = range(1, 21)
+        isotopes = ["15N", "1H"] * 10
+        csa = [-172e-6, None] * 10
+        select = [True, False] * 10
+        fixed = [False, False] * 10
+        s2 = [0.8, None] * 10
+        te = [20e-12, None] * 10
 
         # Check the spin data.
         i = 0
@@ -219,42 +235,43 @@ class Mf(GuiTestCase):
             self.assertEqual(spin.name, spin_names[i])
             self.assertEqual(spin.num,  spin_nums[i])
 
-            # The 1H spin checks.
-            if i%2:
-                # The data.
-                self.assertEqual(spin.select, False)
-                self.assertEqual(spin.isotope, '1H')
-
-            # The 15N spin checks.
+            # The data.
+            self.assertEqual(spin.select, select[i])
+            self.assertEqual(spin.fixed, fixed[i])
+            self.assertEqual(spin.isotope, isotopes[i])
+            if csa[i] == None:
+                self.assertEqual(spin.csa, None)
             else:
-                # The data.
-                self.assertEqual(spin.select, True)
-                self.assertEqual(spin.fixed, False)
-                self.assertEqual(spin.isotope, '15N')
-                self.assertAlmostEqual(spin.csa, -172e-6)
+                self.assertAlmostEqual(spin.csa, csa[i])
 
-                # The model-free data.
-                self.assertEqual(spin.model, 'm2')
-                self.assertEqual(spin.equation, 'mf_orig')
-                self.assertEqual(len(spin.params), 2)
-                self.assertEqual(spin.params[0], 's2')
-                self.assertEqual(spin.params[1], 'te')
+            # The model-free data.
+            self.assertEqual(spin.model, 'm2')
+            self.assertEqual(spin.equation, 'mf_orig')
+            self.assertEqual(len(spin.params), 2)
+            self.assertEqual(spin.params[0], 's2')
+            self.assertEqual(spin.params[1], 'te')
+            if s2[i] == None:
+                self.assertEqual(spin.s2, None)
+            else:
                 self.assertAlmostEqual(spin.s2, 0.8)
-                self.assertEqual(spin.s2f, None)
-                self.assertEqual(spin.s2s, None)
-                self.assertEqual(spin.local_tm, None)
+            self.assertEqual(spin.s2f, None)
+            self.assertEqual(spin.s2s, None)
+            self.assertEqual(spin.local_tm, None)
+            if te[i] == None:
+                self.assertEqual(spin.te, None)
+            else:
                 self.assertAlmostEqual(spin.te, 20e-12)
-                self.assertEqual(spin.tf, None)
-                self.assertEqual(spin.ts, None)
-                self.assertEqual(spin.rex, None)
+            self.assertEqual(spin.tf, None)
+            self.assertEqual(spin.ts, None)
+            self.assertEqual(spin.rex, None)
 
-                # The spin minimisation info.
-                self.assertEqual(spin.chi2, None)
-                self.assertEqual(spin.iter, None)
-                self.assertEqual(spin.f_count, None)
-                self.assertEqual(spin.g_count, None)
-                self.assertEqual(spin.h_count, None)
-                self.assertEqual(spin.warning, None)
+            # The spin minimisation info.
+            self.assertEqual(spin.chi2, None)
+            self.assertEqual(spin.iter, None)
+            self.assertEqual(spin.f_count, None)
+            self.assertEqual(spin.g_count, None)
+            self.assertEqual(spin.h_count, None)
+            self.assertEqual(spin.warning, None)
 
             # Increment the index.
             i += 1

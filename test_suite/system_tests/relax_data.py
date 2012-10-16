@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,9 +23,9 @@
 from os import sep
 
 # relax module imports.
-from base_classes import SystemTestCase
 from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Relax_data(SystemTestCase):
@@ -126,8 +126,14 @@ class Relax_data(SystemTestCase):
         self.assert_(not cdp.frq.has_key('R2_900'))
         self.assert_(not cdp.ri_type.has_key('R2_900'))
         for spin in spin_loop():
-            self.assert_(not spin.ri_data.has_key('R2_900'))
-            self.assert_(not spin.ri_data_err.has_key('R2_900'))
+            # Protons.
+            if spin.name in ['H', 'HE1']:
+                self.assert_(not hasattr(spin, 'ri_data'))
+
+            # Nitrogens.
+            else:
+                self.assert_(not spin.ri_data.has_key('R2_900'))
+                self.assert_(not spin.ri_data_err.has_key('R2_900'))
 
         # Switch to the second pipe.
         self.interpreter.pipe.switch('delete 2')

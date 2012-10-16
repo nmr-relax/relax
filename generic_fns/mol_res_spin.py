@@ -2193,8 +2193,8 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
     @type name:         str
     @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
     @type pipe:         str
-    @keyword force:     A flag which if True will cause the named spin to be renamed.
-    @type force:        bool
+    @keyword force:     A flag which if True will cause the named spin to be renamed.  If None, then the warning messages will not mention the need to change this flag to rename.
+    @type force:        bool or None
     """
 
     # The data pipe.
@@ -2209,8 +2209,11 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
     try:
         # Rename the matching spins.
         for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
-            if spin.name and not force:
-                warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+            if spin.name and force != True:
+                if force == False:
+                    warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+                else:
+                    warn(RelaxWarning("The spin '%s' is already named." % id))
             else:
                 spin.name = name
 
@@ -3050,8 +3053,8 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
     @type isotope:      str
     @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
     @type pipe:         str
-    @keyword force:     A flag which if True will cause the isotope type to be changed.
-    @type force:        bool
+    @keyword force:     A flag which if True will cause the isotope type to be changed.  If None, then the warning messages will not mention the need to change this flag to rename.
+    @type force:        bool or None
     """
 
     # Types currently supported in relax.
@@ -3081,8 +3084,11 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
 
     # Set the isotope type for the matching spins.
     for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
-        if hasattr(spin, 'isotope') and spin.isotope and not force:
-            warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
+        if hasattr(spin, 'isotope') and spin.isotope and force != True:
+            if force == False:
+                warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set.  Change the force flag to True to reset." % id))
+            else:
+                warn(RelaxWarning("The nuclear isotope type of the spin '%s' is already set." % id))
         else:
             spin.isotope = isotope
 

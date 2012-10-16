@@ -27,12 +27,12 @@ import sys
 from tempfile import mkdtemp
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
 from relax_io import test_binary
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Dasha(SystemTestCase):
@@ -89,11 +89,11 @@ class Dasha(SystemTestCase):
         ri_data = [{'R1_600': 1.0, 'R2_600': 15.0, 'NOE_600': 0.9},
                    {'R1_600': 0.9, 'R2_600': 13.9, 'NOE_600': 0.79},
                    {'R2_600': 12.0, 'NOE_600': 0.6},
-                   {'R1_600': None, 'R2_600': None, 'NOE_600': None}]
+                   None]
         ri_data_err = [{'R1_600': 0.05, 'R2_600': 0.5, 'NOE_600': 0.05},
                        {'R1_600': 0.05, 'R2_600': 0.8, 'NOE_600': 0.05},
                        {'R2_600': 0.5, 'NOE_600': 0.05},
-                       {'R1_600': None, 'R2_600': None, 'NOE_600': None}]
+                       None]
 
         # Check the spin data.
         i = 0
@@ -121,9 +121,12 @@ class Dasha(SystemTestCase):
             self.assertEqual(spin.rex, rex[i])
             self.assertAlmostEqual(spin.csa, csa[i])
             self.assertEqual(spin.chi2, chi2[i])
-            for ri_id in cdp.ri_ids:
-                if ri_id in ri_data[i].keys():
-                    self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
+            if ri_data[i] == None:
+                self.assert_(not hasattr(spin, 'ri_data'))
+            else:
+                for ri_id in cdp.ri_ids:
+                    if ri_id in ri_data[i].keys():
+                        self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
 
             # Increment the spin index.
             i += 1

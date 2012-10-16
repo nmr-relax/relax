@@ -23,10 +23,10 @@
 from os import sep
 
 # relax module imports.
-from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.interatomic import return_interatom_list
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Angles(SystemTestCase):
@@ -65,7 +65,7 @@ class Angles(SystemTestCase):
         self.assertEqual(len(cdp.mol[0].res), 12)
 
         # Checks for the first 12 residues.
-        for i in xrange(12):
+        for i in range(12):
             print((cdp.mol[0].res[i].spin[0]))
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
@@ -91,7 +91,7 @@ class Angles(SystemTestCase):
                 self.assertEqual(cdp.mol[0].res[i].spin[1].name, attached_atoms[i])
 
                 # The vector.
-                for j in xrange(3):
+                for j in range(3):
                     self.assertAlmostEqual(interatoms[0].vector[j], xh_vects[i][j])
 
                 # Check the alpha angles.
