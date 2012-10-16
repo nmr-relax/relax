@@ -25,9 +25,9 @@
 # Python module imports.
 from re import search
 from unittest import TestSuite
+import wx
 
 # relax module imports.
-from gui.interpreter import Interpreter
 from relax_errors import RelaxError
 
 # relax GUI test module imports.
@@ -132,10 +132,6 @@ class GUI_test_runner:
 
         # Run the test suite.
         results = runner.run(full_suite)
-
-        # Terminate the interpreter thread to allow the tests to cleanly exit.
-        interpreter = Interpreter()
-        interpreter.exit()
 
         # Return the status of the tests.
         return results.wasSuccessful()
