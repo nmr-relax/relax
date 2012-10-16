@@ -46,7 +46,7 @@ def install(target, source, env):
     print("####################")
     print("# Installing relax #")
     print("####################\n\n")
-    print(("Installing the program relax into the directory " + repr(env['RELAX_PATH']) + "\n\n"))
+    print("Installing the program relax into the directory " + repr(env['RELAX_PATH']) + "\n\n")
 
 
     # Tests.
@@ -84,7 +84,7 @@ def install(target, source, env):
 
     # Copy the files (and create the directory).
     try:
-        print(("\nCopying all files in " + repr(getcwd()) + " to " + repr(env['RELAX_PATH']) + "."))
+        print("\nCopying all files in " + repr(getcwd()) + " to " + repr(env['RELAX_PATH']) + ".")
         copytree(getcwd(), env['RELAX_PATH'])
     except OSError:
         message = sys.exc_info()[1]
@@ -105,7 +105,7 @@ def install(target, source, env):
 
     # Create the symbolic link.
     if env['SYMLINK_FLAG']:
-        print(("\nCreating the symbolic link from " + repr(env['RELAX_PATH'] + sep + 'relax') + " to " + repr(env['SYMLINK']) + "."))
+        print("\nCreating the symbolic link from " + repr(env['RELAX_PATH'] + sep + 'relax') + " to " + repr(env['SYMLINK']) + ".")
         symlink(env['RELAX_PATH'] + sep + 'relax', env['SYMLINK'])
 
 
@@ -133,7 +133,7 @@ def uninstall(target, source, env):
     print("######################")
     print("# Uninstalling relax #")
     print("######################\n\n")
-    print(("Uninstalling the program relax from the directory " + repr(env['INSTALL_PATH']) + "\n\n"))
+    print("Uninstalling the program relax from the directory " + repr(env['INSTALL_PATH']) + "\n\n")
 
 
     # Tests.
@@ -168,11 +168,11 @@ def uninstall(target, source, env):
 
     # Remove the symbolic link.
     if env['SYMLINK_FLAG']:
-        print(("\nRemoving the symbolic link " + repr(env['SYMLINK']) + "."))
+        print("\nRemoving the symbolic link " + repr(env['SYMLINK']) + ".")
         remove(env['SYMLINK'])
 
     # Remove the directory.
-    print(("\nRemoving the entire directory " + repr(env['RELAX_PATH']) + ".\n"))
+    print("\nRemoving the entire directory " + repr(env['RELAX_PATH']) + ".\n")
     for root, dirs, files in walk(env['RELAX_PATH'], topdown=False):
         for file in files:
             remove(path.join(root, file))

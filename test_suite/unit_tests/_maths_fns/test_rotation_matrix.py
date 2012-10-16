@@ -139,19 +139,19 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("Rotated and true axes (beta = pi/4):")
-        print(("x pos rot:  %s" % x_new_pos))
-        print(("x pos real: %s\n" % x_real_pos))
-        print(("y pos rot:  %s" % y_new_pos))
-        print(("y pos real: %s\n" % y_real_pos))
-        print(("z pos rot:  %s" % z_new_pos))
-        print(("z pos real: %s\n" % z_real_pos))
+        print("x pos rot:  %s" % x_new_pos)
+        print("x pos real: %s\n" % x_real_pos)
+        print("y pos rot:  %s" % y_new_pos)
+        print("y pos real: %s\n" % y_real_pos)
+        print("z pos rot:  %s" % z_new_pos)
+        print("z pos real: %s\n" % z_real_pos)
 
-        print(("x neg rot:  %s" % x_new_neg))
-        print(("x neg real: %s\n" % x_real_neg))
-        print(("y neg rot:  %s" % y_new_neg))
-        print(("y neg real: %s\n" % y_real_neg))
-        print(("z neg rot:  %s" % z_new_neg))
-        print(("z neg real: %s\n" % z_real_neg))
+        print("x neg rot:  %s" % x_new_neg)
+        print("x neg real: %s\n" % x_real_neg)
+        print("y neg rot:  %s" % y_new_neg)
+        print("y neg real: %s\n" % y_real_neg)
+        print("z neg rot:  %s" % z_new_neg)
+        print("z neg real: %s\n" % z_real_neg)
 
         # Checks.
         for i in range(3):
@@ -378,10 +378,10 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("Original data:")
-        print(("alpha: %s" % alpha_init))
-        print(("beta: %s" % beta_init))
-        print(("gamma: %s\n" % gamma_init))
-        print(("R:\n%s\n" % R2))
+        print("alpha: %s" % alpha_init)
+        print("beta: %s" % beta_init)
+        print("gamma: %s\n" % gamma_init)
+        print("R:\n%s\n" % R2)
 
         # The different notations.
         sets = ['xyx', 'xyz', 'xzx', 'xzy', 'yxy', 'yxz', 'yzx', 'yzy', 'zxy', 'zxz', 'zyx', 'zyz']
@@ -404,7 +404,7 @@ class Test_rotation_matrix(TestCase):
 
             # Euler -> R
             euler_to_R(a, b, g, R)
-            print(("Euler -> R:\n%s\n" % R))
+            print("Euler -> R:\n%s\n" % R)
 
             # R -> axis, angle.
             axis, angle = R_to_axis_angle(R)
@@ -420,7 +420,7 @@ class Test_rotation_matrix(TestCase):
 
             # axis, angle -> R.
             axis_angle_to_R(axis, angle, R)
-            print(("axis, angle -> R:\n%s\n" % R))
+            print("axis, angle -> R:\n%s\n" % R)
 
             # Print out the rotation matrix.
             print("Rotation matrix difference:\n%s\n" % (R2-R))
@@ -435,10 +435,10 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("End data:")
-        print(("alpha: %s" % alpha_end))
-        print(("beta: %s" % beta_end))
-        print(("gamma: %s\n" % gamma_end))
-        print(("R:\n%s\n" % R))
+        print("alpha: %s" % alpha_end)
+        print("beta: %s" % beta_end)
+        print("gamma: %s\n" % gamma_end)
+        print("R:\n%s\n" % R)
 
         # Checks.
         self.assertAlmostEqual(alpha_init, alpha_end)
@@ -456,9 +456,9 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("Original angles:")
-        print(("alpha: %s" % alpha))
-        print(("beta: %s" % beta))
-        print(("gamma: %s\n" % gamma))
+        print("alpha: %s" % alpha)
+        print("beta: %s" % beta)
+        print("gamma: %s\n" % gamma)
 
         # Init.
         axis = zeros(3, float64)
@@ -501,9 +501,9 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("New angles:")
-        print(("alpha: %s" % alpha_new))
-        print(("beta: %s" % beta_new))
-        print(("gamma: %s\n" % gamma_new))
+        print("alpha: %s" % alpha_new)
+        print("beta: %s" % beta_new)
+        print("gamma: %s\n" % gamma_new)
 
         # Checks.
         self.assertAlmostEqual(alpha, alpha_new)

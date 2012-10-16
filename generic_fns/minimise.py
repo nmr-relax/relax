@@ -59,7 +59,7 @@ def calc(verbosity=1):
         for i in range(cdp.sim_number):
             # Print out.
             if verbosity:
-                print(("Simulation " + repr(i+1)))
+                print("Simulation " + repr(i+1))
 
             # Status.
             if status.current_analysis:
@@ -118,7 +118,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
         for i in range(cdp.sim_number):
             # Print out.
             if verbosity:
-                print(("Simulation " + repr(i+1)))
+                print("Simulation " + repr(i+1))
 
             # Status.
             if status.current_analysis:
@@ -200,7 +200,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
         for i in range(cdp.sim_number):
             # Print out.
             if verbosity:
-                print(("Simulation " + repr(i+1)))
+                print("Simulation " + repr(i+1))
 
             # Status.
             if status.current_analysis:

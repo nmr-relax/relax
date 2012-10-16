@@ -63,7 +63,7 @@ def gpg_sign(target, source, env):
             file = env['DIST_FILE'] + '.dmg'
 
         # Print out.
-        print(("\n\nSigning the distribution package " + repr(file) + ".\n"))
+        print("\n\nSigning the distribution package " + repr(file) + ".\n")
 
         # Run the 'gpg' command.
         system("gpg --detach-sign --default-key " + key + " " + path.pardir + path.sep + file)
@@ -97,7 +97,7 @@ def package(target, source, env):
             file = env['DIST_FILE'] + '.dmg'
 
         # Print out.
-        print(("\n\nCreating the package distribution " + repr(file) + ".\n"))
+        print("\n\nCreating the package distribution " + repr(file) + ".\n")
 
         # Create the special Mac OS X DMG file and then stop execution.
         if dist_type == 'dmg':
@@ -149,7 +149,7 @@ def package(target, source, env):
                 # Create the file name (without the base directory).
                 name = path.join(root, files[i])
                 name = name[len(base):]
-                print(('relax-' + version + path.sep + name))
+                print('relax-' + version + path.sep + name)
 
                 # The archive file name.
                 arcname = 'relax-' + version + path.sep + name

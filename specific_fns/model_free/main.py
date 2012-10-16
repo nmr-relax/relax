@@ -1596,17 +1596,17 @@ class Model_free_main:
         # Local tm.
         if name == 'local_tm' and value >= c1:
             if sim == None:
-                print(("Data pipe '%s':  The local tm parameter of %.5g is greater than %.5g, eliminating spin system '%s'." % (pipes.cdp_name(), value, c1, spin_id)))
+                print("Data pipe '%s':  The local tm parameter of %.5g is greater than %.5g, eliminating spin system '%s'." % (pipes.cdp_name(), value, c1, spin_id))
             else:
-                print(("Data pipe '%s':  The local tm parameter of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (pipes.cdp_name(), value, c1, sim, spin_id)))
+                print("Data pipe '%s':  The local tm parameter of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (pipes.cdp_name(), value, c1, sim, spin_id))
             return True
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
             if sim == None:
-                print(("Data pipe '%s':  The %s value of %.5g is greater than %.5g, eliminating spin system '%s'." % (pipes.cdp_name(), name, value, c2*tm, spin_id)))
+                print("Data pipe '%s':  The %s value of %.5g is greater than %.5g, eliminating spin system '%s'." % (pipes.cdp_name(), name, value, c2*tm, spin_id))
             else:
-                print(("Data pipe '%s':  The %s value of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (pipes.cdp_name(), name, value, c2*tm, sim, spin_id)))
+                print("Data pipe '%s':  The %s value of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (pipes.cdp_name(), name, value, c2*tm, sim, spin_id))
             return True
 
         # Accept model.

@@ -78,11 +78,11 @@ self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Print out.
 print("\n# Min details #")
-print(("grid increments: %s" % GRID_INCS))
+print("grid increments: %s" % GRID_INCS)
 print("\n# Euler angles (deg) #")
-print(("ave_pos_alpha:      %20.8f+/-%-20.8f" % (cdp.ave_pos_alpha /2/pi*360, cdp.ave_pos_alpha_err /2/pi*360)))
-print(("ave_pos_beta:       %20.8f+/-%-20.8f" % (cdp.ave_pos_beta /2/pi*360, cdp.ave_pos_beta_err /2/pi*360)))
-print(("ave_pos_gamma:      %20.8f+/-%-20.8f" % (cdp.ave_pos_gamma /2/pi*360, cdp.ave_pos_gamma_err /2/pi*360)))
+print("ave_pos_alpha:      %20.8f+/-%-20.8f" % (cdp.ave_pos_alpha /2/pi*360, cdp.ave_pos_alpha_err /2/pi*360))
+print("ave_pos_beta:       %20.8f+/-%-20.8f" % (cdp.ave_pos_beta /2/pi*360, cdp.ave_pos_beta_err /2/pi*360))
+print("ave_pos_gamma:      %20.8f+/-%-20.8f" % (cdp.ave_pos_gamma /2/pi*360, cdp.ave_pos_gamma_err /2/pi*360))
 
 # Write the results.
 self._execute_uf(uf_name='results.write', file='devnull', dir=None, force=True)

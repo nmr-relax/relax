@@ -65,7 +65,7 @@ class Results:
 
         # Print out.
         if verbosity:
-            print(("relax " + version + " model-free results file."))
+            print("relax " + version + " model-free results file.")
 
         # Return the version.
         return version
@@ -113,9 +113,9 @@ class Results:
         # Print out.
         if verbosity >= 2:
             print("\nFixing parameters based on the model type.")
-            print(("Model type: " + model_type))
-            print(("Diffusion tensor fixed: " + repr(diff_fixed)))
-            print(("Model-free parameters fixed: " + repr(mf_fixed)))
+            print("Model type: " + model_type)
+            print("Diffusion tensor fixed: " + repr(diff_fixed))
+            print("Model-free parameters fixed: " + repr(mf_fixed))
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:
@@ -952,7 +952,7 @@ class Results:
         # Print out.
         if diff_type and data_set == 'value' and verbosity:
             print("\nSetting the diffusion tensor.")
-            print(("Diffusion type: " + diff_type))
+            print("Diffusion type: " + diff_type)
 
         # Sphere.
         if diff_type == 'sphere':

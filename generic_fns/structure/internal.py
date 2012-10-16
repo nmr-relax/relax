@@ -1539,7 +1539,7 @@ class Internal(Base_struct_API):
 
             if model_records:
                 # Print out.
-                print(("\nMODEL %s" % model.num))
+                print("\nMODEL %s" % model.num)
 
                 # Write the model record.
                 file.write("%-6s    %4i\n" % ('MODEL', model.num))

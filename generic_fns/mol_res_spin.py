@@ -1465,12 +1465,12 @@ def display_molecule(mol_id=None):
         mol_sel = None
 
     # Print a header.
-    print(("\n\n%-15s %-15s" % ("Molecule", "Number of residues")))
+    print("\n\n%-15s %-15s" % ("Molecule", "Number of residues"))
 
     # Molecule loop.
     for mol in molecule_loop(mol_sel):
         # Print the molecule data.
-        print(("%-15s %-15s" % (mol.name, repr(len(mol.res)))))
+        print("%-15s %-15s" % (mol.name, repr(len(mol.res))))
 
 
 def display_residue(res_id=None):
@@ -1488,11 +1488,11 @@ def display_residue(res_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Print a header.
-    print(("\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins")))
+    print("\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins"))
 
     # Residue loop.
     for res, mol_name in residue_loop(res_id, full_info=True):
-        print(("%-15s %-15s %-15s %-15s" % (mol_name, repr(res.num), res.name, repr(len(res.spin)))))
+        print("%-15s %-15s %-15s %-15s" % (mol_name, repr(res.num), res.name, repr(len(res.spin))))
 
 
 def display_spin(spin_id=None):
@@ -1503,12 +1503,12 @@ def display_spin(spin_id=None):
     """
 
     # Print a header.
-    print(("\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")))
+    print("\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name"))
 
     # Spin loop.
     for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
         # Print the residue data.
-        print(("%-15s %-15s %-15s %-15s %-15s" % (mol_name, repr(res_num), res_name, repr(spin.num), spin.name)))
+        print("%-15s %-15s %-15s %-15s %-15s" % (mol_name, repr(res_num), res_name, repr(spin.num), spin.name))
 
 
 def exists_mol_res_spin_data(pipe=None):
@@ -2414,7 +2414,7 @@ def parse_token(token, verbosity=False):
                 # Invalid range element, only one range char '-' and one negative sign is allowed.
                 if len(indices) > 2:
                     if verbosity:
-                        print(("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range."))
+                        print("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range.")
                     valid_range = False
 
                 # Convert the two numbers to integers.
@@ -2423,13 +2423,13 @@ def parse_token(token, verbosity=False):
                     end = int(element[indices[0]+1:])
                 except ValueError:
                     if verbosity:
-                        print(("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."))
+                        print("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range.")
                     valid_range = False
 
                 # Test that the starting number is less than the end.
                 if valid_range and start >= end:
                     if verbosity:
-                        print(("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range."))
+                        print("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range.")
                     valid_range = False
 
                 # Create the range and append it to the list.
