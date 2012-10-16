@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006 Gary Thompson                                            #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -63,7 +63,7 @@ class Test_float(TestCase):
     """Unit tests for the functions of the 'float' module."""
 
     # A dictionary of all numerical types (the key is the memory address, i.e. this is like a pointer).
-    tests = make_dict_by_id([pos_inf, neg_inf, FLOAT_NORMAL, NEG_FLOAT_NORMAL, FLOAT_EPSILON, NEG_FLOAT_EPSILON, nan, ZERO, NEG_ZERO])
+    num_types = make_dict_by_id([pos_inf, neg_inf, FLOAT_NORMAL, NEG_FLOAT_NORMAL, FLOAT_EPSILON, NEG_FLOAT_EPSILON, nan, ZERO, NEG_ZERO])
 
     def do_test_sets(self, function, true_class=[], false_class=[]):
         """Method for checking all the values against the given function."""
@@ -104,7 +104,7 @@ class Test_float(TestCase):
         negatives = (neg_inf, NEG_FLOAT_NORMAL, NEG_FLOAT_EPSILON, NEG_ZERO)
 
         # Positive values.
-        positives = winnow_dist_to_list_by_id(self.tests, negatives)
+        positives = winnow_dist_to_list_by_id(self.num_types, negatives)
 
         # Run the tests.
         self.do_test_sets(isPositive, true_class=positives, false_class=negatives)
@@ -117,7 +117,7 @@ class Test_float(TestCase):
         zeros = (ZERO, NEG_ZERO)
 
         # All other numbers.
-        non_zeros = winnow_dist_to_list_by_id(self.tests, zeros)
+        non_zeros = winnow_dist_to_list_by_id(self.num_types, zeros)
 
         # Run the tests.
         self.do_test_sets(isZero, true_class=zeros, false_class=non_zeros)
