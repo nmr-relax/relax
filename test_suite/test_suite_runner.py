@@ -39,8 +39,7 @@ from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
 if dep_check.wx_module:
-    from gui.interpreter import Interpreter
-    from gui.relax_gui import Main
+    import gui
 from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
@@ -121,7 +120,7 @@ class Test_suite_runner:
                 app = wx.App(redirect=False)
 
                 # Build the GUI.
-                app.gui = Main(parent=None, id=-1, title="")
+                app.gui = gui.relax_gui.Main(parent=None, id=-1, title="")
 
             # Execute the GUI tests.
             gui_runner = GUI_test_runner()
@@ -130,7 +129,7 @@ class Test_suite_runner:
             # Clean up for the GUI, if not in GUI mode.
             if status.test_mode:
                 # Terminate the interpreter thread to allow the tests to cleanly exit.
-                interpreter = Interpreter()
+                interpreter = gui.interpreter.Interpreter()
                 interpreter.exit()
 
                 # Stop the GUI main loop.
