@@ -2611,7 +2611,7 @@ class Mf(SystemTestCase):
 
         # Read the 1.3 results file, extract the data, then close it again.
         a, b, c = platform.python_version_tuple()
-        if dep_check.xml_type == 'internal' and int(a) >= 2 and int(b) >= 7 and int(c) >= 3:
+        if (dep_check.xml_type == 'internal' and int(a) >= 2 and int(b) >= 7 and int(c) >= 3) or int(a) >= 3:
             file = open_read_file(file_name='final_results_trunc_1.3_v2', dir=path)
         else:
             file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)

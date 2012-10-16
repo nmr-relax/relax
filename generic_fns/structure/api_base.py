@@ -1390,9 +1390,9 @@ class MolList(list):
         for mol_node in mol_nodes:
             # Some imports (here to break circular import issues).
             if id == 'internal':
-                from internal import MolContainer
+                from generic_fns.structure.internal import MolContainer
             elif id == 'scientific':
-                from scientific import MolContainer
+                from generic_fns.structure.scientific import MolContainer
 
             # Initialise a MolContainer instance.
             mol_cont = MolContainer()

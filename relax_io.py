@@ -45,6 +45,7 @@ from warnings import warn
 
 # relax module imports.
 from check_types import is_filetype
+from compat import py_version
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -151,7 +152,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     data = []
     for i in range(len(file_data)):
         # Python 3 support - conversion of bytes type objects to strings.
-        if hasattr(file_data[i], 'decode'):
+        if py_version == 3 and hasattr(file_data[i], 'decode'):
             file_data[i] = file_data[i].decode()
 
         if sep:
@@ -1038,8 +1039,17 @@ class DummyFileObject:
     def __init__(self):
         """Set up the dummy object to act as a file object."""
 
-        # Initialise an object for adding the string from all write calls to.
-        self.data = ''
+        # Initialise for Python 2.
+        if py_version == 2:
+            self.data = ''
+            self._newline = '\n'
+            self._empty = ''
+
+        # Initialise for Python 3.
+        elif py_version == 3:
+            self.data = b''
+            self._newline = b'\n'
+            self._empty = b''
 
         # Set the closed flag.
         self.closed = False
@@ -1078,15 +1088,15 @@ class DummyFileObject:
         """
 
         # Split up the string.
-        lines = self.data.split('\n')
+        lines = self.data.split(self._newline)
 
         # Remove the last line if empty.
-        if lines[-1] == '':
+        if lines[-1] == self._empty:
             lines.pop()
 
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
         for i in range(len(lines)):
-            lines[i] = lines[i] + '\n'
+            lines[i] = lines[i] + self._newline
 
         # Return the file lines.
         return lines

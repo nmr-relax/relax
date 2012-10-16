@@ -1775,7 +1775,7 @@ class Frame_order(API_base, API_common):
             if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
                 # Change the default increment numbers.
                 if not isinstance(inc, list):
-                    incs[i] = incs[i] / 2 + 1
+                    incs[i] = int(incs[i] / 2) + 1
 
                 # The distribution type and end point.
                 dist_type = 'acos'
