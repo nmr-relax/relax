@@ -947,7 +947,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
     if domain:
         set_domain(tensor=tensor, domain=domain)
     if align_id:
-        tensor_obj.align_id = align_id
+        tensor_obj.set(param='align_id', value=align_id)
 
 
 def map_bounds(param):
