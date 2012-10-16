@@ -532,11 +532,11 @@ class Unit_test_runner(object):
         @rtype:     str
         """
 
-        result = set()
+        result = []
 
         # check for current working directory
         if test_module == None:
-            result.add(os.curdir)
+            result.append(os.curdir)
         else:
             # add a direct file
             mpath = []
@@ -547,11 +547,11 @@ class Unit_test_runner(object):
                 else:
                     mpath.append(elem)
 
-            result.add(tuple(mpath))
+            result.append(tuple(mpath))
 
             mpath = copy(mpath)
             mpath.append(mpath[-1].capitalize())
-            result.add(tuple(mpath))
+            result.append(tuple(mpath))
 
             module_path_elems = test_module.split('.')
 
@@ -569,11 +569,11 @@ class Unit_test_runner(object):
                     break
 
             if elems_ok:
-                result.add(tuple(module_norm_path))
+                result.append(tuple(module_norm_path))
 
                 mpath = copy(module_norm_path)
                 mpath.append(module_norm_path[-1].capitalize())
-                result.add(tuple(mpath))
+                result.append(tuple(mpath))
 
         return result
 

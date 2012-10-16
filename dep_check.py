@@ -212,6 +212,25 @@ if xml_module:
         xml_version = ''
         xml_type = ''
 
+# subprocess module.
+try:
+    import subprocess
+    subprocess_module = True
+except ImportError:
+    message = sys.exc_info()[1]
+    subprocess_module = False
+    subprocess_module_message = message.args[0]
+
+# ctypes module.
+try:
+    import ctypes
+    from ctypes import Structure
+    ctypes_module = True
+except ImportError:
+    message = sys.exc_info()[1]
+    ctypes_module = False
+    ctypes_module_message = message.args[0]
+
 
 
 # Compiled C modules.

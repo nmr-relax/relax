@@ -50,7 +50,7 @@ class Relax_fit(SystemTestCase):
         # Missing module.
         if not dep_check.C_module_exp_fn:
             # Store in the status object. 
-            status.skipped_tests.append([methodName, 'Relaxation curve-fitting C module', self._skip_type])
+            status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
 
     def setUp(self):

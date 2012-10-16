@@ -385,9 +385,11 @@ def pipe_loop(name=False):
             else:
                 yield ds[key]
 
-    # Release the lock.
-    finally:
+    # Release the lock (in a Python 2.4 and lower compatible way, see http://stackoverflow.com/questions/2339358/workaround-for-python-2-4s-yield-not-allowed-in-try-block-with-finally-clause).
+    except:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
+        raise
+    status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
 def pipe_names(bundle=None):

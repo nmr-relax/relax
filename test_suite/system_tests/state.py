@@ -26,13 +26,31 @@ from tempfile import mktemp
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.pipes import VALID_TYPES, get_pipe
 from generic_fns.reset import reset
+from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class State(SystemTestCase):
     """Class for testing the state saving and loading user functions."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(State, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.C_module_exp_fn and methodName in ['test_write_read_pipes']:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
+
 
     def setUp(self):
         """Common set up for these system tests."""
@@ -64,7 +82,7 @@ class State(SystemTestCase):
         """Test the writing out, and re-reading of data pipes from the state file."""
 
         # Create a data pipe.
-        self.interpreter.pipe.create('test', 'relax_fit')
+        self.interpreter.pipe.create('test', 'mf')
 
         # Reset relax.
         reset()
