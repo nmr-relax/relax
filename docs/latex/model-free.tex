@@ -924,7 +924,7 @@ pipes = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
  \\
 \# Loop over the data pipe names. \\
 for name in pipes: \\
-\hspace*{4ex} print ``$\backslash$n$\backslash$n\# '' + name + `` \#'' \\
+\hspace*{4ex} print(``$\backslash$n$\backslash$n\# '' + name + `` \#'') \\
  \\
 \hspace*{4ex} \# Create the data pipe. \\
 \hspace*{4ex} pipe.create(name, `mf') \\
