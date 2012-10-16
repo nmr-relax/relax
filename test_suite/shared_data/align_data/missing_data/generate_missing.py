@@ -144,7 +144,7 @@ for i in range(len(A)):
 
     # Loop over the interatomic data.
     for interatom in interatomic_loop():
-        print interatom.spin_id1, interatom.spin_id2
+        print(interatom.spin_id1, interatom.spin_id2)
         # Deselected containers.
         if not interatom.select:
             continue
@@ -161,7 +161,7 @@ for i in range(len(A)):
             elif spin1._res_num == missing[i][j][0] and spin1.name == missing[i][j][1]:
                 skip = True
         if skip:
-            print "\tskip"
+            print("\tskip")
             continue
 
         # No vector.
