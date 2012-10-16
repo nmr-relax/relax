@@ -42,6 +42,7 @@ from textwrap import fill
 from warnings import warn
 
 # relax module imports.
+from check_types import is_unicode
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import exp_info, pipes, relax_re
 from relax_errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
@@ -80,7 +81,7 @@ class Selection(object):
         """
 
         # Handle Unicode.
-        if isinstance(select_string, unicode):
+        if is_unicode(select_string):
             select_string = str(select_string)
 
         self._union = None
@@ -1973,7 +1974,7 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
                         spin._spin_ids.pop(spin._spin_ids.index(spin_id))
 
                     # Remove the IDs from the look up table.
-                    if dp.mol._spin_id_lookup.has_key(spin_id):
+                    if spin_id in dp.mol._spin_id_lookup:
                         dp.mol._spin_id_lookup.pop(spin_id)
 
 
@@ -2451,9 +2452,6 @@ def parse_token(token, verbosity=False):
                 # Append the element.
                 id_list.append(element)
 
-    # Sort the list.
-    id_list.sort()
-
     # Return the identifying list.
     return id_list
 
@@ -2646,7 +2644,7 @@ def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so assume there is no spin.
-    if not dp.mol._spin_id_lookup.has_key(spin_id):
+    if spin_id not in dp.mol._spin_id_lookup:
         return None
 
     # The indices from the look up table.
@@ -2682,7 +2680,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
     """
 
     # Handle Unicode.
-    if isinstance(selection, unicode):
+    if is_unicode(selection):
         selection = str(selection)
 
     # The data pipe.
@@ -2812,7 +2810,7 @@ def return_spin_indices(spin_id=None, pipe=None):
     dp = pipes.get_pipe(pipe)
 
     # No spin ID, so switch to selection matching.
-    if not dp.mol._spin_id_lookup.has_key(spin_id):
+    if spin_id not in dp.mol._spin_id_lookup:
         # Parse the selection string.
         select_obj = Selection(spin_id)
 
