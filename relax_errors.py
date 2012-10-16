@@ -1014,7 +1014,7 @@ def all_errors(names):
     """Function for returning all the RelaxErrors to allow the AllRelaxError object to be created."""
 
     # Empty list.
-    list = None
+    list = []
 
     # Loop over all objects of this module.
     for name in names:
@@ -1025,14 +1025,11 @@ def all_errors(names):
         if not (isinstance(object, type(RelaxError)) or isinstance(object, type(type))) or not match('Relax', name):
             continue
 
-        # Tuple of all the errors.
-        if list == None:
-            list = object,
-        else:
-            list = list, object
+        # Append to the list.
+        list.append(object)
 
     # Return the list of RelaxErrors
     return list
 
-# Initialise the AllRelaxErrors structure so it can be imported.
-AllRelaxErrors = all_errors(dir())
+# Initialise the AllRelaxErrors structure, as a tuple for the except statements, so it can be imported.
+AllRelaxErrors = tuple(all_errors(dir()))

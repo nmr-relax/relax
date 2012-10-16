@@ -47,12 +47,13 @@ def determine_format(file):
     # Header line.
     header = file.readline()
     header = header[:-1]    # Strip the trailing newline.
+    header = str(header)    # Convert to a string type.
 
     # Be nice and go back to the start of the file.
     file.seek(0)
 
     # XML.
-    if search("<\?xml", header):
+    if search(r"<\?xml", header):
         return 'xml'
 
     # Columnar.

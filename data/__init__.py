@@ -301,7 +301,7 @@ class Relax_data_store(dict):
         # The pipe bundle.
         if bundle:
             # A new bundle.
-            if bundle not in self.pipe_bundles.keys():
+            if bundle not in list(self.pipe_bundles.keys()):
                 self.pipe_bundles[bundle] = []
 
             # Add the pipe to the bundle.
@@ -327,9 +327,9 @@ class Relax_data_store(dict):
         """
 
         # No pipes should exist.
-        if not self.keys() == []:
+        if not list(self.keys()) == []:
             if verbosity:
-                stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
+                stderr.write("The relax data store contains the data pipes %s.\n" % list(self.keys()))
             return False
 
         # Objects which should be in here.
@@ -479,7 +479,7 @@ class Relax_data_store(dict):
                 pipes.append(pipe_name)
 
             # Set the current pipe.
-            if self.current_pipe in self.keys():
+            if self.current_pipe in list(self.keys()):
                 builtins.cdp = self[self.current_pipe]
 
         # Finally update the molecule, residue, and spin metadata.
@@ -506,7 +506,7 @@ class Relax_data_store(dict):
         all = False
         if not pipes:
             all = True
-            pipes = self.keys()
+            pipes = list(self.keys())
         elif isinstance(pipes, str):
             pipes = [pipes]
 
@@ -536,7 +536,7 @@ class Relax_data_store(dict):
 
         # Add all objects in the data store base object to the XML element.
         if all:
-            blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+            blacklist = list(list(self.__class__.__dict__.keys()) + list(dict.__dict__.keys()))
             for name in dir(self):
                 # Skip blacklisted objects.
                 if name in blacklist:

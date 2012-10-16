@@ -26,6 +26,7 @@ from numpy import array, dot, eye, float64, identity, transpose, zeros
 from numpy.linalg import det, eig, eigvals
 
 # relax module imports.
+from compat import py_version
 from data.data_classes import Element
 from data.relax_xml import fill_object_contents, xml_to_object
 from float import nan
@@ -1011,7 +1012,7 @@ class AlignTensorList(list):
         tensor_list_element.setAttribute('desc', 'Alignment tensor list')
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(list(self.__class__.__dict__.keys()) + list(list.__dict__.keys())))
 
         # Loop over the tensors.
         for i in range(len(self)):
@@ -1142,14 +1143,26 @@ class AlignTensorData(Element):
                 target_obj.append_untouchable_item(fn(*deps))
 
 
-    def __update_sim_set(self, param_name, index):
+    def __update_sim_set(self, param_name, slice_obj):
         """Update the Monte Carlo simulation data lists when a simulation value is set.
 
         @param param_name:  The MC sim parameter name which is being set.
         @type param_name:   str
-        @param index:       The index of the Monte Carlo simulation which was set.
-        @type index:        int
+        @param slice_obj:   For Python 2, the index of the Monte Carlo simulation which was set.  Or for Python 3, a slice object.
+        @type slice_obj:    int or slice object
         """
+
+        # Python 3 support.
+        if py_version == 3:
+            if slice_obj.start != slice_obj.stop:
+                raise RelaxError("The slice object %s cannot be handled." % slice_obj)
+
+            # The index of the object.
+            index = slice_obj.start
+
+        # Python 2.
+        else:
+            index = slice_obj
 
         # Loop over the targets.
         for target, update_if_set, depends in dependency_generator():
@@ -1195,7 +1208,7 @@ class AlignTensorData(Element):
                 target_obj = getattr(self, target+'_sim')
 
                 # Calculate and set the value.
-                target_obj.set_untouchable_item(index, fn(*deps))
+                target_obj.set_untouchable_item(slice_obj, fn(*deps))
 
 
     def __update_object(self, param_name, target, update_if_set, depends, category):
@@ -1318,14 +1331,14 @@ class AlignTensorSimList(list):
         self.align_element = align_element
 
 
-    def __setitem__(self, index, value):
+    def __setitem__(self, slice_obj, value):
         """Set the value."""
 
         # Set the value.
-        list.__setitem__(self, index, value)
+        list.__setitem__(self, slice_obj, value)
 
         # Then update the other lists.
-        self.align_element._AlignTensorData__update_sim_set(self.param_name, index)
+        self.align_element._AlignTensorData__update_sim_set(self.param_name, slice_obj)
 
 
     def append(self, value):
@@ -1345,8 +1358,9 @@ class AlignTensorSimList(list):
         self[len(self):len(self)] = [value]
 
 
-    def set_untouchable_item(self, index, value):
+    def set_untouchable_item(self, slice_obj, value):
         """Set the value for an untouchable MC data structure."""
 
         # Set the value.
-        list.__setitem__(self, index, value)
+        print(slice_obj)
+        list.__setitem__(self, slice_obj, value)
