@@ -1159,11 +1159,11 @@ class Frame_order(API_base, API_common):
         # Loop over the reduced tensors.
         for i, tensor in self._tensor_loop(red=True):
             # Store the values.
-            tensor.Axx = target_fn.A_5D_bc[5*i + 0]
-            tensor.Ayy = target_fn.A_5D_bc[5*i + 1]
-            tensor.Axy = target_fn.A_5D_bc[5*i + 2]
-            tensor.Axz = target_fn.A_5D_bc[5*i + 3]
-            tensor.Ayz = target_fn.A_5D_bc[5*i + 4]
+            tensor.set(param='Axx', value=target_fn.A_5D_bc[5*i + 0])
+            tensor.set(param='Ayy', value=target_fn.A_5D_bc[5*i + 1])
+            tensor.set(param='Axy', value=target_fn.A_5D_bc[5*i + 2])
+            tensor.set(param='Axz', value=target_fn.A_5D_bc[5*i + 3])
+            tensor.set(param='Ayz', value=target_fn.A_5D_bc[5*i + 4])
 
         # The RDC data.
         for i in range(len(cdp.align_ids)):
