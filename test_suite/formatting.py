@@ -43,7 +43,7 @@ def subtitle(text):
     sys.stdout.write("\n\n")
 
 
-def summary_line(name, passed, width=64):
+def summary_line(name, passed, width=100):
     """Print a summary line.
 
     @param name:    The name of the test, test category, etc.
@@ -54,24 +54,25 @@ def summary_line(name, passed, width=64):
     @type width:    int
     """
 
-    # Name.
-    sys.stdout.write(name + " ")
-
-    # Dots.
-    for j in range(width - len(name)):
-        sys.stdout.write(".")
-
     # Passed.
     if passed == True:
-        sys.stdout.write(" %-10s\n" % "[ OK ]")
+        state = "OK"
 
     # Skipped.
     elif passed == 'skip':
-        sys.stdout.write(" %-10s\n" % "[ Skipped ]")
+        state = "Skipped"
 
     # Failed.
     else:
-        sys.stdout.write(" %-10s\n" % "[ Failed ]")
+        state = "Failed"
+
+    # Dots.
+    dots = ''
+    for j in range(width - len(name) - len(state) - 6):
+        dots += '.'
+
+    # Write out the line.
+    sys.stdout.write("%s %s [ %s ]\n" % (name, dots, state))
 
 
 def title(text):
