@@ -440,7 +440,7 @@ class Unit_test_runner(object):
                 raise Exception("can't find system directory start from %s" % root_path)
             else:
                 if verbose:
-                    print(('search for system directory found:    %s' % self.system_directory))
+                    print('search for system directory found:    %s' % self.system_directory)
         else:
             self.system_directory = None
 
@@ -450,7 +450,7 @@ class Unit_test_runner(object):
                 raise Exception("can't find unit test directory start from %s" % root_path)
             else:
                 if verbose:
-                    print(('search for unit test directory found: %s' % self.unit_test_directory))
+                    print('search for unit test directory found: %s' % self.unit_test_directory)
         else:
             self.unit_test_directory = None
 
@@ -599,12 +599,12 @@ class Unit_test_runner(object):
 
         module_paths = self.paths_from_test_module(self.test_module)
         if self.verbose:
-            print(('root path:          ', self.root_path))
-            print(('system directory:   ', self.system_directory))
-            print(('unit test directory:', self.unit_test_directory))
+            print('root path:          ', self.root_path)
+            print('system directory:   ', self.system_directory)
+            print('unit test directory:', self.unit_test_directory)
             print('')
             for i, elem in enumerate(module_paths):
-                print(('module path %d:  %s'  % (i, elem)))
+                print('module path %d:  %s'  % (i, elem))
             print('')
 
         # add SystemDirectory to python path
@@ -632,10 +632,10 @@ class Unit_test_runner(object):
                 if path_len <= 1:
                     continue
                 elif path_len == 2:
-                    print(('trying to load 2: ',  module_path[0], module_path[1]))
+                    print('trying to load 2: ',  module_path[0], module_path[1])
                     tests = load_test_case('', module_path[0], module_path[1])
                 else:
-                    print(('trying to load 3: ', os.path.join(*module_path[:-2]), module_path[-2], module_path[-1]))
+                    print('trying to load 3: ', os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
                     tests = load_test_case(os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
                 if tests != None:
                     break
@@ -711,7 +711,7 @@ if __name__ == '__main__':
     if options.system_directory != None:
         if not os.path.exists(options.system_directory):
             print("The path to the system directory doeesn't exist")
-            print(("provided path: %s" % options.system_directory))
+            print("provided path: %s" % options.system_directory)
             print("exiting...")
             sys.exit(0)
         search_system = False
@@ -720,7 +720,7 @@ if __name__ == '__main__':
     if options.unit_test_directory != None:
         if not os.path.exists(options.unit_test_directory):
             print("The path to the system directory doeesn't exist")
-            print(("provided path: %s" % options.unit_test_directory))
+            print("provided path: %s" % options.unit_test_directory)
             print("exiting...")
             sys.exit(0)
         search_unit = False

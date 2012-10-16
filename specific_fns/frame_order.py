@@ -390,7 +390,7 @@ class Frame_order(API_base, API_common):
             # The axis.
             axis = zeros(3, float64)
             spherical_to_cartesian([1.0, getattr(cdp, 'axis_theta'), getattr(cdp, 'axis_phi')], axis)
-            print(("Central axis: %s." % axis))
+            print("Central axis: %s." % axis)
 
             # Rotations and inversions.
             axis_pos = axis
@@ -427,7 +427,7 @@ class Frame_order(API_base, API_common):
             # The axis system.
             axes = zeros((3, 3), float64)
             euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
-            print(("Axis system:\n%s" % axes))
+            print("Axis system:\n%s" % axes)
 
             # Rotations and inversions.
             axes_pos = axes

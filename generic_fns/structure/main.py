@@ -688,9 +688,9 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
         # Multiple models loaded.
         if num_models > 1:
             if model:
-                print(("Extracting vectors for model '%s'." % model))
+                print("Extracting vectors for model '%s'." % model)
             else:
-                print(("Extracting vectors for all %s models." % num_models))
+                print("Extracting vectors for all %s models." % num_models)
                 if ave:
                     print("Averaging all vectors.")
 

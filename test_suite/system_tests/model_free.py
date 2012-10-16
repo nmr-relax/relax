@@ -219,7 +219,7 @@ class Mf(SystemTestCase):
                 continue
 
             # Print out.
-            print(("\t" + name))
+            print("\t" + name)
 
             # Get the sub-objects.
             sub_obj1 = getattr(obj1, name)

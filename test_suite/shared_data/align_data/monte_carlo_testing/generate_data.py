@@ -120,14 +120,14 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     rdc_file.write("%-10s %-10s %20.11f %20.11g\n" % (repr(spin_id1), repr(spin_id2), rdc, 1e-10))
 
 # Print outs.
-print(("\nAlignment tensor (A):\n" + repr(tensor)))
-print(("Eigenvalues: " + repr(eigvals(tensor))))
-print(("Dipolar constant: " + repr(dip_const)))
+print("\nAlignment tensor (A):\n" + repr(tensor))
+print("Eigenvalues: " + repr(eigvals(tensor)))
+print("Dipolar constant: " + repr(dip_const))
 
-print(("\nSaupe order matrix (S):\n" + repr(tensor * 1.5)))
-print(("Eigenvalues: " + repr(eigvals(tensor * 1.5))))
+print("\nSaupe order matrix (S):\n" + repr(tensor * 1.5))
+print("Eigenvalues: " + repr(eigvals(tensor * 1.5)))
 
-print(("\nMagnetic susceptibility tensor (Chi):\n" + repr(chi_tensor)))
-print(("Eigenvalues: " + repr(eigvals(chi_tensor))))
-print(("PCS constant: " + repr(pcs_const)))
-print(("PCS centre: " + repr(centre)))
+print("\nMagnetic susceptibility tensor (Chi):\n" + repr(chi_tensor))
+print("Eigenvalues: " + repr(eigvals(chi_tensor)))
+print("PCS constant: " + repr(pcs_const))
+print("PCS centre: " + repr(centre))

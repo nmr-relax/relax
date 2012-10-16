@@ -66,7 +66,7 @@ For assistance in using a function, simply type 'help(function)'.  All functions
 
         # Catch strange callings of the object.
         if len(args) != 1 or isinstance(args[0], str):
-            print((self.text))
+            print(self.text)
             return
 
         # Alias the object.

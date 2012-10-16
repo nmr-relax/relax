@@ -679,8 +679,8 @@ class Relax_fit(API_base, API_common):
                     print("\n\n")
 
                 string = "Fitting to spin " + repr(spin_id)
-                print(("\n\n" + string))
-                print((len(string) * '~'))
+                print("\n\n" + string)
+                print(len(string) * '~')
 
 
             # Initialise the function to minimise.

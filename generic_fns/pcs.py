@@ -187,9 +187,9 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=
     if verbosity:
         print("Paramagnetic centres located at:")
         for pos in full_pos_list:
-            print(("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])))
+            print("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2]))
         print("\nAverage paramagnetic centre located at:")
-        print(("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])))
+        print("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2]))
 
     # Set the centre (place it into the current data pipe).
     if ave_pos:

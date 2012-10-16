@@ -296,11 +296,11 @@ def display(tensor=None):
 
         # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
         print("# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:")
-        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Sxx, data.Syy, data.Sxy, data.Sxz, data.Syz)))
+        print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Sxx, data.Syy, data.Sxy, data.Sxz, data.Syz))
 
         # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
         print("# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).")
-        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Szz, data.Sxxyy, data.Sxy, data.Sxz, data.Syz)))
+        print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Szz, data.Sxxyy, data.Sxy, data.Sxz, data.Syz))
 
         # 3D form.
         print("# 3D, rank-2 notation.")
@@ -315,11 +315,11 @@ def display(tensor=None):
 
         # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
         print("# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:")
-        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Axx, data.Ayy, data.Axy, data.Axz, data.Ayz)))
+        print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Axx, data.Ayy, data.Axy, data.Axz, data.Ayz))
 
         # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
         print("# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).")
-        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Azz, data.Axxyy, data.Axy, data.Axz, data.Ayz)))
+        print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Azz, data.Axxyy, data.Axy, data.Axz, data.Ayz))
 
         # 3D form.
         print("# 3D, rank-2 notation.")
@@ -334,11 +334,11 @@ def display(tensor=None):
 
         # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
         print("# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:")
-        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pxx, data.Pyy, data.Pxy, data.Pxz, data.Pyz)))
+        print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pxx, data.Pyy, data.Pxy, data.Pxz, data.Pyz))
 
         # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
         print("# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.")
-        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pzz, data.Pxxyy, data.Pxy, data.Pxz, data.Pyz)))
+        print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pzz, data.Pxxyy, data.Pxy, data.Pxz, data.Pyz))
 
         # 3D form.
         print("# 3D, rank-2 notation.")
@@ -355,17 +355,17 @@ def display(tensor=None):
         # The field strength.
         print("# The magnetic field strength (MHz):")
         if hasattr(cdp, 'frq') and tensor in cdp.frq:
-            print(("%s\n" % (cdp.frq[tensor] / 1e6)))
+            print("%s\n" % (cdp.frq[tensor] / 1e6))
         else:
-            print(("Not set.\n"))
+            print("Not set.\n")
             chi_tensor = False
 
         # The temperature.
         print("# The temperature (K):")
         if hasattr(cdp, 'temperature') and tensor in cdp.temperature:
-            print(("%s\n" % cdp.temperature[tensor]))
+            print("%s\n" % cdp.temperature[tensor])
         else:
-            print(("Not set.\n"))
+            print("Not set.\n")
             chi_tensor = False
 
         # No chi tensor.
@@ -386,11 +386,11 @@ def display(tensor=None):
 
             # The parameter set {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}.
             print("# 5D, rank-1 notation {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}:")
-            print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_xx, chi_yy, chi_xy, chi_xz, chi_yz)))
+            print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_xx, chi_yy, chi_xy, chi_xz, chi_yz))
 
             # The parameter set {chi_zz, chi_xx-yy, chi_xy, chi_xz, chi_yz}.
             print("# 5D, rank-1 notation {chi_zz, chi_xx-yy, chi_xy, chi_xz, chi_yz}.")
-            print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_zz, chi_xxyy, chi_xy, chi_xz, chi_yz)))
+            print("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_zz, chi_xxyy, chi_xy, chi_xz, chi_yz))
 
             # 3D form.
             print("# 3D, rank-2 notation.")
@@ -405,23 +405,23 @@ def display(tensor=None):
 
         # Eigenvalues.
         print("# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.")
-        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.S_diag[0, 0], data.S_diag[1, 1], data.S_diag[2, 2])))
+        print("[%25.12e, %25.12e, %25.12e]\n" % (data.S_diag[0, 0], data.S_diag[1, 1], data.S_diag[2, 2]))
         print("# Alignment tensor eigenvalues {Axx, Ayy, Azz}.")
-        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.A_diag[0, 0], data.A_diag[1, 1], data.A_diag[2, 2])))
+        print("[%25.12e, %25.12e, %25.12e]\n" % (data.A_diag[0, 0], data.A_diag[1, 1], data.A_diag[2, 2]))
         print("# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.")
-        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.P_diag[0, 0], data.P_diag[1, 1], data.P_diag[2, 2])))
+        print("[%25.12e, %25.12e, %25.12e]\n" % (data.P_diag[0, 0], data.P_diag[1, 1], data.P_diag[2, 2]))
         if chi_tensor:
             chi_diag =       calc_chi_tensor(data.A_diag, cdp.frq[tensor], cdp.temperature[tensor])
             print("# Magnetic susceptibility eigenvalues {chi_xx, chi_yy, chi_zz}.")
-            print(("[%25.12e, %25.12e, %25.12e]\n" % (chi_diag[0, 0], chi_diag[1, 1], chi_diag[2, 2])))
+            print("[%25.12e, %25.12e, %25.12e]\n" % (chi_diag[0, 0], chi_diag[1, 1], chi_diag[2, 2]))
 
         # Eigenvectors.
         print("# Eigenvector x.")
-        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_x[0], data.unit_x[1], data.unit_x[2])))
+        print("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_x[0], data.unit_x[1], data.unit_x[2]))
         print("# Eigenvector y.")
-        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_y[0], data.unit_y[1], data.unit_y[2])))
+        print("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_y[0], data.unit_y[1], data.unit_y[2]))
         print("# Eigenvector z.")
-        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_z[0], data.unit_z[1], data.unit_z[2])))
+        print("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_z[0], data.unit_z[1], data.unit_z[2]))
 
         # Rotation matrix.
         print("# Rotation matrix.")
@@ -429,7 +429,7 @@ def display(tensor=None):
 
         # zyz.
         print("# Euler angles in zyz notation {alpha, beta, gamma}.")
-        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.euler[0], data.euler[1], data.euler[2])))
+        print("[%25.12f, %25.12f, %25.12f]\n" % (data.euler[0], data.euler[1], data.euler[2]))
 
 
         # Geometric description.
@@ -2046,8 +2046,8 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    print(("\nData pipe: " + repr(pipes.cdp_name())))
+    print("\nData pipe: " + repr(pipes.cdp_name()))
     print("\nSingular values:")
     for val in s:
-        print(("\t" + repr(val)))
-    print(("\nCondition number: " + repr(cdp.align_tensors.cond_num)))
+        print("\t" + repr(val))
+    print("\nCondition number: " + repr(cdp.align_tensors.cond_num))
