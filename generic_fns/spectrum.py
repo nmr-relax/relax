@@ -318,7 +318,7 @@ def __errors_repl(verbosity=0):
             continue
 
         # The replicated spectra.
-        for j in xrange(len(cdp.replicates)):
+        for j in range(len(cdp.replicates)):
             if id in cdp.replicates[j]:
                 spectra = cdp.replicates[j]
 
@@ -344,7 +344,7 @@ def __errors_repl(verbosity=0):
 
             # Missing data.
             missing = False
-            for j in xrange(num_spectra):
+            for j in range(num_spectra):
                 if not spin.intensities.has_key(spectra[j]):
                     missing = True
             if missing:
@@ -352,13 +352,13 @@ def __errors_repl(verbosity=0):
 
             # Average intensity.
             ave_intensity = 0.0
-            for j in xrange(num_spectra):
+            for j in range(num_spectra):
                 ave_intensity = ave_intensity + spin.intensities[spectra[j]]
             ave_intensity = ave_intensity / num_spectra
 
             # Sum of squared errors.
             SSE = 0.0
-            for j in xrange(num_spectra):
+            for j in range(num_spectra):
                 SSE = SSE + (spin.intensities[spectra[j]] - ave_intensity) ** 2
 
             # Variance.
@@ -1115,7 +1115,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Loop over the peak intensity data.
     data = []
     data_flag = False
-    for i in xrange(len(intensity_data)):
+    for i in range(len(intensity_data)):
         # Extract the data.
         H_name, X_name, spin_id, intensity, line = intensity_data[i]
 
@@ -1201,16 +1201,16 @@ def replicated(spectrum_ids=None):
 
     # Check if the spectrum IDs are already in the list.
     found = False
-    for i in xrange(len(cdp.replicates)):
+    for i in range(len(cdp.replicates)):
         # Loop over all elements of the first.
-        for j in xrange(len(spectrum_ids)):
+        for j in range(len(spectrum_ids)):
             if spectrum_ids[j] in cdp.replicates[i]:
                 found = True
 
         # One of the spectrum IDs already have a replicate specified.
         if found:
             # Add the remaining replicates to the list and quit this function.
-            for j in xrange(len(spectrum_ids)):
+            for j in range(len(spectrum_ids)):
                 if spectrum_ids[j] not in cdp.replicates[i]:
                     cdp.replicates[i].append(spectrum_ids[j])
 

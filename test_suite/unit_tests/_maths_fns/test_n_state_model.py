@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -51,7 +51,7 @@ class Test_n_state_model(TestCase):
         model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
-        for i in xrange(3):
+        for i in range(3):
             # Target function.
             chi2 = model.func_2domain(init_params)
 
@@ -79,7 +79,7 @@ class Test_n_state_model(TestCase):
         model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
-        for i in xrange(3):
+        for i in range(3):
             # Target function.
             chi2 = model.func_2domain(init_params)
 
@@ -107,7 +107,7 @@ class Test_n_state_model(TestCase):
         model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
-        for i in xrange(3):
+        for i in range(3):
             # Target function.
             chi2 = model.func_2domain(init_params)
 
@@ -135,7 +135,7 @@ class Test_n_state_model(TestCase):
         model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
-        for i in xrange(3):
+        for i in range(3):
             # Target function.
             chi2 = model.func_2domain(init_params)
 

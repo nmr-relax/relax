@@ -1110,7 +1110,7 @@ class ModelList(list):
 
         text = "Models.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Model number") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].num) + "\n"
         return text
 
@@ -1129,7 +1129,7 @@ class ModelList(list):
         # Otherwise append an empty ModelContainer.
         else:
             # Test if the model number already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 if self[i].num == model_num:
                     raise RelaxError("The model '" + repr(model_num) + "' already exists.")
 
@@ -1206,7 +1206,7 @@ class ModelList(list):
         """
 
         # Loop over the models.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Create an XML element for this model and add it to the higher level element.
             model_element = doc.createElement('model')
             element.appendChild(model_element)
@@ -1319,7 +1319,7 @@ class MolList(list):
 
         text = "Molecules.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].mol_name) + "\n"
         return text
 
@@ -1340,7 +1340,7 @@ class MolList(list):
         # Otherwise append an empty MolContainer.
         else:
             # Test if the molecule already exists.
-            for i in xrange(len(self)):
+            for i in range(len(self)):
                 if self[i].mol_name == mol_name:
                     raise RelaxError("The molecule '%s' already exists." % mol_name)
 
@@ -1419,6 +1419,6 @@ class MolList(list):
         """
 
         # Loop over the molecules.
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             # Add the molecule data.
             self[i].to_xml(doc, element)

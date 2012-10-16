@@ -28,7 +28,7 @@ from relax_errors import RelaxIntError, RelaxListStrError, RelaxNoneIntError, Re
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_spin(Spin_base_class, TestCase):

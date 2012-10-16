@@ -157,7 +157,7 @@ class Internal(Base_struct_API):
         dist_list = []
         connect_list = {}
         element_list = {}
-        for i in xrange(len(mol.atom_num)):
+        for i in range(len(mol.atom_num)):
             # Skip proton to proton bonds!
             if mol.element[index] == 'H' and mol.element[i] == 'H':
                 continue
@@ -276,7 +276,7 @@ class Internal(Base_struct_API):
         records = []
 
         # Loop over the data.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             # A new model record.
             if search('^MODEL', lines[i]):
                 try:
@@ -331,7 +331,7 @@ class Internal(Base_struct_API):
         records = []
 
         # Loop over the data.
-        for i in xrange(len(lines)):
+        for i in range(len(lines)):
             num=0
             word=split(lines[i])
             # Find the total atom number and the first model.
@@ -1436,7 +1436,7 @@ class Internal(Base_struct_API):
             het_data.append([])
 
             # Collect the non-standard residue info.
-            for i in xrange(len(mol.atom_name)):
+            for i in range(len(mol.atom_name)):
                 # Skip non-HETATM records and HETATM records with no residue info.
                 if mol.pdb_record[i] != 'HETATM' or mol.res_name[i] == None:
                     continue
@@ -1455,7 +1455,7 @@ class Internal(Base_struct_API):
 
                 # Find if the atom has already a count entry.
                 entry = False
-                for j in xrange(len(het_data[index][-1][4])):
+                for j in range(len(het_data[index][-1][4])):
                     if mol.element[i] == het_data[index][-1][4][j][0]:
                         entry = True
 
@@ -1464,15 +1464,15 @@ class Internal(Base_struct_API):
                     het_data[index][-1][4].append([mol.element[i], 0])
 
                 # Increment the specific atom count.
-                for j in xrange(len(het_data[index][-1][4])):
+                for j in range(len(het_data[index][-1][4])):
                     if mol.element[i] == het_data[index][-1][4][j][0]:
                         het_data[index][-1][4][j][1] = het_data[index][-1][4][j][1] + 1
 
             # Create the collective hetrogen info data structure.
-            for i in xrange(len(het_data[index])):
+            for i in range(len(het_data[index])):
                 # Find the entry in the collective structure.
                 found = False
-                for j in xrange(len(het_data_coll)):
+                for j in range(len(het_data_coll)):
                     # Matching residue numbers.
                     if het_data[index][i][0] == het_data_coll[j][0]:
                         # Change the flag.
@@ -1587,7 +1587,7 @@ class Internal(Base_struct_API):
 
                 # Loop over the atomic data.
                 atom_record = False
-                for i in xrange(len(mol.atom_name)):
+                for i in range(len(mol.atom_name)):
                     # Write the ATOM record.
                     if mol.pdb_record[i] in [None, 'ATOM']:
                         atom_record = True
@@ -1614,7 +1614,7 @@ class Internal(Base_struct_API):
 
                 # Loop over the atomic data.
                 count_shift = False
-                for i in xrange(len(mol.atom_name)):
+                for i in range(len(mol.atom_name)):
                     # Write the HETATM record.
                     if mol.pdb_record[i] == 'HETATM':
                         # The atom number, if missing.
@@ -1653,7 +1653,7 @@ class Internal(Base_struct_API):
         # Loop over the molecules of the first model.
         for mol in self.structural_data[0].mol:
             # Loop over the atoms.
-            for i in xrange(len(mol.atom_name)):
+            for i in range(len(mol.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
                 if not len(mol.bonded[i]):
                     continue
@@ -1664,7 +1664,7 @@ class Internal(Base_struct_API):
                 bonded = ['', '', '', '']
 
                 # Loop over the bonded atoms.
-                for j in xrange(len(mol.bonded[i])):
+                for j in range(len(mol.bonded[i])):
                     # End of the array, hence create the CONECT record in this iteration.
                     if j == len(mol.bonded[i])-1:
                         flush = True
@@ -1796,7 +1796,7 @@ class MolContainer:
         """
 
         # Loop over the atoms.
-        for j in xrange(len(self.atom_num)):
+        for j in range(len(self.atom_num)):
             # Return the index.
             if self.atom_num[j] == atom_num:
                 return j
@@ -1941,7 +1941,7 @@ class MolContainer:
             fields.append(record[78:80])
 
             # Loop over the fields.
-            for i in xrange(len(fields)):
+            for i in range(len(fields)):
                 # Strip all whitespace.
                 fields[i] = strip(fields[i])
 
@@ -1976,7 +1976,7 @@ class MolContainer:
             fields.append(record[26:31])
 
             # Loop over the fields.
-            for i in xrange(len(fields)):
+            for i in range(len(fields)):
                 # Strip all whitespace.
                 fields[i] = strip(fields[i])
 
@@ -2035,7 +2035,7 @@ class MolContainer:
             fields.append(word[3])
 
             # Loop over the fields.
-            for i in xrange(len(fields)):
+            for i in range(len(fields)):
                 # Strip all whitespace.
                 fields[i] = strip(fields[i])
 
@@ -2144,7 +2144,7 @@ class MolContainer:
             # Connect atoms.
             if record[0] == 'CONECT':
                 # Loop over the atoms of the record.
-                for i in xrange(len(record)-2):
+                for i in range(len(record)-2):
                     # Skip if there is no record.
                     if record[i+2] == None:
                         continue

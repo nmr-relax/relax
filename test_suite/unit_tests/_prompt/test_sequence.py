@@ -28,7 +28,7 @@ from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNon
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_sequence(Sequence_base_class, TestCase):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -133,7 +133,7 @@ class Sequence_base_class(UnitTestCase):
         dp = pipes.get_pipe('orig')
 
         # Test the entire sequence.
-        for i in xrange(len(self.Ap4Aase_res_num)):
+        for i in range(len(self.Ap4Aase_res_num)):
             self.assertEqual(dp.mol[0].res[i].num, self.Ap4Aase_res_num[i])
             self.assertEqual(dp.mol[0].res[i].name, self.Ap4Aase_res_name[i])
 

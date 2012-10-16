@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -58,7 +58,7 @@ class Test_api_base(TestCase):
             defaults = ()
 
         # Args.
-        for i in xrange(len(args) - len(defaults)):
+        for i in range(len(args) - len(defaults)):
             # Separator.
             if i != 0:
                 text = text + ', '
@@ -70,7 +70,7 @@ class Test_api_base(TestCase):
         index = i+1
 
         # Keyword args.
-        for i in xrange(index, len(defaults)+1):
+        for i in range(index, len(defaults)+1):
             # Separator.
             if i != 0:
                 text = text + ', '

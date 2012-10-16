@@ -44,13 +44,13 @@ class Bmrb(SystemTestCase):
         @type methodName:       str
         """
 
+        # Execute the base class method.
+        super(Bmrb, self).__init__(methodName)
+
         # Missing module.
         if not dep_check.bmrblib_module:
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Bmrblib', self._skip_type])
-
-        # Execute the base class method.
-        super(Bmrb, self).__init__(methodName)
 
 
     def setUp(self):

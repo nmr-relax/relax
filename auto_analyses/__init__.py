@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,10 +23,10 @@
 """Package for all of the automatic analyses, hard coded protocols to be used as a black box."""
 
 # Module imports.
-import dauvergne_protocol
-import noe
-import relax_fit
-import stereochem_analysis
+from auto_analyses import dauvergne_protocol
+from auto_analyses import noe
+from auto_analyses import relax_fit
+from auto_analyses import stereochem_analysis
 
 
 __all__ = [ 'dauvergne_protocol',

@@ -26,7 +26,10 @@
 from os import F_OK, access
 from os.path import sep
 import platform
-from Queue import Queue
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 from re import search
 from string import split
 import sys

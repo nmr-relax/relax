@@ -720,7 +720,7 @@ class Scientific_data(Base_struct_API):
             model_load_num = model_load_num + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name, file_name=file, file_path=path)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=list(range(1, len(mol_conts[0])+1)), set_mol_name=new_mol_name, file_name=file, file_path=path)
 
         # Loading worked.
         return True

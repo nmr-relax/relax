@@ -541,7 +541,7 @@ class Stereochem_analysis:
             self.interpreter.pipe.create("noe_viol_%s" % config, "N-state")
 
             # Read the first structure.
-            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
             # Load all protons as the sequence.
             self.interpreter.structure.load_spins("@H*", ave_pos=False)
@@ -572,7 +572,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
                 # Get the atomic positions.
                 self.interpreter.structure.get_pos(ave_pos=False)
@@ -630,7 +630,7 @@ class Stereochem_analysis:
             self.interpreter.pipe.create("rdc_analysis_%s" % config, "N-state")
 
             # Read the first structure.
-            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
             # Load all spins as the sequence.
             self.interpreter.structure.load_spins(ave_pos=False)
@@ -670,7 +670,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=list(range(1, self.num_models+1)), parser="internal")
 
                 # Get the positional information, then load the CH vectors.
                 self.interpreter.structure.get_pos(ave_pos=False)
