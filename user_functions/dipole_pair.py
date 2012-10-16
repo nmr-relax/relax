@@ -23,8 +23,12 @@
 """The dipole_pair user function definitions."""
 
 # Python module imports.
+import dep_check
 from os import sep
-import wx
+if dep_check.wx_module:
+    from wx import FD_OPEN
+else:
+    FD_OPEN = -1
 
 # relax module imports.
 from generic_fns import pipes, dipole_pair
@@ -95,7 +99,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the averaged distance data.",
-    wiz_filesel_style = wx.FD_OPEN
+    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

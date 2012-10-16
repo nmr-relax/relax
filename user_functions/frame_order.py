@@ -23,7 +23,11 @@
 """The frame_order user function definitions."""
 
 # Python module imports.
-import wx
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_SAVE
+else:
+    FD_SAVE = -1
 
 # relax module imports.
 from specific_fns.setup import frame_order_obj
@@ -66,7 +70,7 @@ uf.add_keyarg(
     desc_short = "file name",
     desc = "The name of the PDB file to create.",
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
-    wiz_filesel_style = wx.FD_SAVE
+    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
