@@ -2204,21 +2204,17 @@ class Frame_order(API_base, API_common):
         if data_id == 'A':
             # Loop over the full tensors.
             for j, tensor in self._tensor_loop(red=False):
-                # Initialise the data if needed.
-                if not hasattr(tensor, 'Axx_sim'):
-                    tensor.Axx_sim = []
-                    tensor.Ayy_sim = []
-                    tensor.Axy_sim = []
-                    tensor.Axz_sim = []
-                    tensor.Ayz_sim = []
+                # Set the simulation number.
+                tensor.set_sim_num(cdp.sim_number)
 
-                # Set the full tensor simulation data.
-                for i in range(cdp.sim_number):
-                    tensor.Axx_sim.append(sim_data[i][5*j + 0])
-                    tensor.Ayy_sim.append(sim_data[i][5*j + 1])
-                    tensor.Axy_sim.append(sim_data[i][5*j + 2])
-                    tensor.Axz_sim.append(sim_data[i][5*j + 3])
-                    tensor.Ayz_sim.append(sim_data[i][5*j + 4])
+                # Loop over the simulations.
+                for j in range(cdp.sim_number):
+                    # Set the reduced tensor simulation data.
+                    tensor.set(param='Axx', value=sim_data[5*i + 0][j], category='sim', sim_index=j)
+                    tensor.set(param='Ayy', value=sim_data[5*i + 1][j], category='sim', sim_index=j)
+                    tensor.set(param='Axy', value=sim_data[5*i + 2][j], category='sim', sim_index=j)
+                    tensor.set(param='Axz', value=sim_data[5*i + 3][j], category='sim', sim_index=j)
+                    tensor.set(param='Ayz', value=sim_data[5*i + 4][j], category='sim', sim_index=j)
 
         # The RDC data.
         elif data_id[0] == 'rdc':

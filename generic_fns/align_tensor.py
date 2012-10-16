@@ -484,11 +484,11 @@ def fix(id=None, fixed=True):
     for i in range(len(cdp.align_tensors)):
         # ID match.
         if id and cdp.align_tensors[i].name == id:
-            cdp.align_tensors[i].fixed = fixed
+            cdp.align_tensors[i].set_fixed(fixed)
 
         # Set all tensor flags.
         if id == None:
-            cdp.align_tensors[i].fixed = fixed
+            cdp.align_tensors[i].set_fixed(fixed)
 
 
 def fold_angles(sim_index=None):
@@ -529,15 +529,15 @@ def fold_angles(sim_index=None):
 
     # Normal value.
     if sim_index == None:
-        cdp.align_tensors.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
-        cdp.align_tensors.beta  = wrap_angles(beta, 0.0, 2.0*pi)
-        cdp.align_tensors.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
+        cdp.align_tensors.set(param='alpha', value=wrap_angles(alpha, 0.0, 2.0*pi))
+        cdp.align_tensors.set(param='beta', value= wrap_angles(beta, 0.0, 2.0*pi))
+        cdp.align_tensors.set(param='gamma', value=wrap_angles(gamma, 0.0, 2.0*pi))
 
     # Simulation values.
     else:
-        cdp.align_tensors.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-        cdp.align_tensors.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
-        cdp.align_tensors.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+        cdp.align_tensors.set(param='alpha', value=wrap_angles(alpha_sim, alpha - pi, alpha + pi), category='sim', sim_index=sim_index)
+        cdp.align_tensors.set(param='beta', value= wrap_angles(beta_sim, beta - pi, beta + pi), category='sim', sim_index=sim_index)
+        cdp.align_tensors.set(param='gamma', value=wrap_angles(gamma_sim, gamma - pi, gamma + pi), category='sim', sim_index=sim_index)
 
 
     # Remove the glide reflection and translational symmetries.
@@ -547,18 +547,18 @@ def fold_angles(sim_index=None):
     if sim_index == None:
         # Fold beta inside 0 and pi.
         if cdp.align_tensors.beta >= pi:
-            cdp.align_tensors.alpha = pi - cdp.align_tensors.alpha
-            cdp.align_tensors.beta = cdp.align_tensors.beta - pi
+            cdp.align_tensors.set(param='alpha', value=pi - cdp.align_tensors.alpha)
+            cdp.align_tensors.set(param='beta', value=cdp.align_tensors.beta - pi)
 
     # Simulation values.
     else:
         # Fold beta_sim inside beta-pi/2 and beta+pi/2.
         if cdp.align_tensors.beta_sim[sim_index] >= cdp.align_tensors.beta + pi/2.0:
-            cdp.align_tensors.alpha_sim[sim_index] = pi - cdp.align_tensors.alpha_sim[sim_index]
-            cdp.align_tensors.beta_sim[sim_index] = cdp.align_tensors.beta_sim[sim_index] - pi
+            cdp.align_tensors.set(param='alpha', value=pi - cdp.align_tensors.alpha_sim[sim_index], category='sim', sim_index=sim_index)
+            cdp.align_tensors.set(param='beta', value=cdp.align_tensors.beta_sim[sim_index] - pi, category='sim', sim_index=sim_index)
         elif cdp.align_tensors.beta_sim[sim_index] <= cdp.align_tensors.beta - pi/2.0:
-            cdp.align_tensors.alpha_sim[sim_index] = pi - cdp.align_tensors.alpha_sim[sim_index]
-            cdp.align_tensors.beta_sim[sim_index] = cdp.align_tensors.beta_sim[sim_index] + pi
+            cdp.align_tensors.set(param='alpha', value=pi - cdp.align_tensors.alpha_sim[sim_index], category='sim', sim_index=sim_index)
+            cdp.align_tensors.set(param='beta', value=cdp.align_tensors.beta_sim[sim_index] + pi, category='sim', sim_index=sim_index)
 
 
 def gdo(A):
@@ -1528,37 +1528,37 @@ def set(tensor=None, value=None, param=None, errors=False):
         # The single parameter Sxx.
         if geo_params[0] == 'Sxx':
             if errors:
-                tensor.Sxx_err = geo_values[0]
+                tensor.set(param='Sxx', value=geo_values[0], category='err')
             else:
-                tensor.Sxx = geo_values[0]
+                tensor.set(param='Sxx', value=geo_values[0])
 
         # The single parameter Syy.
         elif geo_params[0] == 'Syy':
             if errors:
-                tensor.Syy_err = geo_values[0]
+                tensor.set(param='Syy', value=geo_values[0], category='err')
             else:
-                tensor.Syy = geo_values[0]
+                tensor.set(param='Syy', value=geo_values[0])
 
         # The single parameter Sxy.
         elif geo_params[0] == 'Sxy':
             if errors:
-                tensor.Sxy_err = geo_values[0]
+                tensor.set(param='Sxy', value=geo_values[0], category='err')
             else:
-                tensor.Sxy = geo_values[0]
+                tensor.set(param='Sxy', value=geo_values[0])
 
         # The single parameter Sxz.
         elif geo_params[0] == 'Sxz':
             if errors:
-                tensor.Sxz_err = geo_values[0]
+                tensor.set(param='Sxz', value=geo_values[0], category='err')
             else:
-                tensor.Sxz = geo_values[0]
+                tensor.set(param='Sxz', value=geo_values[0])
 
         # The single parameter Syz.
         elif geo_params[0] == 'Syz':
             if errors:
-                tensor.Syz_err = geo_values[0]
+                tensor.set(param='Syz', value=geo_values[0], category='err')
             else:
-                tensor.Syz = geo_values[0]
+                tensor.set(param='Syz', value=geo_values[0])
 
 
         # Alignment tensor.
@@ -1567,37 +1567,37 @@ def set(tensor=None, value=None, param=None, errors=False):
         # The single parameter Axx.
         elif geo_params[0] == 'Axx':
             if errors:
-                tensor.Sxx_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxx', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Sxx = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxx', value=3.0/2.0 * geo_values[0])
 
         # The single parameter Ayy.
         elif geo_params[0] == 'Ayy':
             if errors:
-                tensor.Syy_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Syy', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Syy = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Syy', value=3.0/2.0 * geo_values[0])
 
         # The single parameter Axy.
         elif geo_params[0] == 'Axy':
             if errors:
-                tensor.Sxy_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxy', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Sxy = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxy', value=3.0/2.0 * geo_values[0])
 
         # The single parameter Axz.
         elif geo_params[0] == 'Axz':
             if errors:
-                tensor.Sxz_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxz', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Sxz = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxz', value=3.0/2.0 * geo_values[0])
 
         # The single parameter Ayz.
         elif geo_params[0] == 'Ayz':
             if errors:
-                tensor.Syz_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Syz', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Syz = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Syz', value=3.0/2.0 * geo_values[0])
 
 
         # Probability tensor.
@@ -1606,37 +1606,37 @@ def set(tensor=None, value=None, param=None, errors=False):
         # The single parameter Pxx.
         elif geo_params[0] == 'Pxx':
             if errors:
-                tensor.Sxx_err = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+                tensor.set(param='Sxx', value=3.0/2.0 * (geo_values[0] - 1.0/3.0), category='err')
             else:
-                tensor.Sxx = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+                tensor.set(param='Sxx', value=3.0/2.0 * (geo_values[0] - 1.0/3.0))
 
         # The single parameter Pyy.
         elif geo_params[0] == 'Pyy':
             if errors:
-                tensor.Syy_err = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+                tensor.set(param='Syy', value=3.0/2.0 * (geo_values[0] - 1.0/3.0), category='err')
             else:
-                tensor.Syy = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+                tensor.set(param='Syy', value=3.0/2.0 * (geo_values[0] - 1.0/3.0))
 
         # The single parameter Pxy.
         elif geo_params[0] == 'Pxy':
             if errors:
-                tensor.Sxy_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxy', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Sxy = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxy', value=3.0/2.0 * geo_values[0])
 
         # The single parameter Pxz.
         elif geo_params[0] == 'Pxz':
             if errors:
-                tensor.Sxz_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxz', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Sxz = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Sxz', value=3.0/2.0 * geo_values[0])
 
         # The single parameter Pyz.
         elif geo_params[0] == 'Pyz':
             if errors:
-                tensor.Syz_err = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Syz', value=3.0/2.0 * geo_values[0], category='err')
             else:
-                tensor.Syz = 3.0/2.0 * geo_values[0]
+                tensor.set(param='Syz', value=3.0/2.0 * geo_values[0])
 
         # Cannot set the single parameter.
         else:
@@ -1655,17 +1655,17 @@ def set(tensor=None, value=None, param=None, errors=False):
 
             # Set the internal parameter values.
             if errors:
-                tensor.Axx_err = 2.0/3.0 * Sxx
-                tensor.Ayy_err = 2.0/3.0 * Syy
-                tensor.Axy_err = 2.0/3.0 * Sxy
-                tensor.Axz_err = 2.0/3.0 * Sxz
-                tensor.Ayz_err = 2.0/3.0 * Syz
+                tensor.set(param='Axx', value=2.0/3.0 * Sxx, category='err')
+                tensor.set(param='Ayy', value=2.0/3.0 * Syy, category='err')
+                tensor.set(param='Axy', value=2.0/3.0 * Sxy, category='err')
+                tensor.set(param='Axz', value=2.0/3.0 * Sxz, category='err')
+                tensor.set(param='Ayz', value=2.0/3.0 * Syz, category='err')
             else:
-                tensor.Axx = 2.0/3.0 * Sxx
-                tensor.Ayy = 2.0/3.0 * Syy
-                tensor.Axy = 2.0/3.0 * Sxy
-                tensor.Axz = 2.0/3.0 * Sxz
-                tensor.Ayz = 2.0/3.0 * Syz
+                tensor.set(param='Axx', value=2.0/3.0 * Sxx)
+                tensor.set(param='Ayy', value=2.0/3.0 * Syy)
+                tensor.set(param='Axy', value=2.0/3.0 * Sxy)
+                tensor.set(param='Axz', value=2.0/3.0 * Sxz)
+                tensor.set(param='Ayz', value=2.0/3.0 * Syz)
 
         # The geometric parameter set {Szz, Sxxyy, Sxy, Sxz, Syz}.
         elif geo_params.count('Szz') == 1 and geo_params.count('Sxxyy') == 1 and geo_params.count('Sxy') == 1 and geo_params.count('Sxz') == 1 and geo_params.count('Syz') == 1:
@@ -1678,17 +1678,17 @@ def set(tensor=None, value=None, param=None, errors=False):
 
             # Set the internal parameter values.
             if errors:
-                tensor.Axx_err = 2.0/3.0 * -0.5*(Szz-Sxxyy)
-                tensor.Ayy_err = 2.0/3.0 * -0.5*(Szz+Sxxyy)
-                tensor.Axy_err = 2.0/3.0 * Sxy
-                tensor.Axz_err = 2.0/3.0 * Sxz
-                tensor.Ayz_err = 2.0/3.0 * Syz
+                tensor.set(param='Axx', value=2.0/3.0 * -0.5*(Szz-Sxxyy), category='err')
+                tensor.set(param='Ayy', value=2.0/3.0 * -0.5*(Szz+Sxxyy), category='err')
+                tensor.set(param='Axy', value=2.0/3.0 * Sxy, category='err')
+                tensor.set(param='Axz', value=2.0/3.0 * Sxz, category='err')
+                tensor.set(param='Ayz', value=2.0/3.0 * Syz, category='err')
             else:
-                tensor.Axx = 2.0/3.0 * -0.5*(Szz-Sxxyy)
-                tensor.Ayy = 2.0/3.0 * -0.5*(Szz+Sxxyy)
-                tensor.Axy = 2.0/3.0 * Sxy
-                tensor.Axz = 2.0/3.0 * Sxz
-                tensor.Ayz = 2.0/3.0 * Syz
+                tensor.set(param='Axx', value=2.0/3.0 * -0.5*(Szz-Sxxyy))
+                tensor.set(param='Ayy', value=2.0/3.0 * -0.5*(Szz+Sxxyy))
+                tensor.set(param='Axy', value=2.0/3.0 * Sxy)
+                tensor.set(param='Axz', value=2.0/3.0 * Sxz)
+                tensor.set(param='Ayz', value=2.0/3.0 * Syz)
 
         # The geometric parameter set {Axx, Ayy, Axy, Axz, Ayz}.
         elif geo_params.count('Axx') == 1 and geo_params.count('Ayy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
@@ -1701,17 +1701,17 @@ def set(tensor=None, value=None, param=None, errors=False):
 
             # Set the internal parameter values.
             if errors:
-                tensor.Axx_err = Axx
-                tensor.Ayy_err = Ayy
-                tensor.Axy_err = Axy
-                tensor.Axz_err = Axz
-                tensor.Ayz_err = Ayz
+                tensor.set(param='Axx', value=Axx, category='err')
+                tensor.set(param='Ayy', value=Ayy, category='err')
+                tensor.set(param='Axy', value=Axy, category='err')
+                tensor.set(param='Axz', value=Axz, category='err')
+                tensor.set(param='Ayz', value=Ayz, category='err')
             else:
-                tensor.Axx = Axx
-                tensor.Ayy = Ayy
-                tensor.Axy = Axy
-                tensor.Axz = Axz
-                tensor.Ayz = Ayz
+                tensor.set(param='Axx', value=Axx)
+                tensor.set(param='Ayy', value=Ayy)
+                tensor.set(param='Axy', value=Axy)
+                tensor.set(param='Axz', value=Axz)
+                tensor.set(param='Ayz', value=Ayz)
 
         # The geometric parameter set {Azz, Axxyy, Axy, Axz, Ayz}.
         elif geo_params.count('Azz') == 1 and geo_params.count('Axxyy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
@@ -1724,17 +1724,17 @@ def set(tensor=None, value=None, param=None, errors=False):
 
             # Set the internal parameter values.
             if errors:
-                tensor.Axx_err = -0.5*(Azz-Axxyy)
-                tensor.Ayy_err = -0.5*(Azz+Axxyy)
-                tensor.Axy_err = Axy
-                tensor.Axz_err = Axz
-                tensor.Ayz_err = Ayz
+                tensor.set(param='Axx', value=-0.5*(Azz-Axxyy), category='err')
+                tensor.set(param='Ayy', value=-0.5*(Azz+Axxyy), category='err')
+                tensor.set(param='Axy', value=Axy, category='err')
+                tensor.set(param='Axz', value=Axz, category='err')
+                tensor.set(param='Ayz', value=Ayz, category='err')
             else:
-                tensor.Axx = -0.5*(Azz-Axxyy)
-                tensor.Ayy = -0.5*(Azz+Axxyy)
-                tensor.Axy = Axy
-                tensor.Axz = Axz
-                tensor.Ayz = Ayz
+                tensor.set(param='Axx', value=-0.5*(Azz-Axxyy))
+                tensor.set(param='Ayy', value=-0.5*(Azz+Axxyy))
+                tensor.set(param='Axy', value=Axy)
+                tensor.set(param='Axz', value=Axz)
+                tensor.set(param='Ayz', value=Ayz)
 
         # The geometric parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
         elif geo_params.count('Pxx') == 1 and geo_params.count('Pyy') == 1 and geo_params.count('Pxy') == 1 and geo_params.count('Pxz') == 1 and geo_params.count('Pyz') == 1:
@@ -1747,17 +1747,17 @@ def set(tensor=None, value=None, param=None, errors=False):
 
             # Set the internal parameter values.
             if errors:
-                tensor.Axx_err = Pxx - 1.0/3.0
-                tensor.Ayy_err = Pyy - 1.0/3.0
-                tensor.Axy_err = Pxy
-                tensor.Axz_err = Pxz
-                tensor.Ayz_err = Pyz
+                tensor.set(param='Axx', value=Pxx - 1.0/3.0, category='err')
+                tensor.set(param='Ayy', value=Pyy - 1.0/3.0, category='err')
+                tensor.set(param='Axy', value=Pxy, category='err')
+                tensor.set(param='Axz', value=Pxz, category='err')
+                tensor.set(param='Ayz', value=Pyz, category='err')
             else:
-                tensor.Axx = Pxx - 1.0/3.0
-                tensor.Ayy = Pyy - 1.0/3.0
-                tensor.Axy = Pxy
-                tensor.Axz = Pxz
-                tensor.Ayz = Pyz
+                tensor.set(param='Axx', value=Pxx - 1.0/3.0)
+                tensor.set(param='Ayy', value=Pyy - 1.0/3.0)
+                tensor.set(param='Axy', value=Pxy)
+                tensor.set(param='Axz', value=Pxz)
+                tensor.set(param='Ayz', value=Pyz)
 
         # The geometric parameter set {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
         elif geo_params.count('Pzz') == 1 and geo_params.count('Pxxyy') == 1 and geo_params.count('Pxy') == 1 and geo_params.count('Pxz') == 1 and geo_params.count('Pyz') == 1:
@@ -1770,17 +1770,17 @@ def set(tensor=None, value=None, param=None, errors=False):
 
             # Set the internal parameter values.
             if errors:
-                tensor.Axx_err = -0.5*(Pzz-Pxxyy) - 1.0/3.0
-                tensor.Ayy_err = -0.5*(Pzz+Pxxyy) - 1.0/3.0
-                tensor.Axy_err = Pxy
-                tensor.Axz_err = Pxz
-                tensor.Ayz_err = Pyz
+                tensor.set(param='Axx', value=-0.5*(Pzz-Pxxyy) - 1.0/3.0, category='err')
+                tensor.set(param='Ayy', value=-0.5*(Pzz+Pxxyy) - 1.0/3.0, category='err')
+                tensor.set(param='Axy', value=Pxy, category='err')
+                tensor.set(param='Axz', value=Pxz, category='err')
+                tensor.set(param='Ayz', value=Pyz, category='err')
             else:
-                tensor.Axx = -0.5*(Pzz-Pxxyy) - 1.0/3.0
-                tensor.Ayy = -0.5*(Pzz+Pxxyy) - 1.0/3.0
-                tensor.Axy = Pxy
-                tensor.Axz = Pxz
-                tensor.Ayz = Pyz
+                tensor.set(param='Axx', value=-0.5*(Pzz-Pxxyy) - 1.0/3.0)
+                tensor.set(param='Ayy', value=-0.5*(Pzz+Pxxyy) - 1.0/3.0)
+                tensor.set(param='Axy', value=Pxy)
+                tensor.set(param='Axz', value=Pxz)
+                tensor.set(param='Ayz', value=Pyz)
 
         # Unknown parameter combination.
         else:
@@ -1800,52 +1800,52 @@ def set(tensor=None, value=None, param=None, errors=False):
         # The single parameter alpha.
         if orient_params[0] == 'alpha':
             if errors:
-                tensor.alpha_err = orient_values[orient_params.index('alpha')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')], category='err')
             else:
-                tensor.alpha = orient_values[orient_params.index('alpha')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')])
 
         # The single parameter beta.
         elif orient_params[0] == 'beta':
             if errors:
-                tensor.beta_err = orient_values[orient_params.index('beta')]
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')], category='err')
             else:
-                tensor.beta = orient_values[orient_params.index('beta')]
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')])
 
         # The single parameter gamma.
         elif orient_params[0] == 'gamma':
             if errors:
-                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')], category='err')
             else:
-                tensor.gamma = orient_values[orient_params.index('gamma')]
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')])
 
     # Two orientational parameters.
     elif len(orient_params) == 2:
         # The orientational parameter set {alpha, beta}.
         if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
             if errors:
-                tensor.alpha_err = orient_values[orient_params.index('alpha')]
-                tensor.beta_err = orient_values[orient_params.index('beta')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')], category='err')
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')], category='err')
             else:
-                tensor.alpha = orient_values[orient_params.index('alpha')]
-                tensor.beta = orient_values[orient_params.index('beta')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')])
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')])
 
         # The orientational parameter set {alpha, gamma}.
         if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
             if errors:
-                tensor.alpha_err = orient_values[orient_params.index('alpha')]
-                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')], category='err')
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')], category='err')
             else:
-                tensor.alpha = orient_values[orient_params.index('alpha')]
-                tensor.gamma = orient_values[orient_params.index('gamma')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')])
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')])
 
         # The orientational parameter set {beta, gamma}.
         if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
             if errors:
-                tensor.beta_err = orient_values[orient_params.index('beta')]
-                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')], category='err')
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')], category='err')
             else:
-                tensor.beta = orient_values[orient_params.index('beta')]
-                tensor.gamma = orient_values[orient_params.index('gamma')]
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')])
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')])
 
         # Unknown parameter combination.
         else:
@@ -1856,13 +1856,13 @@ def set(tensor=None, value=None, param=None, errors=False):
         # The orientational parameter set {alpha, beta, gamma}.
         if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
             if errors:
-                tensor.alpha_err = orient_values[orient_params.index('alpha')]
-                tensor.beta_err = orient_values[orient_params.index('beta')]
-                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')], category='err')
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')], category='err')
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')], category='err')
             else:
-                tensor.alpha = orient_values[orient_params.index('alpha')]
-                tensor.beta = orient_values[orient_params.index('beta')]
-                tensor.gamma = orient_values[orient_params.index('gamma')]
+                tensor.set(param='alpha', value=orient_values[orient_params.index('alpha')])
+                tensor.set(param='beta', value=orient_values[orient_params.index('beta')])
+                tensor.set(param='gamma', value=orient_values[orient_params.index('gamma')])
 
         # Unknown parameter combination.
         else:
@@ -1949,7 +1949,7 @@ def set_domain(tensor=None, domain=None):
     for tensor_cont in cdp.align_tensors:
         # Find the matching tensor and then store the domain label.
         if tensor_cont.name == tensor:
-            tensor_cont.domain = domain
+            tensor_cont.set(param='domain', value=domain)
             match = True
 
     # The tensor label doesn't exist.

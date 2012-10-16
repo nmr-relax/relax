@@ -77,7 +77,7 @@ class Mf_minimise:
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # Sim values.
-                cdp.diff_tensor.tm_sim[sim_index] = param_vector[0]
+                cdp.diff_tensor.set(param='tm', value=param_vector[0], category='sim', sim_index=sim_index)
 
                 # Parameter index.
                 param_index = param_index + 1
@@ -85,10 +85,10 @@ class Mf_minimise:
             # Spheroidal diffusion.
             elif cdp.diff_tensor.type == 'spheroid':
                 # Sim values.
-                cdp.diff_tensor.tm_sim[sim_index] = param_vector[0]
-                cdp.diff_tensor.Da_sim[sim_index] = param_vector[1]
-                cdp.diff_tensor.theta_sim[sim_index] = param_vector[2]
-                cdp.diff_tensor.phi_sim[sim_index] = param_vector[3]
+                cdp.diff_tensor.set(param='tm', value=param_vector[0], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='Da', value=param_vector[1], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='theta', value=param_vector[2], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='phi', value=param_vector[3], category='sim', sim_index=sim_index)
                 diffusion_tensor.fold_angles(sim_index=sim_index)
 
                 # Parameter index.
@@ -97,12 +97,12 @@ class Mf_minimise:
             # Ellipsoidal diffusion.
             elif cdp.diff_tensor.type == 'ellipsoid':
                 # Sim values.
-                cdp.diff_tensor.tm_sim[sim_index] = param_vector[0]
-                cdp.diff_tensor.Da_sim[sim_index] = param_vector[1]
-                cdp.diff_tensor.Dr_sim[sim_index] = param_vector[2]
-                cdp.diff_tensor.alpha_sim[sim_index] = param_vector[3]
-                cdp.diff_tensor.beta_sim[sim_index] = param_vector[4]
-                cdp.diff_tensor.gamma_sim[sim_index] = param_vector[5]
+                cdp.diff_tensor.set(param='tm', value=param_vector[0], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='Da', value=param_vector[1], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='Dr', value=param_vector[2], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='alpha', value=param_vector[3], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='beta', value=param_vector[4], category='sim', sim_index=sim_index)
+                cdp.diff_tensor.set(param='gamma', value=param_vector[5], category='sim', sim_index=sim_index)
                 diffusion_tensor.fold_angles(sim_index=sim_index)
 
                 # Parameter index.
@@ -113,7 +113,7 @@ class Mf_minimise:
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # Values.
-                cdp.diff_tensor.tm = param_vector[0]
+                cdp.diff_tensor.set(param='tm', value=param_vector[0])
 
                 # Parameter index.
                 param_index = param_index + 1
@@ -121,10 +121,10 @@ class Mf_minimise:
             # Spheroidal diffusion.
             elif cdp.diff_tensor.type == 'spheroid':
                 # Values.
-                cdp.diff_tensor.tm = param_vector[0]
-                cdp.diff_tensor.Da = param_vector[1]
-                cdp.diff_tensor.theta = param_vector[2]
-                cdp.diff_tensor.phi = param_vector[3]
+                cdp.diff_tensor.set(param='tm', value=param_vector[0])
+                cdp.diff_tensor.set(param='Da', value=param_vector[1])
+                cdp.diff_tensor.set(param='theta', value=param_vector[2])
+                cdp.diff_tensor.set(param='phi', value=param_vector[3])
                 diffusion_tensor.fold_angles()
 
                 # Parameter index.
@@ -133,12 +133,12 @@ class Mf_minimise:
             # Ellipsoidal diffusion.
             elif cdp.diff_tensor.type == 'ellipsoid':
                 # Values.
-                cdp.diff_tensor.tm = param_vector[0]
-                cdp.diff_tensor.Da = param_vector[1]
-                cdp.diff_tensor.Dr = param_vector[2]
-                cdp.diff_tensor.alpha = param_vector[3]
-                cdp.diff_tensor.beta = param_vector[4]
-                cdp.diff_tensor.gamma = param_vector[5]
+                cdp.diff_tensor.set(param='tm', value=param_vector[0])
+                cdp.diff_tensor.set(param='Da', value=param_vector[1])
+                cdp.diff_tensor.set(param='Dr', value=param_vector[2])
+                cdp.diff_tensor.set(param='alpha', value=param_vector[3])
+                cdp.diff_tensor.set(param='beta', value=param_vector[4])
+                cdp.diff_tensor.set(param='gamma', value=param_vector[5])
                 diffusion_tensor.fold_angles()
 
                 # Parameter index.

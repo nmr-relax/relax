@@ -68,7 +68,7 @@ def fill_object_contents(doc, elem, object=None, blacklist=[]):
             continue
 
         # Only pack objects in the __mod_attr__ list, if that list exists.
-        if hasattr(object, '__mod_attr__') and name not in object.__mod_attr__:
+        if hasattr(object, '_mod_attr') and name not in object._mod_attr:
             continue
 
         # Create a new element for this object, and add it to the main element.
