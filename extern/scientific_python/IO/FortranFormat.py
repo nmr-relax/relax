@@ -33,8 +33,8 @@ Examples::
     >>>s = '   59999'
     >>>format = FortranFormat('2I4')
     >>>line = FortranLine(s, format)
-    >>>print line[0]
-    >>>print line[1]
+    >>>print(line[0])
+    >>>print(line[1])
 
   prints::
 
@@ -46,7 +46,7 @@ Examples::
 
     >>>format = FortranFormat('2D15.5')
     >>>line = FortranLine([3.1415926, 2.71828], format)
-    >>>print str(line)
+    >>>print(str(line))
 
   prints::
 

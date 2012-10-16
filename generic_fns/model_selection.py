@@ -217,8 +217,8 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
     # Loop over the base models.
     for model_info in model_loop():
         # Print out.
-        print(("\n" + model_desc(model_info)))
-        print(("%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")))
+        print("\n" + model_desc(model_info))
+        print("%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion"))
 
         # Initial model.
         best_model = None
@@ -279,7 +279,7 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
                 crit = formula(chi2, float(k), float(n))
 
                 # Print out.
-                print(("%-20s %-20i %-20i %-20.5f %-20.5f" % (pipe, k, n, chi2, crit)))
+                print("%-20s %-20i %-20i %-20.5f %-20.5f" % (pipe, k, n, chi2, crit))
 
             # Select model.
             if crit < best_crit:
@@ -289,7 +289,7 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
             # Print out of selected model.
-            print(("The model from the data pipe " + repr(best_model) + " has been selected."))
+            print("The model from the data pipe " + repr(best_model) + " has been selected.")
 
             # Switch to the selected data pipe.
             switch(best_model)

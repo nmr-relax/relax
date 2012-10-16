@@ -47,7 +47,7 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # PRE.
     if norm(r) < PRE:
         # Print out.
-        print(("\t%20s %20s %20s %20s %20s" % (mol, res_num, res_name, spin.num, spin.name)))
+        print("\t%20s %20s %20s %20s %20s" % (mol, res_num, res_name, spin.num, spin.name))
 
         file.write("%20s %20s %20s %20s %20s\n" % (mol, res_num, res_name, spin.num, spin.name))
 

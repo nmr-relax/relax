@@ -95,9 +95,9 @@ class Palmer(SystemTestCase):
             rex = [[None, None, None], [None, None, None], [4.308, 4.278, None]]
         chi2 = [[36.6223, 20.3954, None], [36.6223, 20.3299, None], [1.9763, 0.6307, None]]
         for model_index in range(3):
-            print(("Model " + repr(models[model_index])))
+            print("Model " + repr(models[model_index]))
             for spin_index in range(3):
-                print(("Spin " + repr(spin_names[spin_index])))
+                print("Spin " + repr(spin_names[spin_index]))
 
                 # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])
@@ -199,9 +199,9 @@ class Palmer(SystemTestCase):
 
         # Checks for model m1, m2, and m3 mfout file reading.
         for model_index in range(3):
-            print(("Model " + repr(models[model_index])))
+            print("Model " + repr(models[model_index]))
             for spin_index in range(3):
-                print(("Spin " + repr(spin_names[spin_index])))
+                print("Spin " + repr(spin_names[spin_index]))
 
                 # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])

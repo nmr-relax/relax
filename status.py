@@ -444,7 +444,7 @@ class Observer(object):
         @type key:              str
         @param method:          The observer's method to be called after a state change.
         @type method:           method
-        @keyword method_name:   The optional method name used in debugging print outs.
+        @keyword method_name:   The optional method name used in debugging printouts.
         @type method_name:      str or None
         """
 

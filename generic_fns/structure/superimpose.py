@@ -238,7 +238,7 @@ def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
             # Calculate the displacements (Kabsch algorithm).
             trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, centroid=centroid, verbosity=0)
 
-            # Table print out.
+            # Table printout.
             if verbosity:
                 print("%-10i%25.3g%25.3g" % (i, trans_dist, (angle / 2.0 / pi * 360.0)))
 
@@ -283,9 +283,9 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
     This uses the Kabsch algorithm (http://en.wikipedia.org/wiki/Kabsch_algorithm).
 
 
-    @keyword name_from:     The name of the starting structure, used for the print outs.
+    @keyword name_from:     The name of the starting structure, used for the printouts.
     @type name_from:        str
-    @keyword name_to:       The name of the ending structure, used for the print outs.
+    @keyword name_to:       The name of the ending structure, used for the printouts.
     @type name_to:          str
     @keyword coord_from:    The list of atomic coordinates for the starting structure.
     @type coord_from:       numpy rank-2, Nx3 array

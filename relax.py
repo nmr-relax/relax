@@ -152,7 +152,7 @@ class Relax:
 
         # Show the version number and exit.
         if self.mode == 'version':
-            print(('relax ' + version.version_full()))
+            print('relax ' + version.version_full())
             return
 
         # Show the relax info and exit.

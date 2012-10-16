@@ -325,9 +325,9 @@ def __errors_repl(verbosity=0):
         num_spectra = len(spectra)
 
         # Print out.
-        print(("\nReplicated spectra:  " + repr(spectra)))
+        print("\nReplicated spectra:  " + repr(spectra))
         if verbosity:
-            print(("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")))
+            print("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD"))
 
         # Calculate the mean value.
         count = 0
@@ -370,7 +370,7 @@ def __errors_repl(verbosity=0):
 
             # Print out.
             if verbosity:
-                print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
+                print("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I)))
 
             # Sum of variances (for average).
             if not id in cdp.var_I:
@@ -390,7 +390,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[spectra[j]] = cdp.var_I[id]
 
         # Print out.
-        print(("Standard deviation:  %s" % sqrt(cdp.var_I[id])))
+        print("Standard deviation:  %s" % sqrt(cdp.var_I[id]))
 
 
     # Average across all spectra if there are time points with a single spectrum.
@@ -420,7 +420,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[id] = var_I
 
         # Print out.
-        print(("Standard deviation for all spins:  " + repr(sqrt(var_I))))
+        print("Standard deviation for all spins:  " + repr(sqrt(var_I)))
 
     # Loop over the spectra.
     for id in cdp.var_I.keys():
@@ -749,7 +749,7 @@ def intensity_nmrview(file_data=None, int_col=None):
 
     # Assume the NMRView file has six header lines!
     num = 6
-    print(("Number of header lines: " + repr(num)))
+    print("Number of header lines: " + repr(num))
 
     # Remove the header.
     file_data = file_data[num:]
@@ -933,7 +933,7 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
             num = num + 1
         else:
             break
-    print(("Number of header lines found: " + repr(num)))
+    print("Number of header lines found: " + repr(num))
 
     # Remove the header.
     file_data = file_data[num:]

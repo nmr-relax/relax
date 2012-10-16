@@ -1,0 +1,7 @@
+help
+pipe.create('test', 'mf')
+pipe.create('noe test', 'noe')
+pipe.display()
+minimise()
+reset()
+state.load('results')
