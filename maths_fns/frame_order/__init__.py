@@ -382,7 +382,7 @@ class Frame_order:
             raise RelaxError("The full_in_ref_frame argument " + repr(self.full_in_ref_frame) + " must be supplied.")
 
         # Tensor set up.
-        self.num_tensors = len(self.full_tensors) / 5
+        self.num_tensors = int(len(self.full_tensors) / 5)
         self.A_3D = zeros((self.num_tensors, 3, 3), float64)
         self.A_3D_bc = zeros((self.num_tensors, 3, 3), float64)
         self.A_5D_bc = zeros(self.num_tensors*5, float64)
