@@ -111,7 +111,8 @@ except ImportError:
 try:
     import bz2
     bz2_module = True
-except ImportError, message:
+except ImportError:
+    message = sys.exc_info()[1]
     bz2_module = False
     bz2_module_message = message.args[0]
 
@@ -119,7 +120,8 @@ except ImportError, message:
 try:
     import gzip
     gzip_module = True
-except ImportError, message:
+except ImportError:
+    message = sys.exc_info()[1]
     gzip_module = False
     gzip_module_message = message.args[0]
 
@@ -129,7 +131,8 @@ try:
     from os import devnull
     del devnull
     devnull_import = True
-except ImportError, message:
+except ImportError:
+    message = sys.exc_info()[1]
     devnull_import = False
     devnull_import_message = message.args[0]
 
@@ -159,7 +162,8 @@ except ImportError:
 try:
     import mpi4py
     mpi4py_module = True
-except ImportError, message:
+except ImportError:
+    message = sys.exc_info()[1]
     mpi4py_module = False
 
     # The error message.
@@ -176,14 +180,16 @@ except ImportError, message:
 try:
     import pymol
     pymol_module = True
-except ImportError, message:
+except ImportError:
+    message = sys.exc_info()[1]
     pymol_module = False
 
 # XML.
 try:
     import xml
     xml_module = True
-except ImportError, message:
+except ImportError:
+    message = sys.exc_info()[1]
     xml_module = False
 if xml_module:
     # The XML version mess!
@@ -208,7 +214,7 @@ try:
     from maths_fns.relax_fit import setup
     del setup
     C_module_exp_fn = True
-except ImportError, message:
+except ImportError:
     # The OS.
     system = platform.system()
 
@@ -221,7 +227,8 @@ except ImportError, message:
 
     # Show the full error.
     else:
-        C_module_exp_fn_mesg = "ImportError: " + message[0] + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
+        message = sys.exc_info()[1]
+        C_module_exp_fn_mesg = "ImportError: " + repr(message) + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
 
     # Set the flag.
     C_module_exp_fn = False

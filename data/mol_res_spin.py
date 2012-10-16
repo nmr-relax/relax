@@ -28,11 +28,11 @@ from re import match, search
 from string import lower
 
 # relax module imports.
+from data.prototype import Prototype
+from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from float import floatAsByteArray
 import generic_fns
-from prototype import Prototype
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
-from relax_xml import fill_object_contents, object_to_xml, xml_to_object
 import specific_fns
 
 

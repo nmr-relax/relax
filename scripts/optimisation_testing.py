@@ -2,7 +2,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 import sys
 
 # relax module imports.
@@ -34,7 +33,7 @@ for name in dir(mf):
 
     # Get the message.
     tests.append(name)
-    messages.append(split(mf.mesg_opt_debug(spin), '\n'))
+    messages.append(mf.mesg_opt_debug(spin).split('\n'))
 
     # Tear down.
     mf.tearDown()

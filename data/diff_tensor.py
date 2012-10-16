@@ -24,15 +24,13 @@ from copy import deepcopy
 from re import search
 from math import cos, sin
 from numpy import array, float64, dot, identity, transpose, zeros
-from types import ListType
 
 # relax module imports.
-from data_classes import Element
+from data.data_classes import Element
+from data.relax_xml import fill_object_contents, xml_to_object
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError
-from relax_xml import fill_object_contents, xml_to_object
-
 
 
 def calc_Diso(tm):
@@ -977,7 +975,7 @@ class DiffTensorData(Element):
 
 
 
-class DiffTensorSimList(ListType):
+class DiffTensorSimList(list):
     """Empty data container for Monte Carlo simulation diffusion tensor data."""
 
     def __deepcopy__(self, memo):
@@ -993,7 +991,7 @@ class DiffTensorSimList(ListType):
                 continue
 
             # Skip the class methods.
-            if name in list(self.__class__.__dict__.keys()) or name in dir(ListType):
+            if name in list(self.__class__.__dict__.keys()) or name in dir(list):
                 continue
 
             # Skip the diff_element object.
@@ -1039,7 +1037,7 @@ class DiffTensorSimList(ListType):
         """Set the value."""
 
         # Set the value.
-        ListType.__setitem__(self, index, value)
+        list.__setitem__(self, index, value)
 
         # Then update the other lists.
         self.diff_element._DiffTensorData__update_sim_set(self.param_name, index)
@@ -1066,4 +1064,4 @@ class DiffTensorSimList(ListType):
         """Set the value for an untouchable MC data structure."""
 
         # Set the value.
-        ListType.__setitem__(self, index, value)
+        list.__setitem__(self, index, value)

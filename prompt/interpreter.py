@@ -27,7 +27,7 @@ import dep_check
 
 # Python module imports.
 import ansi
-from code import InteractiveConsole, softspace
+from code import InteractiveConsole
 from math import pi
 from os import F_OK, access, chdir, getcwd, path
 from pydoc import pager
@@ -36,7 +36,6 @@ if dep_check.readline_module:
     import readline
 if dep_check.runpy_module:
     import runpy
-from string import split
 import sys
 
 # relax module imports.
@@ -116,7 +115,7 @@ class Interpreter:
 
         # Split up the name.
         if search('\.', uf_name):
-            class_name, uf_name = split(uf_name, '.')
+            class_name, uf_name = uf_name.split('.')
         else:
             class_name = None
 
@@ -180,7 +179,7 @@ class Interpreter:
         for name, data in uf_info.uf_loop():
             # Split up the name.
             if search('\.', name):
-                class_name, uf_name = split(name, '.')
+                class_name, uf_name = name.split('.')
             else:
                 class_name = None
 
@@ -432,10 +431,11 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     if show_script:
         try:
             file = open(script_file, 'r')
-        except IOError, warning:
+        except IOError:
             try:
                 raise RelaxError("The script file '" + script_file + "' does not exist.")
-            except AllRelaxErrors, instance:
+            except AllRelaxErrors:
+                instance = sys.exc_info()[1]
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
@@ -484,7 +484,9 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         exec_pass = False
 
     # Catch the RelaxErrors.
-    except AllRelaxErrors, instance:
+    except AllRelaxErrors:
+        instance = sys.exc_info()[1]
+
         # Unlock execution.
         status.exec_lock.release()
 
@@ -594,11 +596,9 @@ def runcode(self, code):
         exec(code, self.locals)
     except SystemExit:
         raise
-    except AllRelaxErrors, instance:
+    except AllRelaxErrors:
+        instance = sys.exc_info()[1]
         self.write(instance.__str__())
         self.write("\n")
     except:
         self.showtraceback()
-    else:
-        if softspace(sys.stdout, 0):
-            print('')

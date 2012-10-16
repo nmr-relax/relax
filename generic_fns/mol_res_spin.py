@@ -37,7 +37,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array, float64
 from re import split
-from string import count, replace, strip, upper
+from string import count, replace, upper
 import sys
 from textwrap import fill
 from warnings import warn
@@ -2400,7 +2400,7 @@ def parse_token(token, verbosity=False):
         # Loop over the elements.
         for element in elements:
             # Strip all leading and trailing whitespace.
-            element = strip(element)
+            element = element.strip()
 
             # Find all '-' characters (ignoring the first character, i.e. a negative number).
             indices= []

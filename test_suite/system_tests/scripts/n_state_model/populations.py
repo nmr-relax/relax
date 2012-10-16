@@ -85,7 +85,7 @@ print n_state_model_obj._assemble_param_vector()
 self._execute_uf(uf_name='calc')
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2) > 1e-15:
-    raise RelaxError, "The chi2 at the solution is not zero!"
+    raise RelaxError("The chi2 at the solution is not zero!")
 
 
 # The population model opt.

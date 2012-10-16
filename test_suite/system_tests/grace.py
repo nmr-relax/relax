@@ -22,7 +22,6 @@
 # Python module imports.
 from os import sep
 from re import search
-from string import split
 from tempfile import mktemp
 
 # relax module imports.
@@ -80,7 +79,7 @@ class Grace(SystemTestCase):
                 break
 
             # Split up the data.
-            row = split(lines[i])
+            row = lines[i].split()
 
             # Store the data.
             spin.append(float(row[0]))

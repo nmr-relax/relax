@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 from unittest import TestSuite
 
 # relax module imports.
@@ -133,7 +132,7 @@ class System_test_runner:
             # Single system test.
             else:
                 # Split.
-                row = split(test, '.')
+                row = test.split('.')
 
                 # Check.
                 if len(row) != 2:

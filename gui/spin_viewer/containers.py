@@ -25,7 +25,7 @@
 
 # Python module imports.
 from re import search
-from string import replace, split
+from string import replace
 import wx
 
 # relax module imports.
@@ -523,7 +523,7 @@ class Spin(Container_base):
             obj = getattr(spin, name)
 
             # The type.
-            obj_type = split(str(type(obj)), "'")[1]
+            obj_type = str(type(obj)).split("'")[1]
 
             # List types.
             if obj_type in ['list', 'numpy.ndarray'] and len(obj) > 1:

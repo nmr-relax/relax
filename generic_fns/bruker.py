@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import search, split
-from string import strip
 
 # relax module imports.
 from generic_fns import pipes
@@ -118,7 +117,7 @@ def read(ri_id=None, file=None, dir=None):
 
         # Strip the rubbish.
         for j in range(len(row)):
-            row[j] = strip(row[j])
+            row[j] = row[j].strip()
 
         # Empty line.
         if len(row) == 0:

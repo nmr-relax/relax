@@ -57,10 +57,10 @@ This script is split into multiple stages:
 
 # Python module imports.
 from math import pi, sqrt
-from os import F_OK, access, getcwd, popen3, sep
+from os import F_OK, access, getcwd, sep
 from random import randint
 from re import search
-from string import split
+from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -268,9 +268,9 @@ class Stereochem_analysis:
             data = []
             for j in range(1, len(noe_lines)):
                 # Split the lines.
-                ens = int(split(noe_lines[j])[0])
-                noe_viol = float(split(noe_lines[j])[1])
-                q_rdc = float(split(rdc_lines[j])[1])
+                ens = int(noe_lines[j].split()[0])
+                noe_viol = float(noe_lines[j].split()[1])
+                q_rdc = float(rdc_lines[j].split()[1])
 
                 # The NOE Q-factor.
                 q_noe = sqrt(noe_viol/self.noe_norm)
@@ -404,7 +404,7 @@ class Stereochem_analysis:
                 noe_viols = []
                 for j in range(1, len(lines)):
                     # Extract the violation.
-                    viol = float(split(lines[j])[1])
+                    viol = float(lines[j].split()[1])
                     noe_viols.append(viol)
 
                     # Add to the data structure.
@@ -450,7 +450,7 @@ class Stereochem_analysis:
                 values = []
                 for j in range(1, len(lines)):
                     # Extract the violation.
-                    value = float(split(lines[j])[1])
+                    value = float(lines[j].split()[1])
                     values.append(value)
 
                     # Add to the data structure.
@@ -501,8 +501,8 @@ class Stereochem_analysis:
                 # Loop over the data.
                 for j in range(1, len(noe_lines)):
                     # Split the lines.
-                    noe_viol = float(split(noe_lines[j])[1])
-                    q_factor = float(split(rdc_lines[j])[1])
+                    noe_viol = float(noe_lines[j].split()[1])
+                    q_factor = float(rdc_lines[j].split()[1])
 
                     # Add the xy pair.
                     data[i].append([noe_viol, q_factor])
@@ -768,32 +768,32 @@ class Stereochem_analysis:
                     continue
 
                 # Open the Molmol pipe.
-                stdin, stdout, stderr = popen3("molmol -t -f -", 'w', 0)
+                pipe = Popen("molmol -t -f -", shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
                 # Init all.
-                stdin.write("InitAll yes\n")
+                pipe.stdin.write("InitAll yes\n")
 
                 # Read the PDB.
-                stdin.write("ReadPdb " + self.results_dir+sep+file_in + "\n")
+                pipe.stdin.write("ReadPdb " + self.results_dir+sep+file_in + "\n")
 
                 # Fitting to mean.
-                stdin.write("Fit to_first 'selected'\n")
-                stdin.write("Fit to_mean 'selected'\n")
+                pipe.stdin.write("Fit to_first 'selected'\n")
+                pipe.stdin.write("Fit to_mean 'selected'\n")
 
                 # Write the result.
-                stdin.write("WritePdb " + self.results_dir+sep+file_out + "\n")
+                pipe.stdin.write("WritePdb " + self.results_dir+sep+file_out + "\n")
 
                 # End Molmol.
-                stdin.close()
+                pipe.stdin.close()
 
                 # Get STDOUT and STDERR.
-                sys.stdout.write(stdout.read())
+                sys.stdout.write(pipe.stdout.read())
                 if self.log:
-                    log.write(stderr.read())
+                    log.write(pipe.stderr.read())
 
                 # Close the pipe.
-                stdout.close()
-                stderr.close()
+                pipe.stdout.close()
+                pipe.stderr.close()
 
                 # Open the superimposed file in relax.
                 self.interpreter.reset()

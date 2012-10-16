@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import search
-from string import split
 import wx
 from wx.lib import scrolledpanel
 
@@ -83,7 +82,7 @@ def build_uf_menus(parent=None, menubar=None):
     for name, data in uf_info.uf_loop():
         # Split up the name.
         if search('\.', name):
-            class_name, uf_name = split(name, '.')
+            class_name, uf_name = name.split('.')
         else:
             class_name = None
 

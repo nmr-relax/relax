@@ -31,7 +31,6 @@ try:
 except ImportError:
     from Queue import Queue
 from re import search
-from string import split
 import sys
 from threading import Lock, RLock
 
@@ -90,7 +89,7 @@ class Status(object):
             # Find the Resources folder, where the relax data files are located.
             if search('Resources', path):
                 # Nasty hack for creating the Resources path.
-                bits = split(path, 'Resources')
+                bits = path.split('Resources')
                 mac_path = bits[0] + 'Resources'
 
                 # Return the Mac Resources folder path.

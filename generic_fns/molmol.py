@@ -24,7 +24,6 @@
 
 # Python module imports.
 from os import sep
-from string import split
 from subprocess import PIPE, Popen
 from time import sleep
 
@@ -377,7 +376,7 @@ def tensor_pdb(file=None):
 
     # Read in the tensor PDB file and force Molmol to recognise the CONECT records (not that it will show the bonds)!
     molmol_obj.exec_cmd("ReadPdb " + file)
-    file_parts = split(file, '.')
+    file_parts = file.split('.')
     molmol_obj.exec_cmd("SelectMol '@" + file_parts[0] + "'")
     molmol_obj.exec_cmd("CalcBond 1 1 1")
 

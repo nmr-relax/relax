@@ -27,7 +27,6 @@
 from os import F_OK, access, getcwd, sep
 import platform
 from re import search
-from string import split
 import sys
 from textwrap import wrap
 from time import sleep
@@ -83,7 +82,7 @@ class Main(wx.Frame):
 
         # Store the wxPython info for os/machine/version specific hacks.
         status.wx_info = {}
-        status.wx_info["version"] = split(wx.__version__, '.')
+        status.wx_info["version"] = wx.__version__.split('.')
         status.wx_info["minor"] = "%s.%s" % (status.wx_info["version"][0], status.wx_info["version"][1])
         status.wx_info["os"] = sys.platform
         status.wx_info["build"] = None

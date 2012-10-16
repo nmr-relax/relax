@@ -25,7 +25,6 @@
 # Python module imports.
 from re import search
 from relax_errors import RelaxError
-from string import split
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -96,7 +95,7 @@ class Uf_info(object):
         # First check if the user function class has been set up.
         if search('\.', name):
             # Split up the name.
-            class_name, fn_name = split(name, '.')
+            class_name, fn_name = name.split('.')
 
             # Check for the class name.
             if class_name not in self._class_names:

@@ -27,7 +27,7 @@ from data.diff_tensor import DiffTensorSimList
 from math import pi
 from numpy import float64, array, transpose
 from re import search
-from string import lower, replace, split
+from string import lower, replace
 import sys
 
 # relax module imports.
@@ -461,7 +461,7 @@ class Results:
             # Minimisation details (global minimisation results).
             if model_type == 'diff' or model_type == 'all':
                 # The simulation index.
-                index = int(split(data_set, '_')[1])
+                index = int(data_set.split('_')[1])
 
                 # Already loaded.
                 if len(cdp.chi2_sim) == index + 1:
@@ -721,7 +721,7 @@ class Results:
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
                 # Extract the number from the data_set string.
-                sim_num = split(data_set, '_')
+                sim_num = data_set.split('_')
                 try:
                     sim_num = int(sim_num[1])
                 except:

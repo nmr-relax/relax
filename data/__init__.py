@@ -24,19 +24,21 @@
 
 
 # Python module imports.
-import __builtin__
+try:
+    import __builtin__ as builtins    # Python 2 import.
+except ImportError:
+    import builtins    # Python 3 import.
 from re import search
-from string import split
 from sys import stderr
 from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
-from pipe_container import PipeContainer
+from data.gui import Gui
+from data.pipe_container import PipeContainer
+from data.relax_xml import fill_object_contents, xml_to_object
 import generic_fns
-from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
-from relax_xml import fill_object_contents, xml_to_object
 from status import Status; status = Status()
 import version
 
@@ -59,7 +61,7 @@ class Relax_data_store(dict):
 
     # The current data pipe.
     current_pipe = None
-    __builtin__.cdp = None
+    builtins.cdp = None
 
     # Class variable for storing the class instance.
     instance = None
@@ -112,7 +114,7 @@ class Relax_data_store(dict):
             if obj == None or isinstance(obj, str):
                 text = text + "  %s %s: %s\n" % (name, type(obj), obj)
             else:
-                text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
+                text = text + "  %s %s: %s\n" % (name, type(obj), obj.__doc__.split('\n')[0])
 
         # dict methods.
         text = text + "\n"
@@ -130,7 +132,7 @@ class Relax_data_store(dict):
             obj = getattr(self, name)
 
             # The text.
-            text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
+            text = text + "  %s %s: %s\n" % (name, type(obj), obj.__doc__.split('\n')[0])
 
         # All other objects.
         text = text + "\n"
@@ -174,7 +176,7 @@ class Relax_data_store(dict):
         self.instance.clear()
 
         # Reset the current data pipe.
-        __builtin__.cdp = None
+        builtins.cdp = None
 
         # Recreate the pipe bundle object.
         self.instance.pipe_bundles = {}
@@ -309,7 +311,7 @@ class Relax_data_store(dict):
         if switch:
             # Set the current data pipe.
             self.instance.current_pipe = pipe_name
-            __builtin__.cdp = self[pipe_name]
+            builtins.cdp = self[pipe_name]
 
             # Signal the switch.
             status.observers.pipe_alteration.notify()
@@ -478,7 +480,7 @@ class Relax_data_store(dict):
 
             # Set the current pipe.
             if self.current_pipe in self.keys():
-                __builtin__.cdp = self[self.current_pipe]
+                builtins.cdp = self[self.current_pipe]
 
         # Finally update the molecule, residue, and spin metadata.
         generic_fns.mol_res_spin.metadata_update()
