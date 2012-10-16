@@ -79,7 +79,6 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[0], params=( 1.4
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[1], params=( 3.56720663040924505435e-04, -2.68385787902088840916e-04, -1.69361406642305853832e-04,  1.71873715515064501074e-04, -3.05790155096090983822e-04), align_id=align_list[1], param_types=2)
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[2], params=( 2.32088908680377300801e-07,  2.08076808579168379617e-06, -2.21735465435989729223e-06, -3.74311563209448033818e-06, -2.40784858070560310370e-06), align_id=align_list[2], param_types=2)
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.62495279588228071048e-04,  7.35617367964106275147e-04,  6.39754192258981332648e-05,  6.27880171180572523460e-05,  2.01197582457700226708e-04), align_id=align_list[3], param_types=2)
-print n_state_model_obj._assemble_param_vector()
 
 # Calculation.
 self._execute_uf(uf_name='calc')
