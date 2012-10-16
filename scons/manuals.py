@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 from status import Status; status = Status()
-from version import version
+import version
 
 
 def clean_manual_files(target, source, env):
@@ -485,9 +485,14 @@ def version_file(target, source, env):
     print("# Creating the LaTeX relax version number file #")
     print("################################################")
 
+    # Add the repository revision if not a normal release.
+    text = version.version
+    if text == 'repository checkout':
+        text += ' r' + version.revision()
+
     # Place the program version number into a LaTeX file.
     file = open(env['LATEX_DIR'] + sep + 'relax_version.tex', 'w')
-    file.write("Version " + version + '\n')
+    file.write("Version " + text + '\n')
     file.close()
 
     # Final printout.

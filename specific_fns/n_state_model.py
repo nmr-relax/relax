@@ -43,7 +43,7 @@ from generic_fns.structure.internal import Internal
 from generic_fns.structure.mass import centre_of_mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
-from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
+from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from relax_io import open_write_file

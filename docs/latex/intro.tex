@@ -6,8 +6,8 @@
 The program relax is designed for the study of molecular dynamics through the analysis of experimental NMR data. Organic molecules, proteins, RNA, DNA, sugars, and other biomolecules are all supported. It was originally written for the model-free analysis of protein dynamics, though its scope has been significantly expanded.  It is a community driven project created by NMR spectroscopists for NMR spectroscopists.  It supports many analysis types including:
 
 \begin{description}
-\item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data.
-\item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the Rx NMR relaxation rates.
+\item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data
+\item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the R$_x$ NMR relaxation rates.
 \item[NOE] - the calculation of the steady-state NOE NMR relaxation data.
 \item[Data consistency] - the consistency testing of multiple field NMR relaxation data.
 \item[RSDM] - Reduced Spectral Density Mapping.
@@ -46,15 +46,16 @@ Other literature related to the improved model-free analysis used within relax i
 The following relaxation data analysis techniques are currently supported by relax:
 
 \begin{itemize}
-\item Model-free analysis \citep{LipariSzabo82a, LipariSzabo82b, Clore90a}.
+\item Model-free analysis (\citet{LipariSzabo82a, LipariSzabo82b, Clore90a} and the specific implementation of \citet{dAuvergneGooley03,dAuvergneGooley06,dAuvergneGooley07,dAuvergneGooley08a,dAuvergneGooley08b}).
 \item Reduced spectral density mapping \citep{Farrow95, Lefevre96}\index{reduced spectral density mapping}.
+\item Consistency testing -- the validation of multiple field NMR relaxation data \citep{MorinGagne09}.
 \item Exponential curve fitting (to find the $\Rone$ and $\Rtwo$ relaxation rates)\index{exponential curve fitting}.
 \item Steady-state NOE calculation\index{NOE}.
-\item Determination of absolute stereochemistry of flexible molecules using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD (see \citet{Sun11}).
+\item Determination of absolute stereochemistry of flexible molecules via the N-state model using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD \citep{Sun11}.
 \item The N-state model for investigating domain motions.
 \item The frame order theory.
-\item Conformational analysis of paramagnetically tagged molecules (see \citet{Erdelyi11}).
-\item Analysis of RDCs and PCSs using ensemble of structures (the N-state model of dynamics).
+\item Conformational analysis of paramagnetically tagged molecules via the N-state model \citep{Erdelyi11}.
+\item Analysis and comparison of ensembles of structures using RDCs, PCSs, NOEs, etc. (the N-state model of dynamics).
 \end{itemize}
 
 
@@ -299,7 +300,7 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 % The data pipe.
 %~~~~~~~~~~~~~~~
 
-\subsection{The data pipe}
+\subsection{The data pipe} \label{sect: the data pipe}
 \index{data pipe|textbf}
 
 Within relax all user functions operate on data stored within the current data pipe.  This pipe stores data is input, processed, or output as user functions are called.  There are different types of data pipe for different analyses, e.g. a reduced spectral density mapping pipe, a model-free pipe, an exponential curve-fitting pipe, etc.  Multiple data pipes can be created within relax and various operations performed in sequence on these pipes.  This is useful for operations such as model selection whereby the function \texttt{`model\_selection'} can operate on a number of pipes corresponding to different models and then assign the results to a newly created pipe.  When running relax you choose which pipe you are currently in by using the \texttt{`pipe.switch'} user function to jump between pipes. 
@@ -481,7 +482,7 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 % Spin viewer screenshot
 \begin{figure}
 \centerline{\includegraphics[width=0.9\textwidth, bb=14 14 1065 768]{graphics/screenshots/spin_viewer.eps.gz}}
-\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.}\label{fig: screenshot: spin viewer}
+\caption[Spin viewer window screenshot]{Screenshot of the relax GUI interface -- the spin viewer window.  This viewer is designed for easy addition and manipulation of spin systems within the relax data store.  The window is accessible via the `View$\to$Spin view' menu entry, typing `Ctrl-T', the spin viewer button in the toolbar, or the `spin editor' button within the auto-analysis tabs.}\label{fig: screenshot: spin viewer}
 \end{figure}
 
 % Results viewer screenshot
@@ -492,7 +493,7 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 
 % Pipe editor screenshot
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 619 410]{graphics/screenshots/pipe_editor.eps.gz}}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 769 488]{graphics/screenshots/pipe_editor.eps.gz}}
 \caption[Pipe editor window screenshot]{Screenshot of the relax GUI interface -- the pipe editor window.  One analysis may consist of one or more data pipes.  And each analysis has its own unique set of data pipes.  This editor allows for the easy manipulation of data pipes for advanced users.}\label{fig: screenshot: pipe editor}
 \end{figure}
 

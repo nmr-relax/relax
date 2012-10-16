@@ -28,7 +28,8 @@ import sys
 sys.path.append(sys.path[0])
 sys.path[0] = '../..'
 
-# Import the program relax.
+# relax module imports.
+from graphics import fetch_icon
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
@@ -50,6 +51,15 @@ class Fetch_docstrings:
 
         # Loop over the user functions.
         for self.uf_name, self.uf in uf_info.uf_loop():
+            # The user function class.
+            self.uf_class = None
+            if search('\.', self.uf_name):
+                # Split up the name.
+                class_name, uf_name = split(self.uf_name, '.')
+
+                # Get the user function class data object.
+                self.uf_class = uf_info.get_class(class_name)
+
             # Reset the table count for each user function.
             self.uf_table_count = 1
 
@@ -211,11 +221,23 @@ class Fetch_docstrings:
         self.file.write("\n\n")
 
         # Add a spaced out rule.
-        self.file.write("\\vspace{20pt}\n")
+        self.file.write("\\pagebreak[4]\n")
         self.file.write("\\rule{\columnwidth}{2pt}\n")
-        self.file.write("\\vspace{-30pt}\n")
+        self.file.write("\\vspace{10pt}\n")
+
+        # Add the user function class icon.
+        if self.uf_class:
+            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format='eps.gz')
+            if icon:
+                self.file.write("\includegraphics[bb=0 0 18 18]{%s} \hfill " % icon)
+
+        # Add the user function icon.
+        icon = fetch_icon(self.uf.gui_icon, size='128x128', format='eps.gz')
+        if icon:
+            self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n\n" % icon)
 
         # The title.
+        self.file.write("\\vspace{-20pt}\n")
         self.uf_name_latex = self.uf_name
 
         # LaTeX formatting.
@@ -226,8 +248,8 @@ class Fetch_docstrings:
         self.uf_name_latex = replace(self.uf_name_latex, '.', '\-.')
         self.uf_name_latex = replace(self.uf_name_latex, '\_', '\-\_')
 
-        # Write out the title.
-        self.file.write("\subsection{%s}\n\n" % self.uf_name_latex)
+        # Write out the title (with label).
+        self.file.write("\subsection{%s} \label{uf: %s}\n" % (self.uf_name_latex, self.uf_name))
 
 
     def indexing(self, index, bold=False):
