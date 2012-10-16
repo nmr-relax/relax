@@ -46,6 +46,7 @@ ENTRY
     author
     booktitle
     chapter
+    doi
     edition
     editor
     howpublished
@@ -266,6 +267,14 @@ FUNCTION {format.editors}
     { " (ed.)" * }
       if$
     }
+  if$
+}
+
+FUNCTION {format.doi}
+{
+  doi empty$
+    { "" }
+    { "(\href{http://dx.doi.org/" doi * "}{" * doi * "})" * }
   if$
 }
 
@@ -508,6 +517,8 @@ FUNCTION {article}
     }
   if$
   new.block
+  format.doi output
+  new.block
   note output
   fin.entry
 }
@@ -710,6 +721,8 @@ FUNCTION {phdthesis}
   "PhD thesis" format.thesis.type output.nonnull
   school "school" output.check
   address output
+  new.block
+  format.doi output
   new.block
   note output
   fin.entry
