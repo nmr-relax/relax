@@ -462,9 +462,9 @@ class Frame_order(API_base, API_common):
                     axis_sim_neg = axes_sim_neg[:, :, j]
 
                 # The vectors.
-                res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='%sAX'%label[i].upper(), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='%sAX'%label[i].upper(), sim_vectors=axis_sim_neg, res_num=res_num, origin=cdp.pivot, scale=size)
+                    res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
