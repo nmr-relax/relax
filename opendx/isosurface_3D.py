@@ -77,7 +77,7 @@ class Iso3D(Base_Map):
         values = zeros(3, float64)
         percent = 0.0
         percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
-        print(("%-10s%8.3f%-1s" % ("Progress:", percent, "%")))
+        print("%-10s%8.3f%-1s" % ("Progress:", percent, "%"))
 
         # Fix the diffusion tensor.
         unfix = False
@@ -131,7 +131,7 @@ class Iso3D(Base_Map):
 
                 # Progress incrementation and printout.
                 percent = percent + percent_inc
-                print(("%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2)))
+                print("%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2))
 
                 # Increment the value of the second parameter.
                 values[1] = values[1] + self.step_size[1]

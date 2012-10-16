@@ -108,8 +108,8 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False):
     R = R / M
 
     # Final printout.
-    print(("    Total mass:      M = " + repr(M)))
-    print(("    Centre of mass:  R = " + repr(R)))
+    print("    Total mass:      M = " + repr(M))
+    print("    Centre of mass:  R = " + repr(R))
 
     # Return the centre of mass.
     if return_mass:

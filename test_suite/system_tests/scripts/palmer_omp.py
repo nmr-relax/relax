@@ -26,7 +26,7 @@ def exec_stage_1(pipes):
     # Loop over the data pipes.
     for name in pipes:
         # Create the data pipe.
-        print(("\n\n# " + name + " #"))
+        print("\n\n# " + name + " #")
         pipe.create(name, 'mf')
 
         # Copy the sequence.

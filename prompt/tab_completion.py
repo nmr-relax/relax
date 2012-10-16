@@ -72,10 +72,10 @@ class Tab_completion:
                 self.options.append(module + '.' + name)
 
         if self.verbosity:
-            print(("List: " + repr(list)))
-            print(("Module: " + repr(module)))
-            print(("self.list: " + repr(self.list)))
-            print(("self.options: " + repr(self.options)))
+            print("List: " + repr(list))
+            print("Module: " + repr(module))
+            print("self.list: " + repr(self.list))
+            print("self.options: " + repr(self.options))
 
 
     def finish(self, input, state):
@@ -87,7 +87,7 @@ class Tab_completion:
         # Create a list of all possible options.
         # Find a list of options by matching the input with self.list
         if self.verbosity:
-            print(("\nInput: " + repr(self.input)))
+            print("\nInput: " + repr(self.input))
         if not "." in self.input:
             if self.verbosity:
                 print("Creating list.")

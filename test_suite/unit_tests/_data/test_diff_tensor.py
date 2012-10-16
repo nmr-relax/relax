@@ -131,7 +131,7 @@ class Test_diff_tensor(TestCase):
     def test_display(self):
         """Test that the contents of the diffusion tensor object can be displayed."""
 
-        print((self.diff_data))
+        print(self.diff_data)
 
 
     def test_set_Diso(self):

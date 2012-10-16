@@ -387,18 +387,18 @@ class N_state_model(API_base, API_common):
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
-        print(("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))))
-        print(("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))))
-        print(("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))))
-        print(("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))))
-        print(("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))))
-        print(("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))))
-        print(("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))))
-        print(("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))))
-        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)))
-        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)))
-        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
-        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
+        print("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point)))
+        print("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM)))
+        print("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM)))
+        print("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect)))
+        print("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM)))
+        print("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM)))
+        print("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM)))
+        print("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red)))
+        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.))
+        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2))
+        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.))
+        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2))
         print("\n\n")
 
 
