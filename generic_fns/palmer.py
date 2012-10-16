@@ -27,7 +27,6 @@
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
-from string import count, find
 from subprocess import PIPE, Popen
 import sys
 
@@ -792,7 +791,7 @@ def get_mf_data(mfout_lines, pos):
     fused = False
     for element in row:
         # Count the number of '.' characters.
-        num = count(element, '.')
+        num = element.count('.')
 
         # Catch two or more '.' characters.
         if num > 1:
@@ -802,7 +801,7 @@ def get_mf_data(mfout_lines, pos):
             # Loop over each fused number.
             for i in range(num):
                 # Find the index of the first '.'.
-                index = find(element, '.')
+                index = element.find('.')
 
                 # The first number (index + decimal point + 3 decimal chars).
                 new_row.append(element[0:index+4])

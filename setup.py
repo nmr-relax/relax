@@ -39,7 +39,6 @@ from os import getcwd, listdir, sep, walk
 from os.path import relpath, sep
 from re import search
 from setuptools import setup
-from string import replace
 import sys
 
 # relax module imports.
@@ -196,7 +195,7 @@ class Setup:
             if rel_path == '.':
                 module_path = ''
             else:
-                module_path = replace(rel_path, sep, '.')
+                module_path = rel_path.replace(sep, '.')
                 if module_path:
                     module_path += '.'
 

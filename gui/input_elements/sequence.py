@@ -23,7 +23,6 @@
 """Module containing a set of special GUI elements to be used in the relax wizards."""
 
 # Python module imports.
-from string import upper
 import wx
 import wx.lib.mixins.listctrl
 
@@ -596,7 +595,7 @@ class Sequence_window(wx.Dialog):
         self.sequence = Sequence_list_ctrl(self)
 
         # Set the column title.
-        title = "%s%s" % (upper(self.name[0]), self.name[1:])
+        title = "%s%s" % (self.name[0].upper(), self.name[1:])
 
         # Add a single column, full width.
         self.sequence.InsertColumn(0, title)

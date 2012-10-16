@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,7 @@
 
 # Python module imports.
 from math import pi
-from string import ascii_letters, digits, upper
+from string import ascii_letters, digits
 
 # relax module imports.
 from float import nan
@@ -262,7 +262,7 @@ def return_atomic_mass(element=None):
         return ArS
 
     # Calcium.
-    if upper(element) == 'CA':
+    if element.upper() == 'CA':
         return ArCa
 
     # Unknown mass.

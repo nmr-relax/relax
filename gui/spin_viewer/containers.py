@@ -25,7 +25,6 @@
 
 # Python module imports.
 from re import search
-from string import replace
 import wx
 
 # relax module imports.
@@ -135,7 +134,7 @@ class Container_base:
         text = unicode(text)
 
         # Fix for the '&' character.
-        text = replace(text, '&', '&&')
+        text = text.replace('&', '&&')
 
         # The object.
         obj = wx.StaticText(self.parent, -1, text)
@@ -160,7 +159,7 @@ class Container_base:
         text = unicode(text)
 
         # Fix for the '&' character.
-        text = replace(text, '&', '&&')
+        text = text.replace('&', '&&')
 
         # The object.
         obj = wx.StaticText(self.parent, -1, text)

@@ -27,7 +27,7 @@ from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access
 from re import search
-from string import digits, upper
+from string import digits
 from warnings import warn
 
 # relax module imports.

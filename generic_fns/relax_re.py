@@ -24,7 +24,6 @@
 
 # Python module imports.
 import re
-from string import replace
 
 
 def search(pattern, id):
@@ -71,8 +70,8 @@ def search(pattern, id):
             return True
 
         # First replace any '*' with '.*' (relax to re conversion).
-        pattern_re = replace(pattern, '*', '.*')
-        id_re =      replace(id,      '*', '.*')
+        pattern_re = pattern.replace('*', '.*')
+        id_re =      id.replace('*', '.*')
 
         # Bracket the pattern.
         pattern_re = '^%s$' % pattern_re

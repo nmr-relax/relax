@@ -22,7 +22,6 @@
 # Python module imports.
 from os import F_OK, access, getcwd, listdir, sep
 from re import search
-from string import lower
 from time import sleep
 
 # relax module imports.
@@ -382,7 +381,7 @@ class dAuvergne_protocol:
             for j in range(len(spin.params)):
                 # Get the parameters and values.
                 self.conv_data.mf_params[-1][-1].append(spin.params[j])
-                self.conv_data.mf_vals[-1][-1].append(getattr(spin, lower(spin.params[j])))
+                self.conv_data.mf_vals[-1][-1].append(getattr(spin, spin.params[j].lower()))
 
         # No need for tests.
         if self.round == 1:
