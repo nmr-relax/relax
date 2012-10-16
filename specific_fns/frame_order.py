@@ -2203,13 +2203,13 @@ class Frame_order(API_base, API_common):
         # Alignment tensor data.
         if data_id == 'A':
             # Loop over the full tensors.
-            for j, tensor in self._tensor_loop(red=False):
+            for i, tensor in self._tensor_loop(red=False):
                 # Set the simulation number.
                 tensor.set_sim_num(cdp.sim_number)
 
                 # Loop over the simulations.
                 for j in range(cdp.sim_number):
-                    # Set the reduced tensor simulation data.
+                    # Set the full tensor simulation data.
                     tensor.set(param='Axx', value=sim_data[5*i + 0][j], category='sim', sim_index=j)
                     tensor.set(param='Ayy', value=sim_data[5*i + 1][j], category='sim', sim_index=j)
                     tensor.set(param='Axy', value=sim_data[5*i + 2][j], category='sim', sim_index=j)
