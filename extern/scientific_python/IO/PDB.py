@@ -45,10 +45,10 @@ conventions as specified in the PDB format description.
 Example::
 
   >>>conf = Structure('example.pdb')
-  >>>print conf
+  >>>print(conf)
   >>>for residue in conf.residues:
   >>>    for atom in residue:
-  >>>        print atom
+  >>>        print(atom)
 
 @undocumented: atom_format
 @undocumented: anisou_format
