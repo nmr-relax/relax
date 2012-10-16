@@ -268,6 +268,14 @@ def compile_api_manual_html(target, source, env):
         if file in blacklist:
             continue
 
+        # The excluded ones.
+        if file in exclude:
+            continue
+
+        # Hidden files and directories.
+        if search('^\.', file):
+            continue
+
         # Otherwise add it.
         epydoc_cmd = "%s %s" % (epydoc_cmd, file)
 
