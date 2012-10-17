@@ -830,6 +830,19 @@ class RelaxInvalidDataError(BaseError):
 # Data pipe errors.
 ###################
 
+# The data pipe bundle already exists.
+class RelaxBundleError(BaseError):
+    def __init__(self, bundle):
+        self.text = "The data pipe bundle '%s' already exists." % bundle
+
+# No data pipe bundles exist.
+class RelaxNoBundleError(BaseError):
+    def __init__(self, bundle=None):
+        if bundle != None:
+            self.text = "The data pipe bundle '%s' has not been created yet." % bundle
+        else:
+            self.text = "No data pipe bundles currently exist.  Please use the pipe.bundle user function first."
+
 # The data pipe already exists.
 class RelaxPipeError(BaseError):
     def __init__(self, pipe):
