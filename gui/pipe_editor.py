@@ -30,6 +30,7 @@ import wx.grid
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
 from graphics import fetch_icon
+from relax_errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -323,9 +324,15 @@ class Pipe_editor(wx.Frame):
         if not hasattr(ds, 'relax_gui'):
             self.gui.init_data()
 
-        # The type.
+        # The type and data pipe bundle.
         type = get_type(self.selected_pipe)
         bundle = get_bundle(self.selected_pipe)
+
+        # Error checking.
+        if self.selected_pipe == None:
+            raise RelaxError("No data pipe has been selected - this is not possible.")
+        if bundle == None:
+            raise RelaxError("The selected data pipe is not associated with a data pipe bundle.")
 
         # The name.
         names = {

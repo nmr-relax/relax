@@ -100,13 +100,13 @@ def compile_api_manual_html(target, source, env):
     # exclude
     #   The list of objects to exclude.
     exclude = [
+        'devel_scripts',
         'extern',
         'graphics',
         'minfx.scipy_subset',
         'multi.test_implementation',
         'multi.test_implementation2',
-        'sample_scripts',
-        'scripts'
+        'sample_scripts'
     ]
 
     # output
@@ -268,6 +268,14 @@ def compile_api_manual_html(target, source, env):
         if file in blacklist:
             continue
 
+        # The excluded ones.
+        if file in exclude:
+            continue
+
+        # Hidden files and directories.
+        if search('^\.', file):
+            continue
+
         # Otherwise add it.
         epydoc_cmd = "%s %s" % (epydoc_cmd, file)
 
@@ -310,7 +318,7 @@ def compile_api_manual_html(target, source, env):
     head_lines = []
 
     # The Google analytics JS.
-    file = open(status.install_path + sep + 'scripts' + sep + 'google_analytics.js')
+    file = open(status.install_path + sep + 'devel_scripts' + sep + 'google_analytics.js')
     for line in file.readlines():
         head_lines.append(line)
     file.close()
