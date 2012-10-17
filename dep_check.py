@@ -142,7 +142,7 @@ except ImportError:
 try:
     import scipy
     scipy_module = True
-except ImportError:
+except:
     scipy_module = False
 
 # Numeric python package check.
