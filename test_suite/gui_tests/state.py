@@ -93,7 +93,7 @@ class State(GuiTestCase):
         self.app.gui.state_load(file_name=file)
 
         # Create a data pipe bundle.
-        self._execute_uf(uf_name='pipe.bundle', pipe='a')
+        self._execute_uf(uf_name='pipe.bundle', pipe='a', bundle='test bundle')
 
         # Show the pipe editor.
         self.app.gui.show_pipe_editor(None)
