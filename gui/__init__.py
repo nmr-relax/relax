@@ -38,10 +38,10 @@ if dep_check.wx_module:
 import generic_fns
 from graphics import IMAGE_PATH
 from relax_errors import RelaxError
-from relax_gui import Main
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui import relax_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
@@ -100,7 +100,7 @@ class App(wx.App):
         self.show_splash()
 
         # Build the GUI.
-        self.gui = Main(parent=None, id=-1, title="")
+        self.gui = relax_gui.Main(parent=None, id=-1, title="")
 
         # Make it the main application component.
         self.SetTopWindow(self.gui)

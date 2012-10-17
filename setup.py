@@ -38,7 +38,11 @@ hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app relax.dmg
 from os import getcwd, listdir, sep, walk
 from os.path import relpath, sep
 from re import search
-from setuptools import setup
+try:
+    from setuptools import setup
+except ImportError:
+    print("ImportError:  To run setup.py, please installed the Python setuptools (see http://pypi.python.org/pypi/setuptools)")
+    setup = None
 import sys
 
 # relax module imports.

@@ -39,6 +39,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin
 from generic_fns.pipes import has_bundle, has_pipe
 from graphics import fetch_icon
 from physical_constants import NH_BOND_LENGTH
+from relax_errors import RelaxError
 from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
@@ -209,6 +210,10 @@ class Auto_model_free(Base_analysis):
             ds.relax_gui.analyses[data_index].local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
             ds.relax_gui.analyses[data_index].mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
             ds.relax_gui.analyses[data_index].max_iter = 30
+
+        # Error checking.
+        if ds.relax_gui.analyses[data_index].pipe_bundle == None:
+            raise RelaxError("The pipe bundle must be supplied.")
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
