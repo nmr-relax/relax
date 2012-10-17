@@ -44,7 +44,6 @@ from generic_fns.reset import reset
 from relax_errors import RelaxNoPipeError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
-import test_suite.test_suite_runner
 from version import version
 
 # relax GUI module imports.
@@ -587,7 +586,8 @@ class Main(wx.Frame):
         # Prevent all new GUI elements from being shown.
         status.show_gui = False
 
-        # Run the tests.
+        # Run the tests (with the import here to break a nasty circular import).
+        import test_suite.test_suite_runner
         runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True, categories=categories)
         runner.run_all_tests()
 

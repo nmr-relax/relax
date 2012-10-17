@@ -452,6 +452,10 @@ class Observer(object):
         if key in self._keys:
             raise RelaxError("The observer '%s' already exists." % key)
 
+        # Blank key.
+        if key == None:
+            raise RelaxError("The observer key must be supplied.")
+
         # Debugging.
         if self._status.debug:
             if method_name:
