@@ -27,6 +27,7 @@
 from copy import deepcopy
 import os
 import platform
+import sys
 from textwrap import wrap
 import wx
 
