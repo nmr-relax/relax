@@ -329,6 +329,8 @@ class Pipe_editor(wx.Frame):
         bundle = get_bundle(self.selected_pipe)
 
         # Error checking.
+        if self.selected_pipe == None:
+            raise RelaxError("No data pipe has been selected - this is not possible.")
         if bundle == None:
             raise RelaxError("The selected data pipe is not associated with a data pipe bundle.")
 
