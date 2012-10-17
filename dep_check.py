@@ -217,12 +217,19 @@ except ImportError:
 # ctypes module.
 try:
     import ctypes
-    from ctypes import Structure
     ctypes_module = True
 except ImportError:
     message = sys.exc_info()[1]
     ctypes_module = False
     ctypes_module_message = message.args[0]
+try:
+    from ctypes import Structure
+    ctypes_structure_module = True
+except ImportError:
+    message = sys.exc_info()[1]
+    ctypes_structure_module = False
+    ctypes_structure_module_message = message.args[0]
+
 
 
 
