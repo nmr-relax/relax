@@ -64,6 +64,9 @@ $ANTI_ALIAS = 1;
 # Set the font size.
 $FONT_SIZE = "12pt";
 
+# Modify the footer.
+$ADDRESS = "The <a href=http://www.nmr-relax.com>relax</a> <a href=http://www.nmr-relax.com/manual>user manual</a> (<a href=http://download.gna.org/relax/manual/relax.pdf>PDF</a>), created $address_data[1].";
+
 # Ignore certain LaTeX commands
 &ignore_commands( <<_IGNORED_CMDS_);
 documentstyle # [] # {}

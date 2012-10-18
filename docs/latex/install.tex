@@ -12,7 +12,7 @@
 The following packages need to be installed before using relax:
 
 \begin{description}
-\item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.5 or higher.
+\item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.3 or higher.
 \item[\href{http://numpy.scipy.org/}{NumPy}\index{NumPy}:]  Version 1.0.4 or higher.  This package is used for most of the numerical calculations within relax.
 \item[\href{http://www.scipy.org/}{SciPy}\index{SciPy}:]  Version 0.7.1 or higher.  This package is optional.  It is required only for the frame order theory analyses.
 \item[\href{http://www.scipy.org/}{wxPython}\index{wxPython}:]  Version 2.8 or higher.  This package is also optional.  It is required for the operation of the graphical user interface (GUI)\index{GUI}.
@@ -34,7 +34,7 @@ Older versions of these packages may work, use them at your own risk.  If, for o
 \subsection{The source releases}
 \label{sect: source releases}
 
-Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \file{*.so}, \file{*.pyd} or \file{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{Scons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files.  Once Scons is installed type
+Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \file{*.so}, \file{*.pyd} or \file{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{Scons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files installed.  Once Scons is installed type
 
 \example{\$ scons}
 \index{scons}
