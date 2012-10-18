@@ -67,7 +67,7 @@ $ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
 
 
 
-* Build other distribution packages by checking out the tag and bundling minfx and bmrblib.:
+* Build other distribution packages by checking out the tag and bundling minfx and bmrblib:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
