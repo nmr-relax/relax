@@ -26,7 +26,7 @@
 
 # Import statements.
 from numpy import get_include
-from os import getcwd, path, remove, sep, walk
+from os import getcwd, path, remove, rmdir, sep, walk
 import platform
 from re import search
 from shutil import rmtree
@@ -429,6 +429,15 @@ class Main:
             for file in files:
                 if search('^relax_state_.*.bz2', file):
                     remove(path.join(root, file))
+
+        # Remove the Python 3 __pycache__ directories.
+        print("Removing the Python 3 __pycache__ directories.\n")
+        for root, dirs, files in walk(getcwd()):
+            # Loop over the directories.
+            for dir in dirs:
+                if search('__pycache__', dir):
+                    rmdir(path.join(root, dir))
+
 
         # Final printout.
         print("\n\n\n")

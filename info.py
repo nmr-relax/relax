@@ -28,11 +28,13 @@ import dep_check
 # Python module imports.
 if dep_check.ctypes_module:
     import ctypes
-    from ctypes import Structure
     if hasattr(ctypes, 'windll'):
         import ctypes.wintypes
 else:
     ctypes = None
+if dep_check.ctypes_structure_module:
+    from ctypes import Structure
+else:
     Structure = object
 import numpy
 from os import environ, waitpid
