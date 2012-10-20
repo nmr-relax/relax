@@ -79,7 +79,7 @@ class Immediate_result_queue(Result_queue):
 class Threaded_result_queue(Result_queue):
     def __init__(self, processor):
         super(Threaded_result_queue, self).__init__(processor)
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self.sleep_time = 0.05
         self.processor = processor
         self.running = 1
