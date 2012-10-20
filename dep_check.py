@@ -164,7 +164,7 @@ try:
     from Scientific.Visualization import VMD    # This requires Numeric to be installed (at least in Scientific 2.7.8).
     del VMD
     vmd_module = True
-except ImportError:
+except:
     vmd_module = False
 
 # mpi4py.
