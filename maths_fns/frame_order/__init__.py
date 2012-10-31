@@ -54,7 +54,7 @@ from maths_fns.pcs import pcs_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
 from maths_fns.rdc import rdc_tensor
-from multi import Processor_box
+from multi import fetch_data, Processor_box
 from physical_constants import pcs_constant
 from relax_errors import RelaxError
 
@@ -64,7 +64,7 @@ class Frame_order:
 
     def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, pivot=zeros(3), pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
-        
+
         @keyword model:             The name of the Frame Order model.
         @type model:                str
         @keyword init_params:       The initial parameter values.
@@ -294,7 +294,7 @@ class Frame_order:
         # The quasi-random integration via the multi-processor.
         if not quad_int and self.pcs_flag_sum and model not in ['rigid']:
             # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-            processor_box = Processor_box() 
+            processor_box = Processor_box()
             self.processor = processor_box.processor
 
             # The Sobol' sequence data and target function aliases (quasi-random integration).
@@ -1214,6 +1214,9 @@ class Frame_order:
 
             # Wait for completion.
             self.processor.run_queue()
+
+            # Get the PCS values.
+            self.pcs_theta = fetch_data('pcs_theta')
 
             # Calculate the PCS and error.
             num = data.num_pts

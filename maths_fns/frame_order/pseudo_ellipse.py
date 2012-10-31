@@ -34,7 +34,7 @@ if dep_check.scipy_module:
 # relax module imports.
 from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
 from maths_fns.frame_order.pec import pec
-from multi import Memo, Result_command, Slave_command
+from multi import fetch_data_store, Memo, Result_command, Slave_command
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -689,6 +689,11 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
         self.num_pts = num_pts
         self.pcs_theta = pcs_theta
 
+        # Remove the old PCS data from the data store (required for the uniprocessor).
+        data_store = fetch_data_store()
+        if hasattr(data_store, 'pcs_theta'):
+            del data_store.pcs_theta
+
 
     def run(self, processor, memo):
         """The process the partial PCS calculation.
@@ -702,6 +707,16 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
         # Store the number of points in the data container.
         memo.data.num_pts += self.num_pts
 
+        # Get the master processor data store (this is running on the master!).
+        data_store = fetch_data_store()
+
+        # Place the PCS data into the store, if not already there.
+        if not hasattr(data_store, 'pcs_theta'):
+            data_store.pcs_theta = self.pcs_theta
+
+        # Otherwise sum the data.
+        else:
+            data_store.pcs_theta += self.pcs_theta
 
 
 class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
