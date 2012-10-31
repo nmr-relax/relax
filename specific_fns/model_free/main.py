@@ -1950,6 +1950,7 @@ class Model_free_main:
 
         # Loop over the sequence.
         deselect_flag = False
+        spin_count = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -2025,6 +2026,13 @@ class Model_free_main:
                         spin.select = False
                         deselect_flag = True
                         continue
+
+            # Increment the spin number.
+            spin_count += 1
+
+        # No spins selected, so fail hard to prevent the user from going any further.
+        if spin_count == 0:
+            raise RelaxError("No spins are selected, therefore the optimisation or calculation cannot proceed.")
 
         # Final printout.
         if verbose and not deselect_flag:
