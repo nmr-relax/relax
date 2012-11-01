@@ -33,7 +33,7 @@ from generic_fns import diffusion_tensor, interatomic, pipes, sequence
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_fns
 from relax_errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
-from relax_warnings import RelaxDeselectWarning
+from relax_warnings import RelaxDeselectWarning, RelaxWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -1950,6 +1950,7 @@ class Model_free_main:
 
         # Loop over the sequence.
         deselect_flag = False
+        spin_count = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
@@ -2025,6 +2026,13 @@ class Model_free_main:
                         spin.select = False
                         deselect_flag = True
                         continue
+
+            # Increment the spin number.
+            spin_count += 1
+
+        # No spins selected, so fail hard to prevent the user from going any further.
+        if spin_count == 0:
+            warn(RelaxWarning("No spins are selected therefore the optimisation or calculation cannot proceed."))
 
         # Final printout.
         if verbose and not deselect_flag:
