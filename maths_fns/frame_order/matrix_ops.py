@@ -29,7 +29,6 @@ from numpy.linalg import norm
 
 # relax module imports.
 from maths_fns.kronecker_product import transpose_23
-from maths_fns.rotation_matrix import tilt_torsion_to_R
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
@@ -187,9 +186,6 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
     @type error_flag:           bool
     """
-
-    # The rotation matrix.
-    tilt_torsion_to_R(phi_i, theta_i, sigma_i, Ri_prime)
 
     # The rotation.
     R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
