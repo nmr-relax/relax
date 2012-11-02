@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, sin, sqrt
-from numpy import dot, float64, inner, transpose, zeros
+from numpy import dot, inner, transpose
 from numpy.linalg import norm
 
 # relax module imports.
@@ -187,11 +187,38 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     @type error_flag:           bool
     """
 
-    # The vectors.
-    rot_vect, rot_vect_rev, length, length_rev = vectors_pivot_motion_full(theta_i=theta_i, phi_i=phi_i, sigma_i=sigma_i, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime)
+    # The rotation matrix.
+    c_theta = cos(theta_i)
+    s_theta = sin(theta_i)
+    c_phi = cos(phi_i)
+    s_phi = sin(phi_i)
+    c_sigma_phi = cos(sigma_i - phi_i)
+    s_sigma_phi = sin(sigma_i - phi_i)
+    c_phi_c_theta = c_phi * c_theta
+    s_phi_c_theta = s_phi * c_theta
+    Ri_prime[0, 0] =  c_phi_c_theta*c_sigma_phi - s_phi*s_sigma_phi
+    Ri_prime[0, 1] = -c_phi_c_theta*s_sigma_phi - s_phi*c_sigma_phi
+    Ri_prime[0, 2] =  c_phi*s_theta
+    Ri_prime[1, 0] =  s_phi_c_theta*c_sigma_phi + c_phi*s_sigma_phi
+    Ri_prime[1, 1] = -s_phi_c_theta*s_sigma_phi + c_phi*c_sigma_phi
+    Ri_prime[1, 2] =  s_phi*s_theta
+    Ri_prime[2, 0] = -s_theta*c_sigma_phi
+    Ri_prime[2, 1] =  s_theta*s_sigma_phi
+    Ri_prime[2, 2] =  c_theta
+
+    # The rotation.
+    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+
+    # Pre-calculate all the new vectors (forwards and reverse).
+    rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
+    rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
 
     # Loop over the atoms.
     for j in range(len(r_pivot_atom[0])):
+        # The vector length (to the 5th power).
+        length_rev = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
+        length = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
+
         # Loop over the alignments.
         for i in range(len(pcs_theta)):
             # Skip missing data.
@@ -201,10 +228,10 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
             # The projection.
             if full_in_ref_frame[i]:
                 proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev[j]
+                length_i = length_rev
             else:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
-                length_i = length[j]
+                length_i = length
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
@@ -447,71 +474,6 @@ def rotate_daeg(matrix, Rx2_eigen):
 
     # Return the matrix.
     return matrix_rot
-
-
-def vectors_pivot_motion_full(theta_i=None, phi_i=None, sigma_i=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
-    """Calculate the lanthanide to atom vectors.
-
-    @keyword theta_i:           The half cone opening angle (polar angle).
-    @type theta_i:              float
-    @keyword phi_i:             The cone azimuthal angle.
-    @type phi_i:                float
-    @keyword sigma_i:           The torsion angle for state i.
-    @type sigma_i:              float
-    @keyword r_pivot_atom:      The pivot point to atom vector.
-    @type r_pivot_atom:         numpy rank-2, 3D array
-    @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
-    @type r_pivot_atom_rev:     numpy rank-2, 3D array
-    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
-    @type r_ln_pivot:           numpy rank-2, 3D array
-    @keyword R_eigen:           The eigenframe rotation matrix.
-    @type R_eigen:              numpy rank-2, 3D array
-    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion for state i.
-    @type Ri_prime:             numpy rank-2, 3D array
-    @return:                    The vectors, reverse vectors, vector lengths, and reverse vector lengths.
-    @rtype:                     tuple of numpy rank-2, 3D array
-    """
-
-    # The rotation matrix.
-    c_theta = cos(theta_i)
-    s_theta = sin(theta_i)
-    c_phi = cos(phi_i)
-    s_phi = sin(phi_i)
-    c_sigma_phi = cos(sigma_i - phi_i)
-    s_sigma_phi = sin(sigma_i - phi_i)
-    c_phi_c_theta = c_phi * c_theta
-    s_phi_c_theta = s_phi * c_theta
-    Ri_prime[0, 0] =  c_phi_c_theta*c_sigma_phi - s_phi*s_sigma_phi
-    Ri_prime[0, 1] = -c_phi_c_theta*s_sigma_phi - s_phi*c_sigma_phi
-    Ri_prime[0, 2] =  c_phi*s_theta
-    Ri_prime[1, 0] =  s_phi_c_theta*c_sigma_phi + c_phi*s_sigma_phi
-    Ri_prime[1, 1] = -s_phi_c_theta*s_sigma_phi + c_phi*c_sigma_phi
-    Ri_prime[1, 2] =  s_phi*s_theta
-    Ri_prime[2, 0] = -s_theta*c_sigma_phi
-    Ri_prime[2, 1] =  s_theta*s_sigma_phi
-    Ri_prime[2, 2] =  c_theta
-
-    # The rotation.
-    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
-
-    # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
-    rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
-
-    # Initialise the lengths.
-    length = zeros(len(r_pivot_atom[0]), float64)
-    length_rev = zeros(len(r_pivot_atom[0]), float64)
-
-    # Loop over the atoms.
-    for j in range(len(r_pivot_atom[0])):
-        # The vector length (to the 5th power).
-        length[j] = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
-        length_rev[j] = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
-
-    # Return the data.
-    return rot_vect, rot_vect_rev, length, length_rev
 
 
 class Data:
