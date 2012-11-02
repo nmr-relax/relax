@@ -29,6 +29,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from maths_fns.kronecker_product import transpose_23
+from maths_fns.rotation_matrix import tilt_torsion_to_R
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
@@ -188,23 +189,7 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     """
 
     # The rotation matrix.
-    c_theta = cos(theta_i)
-    s_theta = sin(theta_i)
-    c_phi = cos(phi_i)
-    s_phi = sin(phi_i)
-    c_sigma_phi = cos(sigma_i - phi_i)
-    s_sigma_phi = sin(sigma_i - phi_i)
-    c_phi_c_theta = c_phi * c_theta
-    s_phi_c_theta = s_phi * c_theta
-    Ri_prime[0, 0] =  c_phi_c_theta*c_sigma_phi - s_phi*s_sigma_phi
-    Ri_prime[0, 1] = -c_phi_c_theta*s_sigma_phi - s_phi*c_sigma_phi
-    Ri_prime[0, 2] =  c_phi*s_theta
-    Ri_prime[1, 0] =  s_phi_c_theta*c_sigma_phi + c_phi*s_sigma_phi
-    Ri_prime[1, 1] = -s_phi_c_theta*s_sigma_phi + c_phi*c_sigma_phi
-    Ri_prime[1, 2] =  s_phi*s_theta
-    Ri_prime[2, 0] = -s_theta*c_sigma_phi
-    Ri_prime[2, 1] =  s_theta*s_sigma_phi
-    Ri_prime[2, 2] =  c_theta
+    tilt_torsion_to_R(phi_i, theta_i, sigma_i, Ri_prime)
 
     # The rotation.
     R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
