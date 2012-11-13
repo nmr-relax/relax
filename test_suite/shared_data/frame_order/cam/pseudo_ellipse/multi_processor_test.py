@@ -37,7 +37,7 @@ dipole_pair.unit_vectors()
 ln = ['dy', 'tb', 'tm', 'er']
 for i in range(len(ln)):
     # Load the RDCs.
-    #rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+    rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
     # The PCS.
     pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
@@ -92,9 +92,9 @@ value.set(param='ave_pos_gamma', val=3.8013235235956007+0.1)
 value.set(param='eigen_alpha', val=3.14159265358979311600+0.1)
 value.set(param='eigen_beta', val=0.96007997859534310869+0.1)
 value.set(param='eigen_gamma', val=4.03227550621962294031+0.1)
-value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0+0.1)
-value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0+0.1)
-value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0+0.1)
+value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0+0.5)
+value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0+0.5)
+value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0+0.5)
 calc()
 print("\nchi2: %s" % repr(cdp.chi2))
 
