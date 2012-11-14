@@ -266,8 +266,10 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             raise RelaxPCSError(align_id)
 
         # Copy the global data.
-        dp_to.align_ids.append(align_id)
-        dp_to.pcs_ids.append(align_id)
+        if align_id not in dp_to.align_ids:
+            dp_to.align_ids.append(align_id)
+        if align_id in dp_from.pcs_ids:
+            dp_to.pcs_ids.append(align_id)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
