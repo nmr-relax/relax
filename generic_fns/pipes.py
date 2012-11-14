@@ -34,6 +34,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
+from relax_io import write_data
 from status import Status; status = Status()
 
 
@@ -256,22 +257,23 @@ def display():
     # Acquire the pipe lock, and make sure it is finally released.
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
-        # Heading.
-        print("%-20s%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Bundle", "Current"))
-
         # Loop over the data pipes.
+        data = []
         for pipe_name in ds:
             # The current data pipe.
             current = ''
             if pipe_name == cdp_name():
                 current = '*'
 
-            # Print out.
-            print("%-20s%-20s%-20s%-20s" % (repr(pipe_name), get_type(pipe_name), repr(get_bundle(pipe_name)), current))
+            # Store the data for the print out.
+            data.append([repr(pipe_name), get_type(pipe_name), repr(get_bundle(pipe_name)), current])
 
     # Release the lock.
     finally:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
+
+    # Print out.
+    write_data(out=sys.stdout, headings=["Data pipe name", "Data pipe type", "Bundle", "Current"], data=data)
 
 
 def get_bundle(pipe=None):
