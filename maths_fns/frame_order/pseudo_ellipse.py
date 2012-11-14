@@ -808,7 +808,7 @@ class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
                 continue
 
             # Calculate the PCSs for this state.
-            pcs_pivot_motion_full_qrint(full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A, R_eigen=self.R_eigen, RT_eigen=self.RT_eigen, Ri_prime=self.Ri_prime[i], pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_pivot_motion_full_qrint(theta_i=theta, phi_i=phi, sigma_i=sigma, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A, R_eigen=self.R_eigen, RT_eigen=self.RT_eigen, Ri_prime=self.Ri_prime[i], pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Increment the number of points.
             num += 1
