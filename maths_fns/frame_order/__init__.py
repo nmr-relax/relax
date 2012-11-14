@@ -51,7 +51,8 @@ from maths_fns.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.pcs import pcs_tensor
-from maths_fns.rotation_matrix import euler_to_R_zyz, tilt_torsion_to_R, two_vect_to_R
+from maths_fns.rotation_matrix import euler_to_R_zyz
+from maths_fns.rotation_matrix import two_vect_to_R
 from maths_fns.rdc import rdc_tensor
 from multi import fetch_data, Processor_box
 from physical_constants import pcs_constant
@@ -332,14 +333,6 @@ class Frame_order:
             elif model == 'free rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
-
-            # Pre-calculate the rotation matrices Ri_prime from the Sobol' angles.
-            for i in range(self.num_int_pts):
-                # Unpack the angles.
-                theta, phi, sigma = self.sobol_angles[i]
-
-                # The rotation matrix.
-                tilt_torsion_to_R(phi, theta, sigma, self.Ri_prime[i])
 
             # Subdivide the Sobol' data points for the slave processors.
             blocks_sobol = []
