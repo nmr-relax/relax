@@ -335,19 +335,14 @@ class Frame_order:
                 self.func = self.func_free_rotor_qrint
 
             # Subdivide the Sobol' data points for the slave processors.
-            blocks_sobol = []
+            blocks = []
             for block in self.subdivide(self.sobol_angles, self.processor.processor_size()):
-                blocks_sobol.append(block)
-
-            # Subdivide the Ri prime data.
-            blocks_Ri_prime = []
-            for block in self.subdivide(self.Ri_prime, self.processor.processor_size()):
-                blocks_Ri_prime.append(block)
+                blocks.append(block)
 
             # Set up the slave processors.
             self.slaves = []
             for i in range(self.processor.processor_size()):
-                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks_sobol[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=blocks_Ri_prime[i], pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
+                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -395,7 +390,7 @@ class Frame_order:
         # The rotation to the Frame Order eigenframe.
         self.R_eigen = zeros((3, 3), float64)
         self.R_ave = zeros((3, 3), float64)
-        self.Ri_prime = zeros((self.num_int_pts, 3, 3), float64)
+        self.Ri_prime = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.

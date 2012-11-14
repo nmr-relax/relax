@@ -733,7 +733,7 @@ class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
         @type r_ln_pivot:           numpy rank-2, 3D array
         @keyword A:                 The full alignment tensor of the non-moving domain.
         @type A:                    numpy rank-2, 3D array
-        @keyword Ri_prime:          The subdivision of rotation matrices used to calculate the PCS for each state i in the numerical integration.
+        @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
         @type Ri_prime:             numpy rank-2, 3D array
         @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
         @type pcs_theta:            numpy rank-2 array
@@ -808,7 +808,7 @@ class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
                 continue
 
             # Calculate the PCSs for this state.
-            pcs_pivot_motion_full_qrint(theta_i=theta, phi_i=phi, sigma_i=sigma, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A, R_eigen=self.R_eigen, RT_eigen=self.RT_eigen, Ri_prime=self.Ri_prime[i], pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_pivot_motion_full_qrint(theta_i=theta, phi_i=phi, sigma_i=sigma, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A, R_eigen=self.R_eigen, RT_eigen=self.RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Increment the number of points.
             num += 1
