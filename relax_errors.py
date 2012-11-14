@@ -750,6 +750,11 @@ class RelaxNoAlignError(BaseError):
     def __init__(self, align_id, pipe):
         self.text = "The alignment ID string '%s' is missing from the data pipe '%s'." % align_id
 
+# Alignment data already exists.
+class RelaxAlignError(BaseError):
+    def __init__(self, align_id):
+        self.text = "Alignment data corresponding to the ID string '%s' already exists." % align_id
+
 # No RDC data.
 class RelaxNoRDCError(BaseError):
     def __init__(self, id):
