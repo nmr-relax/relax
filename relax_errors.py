@@ -745,6 +745,11 @@ class RelaxRiError(BaseError):
 # RDC and PCS data errors.
 ##########################
 
+# No alignment data.
+class RelaxNoAlignError(BaseError):
+    def __init__(self, align_id, pipe):
+        self.text = "The alignment ID string '%s' is missing from the data pipe '%s'." % align_id
+
 # No RDC data.
 class RelaxNoRDCError(BaseError):
     def __init__(self, id):
