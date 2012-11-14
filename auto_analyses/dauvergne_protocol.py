@@ -126,7 +126,7 @@ class dAuvergne_protocol:
         @type pipe_name:                str
         @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
         @type pipe_bundle:              str
-        @keyword results_dir:           The directory, where files are saved in.
+        @keyword results_dir:           The directory where files are saved in.
         @type results_dir:              str
         @keyword diff_model:            The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.  If all or a subset of these are supplied as a list, then these will be automatically looped over and calculated.
         @type diff_model:               str or list of str
