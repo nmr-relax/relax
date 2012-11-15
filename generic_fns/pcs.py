@@ -284,8 +284,6 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
                 spin_to.pcs_err = {}
 
             # Copy the value and error from pipe_from.
-            print spin_from
-            print spin_to
             if hasattr(spin_from, 'pcs'):
                 spin_to.pcs[align_id] = spin_from.pcs[align_id]
             if hasattr(spin_from, 'pcs_err'):
