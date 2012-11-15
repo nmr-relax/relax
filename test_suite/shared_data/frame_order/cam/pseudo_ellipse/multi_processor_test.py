@@ -92,9 +92,9 @@ value.set(param='ave_pos_gamma', val=3.8013235235956007+0.1)
 value.set(param='eigen_alpha', val=3.14159265358979311600+0.1)
 value.set(param='eigen_beta', val=0.96007997859534310869+0.1)
 value.set(param='eigen_gamma', val=4.03227550621962294031+0.1)
-value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0+0.5)
-value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0+0.5)
-value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0+0.5)
+value.set(param='cone_theta_x', val=0.5235987755982988+0.1)    # 30 deg.
+value.set(param='cone_theta_y', val=0.8726646259971648+0.1)    # 50 deg.
+value.set(param='cone_sigma_max', val=1.0471975511965976+0.1)    # 60 deg.
 calc()
 print("\nchi2: %s" % repr(cdp.chi2))
 
