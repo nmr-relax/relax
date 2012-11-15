@@ -66,3 +66,7 @@ self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='N-state')
 self._execute_uf(uf_name='sequence.copy', pipe_from='orig', pipe_to='new')
 self._execute_uf(uf_name='rdc.copy', pipe_from='orig', pipe_to='new')
 self._execute_uf(uf_name='pcs.copy', pipe_from='orig', pipe_to='new')
+
+# Copy the data again (test that data can be overwritten).
+self._execute_uf(uf_name='rdc.copy', pipe_from='orig', pipe_to='new')
+self._execute_uf(uf_name='pcs.copy', pipe_from='orig', pipe_to='new')
