@@ -261,14 +261,10 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
 
     # Loop over the align IDs.
     for align_id in align_ids:
-        # Test if PCS ID string exists for pipe_to.
-        if align_id in dp_to.pcs_ids:
-            raise RelaxPCSError(align_id)
-
         # Copy the global data.
-        if align_id not in dp_to.align_ids:
+        if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
             dp_to.align_ids.append(align_id)
-        if align_id in dp_from.pcs_ids:
+        if align_id in dp_from.pcs_ids and align_id not in dp_to.pcs_ids:
             dp_to.pcs_ids.append(align_id)
 
         # Spin loop.
