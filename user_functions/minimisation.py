@@ -76,7 +76,8 @@ uf.add_keyarg(
     default = 21,
     py_type = "int_or_int_list",
     desc_short = "incrementation value",
-    desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters."
+    desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
+    none_elements = True
 )
 
 uf.add_keyarg(

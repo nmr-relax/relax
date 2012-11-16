@@ -807,6 +807,10 @@ def write_data(out=None, headings=None, data=None, sep=None):
     @type sep:          str or None
     """
 
+    # No data to print out.
+    if data in [None, []]:
+        return
+
     # The number of rows and columns.
     num_rows = len(data)
     num_cols = len(data[0])

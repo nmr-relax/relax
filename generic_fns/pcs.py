@@ -33,10 +33,10 @@ from warnings import warn
 # relax module imports.
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
 from maths_fns.pcs import ave_pcs_tensor
 from physical_constants import g1H, pcs_constant
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxAlignError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoSequenceError, RelaxPCSError
 from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -200,6 +200,94 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=
         if verbosity:
             print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
+
+
+def copy(pipe_from=None, pipe_to=None, align_id=None):
+    """Copy the PCS data from one data pipe to another.
+
+    @keyword pipe_from: The data pipe to copy the PCS data from.  This defaults to the current data pipe.
+    @type pipe_from:    str
+    @keyword pipe_to:   The data pipe to copy the PCS data to.  This defaults to the current data pipe.
+    @type pipe_to:      str
+    @param align_id:    The alignment ID string.
+    @type align_id:     str
+    """
+
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
+    elif pipe_from == None:
+        pipe_from = pipes.cdp_name()
+    elif pipe_to == None:
+        pipe_to = pipes.cdp_name()
+
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
+
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
+
+    # Test if pipe_from contains sequence data.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError
+
+    # Test if pipe_to contains sequence data.
+    if not exists_mol_res_spin_data(pipe_to):
+        raise RelaxNoSequenceError
+
+    # Test if alignment ID string exists for pipe_from.
+    if align_id and (not hasattr(dp_from, 'align_ids') or align_id not in dp_from.align_ids):
+        raise RelaxNoAlignError(align_id, pipe_from)
+
+    # Test if PCS data for the alignment ID exists.
+    if not hasattr(dp_from, 'pcs_ids'):
+        raise RelaxError("No PCS data exists.")
+    elif align_id and align_id not in dp_from.pcs_ids:
+        raise RelaxNoPCSError(align_id)
+
+    # The IDs.
+    if align_id == None:
+        align_ids = dp_from.align_ids
+    else:
+        align_ids = [align_id]
+
+    # Init target pipe global structures.
+    if not hasattr(dp_to, 'align_ids'):
+        dp_to.align_ids = []
+    if not hasattr(dp_to, 'pcs_ids'):
+        dp_to.pcs_ids = []
+
+    # Loop over the align IDs.
+    for align_id in align_ids:
+        # Copy the global data.
+        if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
+            dp_to.align_ids.append(align_id)
+        if align_id in dp_from.pcs_ids and align_id not in dp_to.pcs_ids:
+            dp_to.pcs_ids.append(align_id)
+
+        # Spin loop.
+        for mol_index, res_index, spin_index in spin_index_loop():
+            # Alias the spin containers.
+            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
+
+            # No data or errors.
+            if (not hasattr(spin_from, 'pcs') or not align_id in spin_from.pcs) and (not hasattr(spin_from, 'pcs_err') or not align_id in spin_from.pcs_err):
+                continue
+
+            # Initialise the spin data if necessary.
+            if hasattr(spin_from, 'pcs') and not hasattr(spin_to, 'pcs'):
+                spin_to.pcs = {}
+            if hasattr(spin_from, 'pcs_err') and not hasattr(spin_to, 'pcs_err'):
+                spin_to.pcs_err = {}
+
+            # Copy the value and error from pipe_from.
+            if hasattr(spin_from, 'pcs'):
+                spin_to.pcs[align_id] = spin_from.pcs[align_id]
+            if hasattr(spin_from, 'pcs_err'):
+                spin_to.pcs_err[align_id] = spin_from.pcs_err[align_id]
 
 
 def corr_plot(format=None, file=None, dir=None, force=False):
