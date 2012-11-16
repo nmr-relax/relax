@@ -1648,6 +1648,19 @@ class Frame_order(API_base, API_common):
         return mc_data
 
 
+    def deselect(self, model_info, sim_index=None):
+        """Deselect models or simulations.
+
+        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
+        @type sim_index:        None or int
+        """
+
+        # Set the deselection flag.
+        cdp.select = False
+
+
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model elimination method.
 
