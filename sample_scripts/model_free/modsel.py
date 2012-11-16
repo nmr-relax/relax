@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,8 +35,8 @@ for name in pipes:
     # Reload precalculated results from the files 'm1/results', etc.
     results.read(file='results', dir=name)
 
-# Model elimination.
-eliminate()
+    # Model elimination.
+    eliminate()
 
 # Model selection.
 model_selection(method='AIC', modsel_pipe='aic')
