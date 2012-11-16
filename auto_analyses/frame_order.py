@@ -80,6 +80,7 @@ class Frame_order_analysis:
 
         # A dictionary of the data pipe names.
         self.models = {}
+        self.pipes = []
 
         # Project directory (i.e. directory containing the model-free model results and the newly generated files)
         if results_dir:
@@ -101,7 +102,7 @@ class Frame_order_analysis:
             self.optimise()
 
             # Model selection.
-            self.interpreter.model_selection(method='AIC', modsel_pipe='final')
+            self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
 
             # Monte Carlo simulations.
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
@@ -250,6 +251,7 @@ class Frame_order_analysis:
 
             # The data pipe name.
             self.models[model] = '%s - %s' % (title, self.pipe_bundle)
+            self.pipes.append(self.models[model])
 
             # The results file already exists, so read its contents instead.
             if self.read_results(model=model, pipe_name=self.models[model]):
@@ -315,6 +317,7 @@ class Frame_order_analysis:
 
         # The data pipe name.
         self.models[model] = '%s - %s' % (title, self.pipe_bundle)
+        self.pipes.append(self.models[model])
 
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.models[model]):
