@@ -1661,6 +1661,29 @@ class Frame_order(API_base, API_common):
         cdp.select = False
 
 
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
+        """Duplicate the data specific to a single frame order data pipe.
+
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        @param model_info:      The model index from model_loop().
+        @type model_info:       int
+        @keyword global_stats:  The global statistics flag.
+        @type global_stats:     bool
+        @keyword verbose:       Unused.
+        @type verbose:          bool
+        """
+
+        # Check that the data pipe does not exist.
+        if pipes.has_pipe(pipe_to):
+            raise RelaxError("The data pipe '%s' already exists." % pipe_to)
+
+        # Create the pipe_to data pipe by copying.
+        pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
+
+
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model elimination method.
 
