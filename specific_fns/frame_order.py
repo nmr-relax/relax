@@ -1701,7 +1701,7 @@ class Frame_order(API_base, API_common):
                 return True
             return True
         if name == 'cone_theta_y' and hasattr(cdp, 'cone_theta_y'):
-            if cdp.cone_theta_y >= -pi:
+            if cdp.cone_theta_y >= pi:
                 print(text % ("cone opening angle theta y", cdp.cone_theta_y, "greater", pi))
                 return True
             if cdp.cone_theta_y < 0.001:
