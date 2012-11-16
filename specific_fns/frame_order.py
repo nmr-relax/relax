@@ -2014,6 +2014,17 @@ class Frame_order(API_base, API_common):
         self._store_bc_data(model)
 
 
+    def model_desc(self, model_info):
+        """Return a description of the model.
+
+        @param model_info:  The model index from model_loop().
+        @type model_info:   int
+        @return:            The model description.
+        @rtype:             str
+        """
+
+        return ""
+
 
     def model_loop(self):
         """Dummy generator method.
@@ -2064,6 +2075,16 @@ class Frame_order(API_base, API_common):
 
         # Return the data.
         return k, n, chi2
+
+
+    def model_type(self):
+        """Return the type of the model, either being 'local' or 'global'.
+
+        @return:            The model type, one of 'local' or 'global'.
+        @rtype:             str
+        """
+
+        return 'global'
 
 
     def return_error(self, data_id):
