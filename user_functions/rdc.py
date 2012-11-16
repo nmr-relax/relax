@@ -96,56 +96,55 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 uf.wizard_apply_button = False
 
 
-# No backend!
-## The rdc.copy user function.
-#uf = uf_info.add_uf('rdc.copy')
-#uf.title = "Copy RDC data from one data pipe to another."
-#uf.title_short = "RDC copying."
-#uf.add_keyarg(
-#    name = "pipe_from",
-#    py_type = "str",
-#    desc_short = "source pipe",
-#    desc = "The name of the pipe to copy the RDC data from.",
-#    wiz_element_type = 'combo',
-#    wiz_combo_iter = pipes.pipe_names,
-#    can_be_none = True
-#)
-#uf.add_keyarg(
-#    name = "pipe_to",
-#    py_type = "str",
-#    desc_short = "destination pipe",
-#    desc = "The name of the pipe to copy the RDC data to.",
-#    wiz_element_type = 'combo',
-#    wiz_combo_iter = pipes.pipe_names,
-#    can_be_none = True
-#)
-#uf.add_keyarg(
-#    name = "align_id",
-#    py_type = "str",
-#    desc_short = "alignment ID string",
-#    desc = "The alignment ID string.",
-#    wiz_element_type = 'combo',
-#    wiz_combo_iter = align_tensor.get_ids,
-#    wiz_read_only = True,
-#    can_be_none = True
-#)
-## Description.
-#uf.desc.append(Desc_container())
-#uf.desc[-1].add_paragraph("This function will copy RDC data from 'pipe_from' to 'pipe_to'.  If align_id is not given then all RDC data will be copied, otherwise only a specific data set will be.")
-## Prompt examples.
-#uf.desc.append(Desc_container("Prompt examples"))
-#uf.desc[-1].add_paragraph("To copy all RDC data from pipe 'm1' to pipe 'm9', type one of:")
-#uf.desc[-1].add_prompt("relax> rdc.copy('m1', 'm9')")
-#uf.desc[-1].add_prompt("relax> rdc.copy(pipe_from='m1', pipe_to='m9')")
-#uf.desc[-1].add_prompt("relax> rdc.copy('m1', 'm9', None)")
-#uf.desc[-1].add_prompt("relax> rdc.copy(pipe_from='m1', pipe_to='m9', align_id=None)")
-#uf.desc[-1].add_paragraph("To copy only the 'Th' RDC data from 'm3' to 'm6', type one of:")
-#uf.desc[-1].add_prompt("relax> rdc.copy('m3', 'm6', 'Th')")
-#uf.desc[-1].add_prompt("relax> rdc.copy(pipe_from='m3', pipe_to='m6', align_id='Th')")
-#uf.backend = rdc.copy
-#uf.menu_text = "cop&y"
-#uf.gui_icon = "oxygen.actions.list-add"
-#uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
+# The rdc.copy user function.
+uf = uf_info.add_uf('rdc.copy')
+uf.title = "Copy RDC data from one data pipe to another."
+uf.title_short = "RDC copying."
+uf.add_keyarg(
+    name = "pipe_from",
+    py_type = "str",
+    desc_short = "source pipe",
+    desc = "The name of the pipe to copy the RDC data from.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "pipe_to",
+    py_type = "str",
+    desc_short = "destination pipe",
+    desc = "The name of the pipe to copy the RDC data to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "align_id",
+    py_type = "str",
+    desc_short = "alignment ID string",
+    desc = "The alignment ID string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This function will copy RDC data from 'pipe_from' to 'pipe_to'.  If align_id is not given then all RDC data will be copied, otherwise only a specific data set will be.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy all RDC data from pipe 'm1' to pipe 'm9', type one of:")
+uf.desc[-1].add_prompt("relax> rdc.copy('m1', 'm9')")
+uf.desc[-1].add_prompt("relax> rdc.copy(pipe_from='m1', pipe_to='m9')")
+uf.desc[-1].add_prompt("relax> rdc.copy('m1', 'm9', None)")
+uf.desc[-1].add_prompt("relax> rdc.copy(pipe_from='m1', pipe_to='m9', align_id=None)")
+uf.desc[-1].add_paragraph("To copy only the 'Th' RDC data from 'm3' to 'm6', type one of:")
+uf.desc[-1].add_prompt("relax> rdc.copy('m3', 'm6', 'Th')")
+uf.desc[-1].add_prompt("relax> rdc.copy(pipe_from='m3', pipe_to='m6', align_id='Th')")
+uf.backend = rdc.copy
+uf.menu_text = "cop&y"
+uf.gui_icon = "oxygen.actions.list-add"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
 # The rdc.corr_plot user function.

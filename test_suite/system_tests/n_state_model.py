@@ -30,7 +30,8 @@ from tempfile import mkdtemp
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
 from generic_fns.interatomic import interatomic_loop, return_interatom
-from generic_fns.mol_res_spin import return_spin, spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_index_loop, spin_loop
+from generic_fns.pipes import get_pipe
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -377,6 +378,48 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 23.5877482365)                 # Pales: 23.709
         self.assertAlmostEqual(cdp.q_rdc, 0.078460000413257444)       # Pales (Q Saupe): 0.079
         self.assertAlmostEqual(cdp.q_rdc_norm2, 0.14049691097282743)       # Pales (Q RDC_RMS): 0.141
+
+
+    def test_data_copying(self):
+        """The copying of RDC and PCS data from one pipe to another."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'data_copying.py')
+
+        # Get the data pipes.
+        orig = get_pipe('orig')
+        new = get_pipe('new')
+
+        # Check the data.
+        self.assertEqual(orig.rdc_ids, new.rdc_ids)
+        self.assertEqual(orig.pcs_ids, new.pcs_ids)
+        self.assertEqual(orig.align_ids, new.align_ids)
+
+        # Check the spin data.
+        for mol_index, res_index, spin_index in spin_index_loop():
+            # Alias the spin containers.
+            spin_orig = orig.mol[mol_index].res[res_index].spin[spin_index]
+            spin_new = new.mol[mol_index].res[res_index].spin[spin_index]
+
+            # Loop over the alignments.
+            for id in orig.align_ids:
+                # RDC checks.
+                if hasattr(spin_orig, 'rdc'):
+                    # Check the keys.
+                    self.assertEqual(spin_orig.rdc.keys(), spin_new.rdc.keys())
+
+                    # Check the values.
+                    if id in spin_orig.rdc:
+                        self.assertEqual(spin_orig.rdc[id], spin_new.rdc[id])
+
+                # PCS checks.
+                if hasattr(spin_orig, 'pcs'):
+                    # Check the keys.
+                    self.assertEqual(spin_orig.pcs.keys(), spin_new.pcs.keys())
+
+                    # Check the values.
+                    if id in spin_orig.pcs:
+                        self.assertEqual(spin_orig.pcs[id], spin_new.pcs[id])
 
 
     def test_lactose_n_state_fixed(self):
