@@ -24,11 +24,13 @@
 
 # Python module imports.
 from math import log
+import sys
 
 # relax module imports.
 import generic_fns.pipes
 from generic_fns.pipes import get_type, has_pipe, pipe_names, switch
 from relax_errors import RelaxError, RelaxPipeError
+from relax_io import write_data
 from specific_fns.setup import get_specific_fn
 
 
@@ -217,12 +219,15 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
     # Loop over the base models.
     for model_info in model_loop():
         # Print out.
-        print("\n" + model_desc(model_info))
-        print("%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion"))
+        print("\n")
+        desc = model_desc(model_info)
+        if desc:
+            print(desc)
 
         # Initial model.
         best_model = None
         best_crit = 1e300
+        data = []
 
         # Loop over the pipes.
         for j in range(len(pipes)):
@@ -278,13 +283,16 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
                 # Calculate the criterion value.
                 crit = formula(chi2, float(k), float(n))
 
-                # Print out.
-                print("%-20s %-20i %-20i %-20.5f %-20.5f" % (pipe, k, n, chi2, crit))
+                # Store the values for a later printout.
+                data.append([pipe, repr(k), repr(n), "%.5f" % chi2, "%.5f" % crit])
 
             # Select model.
             if crit < best_crit:
                 best_model = pipe
                 best_crit = crit
+
+        # Write out the table.
+        write_data(out=sys.stdout, headings=["Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion"], data=data)
 
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
