@@ -100,9 +100,6 @@ class Frame_order_analysis:
             # The nested model optimisation protocol.
             self.optimise()
 
-            # Model elimination.
-            self.interpreter.eliminate()
-
             # Model selection.
             self.interpreter.model_selection(method='AIC', modsel_pipe='final')
 
@@ -256,6 +253,10 @@ class Frame_order_analysis:
 
             # The results file already exists, so read its contents instead.
             if self.read_results(model=model, pipe_name=self.models[model]):
+                # Re-perform model elimination just in case.
+                self.interpreter.eliminate()
+
+                # Skip to the next model.
                 continue
 
             # Create the data pipe using the full data set, and switch to it.
@@ -291,6 +292,9 @@ class Frame_order_analysis:
 
             # Results printout.
             self.print_results()
+
+            # Model elimination.
+            self.interpreter.eliminate()
 
             # Save the results.
             self.interpreter.results.write(dir=model, force=True)
