@@ -1702,7 +1702,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_theta < 0.0:
                 print(text % ("cone opening angle theta", cdp.cone_theta, "less", 0))
                 return True
-            return True
 
         # Pseudo-ellipse cone angles out of range (0.001 instead of 0.0 because of truncation in the numerical integration).
         if name == 'cone_theta_x' and hasattr(cdp, 'cone_theta_x'):
@@ -1712,7 +1711,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_theta_x < 0.001:
                 print(text % ("cone opening angle theta x", cdp.cone_theta_x, "less", 0.001))
                 return True
-            return True
         if name == 'cone_theta_y' and hasattr(cdp, 'cone_theta_y'):
             if cdp.cone_theta_y >= pi:
                 print(text % ("cone opening angle theta y", cdp.cone_theta_y, "greater", pi))
@@ -1720,7 +1718,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_theta_y < 0.001:
                 print(text % ("cone opening angle theta y", cdp.cone_theta_y, "less", 0.001))
                 return True
-            return True
 
         # Torsion angle out of range.
         if name == 'cone_sigma_max' and hasattr(cdp, 'cone_sigma_max'):
@@ -1730,7 +1727,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_sigma_max < 0.0:
                 print(text % ("torsion angle sigma_max", cdp.cone_sigma_max, "less", 0.0))
                 return True
-            return True
 
         # No failure.
         return False
