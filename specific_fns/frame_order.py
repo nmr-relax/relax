@@ -66,7 +66,6 @@ class Frame_order(API_base, API_common):
         super(Frame_order, self).__init__()
 
         # Place methods into the API.
-        self.eliminate = self._eliminate_false
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -1647,6 +1646,81 @@ class Frame_order(API_base, API_common):
 
         # Return the data.
         return mc_data
+
+
+    def eliminate(self, name, value, model_info, args, sim=None):
+        """Model elimination method.
+
+        @param name:        The parameter name.
+        @type name:         str
+        @param value:       The parameter value.
+        @type value:        float
+        @param model_info:  The model index from model_info().
+        @type model_info:   int
+        @param args:        The elimination constant overrides.
+        @type args:         None or tuple of float
+        @keyword sim:       The Monte Carlo simulation index.
+        @type sim:          int
+        @return:            True if the model is to be eliminated, False otherwise.
+        @rtype:             bool
+        """
+
+        # Text to print out if a model failure occurs.
+        text = "The %s parameter of %.5g is %s than %.5g, eliminating "
+        if sim == None:
+            text += "the model."
+        else:
+            text += "simulation %i." % sim
+
+        # Isotropic order parameter out of range.
+        if name == 'cone_s1' and hasattr(cdp, 'cone_s1'):
+            if cdp.cone_s1 > 1.0:
+                print(text % ("cone S1 order", cdp.cone_s1, "greater", 1.0))
+                return True
+            if cdp.cone_s1 < -0.125:
+                print(text % ("cone S1 order", cdp.cone_s1, "less", -0.125))
+                return True
+
+        # Isotropic cone angle out of range.
+        if name == 'cone_theta' and hasattr(cdp, 'cone_theta'):
+            if cdp.cone_theta >= pi:
+                print(text % ("cone opening angle theta", cdp.cone_theta, "greater", pi))
+                return True
+            if cdp.cone_theta < 0.0:
+                print(text % ("cone opening angle theta", cdp.cone_theta, "less", 0))
+                return True
+            return True
+
+        # Pseudo-ellipse cone angles out of range (0.001 instead of 0.0 because of truncation in the numerical integration).
+        if name == 'cone_theta_x' and hasattr(cdp, 'cone_theta_x'):
+            if cdp.cone_theta_x >= pi:
+                print(text % ("cone opening angle theta x", cdp.cone_theta_x, "greater", pi))
+                return True
+            if cdp.cone_theta_x < 0.001:
+                print(text % ("cone opening angle theta x", cdp.cone_theta_x, "less", 0.001))
+                return True
+            return True
+        if name == 'cone_theta_y' and hasattr(cdp, 'cone_theta_y'):
+            if cdp.cone_theta_y >= -pi:
+                print(text % ("cone opening angle theta y", cdp.cone_theta_y, "greater", pi))
+                return True
+            if cdp.cone_theta_y < 0.001:
+                print(text % ("cone opening angle theta y", cdp.cone_theta_y, "less", 0.001))
+                return True
+            return True
+
+        # Torsion angle out of range.
+        if name == 'cone_sigma_max' and hasattr(cdp, 'cone_sigma_max'):
+            if cdp.cone_sigma_max >= pi:
+                print(text % ("torsion angle sigma_max", cdp.cone_sigma_max, "greater", pi))
+                return True
+            if cdp.cone_sigma_max < 0.0:
+                print(text % ("torsion angle sigma_max", cdp.cone_sigma_max, "less", 0.0))
+                return True
+            return True
+
+        # No failure.
+        return False
 
 
     def get_param_names(self, model_info=None):

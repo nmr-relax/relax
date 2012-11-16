@@ -182,31 +182,6 @@ class Frame_order_analysis:
             return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
 
 
-    def model_failure(self):
-        """Check if the model has failed."""
-
-        # Isotropic order parameter out of range.
-        if hasattr(cdp, 'cone_s1') and (cdp.cone_s1 > 1.0 or cdp.cone_s1 < -0.125):
-            return True
-
-        # Isotropic cone angle out of range.
-        if hasattr(cdp, 'cone_theta') and (cdp.cone_theta >= pi or cdp.cone_theta < 0.0):
-            return True
-
-        # Pseudo-ellipse cone angles out of range (0.001 instead of 0.0 because of truncation in the numerical integration).
-        if hasattr(cdp, 'cone_theta_x') and (cdp.cone_theta_x >= pi or cdp.cone_theta_x < 0.001):
-            return True
-        if hasattr(cdp, 'cone_theta_y') and (cdp.cone_theta_y >= pi or cdp.cone_theta_y < 0.001):
-            return True
-
-        # Torsion angle out of range.
-        if hasattr(cdp, 'cone_sigma_max') and (cdp.cone_sigma_max >= pi or cdp.cone_sigma_max < 0.0):
-            return True
-
-        # No failure.
-        return False
-
-
     def nested_params(self, model):
         """Copy the parameters from the simpler nested models for faster optimisation.
 
