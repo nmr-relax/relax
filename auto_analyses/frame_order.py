@@ -59,13 +59,13 @@ class Frame_order_analysis:
         @type grid_inc_rigid:           int
         @keyword min_algor:             The minimisation algorithm (in most cases this should not be changed).
         @type min_algor:                str
-        @keyword num_int_pts_grid:      The number of Sobol' integration points to use in the grid searches.
+        @keyword num_int_pts_grid:      The number of Sobol' points for the PCS numerical integration in the grid searches.
         @type num_int_pts_grid:         int
-        @keyword num_int_pts_subset:    The list of the number of Sobol' numerical integration points to use iteratively in the optimisations after the grid search (for the PCS data subset).
+        @keyword num_int_pts_subset:    The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for the PCS data subset).
         @type num_int_pts_subset:       list of int
         @keyword func_tol_subset:       The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
         @type func_tol_subset:          list of float
-        @keyword num_int_pts_full:      The list of the number of Sobol' numerical integration points to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
+        @keyword num_int_pts_full:      The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
         @type num_int_pts_full:         list of int
         @keyword func_tol_full:         The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
         @type func_tol_full:            list of float
