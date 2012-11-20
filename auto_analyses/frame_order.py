@@ -143,13 +143,35 @@ class Frame_order_analysis:
         if not isinstance(self.pipe_bundle, str):
             raise RelaxError("The pipe bundle name '%s' is invalid." % self.pipe_bundle)
 
-        # Min vars.
+        # Minimisation variables.
         if not isinstance(self.grid_inc, int):
             raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
+        if not isinstance(self.grid_inc_rigid, int):
+            raise RelaxError("The grid_inc_rigid user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
         if not isinstance(self.min_algor, str):
             raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
+        if not isinstance(self.num_int_pts_grid, int):
+            raise RelaxError("The num_int_pts_grid user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
         if not isinstance(self.mc_sim_num, int):
             raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
+
+        # Zooming minimisation (PCS subset).
+        if len(self.num_int_pts_subset) != len(self.func_tol_subset):
+            raise RelaxError("The num_int_pts_subset and func_tol_subset user variables of '%s' and '%s' respectively must be of the same length." % (self.num_int_pts_subset, self.func_tol_subset))
+        for i in range(len(self.num_int_pts_subset)):
+            if not isinstance(self.num_int_pts_subset[i], int):
+                raise RelaxError("The num_int_pts_subset user variable '%s' must be a list of integers." % self.num_int_pts_subset)
+            if not isinstance(self.func_tol_subset[i], float):
+                raise RelaxError("The func_tol_subset user variable '%s' must be a list of floats." % self.func_tol_subset)
+
+        # Zooming minimisation (all RDC and PCS data).
+        if len(self.num_int_pts_full) != len(self.func_tol_full):
+            raise RelaxError("The num_int_pts_full and func_tol_full user variables of '%s' and '%s' respectively must be of the same length." % (self.num_int_pts_full, self.func_tol_full))
+        for i in range(len(self.num_int_pts_full)):
+            if not isinstance(self.num_int_pts_full[i], int):
+                raise RelaxError("The num_int_pts_full user variable '%s' must be a list of integers." % self.num_int_pts_full)
+            if not isinstance(self.func_tol_full[i], float):
+                raise RelaxError("The func_tol_full user variable '%s' must be a list of floats." % self.func_tol_full)
 
 
     def custom_grid_incs(self, model):
