@@ -42,7 +42,7 @@ from status import Status; status = Status()
 
 
 class Frame_order_analysis:
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], num_int_pts_full=[100, 1000, 200000], mc_sim_num=500):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:      The name of the data pipe containing all of the RDC and PCS data.
@@ -75,7 +75,9 @@ class Frame_order_analysis:
         self.min_algor = min_algor
         self.num_int_pts_grid = num_int_pts_grid
         self.num_int_pts_subset = num_int_pts_subset
+        self.func_tol_subset = func_tol_subset
         self.num_int_pts_full = num_int_pts_full
+        self.func_tol_full = func_tol_full
         self.mc_sim_num = mc_sim_num
 
         # A dictionary of the data pipe names.
@@ -280,17 +282,17 @@ class Frame_order_analysis:
             self.interpreter.grid_search(inc=incs, constraints=False)
 
             # Minimise (for the PCS data subset and full RDC set).
-            for num in self.num_int_pts_subset:
-                self.interpreter.frame_order.num_int_pts(num=num)
-                self.interpreter.minimise(self.min_algor, constraints=False)
+            for i in range(len(self.num_int_pts_subset)):
+                self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_subset[i])
+                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_subset[i], constraints=False)
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.models[model])
 
             # Minimise (for the full data set).
-            for num in self.num_int_pts_full:
-                self.interpreter.frame_order.num_int_pts(num=num)
-                self.interpreter.minimise(self.min_algor, constraints=False)
+            for i in range(len(self.num_int_pts_full)):
+                self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_full[i])
+                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_full[i], constraints=False)
 
             # Results printout.
             self.print_results()
