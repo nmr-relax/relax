@@ -42,7 +42,7 @@ from status import Status; status = Status()
 
 
 class Frame_order_analysis:
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -71,6 +71,10 @@ class Frame_order_analysis:
         @type func_tol_full:            list of float
         @keyword mc_sim_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_sim_num:               int
+        @keyword mc_int_num:            The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
+        @type mc_int_num:               int
+        @keyword mc_func_tol:           The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
+        @type mc_func_tol:              float
         """
 
         # Execution lock.
@@ -89,6 +93,8 @@ class Frame_order_analysis:
         self.num_int_pts_full = num_int_pts_full
         self.func_tol_full = func_tol_full
         self.mc_sim_num = mc_sim_num
+        self.mc_int_pts = mc_int_pts
+        self.mc_func_tol = mc_func_tol
 
         # A dictionary of the data pipe names.
         self.models = {}
@@ -116,11 +122,14 @@ class Frame_order_analysis:
             # Model selection.
             self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
 
+            # The number of integration points.
+            self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
+
             # Monte Carlo simulations.
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor, constraints=False)
+            self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
             self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
 
@@ -154,6 +163,10 @@ class Frame_order_analysis:
             raise RelaxError("The num_int_pts_grid user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
         if not isinstance(self.mc_sim_num, int):
             raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
+        if not isinstance(self.mc_int_pts, int):
+            raise RelaxError("The mc_int_pts user variable '%s' is incorrectly set.  It should be an integer." % self.mc_int_pts)
+        if not isinstance(self.mc_func_tol, float):
+            raise RelaxError("The mc_func_tol user variable '%s' is incorrectly set.  It should be a floating point number." % self.mc_func_tol)
 
         # Zooming minimisation (PCS subset).
         if len(self.num_int_pts_subset) != len(self.func_tol_subset):
