@@ -45,21 +45,32 @@ GRID_INC = 11
 # The more precise grid search size for the initial rigid model (the number of increments per dimension).
 GRID_INC_RIGID = 31
 
-# The number of Sobol' integration points to use in the grid searches.
+# The number of Sobol' points for the PCS numerical integration in the grid searches.
 NUM_INT_PTS_GRID = 50
 
-# The list of the number of Sobol' integration points to use iteratively in the optimisations after the grid search (for the PCS data subset).
+# The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for the PCS data subset).
 NUM_INT_PTS_SUBSET = [100]
 
-# The list of the number of Sobol' integration points to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
-NUM_INT_PTS_FULL = [100, 1000]
-#NUM_INT_PTS_FULL = [100, 1000, 200000]
+# The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
+FUNC_TOL_SUBSET = [1e-2]
+
+# The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
+NUM_INT_PTS_FULL = [100, 1000, 10000]
+
+# The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
+FUNC_TOL_FULL = [1e-2, 1e-3, 1e-4]
 
 # The optimisation technique.
 MIN_ALGOR = 'simplex'
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the protocol.
-MC_NUM = 3
+MC_NUM = 100
+
+# The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
+MC_INT_PTS = 1000
+
+# The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
+MC_FUNC_TOL = 1e-3
 
 
 # Set up the base data pipes.
@@ -146,4 +157,4 @@ for i in range(len(ln)):
 ############
 
 # Do not change!
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, mc_sim_num=MC_NUM)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL)
