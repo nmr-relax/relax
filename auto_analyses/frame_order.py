@@ -45,22 +45,32 @@ class Frame_order_analysis:
     def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500):
         """Perform the full frame order analysis.
 
-        @param data_pipe_full:      The name of the data pipe containing all of the RDC and PCS data.
-        @type data_pipe_full:       str
-        @param data_pipe_subset:    The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
-        @type data_pipe_subset:     str
-        @keyword pipe_bundle:       The data pipe bundle to associate all spawned data pipes with.
-        @type pipe_bundle:          str
-        @keyword results_dir:       The directory where files are saved in.
-        @type results_dir:          str
-        @keyword grid_inc:          The number of grid increments to use in the grid search of certain models.
-        @type grid_inc:             int
-        @keyword grid_inc_rigid:    The number of grid increments to use in the grid search of the initial rigid model.
-        @type grid_inc_rigid:       int
-        @keyword min_algor:         The minimisation algorithm (in most cases this should not be changed).
-        @type min_algor:            str
-        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_sim_num:           int
+        @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
+        @type data_pipe_full:           str
+        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
+        @type data_pipe_subset:         str
+        @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:              str
+        @keyword results_dir:           The directory where files are saved in.
+        @type results_dir:              str
+        @keyword grid_inc:              The number of grid increments to use in the grid search of certain models.
+        @type grid_inc:                 int
+        @keyword grid_inc_rigid:        The number of grid increments to use in the grid search of the initial rigid model.
+        @type grid_inc_rigid:           int
+        @keyword min_algor:             The minimisation algorithm (in most cases this should not be changed).
+        @type min_algor:                str
+        @keyword num_int_pts_grid:      The number of Sobol' integration points to use in the grid searches.
+        @type num_int_pts_grid:         int
+        @keyword num_int_pts_subset:    The list of the number of Sobol' numerical integration points to use iteratively in the optimisations after the grid search (for the PCS data subset).
+        @type num_int_pts_subset:       list of int
+        @keyword func_tol_subset:       The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
+        @type func_tol_subset:          list of float
+        @keyword num_int_pts_full:      The list of the number of Sobol' numerical integration points to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
+        @type num_int_pts_full:         list of int
+        @keyword func_tol_full:         The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
+        @type func_tol_full:            list of float
+        @keyword mc_sim_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:               int
         """
 
         # Execution lock.
