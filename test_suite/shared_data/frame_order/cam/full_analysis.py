@@ -67,10 +67,10 @@ MIN_ALGOR = 'simplex'
 MC_NUM = 100
 
 # The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
-MC_INT_PTS = 1000
+MC_INT_PTS = 100
 
 # The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
-MC_FUNC_TOL = 1e-3
+MC_FUNC_TOL = 1e-2
 
 
 # Set up the base data pipes.
@@ -135,6 +135,10 @@ for i in range(len(full)):
 
 # Set the reference domain.
 frame_order.ref_domain('N')
+
+# Link the domains to the PDB files.
+frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
+frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
 # Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
