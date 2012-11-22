@@ -29,7 +29,8 @@ import dep_check
 from math import sqrt
 from numpy import array, dot, float64, linalg, zeros
 import os
-from os import F_OK, access, sep
+from os import F_OK, access, curdir, sep
+from os.path import abspath
 from extern.scientific_python.IO import PDB
 import sys
 from warnings import warn
@@ -593,6 +594,9 @@ class Scientific_data(Base_struct_API):
         # Separate the file name and path.
         path, file = os.path.split(file_path)
 
+        # The absolute path.
+        path_abs = abspath(curdir) + sep + path
+
         # Convert the structure reading args into lists.
         if read_mol and not isinstance(read_mol, list):
             read_mol = [read_mol]
@@ -720,7 +724,7 @@ class Scientific_data(Base_struct_API):
             model_load_num = model_load_num + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=list(range(1, len(mol_conts[0])+1)), set_mol_name=new_mol_name, file_name=file, file_path=path)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=list(range(1, len(mol_conts[0])+1)), set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs)
 
         # Loading worked.
         return True
