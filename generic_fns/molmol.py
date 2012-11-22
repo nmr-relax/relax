@@ -26,7 +26,7 @@
 import dep_check
 
 # Python module imports.
-from os import sep
+from os import F_OK, access, sep
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -127,20 +127,36 @@ class Molmol:
         open_files = []
         for model in cdp.structure.structural_data:
             for mol in model.mol:
-                # The file path.
-                file = mol.file_name
-                if mol.file_path:
-                    file = mol.file_path + sep + file
+                # The file path as the current directory.
+                file_path = None
+                if access(mol.file_name, F_OK):
+                    file_path = mol.file_name
+
+                # The file path using the relative path.
+                if file_path == None and hasattr(mol, 'file_path') and mol.file_path != None:
+                    file_path = mol.file_path + sep + mol.file_name
+                    if not access(file_path, F_OK):
+                        file_path = None
+
+                # The file path using the relative path.
+                if file_path == None and hasattr(mol, 'file_path_abs') and mol.file_path_abs != None:
+                    file_path = mol.file_path_abs + sep + mol.file_name
+                    if not access(file_path, F_OK):
+                        file_path = None
+
+                # Fall back.
+                if file_path == None:
+                    file_path = mol.file_name
 
                 # Already loaded.
-                if file in open_files:
+                if file_path in open_files:
                     continue
 
                 # Open the file in Molmol.
-                self.exec_cmd("ReadPdb " + file)
+                self.exec_cmd("ReadPdb " + file_path)
 
                 # Add to the open file list.
-                open_files.append(file)
+                open_files.append(file_path)
 
 
     def running(self):
