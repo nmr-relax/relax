@@ -477,7 +477,7 @@ class Base_struct_API:
         return len(self.structural_data[0].mol)
 
 
-    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None):
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None):
         """From the given structural data, expand the structural data data structure.
 
         @param data_matrix:         A matrix of structural objects.
@@ -490,11 +490,12 @@ class Base_struct_API:
         @type orig_mol_num:         list of int
         @keyword set_mol_name:      The new molecule names.
         @type set_mol_name:         list of str
-        @keyword file_name:         The name of the file from which the molecular data has been
-                                    extracted.
+        @keyword file_name:         The name of the file from which the molecular data has been extracted.
         @type file_name:            None or str
         @keyword file_path:         The full path to the file specified by 'file_name'.
         @type file_path:            None or str
+        @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
+        @type file_path_abs:        None or str
         """
 
         # Test the number of models.
@@ -562,6 +563,7 @@ class Base_struct_API:
                 model.mol[-1].mol_name = set_mol_name[j]
                 model.mol[-1].file_name = file_name
                 model.mol[-1].file_path = file_path
+                model.mol[-1].file_path_abs = file_path_abs
                 model.mol[-1].file_mol_num = orig_mol_num[j]
                 model.mol[-1].file_model = orig_model_num[i]
 
