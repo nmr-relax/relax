@@ -151,22 +151,16 @@ class Pymol:
                 file_path = None
                 if access(mol.file_name, F_OK):
                     file_path = mol.file_name
-                    print "A"
-                    print file_path
 
                 # The file path using the relative path.
                 if file_path == None and hasattr(mol, 'file_path') and mol.file_path != None:
                     file_path = mol.file_path + sep + mol.file_name
-                    print "b"
-                    print file_path
                     if not access(file_path, F_OK):
                         file_path = None
 
                 # The file path using the relative path.
                 if file_path == None and hasattr(mol, 'file_path_abs') and mol.file_path_abs != None:
                     file_path = mol.file_path_abs + sep + mol.file_name
-                    print "c"
-                    print file_path
                     if not access(file_path, F_OK):
                         file_path = None
 
