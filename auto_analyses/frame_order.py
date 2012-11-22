@@ -122,22 +122,24 @@ class Frame_order_analysis:
             # The nested model optimisation protocol.
             self.optimise()
 
-            # Model selection.
-            self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
+            # The final results does not already exist.
+            if not self.read_results(model='final', pipe_name='final'):
+                # Model selection.
+                self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
 
-            # The number of integration points.
-            self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
+                # The number of integration points.
+                self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
 
-            # Monte Carlo simulations.
-            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
-            self.interpreter.eliminate()
-            self.interpreter.monte_carlo.error_analysis()
+                # Monte Carlo simulations.
+                self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+                self.interpreter.monte_carlo.create_data()
+                self.interpreter.monte_carlo.initial_values()
+                self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
+                self.interpreter.eliminate()
+                self.interpreter.monte_carlo.error_analysis()
 
-            # Finish.
-            self.interpreter.results.write(file='results', force=True)
+                # Finish.
+                self.interpreter.results.write(file='results', force=True)
 
             # Results visualisation.
             self.visualisation()
