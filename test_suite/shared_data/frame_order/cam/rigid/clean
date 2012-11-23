@@ -1,0 +1,13 @@
+#! /bin/sh
+
+rm -rf rigid
+rm -rf rotor
+rm -rf "free rotor"
+rm -rf "iso cone, torsionless"
+rm -rf "iso cone, free rotor"
+rm -rf "iso cone"
+rm -rf "pseudo-ellipse, torsionless"
+rm -rf "pseudo-ellipse, free rotor"
+rm -rf "pseudo-ellipse"
+rm -rf "final"
+rm -rf full_analysis.log*
