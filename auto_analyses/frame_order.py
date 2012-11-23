@@ -515,14 +515,14 @@ class Frame_order_analysis:
 
         # Loop over all models.
         for pipe_name in self.models.values() + ['final']:
+            # Switch to the data pipe.
+            self.interpreter.pipe.switch(pipe_name)
+
             # The directory to place files into.
             if pipe_name == 'final':
                 results_dir = pipe_name
             else:
                 results_dir = cdp.model
-
-            # Switch to the data pipe.
-            self.interpreter.pipe.switch(pipe_name)
 
             # Create a PDB file representation of the motions.
             if cdp.model != 'rigid':
