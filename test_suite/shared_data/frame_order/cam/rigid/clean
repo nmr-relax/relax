@@ -11,3 +11,4 @@ rm -rf "pseudo-ellipse, free rotor"
 rm -rf "pseudo-ellipse"
 rm -rf "final"
 rm -rf full_analysis.log*
+rm -rf final_state.bz2
