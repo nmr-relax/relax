@@ -314,7 +314,7 @@ class Frame_order(API_base, API_common):
         return True
 
 
-    def _cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
+    def _cone_pdb(self, size=30.0, file=None, dir=None, inc=36, force=False):
         """Create a PDB file containing a geometric object representing the Frame Order cone models.
 
         @param size:        The size of the geometric object in Angstroms.
