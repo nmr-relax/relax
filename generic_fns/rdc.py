@@ -753,6 +753,10 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
     # Loop over the interatomic data containers and collect the data.
     data = []
     for interatom in interatomic_loop():
+        # Skip deselected containers.
+        if not interatom.select:
+            continue
+
         # Skip containers with no RDCs.
         if not bc and (not hasattr(interatom, 'rdc') or align_id not in interatom.rdc.keys()):
             continue

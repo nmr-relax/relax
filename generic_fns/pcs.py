@@ -733,6 +733,10 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
     values = []
     errors = []
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         # Skip spins with no PCSs.
         if not bc and (not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys()):
             continue
