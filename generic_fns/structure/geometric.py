@@ -107,10 +107,10 @@ def angles_uniform(inc=None):
 def autoscale_tensor(method='mass'):
     """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
 
-    @param method:  The method used to determine the scaling of the diffusion tensor object.
-    @type method:   str
-    @return:        The scaling factor.
-    @rtype:         float
+    @keyword method:    The method used to determine the scaling of the diffusion tensor object.
+    @type method:       str
+    @return:            The scaling factor.
+    @rtype:             float
     """
 
     # Centre of mass method.
@@ -127,9 +127,7 @@ def autoscale_tensor(method='mass'):
 def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', apex=None, axis=None, R=None, scale=None, inc=None, distribution='uniform', debug=False):
     """Add a residue to the atomic data representing a cone of the given angle.
 
-    A series of vectors totalling the number of increments and starting at the origin are equally
-    spaced around the cone axis.  The atoms representing neighbouring vectors will be directly
-    bonded together.  This will generate an object representing the outer edge of a cone.
+    A series of vectors totalling the number of increments and starting at the origin are equally spaced around the cone axis.  The atoms representing neighbouring vectors will be directly bonded together.  This will generate an object representing the outer edge of a cone.
 
 
     @keyword mol:           The molecule container.
@@ -334,11 +332,11 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
     @type scale:            float
     @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
     @type distribution:     str
-    @param file:            The name of the PDB file to create.
+    @keyword file:          The name of the PDB file to create.
     @type file:             str
-    @param dir:             The name of the directory to place the PDB file into.
+    @keyword dir:           The name of the directory to place the PDB file into.
     @type dir:              str
-    @param force:           Flag which if set to True will overwrite any pre-existing file.
+    @keyword force:         Flag which if set to True will overwrite any pre-existing file.
     @type force:            bool
     @keyword axis_flag:     A flag which if True will create the cone's axis.
     @type axis_flag:        bool
@@ -405,13 +403,13 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     """Create the PDB representation of the diffusion tensor.
 
-    @param scale:   The scaling factor for the diffusion tensor.
+    @keyword scale: The scaling factor for the diffusion tensor.
     @type scale:    float
-    @param file:    The name of the PDB file to create.
+    @keyword file:  The name of the PDB file to create.
     @type file:     str
-    @param dir:     The name of the directory to place the PDB file into.
+    @keyword dir:   The name of the directory to place the PDB file into.
     @type dir:      str
-    @param force:   Flag which if set to True will overwrite any pre-existing file.
+    @keyword force: Flag which if set to True will overwrite any pre-existing file.
     @type force:    bool
     """
 
@@ -588,15 +586,15 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
     """Create a PDB representation of the vector distribution.
 
-    @param length:      The length to set the vectors to in the PDB file.
+    @keyword length:    The length to set the vectors to in the PDB file.
     @type length:       float
-    @param symmetry:    The symmetry flag which if set will create a second PDB chain 'B' which is the same as chain 'A' but with the vectors reversed.
+    @keyword symmetry:  The symmetry flag which if set will create a second PDB chain 'B' which is the same as chain 'A' but with the vectors reversed.
     @type symmetry:     bool
-    @param file:        The name of the PDB file to create.
+    @keyword file:      The name of the PDB file to create.
     @type file:         str
-    @param dir:         The name of the directory to place the PDB file into.
+    @keyword dir:       The name of the directory to place the PDB file into.
     @type dir:          str
-    @param force:       Flag which if set will overwrite any pre-existing file.
+    @keyword force:     Flag which if set will overwrite any pre-existing file.
     @type force:        bool
     """
 
@@ -877,35 +875,34 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
 def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id='', res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
     """Generate residue representations for the vector and the MC simulationed vectors.
 
-    This is used to create a PDB representation of any vector, including its Monte Carlo
-    simulations.
+    This is used to create a PDB representation of any vector, including its Monte Carlo simulations.
 
-    @keyword mol:           The molecule container.
-    @type mol:              MolContainer instance
-    @param vector:          The vector to be represented in the PDB.
-    @type vector:           numpy array, len 3
-    @param atom_name:       The atom name used to label the atom representing the head of the vector.
-    @type atom_name:        str
-    @param res_name_vect:   The 3 letter PDB residue code used to represent the vector.
-    @type res_name_vect:    str
-    @param sim_vectors:     The optional Monte Carlo simulation vectors to be represented in the PDB.
-    @type sim_vectors:      list of numpy array, each len 3
-    @param res_name_sim:    The 3 letter PDB residue code used to represent the Monte Carlo simulation vectors.
-    @type res_name_sim:     str
-    @param chain_id:        The chain identification code.
-    @type chain_id:         str
-    @param res_num:         The residue number.
-    @type res_num:          int
-    @param origin:          The origin for the axis.
-    @type origin:           numpy array, len 3
-    @param scale:           The scaling factor to stretch the vectors by.
-    @type scale:            float
-    @param label_placement: A scaling factor to multiply the pre-scaled vector by.  This is used to place the vector labels a little further out from the vector itself.
-    @type label_placement:  float
-    @param neg:             If True, then the negative vector positioned at the origin will also be included.
-    @type neg:              bool
-    @return:                The new residue number.
-    @rtype:                 int
+    @keyword mol:               The molecule container.
+    @type mol:                  MolContainer instance
+    @keyword vector:            The vector to be represented in the PDB.
+    @type vector:               numpy array, len 3
+    @keyword atom_name:         The atom name used to label the atom representing the head of the vector.
+    @type atom_name:            str
+    @keyword res_name_vect:     The 3 letter PDB residue code used to represent the vector.
+    @type res_name_vect:        str
+    @keyword sim_vectors:       The optional Monte Carlo simulation vectors to be represented in the PDB.
+    @type sim_vectors:          list of numpy array, each len 3
+    @keyword res_name_sim:      The 3 letter PDB residue code used to represent the Monte Carlo simulation vectors.
+    @type res_name_sim:         str
+    @keyword chain_id:          The chain identification code.
+    @type chain_id:             str
+    @keyword res_num:           The residue number.
+    @type res_num:              int
+    @keyword origin:            The origin for the axis.
+    @type origin:               numpy array, len 3
+    @keyword scale:             The scaling factor to stretch the vectors by.
+    @type scale:                float
+    @keyword label_placement:   A scaling factor to multiply the pre-scaled vector by.  This is used to place the vector labels a little further out from the vector itself.
+    @type label_placement:      float
+    @keyword neg:               If True, then the negative vector positioned at the origin will also be included.
+    @type neg:                  bool
+    @return:                    The new residue number.
+    @rtype:                     int
     """
 
     # The atom numbers (and indices).
