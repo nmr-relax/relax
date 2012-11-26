@@ -313,7 +313,7 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
     mol.atom_connect(index1=atom_num-2, index2=origin_atom)
 
 
-def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False):
+def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False, axis_flag=True):
     """Create a PDB representation of the given cone object.
 
     @keyword mol:           The molecule container.
@@ -340,6 +340,8 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
     @type dir:              str
     @param force:           Flag which if set to True will overwrite any pre-existing file.
     @type force:            bool
+    @keyword axis_flag:     A flag which if True will create the cone's axis.
+    @type axis_flag:        bool
     """
 
     # The cone axis default of the z-axis.
@@ -366,12 +368,14 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
     if hasattr(mol, 'atom_num'):
         start_atom = mol.atom_num[-1]+1
 
-    # Add the apex.
-    mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='APX', res_num=start_res, pos=apex, element='C')
+    # The axis.
+    if axis_flag:
+        # Add the apex.
+        mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='APX', res_num=start_res, pos=apex, element='C')
 
-    # Generate the axis vectors.
-    print("\nGenerating the axis vectors.")
-    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=start_res+1, origin=apex, scale=scale)
+        # Generate the axis vectors.
+        print("\nGenerating the axis vectors.")
+        res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=start_res+1, origin=apex, scale=scale)
 
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
