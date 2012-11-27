@@ -1451,9 +1451,9 @@ class Frame_order(API_base, API_common):
             if eigen_gamma != None:
                 cdp.eigen_gamma_sim[sim_index] = wrap_angles(eigen_gamma, cdp.eigen_gamma-pi, cdp.eigen_gamma+pi)
             if axis_theta != None:
-                cdp.axis_theta_sim[sim_index] = axis_theta
+                cdp.axis_theta_sim[sim_index] = wrap_angles(axis_theta, cdp.axis_theta-pi, cdp.axis_theta+pi)
             if axis_phi != None:
-                cdp.axis_phi_sim[sim_index] = axis_phi
+                cdp.axis_phi_sim[sim_index] = wrap_angles(axis_phi, cdp.axis_phi-pi, cdp.axis_phi+pi)
 
             # Cone parameters.
             if cone_theta != None:
@@ -1494,9 +1494,9 @@ class Frame_order(API_base, API_common):
             if eigen_gamma != None:
                 cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
             if axis_theta != None:
-                cdp.axis_theta = axis_theta
+                cdp.axis_theta = wrap_angles(axis_theta, 0.0, 2.0*pi)
             if axis_phi != None:
-                cdp.axis_phi = axis_phi
+                cdp.axis_phi = wrap_angles(axis_phi, 0.0, 2.0*pi)
 
             # Cone parameters.
             if cone_theta != None:
