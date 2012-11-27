@@ -108,9 +108,9 @@ class Analysis:
         value.set(param='eigen_alpha', val=3.14159265358979311600)
         value.set(param='eigen_beta', val=0.96007997859534310869)
         value.set(param='eigen_gamma', val=4.03227550621962294031)
-        value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0)
-        value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0)
-        value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0)
+        value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0)    # 0.52359877559829882
+        value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0)    # 0.87266462599716477
+        value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0)  # 1.0471975511965976
         calc()
         print("\nchi2: %s" % repr(cdp.chi2))
 
