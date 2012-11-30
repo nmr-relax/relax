@@ -54,8 +54,7 @@ def get_values():
 def set(id=None, frq=None):
     """Set the spectrometer frequency of the experiment.
 
-    @keyword id:    The experimental identification string (allowing for multiple experiments per
-                    data pipe).
+    @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
     @type id:       str
     @keyword frq:   The spectrometer frequency in Hertz.
     @type frq:      float
@@ -69,8 +68,8 @@ def set(id=None, frq=None):
         cdp.frq = {}
 
     # Test the frequency has not already been set.
-    if id in cdp.frq:
-        raise RelaxError("The frequency for the experiment " + repr(id) + " has already been set.")
+    if id in cdp.frq and cdp.frq[id] != frq:
+        raise RelaxError("The frequency for the experiment '%s' has already been set to %s Hz." % (id, cdp.frq[id]))
 
     # Set the frequency.
     cdp.frq[id] = frq
