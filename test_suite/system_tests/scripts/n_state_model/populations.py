@@ -59,6 +59,25 @@ for i in range(len(align_list)):
     # The frequency.
     self._execute_uf(uf_name='frq.set', id=align_list[i], frq=799.75376122 * 1e6)
 
+# Try to delete the RDC and PCS data (bug #20335, https://gna.org/bugs/?20335).
+self._execute_uf(uf_name='pcs.delete')
+self._execute_uf(uf_name='rdc.delete')
+
+# Load the RDCs and PCSs.
+for i in range(len(align_list)):
+    # The RDC (skip the list at index 1, as this has zero data and now causes a RelaxError).
+    if i != 1:
+        self._execute_uf(uf_name='rdc.read', align_id=align_list[i], file='missing_rdc_%i' % i, dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
+
+    # The PCS.
+    self._execute_uf(uf_name='pcs.read', align_id=align_list[i], file='missing_pcs_%i' % i, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=None, spin_name_col=5, data_col=6, error_col=None)
+
+    # The temperature.
+    self._execute_uf(uf_name='temperature', id=align_list[i], temp=298)
+
+    # The frequency.
+    self._execute_uf(uf_name='frq.set', id=align_list[i], frq=799.75376122 * 1e6)
+
 # Set the paramagnetic centre.
 self._execute_uf(uf_name='paramag.centre', pos=[ -14.845,    0.969,    0.265])
 

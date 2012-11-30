@@ -371,7 +371,7 @@ def delete(align_id=None):
 
         # Clean the global data.
         if not hasattr(cdp, 'pcs_ids') or id not in cdp.pcs_ids:
-            cdp.align_ids.pop(id)
+            cdp.align_ids.pop(cdp.align_ids.index(id))
 
 
 def display(align_id=None, bc=False):
