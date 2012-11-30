@@ -192,6 +192,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 1.801211682780e-04)
         self.assertAlmostEqual(cdp.chi2, 1044.9572886805781)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.81262759306400001)
 
 
     def test_align_fit(self):
