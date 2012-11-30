@@ -178,6 +178,22 @@ class N_state_model(SystemTestCase):
             i += 1
 
 
+    def test_absolute_rdc_menthol(self):
+        """Test the fitting of signless RDCs for menthol."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'absolute_rdcs_menthol.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+
+
     def test_align_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
 
