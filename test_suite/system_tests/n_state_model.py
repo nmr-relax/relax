@@ -185,12 +185,12 @@ class N_state_model(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'absolute_rdcs_menthol.py')
 
         # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -9.784232367053e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -7.158933725824e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, 4.467570786770e-06)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 5.153319781627e-06)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 1.801211682780e-04)
+        self.assertAlmostEqual(cdp.chi2, 1044.9572886805781)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
 
 

@@ -50,4 +50,4 @@ self._execute_uf(uf_name='minimise', min_algor='newton')
 self._execute_uf(uf_name='align_tensor.display')
 
 # Save the state.
-self._execute_uf(uf_name='state.save', file='devnull')
+self._execute_uf(uf_name='state.save', state='devnull')
