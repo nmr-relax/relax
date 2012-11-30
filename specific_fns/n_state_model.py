@@ -1092,7 +1092,7 @@ class N_state_model(API_base, API_common):
                 # Pseudo-atom set up.
                 if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc.keys():
                     # Skip non-Me groups.
-                    if len(spin1.members) != 3:
+                    if (hasattr(spin1, 'members') and len(spin1.members) != 3) or (hasattr(spin2, 'members') and len(spin2.members) != 3):
                         continue
 
                     # The RDC for the Me-pseudo spin where:
