@@ -90,6 +90,27 @@ class Align_tensor(SystemTestCase):
         cdp.align_tensors[2].set(param='Axx', value=1)
 
 
+    def test_copy(self):
+        """Test the copying of alignment tensors (to catch bug #20338, https://gna.org/bugs/?20338)."""
+
+        # First reset.
+        self.interpreter.reset()
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('copy test', 'N-state')
+
+        # Initialise one tensor.
+        self.interpreter.align_tensor.init(tensor='orig', params=self.tensors_full[0], param_types=0)
+
+        # Copy the tensor.
+        self.interpreter.align_tensor.copy(tensor_from='orig', tensor_to='new')
+
+        # Checks.
+        self.assertEqual(len(cdp.align_tensors), 2)
+        self.assertEqual(cdp.align_tensors[0].name, 'orig')
+        self.assertEqual(cdp.align_tensors[1].name, 'new')
+
+
     def test_to_and_from_xml(self):
         """Test the conversion to and from XML."""
 

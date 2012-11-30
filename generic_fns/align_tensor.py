@@ -115,13 +115,11 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     @param tensor_from: The identification string of the alignment tensor to copy the data from.
     @type tensor_from:  str
-    @param pipe_from:   The data pipe to copy the alignment tensor data from.  This defaults to the
-                        current data pipe.
+    @param pipe_from:   The data pipe to copy the alignment tensor data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @param tensor_to:   The identification string of the alignment tensor to copy the data to.
     @type tensor_to:    str
-    @param pipe_to:     The data pipe to copy the alignment tensor data to.  This defaults to the
-                        current data pipe.
+    @param pipe_to:     The data pipe to copy the alignment tensor data to.  This defaults to the current data pipe.
     @type pipe_to:      str
     """
 
@@ -160,8 +158,12 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     # Copy the data.
     if index_to == None:
         dp_to.align_tensors.append(deepcopy(dp_from.align_tensors[index_from]))
+        index_to = len(dp_to.align_tensors) - 1
     else:
         dp_to.align_tensors[index_to] = deepcopy(dp_from.align_tensors[index_from])
+
+    # Update the tensor's name.
+    dp_to.align_tensors[index_to].set('name', tensor_to)
 
 
 def data_names():
