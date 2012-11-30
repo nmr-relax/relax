@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,8 +30,7 @@ from relax_errors import RelaxError
 def set(id=None, temp=None):
     """Set the experimental temperature.
 
-    @keyword id:    The experimental identification string (allowing for multiple experiments per
-                    data pipe).
+    @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
     @type id:       str
     @keyword temp:  The temperature in kelvin.
     @type temp:     float
@@ -44,9 +43,12 @@ def set(id=None, temp=None):
     if not hasattr(cdp, 'temperature'):
         cdp.temperature = {}
 
+    # Convert to a float.
+    temp = float(temp)
+
     # Test the temperature has not already been set.
-    if id in cdp.temperature:
-        raise RelaxError("The temperature for the experiment " + repr(id) + " has already been set.")
+    if id in cdp.temperature and cdp.temperature[id] != temp:
+        raise RelaxError("The temperature for the experiment '%s' has already been set to %s K." % (id, cdp.temperature[id]))
 
     # Set the temperature.
-    cdp.temperature[id] = float(temp)
+    cdp.temperature[id] = temp
