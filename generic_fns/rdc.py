@@ -120,7 +120,7 @@ def back_calc(align_id=None):
             interatom.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id=id)].A, weights=weights)
 
             # The absolute value.
-            if id in interatom.absolute_rdc.keys() and interatom.absolute_rdc[id]:
+            if hasattr(interatom, 'absolute_rdc') and id in interatom.absolute_rdc.keys() and interatom.absolute_rdc[id]:
                 interatom.rdc_bc[id] = abs(interatom.rdc_bc[id])
 
 
