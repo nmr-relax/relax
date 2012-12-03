@@ -100,7 +100,7 @@ class Align_tensor(SystemTestCase):
         self.interpreter.pipe.create('copy test', 'N-state')
 
         # Initialise one tensor.
-        self.interpreter.align_tensor.init(tensor='orig', params=self.tensors_full[0], param_types=0)
+        self.interpreter.align_tensor.init(tensor='orig', align_id='test', params=self.tensors_full[0], param_types=0)
 
         # Copy the tensor.
         self.interpreter.align_tensor.copy(tensor_from='orig', tensor_to='new')
