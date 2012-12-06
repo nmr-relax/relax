@@ -351,10 +351,16 @@ class Combo_list:
             # Loop over the list.
             for i in range(len(value)):
                 # Loop until the proper client data is found.
+                found = False
                 for j in range(self._combo_boxes[i].GetCount()):
                     if self._combo_boxes[i].GetClientData(j) == value[i]:
                         self._combo_boxes[i].SetSelection(j)
+                        found = True
                         break
+
+                # Otherwise set the value.
+                if not found:
+                    self._combo_boxes[i].SetValue(value[i])
 
 
     def UpdateChoices(self, combo_choices=None, combo_data=None, combo_default=None):
