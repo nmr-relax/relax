@@ -26,6 +26,7 @@
 from re import search
 import wx
 from wx.lib import scrolledpanel
+import sys
 
 # relax module imports.
 import arg_check
