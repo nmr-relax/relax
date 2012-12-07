@@ -24,15 +24,7 @@
 
 # Python module imports.
 import numpy
-from numpy import set_printoptions, array, float32, float64, inf, nan, ndarray, zeros
-try:
-    from numpy import float16
-except ImportError:
-    float16 = float32    # Support for old numpy versions.
-try:
-    from numpy import float128
-except ImportError:
-    float128 = float64    # Support for 32-bit numpy versions.
+from numpy import set_printoptions, array, inf, nan, ndarray, zeros
 from re import search
 
 # Modify numpy for better output of numbers and structures.
@@ -40,6 +32,7 @@ set_printoptions(precision=15, threshold=nan)
 
 # relax module imports.
 import arg_check
+import check_types
 from float import floatAsByteArray, packBytesAsPyFloat
 from relax_errors import RelaxError
 
@@ -136,19 +129,19 @@ def object_to_xml(doc, elem, value=None):
     elem.setAttribute('type', py_type)
 
     # Store floats as IEEE-754 byte arrays (for full precision storage).
-    if arg_check.check_float(value):
+    if check_types.is_float(value):
         val_elem = doc.createElement('ieee_754_byte_array')
         elem.appendChild(val_elem)
         val_elem.appendChild(doc.createTextNode(repr(floatAsByteArray(value))))
 
     # Store lists with floats as IEEE-754 byte arrays.
-    elif (isinstance(value, list) or isinstance(value, ndarray)) and len(value) and arg_check.check_float(value[0]):
+    elif (isinstance(value, list) or isinstance(value, ndarray)) and len(value) and check_types.is_float(value[0]):
         # The converted list.
         ieee_obj = []
         conv = False
         for i in range(len(value)):
             # A float.
-            if arg_check.check_float(value[i]):
+            if check_types.is_float(value[i]):
                 ieee_obj.append(floatAsByteArray(value[i]))
                 conv = True
 
@@ -171,7 +164,7 @@ def object_to_xml(doc, elem, value=None):
         ieee_obj = {}
         conv = False
         for key in list(value.keys()):
-            if arg_check.check_float(value[key]):
+            if check_types.is_float(value[key]):
                 ieee_obj[key] = floatAsByteArray(value[key])
                 conv = True
 
