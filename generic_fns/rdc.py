@@ -31,7 +31,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from arg_check import is_float
+from check_types import is_float
 from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
@@ -94,7 +94,7 @@ def back_calc(align_id=None):
             raise RelaxSpinTypeError(interatom.spin_id2)
 
         # Single vector.
-        if is_float(interatom.vector[0], raise_error=False):
+        if is_float(interatom.vector[0]):
             vectors = [interatom.vector]
         else:
             vectors = interatom.vector
@@ -674,7 +674,15 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             interatom.rdc_err[align_id] = error
 
         # Append the data for printout.
-        data.append([spin_id1, spin_id2, repr(value), repr(error)])
+        data.append([spin_id1, spin_id2])
+        if is_float(value):
+            data[-1].append("%20.15f" % value)
+        else:
+            data[-1].append("%20s" % value)
+        if is_float(error):
+            data[-1].append("%20.15f" % error)
+        else:
+            data[-1].append("%20s" % error)
 
     # No data, so fail hard!
     if not len(data):
