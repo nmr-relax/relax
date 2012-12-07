@@ -196,7 +196,7 @@ uf.add_keyarg(
     wiz_element_type = "combo_list",
     wiz_combo_iter = get_spin_ids,
     wiz_combo_list_min = 2,
-    wiz_read_only = True
+    wiz_read_only = False
 )
 uf.add_keyarg(
     name = "averaging",
