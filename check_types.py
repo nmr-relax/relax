@@ -29,6 +29,15 @@ try:
     file = None
 except ImportError:
     io_module = False
+from numpy import float32, float64, ndarray
+try:
+    from numpy import float16
+except ImportError:
+    float16 = float32    # Support for old numpy versions.
+try:
+    from numpy import float128
+except ImportError:
+    float128 = float64    # Support for 32-bit numpy versions.
 
 
 def is_filetype(obj):
@@ -47,6 +56,33 @@ def is_filetype(obj):
     # Old style check.
     else:
         return isinstance(obj, file)
+
+
+def is_float(num):
+    """Check if the given number is a Python or numpy float.
+
+    @param num: The number to check.
+    @type num:  anything.
+    @return:    True if the number is a float, False otherwise.
+    @rtype:     bool
+    """
+
+    # Standard float.
+    if isinstance(num, float):
+        return True
+
+    # Numpy floats.
+    if isinstance(num, float16):
+        return True
+    if isinstance(num, float32):
+        return True
+    if isinstance(num, float64):
+        return True
+    if isinstance(num, float128):
+        return True
+
+    # Not a float.
+    return False
 
 
 def is_unicode(obj):
