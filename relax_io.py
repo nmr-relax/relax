@@ -49,7 +49,7 @@ from sys import stdin, stdout, stderr
 from warnings import warn
 
 # relax module imports.
-from check_types import is_filetype
+from check_types import is_filetype, is_float
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -883,7 +883,7 @@ def write_data(out=None, headings=None, data=None, sep=None):
             out.write('\n')
 
 
-def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None):
+def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None, float_format="%20.15f"):
     """Generator function for reading the spin specific data from file.
 
     Description
@@ -922,6 +922,8 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
     @type error:            list or list of lists
     @keyword error_name:    A name corresponding to the error argument.  If the error argument is a list of lists, then this must also be a list with the same length at the second dimension of the error arg.
     @type error_name:       str or list of str
+    @keyword float_format:  A float formatting string to use for the data and error whenever a float is found.
+    @type float_format:     str
     """
 
     # Data argument tests.
@@ -1059,20 +1061,32 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
                 # Loop over the list.
                 for i in range(len(data[0])):
                     # The data.
-                    file_data[-1].append(repr(data[spin_index][i]))
+                    if is_float(data[spin_index][i]):
+                        file_data[-1].append(float_format % data[spin_index][i])
+                    else:
+                        file_data[-1].append(repr(data[spin_index][i]))
 
                     # The error.
                     if error:
-                        file_data[-1].append(repr(error[spin_index][i]))
+                        if is_float(error[spin_index][i]):
+                            file_data[-1].append(float_format % error[spin_index][i])
+                        else:
+                            file_data[-1].append(repr(error[spin_index][i]))
 
             # Simple list.
             else:
                 # The data.
-                file_data[-1].append(repr(data[spin_index]))
+                if is_float(data[spin_index]):
+                    file_data[-1].append(float_format % data[spin_index])
+                else:
+                    file_data[-1].append(repr(data[spin_index]))
 
                 # The error.
                 if error:
-                    file_data[-1].append(repr(error[spin_index]))
+                    if is_float(error[spin_index]):
+                        file_data[-1].append(float_format % error[spin_index])
+                    else:
+                        file_data[-1].append(repr(error[spin_index]))
 
         # Only errors.
         elif error:
