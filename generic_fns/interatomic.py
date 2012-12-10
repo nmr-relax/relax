@@ -35,13 +35,17 @@ from relax_io import write_data
 from relax_warnings import RelaxNoSpinWarning
 
 
-def copy(pipe_from=None, pipe_to=None, verbose=True):
+def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):
     """Copy the interatomic data from one data pipe to another.
 
     @keyword pipe_from:         The data pipe to copy the interatomic data from.  This defaults to the current data pipe.
     @type pipe_from:            str
     @keyword pipe_to:           The data pipe to copy the interatomic data to.  This defaults to the current data pipe.
     @type pipe_to:              str
+    @keyword spin_id1:          The spin ID string of the first atom.
+    @type spin_id1:             str
+    @keyword spin_id2:          The spin ID string of the second atom.
+    @type spin_id2:             str
     @keyword verbose:           A flag which if True will cause info about each spin pair to be printed out.
     @type verbose:              bool
     """
@@ -68,7 +72,7 @@ def copy(pipe_from=None, pipe_to=None, verbose=True):
 
     # Loop over the interatomic data of the pipe_from data pipe.
     ids = []
-    for interatom in interatomic_loop(pipe=pipe_from):
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2, pipe=pipe_from):
         # Create a new container.
         new_interatom = create_interatom(spin_id1=interatom.spin_id1, spin_id2=interatom.spin_id2, pipe=pipe_to)
 
@@ -103,7 +107,7 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None):
 
     @keyword spin_id1:  The spin ID string of the first atom.
     @type spin_id1:     str
-    @keyword spin_id2:  The spin ID string of the first atom.
+    @keyword spin_id2:  The spin ID string of the second atom.
     @type spin_id2:     str
     @keyword pipe:      The data pipe to create the interatomic data container for.  This defaults to the current data pipe if not supplied.
     @type pipe:         str or None
