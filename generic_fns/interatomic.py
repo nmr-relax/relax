@@ -29,19 +29,22 @@ import sys
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import Selection, return_spin
-from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError
+from generic_fns.mol_res_spin import Selection, count_spins, return_spin
+from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError, RelaxNoSpinError
 from relax_io import write_data
-from relax_warnings import RelaxNoSpinWarning
 
 
-def copy(pipe_from=None, pipe_to=None, verbose=True):
+def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):
     """Copy the interatomic data from one data pipe to another.
 
     @keyword pipe_from:         The data pipe to copy the interatomic data from.  This defaults to the current data pipe.
     @type pipe_from:            str
     @keyword pipe_to:           The data pipe to copy the interatomic data to.  This defaults to the current data pipe.
     @type pipe_to:              str
+    @keyword spin_id1:          The spin ID string of the first atom.
+    @type spin_id1:             str
+    @keyword spin_id2:          The spin ID string of the second atom.
+    @type spin_id2:             str
     @keyword verbose:           A flag which if True will cause info about each spin pair to be printed out.
     @type verbose:              bool
     """
@@ -58,17 +61,25 @@ def copy(pipe_from=None, pipe_to=None, verbose=True):
     pipes.test(pipe_from)
     pipes.test(pipe_to)
 
+    # Check that the spin IDs exist.
+    if spin_id1:
+        if count_spins(selection=spin_id1, pipe=pipe_from, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id1, pipe_from)
+        if count_spins(selection=spin_id1, pipe=pipe_to, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id1, pipe_to)
+    if spin_id2:
+        if count_spins(selection=spin_id2, pipe=pipe_from, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id2, pipe_from)
+        if count_spins(selection=spin_id2, pipe=pipe_to, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id2, pipe_to)
+
     # Test if pipe_from contains interatomic data (skipping the rest of the function if it is missing).
     if not exists_data(pipe_from):
         return
 
-    # Test if pipe_to contains interatomic data.
-    if exists_data(pipe_to):
-        raise RelaxInteratomError
-
     # Loop over the interatomic data of the pipe_from data pipe.
     ids = []
-    for interatom in interatomic_loop(pipe=pipe_from):
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2, pipe=pipe_from):
         # Create a new container.
         new_interatom = create_interatom(spin_id1=interatom.spin_id1, spin_id2=interatom.spin_id2, pipe=pipe_to)
 
@@ -103,7 +114,7 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None):
 
     @keyword spin_id1:  The spin ID string of the first atom.
     @type spin_id1:     str
-    @keyword spin_id2:  The spin ID string of the first atom.
+    @keyword spin_id2:  The spin ID string of the second atom.
     @type spin_id2:     str
     @keyword pipe:      The data pipe to create the interatomic data container for.  This defaults to the current data pipe if not supplied.
     @type pipe:         str or None

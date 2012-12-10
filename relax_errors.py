@@ -672,8 +672,11 @@ class RelaxNoResError(BaseError):
 
 # Cannot find the spin in the sequence.
 class RelaxNoSpinError(BaseError):
-    def __init__(self, id):
-        self.text = "The spin " + repr(id) + " does not exist."
+    def __init__(self, id, pipe=None):
+        if pipe == None:
+            self.text = "The spin '%s' does not exist." % id
+        else:
+            self.text = "The spin '%s' does not exist in the '%s' data pipe." % (id, pipe)
 
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
