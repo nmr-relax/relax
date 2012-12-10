@@ -29,10 +29,9 @@ import sys
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import Selection, return_spin
-from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError
+from generic_fns.mol_res_spin import Selection, count_spins, return_spin
+from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError, RelaxNoSpinError
 from relax_io import write_data
-from relax_warnings import RelaxNoSpinWarning
 
 
 def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):
@@ -62,13 +61,21 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
     pipes.test(pipe_from)
     pipes.test(pipe_to)
 
+    # Check that the spin IDs exist.
+    if spin_id1:
+        if count_spins(selection=spin_id1, pipe=pipe_from, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id1, pipe_from)
+        if count_spins(selection=spin_id1, pipe=pipe_to, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id1, pipe_to)
+    if spin_id2:
+        if count_spins(selection=spin_id2, pipe=pipe_from, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id2, pipe_from)
+        if count_spins(selection=spin_id2, pipe=pipe_to, skip_desel=False) == 0:
+            raise RelaxNoSpinError(spin_id2, pipe_to)
+
     # Test if pipe_from contains interatomic data (skipping the rest of the function if it is missing).
     if not exists_data(pipe_from):
         return
-
-    # Test if pipe_to contains interatomic data.
-    if exists_data(pipe_to):
-        raise RelaxInteratomError
 
     # Loop over the interatomic data of the pipe_from data pipe.
     ids = []
