@@ -48,6 +48,7 @@ __all__ += [
     'frame_order',
     'frq',
     'grace',
+    'interatomic',
     'jw_mapping',
     'minimisation',
     'model_free',
@@ -97,6 +98,7 @@ import user_functions.fix
 import user_functions.frame_order
 import user_functions.frq
 import user_functions.grace
+import user_functions.interatomic
 import user_functions.jw_mapping
 import user_functions.minimisation
 import user_functions.model_free
