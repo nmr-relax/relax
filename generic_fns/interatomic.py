@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import Selection, count_spins, return_spin
+from generic_fns.mol_res_spin import Selection, count_spins, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError, RelaxNoSpinError
 from relax_io import write_data
 
@@ -72,6 +72,12 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
             raise RelaxNoSpinError(spin_id2, pipe_from)
         if count_spins(selection=spin_id2, pipe=pipe_to, skip_desel=False) == 0:
             raise RelaxNoSpinError(spin_id2, pipe_to)
+
+    # Check for the sequence data in the target pipe if no spin IDs are given.
+    if not spin_id1 and not spin_id2:
+        for spin, spin_id in spin_loop(pipe=pipe_from, return_id=True):
+            if not return_spin(spin_id, pipe=pipe_to):
+                raise RelaxNoSpinError(spin_id, pipe_to)
 
     # Test if pipe_from contains interatomic data (skipping the rest of the function if it is missing).
     if not exists_data(pipe_from):
