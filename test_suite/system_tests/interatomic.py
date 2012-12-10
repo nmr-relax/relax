@@ -28,6 +28,7 @@ from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxNoSpinError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -66,22 +67,40 @@ class Interatomic(SystemTestCase):
         self.interpreter.interatomic.copy(pipe_from='orig', spin_id1=':2@N', spin_id2=':2@H')
         self.interpreter.interatomic.copy(pipe_from='orig', spin_id1=':1@H', spin_id2=':1@N')
 
-        # Check the sequence data.
-        self.assertEqual(cdp.mol[0].name, 'Test mol')
-        self.assertEqual(cdp.mol[0].res[0].name, 'His')
-        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
-        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'H')
-        self.assertEqual(cdp.mol[0].res[1].name, 'His')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
-        self.assertEqual(cdp.mol[0].res[1].spin[1].name, 'H')
+        # Create a new data pipe to copy the data to.
+        self.interpreter.pipe.create(pipe_name="new 2", pipe_type='N-state')
 
-        # Check the interatomic data.
-        self.assertEqual(cdp.interatomic[0].spin_id1, ':2@N')
-        self.assertEqual(cdp.interatomic[0].spin_id2, ':2@H')
-        self.assertEqual(cdp.interatomic[0].y, 2)
-        self.assertEqual(cdp.interatomic[1].spin_id1, ':1@N')
-        self.assertEqual(cdp.interatomic[1].spin_id2, ':1@H')
-        self.assertEqual(cdp.interatomic[1].x, 1)
+        # Copy the data.
+        try:
+            self.interpreter.interatomic.copy(pipe_from='orig')
+        except RelaxNoSpinError:
+            print("Correct RelaxError encountered.")
+        self.interpreter.sequence.copy(pipe_from='orig')
+        self.interpreter.interatomic.copy(pipe_from='orig')
+
+        # Loop over the two new pipes.
+        interatom_index = [[0, 1], [1, 0]]
+        pipes = ['new', 'new 2']
+        for i in range(len(pipes)):
+            # Switch pipes.
+            self.interpreter.pipe.switch(pipes[i])
+
+            # Check the sequence data.
+            self.assertEqual(cdp.mol[0].name, 'Test mol')
+            self.assertEqual(cdp.mol[0].res[0].name, 'His')
+            self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+            self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'H')
+            self.assertEqual(cdp.mol[0].res[1].name, 'His')
+            self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+            self.assertEqual(cdp.mol[0].res[1].spin[1].name, 'H')
+
+            # Check the interatomic data.
+            self.assertEqual(cdp.interatomic[interatom_index[i][0]].spin_id1, ':2@N')
+            self.assertEqual(cdp.interatomic[interatom_index[i][0]].spin_id2, ':2@H')
+            self.assertEqual(cdp.interatomic[interatom_index[i][0]].y, 2)
+            self.assertEqual(cdp.interatomic[interatom_index[i][1]].spin_id1, ':1@N')
+            self.assertEqual(cdp.interatomic[interatom_index[i][1]].spin_id2, ':1@H')
+            self.assertEqual(cdp.interatomic[interatom_index[i][1]].x, 1)
 
 
     def test_manipulation(self):
