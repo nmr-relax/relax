@@ -35,6 +35,55 @@ from test_suite.system_tests.base_classes import SystemTestCase
 class Interatomic(SystemTestCase):
     """Class for testing the interatomic functions."""
 
+    def test_copy(self):
+        """Test the operation of the interatomic.copy user function."""
+
+        # Create an initial data pipe.
+        self.interpreter.pipe.create(pipe_name="orig", pipe_type='N-state')
+
+        # Create some sequence data.
+        self.interpreter.molecule.create(mol_name='Test mol')
+        self.interpreter.residue.create(mol_name='Test mol', res_name='His', res_num=1)
+        self.interpreter.residue.create(mol_name='Test mol', res_name='His', res_num=2)
+        self.interpreter.spin.create(res_num=1, spin_name='N')
+        self.interpreter.spin.create(res_num=1, spin_name='H')
+        self.interpreter.spin.create(res_num=2, spin_name='N')
+        self.interpreter.spin.create(res_num=2, spin_name='H')
+
+        # Define the interatomic interaction.
+        self.interpreter.interatomic.create(spin_id1=':1@N', spin_id2=':1@H')
+        self.interpreter.interatomic.create(spin_id1=':2@N', spin_id2=':2@H')
+
+        # Add some test data.
+        cdp.interatomic[0].x = 1
+        cdp.interatomic[1].y = 2
+
+        # Create a new data pipe to copy the data to.
+        self.interpreter.pipe.create(pipe_name="new", pipe_type='N-state')
+
+        # Copy the data.
+        self.interpreter.sequence.copy(pipe_from='orig')
+        self.interpreter.interatomic.copy(pipe_from='orig', spin_id1=':2@N', spin_id2=':2@H')
+        self.interpreter.interatomic.copy(pipe_from='orig', spin_id1=':1@H', spin_id2=':1@N')
+
+        # Check the sequence data.
+        self.assertEqual(cdp.mol[0].name, 'Test mol')
+        self.assertEqual(cdp.mol[0].res[0].name, 'His')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'H')
+        self.assertEqual(cdp.mol[0].res[1].name, 'His')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[1].spin[1].name, 'H')
+
+        # Check the interatomic data.
+        self.assertEqual(cdp.interatomic[0].spin_id1, ':2@N')
+        self.assertEqual(cdp.interatomic[0].spin_id2, ':2@H')
+        self.assertEqual(cdp.interatomic[0].y, 2)
+        self.assertEqual(cdp.interatomic[1].spin_id1, ':1@N')
+        self.assertEqual(cdp.interatomic[1].spin_id2, ':1@H')
+        self.assertEqual(cdp.interatomic[1].x, 1)
+
+
     def test_manipulation(self):
         """Test the manipulation of interatomic data containers."""
 
