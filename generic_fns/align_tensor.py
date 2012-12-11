@@ -155,7 +155,7 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Add the tensor if it doesn't already exist.
     if tensor_to not in dp_to.align_tensors.names():
-        tensor_obj = cdp.align_tensors.add_item(tensor_to)
+        dp_to.align_tensors.add_item(tensor_to)
 
     # Find the tensor index.
     index_from = get_tensor_index(tensor_from, pipe_from)
