@@ -93,6 +93,29 @@ def bundle_names():
     return list(ds.pipe_bundles.keys())
 
 
+def change_type(pipe_type=None):
+    """Change the type of the current data pipe.
+
+    @keyword pipe_type: The new data pipe type which can be one of the following:
+        'ct':  Consistency testing,
+        'frame order':  The Frame Order theories.
+        'jw':  Reduced spectral density mapping,
+        'hybrid':  The hybridised data pipe.
+        'mf':  Model-free analysis,
+        'N-state':  N-state model of domain dynamics,
+        'noe':  Steady state NOE calculation,
+        'relax_fit':  Relaxation curve fitting,
+        'relax_disp':  Relaxation dispersion,
+    @type pipe_type:    str
+    """
+
+    # Tests for the pipe type.
+    check_type(pipe_type)
+
+    # Change the type.
+    cdp.pipe_type = pipe_type
+
+
 def copy(pipe_from=None, pipe_to=None, bundle_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
