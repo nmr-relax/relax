@@ -93,6 +93,29 @@ def bundle_names():
     return list(ds.pipe_bundles.keys())
 
 
+def change_type(pipe_type=None):
+    """Change the type of the current data pipe.
+
+    @keyword pipe_type: The new data pipe type which can be one of the following:
+        'ct':  Consistency testing,
+        'frame order':  The Frame Order theories.
+        'jw':  Reduced spectral density mapping,
+        'hybrid':  The hybridised data pipe.
+        'mf':  Model-free analysis,
+        'N-state':  N-state model of domain dynamics,
+        'noe':  Steady state NOE calculation,
+        'relax_fit':  Relaxation curve fitting,
+        'relax_disp':  Relaxation dispersion,
+    @type pipe_type:    str
+    """
+
+    # Tests for the pipe type.
+    check_type(pipe_type)
+
+    # Change the type.
+    cdp.pipe_type = pipe_type
+
+
 def copy(pipe_from=None, pipe_to=None, bundle_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
@@ -162,6 +185,28 @@ def create(pipe_name=None, pipe_type=None, bundle=None, switch=True):
     @type switch:       bool
     """
 
+    # Tests for the pipe type.
+    check_type(pipe_type)
+
+    # Acquire the pipe lock (data modifying function), and make sure it is finally released.
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
+    try:
+        # Add the data pipe.
+        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, bundle=bundle, switch=switch)
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
+
+
+def check_type(pipe_type):
+    """Check the validity of the given data pipe type.
+
+    @keyword pipe_type: The data pipe type to check.
+    @type pipe_type:    str
+    @raises RelaxError: If the data pipe type is invalid or the required Python modules are missing.
+    """
+
     # Test if pipe_type is valid.
     if not pipe_type in VALID_TYPES:
         raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(VALID_TYPES) + ".")
@@ -173,16 +218,6 @@ def create(pipe_name=None, pipe_type=None, bundle=None, switch=True):
     # Test that the scipy is installed for the frame order analysis.
     if pipe_type == 'frame order' and not scipy_module:
         raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
-
-    # Acquire the pipe lock (data modifying function), and make sure it is finally released.
-    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
-    try:
-        # Add the data pipe.
-        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, bundle=bundle, switch=switch)
-
-    # Release the lock.
-    finally:
-        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
 def cdp_name():

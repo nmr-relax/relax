@@ -74,6 +74,35 @@ uf.gui_icon = "relax.pipe_bundle"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe_bundle.png'
 
         
+# The pipe.change_type user function.
+uf = uf_info.add_uf('pipe.change_type')
+uf.title = "Change the type of the current data pipe."
+uf.title_short = "Data pipe type change."
+uf.add_keyarg(
+    name = "pipe_type",
+    py_type = "str",
+    desc_short = "type of data pipe",
+    desc = "The type of data pipe.",
+    wiz_element_type = 'combo',
+    wiz_combo_choices = pipes.PIPE_DESC_LIST,
+    wiz_combo_data = pipes.VALID_TYPES,
+    wiz_read_only = True
+)
+uf.backend = pipes.change_type
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The data pipe type must be one of the following:")
+for name in pipes.VALID_TYPES:
+    uf.desc[-1].add_item_list_element("'%s'" % name, "%s." % pipes.PIPE_DESC[name])
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To change the type of the current 'frame order' data pipe to the N-state model, type one of:")
+uf.desc[-1].add_prompt("relax> pipe.change_type('N-state')")
+uf.desc[-1].add_prompt("relax> pipe.change_type(pipe_type='N-state')")
+uf.menu_text = "change_&type"
+uf.wizard_image = WIZARD_IMAGE_PATH + 'pipe.png'
+
+
 # The pipe.copy user function.
 uf = uf_info.add_uf('pipe.copy')
 uf.title = "Copy a data pipe."
