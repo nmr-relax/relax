@@ -115,8 +115,8 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     @type tensor_from:  str
     @param pipe_from:   The data pipe to copy the alignment tensor data from.  This defaults to the current data pipe.
     @type pipe_from:    str
-    @param tensor_to:   The identification string of the alignment tensor to copy the data to.
-    @type tensor_to:    str
+    @param tensor_to:   The identification string of the alignment tensor to copy the data to.  If set to None, then the ID string will be set to the value of tensor_from.
+    @type tensor_to:    str or None
     @param pipe_to:     The data pipe to copy the alignment tensor data to.  This defaults to the current data pipe.
     @type pipe_to:      str
     """
@@ -128,6 +128,10 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
         pipe_to = pipes.cdp_name()
+
+    # The target tensor ID string.
+    if tensor_to == None:
+        tensor_to = tensor_from
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -148,6 +152,10 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     # Create the align_tensors dictionary if it doesn't yet exist.
     if not hasattr(dp_to, 'align_tensors'):
         dp_to.align_tensors = AlignTensorList()
+
+    # Add the tensor if it doesn't already exist.
+    if tensor_to not in dp_to.align_tensors.names():
+        tensor_obj = cdp.align_tensors.add_item(tensor_to)
 
     # Find the tensor index.
     index_from = get_tensor_index(tensor_from, pipe_from)
