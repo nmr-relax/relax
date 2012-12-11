@@ -32,6 +32,19 @@ from test_suite.system_tests.base_classes import SystemTestCase
 class Pipes(SystemTestCase):
     """TestCase class for the functional tests of relax data pipes."""
 
+    def test_change_type(self):
+        """Test the pipe.change_type user function."""
+
+        # Create the data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Change the type.
+        self.interpreter.pipe.change_type('N-state')
+
+        # Check the type.
+        self.assertEqual(cdp.pipe_type, 'N-state')
+
+
     def test_pipe_bundle(self):
         """Test the pipe bundle concepts."""
 
