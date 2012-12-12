@@ -42,7 +42,7 @@ def mag_constant(B0=None, T=None):
 pipe.create('generate data', 'N-state')
 
 # Load the structure.
-structure.read_pdb("bax_C_1J7P_N_H_Ca.pdb", dir="../../structures/", set_mol_name="CaM C-dom")
+structure.read_pdb("bax_C_1J7P_N_H_Ca.pdb", dir="../../structures/", set_mol_name="CaM")
 
 # Load the spins.
 structure.load_spins("@N")

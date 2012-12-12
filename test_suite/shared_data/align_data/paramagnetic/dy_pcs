@@ -1,133 +1,133 @@
-'CaM C-dom'     82         GLU        1          N                     -1.813382
-'CaM C-dom'     83         GLU        15         N                     -2.215500
-'CaM C-dom'     83         GLU        24         H                     -1.903037
-'CaM C-dom'     84         GLU        30         N                     -2.515796
-'CaM C-dom'     84         GLU        39         H                     -2.185043
-'CaM C-dom'     85         ILE        45         N                     -3.440094
-'CaM C-dom'     85         ILE        53         H                     -2.969074
-'CaM C-dom'     86         ARG        64         N                     -5.014090
-'CaM C-dom'     86         ARG        75         H                     -4.129374
-'CaM C-dom'     87         GLU        88         N                     -5.688425
-'CaM C-dom'     87         GLU        97         H                     -4.668723
-'CaM C-dom'     88         ALA        103        N                     -6.887465
-'CaM C-dom'     88         ALA        108        H                     -5.776997
-'CaM C-dom'     89         PHE        113        N                    -12.248225
-'CaM C-dom'     89         PHE        124        H                     -9.820826
-'CaM C-dom'     90         ARG        133        N                    -19.493556
-'CaM C-dom'     90         ARG        144        H                    -14.423235
-'CaM C-dom'     91         VAL        157        N                    -18.853060
-'CaM C-dom'     91         VAL        164        H                    -15.341418
-'CaM C-dom'     92         PHE        173        N                    -31.633928
-'CaM C-dom'     92         PHE        184        H                    -27.632957
-'CaM C-dom'     93         ASP        193        N                   -106.650785
-'CaM C-dom'     93         ASP        201        H                    -69.550480
-'CaM C-dom'     94         LYS        205        N                   -163.738161
-'CaM C-dom'     94         LYS        214        H                   -194.173578
-'CaM C-dom'     95         ASP        227        N                   -181.079712
-'CaM C-dom'     95         ASP        235        H                   -360.070674
-'CaM C-dom'     96         GLY        239        N                   -127.938098
-'CaM C-dom'     96         GLY        243        H                   -171.705403
-'CaM C-dom'     97         ASN        246        N                   -167.051439
-'CaM C-dom'     97         ASN        254        H                   -312.647418
-'CaM C-dom'     98         GLY        260        N                   -102.491833
-'CaM C-dom'     98         GLY        264        H                   -124.645784
-'CaM C-dom'     99         TYR        267        N                   -147.476868
-'CaM C-dom'     99         TYR        278        H                   -248.021627
-'CaM C-dom'     100        ILE        286        N                   -152.762819
-'CaM C-dom'     100        ILE        294        H                    -86.858900
-'CaM C-dom'     101        SER        305        N                   -161.812869
-'CaM C-dom'     101        SER        311        H                   -282.670040
-'CaM C-dom'     102        ALA        316        N                    -30.589166
-'CaM C-dom'     102        ALA        321        H                    -28.678371
-'CaM C-dom'     103        ALA        326        N                    -21.769227
-'CaM C-dom'     103        ALA        331        H                    -23.884553
-'CaM C-dom'     104        GLU        336        N                    -40.418271
-'CaM C-dom'     104        GLU        345        H                    -49.106931
-'CaM C-dom'     105        LEU        351        N                    -27.805860
-'CaM C-dom'     105        LEU        359        H                    -30.862002
-'CaM C-dom'     106        ARG        370        N                    -12.189398
-'CaM C-dom'     106        ARG        381        H                    -14.304872
-'CaM C-dom'     107        HIS        394        N                    -11.392128
-'CaM C-dom'     107        HIS        404        H                    -14.584785
-'CaM C-dom'     108        VAL        411        N                    -11.408047
-'CaM C-dom'     108        VAL        418        H                    -14.527300
-'CaM C-dom'     109        MET        427        N                     -6.793951
-'CaM C-dom'     109        MET        435        H                     -8.143999
-'CaM C-dom'     110        THR        444        N                     -4.412039
-'CaM C-dom'     110        THR        451        H                     -5.300630
-'CaM C-dom'     111        ASN        458        N                     -3.798022
-'CaM C-dom'     111        ASN        466        H                     -4.600638
-'CaM C-dom'     112        LEU        472        N                     -3.366934
-'CaM C-dom'     112        LEU        480        H                     -3.915458
-'CaM C-dom'     113        GLY        491        N                     -2.263089
-'CaM C-dom'     113        GLY        495        H                     -2.499865
-'CaM C-dom'     114        GLU        498        N                     -2.179276
-'CaM C-dom'     114        GLU        507        H                     -2.490787
-'CaM C-dom'     115        LYS        513        N                     -2.016346
-'CaM C-dom'     115        LYS        522        H                     -1.754866
-'CaM C-dom'     116        LEU        535        N                     -2.506071
-'CaM C-dom'     116        LEU        543        H                     -2.895513
-'CaM C-dom'     117        THR        554        N                     -2.220455
-'CaM C-dom'     117        THR        561        H                     -2.029716
-'CaM C-dom'     118        ASP        568        N                     -2.655855
-'CaM C-dom'     118        ASP        576        H                     -2.426732
-'CaM C-dom'     119        GLU        580        N                     -2.309017
-'CaM C-dom'     119        GLU        589        H                     -2.097655
-'CaM C-dom'     120        GLU        595        N                     -2.144320
-'CaM C-dom'     120        GLU        604        H                     -2.067959
-'CaM C-dom'     121        VAL        610        N                     -3.278117
-'CaM C-dom'     121        VAL        617        H                     -3.175154
-'CaM C-dom'     122        ASP        626        N                     -3.738341
-'CaM C-dom'     122        ASP        634        H                     -3.418167
-'CaM C-dom'     123        GLU        638        N                     -2.680368
-'CaM C-dom'     123        GLU        647        H                     -2.575464
-'CaM C-dom'     124        MET        653        N                     -3.093487
-'CaM C-dom'     124        MET        661        H                     -3.125773
-'CaM C-dom'     125        ILE        670        N                     -4.894358
-'CaM C-dom'     125        ILE        678        H                     -4.758707
-'CaM C-dom'     126        ARG        689        N                     -3.865689
-'CaM C-dom'     126        ARG        700        H                     -3.742610
-'CaM C-dom'     127        GLU        713        N                     -2.758198
-'CaM C-dom'     127        GLU        722        H                     -2.873096
-'CaM C-dom'     128        ALA        728        N                     -3.484757
-'CaM C-dom'     128        ALA        733        H                     -3.733417
-'CaM C-dom'     129        ASP        738        N                     -4.622303
-'CaM C-dom'     129        ASP        746        H                     -4.404936
-'CaM C-dom'     130        ILE        750        N                     -3.664751
-'CaM C-dom'     130        ILE        758        H                     -4.153412
-'CaM C-dom'     131        ASP        769        N                     -3.405724
-'CaM C-dom'     131        ASP        777        H                     -4.024470
-'CaM C-dom'     132        GLY        781        N                     -3.457393
-'CaM C-dom'     132        GLY        785        H                     -3.546555
-'CaM C-dom'     133        ASP        788        N                     -5.170821
-'CaM C-dom'     133        ASP        796        H                     -5.300219
-'CaM C-dom'     134        GLY        800        N                     -7.415243
-'CaM C-dom'     134        GLY        804        H                     -6.566346
-'CaM C-dom'     135        GLN        807        N                    -13.847426
-'CaM C-dom'     135        GLN        816        H                    -11.734922
-'CaM C-dom'     136        VAL        824        N                    -22.834783
-'CaM C-dom'     136        VAL        831        H                    -29.936264
-'CaM C-dom'     137        ASN        840        N                    -17.152934
-'CaM C-dom'     137        ASN        848        H                    -13.101899
-'CaM C-dom'     138        TYR        854        N                    -14.161049
-'CaM C-dom'     138        TYR        865        H                    -15.808992
-'CaM C-dom'     139        GLU        873        N                     -6.700634
-'CaM C-dom'     139        GLU        882        H                     -7.280869
-'CaM C-dom'     140        GLU        888        N                     -5.752295
-'CaM C-dom'     140        GLU        897        H                     -6.700754
-'CaM C-dom'     141        PHE        903        N                     -7.129491
-'CaM C-dom'     141        PHE        914        H                     -8.310061
-'CaM C-dom'     142        VAL        923        N                     -4.854495
-'CaM C-dom'     142        VAL        930        H                     -5.373773
-'CaM C-dom'     143        GLN        939        N                     -3.017392
-'CaM C-dom'     143        GLN        948        H                     -3.353918
-'CaM C-dom'     144        MET        956        N                     -3.028767
-'CaM C-dom'     144        MET        964        H                     -3.518140
-'CaM C-dom'     145        MET        973        N                     -2.987271
-'CaM C-dom'     145        MET        981        H                     -3.370786
-'CaM C-dom'     146        THR        990        N                     -2.160228
-'CaM C-dom'     146        THR        997        H                     -2.412055
-'CaM C-dom'     147        ALA        1004       N                     -1.610687
-'CaM C-dom'     147        ALA        1009       H                     -1.767706
-'CaM C-dom'     148        LYS        1014       N                     -1.088616
-'CaM C-dom'     148        LYS        1022       H                     -1.154659
+'CaM'           82         GLU        1          N                     -1.813382
+'CaM'           83         GLU        15         N                     -2.215500
+'CaM'           83         GLU        24         H                     -1.903037
+'CaM'           84         GLU        30         N                     -2.515796
+'CaM'           84         GLU        39         H                     -2.185043
+'CaM'           85         ILE        45         N                     -3.440094
+'CaM'           85         ILE        53         H                     -2.969074
+'CaM'           86         ARG        64         N                     -5.014090
+'CaM'           86         ARG        75         H                     -4.129374
+'CaM'           87         GLU        88         N                     -5.688425
+'CaM'           87         GLU        97         H                     -4.668723
+'CaM'           88         ALA        103        N                     -6.887465
+'CaM'           88         ALA        108        H                     -5.776997
+'CaM'           89         PHE        113        N                    -12.248225
+'CaM'           89         PHE        124        H                     -9.820826
+'CaM'           90         ARG        133        N                    -19.493556
+'CaM'           90         ARG        144        H                    -14.423235
+'CaM'           91         VAL        157        N                    -18.853060
+'CaM'           91         VAL        164        H                    -15.341418
+'CaM'           92         PHE        173        N                    -31.633928
+'CaM'           92         PHE        184        H                    -27.632957
+'CaM'           93         ASP        193        N                   -106.650785
+'CaM'           93         ASP        201        H                    -69.550480
+'CaM'           94         LYS        205        N                   -163.738161
+'CaM'           94         LYS        214        H                   -194.173578
+'CaM'           95         ASP        227        N                   -181.079712
+'CaM'           95         ASP        235        H                   -360.070674
+'CaM'           96         GLY        239        N                   -127.938098
+'CaM'           96         GLY        243        H                   -171.705403
+'CaM'           97         ASN        246        N                   -167.051439
+'CaM'           97         ASN        254        H                   -312.647418
+'CaM'           98         GLY        260        N                   -102.491833
+'CaM'           98         GLY        264        H                   -124.645784
+'CaM'           99         TYR        267        N                   -147.476868
+'CaM'           99         TYR        278        H                   -248.021627
+'CaM'           100        ILE        286        N                   -152.762819
+'CaM'           100        ILE        294        H                    -86.858900
+'CaM'           101        SER        305        N                   -161.812869
+'CaM'           101        SER        311        H                   -282.670040
+'CaM'           102        ALA        316        N                    -30.589166
+'CaM'           102        ALA        321        H                    -28.678371
+'CaM'           103        ALA        326        N                    -21.769227
+'CaM'           103        ALA        331        H                    -23.884553
+'CaM'           104        GLU        336        N                    -40.418271
+'CaM'           104        GLU        345        H                    -49.106931
+'CaM'           105        LEU        351        N                    -27.805860
+'CaM'           105        LEU        359        H                    -30.862002
+'CaM'           106        ARG        370        N                    -12.189398
+'CaM'           106        ARG        381        H                    -14.304872
+'CaM'           107        HIS        394        N                    -11.392128
+'CaM'           107        HIS        404        H                    -14.584785
+'CaM'           108        VAL        411        N                    -11.408047
+'CaM'           108        VAL        418        H                    -14.527300
+'CaM'           109        MET        427        N                     -6.793951
+'CaM'           109        MET        435        H                     -8.143999
+'CaM'           110        THR        444        N                     -4.412039
+'CaM'           110        THR        451        H                     -5.300630
+'CaM'           111        ASN        458        N                     -3.798022
+'CaM'           111        ASN        466        H                     -4.600638
+'CaM'           112        LEU        472        N                     -3.366934
+'CaM'           112        LEU        480        H                     -3.915458
+'CaM'           113        GLY        491        N                     -2.263089
+'CaM'           113        GLY        495        H                     -2.499865
+'CaM'           114        GLU        498        N                     -2.179276
+'CaM'           114        GLU        507        H                     -2.490787
+'CaM'           115        LYS        513        N                     -2.016346
+'CaM'           115        LYS        522        H                     -1.754866
+'CaM'           116        LEU        535        N                     -2.506071
+'CaM'           116        LEU        543        H                     -2.895513
+'CaM'           117        THR        554        N                     -2.220455
+'CaM'           117        THR        561        H                     -2.029716
+'CaM'           118        ASP        568        N                     -2.655855
+'CaM'           118        ASP        576        H                     -2.426732
+'CaM'           119        GLU        580        N                     -2.309017
+'CaM'           119        GLU        589        H                     -2.097655
+'CaM'           120        GLU        595        N                     -2.144320
+'CaM'           120        GLU        604        H                     -2.067959
+'CaM'           121        VAL        610        N                     -3.278117
+'CaM'           121        VAL        617        H                     -3.175154
+'CaM'           122        ASP        626        N                     -3.738341
+'CaM'           122        ASP        634        H                     -3.418167
+'CaM'           123        GLU        638        N                     -2.680368
+'CaM'           123        GLU        647        H                     -2.575464
+'CaM'           124        MET        653        N                     -3.093487
+'CaM'           124        MET        661        H                     -3.125773
+'CaM'           125        ILE        670        N                     -4.894358
+'CaM'           125        ILE        678        H                     -4.758707
+'CaM'           126        ARG        689        N                     -3.865689
+'CaM'           126        ARG        700        H                     -3.742610
+'CaM'           127        GLU        713        N                     -2.758198
+'CaM'           127        GLU        722        H                     -2.873096
+'CaM'           128        ALA        728        N                     -3.484757
+'CaM'           128        ALA        733        H                     -3.733417
+'CaM'           129        ASP        738        N                     -4.622303
+'CaM'           129        ASP        746        H                     -4.404936
+'CaM'           130        ILE        750        N                     -3.664751
+'CaM'           130        ILE        758        H                     -4.153412
+'CaM'           131        ASP        769        N                     -3.405724
+'CaM'           131        ASP        777        H                     -4.024470
+'CaM'           132        GLY        781        N                     -3.457393
+'CaM'           132        GLY        785        H                     -3.546555
+'CaM'           133        ASP        788        N                     -5.170821
+'CaM'           133        ASP        796        H                     -5.300219
+'CaM'           134        GLY        800        N                     -7.415243
+'CaM'           134        GLY        804        H                     -6.566346
+'CaM'           135        GLN        807        N                    -13.847426
+'CaM'           135        GLN        816        H                    -11.734922
+'CaM'           136        VAL        824        N                    -22.834783
+'CaM'           136        VAL        831        H                    -29.936264
+'CaM'           137        ASN        840        N                    -17.152934
+'CaM'           137        ASN        848        H                    -13.101899
+'CaM'           138        TYR        854        N                    -14.161049
+'CaM'           138        TYR        865        H                    -15.808992
+'CaM'           139        GLU        873        N                     -6.700634
+'CaM'           139        GLU        882        H                     -7.280869
+'CaM'           140        GLU        888        N                     -5.752295
+'CaM'           140        GLU        897        H                     -6.700754
+'CaM'           141        PHE        903        N                     -7.129491
+'CaM'           141        PHE        914        H                     -8.310061
+'CaM'           142        VAL        923        N                     -4.854495
+'CaM'           142        VAL        930        H                     -5.373773
+'CaM'           143        GLN        939        N                     -3.017392
+'CaM'           143        GLN        948        H                     -3.353918
+'CaM'           144        MET        956        N                     -3.028767
+'CaM'           144        MET        964        H                     -3.518140
+'CaM'           145        MET        973        N                     -2.987271
+'CaM'           145        MET        981        H                     -3.370786
+'CaM'           146        THR        990        N                     -2.160228
+'CaM'           146        THR        997        H                     -2.412055
+'CaM'           147        ALA        1004       N                     -1.610687
+'CaM'           147        ALA        1009       H                     -1.767706
+'CaM'           148        LYS        1014       N                     -1.088616
+'CaM'           148        LYS        1022       H                     -1.154659
