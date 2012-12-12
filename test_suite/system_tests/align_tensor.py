@@ -111,6 +111,23 @@ class Align_tensor(SystemTestCase):
         self.assertEqual(cdp.align_tensors[1].name, 'new')
 
 
+    def test_fix(self):
+        """Test the align_tensor.fix user function."""
+
+        # Fix all tensors.
+        self.interpreter.align_tensor.fix()
+
+        # Unfix one tensor.
+        self.interpreter.align_tensor.fix('2 full', fixed=False)
+
+        # Check the fixed flags.
+        flags = [True]*10
+        flags[4] = False
+        for i in range(10):
+            print("Checking the tensor %s: '%s'." % (i, cdp.align_tensors[i].name))
+            self.assertEqual(cdp.align_tensors[i].fixed, flags[i])
+
+
     def test_to_and_from_xml(self):
         """Test the conversion to and from XML."""
 
