@@ -14,7 +14,7 @@ mu0 = 4.0 * pi * 1e-7                       # The permeability of vacuum.
 h_bar = 6.62606876 * 1e-34 / (2.0 * pi)     # Dirac's constant.
 g1H = 26.7522212 * 1e7                      # The 1H gyromagnetic ratio.
 g15N = -2.7126 * 1e7                        # The 15N gyromagnetic ratio.
-r_nh = 1.02 * 1e-10                         # The NH bond length.
+r_nh = 1.041 * 1e-10                        # The NH bond length for the RDC.
 
 
 def mag_constant(B0=None, T=None):
