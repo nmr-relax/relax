@@ -125,11 +125,11 @@ for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
 
     # Calculate the PCS for the first tensor, and write out the data.
     pcs = d * dot(dot(interatom.vector, chi0), interatom.vector)
-    dy_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (repr(mol_name), res_num, res_name, spin.num, spin.name, pcs))
+    dy_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (mol_name, res_num, res_name, spin.num, spin.name, pcs))
 
     # Calculate the PCS for the first tensor, and write out the data.
     pcs = d * dot(dot(interatom.vector, chi2), interatom.vector)
-    er_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (repr(mol_name), res_num, res_name, spin.num, spin.name, pcs))
+    er_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (mol_name, res_num, res_name, spin.num, spin.name, pcs))
 
 # Close the PCS files.
 dy_pcs.close()
