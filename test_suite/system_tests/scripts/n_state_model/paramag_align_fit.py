@@ -55,8 +55,8 @@ self._execute_uf(uf_name='temperature', id='Er', temp=303)
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Set up the alignment tensors (for faster optimisation in the test suite)
-self._execute_uf(uf_name='align_tensor.init', tensor='Dy', params=(0.00037, -0.00017, 0.00016, 0.00060, -0.00019))
-self._execute_uf(uf_name='align_tensor.init', tensor='Er', params=(0.00141,  0.00153, 0.00169, 0.00084, -0.00098))
+self._execute_uf(uf_name='align_tensor.init', tensor='Dy', align_id='Dy', params=(0.00037, -0.00017, 0.00016, 0.00060, -0.00019))
+self._execute_uf(uf_name='align_tensor.init', tensor='Er', align_id='Er', params=(0.00141,  0.00153, 0.00169, 0.00084, -0.00098))
 
 # Minimisation of only the Er tensor.
 self._execute_uf(uf_name='align_tensor.fix', id='Dy', fixed=True)
