@@ -934,14 +934,18 @@ class N_state_model(API_base, API_common):
             # Get the temperature for the PCS constant.
             if align_id in cdp.temperature:
                 temp.append(cdp.temperature[align_id])
+
+            # The temperature must be given!
             else:
-                temp.append(0.0)
+                raise RelaxError("The experimental temperature for the alignment ID '%s' has not been set." % align_id)
 
             # Get the spectrometer frequency in Tesla units for the PCS constant.
             if align_id in cdp.frq:
                 frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
+
+            # The frequency must be given!
             else:
-                frq.append(1e-10)
+                raise RelaxError("The spectrometer frequency for the alignment ID '%s' has not been set." % align_id)
 
             # Spin loop.
             j = 0
