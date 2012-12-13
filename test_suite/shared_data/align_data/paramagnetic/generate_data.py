@@ -67,6 +67,8 @@ frq2 = 600e6 * 2.0 * pi / g1H
 # Convert to magnetic susceptibility tensors.
 chi0 = A0 * mag_constant(B0=frq0, T=303)
 chi2 = A2 * mag_constant(B0=frq2, T=303)
+print("\nChi tensor 0:\n%s" % chi0)
+print("\nChi tensor 2:\n%s" % chi2)
 
 
 # RDCs.
@@ -124,13 +126,17 @@ for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
     d = 1.0 / (4.0 * pi * r**3) * 1e6
 
     # Calculate the PCS for the first tensor, and write out the data.
-    pcs = d * dot(dot(interatom.vector, chi0), interatom.vector)
+    pcs = d * dot(dot(unit_vect, chi0), unit_vect)
     dy_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (mol_name, res_num, res_name, spin.num, spin.name, pcs))
 
     # Calculate the PCS for the first tensor, and write out the data.
-    pcs = d * dot(dot(interatom.vector, chi2), interatom.vector)
+    pcs = d * dot(dot(unit_vect, chi2), unit_vect)
     er_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (mol_name, res_num, res_name, spin.num, spin.name, pcs))
 
 # Close the PCS files.
 dy_pcs.close()
 er_pcs.close()
+
+
+# Write out a results file.
+results.write(file='generate_data', dir=None, force=True)
