@@ -580,6 +580,25 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz_err, 0.0)
 
 
+    def test_paramag_align_fit(self):
+        """Test the use of RDCs and PCSs to find the alignment tensor."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'paramag_align_fit.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[1].Axx,  0.001414718232784)
+        self.assertAlmostEqual(cdp.align_tensors[1].Ayy,  0.001530457843766)
+        self.assertAlmostEqual(cdp.align_tensors[1].Axy,  0.001689957281873)
+        self.assertAlmostEqual(cdp.align_tensors[1].Axz,  0.000838692329704)
+        self.assertAlmostEqual(cdp.align_tensors[1].Ayz, -0.000984302159683)
+        self.assertAlmostEqual(cdp.q_factors_rdc['Er'], 0.0, 7)
+        self.assertAlmostEqual(cdp.q_factors_rdc_norm2['Er'], 0.0, 7)
+        self.assertAlmostEqual(cdp.q_factors_pcs['Er'], 0.0, 7)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 7)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0, 7)
+
+
     def test_paramag_centre_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
 

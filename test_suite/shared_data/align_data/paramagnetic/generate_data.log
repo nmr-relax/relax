@@ -1,0 +1,473 @@
+
+
+
+                                     relax repository checkout
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2012 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'generate_data.py'
+----------------------------------------------------------------------------------------------------
+# Python module imports.
+from math import pi
+from numpy import dot, float64, array
+from numpy.linalg import norm
+
+# relax module imports.
+from generic_fns.interatomic import interatomic_loop
+from generic_fns.mol_res_spin import spin_loop
+
+
+# Some constants.
+kB = 1.380650424 * 1e-23                    # Boltzmann's constant in SI units of J.K^-1B.
+mu0 = 4.0 * pi * 1e-7                       # The permeability of vacuum.
+h_bar = 6.62606876 * 1e-34 / (2.0 * pi)     # Dirac's constant.
+g1H = 26.7522212 * 1e7                      # The 1H gyromagnetic ratio.
+g15N = -2.7126 * 1e7                        # The 15N gyromagnetic ratio.
+r_nh = 1.041 * 1e-10                        # The NH bond length for the RDC.
+
+
+def mag_constant(B0=None, T=None):
+    """Calculate the constant for conversion of alignment tensor to magnetic susceptibility tensors.
+
+    The conversion constant is defined as::
+
+            15.mu0.k.T 
+        d = ---------- .
+              Bo**2
+
+
+    @keyword B0:    The magnetic field strength.
+    @type B0:       float
+    @keyword T:     The temperature in Kalvin.
+    @type T:        float
+    """
+
+    # Return the constant.
+    return 15.0 * mu0 * kB * T / B0**2
+
+
+
+# Create a data pipe.
+pipe.create('generate data', 'N-state')
+
+# Load the structure.
+structure.read_pdb("bax_C_1J7P_N_H_Ca.pdb", dir="../../structures/", set_mol_name="CaM")
+
+# Load the spins.
+structure.load_spins("@N")
+structure.load_spins("@H")
+
+# Create the NH vector containers.
+dipole_pair.define('@N', '@H')
+dipole_pair.unit_vectors()
+
+# Set up some alignment tensors (from the random_tensors.py script).
+align_tensor.init(tensor='tensor 0', params=(0.0006157864417437287, -0.00027914923898849156, 0.0002715095515843512, 0.0009842872030009584, -0.00031390384563948447), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.init(tensor='tensor 2', params=(0.0006287636590147914, 0.0006802034861179492, 0.0007510921252766747, 0.00037275214653516623, -0.0004374676265261981), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+# Alias the tensors.
+A0 = cdp.align_tensors[0].A
+A2 = cdp.align_tensors[1].A
+
+# The frequencies of the two alignments.
+frq0 = 900e6 * 2.0 * pi / g1H
+frq2 = 600e6 * 2.0 * pi / g1H
+
+# Convert to magnetic susceptibility tensors.
+chi0 = A0 * mag_constant(B0=frq0, T=303)
+chi2 = A2 * mag_constant(B0=frq2, T=303)
+print("\nChi tensor 0:\n%s" % chi0)
+print("\nChi tensor 2:\n%s" % chi2)
+
+
+# RDCs.
+#######
+
+# Open the RDC files.
+dy_500_rdc = open('dy_500_rdc', 'w')
+dy_700_rdc = open('dy_700_rdc', 'w')
+er_900_rdc = open('er_900_rdc', 'w')
+
+# The dipolar constant.
+d = - 3.0/(2.0*pi) * mu0 / (4.0*pi) * g1H * g15N * h_bar / r_nh**3
+
+# Loop over the interatomic data containers and calculate RDCs.
+for interatom in interatomic_loop():
+    # Calculate the RDC at 500 MHz for the first tensor, and write out the data.
+    A = chi0 / mag_constant(B0=500e6 * 2.0 * pi / g1H, T=303)
+    rdc = d * dot(dot(interatom.vector, A), interatom.vector)
+    dy_500_rdc.write("%-20s %-20s %20f\n" % (repr(interatom.spin_id1), repr(interatom.spin_id2), rdc))
+
+    # Calculate the RDC at 700 MHz for the first tensor, and write out the data.
+    A = chi0 / mag_constant(B0=700e6 * 2.0 * pi / g1H, T=303)
+    rdc = d * dot(dot(interatom.vector, A), interatom.vector)
+    dy_700_rdc.write("%-20s %-20s %20f\n" % (repr(interatom.spin_id1), repr(interatom.spin_id2), rdc))
+
+    # Calculate the RDC at 900 MHz for the second tensor, and write out the data.
+    A = chi2 / mag_constant(B0=900e6 * 2.0 * pi / g1H, T=303)
+    rdc = d * dot(dot(interatom.vector, A), interatom.vector)
+    er_900_rdc.write("%-20s %-20s %20f\n" % (repr(interatom.spin_id1), repr(interatom.spin_id2), rdc))
+
+# Close the RDC files.
+dy_500_rdc.close()
+dy_700_rdc.close()
+er_900_rdc.close()
+
+
+# PCSs.
+#######
+
+# Open the PCS files.
+dy_pcs = open('dy_pcs', 'w')
+er_pcs = open('er_pcs', 'w')
+
+# Set the PCS centre to the atom :1000 of the Bax structure.
+pcs_centre = array([32.555, -19.130, 27.775], float64)
+
+# Loop over the atoms and calculate the PCS.
+for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+    # The vector.
+    vect = spin.pos - pcs_centre
+    r = norm(vect) * 1e-10
+    unit_vect = vect / norm(vect)
+
+    # The PCS constant (in ppm).
+    d = 1.0 / (4.0 * pi * r**3) * 1e6
+
+    # Calculate the PCS for the first tensor, and write out the data.
+    pcs = d * dot(dot(unit_vect, chi0), unit_vect)
+    dy_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (mol_name, res_num, res_name, spin.num, spin.name, pcs))
+
+    # Calculate the PCS for the first tensor, and write out the data.
+    pcs = d * dot(dot(unit_vect, chi2), unit_vect)
+    er_pcs.write("%-15s %-10s %-10s %-10s %-10s %20f\n" % (mol_name, res_num, res_name, spin.num, spin.name, pcs))
+
+# Close the PCS files.
+dy_pcs.close()
+er_pcs.close()
+
+
+# Write out a results file.
+results.write(file='generate_data', dir=None, force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='generate data', pipe_type='N-state', bundle=None)
+
+relax> structure.read_pdb(file='bax_C_1J7P_N_H_Ca.pdb', dir='../../structures/', read_mol=None, set_mol_name='CaM', read_model=None, set_model_num=None, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../../structures//bax_C_1J7P_N_H_Ca.pdb' for reading.
+Adding molecule 'CaM' to model None (from the original molecule number 1 of model None)
+
+relax> structure.load_spins(spin_id='@N', ave_pos=True)
+Adding the following spins to the relax data store.
+
+# mol_name    res_num    res_name    spin_num    spin_name    
+CaM           82         GLU         1           N            
+CaM           83         GLU         15          N            
+CaM           84         GLU         30          N            
+CaM           85         ILE         45          N            
+CaM           86         ARG         64          N            
+CaM           87         GLU         88          N            
+CaM           88         ALA         103         N            
+CaM           89         PHE         113         N            
+CaM           90         ARG         133         N            
+CaM           91         VAL         157         N            
+CaM           92         PHE         173         N            
+CaM           93         ASP         193         N            
+CaM           94         LYS         205         N            
+CaM           95         ASP         227         N            
+CaM           96         GLY         239         N            
+CaM           97         ASN         246         N            
+CaM           98         GLY         260         N            
+CaM           99         TYR         267         N            
+CaM           100        ILE         286         N            
+CaM           101        SER         305         N            
+CaM           102        ALA         316         N            
+CaM           103        ALA         326         N            
+CaM           104        GLU         336         N            
+CaM           105        LEU         351         N            
+CaM           106        ARG         370         N            
+CaM           107        HIS         394         N            
+CaM           108        VAL         411         N            
+CaM           109        MET         427         N            
+CaM           110        THR         444         N            
+CaM           111        ASN         458         N            
+CaM           112        LEU         472         N            
+CaM           113        GLY         491         N            
+CaM           114        GLU         498         N            
+CaM           115        LYS         513         N            
+CaM           116        LEU         535         N            
+CaM           117        THR         554         N            
+CaM           118        ASP         568         N            
+CaM           119        GLU         580         N            
+CaM           120        GLU         595         N            
+CaM           121        VAL         610         N            
+CaM           122        ASP         626         N            
+CaM           123        GLU         638         N            
+CaM           124        MET         653         N            
+CaM           125        ILE         670         N            
+CaM           126        ARG         689         N            
+CaM           127        GLU         713         N            
+CaM           128        ALA         728         N            
+CaM           129        ASP         738         N            
+CaM           130        ILE         750         N            
+CaM           131        ASP         769         N            
+CaM           132        GLY         781         N            
+CaM           133        ASP         788         N            
+CaM           134        GLY         800         N            
+CaM           135        GLN         807         N            
+CaM           136        VAL         824         N            
+CaM           137        ASN         840         N            
+CaM           138        TYR         854         N            
+CaM           139        GLU         873         N            
+CaM           140        GLU         888         N            
+CaM           141        PHE         903         N            
+CaM           142        VAL         923         N            
+CaM           143        GLN         939         N            
+CaM           144        MET         956         N            
+CaM           145        MET         973         N            
+CaM           146        THR         990         N            
+CaM           147        ALA         1004        N            
+CaM           148        LYS         1014        N            
+
+relax> structure.load_spins(spin_id='@H', ave_pos=True)
+Adding the following spins to the relax data store.
+
+# mol_name    res_num    res_name    spin_num    spin_name    
+CaM           83         GLU         24          H            
+CaM           84         GLU         39          H            
+CaM           85         ILE         53          H            
+CaM           86         ARG         75          H            
+CaM           87         GLU         97          H            
+CaM           88         ALA         108         H            
+CaM           89         PHE         124         H            
+CaM           90         ARG         144         H            
+CaM           91         VAL         164         H            
+CaM           92         PHE         184         H            
+CaM           93         ASP         201         H            
+CaM           94         LYS         214         H            
+CaM           95         ASP         235         H            
+CaM           96         GLY         243         H            
+CaM           97         ASN         254         H            
+CaM           98         GLY         264         H            
+CaM           99         TYR         278         H            
+CaM           100        ILE         294         H            
+CaM           101        SER         311         H            
+CaM           102        ALA         321         H            
+CaM           103        ALA         331         H            
+CaM           104        GLU         345         H            
+CaM           105        LEU         359         H            
+CaM           106        ARG         381         H            
+CaM           107        HIS         404         H            
+CaM           108        VAL         418         H            
+CaM           109        MET         435         H            
+CaM           110        THR         451         H            
+CaM           111        ASN         466         H            
+CaM           112        LEU         480         H            
+CaM           113        GLY         495         H            
+CaM           114        GLU         507         H            
+CaM           115        LYS         522         H            
+CaM           116        LEU         543         H            
+CaM           117        THR         561         H            
+CaM           118        ASP         576         H            
+CaM           119        GLU         589         H            
+CaM           120        GLU         604         H            
+CaM           121        VAL         617         H            
+CaM           122        ASP         634         H            
+CaM           123        GLU         647         H            
+CaM           124        MET         661         H            
+CaM           125        ILE         678         H            
+CaM           126        ARG         700         H            
+CaM           127        GLU         722         H            
+CaM           128        ALA         733         H            
+CaM           129        ASP         746         H            
+CaM           130        ILE         758         H            
+CaM           131        ASP         777         H            
+CaM           132        GLY         785         H            
+CaM           133        ASP         796         H            
+CaM           134        GLY         804         H            
+CaM           135        GLN         816         H            
+CaM           136        VAL         831         H            
+CaM           137        ASN         848         H            
+CaM           138        TYR         865         H            
+CaM           139        GLU         882         H            
+CaM           140        GLU         897         H            
+CaM           141        PHE         914         H            
+CaM           142        VAL         930         H            
+CaM           143        GLN         948         H            
+CaM           144        MET         964         H            
+CaM           145        MET         981         H            
+CaM           146        THR         997         H            
+CaM           147        ALA         1009        H            
+CaM           148        LYS         1022        H            
+
+relax> dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+Magnetic dipole-dipole interactions are now defined for the following spins:
+
+# Spin_ID_1     Spin_ID_2       
+'#CaM:83@N'     '#CaM:83@H'     
+'#CaM:84@N'     '#CaM:84@H'     
+'#CaM:85@N'     '#CaM:85@H'     
+'#CaM:86@N'     '#CaM:86@H'     
+'#CaM:87@N'     '#CaM:87@H'     
+'#CaM:88@N'     '#CaM:88@H'     
+'#CaM:89@N'     '#CaM:89@H'     
+'#CaM:90@N'     '#CaM:90@H'     
+'#CaM:91@N'     '#CaM:91@H'     
+'#CaM:92@N'     '#CaM:92@H'     
+'#CaM:93@N'     '#CaM:93@H'     
+'#CaM:94@N'     '#CaM:94@H'     
+'#CaM:95@N'     '#CaM:95@H'     
+'#CaM:96@N'     '#CaM:96@H'     
+'#CaM:97@N'     '#CaM:97@H'     
+'#CaM:98@N'     '#CaM:98@H'     
+'#CaM:99@N'     '#CaM:99@H'     
+'#CaM:100@N'    '#CaM:100@H'    
+'#CaM:101@N'    '#CaM:101@H'    
+'#CaM:102@N'    '#CaM:102@H'    
+'#CaM:103@N'    '#CaM:103@H'    
+'#CaM:104@N'    '#CaM:104@H'    
+'#CaM:105@N'    '#CaM:105@H'    
+'#CaM:106@N'    '#CaM:106@H'    
+'#CaM:107@N'    '#CaM:107@H'    
+'#CaM:108@N'    '#CaM:108@H'    
+'#CaM:109@N'    '#CaM:109@H'    
+'#CaM:110@N'    '#CaM:110@H'    
+'#CaM:111@N'    '#CaM:111@H'    
+'#CaM:112@N'    '#CaM:112@H'    
+'#CaM:113@N'    '#CaM:113@H'    
+'#CaM:114@N'    '#CaM:114@H'    
+'#CaM:115@N'    '#CaM:115@H'    
+'#CaM:116@N'    '#CaM:116@H'    
+'#CaM:117@N'    '#CaM:117@H'    
+'#CaM:118@N'    '#CaM:118@H'    
+'#CaM:119@N'    '#CaM:119@H'    
+'#CaM:120@N'    '#CaM:120@H'    
+'#CaM:121@N'    '#CaM:121@H'    
+'#CaM:122@N'    '#CaM:122@H'    
+'#CaM:123@N'    '#CaM:123@H'    
+'#CaM:124@N'    '#CaM:124@H'    
+'#CaM:125@N'    '#CaM:125@H'    
+'#CaM:126@N'    '#CaM:126@H'    
+'#CaM:127@N'    '#CaM:127@H'    
+'#CaM:128@N'    '#CaM:128@H'    
+'#CaM:129@N'    '#CaM:129@H'    
+'#CaM:130@N'    '#CaM:130@H'    
+'#CaM:131@N'    '#CaM:131@H'    
+'#CaM:132@N'    '#CaM:132@H'    
+'#CaM:133@N'    '#CaM:133@H'    
+'#CaM:134@N'    '#CaM:134@H'    
+'#CaM:135@N'    '#CaM:135@H'    
+'#CaM:136@N'    '#CaM:136@H'    
+'#CaM:137@N'    '#CaM:137@H'    
+'#CaM:138@N'    '#CaM:138@H'    
+'#CaM:139@N'    '#CaM:139@H'    
+'#CaM:140@N'    '#CaM:140@H'    
+'#CaM:141@N'    '#CaM:141@H'    
+'#CaM:142@N'    '#CaM:142@H'    
+'#CaM:143@N'    '#CaM:143@H'    
+'#CaM:144@N'    '#CaM:144@H'    
+'#CaM:145@N'    '#CaM:145@H'    
+'#CaM:146@N'    '#CaM:146@H'    
+'#CaM:147@N'    '#CaM:147@H'    
+'#CaM:148@N'    '#CaM:148@H'    
+
+relax> dipole_pair.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins '#CaM:83@N' and '#CaM:83@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:84@N' and '#CaM:84@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:85@N' and '#CaM:85@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:86@N' and '#CaM:86@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:87@N' and '#CaM:87@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:88@N' and '#CaM:88@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:89@N' and '#CaM:89@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:90@N' and '#CaM:90@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:91@N' and '#CaM:91@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:92@N' and '#CaM:92@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:93@N' and '#CaM:93@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:94@N' and '#CaM:94@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:95@N' and '#CaM:95@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:96@N' and '#CaM:96@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:97@N' and '#CaM:97@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:98@N' and '#CaM:98@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:99@N' and '#CaM:99@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:100@N' and '#CaM:100@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:101@N' and '#CaM:101@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:102@N' and '#CaM:102@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:103@N' and '#CaM:103@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:104@N' and '#CaM:104@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:105@N' and '#CaM:105@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:106@N' and '#CaM:106@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:107@N' and '#CaM:107@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:108@N' and '#CaM:108@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:109@N' and '#CaM:109@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:110@N' and '#CaM:110@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:111@N' and '#CaM:111@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:112@N' and '#CaM:112@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:113@N' and '#CaM:113@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:114@N' and '#CaM:114@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:115@N' and '#CaM:115@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:116@N' and '#CaM:116@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:117@N' and '#CaM:117@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:118@N' and '#CaM:118@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:119@N' and '#CaM:119@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:120@N' and '#CaM:120@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:121@N' and '#CaM:121@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:122@N' and '#CaM:122@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:123@N' and '#CaM:123@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:124@N' and '#CaM:124@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:125@N' and '#CaM:125@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:126@N' and '#CaM:126@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:127@N' and '#CaM:127@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:128@N' and '#CaM:128@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:129@N' and '#CaM:129@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:130@N' and '#CaM:130@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:131@N' and '#CaM:131@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:132@N' and '#CaM:132@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:133@N' and '#CaM:133@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:134@N' and '#CaM:134@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:135@N' and '#CaM:135@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:136@N' and '#CaM:136@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:137@N' and '#CaM:137@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:138@N' and '#CaM:138@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:139@N' and '#CaM:139@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:140@N' and '#CaM:140@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:141@N' and '#CaM:141@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:142@N' and '#CaM:142@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:143@N' and '#CaM:143@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:144@N' and '#CaM:144@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:145@N' and '#CaM:145@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:146@N' and '#CaM:146@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:147@N' and '#CaM:147@H'.
+Calculated 1 N-H unit vector between the spins '#CaM:148@N' and '#CaM:148@H'.
+
+relax> align_tensor.init(tensor='tensor 0', params=(0.0006157864417437287, -0.00027914923898849156, 0.0002715095515843512, 0.0009842872030009584, -0.00031390384563948447), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='tensor 2', params=(0.0006287636590147914, 0.0006802034861179492, 0.0007510921252766747, 0.00037275214653516623, -0.0004374676265261981), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+Chi tensor 0:
+[[  1.086757240905166e-31   4.791676970406651e-32   1.737097754154114e-31]
+ [  4.791676970406651e-32  -4.926504323558359e-32  -5.539863401842450e-32]
+ [  1.737097754154114e-31  -5.539863401842450e-32  -5.941068085493295e-32]]
+
+Chi tensor 2:
+[[  2.496734548042601e-31   2.982484167229678e-31   1.480147824652656e-31]
+ [  2.982484167229678e-31   2.700995070470108e-31  -1.737124150129138e-31]
+ [  1.480147824652656e-31  -1.737124150129138e-31  -5.197729618512710e-31]]
+
+relax> results.write(file='generate_data', dir=None, compress_type=1, force=True)
+Opening the file 'generate_data.bz2' for writing.
+

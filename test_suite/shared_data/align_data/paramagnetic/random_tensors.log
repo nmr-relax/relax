@@ -1,0 +1,533 @@
+
+
+
+                                     relax repository checkout
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2012 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'random_tensors.py'
+----------------------------------------------------------------------------------------------------
+# Python module imports.
+from random import uniform
+
+# Create a data pipe.
+pipe.create('random tensors', 'N-state')
+
+# Generate a number of tensors
+for i in range(4):
+    align_tensor.init(tensor='tensor %i'%i, params=(uniform(-1e-3, 1e-3), uniform(-1e-3, 1e-3), uniform(-1e-3, 1e-3), uniform(-1e-3, 1e-3), uniform(-1e-3, 1e-3)))
+
+# Display the tensor info.
+align_tensor.display()
+
+# Save the results.
+results.write('random_tensors', dir=None, force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='random tensors', pipe_type='N-state', bundle=None)
+
+relax> align_tensor.init(tensor='tensor 0', params=(0.0006157864417437287, -0.00027914923898849156, 0.0002715095515843512, 0.0009842872030009584, -0.00031390384563948447), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='tensor 1', params=(-0.0007389709383642749, -0.0004806175060282718, 0.0001723871683368143, 0.00047149640512591487, 0.00022067803301137052), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='tensor 2', params=(0.0006287636590147914, 0.0006802034861179492, 0.0007510921252766747, 0.00037275214653516623, -0.0004374676265261981), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='tensor 3', params=(-2.817234378419027e-06, -0.0007770170144849803, -0.0006728748705293265, -0.00014766131067624525, -0.0007841960063031326), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.display(tensor=None)
+
+
+
+####################
+# Tensor: tensor 0 #
+####################
+
+
+# Saupe order matrix.
+#####################
+
+# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:
+[       9.236796626156e-04,       -4.187238584827e-04,        4.072643273765e-04,        1.476430804501e-03,       -4.708557684592e-04]
+
+# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).
+[      -5.049558041329e-04,        1.342403521098e-03,        4.072643273765e-04,        1.476430804501e-03,       -4.708557684592e-04]
+
+# 3D, rank-2 notation.
+[[ 0.000923679662616  0.000407264327377  0.001476430804501]
+ [ 0.000407264327377 -0.000418723858483 -0.000470855768459]
+ [ 0.001476430804501 -0.000470855768459 -0.000504955804133]]
+
+
+# Alignment tensor.
+###################
+
+# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:
+[       6.157864417437e-04,       -2.791492389885e-04,        2.715095515844e-04,        9.842872030010e-04,       -3.139038456395e-04]
+
+# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).
+[      -3.366372027552e-04,        8.949356807322e-04,        2.715095515844e-04,        9.842872030010e-04,       -3.139038456395e-04]
+
+# 3D, rank-2 notation.
+[[ 0.000615786441744  0.000271509551584  0.000984287203001]
+ [ 0.000271509551584 -0.000279149238988 -0.000313903845639]
+ [ 0.000984287203001 -0.000313903845639 -0.000336637202755]]
+
+
+# Probability tensor.
+#####################
+
+# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:
+[       3.339491197751e-01,        3.330541840943e-01,        2.715095515844e-04,        9.842872030010e-04,       -3.139038456395e-04]
+
+# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
+[       3.329966961306e-01,        8.949356807322e-04,        2.715095515844e-04,        9.842872030010e-04,       -3.139038456395e-04]
+
+# 3D, rank-2 notation.
+[[  3.339491197750770e-01   2.715095515843512e-04   9.842872030009584e-04]
+ [  2.715095515843512e-04   3.330541840943448e-01  -3.139038456394845e-04]
+ [  9.842872030009584e-04  -3.139038456394845e-04   3.329966961305781e-01]]
+
+
+# Magnetic susceptibility tensor.
+#################################
+
+# The magnetic field strength (MHz):
+Not set.
+
+# The temperature (K):
+Not set.
+
+# The chi tensor:
+N/A.
+
+
+
+# Eigensystem.
+##############
+
+# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.
+[      -1.318306523745e-04,       -1.721857000846e-03,        1.853687653221e-03]
+
+# Alignment tensor eigenvalues {Axx, Ayy, Azz}.
+[      -8.788710158302e-05,       -1.147904667231e-03,        1.235791768814e-03]
+
+# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.
+[       3.321854286661e-01,        3.332454462318e-01,        3.345691251021e-01]
+
+# Eigenvector x.
+[          -0.190573816378,           -0.902897848992,            0.385301303914]
+
+# Eigenvector y.
+[          -0.489831283041,            0.427603079066,            0.759750564940]
+
+# Eigenvector z.
+[          -0.850733174777,           -0.043944067398,           -0.523757562499]
+
+# Rotation matrix.
+[[-0.190573816377767 -0.489831283041033 -0.850733174776668]
+ [-0.902897848991505  0.427603079066398 -0.04394406739765 ]
+ [ 0.385301303913868  0.759750564940435 -0.523757562499065]]
+
+# Euler angles in zyz notation {alpha, beta, gamma}.
+[           2.040141075449,            2.122052297834,            3.193201134029]
+
+
+
+# Geometric description.
+########################
+
+# Generalized degree of order (GDO).
+GDO = 2.068546795534e-03       
+
+# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).
+Aa = 1.853687653221e-03       
+
+# Rhombic component (Ar = Axx - Ayy, where Aii are the eigenvalues).
+Ar = 1.060017565648e-03       
+
+# Rhombicity (R = Ar / Aa).
+R = 0.571842599160           
+
+# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).
+eta = 0.857763898739           
+
+
+
+
+
+
+
+
+####################
+# Tensor: tensor 1 #
+####################
+
+
+# Saupe order matrix.
+#####################
+
+# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:
+[      -1.108456407546e-03,       -7.209262590424e-04,        2.585807525052e-04,        7.072446076889e-04,        3.310170495171e-04]
+
+# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).
+[       1.829382666589e-03,       -3.875301485040e-04,        2.585807525052e-04,        7.072446076889e-04,        3.310170495171e-04]
+
+# 3D, rank-2 notation.
+[[-0.001108456407546  0.000258580752505  0.000707244607689]
+ [ 0.000258580752505 -0.000720926259042  0.000331017049517]
+ [ 0.000707244607689  0.000331017049517  0.001829382666589]]
+
+
+# Alignment tensor.
+###################
+
+# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:
+[      -7.389709383643e-04,       -4.806175060283e-04,        1.723871683368e-04,        4.714964051259e-04,        2.206780330114e-04]
+
+# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).
+[       1.219588444393e-03,       -2.583534323360e-04,        1.723871683368e-04,        4.714964051259e-04,        2.206780330114e-04]
+
+# 3D, rank-2 notation.
+[[-0.000738970938364  0.000172387168337  0.000471496405126]
+ [ 0.000172387168337 -0.000480617506028  0.000220678033011]
+ [ 0.000471496405126  0.000220678033011  0.001219588444393]]
+
+
+# Probability tensor.
+#####################
+
+# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:
+[       3.325943623950e-01,        3.328527158273e-01,        1.723871683368e-04,        4.714964051259e-04,        2.206780330114e-04]
+
+# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
+[       3.345529217777e-01,       -2.583534323360e-04,        1.723871683368e-04,        4.714964051259e-04,        2.206780330114e-04]
+
+# 3D, rank-2 notation.
+[[  3.325943623949690e-01   1.723871683368143e-04   4.714964051259149e-04]
+ [  1.723871683368143e-04   3.328527158273050e-01   2.206780330113705e-04]
+ [  4.714964051259149e-04   2.206780330113705e-04   3.345529217777259e-01]]
+
+
+# Magnetic susceptibility tensor.
+#################################
+
+# The magnetic field strength (MHz):
+Not set.
+
+# The temperature (K):
+Not set.
+
+# The chi tensor:
+N/A.
+
+
+
+# Eigensystem.
+##############
+
+# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.
+[      -7.167513721389e-04,       -1.326515242227e-03,        2.043266614366e-03]
+
+# Alignment tensor eigenvalues {Axx, Ayy, Azz}.
+[      -4.778342480926e-04,       -8.843434948181e-04,        1.362177742911e-03]
+
+# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.
+[       3.324489898385e-01,        3.328554990852e-01,        3.346955110762e-01]
+
+# Eigenvector x.
+[          -0.267250941122,           -0.943301971578,            0.196871340950]
+
+# Eigenvector y.
+[           0.936371135199,           -0.302461446464,           -0.178118417264]
+
+# Eigenvector z.
+[           0.227565444730,            0.136742326369,            0.964113844182]
+
+# Rotation matrix.
+[[-0.267250941121554  0.936371135199284  0.22756544473019 ]
+ [-0.943301971577566 -0.302461446463993  0.136742326368924]
+ [ 0.196871340950176 -0.178118417263668  0.964113844182296]]
+
+# Euler angles in zyz notation {alpha, beta, gamma}.
+[           3.877023281799,            0.268711257064,            0.541075354250]
+
+
+
+# Geometric description.
+########################
+
+# Generalized degree of order (GDO).
+GDO = 2.073373044857e-03       
+
+# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).
+Aa = 2.043266614366e-03       
+
+# Rhombic component (Ar = Axx - Ayy, where Aii are the eigenvalues).
+Ar = 4.065092467255e-04       
+
+# Rhombicity (R = Ar / Aa).
+R = 0.198950662565           
+
+# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).
+eta = 0.298425993848           
+
+
+
+
+
+
+
+
+####################
+# Tensor: tensor 2 #
+####################
+
+
+# Saupe order matrix.
+#####################
+
+# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:
+[       9.431454885222e-04,        1.020305229177e-03,        1.126638187915e-03,        5.591282198027e-04,       -6.562014397893e-04]
+
+# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).
+[      -1.963450717699e-03,       -7.715974065474e-05,        1.126638187915e-03,        5.591282198027e-04,       -6.562014397893e-04]
+
+# 3D, rank-2 notation.
+[[ 0.000943145488522  0.001126638187915  0.000559128219803]
+ [ 0.001126638187915  0.001020305229177 -0.000656201439789]
+ [ 0.000559128219803 -0.000656201439789 -0.001963450717699]]
+
+
+# Alignment tensor.
+###################
+
+# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:
+[       6.287636590148e-04,        6.802034861179e-04,        7.510921252767e-04,        3.727521465352e-04,       -4.374676265262e-04]
+
+# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).
+[      -1.308967145133e-03,       -5.143982710316e-05,        7.510921252767e-04,        3.727521465352e-04,       -4.374676265262e-04]
+
+# 3D, rank-2 notation.
+[[ 0.000628763659015  0.000751092125277  0.000372752146535]
+ [ 0.000751092125277  0.000680203486118 -0.000437467626526]
+ [ 0.000372752146535 -0.000437467626526 -0.001308967145133]]
+
+
+# Probability tensor.
+#####################
+
+# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:
+[       3.339620969923e-01,        3.340135368195e-01,        7.510921252767e-04,        3.727521465352e-04,       -4.374676265262e-04]
+
+# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
+[       3.320243661882e-01,       -5.143982710316e-05,        7.510921252767e-04,        3.727521465352e-04,       -4.374676265262e-04]
+
+# 3D, rank-2 notation.
+[[ 0.333962096992348  0.000751092125277  0.000372752146535]
+ [ 0.000751092125277  0.334013536819451 -0.000437467626526]
+ [ 0.000372752146535 -0.000437467626526  0.332024366188201]]
+
+
+# Magnetic susceptibility tensor.
+#################################
+
+# The magnetic field strength (MHz):
+Not set.
+
+# The temperature (K):
+Not set.
+
+# The chi tensor:
+N/A.
+
+
+
+# Eigensystem.
+##############
+
+# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.
+[       1.949732926903e-04,        2.110876958364e-03,       -2.305850251054e-03]
+
+# Alignment tensor eigenvalues {Axx, Ayy, Azz}.
+[       1.299821951268e-04,        1.407251305576e-03,       -1.537233500703e-03]
+
+# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.
+[       3.317960998326e-01,        3.334633155285e-01,        3.347405846389e-01]
+
+# Eigenvector x.
+[          -0.679463030573,            0.634261746103,           -0.368838755439]
+
+# Eigenvector y.
+[          -0.688626491784,           -0.724775432077,            0.022228987159]
+
+# Eigenvector z.
+[          -0.253226272131,            0.269095913174,            0.929227552656]
+
+# Rotation matrix.
+[[-0.67946303057328  -0.688626491784091 -0.253226272130892]
+ [ 0.634261746103368 -0.724775432077425  0.269095913173886]
+ [-0.368838755439393  0.022228987159026  0.9292275526564  ]]
+
+# Euler angles in zyz notation {alpha, beta, gamma}.
+[           0.060194684460,            0.378479483160,            2.325820975515]
+
+
+
+# Geometric description.
+########################
+
+# Generalized degree of order (GDO).
+GDO = 2.557441625075e-03       
+
+# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).
+Aa = -2.305850251054e-03      
+
+# Rhombic component (Ar = Axx - Ayy, where Aii are the eigenvalues).
+Ar = -1.277269110449e-03      
+
+# Rhombicity (R = Ar / Aa).
+R = 0.553925438074           
+
+# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).
+eta = 0.830888157112           
+
+
+
+
+
+
+
+
+####################
+# Tensor: tensor 3 #
+####################
+
+
+# Saupe order matrix.
+#####################
+
+# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:
+[      -4.225851567629e-06,       -1.165525521727e-03,       -1.009312305794e-03,       -2.214919660144e-04,       -1.176294009455e-03]
+
+# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).
+[       1.169751373295e-03,        1.161299670160e-03,       -1.009312305794e-03,       -2.214919660144e-04,       -1.176294009455e-03]
+
+# 3D, rank-2 notation.
+[[ -4.225851567628541e-06  -1.009312305793990e-03  -2.214919660143679e-04]
+ [ -1.009312305793990e-03  -1.165525521727470e-03  -1.176294009454699e-03]
+ [ -2.214919660143679e-04  -1.176294009454699e-03   1.169751373295099e-03]]
+
+
+# Alignment tensor.
+###################
+
+# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:
+[      -2.817234378419e-06,       -7.770170144850e-04,       -6.728748705293e-04,       -1.476613106762e-04,       -7.841960063031e-04]
+
+# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).
+[       7.798342488634e-04,        7.741997801066e-04,       -6.728748705293e-04,       -1.476613106762e-04,       -7.841960063031e-04]
+
+# 3D, rank-2 notation.
+[[ -2.817234378419027e-06  -6.728748705293265e-04  -1.476613106762452e-04]
+ [ -6.728748705293265e-04  -7.770170144849803e-04  -7.841960063031326e-04]
+ [ -1.476613106762452e-04  -7.841960063031326e-04   7.798342488633994e-04]]
+
+
+# Probability tensor.
+#####################
+
+# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:
+[       3.333305160990e-01,        3.325563163188e-01,       -6.728748705293e-04,       -1.476613106762e-04,       -7.841960063031e-04]
+
+# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
+[       3.341131675822e-01,        7.741997801066e-04,       -6.728748705293e-04,       -1.476613106762e-04,       -7.841960063031e-04]
+
+# 3D, rank-2 notation.
+[[  3.333305160989549e-01  -6.728748705293265e-04  -1.476613106762452e-04]
+ [ -6.728748705293265e-04   3.325563163188484e-01  -7.841960063031326e-04]
+ [ -1.476613106762452e-04  -7.841960063031326e-04   3.341131675821967e-01]]
+
+
+# Magnetic susceptibility tensor.
+#################################
+
+# The magnetic field strength (MHz):
+Not set.
+
+# The temperature (K):
+Not set.
+
+# The chi tensor:
+N/A.
+
+
+
+# Eigensystem.
+##############
+
+# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.
+[       4.572664596949e-04,        1.683959537685e-03,       -2.141225997380e-03]
+
+# Alignment tensor eigenvalues {Axx, Ayy, Azz}.
+[       3.048443064632e-04,        1.122639691790e-03,       -1.427483998253e-03]
+
+# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.
+[       3.319058493351e-01,        3.336381776398e-01,        3.344559730251e-01]
+
+# Eigenvector x.
+[           0.892643643824,           -0.344302079878,           -0.290935393053]
+
+# Eigenvector y.
+[           0.131839866784,           -0.417785197910,            0.898929239670]
+
+# Eigenvector z.
+[          -0.431051707648,           -0.840780355502,           -0.327540561053]
+
+# Rotation matrix.
+[[ 0.892643643824479  0.131839866784492 -0.431051707647708]
+ [-0.344302079878446 -0.417785197909739 -0.840780355502492]
+ [-0.290935393053395  0.898929239670046 -0.327540561053283]]
+
+# Euler angles in zyz notation {alpha, beta, gamma}.
+[           1.257789017295,            1.904495693930,            4.238648495110]
+
+
+
+# Geometric description.
+########################
+
+# Generalized degree of order (GDO).
+GDO = 2.255313889695e-03       
+
+# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).
+Aa = -2.141225997380e-03      
+
+# Rhombic component (Ar = Axx - Ayy, where Aii are the eigenvalues).
+Ar = -8.177953853266e-04      
+
+# Rhombicity (R = Ar / Aa).
+R = 0.381928570981           
+
+# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).
+eta = 0.572892856472           
+
+
+
+
+
+
+relax> results.write(file='random_tensors', dir=None, compress_type=1, force=True)
+Opening the file 'random_tensors.bz2' for writing.
+
