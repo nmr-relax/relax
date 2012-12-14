@@ -750,8 +750,11 @@ class RelaxRiError(BaseError):
 
 # No alignment data.
 class RelaxNoAlignError(BaseError):
-    def __init__(self, align_id, pipe):
-        self.text = "The alignment ID string '%s' is missing from the data pipe '%s'." % align_id
+    def __init__(self, align_id, pipe=None):
+        if pipe != None:
+            self.text = "The alignment ID string '%s' is missing from the data pipe '%s'." % (align_id, pipe)
+        else:
+            self.text = "The alignment ID string '%s' is missing." % align_id
 
 # Alignment data already exists.
 class RelaxAlignError(BaseError):
