@@ -118,7 +118,7 @@ class Uf_object(object):
         for name in keys:
             # Unknown keyword.
             if name not in self._karg_names:
-                raise RelaxError("The keyword argument '%s' is unknown." % name)
+                raise RelaxError("User function %s - the keyword argument '%s' is unknown." % (self._name, name))
 
         # Convert the args to keyword args if needed.
         num_args = len(uf_args)
@@ -127,7 +127,7 @@ class Uf_object(object):
             for i in range(num_args):
                 # Check if the keyword is already assigned.
                 if self._kargs[i]['name'] in keys:
-                    raise RelaxError("The argument '%s' and the keyword argument '%s' cannot both be supplied." % (uf_args[i], self._kargs[i]['name']))
+                    raise RelaxError("User function %s - the argument '%s' and the keyword argument '%s' cannot both be supplied." % (self._name, uf_args[i], self._kargs[i]['name']))
 
                 # Add the arg as a keyword arg.
                 uf_kargs[self._kargs[i]['name']] = uf_args[i]
@@ -213,7 +213,7 @@ class Uf_object(object):
             elif py_type == 'val_or_list':
                 arg_check.is_val_or_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             else:
-                raise RelaxError("The Python object type '%s' is unknown." % py_type)
+                raise RelaxError("User function %s - the Python object type '%s' is unknown." % (self._name, py_type))
 
         # Execute the functional code.
         self._backend(*new_args, **uf_kargs)

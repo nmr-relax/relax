@@ -221,27 +221,27 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
         if align_id in dp_from.rdc_ids and align_id not in dp_to.rdc_ids:
             dp_to.rdc_ids.append(align_id)
 
-        # Spin loop.
-        for mol_index, res_index, spin_index in spin_index_loop():
-            # Alias the spin containers.
-            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
+        # Loop over the interatomic data.
+        for i in range(len(dp_from.interatomic)):
+            # Alias the containers.
+            interatom_from = dp_from.interatomic[i]
+            interatom_to = dp_to.interatomic[i]
 
             # No data or errors.
-            if (not hasattr(spin_from, 'rdc') or not align_id in spin_from.rdc) and (not hasattr(spin_from, 'rdc_err') or not align_id in spin_from.rdc_err):
+            if (not hasattr(interatom_from, 'rdc') or not align_id in interatom_from.rdc) and (not hasattr(interatom_from, 'rdc_err') or not align_id in interatom_from.rdc_err):
                 continue
 
-            # Initialise the spin data if necessary.
-            if hasattr(spin_from, 'rdc') and not hasattr(spin_to, 'rdc'):
-                spin_to.rdc = {}
-            if hasattr(spin_from, 'rdc_err') and not hasattr(spin_to, 'rdc_err'):
-                spin_to.rdc_err = {}
+            # Initialise the data structures if necessary.
+            if hasattr(interatom_from, 'rdc') and not hasattr(interatom_to, 'rdc'):
+                interatom_to.rdc = {}
+            if hasattr(interatom_from, 'rdc_err') and not hasattr(interatom_to, 'rdc_err'):
+                interatom_to.rdc_err = {}
 
             # Copy the value and error from pipe_from.
-            if hasattr(spin_from, 'rdc'):
-                spin_to.rdc[align_id] = spin_from.rdc[align_id]
-            if hasattr(spin_from, 'rdc_err'):
-                spin_to.rdc_err[align_id] = spin_from.rdc_err[align_id]
+            if hasattr(interatom_from, 'rdc'):
+                interatom_to.rdc[align_id] = interatom_from.rdc[align_id]
+            if hasattr(interatom_from, 'rdc_err'):
+                interatom_to.rdc_err[align_id] = interatom_from.rdc_err[align_id]
 
 
 def corr_plot(format=None, file=None, dir=None, force=False):

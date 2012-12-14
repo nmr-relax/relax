@@ -52,6 +52,7 @@ from test_suite.system_tests.n_state_model import N_state_model
 from test_suite.system_tests.noe import Noe
 from test_suite.system_tests.noe_restraints import Noe_restraints
 from test_suite.system_tests.palmer import Palmer
+from test_suite.system_tests.pcs import Pcs
 from test_suite.system_tests.peak_lists import Peak_lists
 from test_suite.system_tests.pipes import Pipes
 from test_suite.system_tests.rdc import Rdc
@@ -84,6 +85,7 @@ __all__ = ['align_tensor',
            'noe',
            'noe_restraints',
            'palmer',
+           'pcs'
            'peak_lists'
            'pipes',
            'rdc',
@@ -170,6 +172,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
             suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Pcs))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))
