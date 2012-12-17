@@ -265,19 +265,20 @@ class Selection(object):
 
         @param spin_id: The spin identification string.
         @type spin_id:  str
-        @return:        The answer of whether the molecule, residue, and/or spin corresponding to
-                        the spin_id string found within the selection object.
+        @return:        The answer of whether the molecule, residue, and/or spin corresponding to the spin_id string found within the selection object.
         @rtype:         bool
         """
 
+        # No ID string.
+        if spin_id == '':
+            warn(RelaxWarning("The spin ID string '' is empty."))
+            return False
+
         # Parse the spin_id string.
-        try:
-            mol_token, res_token, spin_token = tokenise(spin_id)
-            molecules = parse_token(mol_token)
-            residues = parse_token(res_token)
-            spins = parse_token(spin_token)
-        except RelaxError:
-            warn(RelaxWarning("The spin identification string " + repr(spin_id) + " is too complex for the selection object."))
+        mol_name, res_num, res_name, spin_num, spin_name = spin_id_to_data_list(spin_id)
+
+        # Check if the spin is in the selection object.
+        return self.contains_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol=mol_name)
 
 
     def contains_mol(self, mol=None):
