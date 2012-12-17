@@ -59,6 +59,7 @@ from test_suite.system_tests.rdc import Rdc
 from test_suite.system_tests.relax_data import Relax_data
 from test_suite.system_tests.relax_fit import Relax_fit
 from test_suite.system_tests.results import Results
+from test_suite.system_tests.selection import Selection
 from test_suite.system_tests.sequence import Sequence
 from test_suite.system_tests.state import State
 from test_suite.system_tests.structure import Structure
@@ -92,6 +93,7 @@ __all__ = ['align_tensor',
            'relax_data',
            'relax_fit',
            'results',
+           'selection',
            'sequence',
            'state',
            'structure',
@@ -178,6 +180,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_data))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
             suite_array.append(TestLoader().loadTestsFromTestCase(Results))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Selection))
             suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
             suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
