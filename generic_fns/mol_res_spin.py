@@ -27,10 +27,8 @@ The functionality of this module is diverse:
     - Functions for parsing or generating spin identification strings.
     - The mol-res-spin selection object (derived from the Selection class).
     - Generator functions for looping over molecules, residues, or spins.
-    - Functions for returning MoleculeContainer, ResidueContainer, and SpinContainer objects or
-    information about these.
-    - Functions for copying, creating, deleting, displaying, naming, and numbering
-    MoleculeContainer, ResidueContainer, and SpinContainer objects in the relax data store.
+    - Functions for returning MoleculeContainer, ResidueContainer, and SpinContainer objects or information about these.
+    - Functions for copying, creating, deleting, displaying, naming, and numbering MoleculeContainer, ResidueContainer, and SpinContainer objects in the relax data store.
     - Functions for counting spins or testing their existence.
 """
 
@@ -69,8 +67,7 @@ id_string_doc.add_paragraph("Regular expression can be used to select spins.  Fo
 class Selection(object):
     """An object containing mol-res-spin selections.
 
-    A Selection object represents either a set of selected molecules, residues and spins, or the
-    union or intersection of two other Selection objects.
+    A Selection object represents either a set of selected molecules, residues and spins, or the union or intersection of two other Selection objects.
     """
 
     def __init__(self, select_string):
@@ -119,9 +116,7 @@ class Selection(object):
     def __contains__(self, obj):
         """Replacement function for determining if an object matches the selection.
 
-        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or
-                        SpinContainer instance or a type of these instances.  If a tuple, only one
-                        type of object can be in the tuple.
+        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or SpinContainer instance or a type of these instances.  If a tuple, only one type of object can be in the tuple.
         @type obj:      instance or type of instances.
         @return:        The answer of whether the object matches the selection.
         @rtype:         bool
@@ -147,9 +142,7 @@ class Selection(object):
     def __contains_mol_res_spin_containers(self, obj):
         """Are the MoleculeContainer, ResidueContainer, and/or SpinContainer in the selection.
 
-        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or
-                        SpinContainer instance or a type of these instances.  If a tuple, only one
-                        type of object can be in the tuple.
+        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or SpinContainer instance or a type of these instances.  If a tuple, only one type of object can be in the tuple.
         @type obj:      instance or type of instances.
         @return:        The answer of whether the objects are found within the selection object.
         @rtype:         bool
@@ -286,8 +279,7 @@ class Selection(object):
 
         @keyword mol:   The name of the molecule.
         @type mol:      str or None
-        @return:        The answer of whether the molecule is contained withing the selection
-                        object.
+        @return:        The answer of whether the molecule is contained withing the selection object.
         @rtype:         bool
         """
 
@@ -320,8 +312,7 @@ class Selection(object):
         @type res_name:     str or None
         @keyword mol:       The molecule name.
         @type mol:          str or None
-        @return:            The answer of whether the molecule is contained withing the selection
-                            object.
+        @return:            The answer of whether the molecule is contained withing the selection object.
         @rtype:             bool
         """
 
@@ -364,8 +355,7 @@ class Selection(object):
         @type res_name:     str or None
         @keyword mol:       The molecule name.
         @type mol:          str or None
-        @return:            The answer of whether the spin is contained withing the selection
-                            object.
+        @return:            The answer of whether the spin is contained withing the selection object.
         @rtype:             bool
         """
 
@@ -619,13 +609,12 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
 
     For copying to be successful, the mol_from identification string must match an existent molecule.
 
-    @param pipe_from:   The data pipe to copy the molecule data from.  This defaults to the current
-                        data pipe.
+
+    @param pipe_from:   The data pipe to copy the molecule data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @param mol_from:    The molecule identification string for the structure to copy the data from.
     @type mol_from:     str
-    @param pipe_to:     The data pipe to copy the molecule data to.  This defaults to the current
-                        data pipe.
+    @param pipe_to:     The data pipe to copy the molecule data to.  This defaults to the current data pipe.
     @type pipe_to:      str
     @param mol_to:      The molecule identification string for the structure to copy the data to.
     @type mol_to:       str
@@ -694,16 +683,13 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
 def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     """Copy the contents of the residue structure from one residue to a new residue.
 
-    For copying to be successful, the res_from identification string must match an existent residue.
-    The new residue number must be unique.
+    For copying to be successful, the res_from identification string must match an existent residue. The new residue number must be unique.
 
-    @param pipe_from:   The data pipe to copy the residue from.  This defaults to the current data
-                        pipe.
+    @param pipe_from:   The data pipe to copy the residue from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @param res_from:    The residue identification string for the structure to copy the data from.
     @type res_from:     str
-    @param pipe_to:     The data pipe to copy the residue to.  This defaults to the current data
-                        pipe.
+    @param pipe_to:     The data pipe to copy the residue to.  This defaults to the current data pipe.
     @type pipe_to:      str
     @param res_to:      The residue identification string for the structure to copy the data to.
     @type res_to:       str
@@ -775,16 +761,14 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     """Copy the contents of the spin structure from one spin to a new spin.
 
-    For copying to be successful, the spin_from identification string must match an existent spin.
-    The new spin number must be unique.
+    For copying to be successful, the spin_from identification string must match an existent spin. The new spin number must be unique.
 
-    @param pipe_from:   The data pipe to copy the spin from.  This defaults to the current data
-                        pipe.
+
+    @param pipe_from:   The data pipe to copy the spin from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @param spin_from:   The spin identification string for the structure to copy the data from.
     @type spin_from:    str
-    @param pipe_to:     The data pipe to copy the spin to.  This defaults to the current data
-                        pipe.
+    @param pipe_to:     The data pipe to copy the spin to.  This defaults to the current data pipe.
     @type pipe_to:      str
     @param spin_to:     The spin identification string for the structure to copy the data to.
     @type spin_to:      str
@@ -927,8 +911,7 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
     @type selection:        str
     @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:             str
-    @keyword skip_desel:    A flag which if true will cause deselected spins to be skipped in the
-                            count.
+    @keyword skip_desel:    A flag which if true will cause deselected spins to be skipped in the count.
     @type skip_desel:       bool
     @return:                The number of non-empty spins.
     @rtype:                 int
@@ -1266,8 +1249,7 @@ def convert_from_global_index(global_index=None, pipe=None):
 
     @param global_index:        The global spin index, spanning the molecule and residue containers.
     @type global_index:         int
-    @param pipe:                The data pipe containing the spin.  Defaults to the current data
-                                pipe.
+    @param pipe:                The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:                 str
     @return:                    The corresponding molecule, residue, and spin indices.
     @rtype:                     tuple of int
@@ -1546,8 +1528,7 @@ def find_index(selection=None, pipe=None, global_index=True):
     @type selection:        str
     @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:             str
-    @keyword global_index:  A flag which if True will cause the global index to be returned.  If
-                            False, then the molecule, residue, and spin indices will be returned.
+    @keyword global_index:  A flag which if True will cause the global index to be returned.  If False, then the molecule, residue, and spin indices will be returned.
     @type global_index:     bool
     @return:                The global spin index or the molecule, residue, and spin indices.
     @rtype:                 int or tuple of 3 int
@@ -2368,13 +2349,10 @@ def one_letter_code(res_names):
 def parse_token(token, verbosity=False):
     """Parse the token string and return a list of identifying numbers and names.
 
-    Firstly the token is split by the ',' character into its individual elements and all whitespace
-    stripped from the elements.  Numbers are converted to integers, names are left as strings, and
-    ranges are converted into the full list of integers.
+    Firstly the token is split by the ',' character into its individual elements and all whitespace stripped from the elements.  Numbers are converted to integers, names are left as strings, and ranges are converted into the full list of integers.
 
-    @param token:       The identification string, the elements of which are separated by commas.
-                        Each element can be either a single number, a range of numbers (two numbers
-                        separated by '-'), or a name.
+
+    @param token:       The identification string, the elements of which are separated by commas. Each element can be either a single number, a range of numbers (two numbers separated by '-'), or a name.
     @type token:        str
     @keyword verbosity: A flag which if True will cause a number of printouts to be activated.
     @type verbosity:    bool
@@ -2668,6 +2646,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
 
     If more than one selection is given, then the boolean AND operation will be used to pull out the spin.
 
+
     @keyword selection: The spin selection identifier.
     @type selection:    str
     @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
@@ -2752,16 +2731,12 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
 
     @param global_index:        The global spin index, spanning the molecule and residue containers.
     @type global_index:         int
-    @param pipe:                The data pipe containing the spin.  Defaults to the current data
-                                pipe.
+    @param pipe:                The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:                 str
-    @keyword return_spin_id:    A flag which if True will cause both the spin container and spin
-                                identification string to be returned.
+    @keyword return_spin_id:    A flag which if True will cause both the spin container and spin identification string to be returned.
     @type return_spin_id:       bool
-    @return:                    The spin specific data container (additionally the spin
-                                identification string if return_spin_id is set).
-    @rtype:                     instance of the SpinContainer class (or tuple of SpinContainer and
-                                str)
+    @return:                    The spin specific data container (additionally the spin identification string if return_spin_id is set).
+    @rtype:                     instance of the SpinContainer class (or tuple of SpinContainer and str)
     """
 
     # The data pipe.
@@ -3276,8 +3251,7 @@ def spin_id_variants_elim(dp=None, mol_index=None, res_index=None, spin_index=No
 def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Function for determining if the spin is located within the list of spins.
 
-    @param spin_list:       The list of spins.  The first dimension corresponds to different spins,
-                            the second corresponds to the spin information columns.
+    @param spin_list:       The list of spins.  The first dimension corresponds to different spins, the second corresponds to the spin information columns.
     @type spin_list:        list of lists of str
     @keyword mol_name_col:  The column containing the molecule name information.
     @type mol_name_col:     int or None
@@ -3430,13 +3404,12 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
 def tokenise(selection):
     """Split the input selection string returning the mol_token, res_token, and spin_token strings.
 
-    The mol_token is identified as the text from the '#' to either the ':' or '@' characters or the
-    end of the string.
+    The mol_token is identified as the text from the '#' to either the ':' or '@' characters or the end of the string.
 
-    The res_token is identified as the text from the ':' to either the '@' character or the end of
-    the string.
+    The res_token is identified as the text from the ':' to either the '@' character or the end of the string.
 
     The spin_token is identified as the text from the '@' to the end of the string.
+
 
     @param selection:   The selection identifier.
     @type selection:    str
