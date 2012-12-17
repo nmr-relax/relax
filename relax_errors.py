@@ -715,6 +715,11 @@ class RelaxInteratomError(BaseError):
         else:
             self.text = "The interatomic data for the data pipe " + repr(pipe) + " already exists."
 
+# Inconsistency in the interatomic data.
+class RelaxInteratomInconsistentError(BaseError):
+    def __init__(self, pipe1, pipe2):
+        self.text = "The interatomic data is inconsistent between the data pipes '%s' and '%s'." % (pipe1, pipe2)
+
 
 
 # Spectral data errors.
