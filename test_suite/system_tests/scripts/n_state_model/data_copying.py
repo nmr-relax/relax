@@ -64,6 +64,7 @@ self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='N-state')
 
 # Copy the data.
 self._execute_uf(uf_name='sequence.copy', pipe_from='orig', pipe_to='new')
+self._execute_uf(uf_name='interatomic.copy', pipe_from='orig', pipe_to='new')
 self._execute_uf(uf_name='rdc.copy', pipe_from='orig', pipe_to='new')
 self._execute_uf(uf_name='pcs.copy', pipe_from='orig', pipe_to='new')
 
