@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import Selection, count_spins, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxInteratomError, RelaxNoInteratomError, RelaxNoSpinError
+from relax_errors import RelaxError, RelaxInteratomError, RelaxInteratomInconsistentError, RelaxNoInteratomError, RelaxNoSpinError
 from relax_io import write_data
 
 
@@ -113,6 +113,37 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
     # Print out.
     if verbose:
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
+
+
+def consistent_interatomic_data(pipe1=None, pipe2=None):
+    """Check that the interatomic data is consistent between two data pipes.
+
+    @keyword pipe1:     The name of the first data pipe to compare.
+    @type pipe1:        str
+    @keyword pipe2:     The name of the second data pipe to compare.
+    @type pipe2:        str
+    @raises RelaxError: If the data is inconsistent.
+    """
+
+    # Get the data pipes.
+    dp1 = pipes.get_pipe(pipe1)
+    dp2 = pipes.get_pipe(pipe2)
+
+    # Check the data lengths.
+    if len(dp1.interatomic) != len(dp2.interatomic):
+        raise RelaxInteratomInconsistentError(pipe1, pipe2)
+
+    # Loop over the interatomic data.
+    for i in range(len(dp1.interatomic)):
+        # Alias the containers.
+        interatom1 = dp1.interatomic[i]
+        interatom2 = dp2.interatomic[i]
+
+        # Check the spin IDs.
+        if interatom1.spin_id1 != interatom2.spin_id1:
+            raise RelaxInteratomInconsistentError(pipe1, pipe2)
+        if interatom1.spin_id2 != interatom2.spin_id2:
+            raise RelaxInteratomInconsistentError(pipe1, pipe2)
 
 
 def create_interatom(spin_id1=None, spin_id2=None, pipe=None):

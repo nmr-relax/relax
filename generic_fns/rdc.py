@@ -35,7 +35,7 @@ from check_types import is_float
 from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
-from generic_fns.interatomic import create_interatom, interatomic_loop, return_interatom
+from generic_fns.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
@@ -200,6 +200,9 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
         raise RelaxError("No RDC data exists.")
     elif align_id and align_id not in dp_from.rdc_ids:
         raise RelaxNoRDCError(align_id)
+
+    # Test that the interatomic data is consistent between the two data pipe.
+    consistent_interatomic_data(pipe1=pipe_to, pipe2=pipe_from)
 
     # The IDs.
     if align_id == None:
