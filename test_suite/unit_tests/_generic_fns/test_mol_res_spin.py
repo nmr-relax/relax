@@ -455,6 +455,46 @@ class Test_mol_res_spin(UnitTestCase):
         self.assertEqual(obj.spins, [])
 
 
+    def test_Selection_range_contains_resid(self):
+        """The Selection object ":1-70" contains the res ':1'."""
+
+        # The Selection object.
+        obj = mol_res_spin.Selection(":1-70")
+
+        # Check that the residue ID is in the selection.
+        self.assert_(':1' in obj)
+
+
+    def test_Selection_range_contains_resid2(self):
+        """The Selection object ":1-70" does not contain the res ':71'."""
+
+        # The Selection object.
+        obj = mol_res_spin.Selection(":1-70")
+
+        # Check that the residue ID is in the selection.
+        self.assert_(':71' not in obj)
+
+
+    def test_Selection_range_contains_spinid(self):
+        """The Selection object ":1-70" contains the spin ':1@N'."""
+
+        # The Selection object.
+        obj = mol_res_spin.Selection(":1-70")
+
+        # Check that the residue ID is in the selection.
+        self.assert_(':1@N' in obj)
+
+
+    def test_Selection_range_contains_spinid2(self):
+        """The Selection object ":1-70" does not contain the spin ':71@C'."""
+
+        # The Selection object.
+        obj = mol_res_spin.Selection(":1-70")
+
+        # Check that the residue ID is in the selection.
+        self.assert_(':71@C' not in obj)
+
+
     def test_count_spins(self):
         """Test that the number of spins can be properly counted.
 
