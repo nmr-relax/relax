@@ -30,7 +30,7 @@ else:
     FD_OPEN = -1
 
 # relax module imports.
-from generic_fns import selection
+from generic_fns import domain, selection
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -59,6 +59,65 @@ uf.backend = selection.sel_all
 uf.menu_text = "&all"
 uf.wizard_size = (600, 550)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
+
+
+# The select.domain user function.
+uf = uf_info.add_uf("select.domain")
+uf.title = "Select all spins and interatomic data containers of a domain."
+uf.title_short = "Selection of whole domains."
+uf.display = True
+uf.add_keyarg(
+    name = "domain_id",
+    py_type = "str",
+    arg_type = "domain ID",
+    desc_short = "domain ID string",
+    desc = "The domain ID string of the domain to select.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = domain.get_domain_ids,
+    can_be_none = False
+)
+uf.add_keyarg(
+    name = "boolean",
+    default = "AND",
+    py_type = "str",
+    desc_short = "boolean operator",
+    desc = "The boolean operator specifying how interatomic data containers should be selected.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "OR",
+        "NOR",
+        "AND",
+        "NAND",
+        "XOR",
+        "XNOR"
+    ],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "change_all",
+    default = True,
+    py_type = "bool",
+    desc_short = "change all flag",
+    desc = "A flag specifying if all non-matching spin and interatomic data containers should be deselected."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will select all spins and interatomic data containers of a given domain.  This is defined by the domain ID string as specified by the previously executed domain-related user functions.")
+uf.desc.append(selection.boolean_doc)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To select all spins of the domain 'N-dom', simply type one of:")
+uf.desc[-1].add_prompt("relax> select.domain('N-dom', change_all=True)")
+uf.desc[-1].add_prompt("relax> select.domain(domain_id='N-dom', change_all=True)")
+uf.desc[-1].add_paragraph("To select all spins of the domain 'N-dom', preserving the current selections, simply type one of:")
+uf.desc[-1].add_prompt("relax> select.domain('N-dom', 'AND', True)")
+uf.desc[-1].add_prompt("relax> select.domain(domain_id='N-dom', boolean='AND', change_all=True)")
+uf.backend = selection.sel_domain
+uf.menu_text = "&domain"
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
+uf.wizard_apply_button = True
 uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 
 

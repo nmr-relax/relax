@@ -27,9 +27,9 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -359,6 +359,77 @@ def sel_all():
     # Loop over the spins and select them.
     for spin in spin_loop():
         spin.select = True
+
+
+def sel_domain(domain_id=None, boolean='OR', change_all=False):
+    """Select all spins and interatomic data containers of the given domain.
+
+    @keyword domain_id:     The domain ID string.
+    @type domain_id:        str or None
+    @param boolean:         The boolean operator used to select the spin systems with.  It can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'. This will be ignored if the change_all flag is set.
+    @type boolean:          str
+    @keyword change_all:    A flag which if True will cause all spins and interatomic data containers outside of the domain to be deselected.
+    @type change_all:       bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the domain is defined.
+    if not hasattr(cdp, 'domain') or domain_id not in cdp.domain:
+        raise RelaxNoDomainError(domain_id)
+
+    # The domain selection object.
+    domain = Selection(cdp.domain[domain_id])
+
+    # Loop over the spins and select as required.
+    for spin, spin_id in spin_loop(return_id=True):
+        # Deselect spins outside of the domain.
+        if spin_id not in domain and change_all:
+            print "out: %s" % spin_id
+            spin.select = False
+
+        # Inside the domain.
+        if spin_id in domain:
+            if boolean == 'OR':
+                print "OR: %s" % spin_id
+                spin.select = spin.select or True
+            elif boolean == 'NOR':
+                spin.select = not (spin.select or True)
+            elif boolean == 'AND':
+                spin.select = spin.select and True
+            elif boolean == 'NAND':
+                spin.select = not (spin.select and True)
+            elif boolean == 'XOR':
+                spin.select = not (spin.select and True) and (spin.select or True)
+            elif boolean == 'XNOR':
+                spin.select = (spin.select and True) or not (spin.select or True)
+            else:
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
+
+    # Interatomic data loop.
+    for interatom in interatomic_loop():
+        # Deselect containers outside of the domain.
+        if (interatom.spin_id1 not in domain and interatom.spin_id2 not in domain) and change_all:
+            interatom.select = False
+
+        # Inside the domain.
+        if interatom.spin_id1 in domain or interatom.spin_id2 in domain:
+            if boolean == 'OR':
+                interatom.select = interatom.select or True
+            elif boolean == 'NOR':
+                interatom.select = not (interatom.select or True)
+            elif boolean == 'AND':
+                interatom.select = interatom.select and True
+            elif boolean == 'NAND':
+                interatom.select = not (interatom.select and True)
+            elif boolean == 'XOR':
+                interatom.select = not (interatom.select and True) and (interatom.select or True)
+            elif boolean == 'XNOR':
+                interatom.select = (interatom.select and True) or not (interatom.select or True)
+            else:
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
+
 
 
 def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
