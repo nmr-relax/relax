@@ -22,9 +22,13 @@
 # Module docstring.
 """Module for manipulating the spectrometer frequency of experiments."""
 
+# Python module imports.
+from warnings import warn
+
 # relax module imports.
 from generic_fns import pipes
 from relax_errors import RelaxError
+from relax_warnings import RelaxWarning
 
 
 def get_values():
@@ -88,3 +92,8 @@ def set(id=None, frq=None, units='Hz'):
     # Set the frequency.
     cdp.frq[id] = frq * conv
 
+    # Warnings.
+    if cdp.frq[id] < 1e8:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.frq[id])
+    if cdp.frq[id] > 2e9:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.frq[id])
