@@ -22,9 +22,13 @@
 # Module docstring.
 """Module for manipulating the spectrometer frequency of experiments."""
 
+# Python module imports.
+from warnings import warn
+
 # relax module imports.
 from generic_fns import pipes
 from relax_errors import RelaxError
+from relax_warnings import RelaxWarning
 
 
 def get_values():
@@ -51,13 +55,15 @@ def get_values():
     return frq
 
 
-def set(id=None, frq=None):
+def set(id=None, frq=None, units='Hz'):
     """Set the spectrometer frequency of the experiment.
 
     @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
     @type id:       str
     @keyword frq:   The spectrometer frequency in Hertz.
     @type frq:      float
+    @keyword units: The units of frequency.  This can be one of "Hz", "kHz", "MHz", or "GHz".
+    @type units:    str
     """
 
     # Test if the current data pipe exists.
@@ -71,6 +77,23 @@ def set(id=None, frq=None):
     if id in cdp.frq and cdp.frq[id] != frq:
         raise RelaxError("The frequency for the experiment '%s' has already been set to %s Hz." % (id, cdp.frq[id]))
 
-    # Set the frequency.
-    cdp.frq[id] = frq
+    # Unit conversion.
+    if units == 'Hz':
+        conv = 1.0
+    elif units == 'kHz':
+        conv = 1e3
+    elif units == 'MHz':
+        conv = 1e6
+    elif units == 'GHz':
+        conv = 1e9
+    else:
+        raise RelaxError("The frequency units of '%s' are unknown." % units)
 
+    # Set the frequency.
+    cdp.frq[id] = frq * conv
+
+    # Warnings.
+    if cdp.frq[id] < 1e8:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.frq[id])
+    if cdp.frq[id] > 2e9:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.frq[id])

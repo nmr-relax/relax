@@ -51,10 +51,25 @@ uf.add_keyarg(
     desc_short = "spectrometer frequency",
     desc = "The spectrometer frequency in Hertz."
 )
+uf.add_keyarg(
+    name = "units",
+    default = "Hz",
+    py_type = "str",
+    desc_short = "frequency units",
+    desc = "The units of frequency.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "Hz",
+        "kHz"
+        "MHz"
+        "GHz"
+    ],
+    wiz_read_only = True
+)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the spectrometer frequency of a given experiment to be set.")
+uf.desc[-1].add_paragraph("This allows the spectrometer frequency of a given experiment to be set.  The expected units are that of the proton resonance frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file for the exact value.")
 uf.backend = generic_fns.frq.set
 uf.menu_text = "&set"
 uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_size = (700, 400)
+uf.wizard_size = (750, 500)
