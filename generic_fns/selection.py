@@ -51,6 +51,68 @@ table.add_row(["XNOR", "1", "1", "1", "1", "1", "0", "0", "1", "0"])
 boolean_doc.add_table(table.label)
 
 
+def boolean_deselect(current=None, boolean=None):
+    """Return the new boolean deselection result using the current selection.
+
+    @keyword current:   The current selection state.
+    @type current:      bool
+    @keyword boolean:   The boolean operator used to select with.  It can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+    @type boolean:      str
+    @return:            The new selection state.
+    @rtype:             bool
+    """
+
+    # Boolean selections.
+    if boolean == 'OR':
+        state = current or False
+    elif boolean == 'NOR':
+        state = not (current or False)
+    elif boolean == 'AND':
+        state = current and False
+    elif boolean == 'NAND':
+        state = not (current and False)
+    elif boolean == 'XOR':
+        state = not (current and False) and (current or False)
+    elif boolean == 'XNOR':
+        state = (current and False) or not (current or False)
+    else:
+        raise RelaxError("Unknown boolean operator " + repr(boolean))
+
+    # Return the new selection state.
+    return state
+
+
+def boolean_select(current=None, boolean=None):
+    """Return the new boolean selection result using the current selection.
+
+    @keyword current:   The current selection state.
+    @type current:      bool
+    @keyword boolean:   The boolean operator used to select with.  It can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+    @type boolean:      str
+    @return:            The new selection state.
+    @rtype:             bool
+    """
+
+    # Boolean selections.
+    if boolean == 'OR':
+        state = current or True
+    elif boolean == 'NOR':
+        state = not (current or True)
+    elif boolean == 'AND':
+        state = current and True
+    elif boolean == 'NAND':
+        state = not (current and True)
+    elif boolean == 'XOR':
+        state = not (current and True) and (current or True)
+    elif boolean == 'XNOR':
+        state = (current and True) or not (current or True)
+    else:
+        raise RelaxError("Unknown boolean operator " + repr(boolean))
+
+    # Return the new selection state.
+    return state
+
+
 def desel_all():
     """Deselect all spins.
 
@@ -105,20 +167,7 @@ def desel_interatom(spin_id1=None, spin_id2=None, boolean='AND', change_all=Fals
 
         # Boolean selections.
         else:
-            if boolean == 'OR':
-                interatom.select = interatom.select or False
-            elif boolean == 'NOR':
-                interatom.select = not (interatom.select or False)
-            elif boolean == 'AND':
-                interatom.select = interatom.select and False
-            elif boolean == 'NAND':
-                interatom.select = not (interatom.select and False)
-            elif boolean == 'XOR':
-                interatom.select = not (interatom.select and False) and (interatom.select or False)
-            elif boolean == 'XNOR':
-                interatom.select = (interatom.select and False) or not (interatom.select or False)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            interatom.select = boolean_deselect(current=interatom.select, boolean=boolean)
 
 
 def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False):
@@ -199,20 +248,7 @@ def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_c
 
         # Boolean selections.
         else:
-            if boolean == 'OR':
-                spin.select = spin.select or False
-            elif boolean == 'NOR':
-                spin.select = not (spin.select or False)
-            elif boolean == 'AND':
-                spin.select = spin.select and False
-            elif boolean == 'NAND':
-                spin.select = not (spin.select and False)
-            elif boolean == 'XOR':
-                spin.select = not (spin.select and False) and (spin.select or False)
-            elif boolean == 'XNOR':
-                spin.select = (spin.select and False) or not (spin.select or False)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            spin.select = boolean_deselect(current=spin.select, boolean=boolean)
 
 
 def desel_spin(spin_id=None, boolean='AND', change_all=False):
@@ -253,20 +289,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
 
         # Boolean selections.
         else:
-            if boolean == 'OR':
-                spin.select = spin.select or False
-            elif boolean == 'NOR':
-                spin.select = not (spin.select or False)
-            elif boolean == 'AND':
-                spin.select = spin.select and False
-            elif boolean == 'NAND':
-                spin.select = not (spin.select and False)
-            elif boolean == 'XOR':
-                spin.select = not (spin.select and False) and (spin.select or False)
-            elif boolean == 'XNOR':
-                spin.select = (spin.select and False) or not (spin.select or False)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            spin.select = boolean_deselect(current=spin.select, boolean=boolean)
 
 
 def is_mol_selected(selection=None):
@@ -397,20 +420,7 @@ def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
 
         # Boolean selections.
         else:
-            if boolean == 'OR':
-                interatom.select = interatom.select or True
-            elif boolean == 'NOR':
-                interatom.select = not (interatom.select or True)
-            elif boolean == 'AND':
-                interatom.select = interatom.select and True
-            elif boolean == 'NAND':
-                interatom.select = not (interatom.select and True)
-            elif boolean == 'XOR':
-                interatom.select = not (interatom.select and True) and (interatom.select or True)
-            elif boolean == 'XNOR':
-                interatom.select = (interatom.select and True) or not (interatom.select or True)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            interatom.select = boolean_select(current=interatom.select, boolean=boolean)
 
 
 def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='OR', change_all=False):
@@ -491,20 +501,7 @@ def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col
 
         # Boolean selections.
         else:
-            if boolean == 'OR':
-                spin.select = spin.select or True
-            elif boolean == 'NOR':
-                spin.select = not (spin.select or True)
-            elif boolean == 'AND':
-                spin.select = spin.select and True
-            elif boolean == 'NAND':
-                spin.select = not (spin.select and True)
-            elif boolean == 'XOR':
-                spin.select = not (spin.select and True) and (spin.select or True)
-            elif boolean == 'XNOR':
-                spin.select = (spin.select and True) or not (spin.select or True)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            spin.select = boolean_select(current=spin.select, boolean=boolean)
 
 
 def sel_spin(spin_id=None, boolean='OR', change_all=False):
@@ -546,17 +543,4 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
 
         # Boolean selections.
         else:
-            if boolean == 'OR':
-                spin.select = spin.select or True
-            elif boolean == 'NOR':
-                spin.select = not (spin.select or True)
-            elif boolean == 'AND':
-                spin.select = spin.select and True
-            elif boolean == 'NAND':
-                spin.select = not (spin.select and True)
-            elif boolean == 'XOR':
-                spin.select = not (spin.select and True) and (spin.select or True)
-            elif boolean == 'XNOR':
-                spin.select = (spin.select and True) or not (spin.select or True)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            spin.select = boolean_select(current=spin.select, boolean=boolean)
