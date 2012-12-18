@@ -94,6 +94,6 @@ def set(id=None, frq=None, units='Hz'):
 
     # Warnings.
     if cdp.frq[id] < 1e8:
-        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.frq[id])
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.frq[id]))
     if cdp.frq[id] > 2e9:
-        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.frq[id])
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.frq[id]))
