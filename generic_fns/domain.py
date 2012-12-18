@@ -38,3 +38,24 @@ def define(id=None, spin_id=None):
 
     # Store the domain info.
     cdp.domain[id] = spin_id
+
+
+def get_domain_ids():
+    """Return the list of all domain ID strings.
+
+    @return:        The list of all domain IDs.
+    @rtype:         list of str
+    """
+
+    # No pipe.
+    if cdp == None:
+        return []
+
+    # No domain data.
+    if not hasattr(cdp, 'domain'):
+        return []
+
+    # The domain IDs, sorted.
+    ids = cdp.domain.keys()
+    ids.sort()
+    return ids
