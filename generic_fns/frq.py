@@ -51,13 +51,15 @@ def get_values():
     return frq
 
 
-def set(id=None, frq=None):
+def set(id=None, frq=None, units='Hz'):
     """Set the spectrometer frequency of the experiment.
 
     @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
     @type id:       str
     @keyword frq:   The spectrometer frequency in Hertz.
     @type frq:      float
+    @keyword units: The units of frequency.  This can be one of "Hz", "kHz", "MHz", or "GHz".
+    @type units:    str
     """
 
     # Test if the current data pipe exists.
@@ -71,6 +73,18 @@ def set(id=None, frq=None):
     if id in cdp.frq and cdp.frq[id] != frq:
         raise RelaxError("The frequency for the experiment '%s' has already been set to %s Hz." % (id, cdp.frq[id]))
 
+    # Unit conversion.
+    if units == 'Hz':
+        conv = 1.0
+    elif units == 'kHz':
+        conv = 1e3
+    elif units == 'MHz':
+        conv = 1e6
+    elif units == 'GHz':
+        conv = 1e9
+    else:
+        raise RelaxError("The frequency units of '%s' are unknown." % units)
+
     # Set the frequency.
-    cdp.frq[id] = frq
+    cdp.frq[id] = frq * conv
 
