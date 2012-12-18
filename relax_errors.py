@@ -722,6 +722,19 @@ class RelaxInteratomInconsistentError(BaseError):
 
 
 
+# Domain errors.
+################
+
+# No domain defined.
+class RelaxNoDomainError(BaseError):
+    def __init__(self, id=None):
+        if id == None:
+            self.text = "No domains are defined."
+        else:
+            self.text = "The domain '%s' is not defined." % id
+
+
+
 # Spectral data errors.
 #######################
 
