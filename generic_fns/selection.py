@@ -409,7 +409,6 @@ def sel_domain(domain_id=None, boolean='OR', change_all=False):
     for spin, spin_id in spin_loop(return_id=True):
         # Deselect spins outside of the domain.
         if spin_id not in domain and change_all:
-            print "out: %s" % spin_id
             spin.select = False
 
         # Inside the domain.
