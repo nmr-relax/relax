@@ -119,12 +119,13 @@ class Bruker(GuiTestCase, system_tests.bruker.Bruker):
         page.uf_args['ri_id'].SetValue(str_to_gui('r1_700'))
         page.uf_args['file'].SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'bruker_files' + sep + 'T1_demo_1UBQ_H_trunc.txt'))
 
-        # Catch the failure.
-        try:
-            error = False
-            analysis.relax_data.wizard._go_next(None)
-        except RelaxError:
-            error = True
+        # Cause the failure.
+        analysis.relax_data.wizard._go_next(None)
 
-        # Assert that the RelaxError has occurred.
-        self.assertEqual(error, True)
+        # Check that no data was loaded.
+        self.assert_(not hasattr(cdp, 'ri_ids'))
+        self.assert_(not hasattr(cdp, 'frq'))
+        self.assert_(not hasattr(cdp, 'ri_type'))
+        for spin in spin_loop():
+            self.assert_(not hasattr(spin, 'ri_data'))
+            self.assert_(not hasattr(spin, 'ri_data_err'))
