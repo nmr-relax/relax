@@ -40,10 +40,6 @@ def gui_raise(relax_error, raise_flag=False):
     @raises RelaxError:     This raises all RelaxErrors, if the raise flag is given.
     """
 
-    # Die if running in test mode.
-    if status.test_mode:
-        raise relax_error
-
     # Turn off the busy cursor if needed.
     if wx.IsBusy():
         wx.EndBusyCursor()
