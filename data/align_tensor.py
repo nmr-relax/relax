@@ -1016,6 +1016,10 @@ class AlignTensorList(list):
 
                 # Simulation objects objects.
                 else:
+                    # Set the simulation number if needed.
+                    if not hasattr(self[-1], '_sim_num') or self[-1]._sim_num == None:
+                        self[-1].set_sim_num(len(value))
+
                     # Recreate the list elements.
                     for i in range(len(value)):
                         self[-1].set(param=param, value=value[i], category='sim', sim_index=i)
