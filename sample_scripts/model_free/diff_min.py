@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,7 +19,19 @@
 #                                                                             #
 ###############################################################################
 
-"""Script for diffusion tensor optimisation."""
+"""Demonstration script for diffusion tensor optimisation in a model-free analysis.
+
+Importantly, if a model-free analysis is to be based on this script, note that multiple rounds of executing this script will be required for each diffusion tensor.  To understand this concept of finding the universal solution of the optimisation minimum across multiple model-free spaces (or universes), please read:
+
+    d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494. (http://dx.doi.org/10.1039/b702202f)
+
+    d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133. (http://dx.doi.org/10.1007/s10858-007-9213-3).
+
+
+Also note that for a model-free analysis, you should look at the fully contained dauvergne_protocol.py sample script rather than here.
+
+This script requires an initial tensor estimate which can be found using either relax or other software packages.
+"""
 
 
 # Set the data pipe names (also the names of preset model-free models).
@@ -76,8 +88,25 @@ for name in pipes:
     model_free.select_model(model=name)
 
     # Minimise.
-    grid_search(inc=5)
+    grid_search(inc=21)
     minimise('newton')
+
+    # Model elimination.
+    eliminate()
+
+    # Write the results.
+    results.write(file='results', force=True)
+
+# Model selection.
+print("\n\n\n\n\n")
+print("####################")
+print("# Model selection. #")
+print("####################")
+print("\n\n\n")
+
+# Select the models and save the results.
+model_selection(method='AIC', modsel_pipe='aic')
+results.write(file='results', force=True)
 
 # Minimise the diffusion tensor parameters.
 print("\n\n\n\n\n")
@@ -86,23 +115,15 @@ print("# Minimising diffusion tensor parameters. #")
 print("###########################################")
 print("\n\n\n")
 
-# Loop over the data pipes.
-for name in pipes:
-    # Switch to the data pipe.
-    pipe.switch(name)
+# Unfix all parameters.
+fix('all', fixed=False)
 
-    # Unfix the diffusion tensor.
-    fix('diff', fixed=0)
+# Minimise.
+grid_search(inc=5)
+minimise('newton')
 
-    # Fix all model-free paremeter values.
-    fix('all_res')
-
-    # Minimise.
-    grid_search(inc=5)
-    minimise('newton', max_iter=5000)
-
-    # Write the results.
-    results.write(file='results', force=True)
+# Write the results.
+results.write(file='results', dir='opt', force=True)
 
 # Save the program state.
 state.save('save', force=True)
