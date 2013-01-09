@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,6 +21,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from os import sep
 import sys
 from tempfile import mktemp
 
@@ -57,6 +58,16 @@ class State(SystemTestCase):
 
         # Create a temporary file name.
         self.tmpfile = mktemp()
+
+
+    def test_align_tensor_with_mc_sims(self):
+        """Test the loading of a relax state with an alignment tensor with MC simulation structures."""
+
+        # The file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'align_tensor_mc.bz2'
+
+        # Load the state.
+        self.interpreter.state.load(path)
 
 
     def test_state_xml(self):
