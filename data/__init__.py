@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -212,8 +212,13 @@ class Relax_data_store(dict):
                         # The current spin ID.
                         spin_id = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
 
-                        # The interatomic data container design.
-                        if hasattr(spin, 'heteronuc_type'):
+                        # Convert proton spins (the 'heteronuc_type' variable indicates a pre-interatomic container design state).
+                        if hasattr(spin, 'heteronuc_type') and hasattr(spin, 'element') and spin.element == 'H':
+                            # Rename the nuclear isotope.
+                            spin.isotope = spin.proton_type
+
+                        # Convert heteronuclear spins (the 'heteronuc_type' variable indicates a pre-interatomic container design state).
+                        elif hasattr(spin, 'heteronuc_type'):
                             # Rename the nuclear isotope.
                             spin.isotope = spin.heteronuc_type
 
@@ -236,13 +241,21 @@ class Relax_data_store(dict):
                                 spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
                                 spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
 
-                                # Create a new spin container for the proton.
-                                h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
-                                h_spin.select = False
+                                # Fetch the proton spin if it exists.
+                                h_spin = generic_fns.mol_res_spin.return_spin(spin_id2, pipe=pipe_name)
+                                if h_spin:
+                                    spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, spin_num=h_spin.num)
 
-                                # Set up a dipole interaction between the two spins.
-                                generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
-                                generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
+                                # Create a new spin container for the proton if needed.
+                                if not h_spin:
+                                    h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
+                                    h_spin.select = False
+
+                                # Set up a dipole interaction between the two spins if needed.
+                                if not hasattr(h_spin, 'element'):
+                                    generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
+                                if not hasattr(h_spin, 'isotope'):
+                                    generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
                                 generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
 
                                 # Get the interatomic data container.
