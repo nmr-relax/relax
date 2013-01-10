@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,33 +19,32 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package containing all of relax's number crunching code."""
+# Module docstring.
+"""Collection of functions for vector operations."""
+
+# Python module imports.
+from math import acos, cos, pi, sin
+from random import uniform
 
 
-__all__ = [ 'alignment_tensor',
-            'chi2',
-            'coord_transform',
-            'consistency_tests',
-            'correlation_time',
-            'direction_cosine',
-            'frame_order',
-            'frame_order_matrix_ops',
-            'jw_mapping',
-            'jw_mf_comps',
-            'jw_mf',
-            'kronecker_product',
-            'mf',
-            'n_state_model',
-            'order_parameters',
-            'paramag_centre',
-            'pcs',
-            'potential',
-            'pseudo_ellipse',
-            'rdc',
-            'ri_comps',
-            'ri_prime',
-            'ri',
-            'rotation_matrix',
-            'weights',
-            'vectors' ]
+def random_unit_vector(vector):
+    """Generate a random rotation axis.
+
+    Uniform point sampling on a unit sphere is used to generate a random axis orientation.
+
+    @param axis:    The 3D rotation axis.
+    @type axis:     numpy array, len 3
+    """
+
+    # Random azimuthal angle.
+    u = uniform(0, 1)
+    theta = 2*pi*u
+
+    # Random polar angle.
+    v = uniform(0, 1)
+    phi = acos(2.0*v - 1)
+
+    # Random unit vector.
+    vector[0] = cos(theta) * sin(phi)
+    vector[1] = sin(theta) * sin(phi)
+    vector[2] = cos(phi)
