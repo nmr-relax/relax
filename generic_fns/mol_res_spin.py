@@ -1199,13 +1199,13 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Create the molecule if it does not exist.
-        mol_index = index_molecule(mol_name)
+        mol_index = index_molecule(mol_name, pipe=pipe)
         if mol_index == None:
             create_molecule(mol_name=mol_name, pipe=pipe)
             mol_index = len(dp.mol) - 1
 
         # Create the residue if it does not exist.
-        res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=mol_index)
+        res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=mol_index, pipe=pipe)
         if res_index == None:
             create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
             res_index = len(dp.mol[mol_index].res) - 1
@@ -1786,22 +1786,34 @@ def get_spin_ids(selection=None):
     return spin_ids
 
 
-def index_molecule(mol_name=None):
+def index_molecule(mol_name=None, pipe=None):
     """Return the index of the molecule of the given name.
 
     @keyword mol_name:  The name of the molecule.
     @type mol_name:     str or None
+    @keyword pipe:      The data pipe, defaulting to the current data pipe.
+    @type pipe:         str or None
     @return:            The index of the molecule, if it exists.
     @rtype:             int or None
     """
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # Single molecule and no name given.
-    if mol_name == None and len(cdp.mol) == 1:
+    if mol_name == None and len(dp.mol) == 1:
         return 0
 
     # Loop over the molecules.
     i = 0
-    for mol in cdp.mol:
+    for mol in dp.mol:
         # A match.
         if mol.name == mol_name:
             return i
@@ -1813,7 +1825,7 @@ def index_molecule(mol_name=None):
     return None
 
 
-def index_residue(res_num=None, res_name=None, mol_index=None):
+def index_residue(res_num=None, res_name=None, mol_index=None, pipe=None):
     """Return the index of the residue.
 
     @keyword res_num:   The number of the residue.
@@ -1822,17 +1834,29 @@ def index_residue(res_num=None, res_name=None, mol_index=None):
     @type res_name:     str
     @keyword mol_index: The index of the molecule.
     @type mol_index:    str
+    @keyword pipe:      The data pipe, defaulting to the current data pipe.
+    @type pipe:         str or None
     @return:            The index of the residue, if it exists.
     @rtype:             int or None
     """
 
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # Single unnamed residue.
-    if len(cdp.mol[mol_index].res) == 1 and res_num == cdp.mol[mol_index].res[0].num and res_name == cdp.mol[mol_index].res[0].name:
+    if len(dp.mol[mol_index].res) == 1 and res_num == dp.mol[mol_index].res[0].num and res_name == dp.mol[mol_index].res[0].name:
         return 0
 
     # Loop over the residues.
     i = 0
-    for res in cdp.mol[mol_index].res:
+    for res in dp.mol[mol_index].res:
         # A unique number match.
         if res_num != None and res.num == res_num:
             return i
