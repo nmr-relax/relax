@@ -495,8 +495,9 @@ class Relax_data_store(dict):
             if self.current_pipe in list(self.keys()):
                 builtins.cdp = self[self.current_pipe]
 
-        # Finally update the molecule, residue, and spin metadata.
-        generic_fns.mol_res_spin.metadata_update()
+        # Finally update the molecule, residue, and spin metadata for each data pipe.
+        for pipe in pipes:
+            generic_fns.mol_res_spin.metadata_update(pipe=pipe)
 
         # Backwards compatibility transformations.
         self._back_compat_hook(file_version, pipes=pipes)
