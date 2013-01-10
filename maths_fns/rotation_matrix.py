@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2008-2010 Edward d'Auvergne                        #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,13 +21,14 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, asin, atan2, cos, pi, sin, sqrt
-from numpy import array, cross, dot, float64, hypot, sign, transpose, zeros
+from math import acos, atan2, cos, pi, sin, sqrt
+from numpy import array, cross, dot, float64, hypot, transpose, zeros
 from numpy.linalg import norm
-from random import gauss, uniform
+from random import gauss
 
 # relax module imports.
 import generic_fns
+from maths_fns.vectors import random_unit_vector
 
 
 # Global variables.
@@ -1505,7 +1506,7 @@ def R_random_axis(R, angle=0.0):
 
     # Random rotation axis.
     rot_axis = zeros(3, float64)
-    random_rot_axis(rot_axis)
+    random_unit_vector(rot_axis)
 
     # Generate the rotation matrix.
     axis_angle_to_R(rot_axis, angle, R)
@@ -1885,29 +1886,6 @@ def R_to_quaternion(R, quat):
     quat[3] = R[1, 0] - R[0, 1]
     if quat[3]:
         quat[3] = copysign(0.5*sqrt(1 - R[0, 0] - R[1, 1] + R[2, 2]), quat[3])
-
-
-def random_rot_axis(axis):
-    """Generate a random rotation axis.
-
-    Uniform point sampling on a unit sphere is used to generate a random axis orientation.
-
-    @param axis:    The 3D rotation axis.
-    @type axis:     numpy array, len 3
-    """
-
-    # Random azimuthal angle.
-    u = uniform(0, 1)
-    theta = 2*pi*u
-
-    # Random polar angle.
-    v = uniform(0, 1)
-    phi = acos(2.0*v - 1)
-
-    # Random rotation axis.
-    axis[0] = cos(theta) * sin(phi)
-    axis[1] = sin(theta) * sin(phi)
-    axis[2] = cos(phi)
 
 
 def reverse_euler_xyx(alpha, beta, gamma):
