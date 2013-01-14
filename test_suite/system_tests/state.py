@@ -28,6 +28,7 @@ from tempfile import mktemp
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.pipes import VALID_TYPES, get_pipe
 from generic_fns.reset import reset
 from status import Status; status = Status()
@@ -68,6 +69,40 @@ class State(SystemTestCase):
 
         # Load the state.
         self.interpreter.state.load(path)
+
+        # The data.
+        domains = ['Dy N-dom', 'Dy C-dom']
+        rdc = {
+            "Dy N-dom" : [-6.41, -21.55],
+            "Dy C-dom" : [-21.55]
+        }
+        rdc_bc = {
+            "Dy N-dom" : [None, -20.87317257368743],
+            "Dy C-dom" : [None]
+        }
+
+        rdc_err = {
+            "Dy N-dom" : [1.0, 1.0],
+            "Dy C-dom" : [1.0]
+        }
+
+        # Check the data.
+        for domain in domains:
+            # Switch to the X-domain data pipe.
+            self.interpreter.pipe.switch(domain)
+
+            # Check the interatomic data.
+            i = 0
+            for interatom in interatomic_loop():
+                # Check the RDC data.
+                self.assertEqual(interatom.rdc[domain], rdc[domain][i])
+                if rdc_bc[domain][i]:
+                    self.assertEqual(interatom.rdc_bc[domain], rdc_bc[domain][i])
+                if rdc_err[domain][i]:
+                    self.assertEqual(interatom.rdc_err[domain], rdc_err[domain][i])
+
+                # Increment the index.
+                i += 1
 
 
     def test_state_xml(self):
