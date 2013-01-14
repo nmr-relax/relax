@@ -269,21 +269,21 @@ class Relax_data_store(dict):
                                 if hasattr(spin, 'xh_vect'):
                                     interatom.vector = spin.xh_vect
 
+                                # Set the RDC values.
+                                if hasattr(spin, 'rdc'):
+                                    interatom.rdc = spin.rdc
+                                if hasattr(spin, 'rdc_err'):
+                                    interatom.rdc_err = spin.rdc_err
+                                if hasattr(spin, 'rdc_sim'):
+                                    interatom.rdc_sim = spin.rdc_sim
+                                if hasattr(spin, 'rdc_bc'):
+                                    interatom.rdc_bc = spin.rdc_bc
+
                         # Delete the old structures.
-                        if hasattr(spin, 'heteronuc_type'):
-                            del spin.heteronuc_type
-                        if hasattr(spin, 'proton_type'):
-                            del spin.proton_type
-                        if hasattr(spin, 'attached_proton'):
-                            del spin.attached_proton
-                        if hasattr(spin, 'r'):
-                            del spin.r
-                        if hasattr(spin, 'r_err'):
-                            del spin.r_err
-                        if hasattr(spin, 'r_sim'):
-                            del spin.r_sim
-                        if hasattr(spin, 'xh_vect'):
-                            del spin.xh_vect
+                        eliminate = ['heteronuc_type', 'proton_type', 'attached_proton', 'r', 'r_err', 'r_sim', 'rdc', 'rdc_err', 'rdc_sim', 'rdc_bc', 'xh_vect']
+                        for name in eliminate:
+                            if hasattr(spin, name):
+                                delattr(spin, name)
 
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
