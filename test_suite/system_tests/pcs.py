@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -101,3 +101,39 @@ class Pcs(SystemTestCase):
         for spin in spin_loop():
             self.assertEqual(pcs[i], spin.pcs['tb'])
             i += 1
+
+
+    def test_structural_noise(self):
+        """Test the operation of the pcs.structural_noise user function."""
+
+        # The file.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'pcs_structural_noise_test.bz2'
+
+        # Load the state.
+        self.interpreter.state.load(state)
+
+        # Structural noise (twice to make sure old errors are removed properly from the PCS error).
+        self.interpreter.pcs.structural_noise(rmsd=200.0, sim_num=100, file='devnull', dir=None, force=True)
+        self.interpreter.pcs.structural_noise(rmsd=0.2, sim_num=10000, file='devnull', dir=None, force=True)
+
+        # The simulated data (from 1,000,000 randomisations of 0.2 Angstrom RMSD).
+        pcs_struct_err = {
+            'Dy N-dom': 0.014643633242475744,
+            'Er N-dom': 0.0047594540182391868,
+            'Tm N-dom': 0.010454580925459261,
+            'Tb N-dom': 0.01613972832580988
+        }
+        pcs_err = {
+            'Dy N-dom': 0.1010664929367797,
+            'Er N-dom': 0.10011319794388618,
+            'Tm N-dom': 0.1005450061531003,
+            'Tb N-dom': 0.10129408092495312
+        }
+
+        # Alias the single spin.
+        spin = cdp.mol[0].res[0].spin[0]
+
+        # Test the PCS data.
+        for id in ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']:
+            self.assertAlmostEqual(spin.pcs_struct_err[id], pcs_struct_err[id], 3)
+            self.assertAlmostEqual(spin.pcs_err[id], pcs_err[id], 3)
