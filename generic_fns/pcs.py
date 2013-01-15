@@ -810,7 +810,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
             # Remove the previous error.
             if id in spin.pcs_struct_err:
                 warn(RelaxWarning("Removing the previous structural error value from the PCS error of the spin '%s' for the alignment ID '%s'." % (spin_id, id)))
-                spin.pcs_err[id] = sqrt(spin.pcs_err[id]**2 - sd**2)
+                spin.pcs_err[id] = sqrt(spin.pcs_err[id]**2 - spin.pcs_struct_err[id]**2)
 
             # Store the structural error.
             spin.pcs_struct_err[id] = sd
