@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -63,10 +63,6 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
 
     # Get the data pipes.
     source_dp = pipes.get_pipe(pipe)
-
-    # Test if the structure has been loaded.
-    if not hasattr(source_dp, 'structure'):
-        raise RelaxNoPdbError
 
     # Test the centre has already been set.
     if pos != None and not force and hasattr(cdp, 'paramagnetic_centre'):
