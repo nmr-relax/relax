@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,6 +22,11 @@
 # Module docstring.
 """Module for handling the molecule, residue, and spin sequence."""
 
+# Python module imports.
+from copy import deepcopy
+from re import search
+import sys
+
 # relax module imports.
 from arg_check import is_int
 from generic_fns.interatomic import return_interatom_list
@@ -29,7 +34,6 @@ from generic_fns.mol_res_spin import count_molecules, count_residues, count_spin
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import open_write_file, read_spin_data, write_spin_data
-import sys
 
 
 
@@ -79,19 +83,17 @@ def attach_protons():
     set_spin_isotope(spin_id='@H', isotope='1H')
 
 
-def copy(pipe_from=None, pipe_to=None, preserve_select=False, verbose=True):
+def copy(pipe_from=None, pipe_to=None, preserve_select=False, empty=True, verbose=True):
     """Copy the molecule, residue, and spin sequence data from one data pipe to another.
 
-    @keyword pipe_from:         The data pipe to copy the sequence data from.  This defaults to the
-                                current data pipe.
+    @keyword pipe_from:         The data pipe to copy the sequence data from.  This defaults to the current data pipe.
     @type pipe_from:            str
-    @keyword pipe_to:           The data pipe to copy the sequence data to.  This defaults to the
-                                current data pipe.
+    @keyword pipe_to:           The data pipe to copy the sequence data to.  This defaults to the current data pipe.
     @type pipe_to:              str
     @keyword preserve_select:   A flag which if True will cause spin selections to be preserved.
     @type preserve_select:      bool
-    @keyword verbose:           A flag which if True will cause info about each spin to be printed
-                                out as the sequence is generated.
+    @keyword empty:             A flag which if True will create a molecule, residue, and spin sequence in the target pipe lacking all of the spin data of the source pipe.  If False, then the spin data will also be copied.
+    @keyword verbose:           A flag which if True will cause info about each spin to be printed out as the sequence is generated.
     @type verbose:              bool
     """
 
@@ -117,14 +119,38 @@ def copy(pipe_from=None, pipe_to=None, preserve_select=False, verbose=True):
 
     # Loop over the spins of the pipe_from data pipe.
     for spin, mol_name, res_num, res_name in spin_loop(pipe=pipe_from, full_info=True):
+        # Generate the new sequence.
+        new_spin = create_spin(spin_num=spin.num, spin_name=spin.name, res_num=res_num, res_name=res_name, mol_name=mol_name, pipe=pipe_to)
+
         # Preserve selection.
         if preserve_select:
-            select = spin.select
+            new_spin.select = spin.select
         else:
             select = True
 
-        # Generate the new sequence.
-        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to, select=select, verbose=verbose)
+        # Copy all the spin data.
+        if not empty:
+            # Duplicate all the objects of the container.
+            for name in dir(spin):
+                # Skip special objects.
+                if search('^_', name):
+                    continue
+
+                # Skip the spin ID.
+                #if name in ['spin_id']:
+                #    continue
+
+                # Skip class methods.
+                if name in list(spin.__class__.__dict__.keys()):
+                    continue
+
+                # Duplicate all other objects.
+                obj = deepcopy(getattr(spin, name))
+                setattr(new_spin, name, obj)
+
+    # Print out.
+    if verbose:
+        display(mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
 def compare_sequence(pipe1=None, pipe2=None, fail=True):
