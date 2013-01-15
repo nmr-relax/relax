@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -85,6 +85,13 @@ uf.add_keyarg(
     wiz_combo_iter = pipes.pipe_names,
     wiz_read_only = True,
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "empty",
+    default = True,
+    py_type = "bool",
+    desc_short = "empty sequence flag",
+    desc = "A flag which if True will create a molecule, residue, and spin sequence in the target pipe lacking all of the spin data of the source pipe.  If False, then the spin data will also be copied."
 )
 # Description.
 uf.desc.append(Desc_container())
