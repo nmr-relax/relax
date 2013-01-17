@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1852,21 +1852,15 @@ class N_state_model(API_base, API_common):
     def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
-        @param lower:       The lower bounds of the grid search which must be equal to the number of
-                            parameters in the model.
+        @param lower:       The lower bounds of the grid search which must be equal to the number of parameters in the model.
         @type lower:        array of numbers
-        @param upper:       The upper bounds of the grid search which must be equal to the number of
-                            parameters in the model.
+        @param upper:       The upper bounds of the grid search which must be equal to the number of parameters in the model.
         @type upper:        array of numbers
-        @param inc:         The increments for each dimension of the space for the grid search.  The
-                            number of elements in the array must equal to the number of parameters
-                            in the model.
+        @param inc:         The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
         @type inc:          array of int
-        @param constraints: If True, constraints are applied during the grid search (elinating parts
-                            of the grid).  If False, no constraints are used.
+        @param constraints: If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
         @type constraints:  bool
-        @param verbosity:   A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
+        @param verbosity:   A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
         """
 
@@ -1922,8 +1916,63 @@ class N_state_model(API_base, API_common):
                     lower.append(-1e-3)
                     upper.append(1e-3)
 
-        # Minimisation.
-        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        # Determine the data type.
+        data_types = self._base_data_types()
+
+        # The number of tensors to optimise.
+        tensor_num = align_tensor.num_tensors(skip_fixed=True)
+
+        # Custom sub-grid search for when only tensors are optimised (as each tensor is independent, the number of points collapses from inc**(5*N) to N*inc**5).
+        if cdp.model == 'fixed' and tensor_num > 1 and ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed() and hasattr(cdp, 'paramag_centre_fixed') and cdp.paramag_centre_fixed:
+            # Print out.
+            print("Optimising each alignment tensor separately.")
+
+            # Store the alignment tensor fixed flags.
+            fixed_flags = []
+            for i in range(len(cdp.align_ids)):
+                # Get the tensor object.
+                tensor = align_tensor.return_tensor(index=i, skip_fixed=False)
+
+                # Store the flag.
+                fixed_flags.append(tensor.fixed)
+
+                # Fix the tensor.
+                tensor.set('fixed', True)
+
+            # Loop over each sub-grid.
+            for i in range(len(cdp.align_ids)):
+                # Skip the tensor if originally fixed.
+                if fixed_flags[i]:
+                    continue
+
+                # Get the tensor object.
+                tensor = align_tensor.return_tensor(index=i, skip_fixed=False)
+
+                # Unfix the current tensor.
+                tensor.set('fixed', False)
+
+                # Grid search parameter subsets.
+                lower_sub = lower[i*5:i*5+5]
+                upper_sub = upper[i*5:i*5+5]
+                inc_sub = inc[i*5:i*5+5]
+
+                # Minimisation of the sub-grid.
+                self.minimise(min_algor='grid', lower=lower_sub, upper=upper_sub, inc=inc_sub, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+                # Fix the tensor again.
+                tensor.set('fixed', True)
+
+            # Reset the state of the tensors.
+            for i in range(len(cdp.align_ids)):
+                # Get the tensor object.
+                tensor = align_tensor.return_tensor(index=i, skip_fixed=False)
+
+                # Fix the tensor.
+                tensor.set('fixed', fixed_flags[i])
+
+        # All other minimisation.
+        else:
+            self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
