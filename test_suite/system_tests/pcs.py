@@ -25,6 +25,9 @@
 
 # Python module imports.
 from os import sep
+from re import search
+from string import split
+from tempfile import mkdtemp
 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, spin_loop
@@ -34,6 +37,79 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Pcs(SystemTestCase):
     """Class for testing PCS operations."""
+
+    def test_grace_plot(self):
+        """Test the creation of Grace plots of PCS data."""
+
+        # Create a data pipe for all the data.
+        self.interpreter.pipe.create('CaM N-dom', 'N-state')
+
+        # Create some spins.
+        self.interpreter.spin.create(spin_name='N', spin_num=1, res_name='Gly', res_num=3)
+        self.interpreter.spin.create(spin_name='H', spin_num=2, res_name='Gly', res_num=3)
+        self.interpreter.spin.create(spin_name='N', spin_num=3, res_name='Gly', res_num=4)
+        self.interpreter.spin.create(spin_name='H', spin_num=4, res_name='Gly', res_num=4)
+        self.interpreter.sequence.display()
+
+        # Set the element type.
+        self.interpreter.spin.element(element='N', spin_id='@N')
+        self.interpreter.spin.element(element='H', spin_id='@H')
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # PCSs.
+        self.interpreter.pcs.read(align_id='dy', file='pcs_dy_200911.txt', dir=dir, res_num_col=1, data_col=2, error_col=4, spin_id='@N')
+        self.interpreter.pcs.read(align_id='dy', file='pcs_dy_200911.txt', dir=dir, res_num_col=1, data_col=3, error_col=4, spin_id='@H')
+
+        # Fudge the back-calculated PCS data.
+        for spin in spin_loop():
+            spin.pcs_bc = {}
+            spin.pcs_bc['dy'] = spin.pcs['dy'] + 0.1
+
+        # Create the grace plot.
+        self.tmpdir = mkdtemp()
+        self.interpreter.pcs.corr_plot(format='grace', file='pcs_corr.agr', dir=self.tmpdir, force=True)
+
+        # Read the file data.
+        file = open(self.tmpdir+sep+'pcs_corr.agr')
+        lines = file.readlines()
+        file.close()
+
+        # Check the diagonal data.
+        for i in range(len(lines)):
+            if search('G0.S0', lines[i]):
+                point1 = split(lines[i+2])
+                point2 = split(lines[i+3])
+                self.assertAlmostEqual(float(point1[0]), -100.0)
+                self.assertAlmostEqual(float(point1[1]), -100.0)
+                self.assertAlmostEqual(float(point2[0]), 100.0)
+                self.assertAlmostEqual(float(point2[1]), 100.0)
+
+        # Check the 15N data.
+        for i in range(len(lines)):
+            if search('G0.S1', lines[i]):
+                point1 = split(lines[i+2])
+                point2 = split(lines[i+3])
+                self.assertAlmostEqual(float(point1[0]), 0.917+0.1)
+                self.assertAlmostEqual(float(point1[1]), 0.917)
+                self.assertAlmostEqual(float(point1[2]), 0.1)
+                self.assertAlmostEqual(float(point2[0]), 1.131+0.1)
+                self.assertAlmostEqual(float(point2[1]), 1.131)
+                self.assertAlmostEqual(float(point2[2]), 0.1)
+
+        # Check the 1H data.
+        for i in range(len(lines)):
+            if search('G0.S2', lines[i]):
+                point1 = split(lines[i+2])
+                point2 = split(lines[i+3])
+                self.assertAlmostEqual(float(point1[0]), 0.843+0.1)
+                self.assertAlmostEqual(float(point1[1]), 0.843)
+                self.assertAlmostEqual(float(point1[2]), 0.1)
+                self.assertAlmostEqual(float(point2[0]), 1.279+0.1)
+                self.assertAlmostEqual(float(point2[1]), 1.279)
+                self.assertAlmostEqual(float(point2[2]), 0.1)
+
 
     def test_load_multi_col_data(self):
         """Test the loading of PCS data from a file with different columns for each spin type."""
