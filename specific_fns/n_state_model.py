@@ -104,7 +104,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in range(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
-                if cdp.align_tensors[i].align_id not in cdp.align_ids:
+                if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
                 # Fixed tensor.
@@ -557,7 +557,7 @@ class N_state_model(API_base, API_common):
             tensor_num = 0
             for i in range(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
-                if cdp.align_tensors[i].align_id not in cdp.align_ids:
+                if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
                 # Fixed tensor.
@@ -1368,7 +1368,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments.
             for i in range(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
-                if cdp.align_tensors[i].align_id not in cdp.align_ids:
+                if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
                 # Fixed tensor.
@@ -1626,7 +1626,7 @@ class N_state_model(API_base, API_common):
                 # Find if the tensor corresponding to the id exists.
                 exists = False
                 for tensor in cdp.align_tensors:
-                    if id == tensor.align_id:
+                    if id == tensor.name:
                         exists = True
 
                 # Initialise the tensor.
