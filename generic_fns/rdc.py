@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -706,6 +706,48 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         cdp.align_ids.append(align_id)
     if align_id not in cdp.rdc_ids:
         cdp.rdc_ids.append(align_id)
+
+
+def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
+    """Set the RDC errors if not already present.
+
+    @keyword align_id:  The optional alignment tensor ID string.
+    @type align_id:     str
+    @keyword spin_id1:  The optional spin ID string of the first spin.
+    @type spin_id1:     None or str
+    @keyword spin_id2:  The optional spin ID string of the second spin.
+    @type spin_id2:     None or str
+    @keyword sd:        The RDC standard deviation in Hz.
+    @type sd:           float or int.
+    """
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'rdc_ids') or (align_id and align_id not in cdp.rdc_ids):
+        raise RelaxNoRDCError(align_id)
+
+    # Arg check.
+    if align_id and align_id not in cdp.rdc_ids:
+        raise RelaxError("The alignment ID '%s' is not in the RDC ID list %s." % (align_id, cdp.rdc_ids))
+
+    # Convert the align IDs to an array, or take all IDs.
+    if align_id:
+        align_ids = [align_id]
+    else:
+        align_ids = cdp.rdc_ids
+
+    # Loop over the interatomic data.
+    for interatom in interatomic_loop(selection1=spin_id1, selection2=spin_id2):
+        # No data structure.
+        if not hasattr(interatom, 'rdc_err'):
+            interatom.rdc_err = {}
+
+        # Set the error.
+        for id in align_ids:
+            interatom.rdc_err[id] = sd
 
 
 def weight(align_id=None, spin_id=None, weight=1.0):

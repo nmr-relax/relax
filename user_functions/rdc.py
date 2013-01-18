@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,6 +32,7 @@ else:
 
 # relax module imports.
 from generic_fns import align_tensor, pipes, rdc
+from generic_fns.mol_res_spin import get_spin_ids
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -382,6 +383,54 @@ uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
+
+
+# The rdc.set_errors user function.
+uf = uf_info.add_uf('rdc.set_errors')
+uf.title = "Set the errors for the RDCs."
+uf.title_short = "RDC error setting."
+uf.add_keyarg(
+    name = "align_id",
+    py_type = "str",
+    desc_short = "alignment ID string",
+    desc = "The optional alignment ID string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = align_tensor.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id1",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "first spin ID string",
+    desc = "The optional spin ID string of the first spin.",
+    wiz_combo_iter = get_spin_ids,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id2",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "second spin ID string",
+    desc = "The optional spin ID string of the second spin.",
+    wiz_combo_iter = get_spin_ids,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "sd",
+    default = 1.0,
+    py_type = "num",
+    desc_short = "RDC error (Hz)",
+    desc = "The RDC standard deviation value in Hertz."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("If the RDC errors have not already been read from a RDC data file or if they need to be changed, then the errors can be set via this user function.")
+uf.backend = rdc.set_errors
+uf.menu_text = "&set_errors"
+uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
