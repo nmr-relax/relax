@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -457,6 +457,24 @@ class N_state_model(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_mc_sim_failure(self):
+        """Test the setup of the Monte Carlo simulations
+        
+        This failed when this test was added, and is probably due to missing data.
+        """
+
+        # Load the state.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'n_state_model_mc_fail.bz2'
+        self.interpreter.state.load(path)
+
+        # Monte Carlo simulations.
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.monte_carlo.create_data()
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise('newton', constraints=False)
+        self.interpreter.monte_carlo.error_analysis()
 
 
     def test_metal_pos_opt(self):
