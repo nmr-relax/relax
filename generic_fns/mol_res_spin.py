@@ -1973,10 +1973,6 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
         # Alias.
         mol = dp.mol[i]
 
-        # The molecule ID is no longer unique, so add it to the list to remove.
-        if len(mol.res) or len(mol.res[0].spin):
-            to_remove.append(generate_spin_id(mol_name=mol.name))
-
         # Loop over the residues.
         for j in range(len(mol.res)):
             # Residue skipping.
@@ -1985,11 +1981,6 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
 
             # Alias.
             res = mol.res[j]
-
-            # The residue ID is no longer unique, so add it to the list to remove.
-            if len(res.spin):
-                to_remove.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
-                to_remove.append(generate_spin_id(res_num=res.num, res_name=res.name))
 
             # Loop over the spins.
             for k in range(len(res.spin)):
@@ -2001,7 +1992,7 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
                 spin = res.spin[k]
 
                 # The list of IDs to remove.
-                to_remove += spin_id_variants_elim(dp=dp, mol_index=i, res_index=j, spin_index=k)
+                to_remove = spin_id_variants_elim(dp=dp, mol_index=i, res_index=j, spin_index=k)
 
                 # ID removal.
                 for spin_id in to_remove:
@@ -3281,13 +3272,18 @@ def spin_id_variants_elim(dp=None, mol_index=None, res_index=None, spin_index=No
     # The spin IDs without spin info.
     if spin_count > 1:
         spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
+        spin_ids.append(generate_spin_id(mol_name=mol.name))
 
     # The spin IDs without residue info.
     if res_count > 1:
         spin_ids.append(generate_spin_id(mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
+        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
+        spin_ids.append(generate_spin_id(mol_name=mol.name))
 
     # The spin IDs without molecule info.
     if mol_count > 1:
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
         spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
 
     # The spin IDs without spin or residue info.
