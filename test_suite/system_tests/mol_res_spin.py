@@ -63,6 +63,8 @@ class Mol_res_spin(SystemTestCase):
 
         # Make sure that certain spin IDs have been removed.
         print("The spin ID lookup table:\n%s" % cdp.mol._spin_id_lookup)
+        self.assert_('@N' not in cdp.mol._spin_id_lookup)
+        self.assert_('@H' not in cdp.mol._spin_id_lookup)
 
 
     def test_residue_delete(self):
