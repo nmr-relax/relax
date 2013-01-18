@@ -465,8 +465,9 @@ class N_state_model(SystemTestCase):
         This failed when this test was added, and is probably due to missing data.
         """
 
-        # Load the state.
+        # Reset and load the state.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'n_state_model_mc_fail.bz2'
+        self.interpreter.reset()
         self.interpreter.state.load(path)
 
         # Monte Carlo simulations.
