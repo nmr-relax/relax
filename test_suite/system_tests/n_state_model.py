@@ -28,6 +28,7 @@ from tempfile import mkdtemp
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.align_tensor import calc_chi_tensor
 from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import return_spin, spin_index_loop, spin_loop
@@ -38,6 +39,22 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class N_state_model(SystemTestCase):
     """Class for testing various aspects specific to the N-state model."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip some tests if scipy is not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(N_state_model, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.scipy_module and methodName == 'test_frame_order_align_fit':
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
+
 
     def check_vectors(self):
         """Auxiliary method for checking the correct loading of bond vectors."""
