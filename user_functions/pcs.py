@@ -412,7 +412,7 @@ uf.add_keyarg(
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The optional spin ID string.",
-    #wiz_combo_iter = get_spin_ids,
+    wiz_combo_iter = get_spin_ids,
     can_be_none = True
 )
 uf.add_keyarg(
