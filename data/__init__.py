@@ -285,6 +285,13 @@ class Relax_data_store(dict):
                             if hasattr(spin, name):
                                 delattr(spin, name)
 
+            # Convert the alignment tensors.
+            if hasattr(dp, 'align_tensors'):
+                for i in range(len(dp.align_tensors)):
+                    # Fix for the addition of the alignment ID structure as opposed to the tensor name or tag.
+                    if not hasattr(dp.align_tensors[i], 'align_id'):
+                        dp.align_tensors[i].set('align_id', dp.align_tensors[i].name)
+
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.
