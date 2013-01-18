@@ -26,7 +26,6 @@
 # Python module imports.
 from os import sep
 from re import search
-from string import split
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -79,8 +78,8 @@ class Pcs(SystemTestCase):
         # Check the diagonal data.
         for i in range(len(lines)):
             if search('G0.S0', lines[i]):
-                point1 = split(lines[i+2])
-                point2 = split(lines[i+3])
+                point1 = lines[i+2].split()
+                point2 = lines[i+3].split()
                 self.assertAlmostEqual(float(point1[0]), -100.0)
                 self.assertAlmostEqual(float(point1[1]), -100.0)
                 self.assertAlmostEqual(float(point2[0]), 100.0)
@@ -89,8 +88,8 @@ class Pcs(SystemTestCase):
         # Check the 15N data.
         for i in range(len(lines)):
             if search('G0.S1', lines[i]):
-                point1 = split(lines[i+2])
-                point2 = split(lines[i+3])
+                point1 = lines[i+2].split()
+                point2 = lines[i+3].split()
                 self.assertAlmostEqual(float(point1[0]), 0.917+0.1)
                 self.assertAlmostEqual(float(point1[1]), 0.917)
                 self.assertAlmostEqual(float(point1[2]), 0.1)
@@ -101,8 +100,8 @@ class Pcs(SystemTestCase):
         # Check the 1H data.
         for i in range(len(lines)):
             if search('G0.S2', lines[i]):
-                point1 = split(lines[i+2])
-                point2 = split(lines[i+3])
+                point1 = lines[i+2].split()
+                point2 = lines[i+3].split()
                 self.assertAlmostEqual(float(point1[0]), 0.843+0.1)
                 self.assertAlmostEqual(float(point1[1]), 0.843)
                 self.assertAlmostEqual(float(point1[2]), 0.1)
