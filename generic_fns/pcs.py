@@ -613,6 +613,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         # Get the corresponding spin container.
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         spin = return_spin(id)
+        if spin == None and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
+            spin = return_spin(id+spin_id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))
             continue
@@ -878,7 +880,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
         file = open_write_file(file, dir, force)
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, sets=len(align_ids), set_names=align_ids, symbol_sizes=[0.5]*len(align_ids), linetype=[0]*len(align_ids), data_type=['pcs_bc', 'pcs'], axis_labels=["Ln\S3+\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"])
+        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, sets=len(align_ids), set_names=align_ids, symbol_sizes=[0.5]*len(align_ids), linetype=[0]*len(align_ids), data_type=['pcs_bc', 'pcs'], axis_labels=["Ln\\S3+\\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"])
 
         # The main data.
         grace.write_xy_data(data=[grace_data], file=file, graph_type='xy')

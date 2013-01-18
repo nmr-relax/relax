@@ -1964,6 +1964,7 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
     dp = pipes.get_pipe(pipe)
 
     # Loop over the molecules.
+    to_remove = []
     for i in range(len(dp.mol)):
         # Molecule skipping.
         if mol_index != None and mol_index != i:
@@ -1991,10 +1992,10 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
                 spin = res.spin[k]
 
                 # The list of IDs to remove.
-                spin_ids = spin_id_variants_elim(dp=dp, mol_index=i, res_index=j, spin_index=k)
+                to_remove = spin_id_variants_elim(dp=dp, mol_index=i, res_index=j, spin_index=k)
 
                 # ID removal.
-                for spin_id in spin_ids:
+                for spin_id in to_remove:
                     # Blank IDs.
                     if spin_id == '':
                         continue
@@ -3271,13 +3272,18 @@ def spin_id_variants_elim(dp=None, mol_index=None, res_index=None, spin_index=No
     # The spin IDs without spin info.
     if spin_count > 1:
         spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
+        spin_ids.append(generate_spin_id(mol_name=mol.name))
 
     # The spin IDs without residue info.
     if res_count > 1:
         spin_ids.append(generate_spin_id(mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
+        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
+        spin_ids.append(generate_spin_id(mol_name=mol.name))
 
     # The spin IDs without molecule info.
     if mol_count > 1:
+        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
         spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
 
     # The spin IDs without spin or residue info.

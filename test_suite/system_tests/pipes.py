@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,6 +24,7 @@ from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns import pipes
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -31,6 +32,22 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Pipes(SystemTestCase):
     """TestCase class for the functional tests of relax data pipes."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip some tests if scipy is not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Pipes, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.scipy_module and methodName in ['test_change_type']:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
+
 
     def test_change_type(self):
         """Test the pipe.change_type user function."""
