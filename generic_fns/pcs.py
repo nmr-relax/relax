@@ -613,6 +613,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         # Get the corresponding spin container.
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         spin = return_spin(id)
+        if spin == None and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
+            spin = return_spin(id+spin_id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))
             continue
