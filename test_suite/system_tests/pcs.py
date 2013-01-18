@@ -64,7 +64,9 @@ class Pcs(SystemTestCase):
         }
 
         # Check the PCS data.
+        print("\n")
         for spin, spin_id in spin_loop(return_id=True):
+            print("Checking the PCS data of spin '%s'." % spin_id)
             self.assert_(hasattr(spin, 'pcs'))
             self.assertEqual(spin.pcs['dy'], pcs_data[spin_id])
             self.assertEqual(spin.pcs_err['dy'], 0.1)
