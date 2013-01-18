@@ -51,6 +51,10 @@ for i in range(len(align_list)):
     # The frequency.
     self._execute_uf(uf_name='frq.set', id=align_list[i], frq=799.75376122 * 1e6)
 
+# Set some errors.
+self._execute_uf(uf_name='rdc.set_errors', sd=1.0)
+self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
+
 # Set the paramagnetic centre.
 self._execute_uf(uf_name='paramag.centre', pos=[1, 2, -30])
 
@@ -59,6 +63,13 @@ self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
 self._execute_uf(uf_name='minimise', min_algor='bfgs', constraints=True)
+
+# Monte Carlo simulations.
+self._execute_uf(uf_name='monte_carlo.setup', number=3)
+self._execute_uf(uf_name='monte_carlo.create_data')
+self._execute_uf(uf_name='monte_carlo.initial_values')
+self._execute_uf(uf_name='minimise', min_algor='bfgs', constraints=True)
+self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)

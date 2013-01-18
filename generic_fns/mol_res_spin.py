@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1687,6 +1687,10 @@ def get_molecule_ids(selection=None):
     @rtype:             list of str
     """
 
+    # No data pipes, so return an empty list without throwing an error.
+    if not pipes.cdp_name():
+        return []
+
     # Loop over the molecules, append the ID of each within the selection.
     mol_ids = []
     for mol, mol_id in molecule_loop(selection, return_id=True):
@@ -1704,6 +1708,10 @@ def get_molecule_names(selection=None):
     @return:            The molecule names.
     @rtype:             list of str
     """
+
+    # No data pipes, so return an empty list without throwing an error.
+    if not pipes.cdp_name():
+        return []
 
     # Loop over the molecules, append the name of each within the selection.
     mol_names = []
@@ -1723,6 +1731,10 @@ def get_residue_ids(selection=None):
     @rtype:             list of str
     """
 
+    # No data pipes, so return an empty list without throwing an error.
+    if not pipes.cdp_name():
+        return []
+
     # Loop over the residues, appending the ID of each within the selection.
     res_ids = []
     for res, res_id in residue_loop(selection, return_id=True):
@@ -1740,6 +1752,10 @@ def get_residue_names(selection=None):
     @return:            The residue names.
     @rtype:             list of str
     """
+
+    # No data pipes, so return an empty list without throwing an error.
+    if not pipes.cdp_name():
+        return []
 
     # Loop over the residues, appending the name of each within the selection.
     res_names = []
@@ -1759,6 +1775,10 @@ def get_residue_nums(selection=None):
     @rtype:             list of str
     """
 
+    # No data pipes, so return an empty list without throwing an error.
+    if not pipes.cdp_name():
+        return []
+
     # Loop over the residues, appending the number of each within the selection.
     res_nums = []
     for res in residue_loop(selection):
@@ -1776,6 +1796,10 @@ def get_spin_ids(selection=None):
     @return:            The spin ID strings.
     @rtype:             list of str
     """
+
+    # No data pipes, so return an empty list without throwing an error.
+    if not pipes.cdp_name():
+        return []
 
     # Loop over the spins, appending the ID of each within the selection.
     spin_ids = []

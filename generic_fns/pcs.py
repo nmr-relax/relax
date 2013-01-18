@@ -668,6 +668,54 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         cdp.pcs_ids.append(align_id)
 
 
+def set_errors(align_id=None, spin_id=None, sd=None):
+    """Set the PCS errors if not already present.
+
+    @keyword align_id:  The optional alignment tensor ID string.
+    @type align_id:     str
+    @keyword spin_id:   The optional spin ID string.
+    @type spin_id:      None or str
+    @keyword sd:        The PCS standard deviation in ppm.
+    @type sd:           float or int.
+    """
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'pcs_ids') or (align_id and align_id not in cdp.pcs_ids):
+        raise RelaxNoPCSError(align_id)
+
+    # Arg check.
+    if align_id and align_id not in cdp.pcs_ids:
+        raise RelaxError("The alignment ID '%s' is not in the PCS ID list %s." % (align_id, cdp.pcs_ids))
+
+    # Convert the align IDs to an array, or take all IDs.
+    if align_id:
+        align_ids = [align_id]
+    else:
+        align_ids = cdp.pcs_ids
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Skip spins with no PCSs.
+        if not hasattr(spin, 'pcs') or (align_id and not align_id in spin.pcs):
+            continue
+
+        # No data structure.
+        if not hasattr(spin, 'pcs_err'):
+            spin.pcs_err = {}
+
+        # Set the error.
+        for id in align_ids:
+            spin.pcs_err[id] = sd
+
+
 def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None, force=False):
     """Determine the PCS error due to structural noise via simulation.
 
