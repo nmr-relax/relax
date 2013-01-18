@@ -878,7 +878,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
         file = open_write_file(file, dir, force)
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, sets=len(align_ids), set_names=align_ids, symbol_sizes=[0.5]*len(align_ids), linetype=[0]*len(align_ids), data_type=['pcs_bc', 'pcs'], axis_labels=["Ln\S3+\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"])
+        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, sets=len(align_ids), set_names=align_ids, symbol_sizes=[0.5]*len(align_ids), linetype=[0]*len(align_ids), data_type=['pcs_bc', 'pcs'], axis_labels=["Ln\\S3+\\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"])
 
         # The main data.
         grace.write_xy_data(data=[grace_data], file=file, graph_type='xy')
