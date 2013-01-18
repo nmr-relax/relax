@@ -2270,8 +2270,14 @@ class N_state_model(API_base, API_common):
             if not hasattr(container, 'rdc_err'):
                 raise RelaxError("The RDC errors are missing for the spin pair '%s' and '%s'." % (container.spin_id1, container.spin_id2))
 
+            # No data.
+            if data_id[2] not in container.rdc_err:
+                err = None
+            else:
+                err = container.rdc_err[data_id[2]]
+
             # Append the data.
-            mc_errors.append(container.rdc_err[data_id[2]])
+            mc_errors.append(err)
 
         # NOESY data.
         elif data_id[1] == 'noesy' and hasattr(container, 'noesy'):
