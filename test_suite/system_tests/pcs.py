@@ -148,6 +148,43 @@ class Pcs(SystemTestCase):
             self.assertEqual(spin.pcs_err['dy'], 0.1)
 
 
+    def test_load_multi_col_data2(self):
+        """Test the loading of PCS data from a file with different columns for each spin type."""
+
+        # Create a data pipe for all the data.
+        self.interpreter.pipe.create('CaM N-dom', 'N-state')
+
+        # Create some spins.
+        self.interpreter.spin.create(spin_name='N', spin_num=1, res_name='Gly', res_num=3, mol_name='CaM')
+        self.interpreter.spin.create(spin_name='H', spin_num=2, res_name='Gly', res_num=3, mol_name='CaM')
+        self.interpreter.spin.create(spin_name='N', spin_num=3, res_name='Gly', res_num=4, mol_name='CaM')
+        self.interpreter.spin.create(spin_name='H', spin_num=4, res_name='Gly', res_num=4, mol_name='CaM')
+        self.interpreter.sequence.display()
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # PCSs.
+        self.interpreter.pcs.read(align_id='dy', file='pcs_dy_200911.txt', dir=dir, res_num_col=1, data_col=2, error_col=4, spin_id='@N')
+        self.interpreter.pcs.read(align_id='dy', file='pcs_dy_200911.txt', dir=dir, res_num_col=1, data_col=3, error_col=4, spin_id='@H')
+
+        # The data.
+        pcs_data = {
+            '#CaM:3@N': 0.917,
+            '#CaM:3@H': 0.843,
+            '#CaM:4@N': 1.131,
+            '#CaM:4@H': 1.279,
+        }
+
+        # Check the PCS data.
+        print("\n")
+        for spin, spin_id in spin_loop(return_id=True):
+            print("Checking the PCS data of spin '%s'." % spin_id)
+            self.assert_(hasattr(spin, 'pcs'))
+            self.assertEqual(spin.pcs['dy'], pcs_data[spin_id])
+            self.assertEqual(spin.pcs_err['dy'], 0.1)
+
+
     def test_pcs_copy(self):
         """Test the operation of the pcs.copy user function."""
 
