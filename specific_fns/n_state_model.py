@@ -898,7 +898,7 @@ class N_state_model(API_base, API_common):
         # The paramagnetic centre.
         if not hasattr(cdp, 'paramagnetic_centre'):
             paramag_centre = zeros(3, float64)
-        elif sim_index != None:
+        elif sim_index != None and not cdp.paramag_centre_fixed:
             if not hasattr(cdp, 'paramagnetic_centre_sim') or cdp.paramagnetic_centre_sim[sim_index] == None:
                 paramag_centre = zeros(3, float64)
             else:
