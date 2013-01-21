@@ -13,7 +13,7 @@ from status import Status; status = Status()
 
 # Set up.
 NUM_STR = 3
-SIMS = False
+SIMS = True
 
 # Path of the alignment data and structure.
 DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'metal_pos_opt'
@@ -148,7 +148,11 @@ self._execute_uf('simplex', constraints=False, max_iter=50, uf_name='minimise')
 
 # Monte Carlo simulations.
 if SIMS:
-    self._execute_uf(uf_name='monte_carlo.setup', num=3)
+    # Set up the errors needed for the simulations.
+    self._execute_uf(uf_name='rdc.set_errors', sd=1.0)
+    self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
+
+    self._execute_uf(uf_name='monte_carlo.setup', number=3)
     self._execute_uf(uf_name='monte_carlo.create_data')
     self._execute_uf(uf_name='monte_carlo.initial_values')
     self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
