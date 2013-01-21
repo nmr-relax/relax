@@ -2507,6 +2507,11 @@ class N_state_model(API_base, API_common):
                     # Append None to fill the structure.
                     sim_object.append(None)
 
+            # Set the simulation paramagnetic centre positions to the optimised values.
+            if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+                for j in range(cdp.sim_number):
+                    cdp.paramagnetic_centre_sim[j] = deepcopy(cdp.paramagnetic_centre)
+
 
     def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
