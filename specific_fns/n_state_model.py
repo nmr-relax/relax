@@ -82,8 +82,7 @@ class N_state_model(API_base, API_common):
     def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
 
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
+        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:        None or int
         @return:                The parameter vector used for optimisation.
         @rtype:                 numpy array
@@ -155,6 +154,11 @@ class N_state_model(API_base, API_common):
                 param_vector.append(0.0)
                 param_vector.append(0.0)
                 param_vector.append(0.0)
+
+            elif sim_index != None:
+                param_vector.append(cdp.paramagnetic_centre_sim[sim_index][0])
+                param_vector.append(cdp.paramagnetic_centre_sim[sim_index][1])
+                param_vector.append(cdp.paramagnetic_centre_sim[sim_index][2])
 
             else:
                 param_vector.append(cdp.paramagnetic_centre[0])
@@ -632,9 +636,16 @@ class N_state_model(API_base, API_common):
                 cdp.paramagnetic_centre = zeros(3, float64)
 
             # The position.
-            cdp.paramagnetic_centre[0] = param_vector[-3]
-            cdp.paramagnetic_centre[1] = param_vector[-2]
-            cdp.paramagnetic_centre[2] = param_vector[-1]
+            if sim_index == None:
+                cdp.paramagnetic_centre[0] = param_vector[-3]
+                cdp.paramagnetic_centre[1] = param_vector[-2]
+                cdp.paramagnetic_centre[2] = param_vector[-1]
+
+            # Monte Carlo simulated positions.
+            else:
+                cdp.paramagnetic_centre_sim[sim_index][0] = param_vector[-3]
+                cdp.paramagnetic_centre_sim[sim_index][1] = param_vector[-2]
+                cdp.paramagnetic_centre_sim[sim_index][2] = param_vector[-1]
 
 
     def _elim_no_prob(self):
@@ -852,11 +863,13 @@ class N_state_model(API_base, API_common):
                     rdc_index = rdc_index + 1
 
 
-    def _minimise_setup_atomic_pos(self):
+    def _minimise_setup_atomic_pos(self, sim_index=None):
         """Set up the atomic position data structures for optimisation using PCSs and PREs as base data sets.
 
-        @return:    The atomic positions (the first index is the spins, the second is the structures, and the third is the atomic coordinates) and the paramagnetic centre.
-        @rtype:     numpy rank-3 array, numpy rank-1 array.
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The atomic positions (the first index is the spins, the second is the structures, and the third is the atomic coordinates) and the paramagnetic centre.
+        @rtype:             numpy rank-3 array, numpy rank-1 array.
         """
 
         # Initialise.
@@ -883,7 +896,10 @@ class N_state_model(API_base, API_common):
 
         # The paramagnetic centre.
         if hasattr(cdp, 'paramagnetic_centre'):
-            paramag_centre = array(cdp.paramagnetic_centre)
+            if sim_index != None and hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+                paramag_centre = array(cdp.paramagnetic_centre_sim[sim_index])
+            else:
+                paramag_centre = array(cdp.paramagnetic_centre)
         else:
             paramag_centre = zeros(3, float64)
 
@@ -1529,7 +1545,7 @@ class N_state_model(API_base, API_common):
         # Get the atomic_positions.
         atomic_pos, paramag_centre, centre_fixed = None, None, True
         if 'pcs' in data_types or 'pre' in data_types:
-            atomic_pos, paramag_centre = self._minimise_setup_atomic_pos()
+            atomic_pos, paramag_centre = self._minimise_setup_atomic_pos(sim_index=sim_index)
 
             # Optimisation of the centre.
             if hasattr(cdp, 'paramag_centre_fixed'):
@@ -2447,7 +2463,11 @@ class N_state_model(API_base, API_common):
         """Initialise the Monte Carlo parameter values."""
 
         # Get the minimisation statistic object names.
-        min_names = self.data_names(set='min')
+        sim_names = self.data_names(set='min')
+
+        # Add the paramagnetic centre, if optimised.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            sim_names += ['paramagnetic_centre']
 
         # Alignments.
         if hasattr(cdp, 'align_tensors'):
@@ -2468,8 +2488,8 @@ class N_state_model(API_base, API_common):
                     for j in range(cdp.sim_number):
                         cdp.align_tensors[i].set(param=object_name, value=deepcopy(getattr(cdp.align_tensors[i], object_name)), category='sim', sim_index=j)
 
-            # Loop over all the minimisation object names.
-            for object_name in min_names:
+            # Create all other simulation objects.
+            for object_name in sim_names:
                 # Name for the simulation object.
                 sim_object_name = object_name + '_sim'
 
