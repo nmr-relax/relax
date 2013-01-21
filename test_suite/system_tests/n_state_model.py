@@ -478,7 +478,7 @@ class N_state_model(SystemTestCase):
         self.interpreter.monte_carlo.error_analysis()
 
         # Activate the optimisation of the paramagnetic centre position and try again.
-        self.interpreter.param_centre.fix(fixed=False)
+        self.interpreter.paramag.centre(fix=False)
         self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
