@@ -151,19 +151,18 @@ class N_state_model(API_base, API_common):
         # The paramagnetic centre.
         if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
             if not hasattr(cdp, 'paramagnetic_centre'):
-                param_vector.append(0.0)
-                param_vector.append(0.0)
-                param_vector.append(0.0)
-
+                for i in range(3):
+                    param_vector.append(0.0)
             elif sim_index != None:
-                param_vector.append(cdp.paramagnetic_centre_sim[sim_index][0])
-                param_vector.append(cdp.paramagnetic_centre_sim[sim_index][1])
-                param_vector.append(cdp.paramagnetic_centre_sim[sim_index][2])
-
+                if cdp.paramagnetic_centre_sim[sim_index] == None:
+                    for i in range(3):
+                        param_vector.append(0.0)
+                else:
+                    for i in range(3):
+                        param_vector.append(cdp.paramagnetic_centre_sim[sim_index][i])
             else:
-                param_vector.append(cdp.paramagnetic_centre[0])
-                param_vector.append(cdp.paramagnetic_centre[1])
-                param_vector.append(cdp.paramagnetic_centre[2])
+                for i in range(3):
+                    param_vector.append(cdp.paramagnetic_centre[i])
 
         # Convert all None values to zero (to avoid conversion to NaN).
         for i in range(len(param_vector)):
@@ -643,6 +642,8 @@ class N_state_model(API_base, API_common):
 
             # Monte Carlo simulated positions.
             else:
+                if cdp.paramagnetic_centre_sim[sim_index] == None:
+                    cdp.paramagnetic_centre_sim[sim_index] = [None, None, None]
                 cdp.paramagnetic_centre_sim[sim_index][0] = param_vector[-3]
                 cdp.paramagnetic_centre_sim[sim_index][1] = param_vector[-2]
                 cdp.paramagnetic_centre_sim[sim_index][2] = param_vector[-1]
@@ -895,13 +896,15 @@ class N_state_model(API_base, API_common):
         atomic_pos = array(atomic_pos, float64)
 
         # The paramagnetic centre.
-        if hasattr(cdp, 'paramagnetic_centre'):
-            if sim_index != None and hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-                paramag_centre = array(cdp.paramagnetic_centre_sim[sim_index])
-            else:
-                paramag_centre = array(cdp.paramagnetic_centre)
-        else:
+        if not hasattr(cdp, 'paramagnetic_centre'):
             paramag_centre = zeros(3, float64)
+        elif sim_index != None:
+            if cdp.paramagnetic_centre_sim[sim_index] == None:
+                paramag_centre = zeros(3, float64)
+            else:
+                paramag_centre = array(cdp.paramagnetic_centre_sim[sim_index])
+        else:
+            paramag_centre = array(cdp.paramagnetic_centre)
 
         # Return the data structures.
         return atomic_pos, paramag_centre
