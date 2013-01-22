@@ -2083,6 +2083,13 @@ class N_state_model(API_base, API_common):
             min_options = (min_algor,) + min_options
             min_algor = 'Method of Multipliers'
 
+        # Only allow simplex optimisation for the paramagnetic centre position optimisation (the PCS gradients and Hessians are not yet implemented).
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            if min_algor != 'simplex':
+                raise RelaxError("For the paramagnetic centre position, only simplex optimisation is allowed as the PCS gradients and Hessians are not yet implemented.")
+            if constraints:
+                raise RelaxError("For the paramagnetic centre position, constrains are not allowed as the PCS gradients and Hessians are not yet implemented.")
+
         # Linear constraints.
         if constraints:
             A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
