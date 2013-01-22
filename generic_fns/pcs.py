@@ -522,13 +522,13 @@ def q_factors(spin_id=None):
 
         # Warnings (and then exit).
         if not spin_count:
-            warn(RelaxWarning("No spins have been used in the calculation."))
+            warn(RelaxWarning("No spins have been used in the calculation, skipping the PCS Q factor calculation."))
             return
         if not pcs_data:
-            warn(RelaxWarning("No PCS data can be found for the alignment ID '%s'." % align_id))
+            warn(RelaxWarning("No PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
         if not pcs_bc_data:
-            warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s'." % align_id))
+            warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
 
     # The total Q-factor.
