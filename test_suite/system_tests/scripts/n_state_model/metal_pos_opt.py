@@ -105,6 +105,7 @@ if cdp.chi2 > 1e-15:
 # Shift the metal.
 print("\nShifting the Ln3+ position.")
 print("Original position: [%.3f, %.3f, %.3f]" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+x_orig, y_orig, z_orig = cdp.paramagnetic_centre
 cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.02
 print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
 self._execute_uf(uf_name='calc')
@@ -114,13 +115,15 @@ if cdp.chi2 < 1e-15:
 
 # Optimise the Ln3+ position.
 x, y, z = cdp.paramagnetic_centre
-self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise', verbosity=2)
 
 # Check that the metal moved.
 print("\nOriginal position: [%.3f, %.3f, %.3f]" % (x, y, z))
 print("New position:      [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+if "%.3f" % x_orig != "%.3f" % cdp.paramagnetic_centre[0] or "%.3f" % y_orig != "%.3f" % cdp.paramagnetic_centre[1] or "%.3f" % z_orig != "%.3f" % cdp.paramagnetic_centre[2]:
+    raise RelaxError("The original metal position has not been found.")
 if "%.3f" % x == "%.3f" % cdp.paramagnetic_centre[0] and "%.3f" % y == "%.3f" % cdp.paramagnetic_centre[1] and "%.3f" % z == "%.3f" % cdp.paramagnetic_centre[2]:
-    raise RelaxError("The metal position has not been optimised!")
+    raise RelaxError("The metal position has not been optimised.")
 
 # Print out.
 print("\n\n")
