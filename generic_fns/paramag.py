@@ -70,9 +70,9 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
 
     # The fixed flag.
     if fix:
-        print("The paramagnetic centre will be fixed during optimisation.")
+        print("The paramagnetic centre position will be fixed during optimisation.")
     else:
-        print("The paramagnetic centre will be optimised.")
+        print("The paramagnetic centre position will be optimised.")
     cdp.paramag_centre_fixed = fix
 
     # Position is supplied.

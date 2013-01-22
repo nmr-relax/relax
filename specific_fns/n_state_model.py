@@ -898,8 +898,8 @@ class N_state_model(API_base, API_common):
         # The paramagnetic centre.
         if not hasattr(cdp, 'paramagnetic_centre'):
             paramag_centre = zeros(3, float64)
-        elif sim_index != None:
-            if cdp.paramagnetic_centre_sim[sim_index] == None:
+        elif sim_index != None and not cdp.paramag_centre_fixed:
+            if not hasattr(cdp, 'paramagnetic_centre_sim') or cdp.paramagnetic_centre_sim[sim_index] == None:
                 paramag_centre = zeros(3, float64)
             else:
                 paramag_centre = array(cdp.paramagnetic_centre_sim[sim_index])
@@ -2083,6 +2083,13 @@ class N_state_model(API_base, API_common):
             min_options = (min_algor,) + min_options
             min_algor = 'Method of Multipliers'
 
+        # Only allow simplex optimisation for the paramagnetic centre position optimisation (the PCS gradients and Hessians are not yet implemented).
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            if min_algor != 'simplex':
+                raise RelaxError("For the paramagnetic centre position, only simplex optimisation is allowed as the PCS gradients and Hessians are not yet implemented.")
+            if constraints:
+                raise RelaxError("For the paramagnetic centre position, constrains are not allowed as the PCS gradients and Hessians are not yet implemented.")
+
         # Linear constraints.
         if constraints:
             A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
@@ -2506,6 +2513,11 @@ class N_state_model(API_base, API_common):
                 for j in range(cdp.sim_number):
                     # Append None to fill the structure.
                     sim_object.append(None)
+
+            # Set the simulation paramagnetic centre positions to the optimised values.
+            if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+                for j in range(cdp.sim_number):
+                    cdp.paramagnetic_centre_sim[j] = deepcopy(cdp.paramagnetic_centre)
 
 
     def sim_pack_data(self, data_id, sim_data):

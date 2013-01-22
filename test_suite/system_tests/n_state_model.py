@@ -521,6 +521,14 @@ class N_state_model(SystemTestCase):
         self.interpreter.minimise('newton', constraints=False)
         self.interpreter.monte_carlo.error_analysis()
 
+        # Activate the optimisation of the paramagnetic centre position and try again.
+        self.interpreter.paramag.centre(fix=False)
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.monte_carlo.create_data()
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise('simplex', constraints=False, max_iter=100)
+        self.interpreter.monte_carlo.error_analysis()
+
 
     def test_metal_pos_opt(self):
         """Test a certain algorithm for the optimisation of the lanthanide position using RDCs and PCSs (with missing data)."""

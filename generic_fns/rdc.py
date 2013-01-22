@@ -465,13 +465,13 @@ def q_factors(spin_id=None):
 
         # Warnings (and then exit).
         if not interatom_count:
-            warn(RelaxWarning("No interatomic data containers have been used in the calculation."))
+            warn(RelaxWarning("No interatomic data containers have been used in the calculation, skipping the RDC Q factor calculation."))
             return
         if not rdc_data:
-            warn(RelaxWarning("No RDC data can be found for the alignment ID '%s'." % align_id))
+            warn(RelaxWarning("No RDC data can be found for the alignment ID '%s', skipping the RDC Q factor calculation for this alignment." % align_id))
             continue
         if not rdc_bc_data:
-            warn(RelaxWarning("No back-calculated RDC data can be found for the alignment ID '%s'." % align_id))
+            warn(RelaxWarning("No back-calculated RDC data can be found for the alignment ID '%s', skipping the RDC Q factor calculation for this alignment." % align_id))
             continue
 
         # Normalisation factor of 2Da^2(4 + 3R)/5.

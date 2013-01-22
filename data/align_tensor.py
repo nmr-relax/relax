@@ -1328,10 +1328,6 @@ class AlignTensorData(Element):
         @type sim_number:       int
         """
 
-        # Check if not already set.
-        if self._sim_num != None:
-            raise RelaxError("The number of simulations has already been set.")
-
         # Store the value.
         self.__dict__['_sim_num'] = sim_number
 
