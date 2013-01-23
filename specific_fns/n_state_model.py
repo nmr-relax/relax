@@ -1358,7 +1358,6 @@ class N_state_model(API_base, API_common):
             ids += cdp.pcs_ids
 
         # No RDC or PCS data for the alignment, so skip the tensor as it will not be optimised.
-        # No RDC or PCS data for the alignment, so skip the tensor as it will not be optimised.
         if tensor.name not in ids:
             return False
 
