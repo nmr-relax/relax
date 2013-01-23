@@ -938,7 +938,13 @@ class N_state_opt:
 
             # Construct the pc partial derivative gradient components, looping over each state.
             if not self.probs_fixed:
-                for c in range(self.N - 1):
+                # Shift the parameter index if the paramagnetic position is optimised.
+                x = 0
+                if not self.centre_fixed:
+                    x = 3
+
+                # Loop over each state.
+                for c in range(self.N - 1 - x):
                     # Index in the parameter array.
                     param_index = self.num_align_params + c
 
