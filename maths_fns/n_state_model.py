@@ -974,8 +974,8 @@ class N_state_opt:
         if self.scaling_flag:
             self.dchi2 = dot(self.dchi2, self.scaling_matrix)
 
-        # The gradient.
-        return self.dchi2
+        # Return a copy of the gradient.
+        return self.dchi2 * 1.0
 
 
     def d2func_standard(self, params):
@@ -1154,8 +1154,8 @@ class N_state_opt:
         if self.scaling_flag:
             self.d2chi2 = dot(self.d2chi2, self.scaling_matrix)
 
-        # The gradient.
-        return self.d2chi2
+        # Return a copy of the Hessian.
+        return self.d2chi2 * 1.0
 
 
     def paramag_info(self):
