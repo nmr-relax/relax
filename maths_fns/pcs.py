@@ -248,8 +248,8 @@ def ave_pcs_tensor_ddeltaij_dc(ddj=None, dj=None, r=None, unit_vect=None, N=None
         # Back-calculate the PCS gradient element.
         grad += weights[c] * (ddj[c] * dot(vect, dot(Ai, vect))  +  2.0 * const * dot(dr_dc, dot(Ai, vect)))
 
-    # Return the average PCS gradient element.
-    return grad
+    # Return the average PCS gradient element, converted back to the Angstrom scale at the coordinates are in Angstrom units.
+    return grad * 1e-10
 
 
 def pcs_constant_grad(T=None, Bo=None, r=None, unit_vect=None, grad=None):
