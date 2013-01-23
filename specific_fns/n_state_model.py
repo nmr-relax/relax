@@ -1422,8 +1422,13 @@ class N_state_model(API_base, API_common):
         if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
             pos_flag = True
 
+        # Are the populations optimised?
+        prob_flag = False
+        if cdp.model == 'population':
+            prob_flag = True
+
         # Not used.
-        if not tensor_flag and not pos_flag:
+        if not tensor_flag and not pos_flag and not prob_flag:
             return False
 
         # The PCS data is to be used for optimisation.
@@ -1455,8 +1460,13 @@ class N_state_model(API_base, API_common):
         if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
             pos_flag = True
 
+        # Are the populations optimised?
+        prob_flag = False
+        if cdp.model == 'population':
+            prob_flag = True
+
         # Not used.
-        if not tensor_flag and not pos_flag:
+        if not tensor_flag and not pos_flag and not prob_flag:
             return False
 
         # The RDC data is to be used for optimisation.
