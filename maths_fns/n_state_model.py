@@ -1100,6 +1100,10 @@ class N_state_opt:
                             self.d2deltaij_theta[pc_index, i*5+3, align_index, j] = self.d2deltaij_theta[align_index*5+3, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[3])
                             self.d2deltaij_theta[pc_index, i*5+4, align_index, j] = self.d2deltaij_theta[align_index*5+4, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[4])
 
+            # Construct the paramagnetic centre c partial derivative components for the PCS.
+            if not self.centre_fixed:
+                raise RelaxError("The Hessian equations for optimising the paramagnetic centre position are not yet implemented.")
+
             # Construct the chi-squared Hessian element for parameters j and k, alignment i.
             for j in range(self.total_num_params):
                 for k in range(self.total_num_params):
