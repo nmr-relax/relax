@@ -638,16 +638,22 @@ class N_state_opt:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
+        # Unpack both the probabilities and paramagnetic centre.
+        if not self.probs_fixed and not self.centre_fixed:
+            # The probabilities.
+            self.probs = params[-(self.N-1)-3:-3]
+
+            # The position (also update the paramagnetic info).
+            self.paramag_centre = params[-3:]
+            self.paramag_info()
+
         # Unpack the probabilities (located at the end of the parameter array).
-        if not self.probs_fixed:
+        elif not self.probs_fixed:
             self.probs = params[-(self.N-1):]
 
-        # Unpack the paramagnetic centre.
-        if not self.centre_fixed:
-            # The position.
+        # Unpack the paramagnetic centre (also update the paramagnetic info).
+        elif not self.centre_fixed:
             self.paramag_centre = params[-3:]
-
-            # Update the paramagnetic info.
             self.paramag_info()
 
         # Loop over each alignment.
