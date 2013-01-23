@@ -770,7 +770,7 @@ class N_state_model(API_base, API_common):
             # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            for i in range(pop_start, self._param_num()):
+            for i in range(pop_start, pop_start+cdp.N-1):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
             b.append(-1.0 / scaling_matrix[i, i])
