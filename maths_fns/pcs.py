@@ -172,10 +172,11 @@ def ave_pcs_tensor_ddeltaij_dc(ddj=None, dj=None, r=None, unit_vect=None, N=None
                             _N_
         ddelta_ij(theta)    \        / ddjc                       dr_jcT                          dr_jc \ 
         ----------------  =  >  pc . | ----.r_jcT.Ai.r_jc  +  djc.------.Ai.r_jc  +  djc.r_jcT.Ai.----- | ,
-               dc           /__      \  dc                          dc                             dc   /
+              dxi           /__      \ dxi                         dxi                             dxi  /
                             c=1
 
     where the last two terms in the sum are equal due to the symmetry of the alignment tensor, and:
+        - xi are the paramagnetic position coordinates {x0, x1, x2},
         - i is the alignment tensor index,
         - j is the index over spins,
         - c is the index over the states or multiple structures,
@@ -187,21 +188,21 @@ def ave_pcs_tensor_ddeltaij_dc(ddj=None, dj=None, r=None, unit_vect=None, N=None
 
     and where::
 
-        ddjc    mu0 15kT            4c
-        ----  = --- ----- ------------------------  ,
-         dc     4pi Bo**2 5(x**2+y**2+z**2)**(3/5)
+        ddjc    mu0 15kT                 5 (si - xi)
+        ----  = --- ----- ---------------------------------------------  ,
+        dxi     4pi Bo**2 ((sx-x0)**2 + (sy-x1)**2 + (sz-x2)**2)**(7/2)
 
-    and::
+    where {sx, sy, sz} are the spin atomic coordinates, and::
 
-        dr      | 1 |   dr      | 0 |   dr      | 0 |
-        --  = - | 0 | , --  = - | 1 | , --  = - | 0 | .
-        dx      | 0 |   dy      | 0 |   dy      | 1 |
+        dr       | 1 |   dr       | 0 |   dr       | 0 |
+        ---  = - | 0 | , ---  = - | 1 | , ---  = - | 0 | .
+        dx0      | 0 |   dx1      | 0 |   dx2      | 1 |
 
     The pseudocontact shift constant is defined here as::
 
-            mu0 15kT   1
-        d = --- ----- ---- ,
-            4pi Bo**2 r**5
+              mu0 15kT    1
+        djc = --- ----- ------ ,
+              4pi Bo**2 rjc**5
 
   
     @keyword ddj:        The PCS constant gradient for each structure c for spin j.  This should be an array with indices corresponding to c.
@@ -256,9 +257,9 @@ def pcs_constant_grad(T=None, Bo=None, r=None, unit_vect=None, grad=None):
 
     The pseudocontact shift constant is defined here as::
 
-            mu0 15kT   1
-        d = --- ----- ---- ,
-            4pi Bo**2 r**5
+              mu0 15kT    1
+        djc = --- ----- ------ ,
+              4pi Bo**2 rjc**5
 
     where:
         - mu0 is the permeability of free space,
@@ -269,12 +270,13 @@ def pcs_constant_grad(T=None, Bo=None, r=None, unit_vect=None, grad=None):
 
     The 5th power of the distance is used to simplify the PCS derivative.  The pseudocontact shift constant derivative is::
 
-        dd    mu0 15kT            5c
-        --  = --- ----- ------------------------  ,
-        dc    4pi Bo**2 (x**2+y**2+z**2)**(7/2)
+        ddjc   mu0 15kT                 5 (si - xi)
+        ---- = --- ----- ---------------------------------------------  ,
+        dxi    4pi Bo**2 ((sx-x0)**2 + (sy-x1)**2 + (sz-x2)**2)**(7/2)
   
     where:
-        - c is the one of the coordinates {x, y, z} of the paramagnetic centre to spin vector.
+        - {x0, x1, x2} are the paramagnetic centre coordinates,
+        - {sx, sy, sz} are the spin atomic coordinates.
 
 
     @keyword T:         The temperature in kelvin.
