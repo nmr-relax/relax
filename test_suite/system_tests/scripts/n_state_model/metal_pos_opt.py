@@ -115,7 +115,17 @@ if cdp.chi2 < 1e-15:
 
 # Optimise the Ln3+ position.
 x, y, z = cdp.paramagnetic_centre
-#self._execute_uf(uf_name='n_state_model.select_model', model='population')
+self._execute_uf(uf_name='n_state_model.select_model', model='population')
+self._execute_uf(uf_name='calc')
+print("Chi2: %s" % cdp.chi2)
+if cdp.chi2 < 1e-15:
+    raise RelaxError("The chi2 value cannot be zero here!")
+self._execute_uf(uf_name='paramag.centre', fix=True)
+self._execute_uf(uf_name='calc')
+print("Chi2: %s" % cdp.chi2)
+if cdp.chi2 < 1e-15:
+    raise RelaxError("The chi2 value cannot be zero here!")
+self._execute_uf(uf_name='paramag.centre', fix=False)
 self._execute_uf('bfgs', constraints=False, max_iter=500, uf_name='minimise', verbosity=1)
 
 # Check that the metal moved.
