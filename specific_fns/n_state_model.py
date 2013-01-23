@@ -99,15 +99,10 @@ class N_state_model(API_base, API_common):
         param_vector = []
 
         # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
-        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
-            # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
+        if self._opt_uses_align_data():
             for i in range(len(cdp.align_tensors)):
-                # No alignment ID, so skip the tensor as it will not be optimised.
-                if cdp.align_tensors[i].align_id not in cdp.align_ids:
-                    continue
-
-                # Fixed tensor.
-                if cdp.align_tensors[i].fixed:
+                # Skip non-optimised tensors.
+                if not self._opt_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Add the parameters.
@@ -194,23 +189,23 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
-            # Loop over the alignments.
-            tensor_num = 0
-            for i in range(len(cdp.align_tensors)):
-                # Fixed tensor.
-                if cdp.align_tensors[i].fixed:
-                    continue
 
-                # Add the 5 alignment parameters.
-                pop_start = pop_start + 5
+        # Loop over the alignments.
+        tensor_num = 0
+        for i in range(len(cdp.align_tensors)):
+            # Skip non-optimised tensors.
+            if not self._opt_tensor(cdp.align_tensors[i]):
+                continue
 
-                # The alignment parameters.
-                for j in range(5):
-                    scaling_matrix[5*tensor_num + j, 5*tensor_num + j] = 1.0
+            # Add the 5 alignment parameters.
+            pop_start = pop_start + 5
 
-                # Increase the tensor number.
-                tensor_num += 1
+            # The alignment parameters.
+            for j in range(5):
+                scaling_matrix[5*tensor_num + j, 5*tensor_num + j] = 1.0
+
+            # Increase the tensor number.
+            tensor_num += 1
 
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
@@ -559,12 +554,8 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             tensor_num = 0
             for i in range(len(cdp.align_tensors)):
-                # No alignment ID, so skip the tensor as it will not be optimised.
-                if cdp.align_tensors[i].align_id not in cdp.align_ids:
-                    continue
-
-                # Fixed tensor.
-                if cdp.align_tensors[i].fixed:
+                # Skip non-optimised tensors.
+                if not self._opt_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Normal tensors.
@@ -746,8 +737,8 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments.
             for i in range(len(cdp.align_tensors)):
-                # Fixed tensor.
-                if cdp.align_tensors[i].fixed:
+                # Skip non-optimised tensors.
+                if not self._opt_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Add 5 parameters.
@@ -779,7 +770,7 @@ class N_state_model(API_base, API_common):
             # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            for i in range(pop_start, self._param_num()):
+            for i in range(pop_start, pop_start+cdp.N-1):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
             b.append(-1.0 / scaling_matrix[i, i])
@@ -805,13 +796,14 @@ class N_state_model(API_base, API_common):
             return
 
         # Loop over each alignment.
-        for align_index in range(len(cdp.align_ids)):
-            # Fixed tensor.
-            if cdp.align_tensors[align_index].fixed:
+        align_index = 0
+        for i in range(len(cdp.align_ids)):
+            # Skip non-optimised tensors.
+            if not self._opt_tensor(cdp.align_tensors[i]):
                 continue
 
             # The alignment ID.
-            align_id = cdp.align_ids[align_index]
+            align_id = cdp.align_ids[i]
 
             # Data flags
             rdc_flag = False
@@ -862,6 +854,9 @@ class N_state_model(API_base, API_common):
 
                     # Increment the data index if the interatom container has data.
                     rdc_index = rdc_index + 1
+
+            # Increment the alignment index (for the optimised tensors).
+            align_index += 1
 
 
     def _minimise_setup_atomic_pos(self, sim_index=None):
@@ -940,9 +935,12 @@ class N_state_model(API_base, API_common):
         frq = []
 
         # The PCS data.
-        for align_id in cdp.align_ids:
-            # No RDC or PCS data, so jump to the next alignment.
-            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids) and (hasattr(cdp, 'pcs_ids') and not align_id in cdp.pcs_ids):
+        for i in range(len(cdp.align_ids)):
+            # Alias the ID.
+            align_id = cdp.align_ids[i]
+
+            # Skip non-optimised data.
+            if not self._opt_uses_align_data(align_id):
                 continue
 
             # Append empty arrays to the PCS structures.
@@ -1083,9 +1081,12 @@ class N_state_model(API_base, API_common):
                 unit_vect[i] = [[None, None, None]]*num
 
         # The RDC data.
-        for align_id in cdp.align_ids:
-            # No RDC or PCS data, so jump to the next alignment.
-            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids) and (hasattr(cdp, 'pcs_ids') and not align_id in cdp.pcs_ids):
+        for i in range(len(cdp.align_ids)):
+            # Alias the ID.
+            align_id = cdp.align_ids[i]
+
+            # Skip non-optimised data.
+            if not self._opt_uses_align_data(align_id):
                 continue
 
             # Append empty arrays to the RDC structures.
@@ -1258,8 +1259,8 @@ class N_state_model(API_base, API_common):
         # Loop over the tensors.
         index = 0
         for i in range(len(cdp.align_tensors)):
-            # Skip unfixed tensors.
-            if not cdp.align_tensors[i].fixed:
+            # Skip non-optimised data.
+            if not self._opt_uses_align_data(cdp.align_tensors[i].name):
                 continue
 
             # The real tensors.
@@ -1340,6 +1341,129 @@ class N_state_model(API_base, API_common):
         self._update_model()
 
 
+    def _opt_tensor(self, tensor):
+        """Determine if the given tensor is to be optimised.
+
+        @param tensor:  The alignment tensor to check.
+        @type tensor:   AlignmentTensor object.
+        @return:        True if the tensor is to be optimised, False otherwise.
+        @rtype:         bool
+        """
+
+        # Combine all RDC and PCS IDs.
+        ids = []
+        if hasattr(cdp, 'rdc_ids'):
+            ids += cdp.rdc_ids
+        if hasattr(cdp, 'pcs_ids'):
+            ids += cdp.pcs_ids
+
+        # No RDC or PCS data for the alignment, so skip the tensor as it will not be optimised.
+        # No RDC or PCS data for the alignment, so skip the tensor as it will not be optimised.
+        if tensor.align_id not in ids:
+            return False
+
+        # Fixed tensor.
+        if tensor.fixed:
+            return False
+
+        # The tensor is to be optimised.
+        return True
+
+
+    def _opt_uses_align_data(self, align_id=None):
+        """Determine if the PCS or RDC data for the given alignment ID is needed for optimisation.
+
+        @keyword align_id:  The optional alignment ID string.
+        @type align_id:     str
+        @return:            True if alignment data is to be used for optimisation, False otherwise.
+        @rtype:             bool
+        """
+
+        # No alignment IDs.
+        if not hasattr(cdp, 'align_ids'):
+            return False
+
+        # Convert the align IDs to an array, or take all IDs.
+        if align_id:
+            align_ids = [align_id]
+        else:
+            align_ids = cdp.align_ids
+
+        # Check the PCS and RDC.
+        for align_id in align_ids:
+            if self._opt_uses_pcs(align_id) or self._opt_uses_rdc(align_id):
+                return True
+
+        # No alignment data is used for optimisation.
+        return False
+
+
+    def _opt_uses_pcs(self, align_id):
+        """Determine if the PCS data for the given alignment ID is needed for optimisation.
+
+        @param align_id:    The alignment ID string.
+        @type align_id:     str
+        @return:            True if the PCS data is to be used for optimisation, False otherwise.
+        @rtype:             bool
+        """
+
+        # No alignment IDs.
+        if not hasattr(cdp, 'pcs_ids'):
+            return False
+
+        # No PCS data for the alignment.
+        if align_id not in cdp.pcs_ids:
+            return False
+
+        # Is the tensor optimised?
+        tensor_flag = self._opt_tensor(align_tensor.get_tensor_object(align_id))
+
+        # Is the paramagnetic position optimised?
+        pos_flag = False
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            pos_flag = True
+
+        # Not used.
+        if not tensor_flag and not pos_flag:
+            return False
+
+        # The PCS data is to be used for optimisation.
+        return True
+
+
+    def _opt_uses_rdc(self, align_id):
+        """Determine if the RDC data for the given alignment ID is needed for optimisation.
+
+        @param align_id:    The alignment ID string.
+        @type align_id:     str
+        @return:            True if the RDC data is to be used for optimisation, False otherwise.
+        @rtype:             bool
+        """
+
+        # No alignment IDs.
+        if not hasattr(cdp, 'rdc_ids'):
+            return False
+
+        # No RDC data for the alignment.
+        if align_id not in cdp.rdc_ids:
+            return False
+
+        # Is the tensor optimised?
+        tensor_flag = self._opt_tensor(align_tensor.get_tensor_object(align_id))
+
+        # Is the paramagnetic position optimised?
+        pos_flag = False
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            pos_flag = True
+
+        # Not used.
+        if not tensor_flag and not pos_flag:
+            return False
+
+        # The RDC data is to be used for optimisation.
+        return True
+
+
     def _param_model_index(self, param):
         """Return the N-state model index for the given parameter.
 
@@ -1386,12 +1510,8 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
             # Loop over the alignments.
             for i in range(len(cdp.align_tensors)):
-                # No alignment ID, so skip the tensor as it is not part of the parameter set.
-                if cdp.align_tensors[i].align_id not in cdp.align_ids:
-                    continue
-
-                # Fixed tensor.
-                if cdp.align_tensors[i].fixed:
+                # Skip non-optimised tensors.
+                if not self._opt_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Add 5 tensor parameters.
@@ -1540,6 +1660,10 @@ class N_state_model(API_base, API_common):
             # The flag list.
             fixed_tensors = []
             for i in range(len(cdp.align_tensors)):
+                # Skip non-optimised data.
+                if not self._opt_uses_align_data(cdp.align_tensors[i].name):
+                    continue
+
                 if cdp.align_tensors[i].fixed:
                     fixed_tensors.append(True)
                 else:
@@ -2083,12 +2207,10 @@ class N_state_model(API_base, API_common):
             min_options = (min_algor,) + min_options
             min_algor = 'Method of Multipliers'
 
-        # Only allow simplex optimisation for the paramagnetic centre position optimisation (the PCS gradients and Hessians are not yet implemented).
+        # Disallow Newton optimisation and other Hessian optimisers for the paramagnetic centre position optimisation (the PCS Hessian is not yet implemented).
         if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            if min_algor != 'simplex':
-                raise RelaxError("For the paramagnetic centre position, only simplex optimisation is allowed as the PCS gradients and Hessians are not yet implemented.")
-            if constraints:
-                raise RelaxError("For the paramagnetic centre position, constrains are not allowed as the PCS gradients and Hessians are not yet implemented.")
+            if min_algor in ['newton']:
+                raise RelaxError("For the paramagnetic centre position, as the Hessians are not yet implemented Newton optimisation cannot be performed.")
 
         # Linear constraints.
         if constraints:
@@ -2486,8 +2608,8 @@ class N_state_model(API_base, API_common):
 
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in range(len(cdp.align_tensors)):
-                # Fixed tensor.
-                if cdp.align_tensors[i].fixed:
+                # Skip non-optimised tensors.
+                if not self._opt_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Set up the number of simulations.

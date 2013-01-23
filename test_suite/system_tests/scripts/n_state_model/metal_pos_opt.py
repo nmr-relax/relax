@@ -98,29 +98,33 @@ print("##############################\n\n\n")
 # Exact position check.
 self._execute_uf(uf_name='paramag.centre', fix=False)
 self._execute_uf(uf_name='calc')
+print("Chi2: %s" % cdp.chi2)
 if cdp.chi2 > 1e-15:
-    print("Chi2: %s" % cdp.chi2)
     raise RelaxError("The chi2 value must be zero here!")
 
 # Shift the metal.
 print("\nShifting the Ln3+ position.")
 print("Original position: [%.3f, %.3f, %.3f]" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+x_orig, y_orig, z_orig = cdp.paramagnetic_centre
 cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.02
 print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
 self._execute_uf(uf_name='calc')
+print("Chi2: %s" % cdp.chi2)
 if cdp.chi2 < 1e-15:
-    print("Chi2: %s" % cdp.chi2)
     raise RelaxError("The chi2 value cannot be zero here!")
 
 # Optimise the Ln3+ position.
 x, y, z = cdp.paramagnetic_centre
-self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+#self._execute_uf(uf_name='n_state_model.select_model', model='population')
+self._execute_uf('bfgs', constraints=False, max_iter=500, uf_name='minimise', verbosity=1)
 
 # Check that the metal moved.
 print("\nOriginal position: [%.3f, %.3f, %.3f]" % (x, y, z))
 print("New position:      [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+if "%.3f" % x_orig != "%.3f" % cdp.paramagnetic_centre[0] or "%.3f" % y_orig != "%.3f" % cdp.paramagnetic_centre[1] or "%.3f" % z_orig != "%.3f" % cdp.paramagnetic_centre[2]:
+    raise RelaxError("The original metal position has not been found.")
 if "%.3f" % x == "%.3f" % cdp.paramagnetic_centre[0] and "%.3f" % y == "%.3f" % cdp.paramagnetic_centre[1] and "%.3f" % z == "%.3f" % cdp.paramagnetic_centre[2]:
-    raise RelaxError("The metal position has not been optimised!")
+    raise RelaxError("The metal position has not been optimised.")
 
 # Print out.
 print("\n\n")
@@ -144,7 +148,7 @@ print("#######################\n\n\n")
 # Optimise everything.
 self._execute_uf(uf_name='align_tensor.fix', fixed=False)
 self._execute_uf(uf_name='paramag.centre', fix=False)
-self._execute_uf('simplex', constraints=False, max_iter=50, uf_name='minimise')
+self._execute_uf('bfgs', constraints=False, max_iter=50, uf_name='minimise')
 
 # Monte Carlo simulations.
 if SIMS:
@@ -155,7 +159,7 @@ if SIMS:
     self._execute_uf(uf_name='monte_carlo.setup', number=3)
     self._execute_uf(uf_name='monte_carlo.create_data')
     self._execute_uf(uf_name='monte_carlo.initial_values')
-    self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+    self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise')
     self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.

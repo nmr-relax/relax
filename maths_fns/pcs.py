@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,11 @@
 """Module for the calculation of pseudocontact shifts."""
 
 # Python imports.
+from math import pi
 from numpy import dot, sum
+
+# relax module imports.
+from physical_constants import kB, mu0
 
 
 def ave_pcs_tensor(dj, vect, N, A, weights=None):
@@ -101,7 +105,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
 def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     """Calculate the ensemble average PCS gradient element for Amn, using the 3D tensor.
 
-    This function calculates the average PCS gradient for a set of electron-nuclear spin unit vectors (paramagnetic to the nuclear spin) from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average PCS gradient element is::
+    This function calculates the alignment tensor parameter part of the average PCS gradient for a set of electron-nuclear spin unit vectors (paramagnetic to the nuclear spin) from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average PCS gradient element is::
 
                             _N_
         ddelta_ij(theta)    \                   T   dAi
@@ -158,6 +162,147 @@ def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
 
     # Return the average PCS gradient element.
     return grad
+
+
+def ave_pcs_tensor_ddeltaij_dc(ddj=None, dj=None, r=None, unit_vect=None, N=None, Ai=None, dr_dc=None, weights=None):
+    """Calculate the ensemble average PCS gradient element for the paramagnetic centre coordinate c, using the 3D tensor.
+
+    This function calculates the paramagnetic centre coordinate part of the average PCS gradient for a set of electron-nuclear spin unit vectors (paramagnetic to the nuclear spin) from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average PCS gradient element is::
+
+                            _N_
+        ddelta_ij(theta)    \        / ddjc                       dr_jcT                          dr_jc \ 
+        ----------------  =  >  pc . | ----.r_jcT.Ai.r_jc  +  djc.------.Ai.r_jc  +  djc.r_jcT.Ai.----- | ,
+              dxi           /__      \ dxi                         dxi                             dxi  /
+                            c=1
+
+    where the last two terms in the sum are equal due to the symmetry of the alignment tensor, and:
+        - xi are the paramagnetic position coordinates {x0, x1, x2},
+        - i is the alignment tensor index,
+        - j is the index over spins,
+        - c is the index over the states or multiple structures,
+        - theta is the parameter vector,
+        - djc is the PCS constant for spin j and state c,
+        - N is the total number of states or structures,
+        - pc is the population probability or weight associated with state c (equally weighted to 1/N if weights are not provided),
+        - r_jc is the vector corresponding to spin j and state c,
+
+    and where::
+
+        ddjc    mu0 15kT                 5 (si - xi)
+        ----  = --- ----- ---------------------------------------------  ,
+        dxi     4pi Bo**2 ((sx-x0)**2 + (sy-x1)**2 + (sz-x2)**2)**(7/2)
+
+    where {sx, sy, sz} are the spin atomic coordinates, and::
+
+        dr       | 1 |   dr       | 0 |   dr       | 0 |
+        ---  = - | 0 | , ---  = - | 1 | , ---  = - | 0 | .
+        dx0      | 0 |   dx1      | 0 |   dx2      | 1 |
+
+    The pseudocontact shift constant is defined here as::
+
+              mu0 15kT    1
+        djc = --- ----- ------ ,
+              4pi Bo**2 rjc**5
+
+  
+    @keyword ddj:        The PCS constant gradient for each structure c for spin j.  This should be an array with indices corresponding to c.
+    @type ddj:           numpy rank-1 array
+    @keyword dj:          The PCS constants for each structure c for spin j.  This should be an array with indices corresponding to c.
+    @type dj:           numpy rank-1 array
+    @keyword r:         The distance between the paramagnetic centre and the spin (in meters).
+    @type r:            float
+    @keyword vect:        The electron-nuclear unit vector matrix.  The first dimension corresponds to the structural index, the second dimension is the coordinates of the unit vector.  The vectors should be parallel to the vector connecting the paramagnetic centre to the nuclear spin.
+    @type vect:         numpy matrix
+    @keyword N:           The total number of structures.
+    @type N:            int
+    @keyword Ai:          The alignment tensor i.
+    @type Ai:           numpy rank-2, 3D tensor
+    @keyword weights:     The weights for each member of the ensemble (the last member need not be supplied).
+    @type weights:      numpy rank-1 array
+    @return:            The average PCS gradient element.
+    @rtype:             float
+    """
+
+    # Initial back-calculated PCS gradient.
+    grad = 0.0
+
+    # No weights given.
+    if weights == None:
+        pc = 1.0 / N
+        weights = [pc] * N
+
+    # Missing last weight.
+    if len(weights) < N:
+        pN = 1.0 - sum(weights, axis=0)
+        weights = weights.tolist()
+        weights.append(pN)
+
+    # Loop over each state.
+    for c in range(N):
+        # Recreate the full length vector.
+        vect = unit_vect[c] * r[c]
+
+        # Modified PCS constant (from r**-3 to r**-5).
+        const = dj[c] / r[c]**2
+
+        # Back-calculate the PCS gradient element.
+        grad += weights[c] * (ddj[c] * dot(vect, dot(Ai, vect))  +  2.0 * const * dot(dr_dc, dot(Ai, vect)))
+
+    # Return the average PCS gradient element, converted back to the Angstrom scale at the coordinates are in Angstrom units.
+    return grad * 1e-10
+
+
+def pcs_constant_grad(T=None, Bo=None, r=None, unit_vect=None, grad=None):
+    """Calculate the PCS constant gradient with respect to the paramagnetic centre position.
+
+    The pseudocontact shift constant is defined here as::
+
+              mu0 15kT    1
+        djc = --- ----- ------ ,
+              4pi Bo**2 rjc**5
+
+    where:
+        - mu0 is the permeability of free space,
+        - k is Boltzmann's constant,
+        - T is the absolute temperature,
+        - Bo is the magnetic field strength,
+        - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
+
+    The 5th power of the distance is used to simplify the PCS derivative.  The pseudocontact shift constant derivative is::
+
+        ddjc   mu0 15kT                 5 (si - xi)
+        ---- = --- ----- ---------------------------------------------  ,
+        dxi    4pi Bo**2 ((sx-x0)**2 + (sy-x1)**2 + (sz-x2)**2)**(7/2)
+  
+    where:
+        - {x0, x1, x2} are the paramagnetic centre coordinates,
+        - {sx, sy, sz} are the spin atomic coordinates.
+
+
+    @keyword T:         The temperature in kelvin.
+    @type T:            float
+    @keyword Bo:        The magnetic field strength.
+    @type Bo:           float
+    @keyword r:         The distance between the paramagnetic centre and the spin (in meters).
+    @type r:            float
+    @keyword unit_vect: The paramagnetic centre to spin unit vector.
+    @type unit_vect:    numpy rank-1, 3D array
+    @keyword grad:      The gradient component to update.  The indices {0, 1, 2} match the {dx, dy, dz} derivatives.
+    @type grad:         numpy rank-1, 3D array
+    """
+
+    # Recreate the full length vector.
+    vect = unit_vect * r
+
+    # Calculate the invariant part.
+    a = 18.75 * mu0 / pi * kB * T / Bo**2
+
+    # Calculate the coordinate part.
+    b = r**7
+
+    # Combine.
+    for i in range(3):
+        grad[i] = a * vect[i] / b
 
 
 def pcs_tensor(dj, mu, A):
