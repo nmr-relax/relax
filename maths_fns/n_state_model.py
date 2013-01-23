@@ -826,6 +826,35 @@ class N_state_opt:
                   dAmn          N /__               dAmn
                                   c=1
 
+        xi partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~
+
+        The paramagnetic position partial derivative is::
+
+                                _N_
+            ddelta_ij(theta)    \        / ddjc                       dr_jcT                          dr_jc \ 
+            ----------------  =  >  pc . | ----.r_jcT.Ai.r_jc  +  djc.------.Ai.r_jc  +  djc.r_jcT.Ai.----- | ,
+                  dxi           /__      \ dxi                         dxi                             dxi  /
+                                c=1
+
+        where xi are the paramagnetic position coordinates {x0, x1, x2} and the last two terms in the sum are equal due to the symmetry of the alignment tensor, and:
+
+            ddjc    mu0 15kT                 5 (si - xi)
+            ----  = --- ----- ---------------------------------------------  ,
+            dxi     4pi Bo**2 ((sx-x0)**2 + (sy-x1)**2 + (sz-x2)**2)**(7/2)
+
+        and::
+
+            dr      | 1 |   dr      | 0 |   dr      | 0 |
+            --  = - | 0 | , --  = - | 1 | , --  = - | 0 | .
+            dx      | 0 |   dy      | 0 |   dy      | 1 |
+
+        The pseudocontact shift constant is defined here as::
+
+                  mu0 15kT    1
+            djc = --- ----- ------ ,
+                  4pi Bo**2 rjc**5
+
 
         The alignment tensor gradient
         -----------------------------
