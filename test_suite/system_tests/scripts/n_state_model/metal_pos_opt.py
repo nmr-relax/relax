@@ -126,7 +126,9 @@ self._execute_uf(uf_name='calc')
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2 - chi2) > 1e-15:
     raise RelaxError("The chi2 value must match the previous value of %s." % chi2)
+self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 self._execute_uf(uf_name='paramag.centre', fix=False)
+self._execute_uf(uf_name='calc')
 self._execute_uf('bfgs', constraints=False, max_iter=500, uf_name='minimise', verbosity=1)
 
 # Check that the metal moved.
