@@ -638,21 +638,17 @@ class N_state_opt:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Unpack both the probabilities and paramagnetic centre.
+        # Unpack both the probabilities (when the paramagnetic centre is also optimised).
         if not self.probs_fixed and not self.centre_fixed:
             # The probabilities.
             self.probs = params[-(self.N-1)-3:-3]
-
-            # The position (also update the paramagnetic info).
-            self.paramag_centre = params[-3:]
-            self.paramag_info()
 
         # Unpack the probabilities (located at the end of the parameter array).
         elif not self.probs_fixed:
             self.probs = params[-(self.N-1):]
 
         # Unpack the paramagnetic centre (also update the paramagnetic info).
-        elif not self.centre_fixed:
+        if not self.centre_fixed:
             self.paramag_centre = params[-3:]
             self.paramag_info()
 
@@ -1126,20 +1122,20 @@ class N_state_opt:
                     # Calculate the RDC Hessian component.
                     for j in range(self.num_interatom):
                         if self.fixed_tensors[align_index] and self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                            self.d2rdc_theta[pc_index, i*5+0, align_index, j] = self.d2rdc_theta[align_index*5+0, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0], absolute=self.absolute_rdc[align_index, j])
-                            self.d2rdc_theta[pc_index, i*5+1, align_index, j] = self.d2rdc_theta[align_index*5+1, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1], absolute=self.absolute_rdc[align_index, j])
-                            self.d2rdc_theta[pc_index, i*5+2, align_index, j] = self.d2rdc_theta[align_index*5+2, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2], absolute=self.absolute_rdc[align_index, j])
-                            self.d2rdc_theta[pc_index, i*5+3, align_index, j] = self.d2rdc_theta[align_index*5+3, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3], absolute=self.absolute_rdc[align_index, j])
-                            self.d2rdc_theta[pc_index, i*5+4, align_index, j] = self.d2rdc_theta[align_index*5+4, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4], absolute=self.absolute_rdc[align_index, j])
+                            self.d2rdc_theta[pc_index, align_index*5+0, align_index, j] = self.d2rdc_theta[align_index*5+0, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0], absolute=self.absolute_rdc[align_index, j])
+                            self.d2rdc_theta[pc_index, align_index*5+1, align_index, j] = self.d2rdc_theta[align_index*5+1, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1], absolute=self.absolute_rdc[align_index, j])
+                            self.d2rdc_theta[pc_index, align_index*5+2, align_index, j] = self.d2rdc_theta[align_index*5+2, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2], absolute=self.absolute_rdc[align_index, j])
+                            self.d2rdc_theta[pc_index, align_index*5+3, align_index, j] = self.d2rdc_theta[align_index*5+3, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3], absolute=self.absolute_rdc[align_index, j])
+                            self.d2rdc_theta[pc_index, align_index*5+4, align_index, j] = self.d2rdc_theta[align_index*5+4, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4], absolute=self.absolute_rdc[align_index, j])
 
                     # Calculate the PCS Hessian component.
                     for j in range(self.num_spins):
                         if self.fixed_tensors[align_index] and self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
-                            self.d2deltaij_theta[pc_index, i*5+0, align_index, j] = self.d2deltaij_theta[align_index*5+0, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[0])
-                            self.d2deltaij_theta[pc_index, i*5+1, align_index, j] = self.d2deltaij_theta[align_index*5+1, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[1])
-                            self.d2deltaij_theta[pc_index, i*5+2, align_index, j] = self.d2deltaij_theta[align_index*5+2, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[2])
-                            self.d2deltaij_theta[pc_index, i*5+3, align_index, j] = self.d2deltaij_theta[align_index*5+3, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[3])
-                            self.d2deltaij_theta[pc_index, i*5+4, align_index, j] = self.d2deltaij_theta[align_index*5+4, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[4])
+                            self.d2deltaij_theta[pc_index, align_index*5+0, align_index, j] = self.d2deltaij_theta[align_index*5+0, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[0])
+                            self.d2deltaij_theta[pc_index, align_index*5+1, align_index, j] = self.d2deltaij_theta[align_index*5+1, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[1])
+                            self.d2deltaij_theta[pc_index, align_index*5+2, align_index, j] = self.d2deltaij_theta[align_index*5+2, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[2])
+                            self.d2deltaij_theta[pc_index, align_index*5+3, align_index, j] = self.d2deltaij_theta[align_index*5+3, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[3])
+                            self.d2deltaij_theta[pc_index, align_index*5+4, align_index, j] = self.d2deltaij_theta[align_index*5+4, pc_index, align_index, j] = pcs_tensor(self.pcs_const[align_index, j, c], self.paramag_unit_vect[j, c], self.dA[4])
 
             # Construct the paramagnetic centre c partial derivative components for the PCS.
             if not self.centre_fixed:
