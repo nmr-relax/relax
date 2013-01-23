@@ -526,7 +526,7 @@ class N_state_model(SystemTestCase):
         self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('simplex', constraints=False, max_iter=100)
+        self.interpreter.minimise('bfgs', constraints=False, max_iter=100)
         self.interpreter.monte_carlo.error_analysis()
 
 
