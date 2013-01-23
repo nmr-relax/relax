@@ -876,10 +876,6 @@ class N_state_opt:
         @rtype:         numpy rank-1 array
         """
 
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
         # Initial chi-squared (or SSE) gradient.
         self.dchi2 = self.dchi2 * 0.0
 
@@ -1074,10 +1070,6 @@ class N_state_opt:
         @return:        The chi-squared or SSE Hessian.
         @rtype:         numpy rank-2 array
         """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
 
         # Initial chi-squared (or SSE) Hessian.
         self.d2chi2 = self.d2chi2 * 0.0
