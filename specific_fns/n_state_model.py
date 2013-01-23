@@ -1637,7 +1637,7 @@ class N_state_model(API_base, API_common):
 
         # The probabilities.
         probs = None
-        if hasattr(cdp, 'probs'):
+        if hasattr(cdp, 'probs') and len(cdp.probs) and cdp.probs[0] != None:
             probs = cdp.probs
 
         # Diagonal scaling.
