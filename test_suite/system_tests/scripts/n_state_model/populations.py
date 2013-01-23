@@ -109,8 +109,11 @@ if abs(cdp.chi2) > 1e-15:
 # The population model opt.
 ###########################
 
+# Change a probability
+self._execute_uf(uf_name='value.set', val=0.6005, param='p1')
+
 # Minimisation.
-self._execute_uf(uf_name='minimise', min_algor='sd', func_tol=1e-2)
+self._execute_uf(uf_name='minimise', min_algor='bfgs')
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)
