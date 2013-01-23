@@ -580,7 +580,7 @@ class N_state_model(API_base, API_common):
             # Create a new parameter vector without the tensors.
             param_vector = param_vector[5*tensor_num:]
 
-        # Monte Carlo simulation data structures.
+        # Alias the Monte Carlo simulation data structures.
         if sim_index != None:
             # Populations.
             if cdp.model in ['2-domain', 'population']:
@@ -592,7 +592,7 @@ class N_state_model(API_base, API_common):
                 beta = cdp.beta_sim[sim_index]
                 gamma = cdp.gamma_sim[sim_index]
 
-        # Normal data structures.
+        # Alias the normal data structures.
         else:
             # Populations.
             if cdp.model in ['2-domain', 'population']:
@@ -604,7 +604,7 @@ class N_state_model(API_base, API_common):
                 beta = cdp.beta
                 gamma = cdp.gamma
 
-        # The probabilities for states 0 to N-1.
+        # Set the probabilities for states 0 to N-1 in the aliased structures.
         if cdp.model in ['2-domain', 'population']:
             for i in range(cdp.N-1):
                 probs[i] = param_vector[i]
@@ -612,7 +612,7 @@ class N_state_model(API_base, API_common):
             # The probability for state N.
             probs[-1] = 1 - sum(probs[0:-1])
 
-        # The Euler angles.
+        # Set the Euler angles in the aliased structures.
         if cdp.model == '2-domain':
             for i in range(cdp.N):
                 alpha[i] = param_vector[cdp.N-1 + 3*i]
