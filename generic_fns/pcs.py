@@ -685,8 +685,12 @@ def set_errors(align_id=None, spin_id=None, sd=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Test if PCS data exists.
+    if not hasattr(cdp, 'pcs_ids'):
+        raise RelaxNoPCSError()
+
     # Test if data corresponding to 'align_id' exists.
-    if not hasattr(cdp, 'pcs_ids') or (align_id and align_id not in cdp.pcs_ids):
+    if align_id and align_id not in cdp.pcs_ids:
         raise RelaxNoPCSError(align_id)
 
     # Arg check.
