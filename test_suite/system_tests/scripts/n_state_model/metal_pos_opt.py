@@ -30,16 +30,20 @@ for i in range(1, NUM_STR+1):
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@C*', ave_pos=False)
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@H*', ave_pos=False)
 
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H6')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H7')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H17')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H18')
-
-# Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
-self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@H6')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@H7')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@H17')
+self._execute_uf(uf_name='deselect.interatom', spin_id1=':UNK@H18')
 
 # Set the nuclear isotope type.
 self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
