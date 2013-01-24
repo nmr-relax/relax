@@ -229,6 +229,10 @@ class N_state_model(SystemTestCase):
             # Check the back-calculated value.
             self.assertAlmostEqual(spin.pcs_bc[tag], pcs[i])
 
+            # Check the simulation values.
+            for sim_index in range(cdp.sim_number):
+                self.assert_(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
+
             # Increment the spin index.
             i += 1
 
