@@ -412,7 +412,12 @@ class N_state_model(API_base, API_common):
         @return:            True if the RDCs should be used, False otherwise.
         """
 
+        # Skip deselected interatomic data containers.
+        if not interatom.select:
+            return False
+
         # Skip deselected spins.
+        # FIXME:  These checks could be fatal in the future if a user has good RDCs and one of the two spins are deselected!
         if not spin1.select or not spin2.select:
             return False
 
