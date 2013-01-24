@@ -2353,7 +2353,7 @@ class N_state_model(API_base, API_common):
         @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
         @type data_id:      list of str
         @return:            The base data.
-        @rtype:             float
+        @rtype:             list of (float or None)
         """
 
         # Alias the spin or interatomic data container, data type and alignment ID.
@@ -2361,17 +2361,33 @@ class N_state_model(API_base, API_common):
         data_type = data_id[1]
         align_id = data_id[2]
 
+        # The data structure to return.
+        data = []
+
+        # Skip deselected spins.
+        if data_id[1] == 'pcs' and not container.select:
+            return
+
         # Return the RDC data.
-        if data_type == 'rdc' and hasattr(container, 'rdc') and align_id in container.rdc:
-            return container.rdc[align_id]
+        if data_type == 'rdc' and hasattr(container, 'rdc'):
+            if align_id not in container.rdc:
+                data.append(None)
+            else:
+                data.append(container.rdc[align_id])
 
         # Return the NOESY data.
-        if data_type == 'noesy' and hasattr(container, 'noesy'):
-            return container.noesy
+        elif data_type == 'noesy' and hasattr(container, 'noesy'):
+            data.append(container.noesy)
 
         # Return the PCS data.
-        if data_id[1] == 'pcs' and hasattr(container, 'pcs') and align_id in container.pcs:
-            return container.pcs[align_id]
+        elif data_id[1] == 'pcs' and hasattr(container, 'pcs'):
+            if align_id not in container.pcs:
+                data.append(None)
+            else:
+                data.append(container.pcs[align_id])
+
+        # Return the data.
+        return data
 
 
     return_data_name_doc = Desc_container("N-state model data type string matching patterns")
