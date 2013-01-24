@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -781,8 +781,11 @@ class RelaxAlignError(BaseError):
 
 # No RDC data.
 class RelaxNoRDCError(BaseError):
-    def __init__(self, id):
-        self.text = "RDC data corresponding to the identification string " + repr(id) + " does not exist."
+    def __init__(self, id=None):
+        if id:
+            self.text = "RDC data corresponding to the identification string " + repr(id) + " does not exist."
+        else:
+            self.text = "No RDC data exists."
 
 # RDC data already exists.
 class RelaxRDCError(BaseError):
@@ -791,8 +794,11 @@ class RelaxRDCError(BaseError):
 
 # No PCS data.
 class RelaxNoPCSError(BaseError):
-    def __init__(self, id):
-        self.text = "PCS data corresponding to the identification string " + repr(id) + " does not exist."
+    def __init__(self, id=None):
+        if id:
+            self.text = "PCS data corresponding to the identification string " + repr(id) + " does not exist."
+        else:
+            self.text = "No PCS data exists."
 
 # PCS data already exists.
 class RelaxPCSError(BaseError):

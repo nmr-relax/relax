@@ -725,8 +725,12 @@ def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Test if RDC data exists.
+    if not hasattr(cdp, 'rdc_ids'):
+        raise RelaxNoRDCError()
+
     # Test if data corresponding to 'align_id' exists.
-    if not hasattr(cdp, 'rdc_ids') or (align_id and align_id not in cdp.rdc_ids):
+    if align_id and align_id not in cdp.rdc_ids:
         raise RelaxNoRDCError(align_id)
 
     # Arg check.

@@ -170,7 +170,7 @@ if SIMS:
     self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
 
     self._execute_uf(uf_name='monte_carlo.setup', number=3)
-    self._execute_uf(uf_name='monte_carlo.create_data')
+    self._execute_uf(uf_name='monte_carlo.create_data', method='direct')
     self._execute_uf(uf_name='monte_carlo.initial_values')
     self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise')
     self._execute_uf(uf_name='monte_carlo.error_analysis')
