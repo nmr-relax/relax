@@ -246,6 +246,10 @@ class N_state_model(SystemTestCase):
             # Check the back-calculated value.
             self.assertAlmostEqual(spin.pcs_bc[tag], pcs[i])
 
+            # Check the simulation values.
+            for sim_index in range(cdp.sim_number):
+                self.assert_(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
+
             # Increment the spin index.
             i += 1
 
@@ -560,6 +564,79 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 0.0)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+        # The spin data.
+        pcs = {
+                'Dy': [ 0.257602207272000,  0.068336164014900,  0.110603133551000,  0.283488541078000,  0.339904760907000,  0.987042929223000,  0.442512226783000,  0.369383947069000,  0.576421001305000,  0.414840770458000,  0.332707187464000, -0.029503579631700,  0.134647155776000,  0.112481223655000,  0.355198596515000, -0.046913037723100, -0.118710220626000,  0.029273074820300,  0.302949891871000,  1.312854817740000,  0.040875625448800,  0.608281919748000,  0.023360076276000,  0.811293913028000,  0.258701382871000,  0.056025797668300,  0.609547727298000,  0.906885191563000],
+                'Tb': [0.644225239812000, 0.677797993460000, 0.492912191403000, 0.524119985177000, 0.600493382214000, 0.501470795483000, 0.516761193931000, 0.702967176951000, 0.914836321239000, 1.318114995620000, 1.350055099220000, 0.893477362442000, 0.999911636071000, 1.065232203160000, 0.996395971540000, 0.720982749003000, 1.374318729640000, 2.106902457600000],
+                'Tm': [ 0.000125066528687, -0.000564062193363, -0.000607973317902,  0.000090266635200,  0.000174865797403,  0.002488010156480,  0.000830246873289,  0.000762523870219, -0.000096933008248,  0.000742665143642, -0.000215152849719],
+                'Er': [-0.481445160767000, -0.361046693640000, -0.370098680342000, -0.413514467402000, -0.410802287329000, -1.081011578870000, -0.963176128222000, -0.745366702244000, -0.674570724880000, -0.751320872646000, -0.684906087274000, -0.461253969271000, -0.443680922437000, -0.344056233315000, -0.328118573270000, -0.395048353548000, -0.356220572284000, -0.324533952261000, -0.411777498713000, -0.511811581196000, -1.018565433020000, -0.959481602761000, -0.734022165690000, -0.660034918889000, -0.709085634512000, -0.878775632044000, -0.553464480425000, -0.765371835675000, -1.548006987460000]
+        }
+        # Loop over the align IDs.
+        for tag in ['Dy', 'Tb', 'Tm', 'Er']:
+            i = 0
+            for spin, spin_id in spin_loop(return_id=True):
+                # Deselected spin.
+                if not spin.select:
+                    continue
+
+                # No PCS.
+                if not hasattr(spin, 'pcs'):
+                    print("No PCS for spin '%s'." % spin_id)
+                    continue
+                if not tag in spin.pcs:
+                    print("No PCS for the '%s' alignment ID for spin '%s'." % (tag, spin_id))
+                    continue
+                print("Checking '%s' PCS data for spin '%s'" % (tag, spin_id))
+
+                # Check the value.
+                self.assertAlmostEqual(spin.pcs[tag], pcs[tag][i])
+
+                # Check the back-calculated value.
+                self.assertAlmostEqual(spin.pcs_bc[tag], pcs[tag][i])
+
+                # Check the simulation values.
+                for sim_index in range(cdp.sim_number):
+                    self.assert_(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
+
+                # Increment the spin index.
+                i += 1
+
+        # The interatomic data.
+        rdc = {
+            'Dy': [-30.671893754700001, -31.307246147099999, -29.358121961700000,  -7.235977742280000, -45.562589405399997, -42.816624411200003, -41.019354747700000, -25.361318450599999, -44.1129977796],
+            'Tm': [-0.057386340972700, -0.045650398398700, -0.074873514450400,  0.099056143214600,  0.021275817005300,  0.037132036464200,  0.047340390362400,  0.128745838536000,  0.010906407989400],
+            'Er': [ 22.944150028900001,  23.363231565100001,  25.948323446000000,   6.955380304960000,   1.784067087050000,   7.228324193240000,   8.271072502000001,  -7.403618580470000]
+        }
+        # Loop over the align IDs.
+        for tag in ['Dy', 'Tm', 'Er']:
+            i = 0
+            for interatom in interatomic_loop():
+                # Deselected interatomic container.
+                if not interatom.select:
+                    continue
+
+                # No RDC.
+                if not hasattr(interatom, 'rdc'):
+                    print("No RDC for interatom '%s-%s'." % (interatom.spin_id1, interatom.spin_id2))
+                    continue
+                if not tag in interatom.rdc:
+                    print("No RDC for the '%s' alignment ID for interatom '%s-%s'." % (tag, interatom.spin_id1, interatom.spin_id2))
+                    continue
+                print("Checking '%s' RDC data for interatom '%s-%s'" % (tag, interatom.spin_id1, interatom.spin_id2))
+
+                # Check the value.
+                self.assertAlmostEqual(interatom.rdc[tag], rdc[tag][i])
+
+                # Check the back-calculated value.
+                self.assertAlmostEqual(interatom.rdc_bc[tag], rdc[tag][i])
+
+                # Check the simulation values.
+                for sim_index in range(cdp.sim_number):
+                    self.assert_(abs(interatom.rdc_sim[tag][sim_index] - interatom.rdc[tag]) < 6.0*interatom.rdc_err[tag])
+
+                # Increment the interatom index.
+                i += 1
 
 
     def test_missing_data(self):
