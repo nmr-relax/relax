@@ -76,8 +76,10 @@ self._execute_uf(uf_name='grid_search', inc=3)
 self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
 
 # Set up the errors needed for the simulations.
-self._execute_uf(uf_name='rdc.set_errors', sd=1.0)
-self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
+if ds.mode in ['rdc', 'all']:
+    self._execute_uf(uf_name='rdc.set_errors', sd=1.0)
+if ds.mode in ['pcs', 'all']:
+    self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
