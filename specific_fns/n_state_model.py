@@ -2347,6 +2347,33 @@ class N_state_model(API_base, API_common):
         return self._param_num(), self._num_data_points(), cdp.chi2
 
 
+    def return_data(self, data_id):
+        """Return the base data for the given data ID.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      list of str
+        @return:            The base data.
+        @rtype:             float
+        """
+
+        # Alias the spin or interatomic data container, data type and alignment ID.
+        container = data_id[0]
+        data_type = data_id[1]
+        align_id = data_id[2]
+
+        # Return the RDC data.
+        if data_type == 'rdc' and hasattr(container, 'rdc') and align_id in container.rdc:
+            return container.rdc[align_id]
+
+        # Return the NOESY data.
+        if data_type == 'noesy' and hasattr(container, 'noesy'):
+            return container.noesy
+
+        # Return the PCS data.
+        if data_id[1] == 'pcs' and hasattr(container, 'pcs') and align_id in container.pcs:
+            return container.pcs[align_id]
+
+
     return_data_name_doc = Desc_container("N-state model data type string matching patterns")
     _table = uf_tables.add_table(label="table: N-state data type patterns", caption="N-state model data type string matching patterns.")
     _table.add_headings(["Data type", "Object name", "Patterns"])
