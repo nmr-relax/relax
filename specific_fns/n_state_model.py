@@ -412,7 +412,12 @@ class N_state_model(API_base, API_common):
         @return:            True if the RDCs should be used, False otherwise.
         """
 
+        # Skip deselected interatomic data containers.
+        if not interatom.select:
+            return False
+
         # Skip deselected spins.
+        # FIXME:  These checks could be fatal in the future if a user has good RDCs and one of the two spins are deselected!
         if not spin1.select or not spin2.select:
             return False
 
@@ -1797,6 +1802,10 @@ class N_state_model(API_base, API_common):
 
         # Loop over the interatomic data containers.
         for interatom in interatomic_loop():
+            # Skip deselected data.
+            if not interatom.select:
+                continue
+
             # Re-initialise the data structure.
             data = [interatom, None, None]
 
@@ -1826,6 +1835,10 @@ class N_state_model(API_base, API_common):
 
         # Loop over the spins.
         for spin in spin_loop():
+            # Skip deselected data.
+            if not spin.select:
+                continue
+
             # Re-initialise the data structure.
             data = [spin, None, None]
 
@@ -2451,7 +2464,7 @@ class N_state_model(API_base, API_common):
         @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
         @type data_id:      str
         @return:            The Monte Carlo simulation data errors.
-        @rtype:             list of floats
+        @rtype:             list of float
         """
 
         # Initialise the MC data structure.

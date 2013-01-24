@@ -850,15 +850,19 @@ class Relax_fit(API_base, API_common):
             print("No spins have been deselected.")
 
 
-    def return_data(self, spin):
+    def return_data(self, data_id=None):
         """Function for returning the peak intensity data structure.
 
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @return:        The peak intensity data structure.
-        @rtype:         list of float
+        @keyword data_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @return:            The peak intensity data structure.
+        @rtype:             list of float
         """
 
+        # Get the spin container.
+        spin = return_spin(data_id)
+
+        # Return the peak intensities.
         return spin.intensities
 
 

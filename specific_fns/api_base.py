@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -117,7 +117,7 @@ class API_base(object):
         """Create the Monte Carlo data.
 
         @keyword data_id:   The data identification information, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
+        @type data_id:      anything
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
@@ -523,13 +523,13 @@ class API_base(object):
         return self.PARAMS.get_conv_factor(param)
 
 
-    def return_data(self, spin):
+    def return_data(self, data_id=None):
         """Return the data points used in optimisation.
 
-        @param spin:    The SpinContainer object.
-        @type spin:     SpinContainer instance
-        @return:        The array of relaxation data values.
-        @rtype:         list of float
+        @keyword data_id:   The data identification information, as yielded by the base_data_loop() generator method.
+        @type data_id:      anything
+        @return:            The array of data values.
+        @rtype:             list of float
         """
 
         # Not implemented.
@@ -571,13 +571,13 @@ class API_base(object):
         return param
 
 
-    def return_error(self, data_id):
+    def return_error(self, data_id=None):
         """Return the error points corresponding to the data points used in optimisation.
 
-        @param data_id: The data identification information, as yielded by the base_data_loop() generator method.
-        @type data_id:  str
-        @return:        The array of relaxation data error values.
-        @rtype:         list of float
+        @keyword data_id:   The data identification information, as yielded by the base_data_loop() generator method.
+        @type data_id:      anything
+        @return:            The array of data error values.
+        @rtype:             list of float
         """
 
         # Not implemented.
@@ -708,7 +708,7 @@ class API_base(object):
         """Pack the Monte Carlo simulation data.
 
         @param data_id:     The data identification information, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
+        @type data_id:      anything
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
