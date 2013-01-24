@@ -75,6 +75,17 @@ self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 self._execute_uf(uf_name='grid_search', inc=3)
 self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
 
+# Set up the errors needed for the simulations.
+self._execute_uf(uf_name='rdc.set_errors', sd=1.0)
+self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
+
+# Monte Carlo simulations.
+self._execute_uf(uf_name='monte_carlo.setup', number=3)
+self._execute_uf(uf_name='monte_carlo.create_data')
+self._execute_uf(uf_name='monte_carlo.initial_values')
+self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise')
+self._execute_uf(uf_name='monte_carlo.error_analysis')
+
 # Write out a results file.
 self._execute_uf('devnull', force=True, uf_name='results.write')
 
