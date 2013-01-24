@@ -528,12 +528,22 @@ class N_state_model(SystemTestCase):
                 'Tm': [ 0.000125066528687, -0.000564062193363, -0.000607973317902,  0.000090266635200,  0.000174865797403,  0.002488010156480,  0.000830246873289,  0.000762523870219, -0.000096933008248,  0.000742665143642, -0.000215152849719],
                 'Er': [-0.481445160767000, -0.361046693640000, -0.370098680342000, -0.413514467402000, -0.410802287329000, -1.081011578870000, -0.963176128222000, -0.745366702244000, -0.674570724880000, -0.751320872646000, -0.684906087274000, -0.461253969271000, -0.443680922437000, -0.344056233315000, -0.328118573270000, -0.395048353548000, -0.356220572284000, -0.324533952261000, -0.411777498713000, -0.511811581196000, -1.018565433020000, -0.959481602761000, -0.734022165690000, -0.660034918889000, -0.709085634512000, -0.878775632044000, -0.553464480425000, -0.765371835675000, -1.548006987460000]
         }
+        spin_deselect_blacklist = ['pcs_bc', 'pcs_sim']
+
         # Loop over the align IDs.
         for tag in ['Dy', 'Tb', 'Tm', 'Er']:
             i = 0
             for spin, spin_id in spin_loop(return_id=True):
                 # Deselected spin.
                 if not spin.select:
+                    print("Checking the deselected spin '%s'" % spin_id)
+
+                    # Check that the container is clean.
+                    for name in spin_deselect_blacklist:
+                        print("    Checking the blacklisted object %s." % name)
+                        self.assert_(not hasattr(spin, name))
+
+                    # Skip the rest of the checks.
                     continue
 
                 # No PCS.
@@ -564,12 +574,22 @@ class N_state_model(SystemTestCase):
             'Tm': [-0.057386340972700, -0.045650398398700, -0.074873514450400,  0.099056143214600,  0.021275817005300,  0.037132036464200,  0.047340390362400,  0.128745838536000,  0.010906407989400],
             'Er': [ 22.944150028900001,  23.363231565100001,  25.948323446000000,   6.955380304960000,   1.784067087050000,   7.228324193240000,   8.271072502000001,  -7.403618580470000]
         }
+        interatom_deselect_blacklist = ['rdc_bc', 'rdc_sim']
+
         # Loop over the align IDs.
         for tag in ['Dy', 'Tm', 'Er']:
             i = 0
             for interatom in interatomic_loop():
                 # Deselected interatomic container.
                 if not interatom.select:
+                    print("Checking the deselected interatom '%s-%s'" % (interatom.spin_id1, interatom.spin_id2))
+
+                    # Check that the container is clean.
+                    for name in interatom_deselect_blacklist:
+                        print("    Checking the blacklisted object %s." % name)
+                        self.assert_(not hasattr(interatom, name))
+
+                    # Skip the rest of the checks.
                     continue
 
                 # No RDC.
