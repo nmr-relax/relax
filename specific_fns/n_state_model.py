@@ -1797,6 +1797,10 @@ class N_state_model(API_base, API_common):
 
         # Loop over the interatomic data containers.
         for interatom in interatomic_loop():
+            # Skip deselected data.
+            if not interatom.select:
+                continue
+
             # Re-initialise the data structure.
             data = [interatom, None, None]
 
@@ -1826,6 +1830,10 @@ class N_state_model(API_base, API_common):
 
         # Loop over the spins.
         for spin in spin_loop():
+            # Skip deselected data.
+            if not spin.select:
+                continue
+
             # Re-initialise the data structure.
             data = [spin, None, None]
 
