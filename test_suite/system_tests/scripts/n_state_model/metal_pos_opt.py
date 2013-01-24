@@ -113,7 +113,7 @@ x_orig, y_orig, z_orig = cdp.paramagnetic_centre
 cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.02
 print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
 self._execute_uf(uf_name='calc')
-print("Chi2: %s" % cdp.chi2)
+print("Chi2: %.15f" % cdp.chi2)
 if cdp.chi2 < 1e-15:
     raise RelaxError("The chi2 value cannot be zero here!")
 
@@ -121,15 +121,16 @@ if cdp.chi2 < 1e-15:
 x, y, z = cdp.paramagnetic_centre
 self._execute_uf(uf_name='n_state_model.select_model', model='population')
 self._execute_uf(uf_name='calc')
-print("Chi2: %s" % cdp.chi2)
+print("Chi2: %.15f" % cdp.chi2)
 chi2 = cdp.chi2
 if cdp.chi2 < 1e-15:
     raise RelaxError("The chi2 value cannot be zero here!")
 self._execute_uf(uf_name='paramag.centre', fix=True)
 self._execute_uf(uf_name='calc')
-print("Chi2: %s" % cdp.chi2)
-if abs(cdp.chi2 - chi2) > 1e-15:
-    raise RelaxError("The chi2 value must match the previous value of %s." % chi2)
+print("Chi2: %.15f" % cdp.chi2)
+if abs(cdp.chi2 - chi2) > 1e-10:
+    print "%.15g" % abs(cdp.chi2 - chi2)
+    raise RelaxError("The chi2 value must match the previous value of %.15f." % chi2)
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 self._execute_uf(uf_name='paramag.centre', fix=False)
 self._execute_uf(uf_name='calc')
