@@ -2464,7 +2464,7 @@ class N_state_model(API_base, API_common):
         @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
         @type data_id:      str
         @return:            The Monte Carlo simulation data errors.
-        @rtype:             list of floats
+        @rtype:             list of float
         """
 
         # Initialise the MC data structure.
