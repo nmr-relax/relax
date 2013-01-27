@@ -1,3 +1,185 @@
+Version 2.2.0
+(27 January 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.2.0
+
+    Features:
+        * Implementation of the rdc.copy and pcs.copy user functions.
+        * Improved printouts from the model_selection, pipe.display, rdc.read user functions.
+        * Implemented the interatomic.copy and interatomic.create user functions
+        * Added the 'units' argument to the frq.set user function to allow values other than Hz to be input.
+        * Added the 'empty' flag to the sequence.copy user function to allow all the spin contents to be copied.
+        * Implemented the pcs.structural_noise user function.  This is used to determine the PCS error due to structural noise via simulation, and adds the error via variance addition to the experimental PCS error.
+        * The N-state model grid search optimises each tensor separately when only tensors are optimised.  This massively collapses the grid search size from inc**(5*N) to N*inc**5, where inc are the number of increments per dimension and N is the number of alignments, making a grid search possible.
+        * Implemented the rdc.set_errors and pcs.set_errors user functions.
+        * Added Monte Carlo simulation support for the paramagnetic centre for PCSs in the N-state model.
+        * The paramagnetic centre position for the PCS can now be optimised using algorithms other than simplex, such as BFGS, as the gradients of the PCS equations have been implemented.  This allows for huge speedups as the simplex optimiser is not suited to such a problem.
+        * The probabilities and paramagnetic position can now be simultaneously optimised in the N-state model.  Such a combination would have previously failed to unpack the parameters correctly.
+        * Constraints are now allowed for the paramagnetic position optimisation in the N-state model.  This is because the gradients are implemented and functional.
+
+
+    Changes:
+        * The relax HTML user manual footer has been modified to remove the name of the person who compiled it.  This is for http://www.nmr-relax.com/manual/index.html, and now contains links for relax (http://www.nmr-relax.com), the manual (http://www.nmr-relax.com/manual) and the PDF version of the manual (http://download.gna.org/relax/manual/relax.pdf).
+        * Small syntax fix in the release checklist document.
+        * Added the MARC archive links to the development chapter of the relax user manual.  These links are:  http://marc.info/?l=relax-announce&r=1&w=2, http://marc.info/?l=relax-users&r=1&w=2, http://marc.info/?l=relax-devel&r=1&w=2, and http://marc.info/?l=relax-commits&r=1&w=2.
+        * The model-free overfit deselection algorithm now fails with a RelaxError when no spins are selected.  This is to avoid situations such as bug #20277 (https://gna.org/bugs/?20277).
+        * The pipe.display user function now uses relax_io.write_data() for better output formatting.
+        * Created the N_state_model.test_data_copying system test for the rdc.copy and pcs.copy user functions.  These user functions do not exist yet, but this test will be used to implement them.
+        * Reactivated the rdc.copy and pcs.copy user function front-ends.  The backends are missing, so relax is currently broken.
+        * Created the RelaxNoAlignError error class for use by rdc.copy and pcs.copy.
+        * Created the RelaxAlignError error class for use by the rdc.copy and pcs.copy user functions.
+        * Implemented the rdc.copy and pcs.copy user function backends.  This code is copied from the relax_data.copy user function and has been tailored to the different data types.
+        * Modified the RDC and PCS data copying system test script to check overwriting.  The rdc.copy and pcs.copy user function should support the overwriting of existent values.
+        * The rdc.copy and pcs.copy user functions now support overwriting pre-existing data.
+        * Removed some debugging printouts.
+        * The N_state_model.test_data_copying system test now checks the spin RDC and PCS data.
+        * The model_selection user function is now using relax_io.write_data() for its printouts.  This allows for clean formatting when data pipes have long names.
+        * The rdc.write and pcs.write user functions now skip deselected spins.
+        * The axis for PDB geometric cone can now be turned off in the create_cone_pdb() function.  The axis_flag keyword argument is now accepted and if False will cause the axis to be excluded.  This is useful for the frame order cones for example as its own {x,y,z}-axis system is created.
+        * Many docstring fixes for the functions of the generic_fns.structure.geometric module.
+        * Created the N_state_model.test_absolute_rdc_menthol system test to demonstrate a pseudo-atom failure.  This is a test of the long range, absolute RDCs for menthol.
+        * Added a check for the second Q factor in the N_state_model.test_absolute_rdc_menthol system test.
+        * Modified the N_state_model.test_populations system test to catch bug #20335.  This simply adds calls to the rdc.delete and pcs.delete user functions, and then reloads the RDC and PCS data.
+        * Modified the temperature user function - the value can be set twice if it is the same value.
+        * Modified the frq.set user function - the value can be set twice if it is the same value.
+        * The rdc.back_calc user function now handles absolute RDCs.
+        * Created the Align_tensor.test_copy system test to catch bug #20338 (https://gna.org/bugs/?20338).
+        * The spin.create_pseudo user function 'members' argument is no longer read only in the GUI.  This allows the user to type in shorter spin IDs rather than selecting them from the list.
+        * Shifted and renamed the arg_check.check_float() function to check_types.is_float().
+        * The relax_io.write_spin_data() function now formats floating point numbers better.  This affects the printouts of many data loading user functions.
+        * Better printouts from the rdc.read user function - the numbers are now formatted.
+        * Created the interatomic.copy and interatomic.create user functions.  This is simply new front ends for the user for the functions of generic_fns.interatomic.
+        * The generic_fns.interatomic.copy() function now accepts spin IDs as arguments to partially copy the data.
+        * Expanded the RelaxNoSpinError class to accept the data pipe name for the error printout.
+        * Created the Interatomic.test_copy system test to check the interatomic.copy user function.
+        * Expanded the Interatomic.test_copy system test to check interatomic.copy without spin IDs.
+        * Added a test for the presence of target sequence data in generic_fns.interatomic.copy().
+        * Spun out code from generic_fns.pipes.create() into the new check_type() function.  This code will be reused in a new pipe user function.
+        * Created the Pipes.test_change_type system test to check the non-existent pipe.change_type user function.
+        * Implemented the pipe.change_type user function front and back ends.
+        * Created the Align_tensor.test_fix() system test to check the operation of align_tensor.fix.
+        * Created some synthetic paramagnetically aligned RDC and PCS data to the test suite.  This will be used in later system tests.
+        * Fixes for the PCS values of the paramagnetic alignment test suite data.  The data generation script output and results file have been added to the repository as well.
+        * Created the N_state_model.test_paramag_align_fit system test to check the paramagnetic data.  This test check the alignment tensor optimisation of the RDC and PCS data in test_suite/shared_data/align_data/paramagnetic/, loading both alignment data sets but only optimising one tensor.
+        * The RelaxErrors when calling user functions in the prompt/script interface are now more informative.  The user function is now stated.  This is to better help the user work out where the problem is.
+        * Created the Rdc.test_rdc_copy system test to demonstrate the failure of the rdc.copy user function.
+        * Created the Pcs.test_pcs_load and Pcs.test_pcs_copy system tests to check some of the PCS user functions.  The Pcs system test class is new, and these tests check untested areas of relax.
+        * Created RelaxInteratomInconsistentError for when the data is inconsistent between two data pipes.
+        * Created the generic_fns.interatomic.consistent_interatomic_data() function for checking data consistency.
+        * The rdc.copy user function now uses the new consistent_interatomic_data() function prior to copying.  To copy the RDC data, the interatomic data containers must be identical between the two data pipes.
+        * Fix for the N_state_model.test_data_copying system test.  The interatomic data is now copied prior to copying the RDC data.
+        * Created 4 unit tests to demonstrate the failure of the selection object with spin IDs.
+        * The molecule, residue and spin selection object now works with spin IDs.
+        * Docstring consistency editing for all parts of the generic_fns.mol_res_spin module.
+        * Created the Selection system test class.  This currently has the test Selection.test_deselect_all for checking the deselect.all user function.  The number of tests will be expanded in the future to cover interatomic data containers and the operation of all the select and deselect user functions.
+        * Shifted the boolean selection operations of the generic_fns.selection module into two new functions.  These are the boolean_select() and boolean_deselect() functions.  The change removes much duplicated code which could be a source of bugs in the future.
+        * The frq.set user function now warns if the frequency is lower than 100 MHz or higher than 2 GHz.
+        * Updated the diffusion tensor minimisation sample script as the code is very old and useless.
+        * Created the State.test_align_tensor_with_mc_sims system test to catch bug #20414.  The report is at http://gna.org/bugs/?20414.
+        * Modified the align_tensor_mc.bz2 save file to catch a strange and rare bug.  This is caught by the State.test_align_tensor_with_mc_sims system test.
+        * Spun out the maths_fns.rotation_matrix.random_rot_axis() function into its own module.  The function is now called maths_fns.vectors.random_unit_vector().
+        * Added a second data pipe with data to the 'align_tensor_mc.bz2' saved state to catch a bug.  This bug was recently introduced.
+        * Added checks for the RDC data in the State.test_align_tensor_with_mc_sims system test.  This is to be sure that the data is properly converted from the old design.
+        * Added the 'empty' flag to the sequence.copy user function to allow all the spin contents to be copied.  The user function was only copying the basic empty molecule, residue and spin containers, in contrast to the interatomic.copy user function which copies all of the container contents as well.  This new flag is for backwards compatibility - it allows old scripts to operate as before while enabling the new functionality.
+        * Removed the check for the 3D structural data in the paramag.centre user function.  This check is not needed.
+        * Created the Pcs.test_structural_noise system test for the new pcs.structural_noise user function.
+        * Created the N_state_model.test_mc_sim_failure system test to demonstrate a bug in the N-state model.  This appears to be a problem with Monte Carlo simulations when data is missing.
+        * Modified the N_state_model.test_mc_sim_failure system test to include missing PCS data.  This is to catch another bug.
+        * Modified the missing data system test script to include Monte Carlo simulations.  This is to cover untested code paths.
+        * Added calls to rdc.set_errors and pcs.set_errors in the missing data N-state model system test script.  These user functions currently do not exist, but are needed as the data files contain no errors.
+        * Modified all generic_fns.mol_res_spin.get_*() functions to handle no data pipes being present.  These functions were previously raising RelaxErrors as no pipes were present.  They now return empty lists instead.  This allows many of the GUI user functions to open in the GUI when no data is present, allowing better debugging and less confusion for the user.
+        * The Pipes.test_change_type system test is skipped if the required scipy module is not installed.
+        * Python 3 fix for the new pcs.structural_noise user function.  There was a string/unicode problem in the Grace plot creation code.
+        * Created the Pcs.test_load_multi_col_data system test to demonstrate a failure of PCS data loading.  This is a problem when 15N data is in one column and 1H data is in another, and the spin_id argument is used to specify which is which.
+        * Added some printouts to the Pcs.test_load_multi_col_data system test.
+        * Created the Pcs.test_grace_plot system test to check the pcs.corr_plot user function.
+        * Created the Pcs.test_load_multi_col_data2 system test to catch a bug with the molecule name.  This is the same as the Pcs.test_load_multi_col_data system test but the spins have the molecule name set.
+        * Created the Mol_res_spin.test_prune_metadata system test to catch a bug in the spin ID lookup table.  Spin IDs appear not to be correctly removed from the lookup table.
+        * Added some more checks to the Mol_res_spin.test_prune_metadata system test to demonstrate more bugs.
+        * Activated the Monte Carlo simulations in the metal_pos_opt.py system test script.  This is to test the combination of Monte Carlo simulations and paramagnetic centre position optimisation.
+        * Added Monte Carlo simulations to the N_state_model.test_paramag_centre_fit system test.  This is to better test the code paths.
+        * Modified the N_state_model.test_mc_sim_failure to demonstrate a failure in paramagnetic centre code.  The failure is for the combination of paramagnetic centre optimisation and Monte Carlo simulations.
+        * Modified the paramag.centre user function printouts for the 'fix' flag.
+        * The alignment tensor objects in the relax data store now support sequential Monte Carlo analyses.  The AlignTensorData.set_sim_num() method was preventing a second Monte Carlo error analysis from being performed by throwing a RelaxError.  The check for previous simulations has been killed.
+        * Added checks to the N-state model for the paramagnetic centre optimisation.  Only simplex optimisation without constraints is allowed for the paramagnetic centre position as the PCS gradients and Hessians are not yet implemented for the coordinate parameters.
+        * Improved the RDC and PCS Q factor calculation warnings to be more informative.  These warnings sometimes appear at the end of the N-state model optimisation, but it is not clear where they come from.
+        * Clean up of some of the logic in N-state model analysis specific code.  The following methods have been added: _opt_tensor(), _opt_uses_align_data(), _opt_uses_pcs(), and _opt_uses_rdc().  These are used through the class to determine what is needed for or used during optimisation,making a lot of checking code more consistent (hence removing latent bugs).
+        * Added some more checks to the metal_pos_opt.py N-state model system test script.
+        * First attempt at implementing the paramagnetic centre position gradient in the N-state model.  This will be used for faster optimisation of the lanthanide position.  Two new functions have been added:  maths_fns.pcs.ave_pcs_tensor_ddeltaij_dc() and maths_fns.pcs.pcs_constant_grad().  These are used by the dfunc_*() methods of the N-state model target function class.
+        * Major code simplification of the N-state model target functions.  The func_tensor_opt(), dfunc_tensor_opt(), and d2func_tensor_opt() methods have been merged with the func_population(), dfunc_population(), and d2func_population() methods into the new func_standard(),dfunc_standard(), and d2func_standard() methods.  This halves the amount of code required to be maintained and debugged.  For the merger, the new probs_fixed class instance variable has been created to determine when the probabilities need to be unpacked from the parameter vector.
+        * Removed the unused parameter scaling in the N-state model gradient and Hessian target functions.
+        * Added a RelaxError to the N-state model Hessian for the optimisation of the paramagnetic position.  This is because these equations are not derived or coded yet.
+        * Expanded the N-state model target function func_standard() docstring to include the xi derivative.  This is the partial derivative with respect to the paramagnetic centre position.
+        * Comment fixes in the ave_pcs_tensor_ddeltaij_dc() and pcs_constant_grad() functions.
+        * Modified the N-state model metal_pos_opt.py system test script.  This is to test optimisation with the new paramagnetic position gradients.
+        * BFGS optimisation is now being used for the N_state_model.test_mc_sim_failure system test.  This is to have better test coverage of the paramagnetic centre position optimisation gradient code paths.
+        * Simplified the parameter unpacking in the func_standard() N-state model target function.
+        * Improved the comments in the _disassemble_param_vector() N-state model method.
+        * Modified the populations.py N-state model system test script to better test optimisation.  The probability of the 2nd state has been slightly shifted to make sure the original value can be found.
+        * Modified the metal_pos_opt.py N-state model system test script to demonstrate some failures.
+        * Improved the checks of the metal_pos_opt.py N-state model system test script.
+        * Modified the metal_pos_opt.py N-state model system test script to catch yet another bug.
+        * Added Monte Carlo simulations to the align_fit.py N-state model system test script.  This is to increase the very low coverage of Monte Carlo simulation testing for the N-state model.
+        * Modified the metal_pos_opt.py N-state model system test script to test the bootstrapping code path.  This converts the Monte Carlo simulations into bootstrapping to make sure this method also functions correctly.
+        * Implemented the N-state model specific return_data() method.  This is needed for bootstrapping.
+        * Fixes for the N-state model return_data() method.
+        * Modified the RelaxNoRDCError and RelaxNoPCSError to accept no alignment ID.  This is then used to indicate the complete absence of data.
+        * Modified the initial testing of the rdc.set_errors and pcs.set_errors user functions.  This is to better indicate to the user what the problem is and why the user function cannot operate.
+        * Fixes for the align_fit.py N-state model system test script.  The recently introduced Monte Carlo simulations and associated RDC and PCS error setting was failing when RDC or PCS data was missing.  The script now checks the mode of operation and only sets errors if the corresponding data is present.
+        * The N_state_model.test_align_fit system test now checks the simulation PCS values.
+        * Fix for the metal_pos_opt.py N-state model system test script.  The moving interatomic data containers are now also deselected. 
+        * Added extensive data checks to the N_state_model.test_metal_pos_opt system test script.
+        * Added new checks in the N_state_model.test_metal_pos_opt system test.  These are for structures which should not be in the deselected spins and interatomic containers
+        * The N-state model _check_rdcs() method now skips deselected interatomic data containers.  A FIXME comment has also been added to highlight a possible future problem.
+        * Added some consistency to the specific analysis API base class.  The return_data() method argument has been changed from 'spin' to 'data_id', as the data from the base_data_loop() methods are often not spin containers.
+        * Made the chi2 value check less stringent in the N_state_model.test_metal_pos_opt system test.  For some bizarre reason, the calc() call in the GUI is less precise.
+        * The N_state_model.test_populations system test has been made less stringent to allow MS Windows to pass.
+
+
+    Bugfixes:
+        * Scons fix for MS Windows.  A bug was introduced in the previous version which causes scons to fail on MS Windows.  This has to do with the ctypes.Structure object but strangely led to a AttributeError importing scipy when initialising scons.
+        * Another attempt at fixing the scons failure in MS Windows due to scipy and ctypes killing each other.
+        * Work around for a numpy bug triggered by scons and the import of Scientific.Visualization.VMD.  For details, see the thread started by Jack Howarth (howarth att bromo dot med dot uc dot edu) started at http://thread.gmane.org/gmane.science.nmr.relax.devel/3663 (Message ID:<20121019140023.GA26861@bromo.med.uc.edu>).
+        * Fix for a fatal bug in the multi-processor code (https://gna.org/bugs/?20253).  The Queue module is now imported as 'queue' for Python 3 support, so the code was referring to the wrong object name.
+        * Bugfix for the grid_search user function.  The elements of the list of integers can be None to indicate that no grid search in that dimension is to be performed.
+        * Fix for model elimination in the modsel.py model-free sample script.  The eliminate user function should be applied to each data pipe separately.
+        * Fix for the relax_io.write_data() function - it can now handle no data being sent in.
+        * Bugfix for the use of pseudo-atoms for RDCs in the N-state model analysis.  If the second atom of the pair in the intermolecular data container holding the RDC data was a pseudo-atom, then the N-state model optimisation setup would fail.  Now both the first and second atoms being pseudo-atoms is supported.
+        * Fix for bug #20335 (https://gna.org/bugs/?20335).  The global alignment ID data structure now has the RDC or PCS ID string correctly removed.
+        * Fix for bug #20338 (https://gna.org/bugs/?20338), the new tensor name is now set.
+        * Bugfix for the catching of errors in the GUI user functions - the sys module import was missing.
+        * Bugfix for the GUI combo_list input element SetValue() method.  Values not belonging to the combo lists can now be set.  This fixes the spin.create_pseudo user function in the test suite, a bug triggered by the N_state_model.test_absolute_rdc_menthol GUI test.
+        * Fixes for the align_tensor.copy user function for when the tensor_to argument is not supplied.  Now it is assumed that the new tensor will have the same name as the old.  The new tensor is also properly initialised.
+        * Bugfix for the N-state model with PCSs and the temperature or spectrometer frequency are not set.  Previously the missing value was set to 0 K or 1e-10 Hz, but this was causing optimisation to fail.  Now a RelaxError is produced if the value is missing and optimisation is attempted.
+        * Fixes for the calculation of RDC and PCS Q factors for when fixed alignment tensors are present.  If a tensor is fixed, then there will be no back-calculated data.  Therefore instead of returning from the function, a continue statement is used to skip just that alignment.
+        * Bugfix for the RelaxNoAlignError error class - the printout statement was broken.
+        * Bugfix for the rdc.copy user function - it is now functional.  The code was old and untested, and still assumed that the RDC values were held in spin containers rather than the interatomic data containers.
+        * Partial fix for bug #20378 (https://gna.org/bugs/index.php?20378).  The gui_raise() function was operating differently under the command line run test suite and the GUI run test suite.  The operation of the function is now consistent, and no RelaxError is raised (unless the raise_flag argument is set).
+        * Full fix for bug #20378 (https://gna.org/bugs/index.php?20378).  As no RelaxError is no longer raised in this Bruker.test_bug_20152_read_dc_file GUI test (well only in the command line operation of the GUI tests), instead the current data pipe is checked to make sure no relaxation data was loaded.
+        * Fix for bug #20414 (http://gna.org/bugs/?20414).  The variable for the number of simulations in the AlignmentTensorList object is now set prior to setting the simulation parameter values.
+        * Fix for bug #20417 (https://gna.org/bugs/?20417).  The backwards compatibility hook for the loading of old relax state and results files can now handle the presence of proton spins.  The data structures are now correctly converted to the current data pipe design.  This is only the case for old files containing PCS data.
+        * Fix for bug #20420 (https://gna.org/bugs/?20420).  The problem was in the generic_fns.mol_res_spin.create_spin() function.  The index_molecule() and index_residue() functions where not taking alternative, non-current data pipes into account.
+        * Fix for bug #20421 (https://gna.org/bugs/?20421).  The loading of relax state files was only updating the spin ID metadata structures for the current data pipe.  Now all loaded data pipes are updated.
+        * RDC data fix for the _back_compat_hook() method for converting old relax state and results files.  The RDC data was not being shifted into the corresponding interatomic data container and remained in the spin containers.
+        * Fix for the bug caught by the N_state_model.test_mc_sim_failure system test.  If no RDC error is present, then the returned error from the N-state model analysis specific method return_error() is None.
+        * Fix for the missing PCS data in the N-state model Monte Carlo simulations.  This was caught by the N_state_model.test_mc_sim_failure system test.
+        * Fix for the N_state_model.test_mc_sim_failure GUI test - the relax data store was not empty at the start.
+        * Bugfix for the loading of PCS data from a file with different spin types in different columns.  This was caught by the Pcs.test_load_multi_col_data system test which now passes.
+        * Bugfix for generic_fns.mol_res_spin.metadata_prune().  Non-unique molecules and residues are now removed from the spin ID lookup table.
+        * Proper bugfix for the spin ID metadata lookup table pruning.  The Mol_res_spin.test_prune_metadata system test now passes.  The previous fix was not complete, and it should have been in the spin_id_variants_elim() function rather than metadata_prune().
+        * Python 3 fix for the Pcs.test_grace_plot system test.
+        * Fix for the N-state model _minimise_setup_atomic_pos() method for the paramagnetic centre.  The cdp.paramagnetic_centre_sim may not exist prior to Monte Carlo simulations.
+        * Fix for the Monte Carlo initialisation of the paramagnetic centre position in the N-state model.  The simulation positions are now initialised to the optimised position.
+        * Fix for the N-state model Monte Carlo simulations for when the paramagnetic centre is fixed.
+        * Bugfix for the N-state model optimisation of populations and paramagnetic position.  The gradient from dfunc_standard() is now correctly calculated when both are optimised.
+        * Fix for the assembly of the N-state model linear constraints.  These were not set up correctly when the populations and paramagnetic position are optimised together.
+        * Bugfix for the N-state model Hessian d2func_standard() method.  An index variable name was incorrect causing the population model to fail with Newton optimisation.
+        * Bugfixes for the _opt_uses_pcs() and _opt_uses_rdc() N-state model methods.  These now check that the populations are optimised as well.
+        * Fix for a bug caught by the N_state_model.test_metal_pos_opt system test.  The problem was that uninitialised probability arrays of None from cdp.probs was always sent into the target function, whereas None should be sent in instead.
+        * Big data store clean up fix for the N-state model.  The N-state model specific base_data_loop() method now skips deselected interatomic data containers and spins.  This prevents a lot of junk data being created in the data pipe, for example back calculated and Monte Carlo simulation RDC and PCS data.
+        * Fixes for the relaxation curve-fitting specific return_data() method.  Strangely it appears as if this method is never used.
+
+
+
 Version 2.1.2
 (17 October 2012, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.1.2
