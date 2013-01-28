@@ -90,8 +90,7 @@ class Test_scientific(UnitTestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        atom_keys = list(res.atoms.keys())
-        atom_keys.sort()
+        atom_keys = sorted(res.atoms.keys())
         self.assertEqual(atom_keys, ['1HA', '2HA', 'C', 'CA', 'H', 'N', 'O'])   # Sorted key comparison needed as key order is not preserved in Python 3.
 
 
@@ -116,8 +115,7 @@ class Test_scientific(UnitTestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        atom_keys = list(res.atoms.keys())
-        atom_keys.sort()
+        atom_keys = sorted(res.atoms.keys())
         self.assertEqual(atom_keys, ['1HA', '2HA', 'C', 'CA', 'H', 'N', 'O'])   # Sorted key comparison needed as key order is not preserved in Python 3.
 
 
