@@ -129,7 +129,7 @@ self._execute_uf(uf_name='paramag.centre', fix=True)
 self._execute_uf(uf_name='calc')
 print("Chi2: %.15f" % cdp.chi2)
 if abs(cdp.chi2 - chi2) > 1e-10:
-    print "%.15g" % abs(cdp.chi2 - chi2)
+    print("%.15g" % abs(cdp.chi2 - chi2))
     raise RelaxError("The chi2 value must match the previous value of %.15f." % chi2)
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 self._execute_uf(uf_name='paramag.centre', fix=False)
