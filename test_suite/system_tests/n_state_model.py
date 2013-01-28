@@ -917,14 +917,14 @@ class N_state_model(SystemTestCase):
 
         # Check the populations.
         self.assertEqual(len(cdp.probs), 3)
-        self.assertAlmostEqual(cdp.probs[0], 0.3)
-        self.assertAlmostEqual(cdp.probs[1], 0.6)
-        self.assertAlmostEqual(cdp.probs[2], 0.1)
+        self.assertAlmostEqual(cdp.probs[0], 0.3, 5)
+        self.assertAlmostEqual(cdp.probs[1], 0.6, 5)
+        self.assertAlmostEqual(cdp.probs[2], 0.1, 5)
 
         # Test the optimised values.
-        self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 5)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 5)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0, 5)
 
 
     def test_vector_loading1(self):

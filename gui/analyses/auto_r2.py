@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 """Module for the automatic R2 analysis frame."""
 
 # relax GUI module imports.
-from auto_rx_base import Auto_rx
+from gui.analyses.auto_rx_base import Auto_rx
 from gui.paths import ANALYSIS_IMAGE_PATH, IMAGE_PATH
 
 

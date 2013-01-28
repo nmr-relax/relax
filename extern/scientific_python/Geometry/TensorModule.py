@@ -126,7 +126,7 @@ class Tensor:
         """
         if isTensor(other):
             a = self.array
-            b =  N.transpose(other.array, range(1, other.rank)+[0])
+            b =  N.transpose(other.array, list(range(1, other.rank))+[0])
             return Tensor(N.innerproduct(a, b), 1)
         else:
             return Tensor(self.array*other, 1)
