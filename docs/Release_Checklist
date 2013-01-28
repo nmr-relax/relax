@@ -119,7 +119,7 @@ Replace the old API documentation in the http://www.nmr-relax.com/api SVN reposi
 
 
 
-* Post the release message to the relax-announce mailing list, as a news item on the relax Gna! website, and on the freshmeat website.
+* Post the release message to the relax-announce mailing list, as a news item on the relax Gna! website, and on the Freecode website.
 
 On the relax-announce mailing list, write a detailed and full description of the release.  Also add a paragraph with links for downloading the release.  At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Include links to the trackers in the full list of changes.
 
