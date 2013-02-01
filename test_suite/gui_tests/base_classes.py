@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,6 +25,10 @@
 # Python module imports.
 from math import pi    # This is needed for relax scripts as pi is located in the relax prompt namespace.
 from os import sep
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 from shutil import rmtree
 from tempfile import mktemp, mkdtemp
 from unittest import TestCase
@@ -34,7 +38,6 @@ import wx
 import dep_check
 
 # relax module imports.
-from compat import Queue as queue
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from generic_fns.reset import reset
