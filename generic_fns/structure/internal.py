@@ -2096,18 +2096,19 @@ class MolContainer:
             if not record:
                 continue
 
-            # Handle the alternate locations.
-            if record[3] != None:
-                # Don't know what to do.
-                if alt_loc == None:
-                    raise RelaxError("Multiple alternate location indicators are present in the PDB file, but the desired coordinate set has not been specified.")
-
-                # Skip non-matching locations.
-                if record[3] != alt_loc:
-                    continue
-
             # Add the atom.
             if record[0] == 'ATOM' or record[0] == 'HETATM':
+                # Handle the alternate locations.
+                if record[3] != None:
+                    print record
+                    # Don't know what to do.
+                    if alt_loc == None:
+                        raise RelaxError("Multiple alternate location indicators are present in the PDB file, but the desired coordinate set has not been specified.")
+
+                    # Skip non-matching locations.
+                    if record[3] != alt_loc:
+                        continue
+
                 # Attempt at determining the element, if missing.
                 element = record[14]
                 if not element:
