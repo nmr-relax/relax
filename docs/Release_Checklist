@@ -20,7 +20,10 @@ $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
 
 
-* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  Commit the changes and then port the revision back into the main line.
+* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  Commit the changes and then port the revision back into the main line.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
+
+$ svn log -v -r18314:HEAD > log
+$ devel_scripts/log_converter.py log
 
 
 
