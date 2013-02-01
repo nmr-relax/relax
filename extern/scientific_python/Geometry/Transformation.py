@@ -142,10 +142,10 @@ class Translation(RigidBodyTransformation):
     def screwMotion(self):
         l = self.vector.length()
         if l == 0.:
-            return Geometry.Vector(0.,0.,0.), \
-                   Geometry.Vector(0.,0.,1.), 0., 0.
+            return Geometry.Vector(0., 0., 0.), \
+                   Geometry.Vector(0., 0., 1.), 0., 0.
         else:
-            return Geometry.Vector(0.,0.,0.), self.vector/l, 0., l
+            return Geometry.Vector(0., 0., 0.), self.vector/l, 0., l
 
 #
 # Pure rotation
@@ -196,8 +196,8 @@ class Rotation(RigidBodyTransformation):
         else:
             return self.asLinearTransformation()*other.asLinearTransformation()
 
-    def __call__(self,other):
-        if hasattr(other,'is_vector'):
+    def __call__(self, other):
+        if hasattr(other, 'is_vector'):
             return self.tensor*other
         elif hasattr(other, 'is_tensor') and other.rank == 2:
             _rinv=self.tensor.inverse()
@@ -214,7 +214,7 @@ class Rotation(RigidBodyTransformation):
         @rtype: (L{Scientific.Geometry.Vector}, C{float})
         """
         asym = -self.tensor.asymmetricalPart()
-        axis = Geometry.Vector(asym[1,2], asym[2,0], asym[0,1])
+        axis = Geometry.Vector(asym[1, 2], asym[2, 0], asym[0, 1])
         sine = axis.length()
         if abs(sine) > 1.e-10:
             axis = axis/sine
@@ -224,7 +224,7 @@ class Rotation(RigidBodyTransformation):
         else:
             t = 0.5*(self.tensor+Geometry.delta)
             i = N.argmax(t.diagonal().array)
-            axis = (t[i]/N.sqrt(t[i,i])).asVector()
+            axis = (t[i]/N.sqrt(t[i, i])).asVector()
             angle = 0.
             if t.trace() < 2.:
                 angle = N.pi
@@ -349,7 +349,7 @@ class Rotation(RigidBodyTransformation):
         return self
 
     def translation(self):
-        return Translation(Geometry.Vector(0.,0.,0.))
+        return Translation(Geometry.Vector(0., 0., 0.))
 
     def inverse(self):
         return Rotation(self.tensor.transpose())
@@ -542,7 +542,7 @@ def mod_angle(angle, mod):
 
 if __name__ == '__main__':
 
-    t = Translation(Geometry.Vector(1.,-2.,0))
+    t = Translation(Geometry.Vector(1., -2., 0))
     r = Rotation(Geometry.Vector(0.1, -2., 0.5), 1.e-10)
     q = r.asQuaternion()
     angles = r.threeAngles(Geometry.Vector(1., 0., 0.),
