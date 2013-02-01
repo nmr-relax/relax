@@ -260,7 +260,7 @@ class PipeContainer(Prototype):
         """
 
         # Is the molecule structure data object empty?
-        if hasattr(self, 'structure') and not self.structure.is_empty():
+        if hasattr(self, 'structure'):
             return False
 
         # Is the molecule/residue/spin data object empty?
