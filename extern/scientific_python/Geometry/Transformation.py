@@ -549,7 +549,7 @@ if __name__ == '__main__':
                            Geometry.Vector(0., 1., 0.),
                            Geometry.Vector(0., 0., 1.))
     c = t*r
-    print c.screwMotion()
+    print(c.screwMotion())
     s = Scaling(2.)
     all = s*t*r
-    print all(Geometry.ex)
+    print(all(Geometry.ex))
