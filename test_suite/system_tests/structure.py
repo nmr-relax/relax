@@ -73,6 +73,18 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path, parser='scientific')
 
 
+    def test_bug_20470_alternate_location_indicator(self):
+        """Catch bug #20470 (https://gna.org/bugs/?20470), the alternate location indicator problem."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file, load the spins, and attach the protons.
+        self.interpreter.structure.read_pdb('1OGT_trunc.pdb', dir=path)
+        self.interpreter.structure.load_spins(spin_id='@N', ave_pos=True)
+        self.interpreter.sequence.attach_protons()
+
+
     def test_displacement(self):
         """Test of the structure.displacement user function."""
 
