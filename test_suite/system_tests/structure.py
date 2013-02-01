@@ -62,7 +62,17 @@ class Structure(SystemTestCase):
         # Load the file.
         self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path)
 
-        
+
+    def test_bug_20469_scientific_parser_xray_records(self):
+        """Test the bug #20469 (https://gna.org/bugs/?20469), the ScientificPython parser failure with X-ray records."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path, parser='scientific')
+
+
     def test_displacement(self):
         """Test of the structure.displacement user function."""
 
