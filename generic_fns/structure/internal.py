@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -2154,6 +2154,10 @@ class MolContainer:
                 for i in range(len(record)-2):
                     # Skip if there is no record.
                     if record[i+2] == None:
+                        continue
+
+                    # Skip broken CONECT records (for when the record points to a non-existent atom).
+                    if self._atom_index(record[1]) == None or self._atom_index(record[i+2]) == None:
                         continue
 
                     # Make the connection.
