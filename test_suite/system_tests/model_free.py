@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -281,6 +281,16 @@ class Mf(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20213_asn_sidechain.py')
+
+
+    def test_bug_20464_missing_ri_data(self):
+        """Bug #20464 catch (https://gna.org/bugs/?20464), the failure due to missing relaxation data."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20464_missing_ri_data.py')
 
 
     def test_create_m4(self):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1083,6 +1083,10 @@ class Mf_minimise:
 
             # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
+                # Skip missing data.
+                if not ri_id in spin.ri_data_err:
+                    continue
+
                 # Alias.
                 err = spin.ri_data_err[ri_id]
 
@@ -1213,6 +1217,10 @@ class Mf_minimise:
 
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:
+            # Skip missing data.
+            if ri_id not in spin.ri_data:
+                continue
+
             # The Rx data.
             if sim_index == None:
                 data = spin.ri_data[ri_id]
