@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -433,7 +433,7 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
-def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', verbosity=1, fail=True):
+def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc=None, verbosity=1, fail=True):
     """The PDB loading function.
 
     Parsers
@@ -461,6 +461,8 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     @type parser:           str
     @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB file does not exist.  If False, then a RelaxWarning will be trown instead.
     @type fail:             bool
+    @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
+    @type alt_loc:          str or None
     @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
     @type verbosity:        int
     @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the PDB file does not exist.
@@ -501,7 +503,7 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
             cdp.structure = Internal()
 
     # Load the structures.
-    cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
+    cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, alt_loc=alt_loc, verbosity=verbosity)
 
     # Load into Molmol (if running).
     molmol.molmol_obj.open_pdb()

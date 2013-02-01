@@ -997,26 +997,21 @@ class Internal(Base_struct_API):
                     return mol
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False):
         """Method for loading structures from a PDB file.
 
         @param file_path:       The full path of the PDB file.
         @type file_path:        str
-        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
-                                molecules are determined differently by the different parsers, but
-                                are numbered consecutively from 1.  If set to None, then all
-                                molecules will be loaded.
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
         @type read_mol:         None, int, or list of int
-        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
-                                then the molecules will be automatically labelled based on the file
-                                name or other information.
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
         @type set_mol_name:     None, str, or list of str
-        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all
-                                models will be loaded.
+        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all models will be loaded.
         @type read_model:       None, int, or list of int
-        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
-                                the PDB model numbers will be preserved, if they exist.
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the PDB model numbers will be preserved, if they exist.
         @type set_model_num:    None, int, or list of int
+        @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
+        @type alt_loc:          str or None
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
         @return:                The status of the loading of the PDB file.
@@ -1087,7 +1082,7 @@ class Internal(Base_struct_API):
                 mol = MolContainer()
 
                 # Fill the molecular data object.
-                mol.fill_object_from_pdb(mol_records)
+                mol.fill_object_from_pdb(mol_records, alt_loc=alt_loc)
 
                 # Store the molecule container.
                 mol_conts[model_index].append(mol)
@@ -2083,11 +2078,13 @@ class MolContainer:
             self.bonded[index2].append(index1)
 
 
-    def fill_object_from_pdb(self, records):
+    def fill_object_from_pdb(self, records, alt_loc=None):
         """Method for generating a complete Structure_container object from the given PDB records.
 
         @param records:         A list of structural PDB records.
         @type records:          list of str
+        @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
+        @type alt_loc:          str or None
         """
 
         # Loop over the records.
@@ -2098,6 +2095,16 @@ class MolContainer:
             # Nothing to do.
             if not record:
                 continue
+
+            # Handle the alternate locations.
+            if record[3] != None:
+                # Don't know what to do.
+                if alt_loc == None:
+                    raise RelaxError("Multiple alternate location indicators are present in the PDB file, but the desired coordinate set has not been specified.")
+
+                # Skip non-matching locations.
+                if record[3] != alt_loc:
+                    continue
 
             # Add the atom.
             if record[0] == 'ATOM' or record[0] == 'HETATM':

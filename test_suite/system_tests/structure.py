@@ -91,7 +91,7 @@ class Structure(SystemTestCase):
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Load the file, load the spins, and attach the protons.
-        self.interpreter.structure.read_pdb('1OGT_trunc.pdb', dir=path)
+        self.interpreter.structure.read_pdb('1OGT_trunc.pdb', dir=path, alt_loc='A')
         self.interpreter.structure.load_spins(spin_id='@N', ave_pos=True)
         self.interpreter.sequence.attach_protons()
 
