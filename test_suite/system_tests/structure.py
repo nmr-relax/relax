@@ -53,6 +53,16 @@ class Structure(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
+    def test_bug_sr_2998_broken_conect_records(self):
+        """Test the bug reported as the support request #2998 (https://gna.org/support/?2998), the broken CONECT records."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path)
+
+        
     def test_displacement(self):
         """Test of the structure.displacement user function."""
 
