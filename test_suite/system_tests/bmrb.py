@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -229,6 +229,27 @@ class Bmrb(SystemTestCase):
         for ri_id in old_ids:
             self.assertEqual(cont_old.ri_data[ri_id], cont_new.ri_data[ri_id])
             self.assertEqual(cont_old.ri_data_err[ri_id], cont_new.ri_data_err[ri_id])
+
+
+    def test_bug_20471_structure_present(self):
+        """Catch bug #20471 (https://gna.org/bugs/?20471), with structural data present prior to a bmrb.read call."""
+
+        # Create the data pipe.
+        self.interpreter.pipe.create('test', 'mf')
+
+        # Load the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb(file='1RTE_H_trunc.pdb', dir=path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc='A')
+
+        # Set up the 15N and 1H spins.
+        self.interpreter.structure.load_spins(spin_id='@N', ave_pos=True)
+        self.interpreter.structure.load_spins(spin_id='@H', ave_pos=True)
+        self.interpreter.spin.isotope(isotope='15N', spin_id='@N', force=False)
+        self.interpreter.spin.isotope(isotope='1H', spin_id='@H', force=False)
+
+        # Load the relaxation data.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bmrb'
+        self.interpreter.bmrb.read(file='17226.txt', dir=path, version=None, sample_conditions=None)
 
 
     def test_rw_bmrb_3_0_model_free(self):
