@@ -30,6 +30,7 @@ from tempfile import mktemp
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from relax_errors import RelaxError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -249,7 +250,7 @@ class Bmrb(SystemTestCase):
 
         # Load the relaxation data.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bmrb'
-        self.interpreter.bmrb.read(file='17226.txt', dir=path, version=None, sample_conditions=None)
+        self.assertRaises(RelaxError, self.interpreter.bmrb.read, file='17226.txt', dir=path, version=None, sample_conditions=None)
 
 
     def test_rw_bmrb_3_0_model_free(self):

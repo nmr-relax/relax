@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -246,7 +246,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will allow most of the data from a BMRB NMR-STAR formatted file to be loaded into the relax data store.  Note that a data pipe should be created for storing the data, and that currently only model-free data pipes can be used.  Also, only one sample condition can be read per relax data pipe.  Therefore if one of the sample conditions is not specified and multiple conditions exist in the NMR-STAR file, an error will be raised.")
+uf.desc[-1].add_paragraph("This will allow most of the data from a BMRB NMR-STAR formatted file to be loaded into the relax data store.  Note that an empty data pipe should be created for storing the data, and that currently only model-free data pipes can be used.  Also, only one sample condition can be read per relax data pipe.  Therefore if one of the sample conditions is not specified and multiple conditions exist in the NMR-STAR file, an error will be raised.")
 uf.backend = bmrb.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
