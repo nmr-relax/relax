@@ -191,7 +191,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            from extern.scientific_python.LA import eigenvalues
+            from numpy.oldnumeric.linear_algebra import eigenvalues
             return eigenvalues(self.array)
         else:
             raise ValueError('Undefined operation')
@@ -204,7 +204,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            from extern.scientific_python.LA import eigenvectors
+            from numpy.oldnumeric.linear_algebra import eigenvectors
             ev, vectors = eigenvectors(self.array)
             return ev, Tensor(vectors)
         else:
@@ -217,7 +217,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            from extern.scientific_python.LA import inverse
+            from numpy.oldnumeric.linear_algebra import inverse
             return Tensor(inverse(self.array))
         else:
             raise ValueError('Undefined operation')
