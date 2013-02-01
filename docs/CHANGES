@@ -1,3 +1,36 @@
+Version 2.2.1
+(01 February 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.2.1
+
+    Features:
+        N/A
+
+
+    Changes:
+        * Replaced a reference to freshmeat with Freecode in the Release checklist document.  Freshmeat no longer exists and is now called Freecode (http://freecode.com/projects/nmr-relax).  
+        * Created the Mf.test_bug_20464_missing_ri_data system test to catch bug #20464.  The data comes from the bug report submitted by Stanislava Panova (stpanova att gmail dot com) at https://gna.org/bugs/?20464.  
+        * Created the Structure.test_bug_sr_2998_broken_conect_records system test.  This is to catch the bug reported as service request #2998 (https://gna.org/support/?2998) and is for corrupted PDB files with broken CONECT records.
+        * Created the Structure.test_bug_20469_scientific_parser_xray_records system test.  This is to catch bug #20469 (https://gna.org/bugs/?20469).
+        * Created the Structure.test_bug_20470_alternate_location_indicator system test to catch bug #20470.  This report is at https://gna.org/bugs/?20470.
+        * Created the Structure.test_alt_loc_missing system test.  This is to test that the internal relax PDB reader raises an error when a PDB file is encountered with alternate location indicators but the alt_loc argument has not been specified.
+        * Created the Bmrb.test_bug_20471_structure_present to catch bug #20471 (https://gna.org/bugs/?20471).
+        * Modified the bmrb.read documentation to make it clearer that the data pipe must be empty.
+
+
+    Bugfixes:
+        * Python 3 fix for a print statement in the metal_pos_opt.py N-state model system test script.  
+        * Python 3 fix for the part of ScientificPython distributed with relax (for the PDB parser).  
+        * Python 3 import fixes for the GUI.  
+        * Python 3 fixes for the list sort() method - this has been replaced by the builtin sorted() function.  
+        * Fix for bug #20464 (https://gna.org/bugs/?20464) - the model-free analysis failure with missing relaxation data.  The problem was the previously missing data had a value of None whereas now the dictionary element can be missing.  Checks have been added to make sure the spin specific relaxation data structures have the key corresponding to the data.  
+        * Fix for the N_state_model.test_monte_carlo_sims system test.  On certain systems, the chi2 check is too stringent.
+        * Fix for the bug reported as the support request #2998 (https://gna.org/support/?2998).  CONECT records pointing to non-existent atoms can now be handled.
+        * Fix for bug #20469 (https://gna.org/bugs/?20469).  This is the Failure in reading X-ray PDB files using the ScientificPython parser.  The ScientificPython Geometry.Transformation module is now distributed with relax.  Some linear algebra imports in the Geometry.TensorModule in newly used code paths have been fixed as well.
+        * Fix for bug #20470 (https://gna.org/bugs/?20470).  The structure.read_pdb user function now accepts the alt_loc argument for specifying the alternate location indicator to read.  This is used by the internal PDB reader.  The bug was caught by the Structure.test_bug_20470_alternate_location_indicator system test.
+        * Fix for bug #20471 (https://gna.org/bugs/?20471) - the is_empty() AttributeError when reading BMRB files.  The problem was that the data pipe is_empty() method was not handling structural data correctly.  The is_empty() method now belongs to the MolContainer objects rather than cdp.structure, and the object cdp.structure is not always present.
+
+
+
 Version 2.2.0
 (27 January 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.2.0
