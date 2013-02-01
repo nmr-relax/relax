@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -556,26 +556,21 @@ class Scientific_data(Base_struct_API):
                     return mol
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
         @param file_path:       The full path of the file.
         @type file_path:        str
-        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
-                                molecules are determined differently by the different parsers, but
-                                are numbered consecutively from 1.  If set to None, then all
-                                molecules will be loaded.
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
         @type read_mol:         None, int, or list of int
-        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
-                                then the molecules will be automatically labelled based on the file
-                                name or other information.
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
         @type set_mol_name:     None, str, or list of str
-        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all
-                                models will be loaded.
+        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all models will be loaded.
         @type read_model:       None, int, or list of int
-        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
-                                the PDB model numbers will be preserved, if they exist.
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the PDB model numbers will be preserved, if they exist.
         @type set_model_num:    None, int, or list of int
+        @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
+        @type alt_loc:          str or None
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
         @return:                The status of the loading of the PDB file.
@@ -590,6 +585,10 @@ class Scientific_data(Base_struct_API):
         if not access(file_path, F_OK):
             # Exit indicating failure.
             return False
+
+        # Alt loc warning.
+        if alt_loc:
+            warn(RelaxWarning("The alt_loc argument will be ignored for the ScientificPython PDB parser."))
 
         # Separate the file name and path.
         path, file = os.path.split(file_path)

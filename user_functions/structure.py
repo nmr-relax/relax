@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -526,6 +526,13 @@ uf.add_keyarg(
     wiz_combo_data = ["internal", "scientific"],
     wiz_read_only = True
 )
+uf.add_keyarg(
+    name = "alt_loc",
+    py_type = "str",
+    desc_short = "alternate location indicator",
+    desc = "The PDB ATOM record 'Alternate location indicator' field value.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.")
@@ -536,6 +543,7 @@ uf.desc[-1].add_paragraph("In a PDB file, the models are specified by the MODEL 
 uf.desc[-1].add_paragraph("Setting the molecule name allows the molecule within the PDB (within one model) to have a custom name.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.")
 uf.desc[-1].add_paragraph("Note that relax will complain if it cannot work out what to do.")
 uf.desc[-1].add_paragraph("This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.")
+uf.desc[-1].add_paragraph("If a PDB file contains alternative atomic locations, then the alternate location indicator must be specified to allow one of the multiple coordinate sets to be select.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all models and all molecules, type one of:")
