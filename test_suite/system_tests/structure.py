@@ -28,6 +28,7 @@ from tempfile import mktemp
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, return_spin
 from maths_fns.rotation_matrix import euler_to_R_zyz
+from relax_errors import RelaxError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -51,6 +52,16 @@ class Structure(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+
+    def test_alt_loc_missing(self):
+        """Test that a RelaxError occurs when the alternate location indicator is present but not specified."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file, load the spins, and attach the protons.
+        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, '1OGT_trunc.pdb', dir=path)
 
 
     def test_bug_sr_2998_broken_conect_records(self):
