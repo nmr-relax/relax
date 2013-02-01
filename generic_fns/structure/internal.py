@@ -2100,7 +2100,6 @@ class MolContainer:
             if record[0] == 'ATOM' or record[0] == 'HETATM':
                 # Handle the alternate locations.
                 if record[3] != None:
-                    print record
                     # Don't know what to do.
                     if alt_loc == None:
                         raise RelaxError("Multiple alternate location indicators are present in the PDB file, but the desired coordinate set has not been specified.")
