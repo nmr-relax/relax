@@ -19,6 +19,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The diffusion tensor objects of the relax data store."""
+
 # Python module imports.
 from copy import deepcopy
 from re import search
