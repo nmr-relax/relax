@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -106,7 +106,8 @@ def compile_api_manual_html(target, source, env):
         'minfx.scipy_subset',
         'multi.test_implementation',
         'multi.test_implementation2',
-        'sample_scripts'
+        'sample_scripts',
+        'test_suite.system_tests.scripts'
     ]
 
     # output
