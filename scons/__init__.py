@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,5 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""SCons build target package."""
 
 __all__ = [ 'manuals' ]
