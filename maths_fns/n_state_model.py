@@ -833,7 +833,7 @@ class N_state_opt:
                   dxi           /__      \ dxi                         dxi                             dxi  /
                                 c=1
 
-        where xi are the paramagnetic position coordinates {x0, x1, x2} and the last two terms in the sum are equal due to the symmetry of the alignment tensor, and:
+        where xi are the paramagnetic position coordinates {x0, x1, x2} and the last two terms in the sum are equal due to the symmetry of the alignment tensor, and::
 
             ddjc    mu0 15kT                 5 (si - xi)
             ----  = --- ----- ---------------------------------------------  ,
