@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -320,18 +320,8 @@ def calc_rotation(diff_type, *args):
            =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
               | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
 
-    @param args:        All the function arguments.
+    @param args:        All the function arguments.  For the spheroid, this includes the spheroid_type (str), the azimuthal angle theta in radians (float), and the polar angle phi in radians (float).  For the ellipsoid, this includes the Dx unit vector (numpy 3D, rank-1 array), the Dy unit vector (numpy 3D, rank-1 array), and the Dz unit vector (numpy 3D, rank-1 array).
     @type args:         tuple
-    @param theta:       The azimuthal angle in radians.
-    @type theta:        float
-    @param phi:         The polar angle in radians.
-    @type phi:          float
-    @param Dx_unit:     The Dx unit vector.
-    @type Dx_unit:      numpy array
-    @param Dy_unit:     The Dy unit vector.
-    @type Dy_unit:      numpy array
-    @param Dz_unit:     The Dz unit vector.
-    @type Dz_unit:      numpy array
     @return:            The rotation matrix.
     @rtype:             numpy 3x3 array
     """
@@ -457,20 +447,8 @@ def calc_tensor_diag(diff_type, *args):
         tensor  =  |  0  Dy   0 |.
                    |  0   0  Dz |
 
-    @param args:    All the arguments.
+    @param args:    All the arguments.  For the sphere, this includes the Diso parameter (float).  For the spheroid, this includes Dpar and Dper parameters (floats).  For the ellipsoid, this includes the Dx, Dy, and Dz parameters (floats).
     @type args:     tuple
-    @param Diso:    The Diso parameter of the sphere.
-    @type Diso:     float
-    @param Dpar:    The Dpar parameter of the spheroid.
-    @type Dpar:     float
-    @param Dper:    The Dper parameter of the spheroid.
-    @type Dper:     float
-    @param Dx:      The Dx parameter of the ellipsoid.
-    @type Dx:       float
-    @param Dy:      The Dy parameter of the ellipsoid.
-    @type Dy:       float
-    @param Dz:      The Dz parameter of the ellipsoid.
-    @type Dz:       float
     @return:        The diagonalised diffusion tensor.
     @rtype:         numpy 3x3 array
     """
