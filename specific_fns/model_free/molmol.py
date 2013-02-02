@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The model-free Molmol macro module."""
+"""The Molmol macro methods of the specific API for model-free analysis."""
 
 # relax module imports.
 from specific_fns.model_free.macro_base import Macro

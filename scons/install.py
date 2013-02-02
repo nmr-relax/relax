@@ -1,10 +1,6 @@
-#! /usr/bin/python
-# That line was just so programs like gvim or emacs will understand that this is Python code!  Don't
-# make this file executable.
-
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,8 +19,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""SCons targets for installing relax."""
 
-# Import statements.
+# Python module imports.
 from os import F_OK, access, getcwd, path, remove, rmdir, sep, system, walk
 from shutil import copytree
 import sys

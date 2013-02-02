@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing generic fns for creation and parsing of XML representations of python objects."""
+"""Module containing generic functions for creation and parsing of XML representations of Python objects."""
 
 # Python module imports.
 import numpy

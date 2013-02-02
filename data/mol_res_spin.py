@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The molecule-residue-spin containers."""
+"""The molecule-residue-spin containers of the relax data store."""
 
 # Python module imports.
 import numpy

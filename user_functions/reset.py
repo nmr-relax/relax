@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -18,6 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
+# Module docstring.
+"""The reset user function definitions."""
 
 # relax module imports.
 import generic_fns.reset

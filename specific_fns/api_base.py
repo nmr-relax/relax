@@ -19,6 +19,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The module defining the analysis specific API."""
+
 # Python module imports.
 from copy import deepcopy
 

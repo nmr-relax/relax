@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""API methods in common between different analysis types."""
+"""Common API methods for use in different specific analyses."""
 
 # Python module imports.
 from copy import deepcopy

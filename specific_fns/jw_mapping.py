@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -18,6 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
+# Module docstring.
+"""Analysis specific code for the reduced spectral density mapping of relaxation data."""
 
 # Python module imports.
 from re import search

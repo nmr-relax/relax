@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The module containing the base class for the model-free macros."""
+"""The Molmol and Pymol base macro methods of the specific API for model-free analysis."""
 
 # Python module imports.
 from math import pi

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module holding the experimental information data container."""
+"""The experimental information data container of the relax data store."""
 
 # relax module imports.
 from data.data_classes import RelaxListType, Element

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The relaxation curve fitting specific code."""
+"""Analysis specific code for the R1 and R2 exponential relaxation curve fitting."""
 
 # Python module imports.
 from minfx.generic import generic_minimise

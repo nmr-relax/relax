@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""A module of special objects used within the specific function API."""
+"""A module of special objects used within the analysis specific API."""
 
 # Python module imports.
 from re import search
