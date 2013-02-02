@@ -30,6 +30,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The main module for relax execution."""
+
 # Python 2 and 3 work-arounds.
 import compat
 
