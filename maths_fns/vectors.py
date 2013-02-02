@@ -32,8 +32,8 @@ def random_unit_vector(vector):
 
     Uniform point sampling on a unit sphere is used to generate a random axis orientation.
 
-    @param axis:    The 3D rotation axis.
-    @type axis:     numpy array, len 3
+    @param vector:  The 3D rotation axis.
+    @type vector:   numpy 3D, rank-1 array
     """
 
     # Random azimuthal angle.
