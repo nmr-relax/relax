@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The N-state model or ensemble analysis specific code."""
+"""Analysis specific code for the N-state model or structure ensemble analysis."""
 
 # Python module imports.
 from copy import deepcopy

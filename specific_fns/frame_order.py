@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The Frame Order analysis of domain dynamics specific code."""
+"""Analysis specific code for the Frame Order theory of domain dynamics."""
 
 # Python module imports.
 from copy import deepcopy

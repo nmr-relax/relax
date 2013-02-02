@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The Lipari-Szabo model-free analysis specific code."""
+"""Analysis specific code for the Lipari-Szabo model-free analysis."""
 
 
 # The available modules.

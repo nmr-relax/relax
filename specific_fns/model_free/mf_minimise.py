@@ -19,6 +19,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The optimisation methods of the specific API for model-free analysis."""
+
 # Python module imports.
 from copy import deepcopy
 from math import pi

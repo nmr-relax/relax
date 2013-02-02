@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The steady-state heteronuclear NOE analysis specific code."""
+"""Analysis specific code for the steady-state heteronuclear NOE calculation."""
 
 
 # The available modules.

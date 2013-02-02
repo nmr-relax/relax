@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""A specific analysis type allowing analyses of different data pipes to be hybridised."""
+"""Analysis specific code for the hybridisation of different data pipes."""
 
 # Python module imports.
 from warnings import warn
