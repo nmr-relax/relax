@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,7 +19,10 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""Package of analysis independent code."""
 
+# The available modules.
 __all__ = [ 'align_tensor',
             'angles',
             'bmrb',
