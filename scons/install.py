@@ -1,7 +1,3 @@
-#! /usr/bin/python
-# That line was just so programs like gvim or emacs will understand that this is Python code!  Don't
-# make this file executable.
-
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006-2013 Edward d'Auvergne                                   #
