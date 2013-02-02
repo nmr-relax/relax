@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,7 +41,6 @@ from relax_errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui import relax_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
@@ -98,6 +97,9 @@ class App(wx.App):
 
         # Show the splash screen.
         self.show_splash()
+
+        # Import here to break a circular import which is killing Epydoc!
+        from gui import relax_gui
 
         # Build the GUI.
         self.gui = relax_gui.Main(parent=None, id=-1, title="")
