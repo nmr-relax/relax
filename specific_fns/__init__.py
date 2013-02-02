@@ -22,7 +22,6 @@
 # Package docstring.
 """Package of analysis specific code."""
 
-
 # The available modules.
 __all__ = [ 'api_base',
             'api_common',

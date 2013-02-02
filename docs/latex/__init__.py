@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,5 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""The directory of LaTeX files for building the relax manual."""
 
+# The list of all package modules.
 __all__ = [ 'fetch_docstrings' ]
