@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -150,6 +150,9 @@ class GuiTestCase(TestCase):
         try:
             # Get the exception from the queue.
             index, exc = status.exception_queue.get(block=False)
+
+            # Print out.
+            print("Exception found, failing the test with an AssertionError:\n")
 
             # Fail.
             self.fail()
