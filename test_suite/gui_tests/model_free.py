@@ -44,50 +44,147 @@ from gui.wizard import Wiz_window
 class Mf(GuiTestCase):
     """Class for testing various aspects specific to the model-free auto-analysis."""
 
-    def test_bug_20479(self):
+    def test_bug_20479_gui_final_pipe(self):
         """Catch bug #20479 (https://gna.org/bugs/?20479), the failure to load a relax state in the GUI.
 
         This was reported by Stanislava Panova (https://gna.org/users/stacy).
         """
 
-        # Simulate the 'Open relax state' menu entry.
-        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'bug_20480.bz2'
-        self.app.gui.state_load(file_name=file)
+        # Simulate the new analysis wizard.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_mf(None)
+        page.analysis_name.SetValue(str_to_gui("Model-free test"))
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
-        # Check that the data has been loaded.
-        self.assertEqual(cdp_name(), "aic - mf (Mon Feb  4 13:30:01 2013)")
-        self.assertEqual(cdp.frq['NOE_800'], 800000031.0)
-        self.assertEqual(cdp.frq['R1_800'], 800000031.0)
-        self.assertEqual(cdp.frq['R2_800'], 800000031.0)
-        self.assertEqual(cdp.frq['R2_600'], 599999000.0)
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
 
         # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Model-free")
-
-        # Set the protocol mode to automatic.
-        analysis.mode_win.select_final()
-        analysis.mode_dialog()
+        analysis = self.app.gui.analysis.get_page_from_name("Model-free test")
 
         # Change the results directory.
-        ds.tmpdir = mkdtemp()
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # The data path.
+        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'bug_20479_gui_final_pipe' + sep
+
+        # Launch the spin viewer window.
+        self.app.gui.show_tree()
+
+        # Spin loading wizard:  Initialisation.
+        self.app.gui.spin_viewer.load_spins_wizard()
+
+        # Spin loading wizard:  The NOE data file.
+        page = self.app.gui.spin_viewer.wizard.get_page(0)
+        page.selection = 'sequence'
+        self.app.gui.spin_viewer.wizard._go_next()
+        page = self.app.gui.spin_viewer.wizard.get_page(self.app.gui.spin_viewer.wizard._current_page)
+        page.uf_args['file'].SetValue(str_to_gui(data_path + 'NoeRelN'))
+        self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Spin loading wizard:  The spin loading.
+        self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Close the spin viewer window.
+        self.app.gui.spin_viewer.handler_close()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
+
+        # Set the element type.
+        self._execute_uf(uf_name='spin.element', element='N')
+
+        # Load the relaxation data.
+        data = [
+            ['NoeRelN', 'noe_800', 'NOE', 800000031.0],
+            ['R1850',  'r1_800',  'R1',  800000031.0],
+            ['R2863',  'r2_800',  'R2',  800000031.0],
+            ['R2604',  'r2_600',  'R2',  599999000.0]
+        ]
+        for i in range(len(data)):
+            self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+        # Attach the protons.
+        self._execute_uf(uf_name='sequence.attach_protons')
+
+        # Dipole-dipole interaction wizard:  Initialisation and skipping of the structure loading.
+        analysis.setup_dipole_pair()
+        analysis.dipole_wizard._current_page = 2
+
+        # Dipole-dipole interaction wizard:  The dipole_pair.define and dipole_pair.set_dist user functions (but skipping dipole_pair.unit_vectors).
+        analysis.dipole_wizard._apply()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+        page = analysis.dipole_wizard.get_page(0)
+        analysis.dipole_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+        analysis.dipole_wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Set up the CSA interaction.
+        analysis.value_set_csa()
+        uf_store['value.set'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope_heteronuc()
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+        analysis.spin_isotope_proton()
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Select only the tm0 and tm1 local tm models.
+        analysis.local_tm_model_field.select = [True, True, False, False, False, False, False, False, False, False]
+        analysis.local_tm_model_field.modify()
+
+        # Select only the m1 and m2 model-free models.
+        analysis.mf_model_field.select = [False, True, True, False, False, False, False, False, False, False]
+        analysis.mf_model_field.modify()
+
+        # Change the grid increments.
+        analysis.grid_inc.SetValue(3)
+        analysis.data.diff_tensor_grid_inc = {'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}
+
+        # Set the number of Monte Carlo simulations.
+        analysis.mc_sim_num.SetValue(2)
+
+        # Set the maximum number of iterations (changing the allowed values).
+        analysis.max_iter.control.SetRange(0, 100)
+        analysis.max_iter.SetValue(1)
 
         # Modify some of the class variables to speed up optimisation.
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_func_tol = 1e-5
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_max_iterations = 1000
 
-        # Execute relax.
-        state = analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
+        # Execute the 'local_tm' and 'final' protocol stages sequentially.
+        for protocol in ['local_tm', 'final']:
+            # Set the protocol mode.
+            if protocol == 'local_tm':
+                analysis.mode_win.select_local_tm()
+            else:
+                analysis.mode_win.select_final()
+            analysis.mode_dialog()
 
-        # Wait for execution to complete.
-        if hasattr(analysis, 'thread'):
-            analysis.thread.join()
+            # Execute relax.
+            state = analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
 
-        # Flush all wx events.
-        wx.Yield()
+            # Wait for execution to complete.
+            if hasattr(analysis, 'thread'):
+                analysis.thread.join()
 
-        # Exceptions in the thread.
-        self.check_exceptions()
+            # Flush all wx events.
+            wx.Yield()
+
+            # Exceptions in the thread.
+            self.check_exceptions()
 
 
     def test_mf_auto_analysis(self):
