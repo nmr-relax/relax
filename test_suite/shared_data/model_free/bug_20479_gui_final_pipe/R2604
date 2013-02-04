@@ -1,0 +1,3 @@
+# mol_name  res_num res_name spin_num spin_name    value    error
+PrtG           9       LYS     28        N        19.124116 0.453507
+PrtG          10       LEU     23        N        17.863523 0.405264
