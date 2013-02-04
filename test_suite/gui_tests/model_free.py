@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,6 +22,7 @@
 # Python module imports.
 import numpy
 from os import F_OK, access, sep
+from tempfile import mkdtemp
 import wx
 
 # relax module imports.
@@ -42,6 +43,52 @@ from gui.wizard import Wiz_window
 
 class Mf(GuiTestCase):
     """Class for testing various aspects specific to the model-free auto-analysis."""
+
+    def test_bug_20479(self):
+        """Catch bug #20479 (https://gna.org/bugs/?20479), the failure to load a relax state in the GUI.
+
+        This was reported by Stanislava Panova (https://gna.org/users/stacy).
+        """
+
+        # Simulate the 'Open relax state' menu entry.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'bug_20480.bz2'
+        self.app.gui.state_load(file_name=file)
+
+        # Check that the data has been loaded.
+        self.assertEqual(cdp_name(), "aic - mf (Mon Feb  4 13:30:01 2013)")
+        self.assertEqual(cdp.frq['NOE_800'], 800000031.0)
+        self.assertEqual(cdp.frq['R1_800'], 800000031.0)
+        self.assertEqual(cdp.frq['R2_800'], 800000031.0)
+        self.assertEqual(cdp.frq['R2_600'], 599999000.0)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Model-free")
+
+        # Set the protocol mode to automatic.
+        analysis.mode_win.select_final()
+        analysis.mode_dialog()
+
+        # Change the results directory.
+        ds.tmpdir = mkdtemp()
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Modify some of the class variables to speed up optimisation.
+        auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_func_tol = 1e-5
+        auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_max_iterations = 1000
+
+        # Execute relax.
+        state = analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
+
+        # Wait for execution to complete.
+        if hasattr(analysis, 'thread'):
+            analysis.thread.join()
+
+        # Flush all wx events.
+        wx.Yield()
+
+        # Exceptions in the thread.
+        self.check_exceptions()
+
 
     def test_mf_auto_analysis(self):
         """Test the model-free auto-analysis."""
