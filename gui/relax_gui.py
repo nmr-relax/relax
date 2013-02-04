@@ -846,6 +846,9 @@ class Main(wx.Frame):
 
             # File loading failure.
             else:
+                # Reset relax to clear any partially loaded data.
+                reset()
+
                 # Reinitialise the GUI data store structure.
                 self.init_data()
 
