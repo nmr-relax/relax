@@ -38,6 +38,21 @@ from gui.wizard import Wiz_window
 class State(GuiTestCase):
     """Class for testing various aspects specific to saved states."""
 
+    def test_bug_20480(self):
+        """Catch bug #20480 (https://gna.org/bugs/?20480), the failure to load a relax state in the GUI."""
+
+        # Simulate the 'Open relax state' menu entry.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'bug_20480.bz2'
+        self.app.gui.state_load(file_name=file)
+
+        # Check that the data has been loaded.
+        self.assertEqual(cdp_name(), "aic - mf (Mon Feb  4 13:30:01 2013)")
+        self.assertEqual(cdp.frq['NOE_800'], 800000031.0)
+        self.assertEqual(cdp.frq['R1_800'], 800000031.0)
+        self.assertEqual(cdp.frq['R2_800'], 800000031.0)
+        self.assertEqual(cdp.frq['R2_600'], 599999000.0)
+
+
     def test_old_state_loading(self):
         """Test the loading of an old relax 1.3 save state with GUI information."""
 

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ from wx.lib import scrolledpanel
  
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins
-from generic_fns.pipes import cdp_name
+from generic_fns.pipes import cdp_name, has_pipe
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
@@ -448,7 +448,10 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
             pipe = cdp_name()
 
         # The count.
-        num = count_spins(pipe=pipe)
+        if not has_pipe(pipe):
+            num = 0
+        else:
+            num = count_spins(pipe=pipe)
 
         # Return the formatted string.
         return "%s spins loaded and selected" % num
