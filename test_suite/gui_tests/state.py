@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,7 +39,10 @@ class State(GuiTestCase):
     """Class for testing various aspects specific to saved states."""
 
     def test_bug_20480(self):
-        """Catch bug #20480 (https://gna.org/bugs/?20480), the failure to load a relax state in the GUI."""
+        """Catch bug #20480 (https://gna.org/bugs/?20480), the failure to load a relax state in the GUI.
+
+        This was reported by Stanislava Panova (https://gna.org/users/stacy).
+        """
 
         # Simulate the 'Open relax state' menu entry.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'saved_states' + sep + 'bug_20480.bz2'
