@@ -51,7 +51,6 @@ class State(GuiTestCase):
         self.assertEqual(cdp.frq['R1_800'], 800000031.0)
         self.assertEqual(cdp.frq['R2_800'], 800000031.0)
         self.assertEqual(cdp.frq['R2_600'], 599999000.0)
-        self.assertEqual(cdp.frq['R2_600'], 99999000.0)
 
 
     def test_old_state_loading(self):
