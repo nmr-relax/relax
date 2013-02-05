@@ -166,9 +166,16 @@ class Mf(GuiTestCase):
 
         # Execute the 'local_tm', 'sphere' and 'final' protocol stages sequentially.
         for protocol in ['local_tm', 'sphere', 'final']:
+            # Print out.
+            text = "Sequential global model optimisation: %s" % protocol
+            char = "%"
+            print("\n\n\n\n%s\n%s %s %s\n%s\n\n\n" % (char*(len(text)+4), char, text, char, char*(len(text)+4)))
+
             # Set the protocol mode.
             if protocol == 'local_tm':
                 analysis.mode_win.select_local_tm()
+            elif protocol == 'sphere':
+                analysis.mode_win.select_sphere()
             else:
                 analysis.mode_win.select_final()
             analysis.mode_dialog()
