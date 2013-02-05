@@ -664,22 +664,28 @@ class dAuvergne_protocol:
             # Diffusion model selection.
             ############################
 
-            # All the global diffusion models to be used in the model selection.
-            models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            # The contents of the results directory.
+            dir_list = listdir(self.results_dir)
+
+            # Check that the minimal set of global diffusion models required for the protocol has been optimised.
+            min_models = ['local_tm', 'sphere']
+            for model in min_models:
+                if model not in dir_list:
+                    raise RelaxError("The minimum set of global diffusion models required for the protocol have not been optimised, the '%s' model results cannot be found." % model)
+
+            # Build a list of all global diffusion models optimised.
+            all_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            self.opt_models = []
             self.pipes = []
-            for name in models:
-                self.pipes.append(self.name_pipe(name))
+            for model in all_models:
+                if model in dir_list:
+                    self.opt_models.append(model)
+                    self.pipes.append(self.name_pipe(model))
 
             # Remove all temporary pipes used in this auto-analysis.
             for name in pipe_names(bundle=self.pipe_bundle):
                 if name in self.pipes + self.mf_model_pipes + self.local_tm_model_pipes + [self.name_pipe('aic'), self.name_pipe('previous')]:
                     self.interpreter.pipe.delete(name)
-
-            # Missing optimised model.
-            dir_list = listdir(self.results_dir)
-            for name in models:
-                if name not in dir_list:
-                    raise RelaxError("The %s model must be optimised first." % name)
 
             # Create the local_tm data pipe.
             self.interpreter.pipe.create(self.name_pipe('local_tm'), 'mf', bundle=self.pipe_bundle)
@@ -689,6 +695,10 @@ class dAuvergne_protocol:
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+                # Skip missing models.
+                if model not in self.opt_models:
+                    continue
+
                 # Determine which was the last round of optimisation for each of the models.
                 self.round = self.determine_rnd(model=model) - 1
 
