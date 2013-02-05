@@ -931,9 +931,10 @@ class dAuvergne_protocol:
         self.interpreter.molmol.macro_write(data_type='time_slow', dir=dir, force=True)
         self.interpreter.molmol.macro_write(data_type='rex',       dir=dir, force=True)
 
-        # Create a diffusion tensor representation of the tensor.
-        dir = self.results_dir + 'final'
-        self.interpreter.structure.create_diff_tensor_pdb(file="tensor.pdb", dir=dir, force=True)
+        # Create a diffusion tensor representation of the tensor, if a PDB file is present.
+        if hasattr(cdp, 'structure'):
+            dir = self.results_dir + 'final'
+            self.interpreter.structure.create_diff_tensor_pdb(file="tensor.pdb", dir=dir, force=True)
 
 
 
