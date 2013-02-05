@@ -164,8 +164,8 @@ class Mf(GuiTestCase):
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_func_tol = 1e-5
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_max_iterations = 1000
 
-        # Execute the 'local_tm' and 'final' protocol stages sequentially.
-        for protocol in ['local_tm', 'final']:
+        # Execute the 'local_tm', 'sphere' and 'final' protocol stages sequentially.
+        for protocol in ['local_tm', 'sphere', 'final']:
             # Set the protocol mode.
             if protocol == 'local_tm':
                 analysis.mode_win.select_local_tm()

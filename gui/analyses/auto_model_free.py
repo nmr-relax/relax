@@ -807,9 +807,6 @@ class Execute_mf(Execute):
         # Start the protocol.
         dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, diff_model=self.data.global_models, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, diff_tensor_grid_inc=self.data.diff_tensor_grid_inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
 
-        # Once completed, change the main pipe of the analysis to the final data pipe.
-        ds.relax_gui.analyses[self.data_index].pipe_name = 'final'
-
 
 
 class Local_tm_list:
