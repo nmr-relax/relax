@@ -115,18 +115,15 @@ class Mf(GuiTestCase):
         # Attach the protons.
         self._execute_uf(uf_name='sequence.attach_protons')
 
-        # Dipole-dipole interaction wizard:  Initialisation and skipping of the structure loading.
-        analysis.setup_dipole_pair()
-        analysis.dipole_wizard._current_page = 2
-
-        # Dipole-dipole interaction wizard:  The dipole_pair.define and dipole_pair.set_dist user functions (but skipping dipole_pair.unit_vectors).
-        analysis.dipole_wizard._apply()
-        interpreter.flush()    # Required because of the asynchronous uf call.
-        page = analysis.dipole_wizard.get_page(0)
-        analysis.dipole_wizard._go_next()
-        interpreter.flush()    # Required because of the asynchronous uf call.
-        analysis.dipole_wizard._go_next()
-        interpreter.flush()    # Required because of the asynchronous uf call.
+        # Dipole-dipole interaction wizard.
+        analysis.setup_dipole_pair()        # Initialisation.
+        analysis.dipole_wizard._skip()      # Skip the structure.read_pdb user function.
+        analysis.dipole_wizard._skip()      # Skip the structure.get_pos user function.
+        analysis.dipole_wizard._go_next()   # The dipole_pair.define user function.
+        interpreter.flush()                 # Required because of the asynchronous uf call.
+        analysis.dipole_wizard._go_next()   # The dipole_pair.set_dist user function.
+        interpreter.flush()                 # Required because of the asynchronous uf call.
+        analysis.dipole_wizard._skip()      # Skip the dipole_pair.unit_vectors user function.
 
         # Set up the CSA interaction.
         analysis.value_set_csa()
