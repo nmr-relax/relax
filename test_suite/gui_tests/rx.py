@@ -55,12 +55,6 @@ class Rx(GuiTestCase):
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
-        # Skip tests for wxPython 2.9.4.1 bugs.
-        skip = ['test_r1_analysis']
-        if wx.version() == '2.9.4.1 gtk2 (classic)' and methodName in skip:
-            # Store in the status object. 
-            status.skipped_tests.append([methodName, 'wxPython 2.9.4.1 gtk2 bugs', self._skip_type])
-
 
     def check_curve_fitting(self):
         """Check the results of the curve-fitting."""
@@ -105,7 +99,6 @@ class Rx(GuiTestCase):
 
     def test_r1_analysis(self):
         """Test the r1 analysis."""
-        self.fail()
 
         # The path to the data files.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting' + sep
@@ -236,7 +229,8 @@ class Rx(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        if status.relax_mode != 'gui':
+        # FIXME: skipping the checks for certain wxPython bugs.
+        if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
             self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
