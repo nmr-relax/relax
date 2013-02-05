@@ -169,6 +169,8 @@ class Mf(GuiTestCase):
             # Set the protocol mode.
             if protocol == 'local_tm':
                 analysis.mode_win.select_local_tm()
+            elif protocol == 'sphere':
+                analysis.mode_win.select_sphere()
             else:
                 analysis.mode_win.select_final()
             analysis.mode_dialog()
