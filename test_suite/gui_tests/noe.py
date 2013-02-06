@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -150,7 +150,8 @@ class Noe(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        if status.relax_mode != 'gui':
+        # FIXME: skipping the checks for certain wxPython bugs.
+        if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # The real data.

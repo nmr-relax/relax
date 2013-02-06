@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,7 +41,7 @@ class Rx(GuiTestCase):
     """Class for testing various aspects specific to the R1 and R2 analyses."""
 
     def __init__(self, methodName='runTest'):
-        """Skip the tests if the C modules are non-functional.
+        """Skip the tests if the C modules are non-functional or for wxPython bugs.
 
         @keyword methodName:    The name of the test.
         @type methodName:       str
@@ -229,7 +229,8 @@ class Rx(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        if status.relax_mode != 'gui':
+        # FIXME: skipping the checks for certain wxPython bugs.
+        if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
             self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 

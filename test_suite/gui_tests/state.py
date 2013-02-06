@@ -38,6 +38,23 @@ from gui.wizard import Wiz_window
 class State(GuiTestCase):
     """Class for testing various aspects specific to saved states."""
 
+    def __init__(self, methodName='runTest'):
+        """Skip certain tests due to wxPython bugs.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(State, self).__init__(methodName)
+
+        # Skip tests for wxPython 2.9.4.1 bugs.
+        skip = ['test_load_state_no_gui']
+        if wx.version() == '2.9.4.1 gtk2 (classic)' and methodName in skip:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'wxPython 2.9.4.1 gtk2 bugs', self._skip_type])
+
+
     def test_bug_20480(self):
         """Catch bug #20480 (https://gna.org/bugs/?20480), the failure to load a relax state in the GUI.
 
