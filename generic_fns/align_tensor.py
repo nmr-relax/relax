@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,6 +36,7 @@ from generic_fns.angles import wrap_angles
 from generic_fns import pipes
 from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_io import write_data
 
 
 def align_data_exists(tensor, pipe=None):
@@ -1052,17 +1053,21 @@ def matrix_angles(basis_set=0, tensors=None):
     elif basis_set == 1:
         sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
     sys.stdout.write(":\n")
-    sys.stdout.write("%8s" % '')
-    for i in range(tensor_num):
-        sys.stdout.write("%8i" % i)
-    sys.stdout.write("\n")
 
-    # First loop.
-    for i in range(tensor_num):
-        # Print out.
-        sys.stdout.write("%8i" % i)
+    # Initialise the table of data.
+    table = []
 
-        # Second loop.
+    # The table header.
+    table.append([''])
+    for i in range(tensor_num):
+        table[0].append(cdp.align_tensors[i].name)
+
+    # First loop over the rows.
+    for i in range(tensor_num):
+        # Add the tensor name.
+        table.append([cdp.align_tensors[i].name])
+
+        # Second loop over the columns.
         for j in range(tensor_num):
             # Dot product.
             delta = dot(matrix[i], matrix[j])
@@ -1074,11 +1079,11 @@ def matrix_angles(basis_set=0, tensors=None):
             # The angle (in rad).
             cdp.align_tensors.angles[i, j] = arccos(delta)
 
-            # Print out the angles in degrees.
-            sys.stdout.write("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))
+            # Add to the table as degrees.
+            table[i+1].append("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))
 
-        # Print out.
-        sys.stdout.write("\n")
+    # Write out the table.
+    write_data(out=sys.stdout, data=table)
 
 
 def num_tensors(skip_fixed=True):
