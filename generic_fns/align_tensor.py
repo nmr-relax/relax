@@ -1959,5 +1959,5 @@ def svd(basis_set=0, tensors=None):
     print("\nData pipe: " + repr(pipes.cdp_name()))
     print("\nSingular values:")
     for val in s:
-        print("\t" + repr(val))
-    print("\nCondition number: " + repr(cdp.align_tensors.cond_num))
+        print("    %.4e" % val)
+    print("\nCondition number: %.2f" % cdp.align_tensors.cond_num)
