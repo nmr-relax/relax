@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -476,7 +476,7 @@ class Frame_order_analysis:
 
 
     def print_title(self, name):
-        """Title print out for each frame order model.
+        """Title printout for each frame order model.
 
         @param name:    The frame order model name.
         @type name:     str
