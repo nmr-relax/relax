@@ -630,7 +630,7 @@ class Frame_order(API_base, API_common):
         atomic_pos = []
 
         # Store the atomic positions.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
