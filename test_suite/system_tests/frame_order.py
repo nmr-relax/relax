@@ -228,6 +228,15 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.5010702982403058)
 
 
+    def test_cam_free_rotor_missing_data(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=self.cam_path+'free_rotor_missing_data.py')
+        self.check_chi2(0.5010702982403058)
+
+
     def test_cam_free_rotor_pcs(self):
         """Test the free rotor frame order model of CaM (with only PCS data)."""
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
-from os import sep
+from os import F_OK, access, sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -185,12 +185,12 @@ class Base_script:
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
-            # Load the RDCs.
-            if not hasattr(status, 'flag_rdc') or status.flag_rdc:
+            # Load the RDCs (if present).
+            if (not hasattr(status, 'flag_rdc') or status.flag_rdc) and access(self.data_path+'rdc_%s.txt'%ln[i], F_OK):
                 self._execute_uf(uf_name='rdc.read', align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
-            # The PCS.
-            if not hasattr(status, 'flag_pcs') or status.flag_pcs:
+            # The PCS (if present).
+            if not hasattr(status, 'flag_pcs') or status.flag_pcs and access(self.data_path+'pcs_%s.txt'%ln[i], F_OK):
                 self._execute_uf(uf_name='pcs.read', align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
