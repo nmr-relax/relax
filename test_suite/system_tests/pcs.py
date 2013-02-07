@@ -263,7 +263,7 @@ class Pcs(SystemTestCase):
 
         # Structural noise (twice to make sure old errors are removed properly from the PCS error).
         self.interpreter.pcs.structural_noise(rmsd=200.0, sim_num=100, file='devnull', dir=None, force=True)
-        self.interpreter.pcs.structural_noise(rmsd=0.2, sim_num=10000, file='devnull', dir=None, force=True)
+        self.interpreter.pcs.structural_noise(rmsd=0.2, sim_num=20000, file='devnull', dir=None, force=True)
 
         # The simulated data (from 1,000,000 randomisations of 0.2 Angstrom RMSD).
         pcs_struct_err = {
@@ -284,5 +284,5 @@ class Pcs(SystemTestCase):
 
         # Test the PCS data.
         for id in ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']:
-            self.assertAlmostEqual(spin.pcs_struct_err[id], pcs_struct_err[id], 3)
-            self.assertAlmostEqual(spin.pcs_err[id], pcs_err[id], 3)
+            self.assertAlmostEqual(spin.pcs_struct_err[id], pcs_struct_err[id], 2)
+            self.assertAlmostEqual(spin.pcs_err[id], pcs_err[id], 2)
