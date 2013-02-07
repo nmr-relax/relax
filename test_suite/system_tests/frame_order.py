@@ -234,7 +234,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'free_rotor_missing_data.py')
-        self.check_chi2(0.5010702982403058)
+        self.check_chi2(0.39693993157977275)
 
 
     def test_cam_free_rotor_pcs(self):
