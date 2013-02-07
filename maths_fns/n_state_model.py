@@ -958,9 +958,9 @@ class N_state_opt:
             if not self.centre_fixed:
                 for j in range(self.num_spins):
                     if self.pcs_flag[align_index] and not self.missing_deltaij[align_index, j]:
-                        self.ddeltaij_theta[-3, align_index, j] = ave_pcs_tensor_ddeltaij_dc(ddj=self.dpcs_const_theta[align_index, j, :, 0], dj=self.pcs_const[align_index, j], r=self.paramag_dist[j], unit_vect=self.paramag_unit_vect[j], N=self.N, Ai=self.A[align_index], dr_dc=self.dr_theta[0], weights=self.probs)
-                        self.ddeltaij_theta[-2, align_index, j] = ave_pcs_tensor_ddeltaij_dc(ddj=self.dpcs_const_theta[align_index, j, :, 1], dj=self.pcs_const[align_index, j], r=self.paramag_dist[j], unit_vect=self.paramag_unit_vect[j], N=self.N, Ai=self.A[align_index], dr_dc=self.dr_theta[1], weights=self.probs)
-                        self.ddeltaij_theta[-1, align_index, j] = ave_pcs_tensor_ddeltaij_dc(ddj=self.dpcs_const_theta[align_index, j, :, 2], dj=self.pcs_const[align_index, j], r=self.paramag_dist[j], unit_vect=self.paramag_unit_vect[j], N=self.N, Ai=self.A[align_index], dr_dc=self.dr_theta[2], weights=self.probs)
+                        self.ddeltaij_theta[-3, align_index, j] = ave_pcs_tensor_ddeltaij_dc(ddj=self.dpcs_const_theta[align_index, j,:, 0], dj=self.pcs_const[align_index, j], r=self.paramag_dist[j], unit_vect=self.paramag_unit_vect[j], N=self.N, Ai=self.A[align_index], dr_dc=self.dr_theta[0], weights=self.probs)
+                        self.ddeltaij_theta[-2, align_index, j] = ave_pcs_tensor_ddeltaij_dc(ddj=self.dpcs_const_theta[align_index, j,:, 1], dj=self.pcs_const[align_index, j], r=self.paramag_dist[j], unit_vect=self.paramag_unit_vect[j], N=self.N, Ai=self.A[align_index], dr_dc=self.dr_theta[1], weights=self.probs)
+                        self.ddeltaij_theta[-1, align_index, j] = ave_pcs_tensor_ddeltaij_dc(ddj=self.dpcs_const_theta[align_index, j,:, 2], dj=self.pcs_const[align_index, j], r=self.paramag_dist[j], unit_vect=self.paramag_unit_vect[j], N=self.N, Ai=self.A[align_index], dr_dc=self.dr_theta[2], weights=self.probs)
 
             # Construct the chi-squared gradient element for parameter k, alignment i.
             for k in range(self.total_num_params):
