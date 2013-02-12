@@ -1,3 +1,49 @@
+Version 2.2.2
+(12 February 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.2.2
+
+    Features:
+        * Improvements to the relax API documentation (http://www.nmr-relax.com/api/).
+
+
+    Changes:
+        * Updated the release checklist to include the devel_scripts/log_converter.py script usage.
+        * Modified the relax manual subtitle as this is no longer only for relaxation analysis.
+        * Docstring fix for the maths_fns.vectors.random_unit_vector() function (this is for the API documentation at http://www.nmr-relax.com/api/).
+        * Epydoc docstring fix for the dfunc_standard() N-state model target function (this is for the API documentation at http://www.nmr-relax.com/api/).
+        * Epydoc docstring fixes for the diffusion tensor objects of the relax data store.
+        * Added and edited a number of module docstrings.
+        * Module and package docstrings additions/improvements for the SCons scripts.
+        * Lots of module and package docstring updates for the analysis specific code.
+        * Module docstring additions and improvements for the relax data store modules.
+        * Addition of the generic_fns package docstring.
+        * Added a module docstring for the main relax module.
+        * Created the State.test_bug_20480 system test to catch bug #20480, the failure to load a saved relax model-free state in the GUI (https://gna.org/bugs/?20480).  This bug was reported by Stanislava Panova (https://gna.org/users/stacy).
+        * Created the Mf.test_bug_20479_gui_final_pipe GUI test to catch bug #20479, the model-free analysis failure in the GUI after setting the protocol mode to local tm. (https://gna.org/bugs/?20479).  This bug was reported by Stanislava Panova (https://gna.org/users/stacy).
+        * Added a printout to the GUI test case base check_exceptions() method to explain what is happening.
+        * Large expansion of the Mf.test_bug_20479_gui_final_pipe GUI test.  Instead of loading the bug #20480 state file, now the entire GUI analysis starting from scratch and using the relaxation data files is performed remotely by the test.  This is necessary because the result of the bug is present in the state file.
+        * Added spherical diffusion to the optimisation in the Mf.test_bug_20479_gui_final_pipe GUI test.
+        * Added a global model print out to the Mf.test_bug_20479_gui_final_pipe GUI test.  This is to help identify where failures occur.
+        * Proper handling of the dipole interaction wizard in the Mf.test_bug_20479_gui_final_pipe GUI test.  This was causing the subsequent GUI tests to fail as the observer objects from the wizard were not all being unregistered.
+        * Added skips for some GUI tests when wxPython version '2.9.4.1 gtk2 (classic)' is used.  There are a number of bugs in this version which cannot be worked around in certain GUI tests, so they must be skipped.
+        * More wxPython version '2.9.4.1 gtk2 (classic)' bug avoidances in the GUI tests.  Now the auto-analyses do not check the gauges in the relax controller at the end of the auto NOE, Rx, and model-free analyses, as reading gauge values is faulty in this version.  The Rx test is no longer skipped for this wxPython version.
+        * Improved the printout from the align_tensor.matrix_angles user function.  The relax_io.write_data() function is being used and the tensors are now identified by name rather than index.
+        * Improved the printouts from the align_tensor.svd user function.
+        * The relax program introduction now includes the revision number for subversion checked out copied.  This allows for better identification of the code base being used.
+        * Fixes for the Pcs.test_structural_noise system test.  As this is based on random functions, sometimes, though rarely, the test fails.  Now the simulation accuracy has been increased and the tests are less rigorous.
+        * Spacing fixes as identified by the Python 2to3 conversion program.
+
+
+    Bugfixes:
+        * Epydoc documentation fix - a circular import in the GUI code paths has been broken.  This affects the API documentation at http://www.nmr-relax.com/api/.
+        * Fix for the failed loading of states in the GUI.  This problem was caught by the State.test_bug_20480 GUI test.  If the loading of a state file fails,sometimes the relax data store can contain partial information from that file.  Now if the loading fails in the GUI, relax is reset.
+        * Fix for bug #20480, the failure to load a saved relax model-free state in the GUI (https://gna.org/bugs/?20480).  This was reported by Stanislava Panova (https://gna.org/users/stacy).  The problem was that the state file was saved after a RelaxError occurred during the model-free analysis.  The GUI data store information states that the active data pipe is called 'final'.  But an error occurred prior to the 'final' data pipe being created.  The fix was to allow the state to be loaded even if the GUI data store information has been corrupted.
+        * Fix for bug #20479 - the failure of non-fully automated model-free analyses in the GUI.  This bug was reported by Stanislava Panova (https://gna.org/users/stacy) at https://gna.org/bugs/?20479.  The problem is GUI specific and was when running each diffusion model one after the other.  The GUI was setting the base data pipe to the 'final' data pipe, which is a clear error.
+        * Fix for bug #20481 (https://gna.org/bugs/?20481).  This is the bug where the dauvergne_protocol model-free auto-analysis expects the prolate and oblate spheroids and ellipsoid to be optimised.  It was caught by the Mf.test_bug_20479_gui_final_pipe GUI test.
+        * Bug fix for the diffusion tensor PDB creation in the dauvergne_protocol model-free auto-analysis.  The call to the structure.create_diff_tensor_pdb user function now only occurs if structural data is present.
+
+
+
 Version 2.2.1
 (01 February 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.2.1
