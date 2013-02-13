@@ -430,6 +430,12 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "mol_name_target",
+    py_type = "str",
+    desc_short = "target molecule name",
+    desc = "The name of target molecule container, overriding the name of the loaded structures."
+)
+uf.add_keyarg(
     name = "ave_pos",
     default = True,
     py_type = "bool",
