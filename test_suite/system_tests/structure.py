@@ -184,6 +184,33 @@ class Structure(SystemTestCase):
                         self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
 
 
+    def test_load_spins_mol_cat(self):
+        """Test the loading of spins from different molecules into one molecule container."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+
+        # Read the PDBs.
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, set_mol_name='L1', parser='internal')
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_2.pdb', dir=path, set_mol_name='L2', parser='internal')
+
+        # Load a few protons.
+        self.interpreter.structure.load_spins('#L1:900@C1', mol_name_target='Lactose')
+        self.interpreter.structure.load_spins('#L2:900@C2', mol_name_target='Lactose')
+
+        # Check the spin data.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, 'Lactose')
+        self.assertEqual(len(cdp.mol[0].res), 1)
+        self.assertEqual(cdp.mol[0].res[0].name, 'UNK')
+        self.assertEqual(cdp.mol[0].res[0].num, 900)
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 2)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'C1')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'C2')
+        self.assertEqual(cdp.mol[0].res[0].spin[1].num, 2)
+
+
     def test_load_internal_results(self):
         """Load the PDB file using the information in a results file (using the internal structural object)."""
 
