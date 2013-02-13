@@ -377,25 +377,15 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
         except RelaxError:
             spin_cont = return_spin(id)
 
-<<<<<<< .working
         # Append all the spin ID info for printing later.
-        mol_names.append(mol_name)
+        if mol_name_target:
+            mol_names.append(mol_name_target)
+        else:
+            mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)
         spin_nums.append(atom_num)
         spin_names.append(atom_name)
-=======
-        # Append all the spin ID info for the first model for printing later.
-        if model_index == 0:
-            if mol_name_target:
-                mol_names.append(mol_name_target)
-            else:
-                mol_names.append(mol_name)
-            res_nums.append(res_num)
-            res_names.append(res_name)
-            spin_nums.append(atom_num)
-            spin_names.append(atom_name)
->>>>>>> .merge-right.r18465
 
         # Position vector.
         spin_cont.pos = pos
