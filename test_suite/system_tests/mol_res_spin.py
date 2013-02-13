@@ -42,55 +42,6 @@ class Mol_res_spin(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
-    def test_metadata_molecule_rename(self):
-        """Check the updating of spin ID metadata when molecules are renamed."""
-
-        # Create a data pipe for all the data.
-        self.interpreter.pipe.create('CaM', 'N-state')
-
-        # Create some spins.
-        self.interpreter.spin.create(spin_name='N', spin_num=1, res_name='Gly', res_num=3, mol_name='N-dom')
-        self.interpreter.spin.create(spin_name='H', spin_num=2, res_name='Gly', res_num=3, mol_name='N-dom')
-        self.interpreter.spin.create(spin_name='N', spin_num=3, res_name='Gly', res_num=90, mol_name='C-dom')
-        self.interpreter.spin.create(spin_name='H', spin_num=4, res_name='Gly', res_num=90, mol_name='C-dom')
-
-        # Check the validity of the current IDs.
-        print("The spin ID lookup table:\n%s" % cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom@N' in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom@H' in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom:3@N' in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom:3@H' in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom@N' in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom@H' in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom:90@N' in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom:90@H' in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom' not in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom' not in cdp.mol._spin_id_lookup)
-        self.assert_(':3' not in cdp.mol._spin_id_lookup)
-        self.assert_(':90' not in cdp.mol._spin_id_lookup)
-        self.assert_('@N' not in cdp.mol._spin_id_lookup)
-        self.assert_('@H' not in cdp.mol._spin_id_lookup)
-
-        # Rename the molecules.
-        self.interpreter.molecule.name(mol_id='#N-dom', name='CaM', force=True)
-        self.interpreter.molecule.name(mol_id='#C-dom', name='CaM', force=True)
-
-        # Make sure that certain spin IDs have been removed.
-        print("The spin ID lookup table:\n%s" % cdp.mol._spin_id_lookup)
-        self.assert_(':3@N' in cdp.mol._spin_id_lookup)
-        self.assert_(':3@H' in cdp.mol._spin_id_lookup)
-        self.assert_(':90@N' in cdp.mol._spin_id_lookup)
-        self.assert_(':90@H' in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom' not in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom@N' not in cdp.mol._spin_id_lookup)
-        self.assert_('#N-dom@H' not in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom' not in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom@N' not in cdp.mol._spin_id_lookup)
-        self.assert_('#C-dom@H' not in cdp.mol._spin_id_lookup)
-        self.assert_('@N' not in cdp.mol._spin_id_lookup)
-        self.assert_('@H' not in cdp.mol._spin_id_lookup)
-
-
     def test_prune_metadata(self):
         """Check the proper pruning of the spin ID metadata."""
 
