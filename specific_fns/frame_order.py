@@ -811,12 +811,8 @@ class Frame_order(API_base, API_common):
                 continue
 
             # A single unit vector.
-            if arg_check.is_float(interatom.vector[0], raise_error=False):
+            if interatom.vector.shape == (3,):
                 unit_vect.append(interatom.vector)
-
-            # A single unit vector.
-            elif len(interatom.vector) == 1:
-                unit_vect.append(interatom.vector[0])
 
             # Average multiple unit vectors.
             else:
