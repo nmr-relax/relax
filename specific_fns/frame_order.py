@@ -28,7 +28,7 @@ from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, eye, float64, identity, ones, transpose, zeros
-from numpy.linalg import inv
+from numpy.linalg import inv, norm
 from re import search
 import sys
 from warnings import warn
@@ -830,6 +830,9 @@ class Frame_order(API_base, API_common):
 
                 # Store.
                 unit_vect.append(ave_vector)
+
+            # Normalise (to be sure).
+            unit_vect[-1] = unit_vect[-1] / norm(unit_vect[-1])
 
             # Gyromagnetic ratios.
             g1 = return_gyromagnetic_ratio(spin1.isotope)
