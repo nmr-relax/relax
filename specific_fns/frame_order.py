@@ -640,7 +640,7 @@ class Frame_order(API_base, API_common):
                 continue
 
             # A single atomic position.
-            if len(spin.pos) == 1:
+            if spin.pos.shape == (3,):
                 atomic_pos.append(spin.pos[0])
 
             # Average multiple atomic positions.
