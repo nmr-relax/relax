@@ -47,7 +47,7 @@ from textwrap import wrap
 
 # relax module imports.
 from status import Status; status = Status()
-from version import revision, version, version_full
+from version import revision, url, version, version_full
 
 
 class Info_box(object):
@@ -270,12 +270,16 @@ class Info_box(object):
         # Some new lines.
         intro_string = '\n\n\n'
 
-        # Program name and version.
+        # Program name and version - subversion code.
         if version == 'repository checkout':
             text = "%s %s r%s" % (self.title, self.version, revision())
+            text2 = "%s" % (url())
+            intro_string = intro_string + self.centre(text, status.text_width) + '\n' + self.centre(text2, status.text_width) + '\n\n'
+
+        # Program name and version - official releases.
         else:
             text = "%s %s" % (self.title, self.version)
-        intro_string = intro_string + self.centre(text, status.text_width) + '\n\n'
+            intro_string = intro_string + self.centre(text, status.text_width) + '\n\n'
 
         # Program description.
         intro_string = intro_string + self.centre(self.desc, status.text_width) + '\n\n'
