@@ -45,7 +45,7 @@ from status import Status; status = Status()
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3, models=['rigid', 'free rotor', 'rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse']):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3, models=['rigid', 'free rotor', 'rotor', 'iso cone, free rotor', 'iso cone, torsionless', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse']):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
