@@ -35,6 +35,8 @@ def atomic_rmsd(coord):
 
     @keyword coord:     The array of molecular coordinates.  The first dimension corresponds to the model, the second the atom, the third the coordinate.
     @type coord:        rank-3 numpy array
+    @return:            The RMSD value.
+    @rtype:             float
     """
 
     # Init.
