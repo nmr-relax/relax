@@ -174,6 +174,8 @@ class Uf_object(object):
                 arg_check.is_float_array(value, desc_short, size=dim, can_be_none=can_be_none)
             elif py_type == 'float_matrix':
                 arg_check.is_float_matrix(value, desc_short, dim=dim, can_be_none=can_be_none)
+            elif py_type == 'float_object':
+                arg_check.is_float_object(value, desc_short, dim=dim, can_be_none=can_be_none)
             elif py_type == 'func':
                 arg_check.is_func(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'int':

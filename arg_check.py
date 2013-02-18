@@ -224,6 +224,86 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
     return True
 
 
+def is_float_object(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=True):
+    """Test if the argument is a rank-N array of floats.
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @keyword name:                      The plain English name of the argument.
+    @type name:                         str
+    @keyword dim:                       The m,n dimensions of the matrix.
+    @type dim:                          tuple of int
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxMatrixFloatError:       If not a matrix of floats (and the raise_error flag is set).
+    @raise RelaxNoneMatrixFloatError:   If not a matrix of floats or not None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return True
+
+    # Fail if not a list.
+    if not isinstance(arg, list) and not isinstance(arg, ndarray):
+        fail = True
+
+    # Fail on empty lists.
+    elif not len(arg):
+        fail = True
+
+    # Fail if not the right dimension.
+    elif dim != None and len(arg) != dim[0]:
+        fail = True
+
+    # Fail if not a rank-2 array.
+    elif dim != None and len(dim) == 2 and not isinstance(arg[0], list) and not isinstance(arg[0], ndarray):
+        fail = True
+
+    # Fail if not a rank-3 array.
+    elif dim != None and len(dim) == 3 and not isinstance(arg[0][0], list) and not isinstance(arg[0][0], ndarray):
+        fail = True
+
+    # Fail if not a rank-4 array.
+    elif dim != None and len(dim) == 4 and not isinstance(arg[0][0][0], list) and not isinstance(arg[0][0][0], ndarray):
+        fail = True
+
+    # Individual element checks.
+    else:
+        # Create a flat list.
+        if isinstance(arg[0], list) or isinstance(arg[0], ndarray):
+            elements = [item for sublist in arg for item in sublist]
+        else:
+            elements = arg
+
+        # Check for float elements.
+        for i in range(len(elements)):
+            if not check_types.is_float(elements[i]):
+                fail = True
+
+    # Fail.
+    if fail:
+        if not raise_error:
+            return False
+        if can_be_none and dim != None:
+            raise RelaxNoneListFloatError(name, arg, dim)
+        elif can_be_none:
+            raise RelaxNoneListFloatError(name, arg)
+        elif dim != None:
+            raise RelaxListFloatError(name, arg, dim)
+        else:
+            raise RelaxListFloatError(name, arg)
+
+    # Success.
+    return True
+
+
 def is_func(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a function.
 
