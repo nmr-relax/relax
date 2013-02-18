@@ -20,6 +20,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import sqrt
 from numpy import float64, zeros
 from os import sep
 from tempfile import mktemp
@@ -880,6 +881,28 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.interatomic[0].vector[0], -0.4102707)
         self.assertAlmostEqual(cdp.interatomic[0].vector[1], 0.62128879)
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], -0.6675913)
+
+
+    def test_rmsd(self):
+        """Test the structure.rmsd user function."""
+
+        # Set up 3 models.
+        self.interpreter.structure.add_model()
+        self.interpreter.structure.add_model()
+        self.interpreter.structure.add_model()
+
+        # Create a structure with some atoms.
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, pos=[[1., 0., 0.], [0., 0., 0.], [0., 0., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., 0.], [0., 2., 0.], [0., 2., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., 0.], [0., 20., 0.], [0., 20., 1.]], element='S')
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd()
+
+        # Checks.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertEqual(cdp.structure.rmsd, 3*sqrt(2))
 
 
     def test_superimpose_fit_to_first(self):
