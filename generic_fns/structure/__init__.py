@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -42,4 +42,5 @@ __all__ = [ 'api_base',
             'main',
             'mass',
             'scientific',
+            'statistics',
             'superimpose' ]
