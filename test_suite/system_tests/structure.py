@@ -891,6 +891,11 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_model()
         self.interpreter.structure.add_model()
 
+        # Check that the models were correctly created.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 3)
+
         # Create a structure with some atoms.
         self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, pos=[[1., 0., 0.], [0., 0., 0.], [0., 0., 1.]], element='S')
         self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., 0.], [0., 2., 0.], [0., 2., 1.]], element='S')
@@ -900,7 +905,6 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rmsd()
 
         # Checks.
-        self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'rmsd'))
         self.assertEqual(cdp.structure.rmsd, 3*sqrt(2))
 
