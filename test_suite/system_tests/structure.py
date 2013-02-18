@@ -897,18 +897,18 @@ class Structure(SystemTestCase):
         self.assertEqual(len(cdp.structure.structural_data), 3)
 
         # Create a structure with some atoms.
-        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, pos=[[1., 0., 0.], [0., 0., 0.], [0., 0., 1.]], element='S')
-        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., 0.], [0., 2., 0.], [0., 2., 1.]], element='S')
-        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., 0.], [0., 20., 0.], [0., 20., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, pos=[[1., 0., -1.], [0., 0., 0.], [-1., 0., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., -1.], [0., 2., 0.], [-1., 2., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., -1.], [0., 20., 0.], [-1., 20., 1.]], element='S')
 
         # Check the internal atomic info.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
         self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
         self.assertEqual(cdp.structure.structural_data[1].mol[0].x, [0., 0., 0.])
         self.assertEqual(cdp.structure.structural_data[1].mol[0].y, [0., 2., 20.])
         self.assertEqual(cdp.structure.structural_data[1].mol[0].z, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [-1., -1., -1.])
         self.assertEqual(cdp.structure.structural_data[2].mol[0].y, [0., 2., 20.])
         self.assertEqual(cdp.structure.structural_data[2].mol[0].z, [1., 1., 1.])
 
@@ -917,7 +917,7 @@ class Structure(SystemTestCase):
 
         # Checks.
         self.assert_(hasattr(cdp.structure, 'rmsd'))
-        self.assertEqual(cdp.structure.rmsd, 3*sqrt(2))
+        self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
 
 
     def test_superimpose_fit_to_first(self):
