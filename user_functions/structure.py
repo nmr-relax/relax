@@ -131,6 +131,12 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 uf = uf_info.add_uf('structure.add_model')
 uf.title = "Add a new model."
 uf.title_short = "Model creation."
+uf.add_keyarg(
+    name = "model_num",
+    py_type = "int",
+    desc_short = "model number",
+    desc = "The number of the new model."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows new models to be added to the internal structural object.  Note that no structural information is allowed to be present")

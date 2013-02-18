@@ -79,7 +79,7 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
     cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
-def add_model():
+def add_model(model_num=None):
     """Add a new model to the empty structural data object."""
 
     # Test if the current data pipe exists.
@@ -98,7 +98,8 @@ def add_model():
         raise RelaxError("The internal structural object is not empty.")
 
     # Add a model.
-    cdp.structure.structural_data.add_item()
+    cdp.structure.structural_data.add_item(model_num=model_num)
+    print("Created the empty model number %s." % model_num)
 
 
 def connect_atom(index1=None, index2=None):
