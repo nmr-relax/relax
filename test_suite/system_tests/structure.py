@@ -920,6 +920,21 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
 
 
+    def test_rmsd_ubi(self):
+        """Test the structure.rmsd user function on the truncated ubiquitin ensemble."""
+
+        # Load the structure.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('trunc_ubi_pcs.pdb', dir=path)
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd()
+
+        # Checks (the values match the VMD 1.9.1 RMSD numbers).
+        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
+
+
     def test_superimpose_fit_to_first(self):
         """Test of the structure.superimpose user function, fitting to the first structure."""
 
