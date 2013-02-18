@@ -31,6 +31,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import molmol, relax_re
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
@@ -105,19 +106,23 @@ def delete():
     pipes.test()
 
     # Run the object method.
-    cdp.structure.delete()
+    if hasattr(cdp, 'structure'):
+        print("Deleting all structural data from the current pipe.")
+        cdp.structure.delete()
 
     # Then remove any spin specific structural info.
+    print("Deleting all spin specific structural info.")
     for spin in spin_loop():
         # Delete positional information.
         if hasattr(spin, 'pos'):
             del spin.pos
 
+    # Then remove any interatomic vector structural info.
+    print("Deleting all interatomic vectors.")
+    for interatom in interatomic_loop():
         # Delete bond vectors.
-        if hasattr(spin, 'bond_vect'):
-            del spin.bond_vect
-        if hasattr(spin, 'xh_vect'):
-            del spin.xh_vect
+        if hasattr(interatom, 'vector'):
+            del interatom.vector
 
 
 def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
