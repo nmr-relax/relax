@@ -199,7 +199,7 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
                 fail = True
 
             # Fail if not the right dimension.
-            elif len(arg[i]) != dim[1]:
+            elif dim != None and len(arg[i]) != dim[1]:
                 fail = True
 
             # Check for float elements.
