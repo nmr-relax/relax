@@ -887,9 +887,9 @@ class Structure(SystemTestCase):
         """Test the structure.rmsd user function."""
 
         # Set up 3 models.
-        self.interpreter.structure.add_model()
-        self.interpreter.structure.add_model()
-        self.interpreter.structure.add_model()
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+        self.interpreter.structure.add_model(model_num=4)
 
         # Check that the models were correctly created.
         self.assert_(hasattr(cdp, 'structure'))
