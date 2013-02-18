@@ -75,8 +75,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "pos",
     default = [None, None, None],
-    py_type = "float_array",
-    dim = 3,
+    py_type = "float_matrix",
     desc_short = "atomic position",
     desc = "The atomic coordinates."
 )
@@ -119,11 +118,11 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows atoms to be added to the internal structural object.")
+uf.desc[-1].add_paragraph("This allows atoms to be added to the internal structural object.  To use the same atomic coordinates for all models, the atomic position can be an array of 3 values.  Alternatively different coordinates can be used for each model if the atomic position is a rank-2 array where the first dimension matches the number of models currently present.")
 uf.backend = generic_fns.structure.main.add_atom
 uf.menu_text = "&add_atom"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (800, 600)
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 

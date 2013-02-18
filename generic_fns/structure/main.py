@@ -54,8 +54,8 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
     @type res_name:         str or None
     @keyword res_num:       The residue number.
     @type res_num:          int or None
-    @keyword pos:           The position vector of coordinates.
-    @type pos:              list (length = 3)
+    @keyword pos:           The position vector of coordinates.  If a rank-2 array is supplied, the length of the first dimension must match the number of models.
+    @type pos:              rank-1 or rank-2 array or list of float
     @keyword element:       The element symbol.
     @type element:          str or None
     @keyword atom_num:      The atom number.

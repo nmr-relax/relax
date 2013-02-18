@@ -31,6 +31,7 @@ from string import digits
 from warnings import warn
 
 # relax module imports.
+from check_types import is_float
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
@@ -581,8 +582,8 @@ class Internal(Base_struct_API):
         @type res_name:         str or None
         @keyword res_num:       The residue number.
         @type res_num:          int or None
-        @keyword pos:           The position vector of coordinates.
-        @type pos:              list (length = 3)
+        @keyword pos:           The position vector of coordinates.  If a rank-2 array is supplied, the length of the first dimension must match the number of models.
+        @type pos:              rank-1 or rank-2 array or list of float
         @keyword element:       The element symbol.
         @type element:          str or None
         @keyword atom_num:      The atom number.
@@ -602,8 +603,19 @@ class Internal(Base_struct_API):
         if len(self.structural_data) == 0:
             self.add_model()
 
+        # Check the position.
+        if is_float(pos[0]):
+            if len(pos) != 3:
+                raise RelaxError("The single atomic position %s must be a 3D list." % pos)
+        else:
+            if len(pos) != len(self.structural_data):
+                raise RelaxError("The %s atomic positions does not match the %s models present." % (len(pos), len(self.structural_data)))
+
         # Loop over each model.
-        for model in self.structural_data:
+        for i in range(len(self.structural_data)):
+            # Alias the model.
+            model = self.structural_data[i]
+
             # Specific molecule.
             mol = self.get_molecule(mol_name, model=model.num)
 
@@ -611,6 +623,12 @@ class Internal(Base_struct_API):
             if mol == None:
                 self.add_molecule(name=mol_name)
                 mol = self.get_molecule(mol_name, model=model.num)
+
+            # Split up the position if needed.
+            if is_float(pos[0]):
+                model_pos = pos
+            else:
+                model_pos = pos[i]
 
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
