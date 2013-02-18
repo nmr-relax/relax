@@ -631,7 +631,7 @@ class Internal(Base_struct_API):
                 model_pos = pos[i]
 
             # Add the atom.
-            mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+            mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
     def add_model(self, model=None, coords_from=None):
