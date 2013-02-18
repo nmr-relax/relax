@@ -639,8 +639,7 @@ def rmsd(atom_id=None, models=None):
         coord[-1] = array(coord[-1])
 
     # Calculate the RMSD.
-    cdp.structure.rmsd = atomic_rmsd(coord)
-    print("RMSD:  %s" % cdp.structure.rmsd)
+    cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)
 
     # Return the RMSD.
     return cdp.structure.rmsd

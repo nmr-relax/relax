@@ -23,11 +23,11 @@
 """Module for handling all types of structural statistics."""
 
 # Python module imports.
-from numpy import float64, sqrt, zeros
+from numpy import float64, mean, sqrt, std, zeros
 from numpy.linalg import norm
 
 
-def atomic_rmsd(coord):
+def atomic_rmsd(coord, verbosity=0):
     """Determine the RMSD for the given atomic coordinates.
 
     This is the per atom RMSD to the mean structure.
@@ -43,17 +43,17 @@ def atomic_rmsd(coord):
     M = len(coord)
     N = len(coord[0])
     model_rmsd = zeros(M, float64)
-    mean = zeros((N, 3), float64)
+    mean_str = zeros((N, 3), float64)
 
     # Calculate the mean structure.
-    calc_mean_structure(coord, mean)
+    calc_mean_structure(coord, mean_str)
 
     # Loop over the models.
     for i in range(M):
         # Loop over the atoms.
         for j in range(N):
             # The vector connecting the mean to model atom.
-            vect = mean[j] - coord[i][j]
+            vect = mean_str[j] - coord[i][j]
 
             # The atomic RMSD.
             model_rmsd[i] += norm(vect)**2
@@ -61,8 +61,18 @@ def atomic_rmsd(coord):
         # Normalise, and sqrt.
         model_rmsd[i] = sqrt(model_rmsd[i] / N)
 
+        # Print out.
+        if verbosity:
+            print("Model %2s RMSD:  %s" % (i, model_rmsd[i]))
+
+    # Calculate the mean and standard deviation.
+    rmsd_mean = mean(model_rmsd)
+    rmsd_sd = std(model_rmsd, ddof=1)
+    if verbosity:
+        print("\nGlobal RMSD:  %s +/- %s" % (rmsd_mean, rmsd_sd))
+
     # Return the average RMSD.
-    return sum(model_rmsd) / M
+    return rmsd_mean
 
 
 def calc_mean_structure(coord=None, mean=None):
