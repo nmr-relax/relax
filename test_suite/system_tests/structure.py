@@ -96,6 +96,29 @@ class Structure(SystemTestCase):
         self.interpreter.sequence.attach_protons()
 
 
+    def test_delete_multi_pipe(self):
+        """Test the deletion of structural data in only one pipe."""
+
+        # Create a structure with a single atom.
+        self.interpreter.structure.add_atom(atom_name='PIV', res_name='M1', res_num=1, pos=[0., 1., 2.], element='S')
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('new', 'N-state')
+
+        # Create a structure with a single atom.
+        self.interpreter.structure.add_atom(atom_name='PIV', res_name='M1', res_num=2, pos=[4., 5., 6.], element='S')
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Checks.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(len(cdp.structure.structural_data), 0)
+        self.interpreter.pipe.switch('mf')
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+
+
     def test_displacement(self):
         """Test of the structure.displacement user function."""
 
