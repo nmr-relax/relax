@@ -901,6 +901,17 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., 0.], [0., 2., 0.], [0., 2., 1.]], element='S')
         self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., 0.], [0., 20., 0.], [0., 20., 1.]], element='S')
 
+        # Check the internal atomic info.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].z, [1., 1., 1.])
+
         # Calculate the RMSD.
         self.interpreter.structure.rmsd()
 
