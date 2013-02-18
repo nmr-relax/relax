@@ -79,6 +79,28 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
     cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
+def add_model():
+    """Add a new model to the empty structural data object."""
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # The structural object can only be the internal object.
+    if cdp.structure.id != 'internal':
+        raise RelaxError("Models can only be added to the internal structural object.")
+
+    # Check the structural object is empty.
+    if cdp.structure.num_molecules() != 0:
+        raise RelaxError("The internal structural object is not empty.")
+
+    # Add a model.
+    cdp.structure.structural_data.add_item()
+
+
 def connect_atom(index1=None, index2=None):
     """Connect two atoms.
 

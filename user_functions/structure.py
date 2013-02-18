@@ -127,6 +127,20 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.add_model user function.
+uf = uf_info.add_uf('structure.add_model')
+uf.title = "Add a new model."
+uf.title_short = "Model creation."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows new models to be added to the internal structural object.  Note that no structural information is allowed to be present")
+uf.backend = generic_fns.structure.main.add_model
+uf.menu_text = "&add_model"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (700, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.connect_atom user function.
 uf = uf_info.add_uf('structure.connect_atom')
 uf.title = "Connect two atoms."
