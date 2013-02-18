@@ -96,6 +96,13 @@ class Structure(SystemTestCase):
         self.interpreter.sequence.attach_protons()
 
 
+    def test_delete_empty(self):
+        """Test the deletion of non-existent structural data."""
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+
     def test_delete_multi_pipe(self):
         """Test the deletion of structural data in only one pipe."""
 
