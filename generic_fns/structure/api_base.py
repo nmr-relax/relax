@@ -466,6 +466,10 @@ class Base_struct_API:
         @rtype:     int
         """
 
+        # No data.
+        if self.empty():
+            return 0
+
         # Validate the structural object.
         self.validate()
 
