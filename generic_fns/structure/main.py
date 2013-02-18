@@ -109,6 +109,8 @@ def delete():
     if hasattr(cdp, 'structure'):
         print("Deleting all structural data from the current pipe.")
         cdp.structure.delete()
+    else:
+        print("No structures are present.")
 
     # Then remove any spin specific structural info.
     print("Deleting all spin specific structural info.")
