@@ -672,6 +672,31 @@ uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_xyz.png'
 
 
+# The structure.rmsd user function.
+uf = uf_info.add_uf('structure.rmsd')
+uf.title = "Determine the RMSD between the models."
+uf.title_short = "Structural RMSD."
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
+uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the RMSD calculation to certain molecules, residues, or atoms.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To determine the RMSD, simply type:")
+uf.desc[-1].add_prompt("relax> structure.rmsd()")
+uf.backend = generic_fns.structure.main.rmsd
+uf.menu_text = "&rmsd"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.rotate user function.
 uf = uf_info.add_uf('structure.rotate')
 uf.title = "Rotate the internal structural object about the given origin by the rotation matrix."
