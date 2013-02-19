@@ -36,7 +36,7 @@ from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
-from generic_fns.structure import pdb_write
+from generic_fns.structure import pdb_read, pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
 from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
@@ -1101,7 +1101,7 @@ class Internal(Base_struct_API):
                 mol = MolContainer()
 
                 # Fill the molecular data object.
-                mol.fill_object_from_pdb(mol_records, alt_loc=alt_loc)
+                mol.fill_object_from_pdb(mol_records, alt_loc_select=alt_loc)
 
                 # Store the molecule container.
                 mol_conts[model_index].append(mol)
@@ -1825,161 +1825,6 @@ class MolContainer:
         warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
 
 
-    def _parse_pdb_record(self, record):
-        """Parse the PDB record string and return an array of the corresponding atomic information.
-
-        The format of the ATOM and HETATM records is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "ATOM"       |                                                |
-         |  7 - 11 | Integer      | serial       | Atom serial number.                            |
-         | 13 - 16 | Atom         | name         | Atom name.                                     |
-         | 17      | Character    | altLoc       | Alternate location indicator.                  |
-         | 18 - 20 | Residue name | resName      | Residue name.                                  |
-         | 22      | Character    | chainID      | Chain identifier.                              |
-         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
-         | 27      | AChar        | iCode        | Code for insertion of residues.                |
-         | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
-         | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
-         | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
-         | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
-         | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
-         | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
-         | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
-         | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
-         |_________|______________|______________|________________________________________________|
-
-
-        The format of the TER record is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "TER   "     |                                                |
-         |  7 - 11 | Integer      | serial       | Serial number.                                 |
-         | 18 - 20 | Residue name | resName      | Residue name.                                  |
-         | 22      | Character    | chainID      | Chain identifier.                              |
-         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
-         | 27      | AChar        | iCode        | Insertion code.                                |
-         |_________|______________|______________|________________________________________________|
-
-
-        The format of the CONECT record is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "CONECT"     |                                                |
-         |  7 - 11 | Integer      | serial       | Atom serial number                             |
-         | 12 - 16 | Integer      | serial       | Serial number of bonded atom                   |
-         | 17 - 21 | Integer      | serial       | Serial number of bonded atom                   |
-         | 22 - 26 | Integer      | serial       | Serial number of bonded atom                   |
-         | 27 - 31 | Integer      | serial       | Serial number of bonded atom                   |
-         | 32 - 36 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 37 - 41 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 42 - 46 | Integer      | serial       | Serial number of salt bridged atom             |
-         | 47 - 51 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 52 - 56 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 57 - 61 | Integer      | serial       | Serial number of salt bridged atom             |
-         |_________|______________|______________|________________________________________________|
-
-
-        @param record:  The single line PDB record.
-        @type record:   str
-        @return:        The list of atomic information, each element corresponding to the PDB fields
-                        as defined in "Protein Data Bank Contents Guide: Atomic Coordinate Entry
-                        Format Description" version 2.1 (draft), October 25, 1996.
-        @rtype:         list of str
-        """
-
-        # Initialise.
-        fields = []
-
-        # ATOM and HETATM records.
-        if search('^ATOM', record) or search('^HETATM', record):
-            # Split up the record.
-            fields.append(record[0:6])
-            fields.append(record[6:11])
-            fields.append(record[12:16])
-            fields.append(record[16])
-            fields.append(record[17:20])
-            fields.append(record[21])
-            fields.append(record[22:26])
-            fields.append(record[26])
-            fields.append(record[30:38])
-            fields.append(record[38:46])
-            fields.append(record[46:54])
-            fields.append(record[54:60])
-            fields.append(record[60:66])
-            fields.append(record[72:76])
-            fields.append(record[76:78])
-            fields.append(record[78:80])
-
-            # Loop over the fields.
-            for i in range(len(fields)):
-                # Strip all whitespace.
-                fields[i] = fields[i].strip()
-
-                # Replace nothingness with None.
-                if fields[i] == '':
-                    fields[i] = None
-
-            # Convert strings to numbers.
-            if fields[1]:
-                fields[1] = int(fields[1])
-            if fields[6]:
-                fields[6] = int(fields[6])
-            if fields[8]:
-                fields[8] = float(fields[8])
-            if fields[9]:
-                fields[9] = float(fields[9])
-            if fields[10]:
-                fields[10] = float(fields[10])
-            if fields[11]:
-                fields[11] = float(fields[11])
-            if fields[12]:
-                fields[12] = float(fields[12])
-
-        # CONECT records.
-        if search('^CONECT', record):
-            # Split up the record.
-            fields.append(record[0:6])
-            fields.append(record[6:11])
-            fields.append(record[11:16])
-            fields.append(record[16:21])
-            fields.append(record[21:26])
-            fields.append(record[26:31])
-
-            # Loop over the fields.
-            for i in range(len(fields)):
-                # Strip all whitespace.
-                fields[i] = fields[i].strip()
-
-                # Replace nothingness with None.
-                if fields[i] == '':
-                    fields[i] = None
-
-            # Convert strings to numbers.
-            if fields[1]:
-                fields[1] = int(fields[1])
-            if fields[2]:
-                fields[2] = int(fields[2])
-            if fields[3]:
-                fields[3] = int(fields[3])
-            if fields[4]:
-                fields[4] = int(fields[4])
-            if fields[5]:
-                fields[5] = int(fields[5])
-
-        # Return the atomic info.
-        return fields
-
-
     def _parse_xyz_record(self, record):
         """Parse the XYZ record string and return an array of the corresponding atomic information.
 
@@ -2095,58 +1940,63 @@ class MolContainer:
             self.bonded[index2].append(index1)
 
 
-    def fill_object_from_pdb(self, records, alt_loc=None):
+    def fill_object_from_pdb(self, records, alt_loc_select=None):
         """Method for generating a complete Structure_container object from the given PDB records.
 
-        @param records:         A list of structural PDB records.
-        @type records:          list of str
-        @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
-        @type alt_loc:          str or None
+        @param records:             A list of structural PDB records.
+        @type records:              list of str
+        @keyword alt_loc_select:    The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
+        @type alt_loc_select:       str or None
         """
 
         # Loop over the records.
         for record in records:
-            # Parse the record.
-            record = self._parse_pdb_record(record)
-
             # Nothing to do.
-            if not record:
+            if not record or record == '\n':
                 continue
 
             # Add the atom.
-            if record[0] == 'ATOM' or record[0] == 'HETATM':
+            if search('^ATOM', record) or search('^HETATM', record):
+                # Parse the record.
+                if search('^ATOM', record):
+                    record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.atom(record)
+                if search('^HETATM', record):
+                    record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.hetatm(record)
+
                 # Handle the alternate locations.
-                if record[3] != None:
+                if alt_loc != None:
                     # Don't know what to do.
-                    if alt_loc == None:
+                    if alt_loc_select == None:
                         raise RelaxError("Multiple alternate location indicators are present in the PDB file, but the desired coordinate set has not been specified.")
 
                     # Skip non-matching locations.
-                    if record[3] != alt_loc:
+                    if alt_loc != alt_loc_select:
                         continue
 
                 # Attempt at determining the element, if missing.
-                element = record[14]
                 if not element:
-                    element = self._det_pdb_element(record[2])
+                    element = self._det_pdb_element(name)
 
                 # Add.
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=element)
+                self.atom_add(pdb_record=record_type, atom_num=serial, atom_name=name, res_name=res_name, chain_id=chain_id, res_num=res_seq, pos=[x, y, z], element=element)
 
             # Connect atoms.
-            if record[0] == 'CONECT':
+            if search('^CONECT', record):
+                # Parse the record.
+                record_type, serial, bonded1, bonded2, bonded3, bonded4 = pdb_read.conect(record)
+
                 # Loop over the atoms of the record.
-                for i in range(len(record)-2):
+                for bonded in [bonded1, bonded2, bonded3, bonded4]:
                     # Skip if there is no record.
-                    if record[i+2] == None:
+                    if not bonded:
                         continue
 
                     # Skip broken CONECT records (for when the record points to a non-existent atom).
-                    if self._atom_index(record[1]) == None or self._atom_index(record[i+2]) == None:
+                    if self._atom_index(serial) == None or self._atom_index(bonded) == None:
                         continue
 
                     # Make the connection.
-                    self.atom_connect(index1=self._atom_index(record[1]), index2=self._atom_index(record[i+2]))
+                    self.atom_connect(index1=self._atom_index(serial), index2=self._atom_index(bonded))
 
 
     def fill_object_from_xyz(self, records):
