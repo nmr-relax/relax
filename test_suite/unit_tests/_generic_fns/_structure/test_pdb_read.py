@@ -59,6 +59,19 @@ class Test_pdb_read(UnitTestCase):
 
         # Test the elements.
         self.assertEqual(record[0], 'HELIX')
+        self.assertEqual(record[1], 1)
+        self.assertEqual(record[2], 'H1')
+        self.assertEqual(record[3], 'ILE')
+        self.assertEqual(record[4], 'A')
+        self.assertEqual(record[5], 23)
+        self.assertEqual(record[6], None)
+        self.assertEqual(record[7], 'GLU')
+        self.assertEqual(record[8], 'A')
+        self.assertEqual(record[9], 34)
+        self.assertEqual(record[10], None)
+        self.assertEqual(record[11], 1)
+        self.assertEqual(record[12], None)
+        self.assertEqual(record[13], 12)
 
 
     def test_sheet(self):
