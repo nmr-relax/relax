@@ -377,7 +377,6 @@ class Structure(SystemTestCase):
         self.assert_(hasattr(cdp.interatomic[0], 'vector'))
 
 
-
     def test_read_pdb_internal2(self):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the internal structural object PDB reader)."""
 
@@ -822,6 +821,32 @@ class Structure(SystemTestCase):
                 self.assertEqual(mol.file_path, paths[i][j])
                 self.assertEqual(mol.file_model, models[i][j])
                 self.assertEqual(mol.file_mol_num, 1)
+
+
+    def test_read_pdb_1UBQ(self):
+        """Test the reading of the complete 1UBQ PDB file."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
+
+        # Check the data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Check the first atom.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
+
+        # Check the last atom.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 602)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 40.862)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 39.575)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 36.251)
 
 
     def test_read_xyz_internal1(self):
