@@ -419,6 +419,139 @@ def formul(record):
     raise RelaxImplementError('formul')
 
 
+def helix(record):
+    """Parse the HELIX record.
+
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#HELIX}.
+
+    Overview
+    ========
+
+    HELIX records are used to identify the position of helices in the molecule. Helices are named, numbered, and classified by type. The residues where the helix begins and ends are noted, as well as the total length.
+
+
+    Record Format
+    =============
+
+     ______________________________________________________________________________________________
+     |         |              |              |                                                    |
+     | Columns | Data type    | Field        | Definition                                         |
+     |_________|______________|______________|____________________________________________________|
+     |         |              |              |                                                    |
+     |  1 -  6 | Record name  | "HELIX "     |                                                    |
+     |  8 - 10 | Integer      | serNum       | Serial number of the helix. This starts at 1 and   |
+     |         |              |              |      increases incrementally.                      |
+     | 12 - 14 | LString(3)   | helixID      | Helix identifier. In addition to a serial number,  |
+     |         |              |              |      each helix is given an alphanumeric character |
+     |         |              |              |      helix identifier.                             |
+     | 16 - 18 | Residue name | initResName  | Name of the initial residue.                       |
+     | 20      | Character    | initChainID  | Chain identifier for the chain containing this     |
+     |         |              |              |      helix.                                        |
+     | 22 - 25 | Integer      | initSeqNum   | Sequence number of the initial residue.            |
+     | 26      | AChar        | initICode    | Insertion code of the initial residue.             |
+     | 28 - 30 | Residue name | endResName   | Name of the terminal residue of the helix.         |
+     | 32      | Character    | endChainID   | Chain identifier for the chain containing this     |
+     |         |              |              |      helix.                                        |
+     | 34 - 37 | Integer      | endSeqNum    | Sequence number of the terminal residue.           |
+     | 38      | AChar        | endICode     | Insertion code of the terminal residue.            |
+     | 39 - 40 | Integer      | helixClass   | Helix class (see below).                           |
+     | 41 - 70 | String       | comment      | Comment about this helix.                          |
+     | 72 - 76 | Integer      | length       | Length of this helix.                              |
+     |_________|______________|______________|____________________________________________________|
+
+    Details
+    =======
+
+    - Additional HELIX records with different serial numbers and identifiers occur if more than one helix is present.
+    - The initial residue of the helix is the N-terminal residue.
+    - Helices are classified as follows:
+
+     _____________________________________________________
+     |                               |  CLASS NUMBER     |
+     | TYPE OF  HELIX                | (COLUMNS 39 - 40) |
+     |_______________________________|___________________|
+     |                               |                   |
+     | Right-handed alpha (default)  |          1        |
+     | Right-handed omega            |          2        |
+     | Right-handed pi               |          3        |
+     | Right-handed gamma            |          4        |
+     | Right-handed 3 - 10           |          5        |
+     | Left-handed alpha             |          6        |
+     | Left-handed omega             |          7        |
+     | Left-handed gamma             |          8        |
+     | 2 - 7 ribbon/helix            |          9        |
+     | Polyproline                   |         10        |
+     |_______________________________|___________________|
+
+
+    Relationships to Other Record Types
+    ===================================
+
+    There may be related information in the REMARKs.
+
+
+    Example
+    =======
+
+             1         2         3         4         5         6         7         8
+    12345678901234567890123456789012345678901234567890123456789012345678901234567890
+    HELIX    1  HA GLY A   86  GLY A   94  1                                   9
+    HELIX    2  HB GLY B   86  GLY B   94  1                                   9
+
+    HELIX   21  21 PRO J  385  LEU J  388  5                                   4
+    HELIX   22  22 PHE J  397  PHE J  402  5                                   6
+
+
+    @param record:          The PDB HELIX record.
+    @type record:           str
+    @return:                The record name, helix serial number, helix identifier, name of the initial residue, chain identifier, sequence number of the initial residue, insertion code of the initial residue, name of the terminal residue, chain identifier, sequence number of the terminal residue, insertion code of the terminal residue, helix class, comment, helix length.
+    @rtype:                 tuple of str, int, str, str, str, int, str, str, str, int, str, int, str, int
+    """
+
+    # Initialise.
+    fields = []
+
+    # Split up the record.
+    fields.append(record[0:6])
+    fields.append(record[7:10])
+    fields.append(record[11:14])
+    fields.append(record[15:18])
+    fields.append(record[19])
+    fields.append(record[21:25])
+    fields.append(record[25])
+    fields.append(record[27:30])
+    fields.append(record[31])
+    fields.append(record[33:37])
+    fields.append(record[37])
+    fields.append(record[38:40])
+    fields.append(record[40:70])
+    fields.append(record[71:76])
+
+    # Loop over the fields.
+    for i in range(len(fields)):
+        # Strip all whitespace.
+        fields[i] = fields[i].strip()
+
+        # Replace nothingness with None.
+        if fields[i] == '':
+            fields[i] = None
+
+    # Convert strings to numbers.
+    if fields[1]:
+        fields[1] = int(fields[1])
+    if fields[5]:
+        fields[5] = int(fields[5])
+    if fields[9]:
+        fields[9] = int(fields[9])
+    if fields[11]:
+        fields[11] = int(fields[11])
+    if fields[13]:
+        fields[13] = int(fields[13])
+
+    # Return the data.
+    return tuple(fields)
+
+
 def het(record):
     """Parse the HET record.
 
