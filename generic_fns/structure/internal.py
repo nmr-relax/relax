@@ -255,8 +255,40 @@ class Internal(Base_struct_API):
             return 'Average vector'
 
 
+    def _parse_pdb_connectivity_annotation(self, lines):
+        """Loop over and parse the PDB connectivity annotation records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect6.html}
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the connectivity annotation section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the connectivity annotation records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the connectivity annotation section.
+        records = [
+            'SSBOND',
+            'LINK  ',
+            'CISPEP'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the connectivity annotation section.
+            if lines[i][0: 6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
     def _parse_pdb_coord(self, lines):
         """Generator function for looping over the models in the PDB file.
+
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect9.html}.
+
 
         @param lines:       The lines of the coordinate section.
         @type lines:        list of str
@@ -298,6 +330,196 @@ class Internal(Base_struct_API):
         # If records is not empty then there are no models, so yield the lot.
         if len(records):
             yield model, records
+
+
+    def _parse_pdb_hetrogen(self, lines):
+        """Loop over and parse the PDB hetrogen records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect4.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the hetrogen section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the hetrogen records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the hetrogen section.
+        records = [
+            'HET   ',
+            'FORMUL',
+            'HETNAM',
+            'HETSYN'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the hetrogen section.
+            if lines[i][0: 6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_misc(self, lines):
+        """Loop over and parse the PDB miscellaneous records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect7.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the miscellaneous section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the miscellaneous records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the miscellaneous section.
+        records = [
+            'SITE  '
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the miscellaneous section.
+            if lines[i][0: 6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_prim_struct(self, lines):
+        """Loop over and parse the PDB primary structure records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect3.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the title section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the primary structure records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the primary structure section.
+        records = [
+            'DBREF ',
+            'DBREF1',
+            'DBREF2',
+            'SEQADV',
+            'SEQRES',
+            'MODRES'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the primary structure section.
+            if lines[i][0: 6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_ss(self, lines):
+        """Loop over and parse the PDB secondary structure records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the secondary structure section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the secondary structure records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the secondary structure section (the depreciated TURN record is also included to handle old PDB files).
+        records = [
+            'HELIX ',
+            'SHEET ',
+            'TURN  '
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the secondary structure section.
+            if lines[i][0: 6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_title(self, lines):
+        """Loop over and parse the PDB title records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect2.html}.
+
+
+        @param lines:       All lines of the PDB file.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the title records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of (sometimes truncated) record names in the title section.
+        records = [
+            'HEADER',
+            'OBSLTE',
+            'TITLE ',
+            'SPLT  ',
+            'CAVEAT',
+            'COMPND',
+            'SOURCE',
+            'KEYWDS',
+            'EXPDTA',
+            'NUMMDL',
+            'MDLTYP',
+            'AUTHOR',
+            'REVDAT',
+            'SPRSDE',
+            'JRNL  ',
+            'REMARK'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the title section.
+            if lines[i][0: 6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_transform(self, lines):
+        """Loop over and parse the PDB transform records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect8.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the transform section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the transform records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the transform section.
+        records = [
+            'CRYST',
+            'MTRIX',
+            'ORIGX',
+            'SCALE',
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the transform section.
+            if lines[i][0: 5] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
 
 
     def _parse_models_xyz(self, file_path):
@@ -1058,6 +1280,15 @@ class Internal(Base_struct_API):
         # Check for empty files.
         if pdb_lines == []:
             raise RelaxError("The PDB file is empty.")
+
+        # Process the different sections.
+        pdb_lines = self._parse_pdb_title(pdb_lines)
+        pdb_lines = self._parse_pdb_prim_struct(pdb_lines)
+        pdb_lines = self._parse_pdb_hetrogen(pdb_lines)
+        pdb_lines = self._parse_pdb_ss(pdb_lines)
+        pdb_lines = self._parse_pdb_connectivity_annotation(pdb_lines)
+        pdb_lines = self._parse_pdb_misc(pdb_lines)
+        pdb_lines = self._parse_pdb_transform(pdb_lines)
 
         # Loop over all models in the PDB file.
         model_index = 0
