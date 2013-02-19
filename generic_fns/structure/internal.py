@@ -255,23 +255,14 @@ class Internal(Base_struct_API):
             return 'Average vector'
 
 
-    def _parse_models_pdb(self, file_path):
+    def _parse_pdb_coord(self, lines):
         """Generator function for looping over the models in the PDB file.
 
-        @param file_path:   The full path of the PDB file.
-        @type file_path:    str
+        @param lines:       The lines of the coordinate section.
+        @type lines:        list of str
         @return:            The model number and all the records for that model.
         @rtype:             tuple of int and array of str
         """
-
-        # Open the file.
-        file = open_read_file(file_path)
-        lines = file.readlines()
-        file.close()
-
-        # Check for empty files.
-        if lines == []:
-            raise RelaxError("The PDB file is empty.")
 
         # Init.
         model = None
@@ -1059,11 +1050,20 @@ class Internal(Base_struct_API):
         if set_model_num and not isinstance(set_model_num, list):
             set_model_num = [set_model_num]
 
+        # Open the PDB file.
+        pdb_file = open_read_file(file_path)
+        pdb_lines = pdb_file.readlines()
+        pdb_file.close()
+
+        # Check for empty files.
+        if pdb_lines == []:
+            raise RelaxError("The PDB file is empty.")
+
         # Loop over all models in the PDB file.
         model_index = 0
         orig_model_num = []
         mol_conts = []
-        for model_num, model_records in self._parse_models_pdb(file_path):
+        for model_num, model_records in self._parse_pdb_coord(pdb_lines):
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
