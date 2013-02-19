@@ -49,3 +49,23 @@ class Test_pdb_read(UnitTestCase):
         self.assertEqual(record[12], 0.0)
         self.assertEqual(record[13], 'C')
         self.assertEqual(record[14], None)
+
+
+    def test_helix(self):
+        """Test the pdb_read.helix() function."""
+
+        # Parse a PDB record (from the 1UBQ PDB file).
+        record = pdb_read.helix('HELIX    1  H1 ILE A   23  GLU A   34  1                                  12    ')
+
+        # Test the elements.
+        self.assertEqual(record[0], 'HELIX')
+
+
+    def test_sheet(self):
+        """Test the pdb_read.sheet() function."""
+
+        # Parse a PDB record (from the 1UBQ PDB file).
+        record = pdb_read.sheet('SHEET    1 BET 5 GLY A  10  VAL A  17  0                                        ')
+
+        # Test the elements.
+        self.assertEqual(record[0], 'SHEET')
