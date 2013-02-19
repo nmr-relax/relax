@@ -26,7 +26,6 @@
 from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access
-from re import search
 from string import digits
 from warnings import warn
 
@@ -277,7 +276,7 @@ class Internal(Base_struct_API):
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the connectivity annotation section.
-            if lines[i][0: 6] not in records:
+            if lines[i][:6] not in records:
                 break
         
         # Return the remaining lines.
@@ -303,18 +302,18 @@ class Internal(Base_struct_API):
         # Loop over the data.
         for i in range(len(lines)):
             # A new model record.
-            if search('^MODEL', lines[i]):
+            if lines[i][:5] == 'MODEL':
                 try:
                     model = int(lines[i].split()[1])
                 except:
                     raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file.")
 
             # Skip all records prior to the first ATOM or HETATM record.
-            if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
+            if not (lines[i][:4] == 'ATOM' or lines[i][:6] == 'HETATM') and not len(records):
                 continue
 
             # End of the model.
-            if search('^ENDMDL', lines[i]):
+            if lines[i][:6] == 'ENDMDL':
                 # Yield the info.
                 yield model, records
 
@@ -355,7 +354,7 @@ class Internal(Base_struct_API):
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the hetrogen section.
-            if lines[i][0: 6] not in records:
+            if lines[i][:6] not in records:
                 break
         
         # Return the remaining lines.
@@ -382,7 +381,7 @@ class Internal(Base_struct_API):
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the miscellaneous section.
-            if lines[i][0: 6] not in records:
+            if lines[i][:6] not in records:
                 break
         
         # Return the remaining lines.
@@ -414,7 +413,7 @@ class Internal(Base_struct_API):
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the primary structure section.
-            if lines[i][0: 6] not in records:
+            if lines[i][:6] not in records:
                 break
         
         # Return the remaining lines.
@@ -443,7 +442,7 @@ class Internal(Base_struct_API):
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the secondary structure section.
-            if lines[i][0: 6] not in records:
+            if lines[i][:6] not in records:
                 break
         
         # Return the remaining lines.
@@ -485,7 +484,7 @@ class Internal(Base_struct_API):
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the title section.
-            if lines[i][0: 6] not in records:
+            if lines[i][:6] not in records:
                 break
         
         # Return the remaining lines.
@@ -599,19 +598,19 @@ class Internal(Base_struct_API):
         # Loop over the data.
         for i in range(len(records)):
             # A PDB termination record.
-            if search('^END', records[i]):
+            if records[i][:3] == 'END':
                 break
 
             # A model termination record.
-            if search('^ENDMDL', records[i]):
+            if records[i][:6] == 'ENDMDL':
                 end = True
 
             # A molecule termination record with no trailing HETATM.
-            elif i < len(records)-1 and search('^TER', records[i]) and not search('^HETATM', records[i+1]):
+            elif i < len(records)-1 and records[i][:3] == 'TER' and not records[i+1][:6] == 'HETATM':
                 end = True
 
             # A HETATM followed by an ATOM record.
-            elif i < len(records)-1 and search('^HETATM', records[i]) and search('^ATOM', records[i+1]):
+            elif i < len(records)-1 and records[i][:6] == 'HETATM' and records[i+1][:4] == 'ATOM':
                 end = True
 
             # End.
@@ -2187,11 +2186,11 @@ class MolContainer:
                 continue
 
             # Add the atom.
-            if search('^ATOM', record) or search('^HETATM', record):
+            if record[:4] == 'ATOM' or record[:6] == 'HETATM':
                 # Parse the record.
-                if search('^ATOM', record):
+                if record[:4] == 'ATOM':
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.atom(record)
-                if search('^HETATM', record):
+                if record[:6] == 'HETATM':
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.hetatm(record)
 
                 # Handle the alternate locations.
@@ -2212,7 +2211,7 @@ class MolContainer:
                 self.atom_add(pdb_record=record_type, atom_num=serial, atom_name=name, res_name=res_name, chain_id=chain_id, res_num=res_seq, pos=[x, y, z], element=element)
 
             # Connect atoms.
-            if search('^CONECT', record):
+            if record[:6] == 'CONECT':
                 # Parse the record.
                 record_type, serial, bonded1, bonded2, bonded3, bonded4 = pdb_read.conect(record)
 
