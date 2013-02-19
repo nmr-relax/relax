@@ -36,6 +36,7 @@ from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
+from generic_fns.structure import pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
 from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
@@ -1388,8 +1389,8 @@ class Internal(Base_struct_API):
 
         # Write some initial remarks.
         print("REMARK")
-        file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
-        file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
+        pdb_write.remark(file, num=4, remark="This file complies with format v. 3.30, Jul-2011.")
+        pdb_write.remark(file, num=40, remark="Created by relax (http://nmr-relax.com).")
         num_remark = 2
 
         # Determine if model records will be created.
@@ -1488,7 +1489,7 @@ class Internal(Base_struct_API):
 
         # Write the HET records.
         for het in het_data_coll:
-            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
+            pdb_write.het(file, het_id=het[2], chain_id=het[1], seq_num=het[0], num_het_atoms=het[3])
 
 
         # The HETNAM records.
@@ -1512,7 +1513,7 @@ class Internal(Base_struct_API):
                 chemical_name = 'Unknown'
 
             # Write the HETNAM records.
-            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
+            pdb_write.hetnam(file, het_id=het[1], text=chemical_name)
 
 
         # The FORMUL records.
@@ -1538,7 +1539,7 @@ class Internal(Base_struct_API):
                 formula = formula + atom_count[0] + repr(atom_count[1])
 
             # The FORMUL record (chemical formula).
-            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+            pdb_write.formul(file, comp_num=het[0], het_id=het[1], text=formula)
 
 
         ######################
@@ -1555,7 +1556,7 @@ class Internal(Base_struct_API):
                 print("\nMODEL %s" % model.num)
 
                 # Write the model record.
-                file.write("%-6s    %4i\n" % ('MODEL', model.num))
+                pdb_write.model(file, serial=model.num)
 
 
             # Add the atomic coordinate records (ATOM, HETATM, and TER).
@@ -1578,8 +1579,15 @@ class Internal(Base_struct_API):
                         if atom_num == None:
                             atom_num = i + 1
 
+                        # Handle the funky atom name alignment.  From the PDB format documents:
+                        # "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
+                        if len(mol.atom_name[i]) == 1:
+                            atom_name = " %s" % mol.atom_name[i]
+                        else:
+                            atom_name = "%s" % mol.atom_name[i]
+
                         # Write out.
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
+                        pdb_write.atom(file, serial=atom_num, name=atom_name, res_name=mol.res_name[i], chain_id=self._translate(mol.chain_id[i]), res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
                         num_atom = num_atom + 1
 
                         # Info for the TER record.
@@ -1590,7 +1598,7 @@ class Internal(Base_struct_API):
 
                 # Finish the ATOM section with the TER record.
                 if atom_record:
-                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', ter_num, self._translate(ter_name), self._translate(ter_chain_id), self._translate(ter_res_num), ''))
+                    pdb_write.ter(file, serial=ter_num, res_name=ter_name, chain_id=self._translate(ter_chain_id), res_seq=ter_res_num)
                     num_ter = num_ter + 1
 
                 # Loop over the atomic data.
@@ -1610,7 +1618,7 @@ class Internal(Base_struct_API):
                             atom_num += 1
 
                         # Write out.
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
+                        pdb_write.hetatm(file, serial=atom_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=self._translate(mol.chain_id[i]), res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
                         num_hetatm = num_hetatm + 1
 
 
@@ -1618,11 +1626,8 @@ class Internal(Base_struct_API):
             ########################################
 
             if model_records:
-                # Print out.
                 print("ENDMDL")
-
-                # Write the model record.
-                file.write("%-6s\n" % 'ENDMDL')
+                pdb_write.endmdl(file)
 
 
         # Create the CONECT records.
@@ -1671,7 +1676,7 @@ class Internal(Base_struct_API):
                                     bonded[k] = bonded[k] + 1
 
                         # Write the CONECT record.
-                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+                        pdb_write.conect(file, serial=i+1, bonded1=bonded[0], bonded2=bonded[1], bonded3=bonded[2], bonded4=bonded[3])
 
                         # Reset the flush flag, the bonded atom count, and the bonded atom names.
                         flush = False
@@ -1686,21 +1691,15 @@ class Internal(Base_struct_API):
         # MASTER record.
         ################
 
-        # Print out.
         print("\nMASTER")
-
-        # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
+        pdb_write.master(file, num_het=len(het_data_coll), num_coord=num_atom+num_hetatm, num_ter=num_ter, num_conect=num_conect)
 
 
         # END.
         ######
 
-        # Print out.
         print("END")
-
-        # Write the END record.
-        file.write("END\n")
+        pdb_write.end(file)
 
 
 class MolContainer:
