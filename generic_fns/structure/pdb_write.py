@@ -1003,6 +1003,7 @@ def model(file, serial=''):
     # Write out the formatted record.
     file.write("%-6s    %4i\n" % ('MODEL', serial))
 
+
 def remark(file, num='', remark=''):
     """Generate the REMARK record.
 
@@ -1132,4 +1133,5 @@ def ter(file, serial='', res_name='', chain_id='', res_seq='', icode=''):
     @type icode:            str
     """
 
+    # Write out the formatted record.
     file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', serial, res_name, chain_id, res_seq, icode))
