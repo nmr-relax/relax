@@ -838,15 +838,25 @@ class Structure(SystemTestCase):
 
         # Check the first atom.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
 
-        # Check the last atom.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 602)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 40.862)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 39.575)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 36.251)
+        # Check the last atom (from the last water HETATM record).
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
 
 
     def test_read_xyz_internal1(self):
