@@ -49,6 +49,26 @@ def _handle_none(value):
     return value
 
 
+def _handle_text(text):
+    """Auxiliary function for handling text values.
+
+    This will convert None to empty strings and make sure everything is capitalised.
+
+
+    @param text:    The text to convert.
+    @type text:     anything
+    @return:        If the text is None, then an empty string.  All text will be capitalised.
+    @rtype:         anything
+    """
+
+    # Handle None.
+    if text == None:
+        return ''
+
+    # Return capitalised text.
+    return text.upper()
+
+
 def _record_validate(record):
     """Check that the record is ok.
 
@@ -849,7 +869,7 @@ def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', te
         _handle_none(seq_num),
         _handle_none(icode),
         _handle_none(num_het_atoms),
-        _handle_none(text),
+        _handle_text(text),
         ''
     )
 
@@ -1082,7 +1102,7 @@ def hetnam(file, continuation='', het_id='', text=''):
         'HETNAM',
         _handle_none(continuation),
         _handle_none(het_id),
-        _handle_none(text)
+        _handle_text(text)
     )
 
     # Validate.
