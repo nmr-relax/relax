@@ -31,11 +31,13 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import molmol, relax_re
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
+from generic_fns.structure.statistics import atomic_rmsd
 from generic_fns.structure.superimpose import fit_to_first, fit_to_mean, Pivot_finder
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_data, write_spin_data
@@ -53,8 +55,8 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
     @type res_name:         str or None
     @keyword res_num:       The residue number.
     @type res_num:          int or None
-    @keyword pos:           The position vector of coordinates.
-    @type pos:              list (length = 3)
+    @keyword pos:           The position vector of coordinates.  If a rank-2 array is supplied, the length of the first dimension must match the number of models.
+    @type pos:              rank-1 or rank-2 array or list of float
     @keyword element:       The element symbol.
     @type element:          str or None
     @keyword atom_num:      The atom number.
@@ -76,6 +78,29 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
 
     # Add the atoms.
     cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+
+
+def add_model(model_num=None):
+    """Add a new model to the empty structural data object."""
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # The structural object can only be the internal object.
+    if cdp.structure.id != 'internal':
+        raise RelaxError("Models can only be added to the internal structural object.")
+
+    # Check the structural object is empty.
+    if cdp.structure.num_molecules() != 0:
+        raise RelaxError("The internal structural object is not empty.")
+
+    # Add a model.
+    cdp.structure.structural_data.add_item(model_num=model_num)
+    print("Created the empty model number %s." % model_num)
 
 
 def connect_atom(index1=None, index2=None):
@@ -105,19 +130,25 @@ def delete():
     pipes.test()
 
     # Run the object method.
-    cdp.structure.delete()
+    if hasattr(cdp, 'structure'):
+        print("Deleting all structural data from the current pipe.")
+        cdp.structure.delete()
+    else:
+        print("No structures are present.")
 
     # Then remove any spin specific structural info.
+    print("Deleting all spin specific structural info.")
     for spin in spin_loop():
         # Delete positional information.
         if hasattr(spin, 'pos'):
             del spin.pos
 
+    # Then remove any interatomic vector structural info.
+    print("Deleting all interatomic vectors.")
+    for interatom in interatomic_loop():
         # Delete bond vectors.
-        if hasattr(spin, 'bond_vect'):
-            del spin.bond_vect
-        if hasattr(spin, 'xh_vect'):
-            del spin.xh_vect
+        if hasattr(interatom, 'vector'):
+            del interatom.vector
 
 
 def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
@@ -537,6 +568,41 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
 
     # Load the structures.
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
+
+
+def rmsd(atom_id=None, models=None):
+    """Calculate the RMSD between the loaded models.
+
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+    @type atom_id:      str or None
+    @keyword models:    The list of models to calculate the RMDS of.  If set to None, then all models will be used.
+    @type models:       list of int or None
+    @return:            The RMSD value.
+    @rtype:             float
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Create a list of all models.
+    if models == None:
+        models = []
+        for model in cdp.structure.model_loop():
+            models.append(model.num)
+
+    # Assemble the atomic coordinates of all models.
+    coord = []
+    for model in models:
+        coord.append([])
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+            coord[-1].append(pos[0])
+        coord[-1] = array(coord[-1])
+
+    # Calculate the RMSD.
+    cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)
+
+    # Return the RMSD.
+    return cdp.structure.rmsd
 
 
 def rotate(R=None, origin=None, model=None, atom_id=None):

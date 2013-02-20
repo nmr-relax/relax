@@ -25,10 +25,11 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import diag, dot, eye, float64, outer, sign, sqrt, transpose, zeros
+from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
+from generic_fns.structure.statistics import atomic_rmsd, calc_mean_structure
 from maths_fns.rotation_matrix import R_to_axis_angle
 
 
@@ -73,69 +74,6 @@ class Pivot_finder:
         # Return the RMSD.
         return val
 
-
-
-def atomic_rmsd(coord):
-    """Determine the RMSD for the given atomic coordinates.
-
-    This is the per atom RMSD to the mean structure.
-
-
-    @keyword coord:     The array of molecular coordinates.  The first dimension corresponds to the model, the second the atom, the third the coordinate.
-    @type coord:        rank-3 numpy array
-    """
-
-    # Init.
-    M = len(coord)
-    N = len(coord[0])
-    model_rmsd = zeros(M, float64)
-    mean = zeros((N, 3), float64)
-
-    # Calculate the mean structure.
-    calc_mean_structure(coord, mean)
-
-    # Loop over the models.
-    for i in range(M):
-        # Loop over the atoms.
-        for j in range(N):
-            # The vector connecting the mean to model atom.
-            vect = mean[j] - coord[i][j]
-
-            # The atomic RMSD.
-            model_rmsd[i] += norm(vect)**2
-
-        # Normalise, and sqrt.
-        model_rmsd[i] = sqrt(model_rmsd[i] / N)
-
-    # Return the average RMSD.
-    return sum(model_rmsd) / M
-
-
-def calc_mean_structure(coord=None, mean=None):
-    """Average the coordinates.
-
-    @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
-    @type coord:        list of numpy rank-2, Nx3 arrays
-    @keyword mean:      The data storage for the mean structure.
-    @type mean:         numpy rank-2, Nx3 array
-    """
-
-    # The number of atoms.
-    N = len(coord[0])
-    M = len(coord)
-
-    # Clear the mean data structure.
-    for i in range(N):
-        mean[i] = [0.0, 0.0, 0.0]
-
-    # Loop over the atoms.
-    for i in range(N):
-        # Loop over the models.
-        for j in range(M):
-            mean[i] += coord[j][i]
-
-        # Average.
-        mean[i] = mean[i] / M
 
 
 def find_centroid(coords):

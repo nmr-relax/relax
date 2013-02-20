@@ -20,6 +20,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import sqrt
 from numpy import float64, zeros
 from os import sep
 from tempfile import mktemp
@@ -94,6 +95,36 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1OGT_trunc.pdb', dir=path, alt_loc='A')
         self.interpreter.structure.load_spins(spin_id='@N', ave_pos=True)
         self.interpreter.sequence.attach_protons()
+
+
+    def test_delete_empty(self):
+        """Test the deletion of non-existent structural data."""
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+
+    def test_delete_multi_pipe(self):
+        """Test the deletion of structural data in only one pipe."""
+
+        # Create a structure with a single atom.
+        self.interpreter.structure.add_atom(atom_name='PIV', res_name='M1', res_num=1, pos=[0., 1., 2.], element='S')
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('new', 'N-state')
+
+        # Create a structure with a single atom.
+        self.interpreter.structure.add_atom(atom_name='PIV', res_name='M1', res_num=2, pos=[4., 5., 6.], element='S')
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Checks.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(len(cdp.structure.structural_data), 0)
+        self.interpreter.pipe.switch('mf')
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
 
 
     def test_displacement(self):
@@ -344,7 +375,6 @@ class Structure(SystemTestCase):
         self.interpreter.dipole_pair.unit_vectors()
         print(cdp.interatomic[0])
         self.assert_(hasattr(cdp.interatomic[0], 'vector'))
-
 
 
     def test_read_pdb_internal2(self):
@@ -793,6 +823,42 @@ class Structure(SystemTestCase):
                 self.assertEqual(mol.file_mol_num, 1)
 
 
+    def test_read_pdb_1UBQ(self):
+        """Test the reading of the complete 1UBQ PDB file."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
+
+        # Check the data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Check the first atom.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
+
+        # Check the last atom (from the last water HETATM record).
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
+
+
     def test_read_xyz_internal1(self):
         """Load the 'Indol_test.xyz' XYZ file (using the internal structural object XYZ reader)."""
 
@@ -850,6 +916,58 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.interatomic[0].vector[0], -0.4102707)
         self.assertAlmostEqual(cdp.interatomic[0].vector[1], 0.62128879)
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], -0.6675913)
+
+
+    def test_rmsd(self):
+        """Test the structure.rmsd user function."""
+
+        # Set up 3 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+        self.interpreter.structure.add_model(model_num=4)
+
+        # Check that the models were correctly created.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 3)
+
+        # Create a structure with some atoms.
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, pos=[[1., 0., -1.], [0., 0., 0.], [-1., 0., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., -1.], [0., 2., 0.], [-1., 2., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., -1.], [0., 20., 0.], [-1., 20., 1.]], element='S')
+
+        # Check the internal atomic info.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].z, [1., 1., 1.])
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd()
+
+        # Checks.
+        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
+
+
+    def test_rmsd_ubi(self):
+        """Test the structure.rmsd user function on the truncated ubiquitin ensemble."""
+
+        # Load the structure.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('trunc_ubi_pcs.pdb', dir=path)
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd()
+
+        # Checks (the values match the VMD 1.9.1 RMSD numbers).
+        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
 
 
     def test_superimpose_fit_to_first(self):

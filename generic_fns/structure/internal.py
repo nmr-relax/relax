@@ -27,15 +27,16 @@ from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
-from re import search
 from string import digits
 from warnings import warn
 
 # relax module imports.
+from check_types import is_float
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
+from generic_fns.structure import pdb_read, pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
 from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
@@ -254,23 +255,46 @@ class Internal(Base_struct_API):
             return 'Average vector'
 
 
-    def _parse_models_pdb(self, file_path):
+    def _parse_pdb_connectivity_annotation(self, lines):
+        """Loop over and parse the PDB connectivity annotation records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect6.html}
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the connectivity annotation section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the connectivity annotation records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the connectivity annotation section.
+        records = [
+            'SSBOND',
+            'LINK  ',
+            'CISPEP'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the connectivity annotation section.
+            if lines[i][:6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_coord(self, lines):
         """Generator function for looping over the models in the PDB file.
 
-        @param file_path:   The full path of the PDB file.
-        @type file_path:    str
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect9.html}.
+
+
+        @param lines:       The lines of the coordinate section.
+        @type lines:        list of str
         @return:            The model number and all the records for that model.
         @rtype:             tuple of int and array of str
         """
-
-        # Open the file.
-        file = open_read_file(file_path)
-        lines = file.readlines()
-        file.close()
-
-        # Check for empty files.
-        if lines == []:
-            raise RelaxError("The PDB file is empty.")
 
         # Init.
         model = None
@@ -279,18 +303,18 @@ class Internal(Base_struct_API):
         # Loop over the data.
         for i in range(len(lines)):
             # A new model record.
-            if search('^MODEL', lines[i]):
+            if lines[i][:5] == 'MODEL':
                 try:
                     model = int(lines[i].split()[1])
                 except:
                     raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file.")
 
             # Skip all records prior to the first ATOM or HETATM record.
-            if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
+            if not (lines[i][:4] == 'ATOM' or lines[i][:6] == 'HETATM') and not len(records):
                 continue
 
             # End of the model.
-            if search('^ENDMDL', lines[i]):
+            if lines[i][:6] == 'ENDMDL':
                 # Yield the info.
                 yield model, records
 
@@ -306,6 +330,196 @@ class Internal(Base_struct_API):
         # If records is not empty then there are no models, so yield the lot.
         if len(records):
             yield model, records
+
+
+    def _parse_pdb_hetrogen(self, lines):
+        """Loop over and parse the PDB hetrogen records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect4.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the hetrogen section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the hetrogen records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the hetrogen section.
+        records = [
+            'HET   ',
+            'FORMUL',
+            'HETNAM',
+            'HETSYN'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the hetrogen section.
+            if lines[i][:6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_misc(self, lines):
+        """Loop over and parse the PDB miscellaneous records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect7.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the miscellaneous section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the miscellaneous records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the miscellaneous section.
+        records = [
+            'SITE  '
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the miscellaneous section.
+            if lines[i][:6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_prim_struct(self, lines):
+        """Loop over and parse the PDB primary structure records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect3.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the title section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the primary structure records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the primary structure section.
+        records = [
+            'DBREF ',
+            'DBREF1',
+            'DBREF2',
+            'SEQADV',
+            'SEQRES',
+            'MODRES'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the primary structure section.
+            if lines[i][:6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_ss(self, lines):
+        """Loop over and parse the PDB secondary structure records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the secondary structure section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the secondary structure records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the secondary structure section (the depreciated TURN record is also included to handle old PDB files).
+        records = [
+            'HELIX ',
+            'SHEET ',
+            'TURN  '
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the secondary structure section.
+            if lines[i][:6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_title(self, lines):
+        """Loop over and parse the PDB title records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect2.html}.
+
+
+        @param lines:       All lines of the PDB file.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the title records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of (sometimes truncated) record names in the title section.
+        records = [
+            'HEADER',
+            'OBSLTE',
+            'TITLE ',
+            'SPLT  ',
+            'CAVEAT',
+            'COMPND',
+            'SOURCE',
+            'KEYWDS',
+            'EXPDTA',
+            'NUMMDL',
+            'MDLTYP',
+            'AUTHOR',
+            'REVDAT',
+            'SPRSDE',
+            'JRNL  ',
+            'REMARK'
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the title section.
+            if lines[i][:6] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
+
+
+    def _parse_pdb_transform(self, lines):
+        """Loop over and parse the PDB transform records.
+        
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect8.html}.
+
+
+        @param lines:       The lines of the PDB file excluding the sections prior to the transform section.
+        @type lines:        list of str
+        @return:            The remaining PDB lines with the transform records stripped.
+        @rtype:             list of str
+        """
+
+        # The ordered list of record names in the transform section.
+        records = [
+            'CRYST',
+            'MTRIX',
+            'ORIGX',
+            'SCALE',
+        ]
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # No match, therefore assume to be out of the transform section.
+            if lines[i][0: 5] not in records:
+                break
+        
+        # Return the remaining lines.
+        return lines[i:]
 
 
     def _parse_models_xyz(self, file_path):
@@ -385,19 +599,19 @@ class Internal(Base_struct_API):
         # Loop over the data.
         for i in range(len(records)):
             # A PDB termination record.
-            if search('^END', records[i]):
+            if records[i][:3] == 'END':
                 break
 
             # A model termination record.
-            if search('^ENDMDL', records[i]):
+            if records[i][:6] == 'ENDMDL':
                 end = True
 
             # A molecule termination record with no trailing HETATM.
-            elif i < len(records)-1 and search('^TER', records[i]) and not search('^HETATM', records[i+1]):
+            elif i < len(records)-1 and records[i][:3] == 'TER' and not records[i+1][:6] == 'HETATM':
                 end = True
 
             # A HETATM followed by an ATOM record.
-            elif i < len(records)-1 and search('^HETATM', records[i]) and search('^ATOM', records[i+1]):
+            elif i < len(records)-1 and records[i][:6] == 'HETATM' and records[i+1][:4] == 'ATOM':
                 end = True
 
             # End.
@@ -582,8 +796,8 @@ class Internal(Base_struct_API):
         @type res_name:         str or None
         @keyword res_num:       The residue number.
         @type res_num:          int or None
-        @keyword pos:           The position vector of coordinates.
-        @type pos:              list (length = 3)
+        @keyword pos:           The position vector of coordinates.  If a rank-2 array is supplied, the length of the first dimension must match the number of models.
+        @type pos:              rank-1 or rank-2 array or list of float
         @keyword element:       The element symbol.
         @type element:          str or None
         @keyword atom_num:      The atom number.
@@ -603,8 +817,19 @@ class Internal(Base_struct_API):
         if len(self.structural_data) == 0:
             self.add_model()
 
+        # Check the position.
+        if is_float(pos[0]):
+            if len(pos) != 3:
+                raise RelaxError("The single atomic position %s must be a 3D list." % pos)
+        else:
+            if len(pos) != len(self.structural_data):
+                raise RelaxError("The %s atomic positions does not match the %s models present." % (len(pos), len(self.structural_data)))
+
         # Loop over each model.
-        for model in self.structural_data:
+        for i in range(len(self.structural_data)):
+            # Alias the model.
+            model = self.structural_data[i]
+
             # Specific molecule.
             mol = self.get_molecule(mol_name, model=model.num)
 
@@ -613,8 +838,14 @@ class Internal(Base_struct_API):
                 self.add_molecule(name=mol_name)
                 mol = self.get_molecule(mol_name, model=model.num)
 
+            # Split up the position if needed.
+            if is_float(pos[0]):
+                model_pos = pos
+            else:
+                model_pos = pos[i]
+
             # Add the atom.
-            mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+            mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
     def add_model(self, model=None, coords_from=None):
@@ -1076,11 +1307,29 @@ class Internal(Base_struct_API):
         if set_model_num and not isinstance(set_model_num, list):
             set_model_num = [set_model_num]
 
+        # Open the PDB file.
+        pdb_file = open_read_file(file_path)
+        pdb_lines = pdb_file.readlines()
+        pdb_file.close()
+
+        # Check for empty files.
+        if pdb_lines == []:
+            raise RelaxError("The PDB file is empty.")
+
+        # Process the different sections.
+        pdb_lines = self._parse_pdb_title(pdb_lines)
+        pdb_lines = self._parse_pdb_prim_struct(pdb_lines)
+        pdb_lines = self._parse_pdb_hetrogen(pdb_lines)
+        pdb_lines = self._parse_pdb_ss(pdb_lines)
+        pdb_lines = self._parse_pdb_connectivity_annotation(pdb_lines)
+        pdb_lines = self._parse_pdb_misc(pdb_lines)
+        pdb_lines = self._parse_pdb_transform(pdb_lines)
+
         # Loop over all models in the PDB file.
         model_index = 0
         orig_model_num = []
         mol_conts = []
-        for model_num, model_records in self._parse_models_pdb(file_path):
+        for model_num, model_records in self._parse_pdb_coord(pdb_lines):
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
@@ -1118,7 +1367,7 @@ class Internal(Base_struct_API):
                 mol = MolContainer()
 
                 # Fill the molecular data object.
-                mol.fill_object_from_pdb(mol_records, alt_loc=alt_loc)
+                mol.fill_object_from_pdb(mol_records, alt_loc_select=alt_loc)
 
                 # Store the molecule container.
                 mol_conts[model_index].append(mol)
@@ -1409,8 +1658,8 @@ class Internal(Base_struct_API):
 
         # Write some initial remarks.
         print("REMARK")
-        file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
-        file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
+        pdb_write.remark(file, num=4, remark="This file complies with format v. 3.30, Jul-2011.")
+        pdb_write.remark(file, num=40, remark="Created by relax (http://nmr-relax.com).")
         num_remark = 2
 
         # Determine if model records will be created.
@@ -1509,7 +1758,7 @@ class Internal(Base_struct_API):
 
         # Write the HET records.
         for het in het_data_coll:
-            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
+            pdb_write.het(file, het_id=het[2], chain_id=het[1], seq_num=het[0], num_het_atoms=het[3])
 
 
         # The HETNAM records.
@@ -1533,7 +1782,7 @@ class Internal(Base_struct_API):
                 chemical_name = 'Unknown'
 
             # Write the HETNAM records.
-            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
+            pdb_write.hetnam(file, het_id=het[1], text=chemical_name)
 
 
         # The FORMUL records.
@@ -1559,7 +1808,7 @@ class Internal(Base_struct_API):
                 formula = formula + atom_count[0] + repr(atom_count[1])
 
             # The FORMUL record (chemical formula).
-            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+            pdb_write.formul(file, comp_num=het[0], het_id=het[1], text=formula)
 
 
         ######################
@@ -1576,7 +1825,7 @@ class Internal(Base_struct_API):
                 print("\nMODEL %s" % model.num)
 
                 # Write the model record.
-                file.write("%-6s    %4i\n" % ('MODEL', model.num))
+                pdb_write.model(file, serial=model.num)
 
 
             # Add the atomic coordinate records (ATOM, HETATM, and TER).
@@ -1599,8 +1848,15 @@ class Internal(Base_struct_API):
                         if atom_num == None:
                             atom_num = i + 1
 
+                        # Handle the funky atom name alignment.  From the PDB format documents:
+                        # "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
+                        if len(mol.atom_name[i]) == 1:
+                            atom_name = " %s" % mol.atom_name[i]
+                        else:
+                            atom_name = "%s" % mol.atom_name[i]
+
                         # Write out.
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
+                        pdb_write.atom(file, serial=atom_num, name=atom_name, res_name=mol.res_name[i], chain_id=self._translate(mol.chain_id[i]), res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
                         num_atom = num_atom + 1
 
                         # Info for the TER record.
@@ -1611,7 +1867,7 @@ class Internal(Base_struct_API):
 
                 # Finish the ATOM section with the TER record.
                 if atom_record:
-                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', ter_num, self._translate(ter_name), self._translate(ter_chain_id), self._translate(ter_res_num), ''))
+                    pdb_write.ter(file, serial=ter_num, res_name=ter_name, chain_id=self._translate(ter_chain_id), res_seq=ter_res_num)
                     num_ter = num_ter + 1
 
                 # Loop over the atomic data.
@@ -1631,7 +1887,7 @@ class Internal(Base_struct_API):
                             atom_num += 1
 
                         # Write out.
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
+                        pdb_write.hetatm(file, serial=atom_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=self._translate(mol.chain_id[i]), res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
                         num_hetatm = num_hetatm + 1
 
 
@@ -1639,11 +1895,8 @@ class Internal(Base_struct_API):
             ########################################
 
             if model_records:
-                # Print out.
                 print("ENDMDL")
-
-                # Write the model record.
-                file.write("%-6s\n" % 'ENDMDL')
+                pdb_write.endmdl(file)
 
 
         # Create the CONECT records.
@@ -1692,7 +1945,7 @@ class Internal(Base_struct_API):
                                     bonded[k] = bonded[k] + 1
 
                         # Write the CONECT record.
-                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+                        pdb_write.conect(file, serial=i+1, bonded1=bonded[0], bonded2=bonded[1], bonded3=bonded[2], bonded4=bonded[3])
 
                         # Reset the flush flag, the bonded atom count, and the bonded atom names.
                         flush = False
@@ -1707,21 +1960,15 @@ class Internal(Base_struct_API):
         # MASTER record.
         ################
 
-        # Print out.
         print("\nMASTER")
-
-        # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
+        pdb_write.master(file, num_het=len(het_data_coll), num_coord=num_atom+num_hetatm, num_ter=num_ter, num_conect=num_conect)
 
 
         # END.
         ######
 
-        # Print out.
         print("END")
-
-        # Write the END record.
-        file.write("END\n")
+        pdb_write.end(file)
 
 
 class MolContainer:
@@ -1847,161 +2094,6 @@ class MolContainer:
         warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
 
 
-    def _parse_pdb_record(self, record):
-        """Parse the PDB record string and return an array of the corresponding atomic information.
-
-        The format of the ATOM and HETATM records is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "ATOM"       |                                                |
-         |  7 - 11 | Integer      | serial       | Atom serial number.                            |
-         | 13 - 16 | Atom         | name         | Atom name.                                     |
-         | 17      | Character    | altLoc       | Alternate location indicator.                  |
-         | 18 - 20 | Residue name | resName      | Residue name.                                  |
-         | 22      | Character    | chainID      | Chain identifier.                              |
-         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
-         | 27      | AChar        | iCode        | Code for insertion of residues.                |
-         | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
-         | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
-         | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
-         | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
-         | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
-         | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
-         | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
-         | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
-         |_________|______________|______________|________________________________________________|
-
-
-        The format of the TER record is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "TER   "     |                                                |
-         |  7 - 11 | Integer      | serial       | Serial number.                                 |
-         | 18 - 20 | Residue name | resName      | Residue name.                                  |
-         | 22      | Character    | chainID      | Chain identifier.                              |
-         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
-         | 27      | AChar        | iCode        | Insertion code.                                |
-         |_________|______________|______________|________________________________________________|
-
-
-        The format of the CONECT record is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "CONECT"     |                                                |
-         |  7 - 11 | Integer      | serial       | Atom serial number                             |
-         | 12 - 16 | Integer      | serial       | Serial number of bonded atom                   |
-         | 17 - 21 | Integer      | serial       | Serial number of bonded atom                   |
-         | 22 - 26 | Integer      | serial       | Serial number of bonded atom                   |
-         | 27 - 31 | Integer      | serial       | Serial number of bonded atom                   |
-         | 32 - 36 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 37 - 41 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 42 - 46 | Integer      | serial       | Serial number of salt bridged atom             |
-         | 47 - 51 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 52 - 56 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 57 - 61 | Integer      | serial       | Serial number of salt bridged atom             |
-         |_________|______________|______________|________________________________________________|
-
-
-        @param record:  The single line PDB record.
-        @type record:   str
-        @return:        The list of atomic information, each element corresponding to the PDB fields
-                        as defined in "Protein Data Bank Contents Guide: Atomic Coordinate Entry
-                        Format Description" version 2.1 (draft), October 25, 1996.
-        @rtype:         list of str
-        """
-
-        # Initialise.
-        fields = []
-
-        # ATOM and HETATM records.
-        if search('^ATOM', record) or search('^HETATM', record):
-            # Split up the record.
-            fields.append(record[0:6])
-            fields.append(record[6:11])
-            fields.append(record[12:16])
-            fields.append(record[16])
-            fields.append(record[17:20])
-            fields.append(record[21])
-            fields.append(record[22:26])
-            fields.append(record[26])
-            fields.append(record[30:38])
-            fields.append(record[38:46])
-            fields.append(record[46:54])
-            fields.append(record[54:60])
-            fields.append(record[60:66])
-            fields.append(record[72:76])
-            fields.append(record[76:78])
-            fields.append(record[78:80])
-
-            # Loop over the fields.
-            for i in range(len(fields)):
-                # Strip all whitespace.
-                fields[i] = fields[i].strip()
-
-                # Replace nothingness with None.
-                if fields[i] == '':
-                    fields[i] = None
-
-            # Convert strings to numbers.
-            if fields[1]:
-                fields[1] = int(fields[1])
-            if fields[6]:
-                fields[6] = int(fields[6])
-            if fields[8]:
-                fields[8] = float(fields[8])
-            if fields[9]:
-                fields[9] = float(fields[9])
-            if fields[10]:
-                fields[10] = float(fields[10])
-            if fields[11]:
-                fields[11] = float(fields[11])
-            if fields[12]:
-                fields[12] = float(fields[12])
-
-        # CONECT records.
-        if search('^CONECT', record):
-            # Split up the record.
-            fields.append(record[0:6])
-            fields.append(record[6:11])
-            fields.append(record[11:16])
-            fields.append(record[16:21])
-            fields.append(record[21:26])
-            fields.append(record[26:31])
-
-            # Loop over the fields.
-            for i in range(len(fields)):
-                # Strip all whitespace.
-                fields[i] = fields[i].strip()
-
-                # Replace nothingness with None.
-                if fields[i] == '':
-                    fields[i] = None
-
-            # Convert strings to numbers.
-            if fields[1]:
-                fields[1] = int(fields[1])
-            if fields[2]:
-                fields[2] = int(fields[2])
-            if fields[3]:
-                fields[3] = int(fields[3])
-            if fields[4]:
-                fields[4] = int(fields[4])
-            if fields[5]:
-                fields[5] = int(fields[5])
-
-        # Return the atomic info.
-        return fields
-
-
     def _parse_xyz_record(self, record):
         """Parse the XYZ record string and return an array of the corresponding atomic information.
 
@@ -2117,58 +2209,63 @@ class MolContainer:
             self.bonded[index2].append(index1)
 
 
-    def fill_object_from_pdb(self, records, alt_loc=None):
+    def fill_object_from_pdb(self, records, alt_loc_select=None):
         """Method for generating a complete Structure_container object from the given PDB records.
 
-        @param records:         A list of structural PDB records.
-        @type records:          list of str
-        @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
-        @type alt_loc:          str or None
+        @param records:             A list of structural PDB records.
+        @type records:              list of str
+        @keyword alt_loc_select:    The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
+        @type alt_loc_select:       str or None
         """
 
         # Loop over the records.
         for record in records:
-            # Parse the record.
-            record = self._parse_pdb_record(record)
-
             # Nothing to do.
-            if not record:
+            if not record or record == '\n':
                 continue
 
             # Add the atom.
-            if record[0] == 'ATOM' or record[0] == 'HETATM':
+            if record[:4] == 'ATOM' or record[:6] == 'HETATM':
+                # Parse the record.
+                if record[:4] == 'ATOM':
+                    record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.atom(record)
+                if record[:6] == 'HETATM':
+                    record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.hetatm(record)
+
                 # Handle the alternate locations.
-                if record[3] != None:
+                if alt_loc != None:
                     # Don't know what to do.
-                    if alt_loc == None:
+                    if alt_loc_select == None:
                         raise RelaxError("Multiple alternate location indicators are present in the PDB file, but the desired coordinate set has not been specified.")
 
                     # Skip non-matching locations.
-                    if record[3] != alt_loc:
+                    if alt_loc != alt_loc_select:
                         continue
 
                 # Attempt at determining the element, if missing.
-                element = record[14]
                 if not element:
-                    element = self._det_pdb_element(record[2])
+                    element = self._det_pdb_element(name)
 
                 # Add.
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=element)
+                self.atom_add(pdb_record=record_type, atom_num=serial, atom_name=name, res_name=res_name, chain_id=chain_id, res_num=res_seq, pos=[x, y, z], element=element)
 
             # Connect atoms.
-            if record[0] == 'CONECT':
+            if record[:6] == 'CONECT':
+                # Parse the record.
+                record_type, serial, bonded1, bonded2, bonded3, bonded4 = pdb_read.conect(record)
+
                 # Loop over the atoms of the record.
-                for i in range(len(record)-2):
+                for bonded in [bonded1, bonded2, bonded3, bonded4]:
                     # Skip if there is no record.
-                    if record[i+2] == None:
+                    if not bonded:
                         continue
 
                     # Skip broken CONECT records (for when the record points to a non-existent atom).
-                    if self._atom_index(record[1]) == None or self._atom_index(record[i+2]) == None:
+                    if self._atom_index(serial) == None or self._atom_index(bonded) == None:
                         continue
 
                     # Make the connection.
-                    self.atom_connect(index1=self._atom_index(record[1]), index2=self._atom_index(record[i+2]))
+                    self.atom_connect(index1=self._atom_index(serial), index2=self._atom_index(bonded))
 
 
     def fill_object_from_xyz(self, records):

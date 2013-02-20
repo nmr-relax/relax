@@ -74,9 +74,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pos",
-    default = [None, None, None],
-    py_type = "float_array",
-    dim = 3,
+    py_type = "float_object",
     desc_short = "atomic position",
     desc = "The atomic coordinates."
 )
@@ -119,11 +117,31 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows atoms to be added to the internal structural object.")
+uf.desc[-1].add_paragraph("This allows atoms to be added to the internal structural object.  To use the same atomic coordinates for all models, the atomic position can be an array of 3 values.  Alternatively different coordinates can be used for each model if the atomic position is a rank-2 array where the first dimension matches the number of models currently present.")
 uf.backend = generic_fns.structure.main.add_atom
 uf.menu_text = "&add_atom"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (800, 600)
+uf.wizard_size = (900, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
+# The structure.add_model user function.
+uf = uf_info.add_uf('structure.add_model')
+uf.title = "Add a new model."
+uf.title_short = "Model creation."
+uf.add_keyarg(
+    name = "model_num",
+    py_type = "int",
+    desc_short = "model number",
+    desc = "The number of the new model."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows new models to be added to the internal structural object.  Note that no structural information is allowed to be present")
+uf.backend = generic_fns.structure.main.add_model
+uf.menu_text = "&add_model"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -651,6 +669,31 @@ uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_xyz.png'
+
+
+# The structure.rmsd user function.
+uf = uf_info.add_uf('structure.rmsd')
+uf.title = "Determine the RMSD between the models."
+uf.title_short = "Structural RMSD."
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
+uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the RMSD calculation to certain molecules, residues, or atoms.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To determine the RMSD, simply type:")
+uf.desc[-1].add_prompt("relax> structure.rmsd()")
+uf.backend = generic_fns.structure.main.rmsd
+uf.menu_text = "&rmsd"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
 # The structure.rotate user function.
