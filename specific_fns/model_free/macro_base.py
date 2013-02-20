@@ -29,7 +29,7 @@ from re import search
 # relax module imports.
 from colour import linear_gradient
 from generic_fns.mol_res_spin import spin_loop
-from relax_errors import RelaxError, RelaxFault, RelaxStyleError, RelaxUnknownDataTypeError
+from relax_errors import RelaxError, RelaxStyleError, RelaxUnknownDataTypeError
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -173,10 +173,6 @@ class Macro:
                     # White bonds (for models m2 and m4 when te > 200 ps).
                     elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
                         self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
-
-                    # Catch errors.
-                    else:
-                        raise RelaxFault
 
 
         # Amplitude of slow motions.
