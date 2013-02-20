@@ -521,8 +521,22 @@ class Model_free_main:
         @rtype:     float
         """
 
+        # No frequency info.
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError("No spectrometer frequency information is present in the current data pipe.")
+
+        # The 1st spectrometer frequency.
+        if hasattr(cdp, 'ri_ids'):
+            frq = cdp.frq[cdp.ri_ids[0]]
+
+        # Take the highest frequency, if all else fails.
+        else:
+            frqs = cdp.frq.values()
+            frqs.sort()
+            frq = frqs[-1]
+
         # The factor.
-        return 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+        return 1.0 / (2.0 * pi * frq)**2
 
 
     def _create_model(self, model=None, equation=None, params=None, spin_id=None):

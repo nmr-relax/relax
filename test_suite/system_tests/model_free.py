@@ -299,6 +299,11 @@ class Mf(SystemTestCase):
         # Load some sequence data.
         self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
 
+        # Set some spin info.
+        self.interpreter.spin.name('N')
+        self.interpreter.spin.element('N')
+        self.interpreter.spin.isotope('15N')
+
         # The models to create.
         models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'] + ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
 
