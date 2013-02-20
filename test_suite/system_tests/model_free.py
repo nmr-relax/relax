@@ -296,6 +296,71 @@ class Mf(SystemTestCase):
     def test_bug_20531_molmol_macro_write_relaxfault(self):
         """Bug #20531 catch (https://gna.org/bugs/?20531), the RelaxFault when creating the Molmol macros."""
 
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'bug_20531_mf_relaxfault.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
+        # Attempt to create the Molmol macros.
+        self.interpreter.molmol.macro_write(data_type='s2',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2f',       dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2s',       dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_fast',  dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_slow',  dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='te',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='tf',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='ts',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_fast', dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_slow', dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='rex',       dir=ds.tmpdir, force=True)
+
+        # Attempt to create the PyMOL macros.
+        self.interpreter.pymol.macro_write(data_type='s2',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2f',       dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2s',       dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_fast',  dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_slow',  dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='te',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='tf',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='ts',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_fast', dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_slow', dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='rex',       dir=ds.tmpdir, force=True)
+
+        # Attempt to create the Grace plots.
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2',  file='s2.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='te',  file='te.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf',  file='tf.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts',  file='ts.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',   y_data_type='te',  file='s2_vs_te.agr',  dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',   y_data_type='rex', file='s2_vs_rex.agr', dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='te',   y_data_type='rex', file='te_vs_rex.agr', dir=ds.tmpdir, force=True)
+
+        # Attempt to create the text files of the values.
+        self.interpreter.value.write(param='s2',       file='s2.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='s2f',      file='s2f.txt',      dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='s2s',      file='s2s.txt',      dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='te',       file='te.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='tf',       file='tf.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='ts',       file='ts.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='rex',      file='rex.txt',      dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=ds.tmpdir, force=True)
+
+
+    def test_bug_20531_molmol_macro_write_relaxfault2(self):
+        """Bug #20531 catch (https://gna.org/bugs/?20531), the RelaxFault when creating the Molmol macros.
+
+        This was the first attempt at catching the bug, but it failed.  However the code paths tested here are not tested in any other tests, so this system test will remain.
+        """
+
         # Load some sequence data.
         self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
 
