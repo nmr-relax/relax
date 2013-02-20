@@ -722,7 +722,7 @@ def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', ini
     """
 
     # The formatted record.
-    text = "%-6s %3s %3s %3s %1s %4s%1s %3s %s %4s%1s%2s%30s %5s    " % (
+    text = "%-6s %3s %3s %3s %1s %4s%1s %3s %1s %4s%1s%2s%30s %5s    " % (
         'HELIX',
         _handle_none(ser_num),
         _handle_none(helix_id),
