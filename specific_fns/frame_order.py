@@ -1354,9 +1354,9 @@ class Frame_order(API_base, API_common):
             rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, absolute_rdc = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Data checks.
-        if not len(pcs):
+        if pcs != None and not len(pcs):
             raise RelaxNoPCSError
-        if not len(rdcs):
+        if rdcs != None and not len(rdcs):
             raise RelaxNoRDCError
 
         # Get the atomic_positions.
