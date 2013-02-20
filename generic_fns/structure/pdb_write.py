@@ -29,6 +29,23 @@ This module currently used the PDB format version 3.30 from July, 2011 U{http://
 from textwrap import wrap
 
 
+def _handle_none(value):
+    """Auxiliary function for handling values of None.
+
+    @param value:   The value to convert.
+    @type value:    anything
+    @return:        If the value is None, then an empty string.  Otherwise the original value is returned.
+    @rtype:         anything
+    """
+
+    # Handle None.
+    if value == None:
+        return ''
+
+    # Normal value.
+    return value
+
+
 def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy='', temp_factor='', element='', charge=''):
     """Generate the ATOM record.
 
@@ -505,6 +522,142 @@ def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
 
     # Write out the formatted record.
     file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', comp_num, het_id, continuation, asterisk, text))
+
+
+def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', init_seq_id='', init_icode='', end_res_name='', end_chain_id='', end_seq_num='', end_icode='', helix_class='', comment='', length=''):
+    """Generate the HELIX record.
+
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#HELIX}.
+
+    Overview
+    ========
+
+    HELIX records are used to identify the position of helices in the molecule. Helices are named, numbered, and classified by type. The residues where the helix begins and ends are noted, as well as the total length.
+
+
+    Record Format
+    =============
+
+     ______________________________________________________________________________________________
+     |         |              |              |                                                    |
+     | Columns | Data type    | Field        | Definition                                         |
+     |_________|______________|______________|____________________________________________________|
+     |         |              |              |                                                    |
+     |  1 -  6 | Record name  | "HELIX "     |                                                    |
+     |  8 - 10 | Integer      | serNum       | Serial number of the helix. This starts at 1 and   |
+     |         |              |              |      increases incrementally.                      |
+     | 12 - 14 | LString(3)   | helixID      | Helix identifier. In addition to a serial number,  |
+     |         |              |              |      each helix is given an alphanumeric character |
+     |         |              |              |      helix identifier.                             |
+     | 16 - 18 | Residue name | initResName  | Name of the initial residue.                       |
+     | 20      | Character    | initChainID  | Chain identifier for the chain containing this     |
+     |         |              |              |      helix.                                        |
+     | 22 - 25 | Integer      | initSeqNum   | Sequence number of the initial residue.            |
+     | 26      | AChar        | initICode    | Insertion code of the initial residue.             |
+     | 28 - 30 | Residue name | endResName   | Name of the terminal residue of the helix.         |
+     | 32      | Character    | endChainID   | Chain identifier for the chain containing this     |
+     |         |              |              |      helix.                                        |
+     | 34 - 37 | Integer      | endSeqNum    | Sequence number of the terminal residue.           |
+     | 38      | AChar        | endICode     | Insertion code of the terminal residue.            |
+     | 39 - 40 | Integer      | helixClass   | Helix class (see below).                           |
+     | 41 - 70 | String       | comment      | Comment about this helix.                          |
+     | 72 - 76 | Integer      | length       | Length of this helix.                              |
+     |_________|______________|______________|____________________________________________________|
+
+    Details
+    =======
+
+    - Additional HELIX records with different serial numbers and identifiers occur if more than one helix is present.
+    - The initial residue of the helix is the N-terminal residue.
+    - Helices are classified as follows:
+
+     _____________________________________________________
+     |                               |  CLASS NUMBER     |
+     | TYPE OF  HELIX                | (COLUMNS 39 - 40) |
+     |_______________________________|___________________|
+     |                               |                   |
+     | Right-handed alpha (default)  |          1        |
+     | Right-handed omega            |          2        |
+     | Right-handed pi               |          3        |
+     | Right-handed gamma            |          4        |
+     | Right-handed 3 - 10           |          5        |
+     | Left-handed alpha             |          6        |
+     | Left-handed omega             |          7        |
+     | Left-handed gamma             |          8        |
+     | 2 - 7 ribbon/helix            |          9        |
+     | Polyproline                   |         10        |
+     |_______________________________|___________________|
+
+
+    Relationships to Other Record Types
+    ===================================
+
+    There may be related information in the REMARKs.
+
+
+    Example
+    =======
+
+             1         2         3         4         5         6         7         8
+    12345678901234567890123456789012345678901234567890123456789012345678901234567890
+    HELIX    1  HA GLY A   86  GLY A   94  1                                   9
+    HELIX    2  HB GLY B   86  GLY B   94  1                                   9
+
+    HELIX   21  21 PRO J  385  LEU J  388  5                                   4
+    HELIX   22  22 PHE J  397  PHE J  402  5                                   6
+
+
+    @param file:            The file to write the record to.
+    @type file:             file object
+    @keyword ser_num:       The helix serial number
+    @type ser_num:          int
+    @keyword helix_id:      The helix identifier
+    @type helix_id:         str
+    @keyword init_res_name: The name of the initial residue
+    @type init_res_name:    str
+    @keyword init_chain_id: The chain identifier
+    @type init_chain_id:    str
+    @keyword init_seq_id:   The sequence number of the initial residue
+    @type init_seq_id:      int
+    @keyword init_icode:    The insertion code of the initial residue
+    @type init_icode:       str
+    @keyword end_res_name:  The name of the terminal residue
+    @type end_res_name:     str
+    @keyword end_chain_id:  The chain identifier
+    @type end_chain_id:     str
+    @keyword end_seq_num:   The sequence number of the terminal residue
+    @type end_seq_num:      int
+    @keyword end_icode:     The insertion code of the terminal residue
+    @type end_icode:        str
+    @keyword helix_class:   The helix class
+    @type helix_class:      int
+    @keyword comment:       The comment
+    @type comment:          str
+    @keyword length:        The helix length.
+    @type length:           int
+    """
+
+    # The formatted record.
+    text = "%-6s %3s %3s %3s %1s %4s%1s %3s %s %4s%1s%2s%30s %5s    " % (
+        'HELIX',
+        _handle_none(ser_num),
+        _handle_none(helix_id),
+        _handle_none(init_res_name),
+        _handle_none(init_chain_id),
+        _handle_none(init_seq_id),
+        _handle_none(init_icode),
+        _handle_none(end_res_name),
+        _handle_none(end_chain_id),
+        _handle_none(end_seq_num),
+        _handle_none(end_icode),
+        _handle_none(helix_class),
+        _handle_none(comment),
+        _handle_none(length)
+    )
+
+    # Write out the formatted record.
+    file.write(text)
+    file.write('\n')
 
 
 def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', text=''):
