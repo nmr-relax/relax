@@ -1012,6 +1012,172 @@ def remark(record):
     raise RelaxImplementError('record')
 
 
+def sheet(record):
+    """Parse the SHEET record.
+
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#SHEET}.
+
+    Overview
+    ========
+
+    SHEET records are used to identify the position of sheets in the molecule. Sheets are both named and numbered. The residues where the sheet begins and ends are noted.
+
+
+    Record Format
+    =============
+
+     ______________________________________________________________________________________________
+     |         |              |              |                                                    |
+     | Columns | Data type    | Field        | Definition                                         |
+     |_________|______________|______________|____________________________________________________|
+     |         |              |              |                                                    |
+     |  1 -  6 | Record name  | "SHEET "     |                                                    |
+     |  8 - 10 | Integer      | strand       | Strand number which starts at 1 for each strand    |
+     |         |              |              | within a sheet and increases by one.               |
+     | 12 - 14 | LString(3)   | sheetID      | Sheet identifier.                                  |
+     | 15 - 16 | Integer      | numStrands   | Number of strands in sheet.                        |
+     | 18 - 20 | Residue name | initResName  | Residue name of initial residue.                   |
+     | 22      | Character    | initChainID  | Chain identifier of initial residue in strand.     |
+     | 23 - 26 | Integer      | initSeqNum   | Sequence number of initial residue in strand.      |
+     | 27      | AChar        | initICode    | Insertion code of initial residue in strand.       |
+     | 29 - 31 | Residue name | endResName   | Residue name of terminal residue.                  |
+     | 33      | Character    | endChainID   | Chain identifier of terminal residue.              |
+     | 34 - 37 | Integer      | endSeqNum    | Sequence number of terminal residue.               |
+     | 38      | AChar        | endICode     | Insertion code of terminal residue.                |
+     | 39 - 40 | Integer      | sense        | Sense of strand with respect to previous strand in |
+     |         |              |              | the sheet. 0 if first strand, 1 if parallel, and   |
+     |         |              |              | -1 if anti-parallel.                               |
+     | 42 - 45 | Atom         | curAtom      | Registration. Atom name in current strand.         |
+     | 46 - 48 | Residue name | curResName   | Registration. Residue name in current strand.      |
+     | 50      | Character    | curChainId   | Registration. Chain identifier in current strand.  |
+     | 51 - 54 | Integer      | curResSeq    | Registration. Residue sequence number in current   |
+     |         |              |              | strand.                                            |
+     | 55      | AChar        | curICode     | Registration. Insertion code in current strand.    |
+     | 57 - 60 | Atom         | prevAtom     | Registration. Atom name in previous strand.        |
+     | 61 - 63 | Residue name | prevResName  | Registration. Residue name in previous strand.     |
+     | 65      | Character    | prevChainId  | Registration. Chain identifier in previous strand. |
+     | 66 - 69 | Integer      | prevResSeq   | Registration. Residue sequence number in previous  |
+     |         |              |              | strand.                                            |
+     | 70      | AChar        | prevICode    | Registration. Insertion code in previous strand.   |
+     |_________|______________|______________|____________________________________________________|
+
+
+    Details
+    =======
+
+    - The initial residue for a strand is its N-terminus. Strand registration information is provided in columns 39 - 70. Strands are listed starting with one edge of the sheet and continuing to the spatially adjacent strand.
+    - The sense in columns 39 - 40 indicates whether strand n is parallel (sense = 1) or anti-parallel (sense = -1) to strand n-1. Sense is equal to zero (0) for the first strand of a sheet.
+    - The registration (columns 42 - 70) of strand n to strand n-1 may be specified by one hydrogen bond between each such pair of strands. This is done by providing the hydrogen bonding between the current and previous strands. No register information should be provided for the first strand.
+    - Split strands, or strands with two or more runs of residues from discontinuous parts of the amino acid sequence, are explicitly listed. Detail description can be included in the REMARK 700 .
+
+
+    Relationships to Other Record Types
+    ===================================
+
+    If the entry contains bifurcated sheets or beta-barrels, the relevant REMARK 700 records must be provided. See the REMARK section for details.
+
+
+    Examples
+    ========
+
+             1         2         3         4         5         6         7         8
+    12345678901234567890123456789012345678901234567890123456789012345678901234567890
+    SHEET    1   A 5 THR A 107  ARG A 110  0
+    SHEET    2   A 5 ILE A  96  THR A  99 -1  N  LYS A  98   O  THR A 107
+    SHEET    3   A 5 ARG A  87  SER A  91 -1  N  LEU A  89   O  TYR A  97
+    SHEET    4   A 5 TRP A  71  ASP A  75 -1  N  ALA A  74   O  ILE A  88
+    SHEET    5   A 5 GLY A  52  PHE A  56 -1  N  PHE A  56   O  TRP A  71
+    SHEET    1   B 5 THR B 107  ARG B 110  0
+    SHEET    2   B 5 ILE B  96  THR B  99 -1  N  LYS B  98   O  THR B 107
+    SHEET    3   B 5 ARG B  87  SER B  91 -1  N  LEU B  89   O  TYR B  97
+    SHEET    4   B 5 TRP B  71  ASP B  75 -1  N  ALA B  74   O  ILE B  88
+    SHEET    5   B 5 GLY B  52  ILE B  55 -1  N  ASP B  54   O  GLU B  73
+
+    The sheet presented as BS1 below is an eight-stranded beta-barrel. This is represented by a nine-stranded sheet in which the first and last strands are identical.
+
+    SHEET    1 BS1 9  VAL   13  ILE    17  0                               
+    SHEET    2 BS1 9  ALA   70  ILE    73  1  O  TRP    72   N  ILE    17  
+    SHEET    3 BS1 9  LYS  127  PHE   132  1  O  ILE   129   N  ILE    73  
+    SHEET    4 BS1 9  GLY  221  ASP   225  1  O  GLY   221   N  ILE   130  
+    SHEET    5 BS1 9  VAL  248  GLU   253  1  O  PHE   249   N  ILE   222  
+    SHEET    6 BS1 9  LEU  276  ASP   278  1  N  LEU   277   O  GLY   252  
+    SHEET    7 BS1 9  TYR  310  THR   318  1  O  VAL   317   N  ASP   278  
+    SHEET    8 BS1 9  VAL  351  TYR   356  1  O  VAL   351   N  THR   318  
+    SHEET    9 BS1 9  VAL   13  ILE    17  1  N  VAL    14   O  PRO   352  
+
+    The sheet structure of this example is bifurcated. In order to represent this feature, two sheets are defined. Strands 2 and 3 of BS7 and BS8 are identical.
+
+    SHEET    1 BS7 3  HIS  662  THR   665  0                               
+    SHEET    2 BS7 3  LYS  639  LYS   648 -1  N  PHE   643   O  HIS   662  
+    SHEET    3 BS7 3  ASN  596  VAL   600 -1  N  TYR   598   O  ILE   646  
+    SHEET    1 BS8 3  ASN  653  TRP   656  0                               
+    SHEET    2 BS8 3  LYS  639  LYS   648 -1  N  LYS   647   O  THR   655  
+    SHEET    3 BS8 3  ASN  596  VAL   600 -1  N  TYR   598   O  ILE   646  
+
+
+    @param record:          The PDB SHEET record.
+    @type record:           str
+    @return:                The record name, strand number, sheet identifier, number of strands in sheet, residue name of initial residue, chain identifier of initial residue in strand, sequence number of initial residue in strand, insertion code of initial residue in strand, residue name of terminal residue, chain identifier of terminal residue, sequence number of terminal residue, insertion code of terminal residue, sense of strand with respect to previous strand, atom name in current strand, residue name in current strand, chain identifier in current strand, residue sequence number in current strand, insertion code in current strand, atom name in previous strand, residue name in previous strand, chain identifier in previous strand, residue sequence number in previous strand, insertion code in previous strand.
+    @rtype:                 tuple of str, int, str, int, str, str, int, str, str, str, int, str, int, str, str, str, int, str, str, str, str, int, str
+    """
+
+    # Initialise.
+    fields = []
+
+    # Split up the record.
+    fields.append(record[0:6])
+    fields.append(record[7:10])
+    fields.append(record[11:14])
+    fields.append(record[14:16])
+    fields.append(record[17:20])
+    fields.append(record[21])
+    fields.append(record[22:26])
+    fields.append(record[26])
+    fields.append(record[28:31])
+    fields.append(record[32])
+    fields.append(record[33:37])
+    fields.append(record[37])
+    fields.append(record[38:40])
+    fields.append(record[41:45])
+    fields.append(record[45:48])
+    fields.append(record[49])
+    fields.append(record[50:54])
+    fields.append(record[54])
+    fields.append(record[56:60])
+    fields.append(record[60:63])
+    fields.append(record[64])
+    fields.append(record[65:69])
+    fields.append(record[69])
+
+    # Loop over the fields.
+    for i in range(len(fields)):
+        # Strip all whitespace.
+        fields[i] = fields[i].strip()
+
+        # Replace nothingness with None.
+        if fields[i] == '':
+            fields[i] = None
+
+    # Convert strings to numbers.
+    if fields[1]:
+        fields[1] = int(fields[1])
+    if fields[3]:
+        fields[3] = int(fields[3])
+    if fields[6]:
+        fields[6] = int(fields[6])
+    if fields[10]:
+        fields[10] = int(fields[10])
+    if fields[12]:
+        fields[12] = int(fields[12])
+    if fields[16]:
+        fields[16] = int(fields[16])
+    if fields[21]:
+        fields[21] = int(fields[21])
+
+    # Return the data.
+    return tuple(fields)
+
+
 def ter(record):
     """Parse the TER record.
 
