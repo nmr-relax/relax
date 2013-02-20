@@ -29,7 +29,7 @@ class Test_pdb_write(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.structure.pdb_write' module."""
 
     def test_atom(self):
-        """Test the pdb_write.atom() function."""
+        """Test the generic_fns.structure.pdb_write.atom() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -46,7 +46,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_helix(self):
-        """Test the pdb_write.helix() function."""
+        """Test the generic_fns.structure.pdb_write.helix() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -62,8 +62,25 @@ class Test_pdb_write(UnitTestCase):
         self.assertEqual(records[0], actual)
 
 
+    def test_het(self):
+        """Test the generic_fns.structure.pdb_write.het() function."""
+
+        # A dummy file to write to.
+        file = DummyFileObject()
+
+        # Create the PDB record.
+        pdb_write.het(file, het_id='CA', chain_id='A', seq_num=1000, icode=None, num_het_atoms=1, text=None)
+
+        # Test the record.
+        records = file.readlines()
+        actual = 'HET     CA  A1000       1                                                       \n'
+        print(repr(records[0]))
+        print(repr(actual))
+        self.assertEqual(records[0], actual)
+
+
     def test_sheet(self):
-        """Test the pdb_write.sheet() function."""
+        """Test the generic_fns.structure.pdb_write.sheet() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()

@@ -82,8 +82,8 @@ def atom(record):
     - AltLoc is the place holder to indicate alternate conformation. The alternate conformation can be in the entire polymer chain, or several residues or partial residue (several atoms within one residue). If an atom is provided in more than one position, then a non-blank alternate location indicator must be used for each of the atomic positions. Within a residue, all atoms that are associated with each other in a given conformation are assigned the same alternate position indicator. There are two ways of representing alternate conformation- either at atom level or at residue level (see examples).
     - For atoms that are in alternate sites indicated by the alternate site indicator, sorting of atoms in the ATOM/HETATM list uses the following general rules:
 
-        - In the simple case that involves a few  atoms or a few residues with alternate sites,  the coordinates occur one after  the other in the entry.
-        - In the case of a large heterogen groups  which are disordered, the atoms for each conformer are listed together.
+        - In the simple case that involves a few atoms or a few residues with alternate sites, the coordinates occur one after the other in the entry.
+        - In the case of a large heterogen groups which are disordered, the atoms for each conformer are listed together.
 
     - Alphabet letters are commonly used for insertion code. The insertion code is used when two residues have the same numbering. The combination of residue numbering and insertion code defines the unique residue.
     - If the depositor provides the data, then the isotropic B value is given for the temperature factor.
@@ -243,9 +243,9 @@ def conect(record):
 
     - CONECT records are present for:
 
-        - Intra-residue connectivity within  non-standard (HET) residues (excluding water).
-        - Inter-residue connectivity of HET  groups to standard groups (including water) or to other HET groups.
-        - Disulfide bridges specified in the  SSBOND records have corresponding records.
+        - Intra-residue connectivity within non-standard (HET) residues (excluding water).
+        - Inter-residue connectivity of HET groups to standard groups (including water) or to other HET groups.
+        - Disulfide bridges specified in the SSBOND records have corresponding records.
 
     - No differentiation is made between atoms with delocalized charges (excess negative or positive charge).
     - Atoms specified in the CONECT records have the same numbers as given in the coordinate section.
@@ -366,8 +366,8 @@ def formul(record):
     - The number of each atom type present immediately follows its chemical symbol without an intervening blank space. There will be no number indicated if there is only one atom for a particular atom type.
     - Each set of SEQRES records and each HET group is assigned a component number in an entry. These numbers are assigned serially, beginning with 1 for the first set of SEQRES records. In addition:
 
-        - If a HET group is presented on a SEQRES record its FORMUL is assigned  the component number of the chain in which it  appears.
-        - If the HET group occurs more than once  and is not presented on SEQRES  records, the component number of its first  occurrence is used.
+        - If a HET group is presented on a SEQRES record its FORMUL is assigned the component number of the chain in which it appears.
+        - If the HET group occurs more than once and is not presented on SEQRES records, the component number of its first occurrence is used.
 
     - All occurrences of the HET group within a chain are grouped together with a multiplier. The remaining occurrences are also grouped with a multiplier. The sum of the multipliers is the number equaling the number of times that that HET group appears in the entry.
     - A continuation field is provided in the event that more space is needed for the formula. Columns 17 - 18 are used in order to maintain continuity with the existing format.
@@ -593,7 +593,7 @@ def het(record):
     Details
     =======
 
-    - Each HET group is assigned a hetID of not more than three (3) alphanumeric characters. The sequence number, chain identifier, insertion code, and number of coordinate records are given for each occurrence of the HET group in the entry. The chemical name of the HET group is given in the HETNAM record and synonyms for the chemical name are given in the HETSYN records, see ftp://ftp.wwpdb.org/pub/pdb/data/monomers .
+    - Each HET group is assigned a hetID of not more than three (3) alphanumeric characters. The sequence number, chain identifier, insertion code, and number of coordinate records are given for each occurrence of the HET group in the entry. The chemical name of the HET group is given in the HETNAM record and synonyms for the chemical name are given in the HETSYN records, see ftp://ftp.wwpdb.org/pub/pdb/data/monomers.
     - There is a separate HET record for each occurrence of the HET group in an entry.
     - A particular HET group is represented in the PDB archive with a unique hetID.
     - PDB entries do not have HET records for water molecules, deuterated water, or methanol (when used as solvent).

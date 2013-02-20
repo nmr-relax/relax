@@ -1758,7 +1758,7 @@ class Internal(Base_struct_API):
 
         # Write the HET records.
         for het in het_data_coll:
-            pdb_write.het(file, het_id=het[2], chain_id=het[1], seq_num=het[0], num_het_atoms=het[3])
+            pdb_write.het(file, het_id=het[1], chain_id=het[2], seq_num=het[0], num_het_atoms=het[3])
 
 
         # The HETNAM records.
