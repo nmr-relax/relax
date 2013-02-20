@@ -442,8 +442,18 @@ class Macro:
     def classic_rex(self, res_num, rex, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
-        # The Rex value at the first field strength.
-        rex = rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+        # The 1st spectrometer frequency.
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError("No spectrometer frequency information is present in the current data pipe.")
+        if hasattr(cdp, 'ri_ids'):
+            frq = cdp.frq[cdp.ri_ids[0]]
+        else:       # Take the highest frequency, if all else fails.
+            frqs = cdp.frq.values()
+            frqs.sort()
+            frq = frqs[-1]
+
+        # The Rex value.
+        rex = rex * (2.0 * pi * frq)**2
 
         # The bond width (aiming for a width range of 2 to 0 for Rex values of 0 to 25 s^-1).
         width = 2.0 - 2.0 / (rex/5.0 + 1.0)
