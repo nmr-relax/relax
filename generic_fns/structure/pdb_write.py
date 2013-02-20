@@ -28,6 +28,9 @@ This module currently used the PDB format version 3.30 from July, 2011 U{http://
 # Python module imports.
 from textwrap import wrap
 
+# relax module imports.
+from relax_errors import RelaxError
+
 
 def _handle_none(value):
     """Auxiliary function for handling values of None.
@@ -44,6 +47,22 @@ def _handle_none(value):
 
     # Normal value.
     return value
+
+
+def _record_validate(record):
+    """Check that the record is ok.
+
+    @param record:      The PDB record as text.
+    @type record:       str
+    @raises RelaxError: If the record is not exactly 80 characters long.
+    """
+
+    # Check the length.
+    if len(record) != 80:
+        if len(record) < 80:
+            raise RelaxError("The PDB record '%s' is too short." % record)
+        else:
+            raise RelaxError("The PDB record '%s' is too long." % record)
 
 
 def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy='', temp_factor='', element='', charge=''):
@@ -205,8 +224,31 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
     @type charge:           int
     """
 
+    # The formatted record.
+    text = "%-6s%5s %-4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" % (
+        'ATOM',
+        _handle_none(serial),
+        _handle_none(name),
+        _handle_none(alt_loc),
+        _handle_none(res_name),
+        _handle_none(chain_id),
+        _handle_none(res_seq),
+        _handle_none(icode),
+        _handle_none(x),
+        _handle_none(y),
+        _handle_none(z),
+        _handle_none(occupancy),
+        _handle_none(temp_factor),
+        _handle_none(element),
+        _handle_none(charge)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s%5s %-4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s\n" % ('ATOM', serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge))
+    file.write(text)
+    file.write('\n')
 
 
 def conect(file, serial='', bonded1='', bonded2='', bonded3='', bonded4=''):
@@ -299,8 +341,22 @@ def conect(file, serial='', bonded1='', bonded2='', bonded3='', bonded4=''):
     @type bonded4:          int
     """
 
+    # The formatted record.
+    text = "%-6s%5s%5s%5s%5s%5s                              \n" % (
+        'CONECT',
+        _handle_none(serial),
+        _handle_none(bonded1),
+        _handle_none(bonded2),
+        _handle_none(bonded3),
+        _handle_none(bonded4)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s%5s%5s%5s%5s%5s                              \n" % ('CONECT', serial, bonded1, bonded2, bonded3, bonded4))
+    file.write(text)
+    file.write('\n')
 
 
 def end(file):
@@ -356,8 +412,15 @@ def end(file):
     @type file:             file object
     """
 
+    # The formatted record.
+    text = "END" + ' '*77
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("END\n")
+    file.write(text)
+    file.write('\n')
 
 
 def endmdl(file):
@@ -432,8 +495,15 @@ def endmdl(file):
     @type file:             file object
     """
 
+    # The formatted record.
+    text = 'ENDMDL' + ' '*74
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s\n" % 'ENDMDL')
+    file.write(text)
+    file.write('\n')
 
 
 def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
@@ -520,8 +590,22 @@ def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
     @type text:             str
     """
 
+    # The formatted record.
+    text = "%-6s  %2s  %3s %2s%1s%-51s\n" % (
+        'FORMUL',
+        _handle_none(comp_num),
+        _handle_none(het_id),
+        _handle_none(continuation),
+        _handle_none(asterisk),
+        _handle_none(text)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', comp_num, het_id, continuation, asterisk, text))
+    file.write(text)
+    file.write('\n')
 
 
 def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', init_seq_id='', init_icode='', end_res_name='', end_chain_id='', end_seq_num='', end_icode='', helix_class='', comment='', length=''):
@@ -655,6 +739,9 @@ def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', ini
         _handle_none(length)
     )
 
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
     file.write(text)
     file.write('\n')
@@ -754,8 +841,23 @@ def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', te
     @type text:             str
     """
 
+    # The formatted record.
+    text = "%-6s %3s  %1s%4s%1s  %5s     %-40s" % (
+        'HET',
+        _handle_none(het_id),
+        _handle_none(chain_id),
+        _handle_none(seq_num),
+        _handle_none(icode),
+        _handle_none(num_het_atoms),
+        _handle_none(text)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het_id, chain_id, seq_num, icode, num_het_atoms, text))
+    file.write(text)
+    file.write('\n')
 
 
 def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy='', temp_factor='', element='', charge=''):
@@ -867,8 +969,31 @@ def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_s
     @type charge:           int
     """
 
+    # The formatted record.
+    text = "%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" % (
+        'HETATM',
+        _handle_none(serial),
+        _handle_none(name),
+        _handle_none(alt_loc),
+        _handle_none(res_name),
+        _handle_none(chain_id),
+        _handle_none(res_seq),
+        _handle_none(icode),
+        _handle_none(x),
+        _handle_none(y),
+        _handle_none(z),
+        _handle_none(occupancy),
+        _handle_none(temp_factor),
+        _handle_none(element),
+        _handle_none(charge)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s\n" % ('HETATM', serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge))
+    file.write(text)
+    file.write('\n')
 
 
 def hetnam(file, continuation='', het_id='', text=''):
@@ -951,8 +1076,20 @@ def hetnam(file, continuation='', het_id='', text=''):
     @type text:             str
     """
 
+    # The formatted record.
+    text = "%-6s  %2s %3s %-55s\n" % (
+        'HETNAM',
+        _handle_none(continuation),
+        _handle_none(het_id),
+        _handle_none(text)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', continuation, het_id, text))
+    file.write(text)
+    file.write('\n')
 
 
 def master(file, num_remark=0, num_het=0, num_helix=0, num_sheet=0, num_turn=0, num_site=0, num_xform=0, num_coord=0, num_ter=0, num_conect=0, num_seq=0):
@@ -1044,8 +1181,29 @@ def master(file, num_remark=0, num_het=0, num_helix=0, num_sheet=0, num_turn=0, 
     @type num_seq           int
     """
 
+    # The formatted record.
+    text = "%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s" % (
+        'MASTER',
+        _handle_none(num_remark),
+        0,
+        _handle_none(num_het),
+        _handle_none(num_helix),
+        _handle_none(num_sheet),
+        _handle_none(num_turn),
+        _handle_none(num_site),
+        _handle_none(num_xform),
+        _handle_none(num_coord),
+        _handle_none(num_ter),
+        _handle_none(num_conect),
+        _handle_none(num_seq)
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', num_remark, 0, num_het, num_helix, num_sheet, num_turn, num_site, num_xform, num_coord, num_ter, num_conect, num_seq))
+    file.write(text)
+    file.write('\n')
 
 
 def model(file, serial=''):
@@ -1153,8 +1311,19 @@ def model(file, serial=''):
     @type serial:           int
     """
 
+    # The formatted record.
+    text = "%-6s    %4i%65s" % (
+        'MODEL',
+        _handle_none(serial),
+        ''
+    )
+
+    # Validate.
+    _record_validate(text)
+
     # Write out the formatted record.
-    file.write("%-6s    %4i\n" % ('MODEL', serial))
+    file.write(text)
+    file.write('\n')
 
 
 def remark(file, num='', remark=''):
@@ -1190,9 +1359,17 @@ def remark(file, num='', remark=''):
     @type remark:       str
     """
 
-    # Write out the formatted record, splitting across lines if needed.
+    # The formatted record, splitting across lines if needed.
     for line in wrap(remark, 68):
-        file.write("%-6s %3s %-68s \n" % ("REMARK", num, line.upper()))
+        # The text.
+        text = "%-6s %3s %-68s " % ("REMARK", num, line.upper())
+
+        # Validate.
+        _record_validate(text)
+
+        # Write out the formatted record.
+        file.write(text)
+        file.write('\n')
 
 
 def ter(file, serial='', res_name='', chain_id='', res_seq='', icode=''):
@@ -1287,4 +1464,18 @@ def ter(file, serial='', res_name='', chain_id='', res_seq='', icode=''):
     """
 
     # Write out the formatted record.
-    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', serial, res_name, chain_id, res_seq, icode))
+    text = "%-6s%5s      %3s %1s%4s%1s" % (
+        'TER',
+        _handle_none(serial),
+        _handle_none(res_name),
+        _handle_none(chain_id),
+        _handle_none(res_seq),
+        _handle_none(icode)
+    )
+
+    # Validate.
+    _record_validate(text)
+
+    # Write out the formatted record.
+    file.write(text)
+    file.write('\n')
