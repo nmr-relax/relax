@@ -842,14 +842,15 @@ def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', te
     """
 
     # The formatted record.
-    text = "%-6s %3s  %1s%4s%1s  %5s     %-40s" % (
+    text = "%-6s %3s  %1s%4s%1s  %5s     %-40s%10s" % (
         'HET',
         _handle_none(het_id),
         _handle_none(chain_id),
         _handle_none(seq_num),
         _handle_none(icode),
         _handle_none(num_het_atoms),
-        _handle_none(text)
+        _handle_none(text),
+        ''
     )
 
     # Validate.
