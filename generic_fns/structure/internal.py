@@ -1793,7 +1793,10 @@ class Internal(Base_struct_API):
 
         # Loop over the non-standard residues and generate and write the chemical formula.
         residues = []
-        for het in het_data_coll:
+        for i in range(len(het_data_coll)):
+            # Alias.
+            het = het_data_coll[i]
+
             # Test if the residue HETNAM record as already been written (otherwise store its name).
             if het[1] in residues:
                 continue
@@ -1808,7 +1811,7 @@ class Internal(Base_struct_API):
                 formula = formula + atom_count[0] + repr(atom_count[1])
 
             # The FORMUL record (chemical formula).
-            pdb_write.formul(file, comp_num=het[0], het_id=het[1], text=formula)
+            pdb_write.formul(file, comp_num=i+1, het_id=het[1], text=formula)
 
 
         ######################
