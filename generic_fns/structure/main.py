@@ -595,7 +595,7 @@ def rmsd(atom_id=None, models=None):
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0])
+            coord[-1].append(pos[0][0])
         coord[-1] = array(coord[-1])
 
     # Calculate the RMSD.
