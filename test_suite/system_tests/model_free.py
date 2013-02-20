@@ -302,6 +302,9 @@ class Mf(SystemTestCase):
         # The models to create.
         models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'] + ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
 
+        # Set the spectrometer frequency.
+        self.interpreter.frq.set(id='600', frq=600000000.1)
+
         # Loop over the models.
         for i in range(len(models)):
             self.interpreter.model_free.select_model(model=models[i], spin_id=':%s'%(i+1))
