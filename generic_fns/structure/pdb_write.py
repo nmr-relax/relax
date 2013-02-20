@@ -1676,13 +1676,14 @@ def ter(file, serial='', res_name='', chain_id='', res_seq='', icode=''):
     """
 
     # Write out the formatted record.
-    text = "%-6s%5s      %3s %1s%4s%1s" % (
+    text = "%-6s%5s      %3s %1s%4s%1s%53s" % (
         'TER',
         _handle_none(serial),
         _handle_none(res_name),
         _handle_none(chain_id),
         _handle_none(res_seq),
-        _handle_none(icode)
+        _handle_none(icode),
+        ''
     )
 
     # Validate.
