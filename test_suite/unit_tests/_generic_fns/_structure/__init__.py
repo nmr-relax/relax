@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,11 @@
 ###############################################################################
 
 
-__all__ = ['test_api_base',
-           'test__init__',
-           'test_internal',
-           'test_scientific']
+__all__ = [
+    'test_api_base',
+    'test__init__',
+    'test_internal',
+    'test_pdb_read',
+    'test_pdb_write',
+    'test_scientific'
+]
