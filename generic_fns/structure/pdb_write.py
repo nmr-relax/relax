@@ -362,13 +362,14 @@ def conect(file, serial='', bonded1='', bonded2='', bonded3='', bonded4=''):
     """
 
     # The formatted record.
-    text = "%-6s%5s%5s%5s%5s%5s                              \n" % (
+    text = "%-6s%5s%5s%5s%5s%5s%49s" % (
         'CONECT',
         _handle_none(serial),
         _handle_none(bonded1),
         _handle_none(bonded2),
         _handle_none(bonded3),
-        _handle_none(bonded4)
+        _handle_none(bonded4),
+        ''
     )
 
     # Validate.
@@ -611,13 +612,14 @@ def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
     """
 
     # The formatted record.
-    text = "%-6s  %2s  %3s %2s%1s%-51s\n" % (
+    text = "%-6s  %2s  %3s %2s%1s%-51s%10s" % (
         'FORMUL',
         _handle_none(comp_num),
         _handle_none(het_id),
         _handle_none(continuation),
         _handle_none(asterisk),
-        _handle_none(text)
+        _handle_none(text),
+        ''
     )
 
     # Validate.
@@ -1098,11 +1100,12 @@ def hetnam(file, continuation='', het_id='', text=''):
     """
 
     # The formatted record.
-    text = "%-6s  %2s %3s %-55s\n" % (
+    text = "%-6s  %2s %3s %-55s%10s" % (
         'HETNAM',
         _handle_none(continuation),
         _handle_none(het_id),
-        _handle_text(text)
+        _handle_text(text),
+        ''
     )
 
     # Validate.
@@ -1203,7 +1206,7 @@ def master(file, num_remark=0, num_het=0, num_helix=0, num_sheet=0, num_turn=0, 
     """
 
     # The formatted record.
-    text = "%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s" % (
+    text = "%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%10s" % (
         'MASTER',
         _handle_none(num_remark),
         0,
@@ -1216,7 +1219,8 @@ def master(file, num_remark=0, num_het=0, num_helix=0, num_sheet=0, num_turn=0, 
         _handle_none(num_coord),
         _handle_none(num_ter),
         _handle_none(num_conect),
-        _handle_none(num_seq)
+        _handle_none(num_seq),
+        ''
     )
 
     # Validate.
