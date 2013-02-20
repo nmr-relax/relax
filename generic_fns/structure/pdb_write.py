@@ -1454,7 +1454,7 @@ def model(file, serial=''):
     """
 
     # The formatted record.
-    text = "%-6s    %4i%65s" % (
+    text = "%-6s    %4i%66s" % (
         'MODEL',
         _handle_none(serial),
         ''
