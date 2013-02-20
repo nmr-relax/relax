@@ -79,6 +79,23 @@ class Test_pdb_write(UnitTestCase):
         self.assertEqual(records[0], actual)
 
 
+    def test_model(self):
+        """Test the generic_fns.structure.pdb_write.model() function."""
+
+        # A dummy file to write to.
+        file = DummyFileObject()
+
+        # Create the PDB record.
+        pdb_write.model(file, serial=1)
+
+        # Test the record.
+        records = file.readlines()
+        actual = 'MODEL        1                                                                  \n'
+        print(repr(records[0]))
+        print(repr(actual))
+        self.assertEqual(records[0], actual)
+
+
     def test_sheet(self):
         """Test the generic_fns.structure.pdb_write.sheet() function."""
 
