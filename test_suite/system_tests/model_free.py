@@ -293,6 +293,81 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20464_missing_ri_data.py')
 
 
+    def test_bug_20531_molmol_macro_write_relaxfault(self):
+        """Bug #20531 catch (https://gna.org/bugs/?20531), the RelaxFault when creating the Molmol macros."""
+
+        # Load some sequence data.
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+
+        # The models to create.
+        models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'] + ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+
+        # Loop over the models.
+        for i in range(len(models)):
+            self.interpreter.model_free.select_model(model=models[i], spin_id=':%s'%(i+1))
+
+        # Set values for all parameters.
+        self.interpreter.value.set(param='s2', val=0.8)
+        self.interpreter.value.set(param='s2f', val=0.85)
+        self.interpreter.value.set(param='s2s', val=0.7)
+        self.interpreter.value.set(param='local_tm', val=8000e-12)
+        self.interpreter.value.set(param='te', val=20e-12)
+        self.interpreter.value.set(param='tf', val=40e-12)
+        self.interpreter.value.set(param='ts', val=2000e-12)
+        self.interpreter.value.set(param='rex', val=1.5e-18)
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
+        # Attempt to create the Molmol macros.
+        self.interpreter.molmol.macro_write(data_type='s2',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2f',       dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2s',       dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_fast',  dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_slow',  dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='te',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='tf',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='ts',        dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_fast', dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_slow', dir=ds.tmpdir, force=True)
+        self.interpreter.molmol.macro_write(data_type='rex',       dir=ds.tmpdir, force=True)
+
+        # Attempt to create the PyMOL macros.
+        self.interpreter.pymol.macro_write(data_type='s2',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2f',       dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2s',       dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_fast',  dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_slow',  dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='te',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='tf',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='ts',        dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_fast', dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_slow', dir=ds.tmpdir, force=True)
+        self.interpreter.pymol.macro_write(data_type='rex',       dir=ds.tmpdir, force=True)
+
+        # Attempt to create the Grace plots.
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2',  file='s2.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='te',  file='te.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf',  file='tf.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts',  file='ts.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',   y_data_type='te',  file='s2_vs_te.agr',  dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',   y_data_type='rex', file='s2_vs_rex.agr', dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='te',   y_data_type='rex', file='te_vs_rex.agr', dir=ds.tmpdir, force=True)
+
+        # Attempt to create the text files of the values.
+        self.interpreter.value.write(param='s2',       file='s2.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='s2f',      file='s2f.txt',      dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='s2s',      file='s2s.txt',      dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='te',       file='te.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='tf',       file='tf.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='ts',       file='ts.txt',       dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='rex',      file='rex.txt',      dir=ds.tmpdir, force=True)
+        self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=ds.tmpdir, force=True)
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
