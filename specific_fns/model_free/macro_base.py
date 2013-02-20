@@ -85,8 +85,8 @@ class Macro:
         if data_type == 's2':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # Skip spins which don't have an S2 value.
@@ -104,8 +104,8 @@ class Macro:
         elif data_type == 's2f':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The backbone NH.
@@ -125,8 +125,8 @@ class Macro:
         elif data_type == 's2s':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The backbone NH.
@@ -146,8 +146,8 @@ class Macro:
         elif data_type == 'amp_fast':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The model.
@@ -185,8 +185,8 @@ class Macro:
         elif data_type == 'amp_slow':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The model.
@@ -215,8 +215,8 @@ class Macro:
         elif data_type == 'te':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # Skip spins which don't have a te value.
@@ -234,8 +234,8 @@ class Macro:
         elif data_type == 'tf':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # Skip spins which don't have a tf value.
@@ -253,8 +253,8 @@ class Macro:
         elif data_type == 'ts':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # Skip spins which don't have a ts value.
@@ -278,8 +278,8 @@ class Macro:
         elif data_type == 'time_fast':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The model.
@@ -310,8 +310,8 @@ class Macro:
         elif data_type == 'time_slow':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The model.
@@ -347,8 +347,8 @@ class Macro:
         elif data_type == 'rex':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-                # Skip deselected spins.
-                if not spin.select:
+                # Skip deselected spins or spins with no model information set.
+                if not spin.select or not hasattr(spin, 'model'):
                     continue
 
                 # The backbone NH.
