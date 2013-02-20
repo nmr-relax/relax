@@ -29,7 +29,7 @@ class Test_pdb_write(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.structure.pdb_write' module."""
 
     def test_atom(self):
-        """Test the pdb_write.atom() function."""
+        """Test the generic_fns.structure.pdb_write.atom() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -46,7 +46,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_helix(self):
-        """Test the pdb_write.helix() function."""
+        """Test the generic_fns.structure.pdb_write.helix() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -63,7 +63,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_sheet(self):
-        """Test the pdb_write.sheet() function."""
+        """Test the generic_fns.structure.pdb_write.sheet() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
