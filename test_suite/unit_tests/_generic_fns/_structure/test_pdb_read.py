@@ -31,7 +31,7 @@ class Test_pdb_read(UnitTestCase):
         """Test the pdb_read.atom() function."""
 
         # Parse a PDB record.
-        record = pdb_read.atom('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
+        record = pdb_read.atom('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C  ')
 
         # Test the elements.
         self.assertEqual(record[0], 'ATOM')
@@ -82,3 +82,25 @@ class Test_pdb_read(UnitTestCase):
 
         # Test the elements.
         self.assertEqual(record[0], 'SHEET')
+        self.assertEqual(record[1], 1)
+        self.assertEqual(record[2], 'BET')
+        self.assertEqual(record[3], 5)
+        self.assertEqual(record[4], 'GLY')
+        self.assertEqual(record[5], 'A')
+        self.assertEqual(record[6], 10)
+        self.assertEqual(record[7], None)
+        self.assertEqual(record[8], 'VAL')
+        self.assertEqual(record[9], 'A')
+        self.assertEqual(record[10], 17)
+        self.assertEqual(record[11], None)
+        self.assertEqual(record[12], 0)
+        self.assertEqual(record[13], None)
+        self.assertEqual(record[14], None)
+        self.assertEqual(record[15], None)
+        self.assertEqual(record[16], None)
+        self.assertEqual(record[17], None)
+        self.assertEqual(record[18], None)
+        self.assertEqual(record[19], None)
+        self.assertEqual(record[20], None)
+        self.assertEqual(record[21], None)
+        self.assertEqual(record[22], None)
