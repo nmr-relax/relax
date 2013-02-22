@@ -239,15 +239,16 @@ class Frame_order(API_base, API_common):
 
         # Array of data types.
         list = []
+        domain_id = cdp.domain[self._domain_moving()]
 
         # RDC search.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(selection1=domain_id):
             if hasattr(interatom, 'rdc'):
                 list.append('rdc')
                 break
 
         # PCS search.
-        for spin in spin_loop():
+        for spin in spin_loop(selection=domain_id):
             if hasattr(spin, 'pcs'):
                 list.append('pcs')
                 break
@@ -628,9 +629,10 @@ class Frame_order(API_base, API_common):
 
         # Initialise.
         atomic_pos = []
+        domain_id = cdp.domain[self._domain_moving()]
 
         # Store the atomic positions.
-        for spin, spin_id in spin_loop(return_id=True):
+        for spin, spin_id in spin_loop(selection=domain_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -729,9 +731,9 @@ class Frame_order(API_base, API_common):
                 raise RelaxError("The spectrometer frequency for the alignment ID '%s' has not been set." % align_id)
 
             # Spin loop over the domain.
-            id = cdp.domain[self._domain_moving()]
+            domain_id = cdp.domain[self._domain_moving()]
             j = 0
-            for spin in spin_loop(id):
+            for spin in spin_loop(selection=domain_id):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -799,9 +801,10 @@ class Frame_order(API_base, API_common):
         unit_vect = []
         rdc_const = []
         absolute = []
+        domain_id = cdp.domain[self._domain_moving()]
 
         # The unit vectors and RDC constants.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(selection1=domain_id):
             # Get the spins.
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
@@ -875,8 +878,8 @@ class Frame_order(API_base, API_common):
             absolute.append([])
 
             # Interatom loop over the domain.
-            id = cdp.domain[self._domain_moving()]
-            for interatom in interatomic_loop(id):
+            domain_id = cdp.domain[self._domain_moving()]
+            for interatom in interatomic_loop(domain_id):
                 # Get the spins.
                 spin1 = return_spin(interatom.spin_id1)
                 spin2 = return_spin(interatom.spin_id2)
@@ -1275,9 +1278,9 @@ class Frame_order(API_base, API_common):
                 pcs_flag = True
 
             # Spin loop over the domain.
-            id = cdp.domain[self._domain_moving()]
+            domain_id = cdp.domain[self._domain_moving()]
             pcs_index = 0
-            for spin in spin_loop(id):
+            for spin in spin_loop(domain_id):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -1296,7 +1299,7 @@ class Frame_order(API_base, API_common):
 
             # Interatomic data container loop.
             rdc_index = 0
-            for interatom in interatomic_loop(id):
+            for interatom in interatomic_loop(domain_id):
                 # Get the spins.
                 spin1 = return_spin(interatom.spin_id1)
                 spin2 = return_spin(interatom.spin_id2)
@@ -1650,10 +1653,10 @@ class Frame_order(API_base, API_common):
         """
 
         # The moving domain ID.
-        id = cdp.domain[self._domain_moving()]
+        domain_id = cdp.domain[self._domain_moving()]
 
         # Loop over the interatomic data containers for the moving domain (for the RDC data).
-        for interatom in interatomic_loop(id):
+        for interatom in interatomic_loop(selection1=domain_id):
             # Get the spins.
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
@@ -1668,7 +1671,7 @@ class Frame_order(API_base, API_common):
                 yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
 
         # Loop over the spin containers for the moving domain (for the PCS data).
-        for spin, spin_id in spin_loop(id, return_id=True):
+        for spin, spin_id in spin_loop(selection=domain_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
