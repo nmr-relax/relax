@@ -193,8 +193,8 @@ class Frame_order:
             if err:
                 self.pcs_error = pcs_errors
             else:
-                # Missing errors (the values need to be small, close to ppm units, so the chi-squared value is comparable to the RDC).
-                self.pcs_error = 0.03 * 1e-6 * ones((self.num_align, self.num_spins), float64)
+                # Missing errors (default to 0.1 ppm errors).
+                self.pcs_error = 0.1 * 1e-6 * ones((self.num_align, self.num_spins), float64)
 
         # RDC errors.
         if self.rdc_flag_sum:
@@ -206,7 +206,7 @@ class Frame_order:
             if err:
                 self.rdc_error = rdc_errors
             else:
-                # Missing errors.
+                # Missing errors (default to 1 Hz errors).
                 self.rdc_error = ones((self.num_align, self.num_interatom), float64)
 
         # Missing data matrices (RDC).
