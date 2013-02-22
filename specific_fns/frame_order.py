@@ -1654,12 +1654,12 @@ class Frame_order(API_base, API_common):
 
         # Loop over the interatomic data containers for the moving domain (for the RDC data).
         for interatom in interatomic_loop(id):
-            # Skip deselected containers.
-            if not interatom.select:
-                continue
+            # Get the spins.
+            spin1 = return_spin(interatom.spin_id1)
+            spin2 = return_spin(interatom.spin_id2)
 
-            # No RDC, so skip.
-            if not hasattr(interatom, 'rdc'):
+            # RDC checks.
+            if not self._check_rdcs(interatom, spin1, spin2):
                 continue
 
             # Loop over the alignment IDs.
