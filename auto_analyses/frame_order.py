@@ -209,39 +209,49 @@ class Frame_order_analysis:
 
         @param model:   The frame order model.
         @type model:    str
+        @return:        The list of increment values.
+        @rtype:         list of int and None
         """
+
+        # Initialise the structure.
+        incs = []
+        if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
+            incs += [None, None, None]
 
         # The rotor model.
         if model == 'rotor':
-            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The free rotor model.
         if model == 'free rotor':
-            return [None, None, self.grid_inc, self.grid_inc]
+            incs += [None, None, self.grid_inc, self.grid_inc]
 
         # The torsionless isotropic cone model.
         if model == 'iso cone, torsionless':
-            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The free rotor isotropic cone model.
         if model == 'iso cone, free rotor':
-            return [None, None, None, None, self.grid_inc]
+            incs += [None, None, None, None, self.grid_inc]
 
         # The isotropic cone model.
         if model == 'iso cone':
-            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
         # The torsionless pseudo-elliptic cone model.
         if model == 'pseudo-ellipse, torsionless':
-            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
         # The free rotor pseudo-elliptic cone model.
         if model == 'pseudo-ellipse, free rotor':
-            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
         # The pseudo-elliptic cone model.
         if model == 'pseudo-ellipse':
-            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
+            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
+
+        # Return the increment list.
+        return incs
 
 
     def nested_params(self, model):
