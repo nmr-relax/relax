@@ -2032,8 +2032,13 @@ class Frame_order(API_base, API_common):
             for j in range(n):
                 # Fixed parameter.
                 if grid[j] == None:
-                    # Get the current parameter value.
-                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
+                    # Get the current parameter value (pivot, assuming the pivot point is always at the start of the parameter array).
+                    if cdp.params[j] in ['pivot_x', 'pivot_y', 'pivot_z']:
+                        pts[i, j] = cdp.pivot[j] / scaling_matrix[j, j]
+
+                    # Get the current parameter value (normal parameter).
+                    else:
+                        pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
 
                 # Add the point coordinate.
                 else:
