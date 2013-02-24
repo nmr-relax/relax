@@ -656,6 +656,7 @@ class Frame_order(API_base, API_common):
                 ave_pos = zeros(3, float64)
                 for i in range(len(spin.pos)):
                     ave_pos += spin.pos[i]
+                ave_pos = ave_pos / len(spin.pos)
 
                 # Store.
                 atomic_pos.append(ave_pos)
