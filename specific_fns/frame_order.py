@@ -645,6 +645,10 @@ class Frame_order(API_base, API_common):
 
             # A single atomic position.
             if spin.pos.shape == (3,):
+                atomic_pos.append(spin.pos)
+
+            # A single model (rank-2 array of a single position).
+            elif spin.pos.shape == (1, 3):
                 atomic_pos.append(spin.pos[0])
 
             # Average multiple atomic positions.
