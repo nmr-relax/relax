@@ -916,6 +916,81 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
         raise RelaxError("No vectors could be extracted.")
 
 
+def web_of_motion(file=None, dir=None, models=None, force=False):
+    """Create a PDB representation of the motion between a set of models.
+
+    This will create a PDB file containing the atoms of all models, with identical atoms links using CONECT records.  This function only supports the internal structural object.
+
+    @keyword file:          The name of the PDB file to write.
+    @type file:             str
+    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:              str or None
+    @keyword models:        The optional list of models to restrict this to.
+    @type models:           list of int or None
+    @keyword force:         The force flag which if True will cause the file to be overwritten.
+    @type force:            bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Validate the models.
+    cdp.structure.validate_models()
+
+    # Check the structural object type.
+    if cdp.structure.id != 'internal':
+        raise RelaxError("The %s structure type is not supported." % cdp.structure.id)
+
+    # Initialise the structural object.
+    web = Internal()
+
+    # Loop over the molecules.
+    for i in range(len(cdp.structure.structural_data[0].mol)):
+        # Alias the molecule of the first model.
+        mol1 = cdp.structure.structural_data[0].mol[i]
+
+        # Loop over the atoms.
+        for j in range(len(mol1.atom_name)):
+            # Loop over the models.
+            for k in range(len(cdp.structure.structural_data)):
+                # Alias.
+                mol = cdp.structure.structural_data[k].mol[i]
+
+                # Add the atom.
+                web.add_atom(mol_name=mol1.mol_name, atom_name=mol.atom_name[j], res_name=mol.res_name[j], res_num=mol.res_num[j], pos=[mol.x[j], mol.y[j], mol.z[j]], element=mol.element[j], chain_id=mol.chain_id[j], segment_id=mol.seg_id[j], pdb_record=mol.pdb_record[j])
+
+            # Loop over the models again, this time twice.
+            for k in range(len(cdp.structure.structural_data)):
+                for l in range(len(cdp.structure.structural_data)):
+                    # Skip identical atoms.
+                    if k == l:
+                        continue
+
+                    # The atom index.
+                    index1 = j*len(cdp.structure.structural_data) + l
+                    index2 = j*len(cdp.structure.structural_data) + k
+
+                    # Connect to the previous atoms.
+                    web.connect_atom(mol_name=mol1.mol_name, index1=index1, index2=index2)
+
+    # The file path.
+    file_path = get_file_path(file, dir)
+
+    # Add '.pdb' to the end of the file path if it isn't there yet.
+    if not search(".pdb$", file_path):
+        file_path = file_path + '.pdb'
+
+    # Open the file for writing.
+    file = open_write_file(file_path, force=force)
+
+    # Write the structure.
+    web.write_pdb(file)
+
+
 def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False):
     """The PDB writing function.
 

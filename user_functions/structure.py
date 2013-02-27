@@ -838,6 +838,57 @@ uf.wizard_size = (750, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.web_of_motion user function.
+uf = uf_info.add_uf('structure.web_of_motion')
+uf.title = "Create a PDB representation of motion between models using a web of interconnecting lines."
+uf.title_short = "Web of motion between models."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory to save the file to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list",
+    desc_short = "model numbers",
+    desc = "Restrict the web to a subset of models.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause any pre-existing files to be overwritten."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will create a PDB representation of the motion between the atoms of a given set of structural models.  Identical atoms of the selected models are concatenated into one model, within a temporary internal structural object, and linked together using PDB CONECT records.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To create a web of motion for the models 1, 3, and 5, type one of:")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion('web.pdb', '.', [1, 3, 5])")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', models=[1, 3, 5])")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', dir='.', models=[1, 3, 5])")
+uf.backend = generic_fns.structure.main.web_of_motion
+uf.menu_text = "&web_of_motion"
+uf.wizard_size = (900, 600)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.write_pdb user function.
 uf = uf_info.add_uf('structure.write_pdb')
 uf.title = "Writing structures to a PDB file."
