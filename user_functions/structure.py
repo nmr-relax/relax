@@ -844,7 +844,7 @@ uf.title = "Create a PDB representation of motion between models using a web of 
 uf.title_short = "Web of motion between models."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",

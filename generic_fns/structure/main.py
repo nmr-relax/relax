@@ -977,15 +977,17 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
                     # Connect to the previous atoms.
                     web.connect_atom(mol_name=mol1.mol_name, index1=index1, index2=index2)
 
-    # The file path.
-    file_path = get_file_path(file, dir)
+    # Append the PDB extension if needed.
+    if isinstance(file, str):
+        # The file path.
+        file = get_file_path(file, dir)
 
-    # Add '.pdb' to the end of the file path if it isn't there yet.
-    if not search(".pdb$", file_path):
-        file_path = file_path + '.pdb'
+        # Add '.pdb' to the end of the file path if it isn't there yet.
+        if not search(".pdb$", file):
+            file += '.pdb'
 
     # Open the file for writing.
-    file = open_write_file(file_path, force=force)
+    file = open_write_file(file, force=force)
 
     # Write the structure.
     web.write_pdb(file)
