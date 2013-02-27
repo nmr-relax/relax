@@ -30,6 +30,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, return_spin
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from relax_errors import RelaxError
+from relax_io import DummyFileObject
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -1053,3 +1054,75 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(model2.x[i], model3.x[i], 2)
             self.assertAlmostEqual(model2.y[i], model3.y[i], 2)
             self.assertAlmostEqual(model2.z[i], model3.z[i], 2)
+
+
+    def test_web_of_motion_all(self):
+        """Check the operation of the structure.web_of_motion user function using all structural models."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file)
+
+        # The result.
+        result = [
+            "ATOM      1  N   LEU     4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU     4       9.211  -9.425  26.970  1.00  0.00           N  ",
+            "ATOM      3  N   LEU     4       7.761  -6.392  27.161  1.00  0.00           N  ",
+            "ATOM      4  H   LEU     4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      5  H   LEU     4       9.085  -9.743  27.919  1.00  0.00           H  ",
+            "ATOM      6  H   LEU     4       7.278  -6.195  28.026  1.00  0.00           H  ",
+            "ATOM      7 CA   LEU     4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      8 CA   LEU     4      10.077  -8.221  26.720  1.00  0.00           C  ",
+            "ATOM      9 CA   LEU     4       9.256  -6.332  27.183  1.00  0.00           C  ",
+            "ATOM     10 CB   LEU     4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM     11 CB   LEU     4       9.297  -7.096  26.024  1.00  0.00           C  ",
+            "ATOM     12 CB   LEU     4       9.799  -5.331  26.144  1.00  0.00           C  ",
+            "ATOM     13 CG   LEU     4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     14 CG   LEU     4      10.061  -5.803  25.679  1.00  0.00           C  ",
+            "ATOM     15 CG   LEU     4      10.293  -5.882  24.803  1.00  0.00           C  ",
+            "ATOM     16 CD1  LEU     4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     17 CD1  LEU     4      11.029  -6.002  24.507  1.00  0.00           C  ",
+            "ATOM     18 CD1  LEU     4       9.404  -6.984  24.274  1.00  0.00           C  ",
+            "ATOM     19 CD2  LEU     4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     20 CD2  LEU     4       9.120  -4.618  25.384  1.00  0.00           C  ",
+            "ATOM     21 CD2  LEU     4      10.355  -4.772  23.792  1.00  0.00           C  ",
+            "ATOM     22  C   LEU     4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     23  C   LEU     4      10.625  -7.721  28.047  1.00  0.00           C  ",
+            "ATOM     24  C   LEU     4       9.816  -6.033  28.572  1.00  0.00           C  ",
+            "TER      25      LEU     4                                                      ",
+            "CONECT    1    2    3                                                           ",
+            "CONECT    2    1    3                                                           ",
+            "CONECT    3    1    2                                                           ",
+            "CONECT    4    5    6                                                           ",
+            "CONECT    5    4    6                                                           ",
+            "CONECT    6    4    5                                                           ",
+            "CONECT    7    8    9                                                           ",
+            "CONECT    8    7    9                                                           ",
+            "CONECT    9    7    8                                                           ",
+            "CONECT   10   11   12                                                           ",
+            "CONECT   11   10   12                                                           ",
+            "CONECT   12   10   11                                                           ",
+            "CONECT   13   14   15                                                           ",
+            "CONECT   14   13   15                                                           ",
+            "CONECT   15   13   14                                                           ",
+            "CONECT   16   17   18                                                           ",
+            "CONECT   17   16   18                                                           ",
+            "CONECT   18   16   17                                                           ",
+            "CONECT   19   20   21                                                           ",
+            "CONECT   20   19   21                                                           ",
+            "CONECT   21   19   20                                                           ",
+            "CONECT   22   23   24                                                           ",
+            "CONECT   23   22   24                                                           ",
+            "CONECT   24   22   23                                                           ",
+            "MASTER        0    0    0    0    0    0    0    0   24    1   24    0          ",
+            "END"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        for i in range(len(lines)):
+            self.assertEqual(result[i], lines[i])
