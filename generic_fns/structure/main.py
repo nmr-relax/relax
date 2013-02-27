@@ -948,6 +948,12 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
     # Initialise the structural object.
     web = Internal()
 
+    # The model list.
+    if models == None:
+        models = []
+        for k in range(len(cdp.structure.structural_data)):
+            models.append(cdp.structure.structural_data[k].num)
+
     # Loop over the molecules.
     for i in range(len(cdp.structure.structural_data[0].mol)):
         # Alias the molecule of the first model.
@@ -957,6 +963,10 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
         for j in range(len(mol1.atom_name)):
             # Loop over the models.
             for k in range(len(cdp.structure.structural_data)):
+                # Skip the model.
+                if cdp.structure.structural_data[k].num not in models:
+                    continue
+
                 # Alias.
                 mol = cdp.structure.structural_data[k].mol[i]
 
@@ -964,15 +974,15 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
                 web.add_atom(mol_name=mol1.mol_name, atom_name=mol.atom_name[j], res_name=mol.res_name[j], res_num=mol.res_num[j], pos=[mol.x[j], mol.y[j], mol.z[j]], element=mol.element[j], chain_id=mol.chain_id[j], segment_id=mol.seg_id[j], pdb_record=mol.pdb_record[j])
 
             # Loop over the models again, this time twice.
-            for k in range(len(cdp.structure.structural_data)):
-                for l in range(len(cdp.structure.structural_data)):
+            for k in range(len(models)):
+                for l in range(len(models)):
                     # Skip identical atoms.
                     if k == l:
                         continue
 
                     # The atom index.
-                    index1 = j*len(cdp.structure.structural_data) + l
-                    index2 = j*len(cdp.structure.structural_data) + k
+                    index1 = j*len(models) + k
+                    index2 = j*len(models) + l
 
                     # Connect to the previous atoms.
                     web.connect_atom(mol_name=mol1.mol_name, index1=index1, index2=index2)
