@@ -1069,6 +1069,8 @@ class Structure(SystemTestCase):
 
         # The result.
         result = [
+            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
+            "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             ",
             "ATOM      1  N   LEU     4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU     4       9.211  -9.425  26.970  1.00  0.00           N  ",
             "ATOM      3  N   LEU     4       7.761  -6.392  27.161  1.00  0.00           N  ",
@@ -1119,10 +1121,10 @@ class Structure(SystemTestCase):
             "CONECT   23   22   24                                                           ",
             "CONECT   24   22   23                                                           ",
             "MASTER        0    0    0    0    0    0    0    0   24    1   24    0          ",
-            "END"
+            "END                                                                             "
         ]
 
         # Check the created PDB file.
         lines = file.readlines()
         for i in range(len(lines)):
-            self.assertEqual(result[i], lines[i])
+            self.assertEqual(result[i]+'\n', lines[i])
