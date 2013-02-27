@@ -1056,6 +1056,66 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(model2.z[i], model3.z[i], 2)
 
 
+    def test_web_of_motion_12(self):
+        """Check the operation of the structure.web_of_motion user function using structural models 1 and 2 (of 3)."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, models=[1, 2])
+
+        # The result.
+        result = [
+            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
+            "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             ",
+            "ATOM      1  N   LEU     4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU     4       9.211  -9.425  26.970  1.00  0.00           N  ",
+            "ATOM      3  H   LEU     4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      4  H   LEU     4       9.085  -9.743  27.919  1.00  0.00           H  ",
+            "ATOM      5 CA   LEU     4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      6 CA   LEU     4      10.077  -8.221  26.720  1.00  0.00           C  ",
+            "ATOM      7 CB   LEU     4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM      8 CB   LEU     4       9.297  -7.096  26.024  1.00  0.00           C  ",
+            "ATOM      9 CG   LEU     4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     11 CG   LEU     4      10.061  -5.803  25.679  1.00  0.00           C  ",
+            "ATOM     12 CD1  LEU     4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     13 CD1  LEU     4      11.029  -6.002  24.507  1.00  0.00           C  ",
+            "ATOM     14 CD2  LEU     4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     15 CD2  LEU     4       9.120  -4.618  25.384  1.00  0.00           C  ",
+            "ATOM     16  C   LEU     4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     17  C   LEU     4      10.625  -7.721  28.047  1.00  0.00           C  ",
+            "TER      18      LEU     4                                                      ",
+            "CONECT    1    2    3                                                           ",
+            "CONECT    2    1    3                                                           ",
+            "CONECT    3    1    2                                                           ",
+            "CONECT    4    5    6                                                           ",
+            "CONECT    5    4    6                                                           ",
+            "CONECT    6    4    5                                                           ",
+            "CONECT    7    8    9                                                           ",
+            "CONECT    8    7    9                                                           ",
+            "CONECT    9    7    8                                                           ",
+            "CONECT   10   11   12                                                           ",
+            "CONECT   11   10   12                                                           ",
+            "CONECT   12   10   11                                                           ",
+            "CONECT   13   14   15                                                           ",
+            "CONECT   14   13   15                                                           ",
+            "CONECT   15   13   14                                                           ",
+            "CONECT   16   17   18                                                           ",
+            "CONECT   17   16   18                                                           ",
+            "CONECT   18   16   17                                                           ",
+            "MASTER        0    0    0    0    0    0    0    0   17    1   17    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
     def test_web_of_motion_all(self):
         """Check the operation of the structure.web_of_motion user function using all structural models."""
 
