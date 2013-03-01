@@ -421,6 +421,20 @@ uf.add_keyarg(
     desc = "The initial position of the pivot.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "func_tol",
+    default = 1e-5,
+    py_type = "num",
+    desc_short = "function tolerance",
+    desc = "The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.  The default value is 1e-5."
+)
+uf.add_keyarg(
+    name = "box_limit",
+    default = 200,
+    py_type = "int",
+    desc_short = "box constraint limit",
+    desc = "The pivot point is constrained withing a box of +/- x Angstrom the using the logarithmic barrier function together with simplex optimisation.  This argument is the value of x."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.")
