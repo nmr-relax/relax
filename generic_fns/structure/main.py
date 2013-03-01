@@ -246,9 +246,18 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5):
         coord[-1] = array(coord[-1])
     coord = array(coord)
 
+    # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
+    A = zeros((6, 3), float64)
+    b = zeros(6, float64)
+    for i in range(3):
+        A[2*i, i] = 1
+        A[2*i+1, i] = -1
+        b[2*i] = -1000
+        b[2*i+1] = -1000
+
     # The target function.
     finder = Pivot_finder(models, coord)
-    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='simplex', func_tol=func_tol, print_flag=2)
+    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='Log barrier', min_options=('simplex',), A=A, b=b, func_tol=func_tol, print_flag=1)
 
     # No result.
     if results == None:
