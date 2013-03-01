@@ -206,7 +206,7 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
             cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
 
 
-def find_pivot(models=None, atom_id=None, init_pos=None):
+def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5):
     """Superimpose a set of structural models.
 
     @keyword models:    The list of models to use.  If set to None, then all models will be used.
@@ -215,6 +215,8 @@ def find_pivot(models=None, atom_id=None, init_pos=None):
     @type atom_id:      str or None
     @keyword init_pos:  The starting pivot position for the pivot point optimisation.
     @type init_pos:     list of float or numpy rank-1, 3D array
+    @keyword func_tol:  The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+    @type func_tol:     None or float
     """
 
     # Test if the current data pipe exists.
@@ -245,7 +247,7 @@ def find_pivot(models=None, atom_id=None, init_pos=None):
 
     # The target function.
     finder = Pivot_finder(models, coord)
-    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='simplex', print_flag=1)
+    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='simplex', func_tol=func_tol, print_flag=2)
 
     # No result.
     if results == None:
