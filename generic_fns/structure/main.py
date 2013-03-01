@@ -38,7 +38,8 @@ from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from generic_fns.structure.statistics import atomic_rmsd
-from generic_fns.structure.superimpose import fit_to_first, fit_to_mean, Pivot_finder
+from generic_fns.structure.superimpose import fit_to_first, fit_to_mean
+from maths_fns.ens_pivot_finder import Pivot_finder
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_data, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -206,7 +207,7 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
             cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
 
 
-def find_pivot(models=None, atom_id=None, init_pos=None):
+def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
     """Superimpose a set of structural models.
 
     @keyword models:    The list of models to use.  If set to None, then all models will be used.
@@ -215,6 +216,10 @@ def find_pivot(models=None, atom_id=None, init_pos=None):
     @type atom_id:      str or None
     @keyword init_pos:  The starting pivot position for the pivot point optimisation.
     @type init_pos:     list of float or numpy rank-1, 3D array
+    @keyword func_tol:  The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+    @type func_tol:     None or float
+    @keyword box_limit: The simplex optimisation used in this function is constrained withing a box of +/- x Angstrom containing the pivot point using the logarithmic barrier function.  This argument is the value of x.
+    @type box_limit:    int
     """
 
     # Test if the current data pipe exists.
@@ -243,9 +248,18 @@ def find_pivot(models=None, atom_id=None, init_pos=None):
         coord[-1] = array(coord[-1])
     coord = array(coord)
 
+    # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
+    A = zeros((6, 3), float64)
+    b = zeros(6, float64)
+    for i in range(3):
+        A[2*i, i] = 1
+        A[2*i+1, i] = -1
+        b[2*i] = -box_limit
+        b[2*i+1] = -box_limit
+
     # The target function.
     finder = Pivot_finder(models, coord)
-    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='simplex', print_flag=1)
+    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='Log barrier', min_options=('simplex',), A=A, b=b, func_tol=func_tol, print_flag=1)
 
     # No result.
     if results == None:
@@ -874,6 +888,93 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:
         raise RelaxError("No vectors could be extracted.")
+
+
+def web_of_motion(file=None, dir=None, models=None, force=False):
+    """Create a PDB representation of the motion between a set of models.
+
+    This will create a PDB file containing the atoms of all models, with identical atoms links using CONECT records.  This function only supports the internal structural object.
+
+    @keyword file:          The name of the PDB file to write.
+    @type file:             str
+    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:              str or None
+    @keyword models:        The optional list of models to restrict this to.
+    @type models:           list of int or None
+    @keyword force:         The force flag which if True will cause the file to be overwritten.
+    @type force:            bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Validate the models.
+    cdp.structure.validate_models()
+
+    # Check the structural object type.
+    if cdp.structure.id != 'internal':
+        raise RelaxError("The %s structure type is not supported." % cdp.structure.id)
+
+    # Initialise the structural object.
+    web = Internal()
+
+    # The model list.
+    if models == None:
+        models = []
+        for k in range(len(cdp.structure.structural_data)):
+            models.append(cdp.structure.structural_data[k].num)
+
+    # Loop over the molecules.
+    for i in range(len(cdp.structure.structural_data[0].mol)):
+        # Alias the molecule of the first model.
+        mol1 = cdp.structure.structural_data[0].mol[i]
+
+        # Loop over the atoms.
+        for j in range(len(mol1.atom_name)):
+            # Loop over the models.
+            for k in range(len(cdp.structure.structural_data)):
+                # Skip the model.
+                if cdp.structure.structural_data[k].num not in models:
+                    continue
+
+                # Alias.
+                mol = cdp.structure.structural_data[k].mol[i]
+
+                # Add the atom.
+                web.add_atom(mol_name=mol1.mol_name, atom_name=mol.atom_name[j], res_name=mol.res_name[j], res_num=mol.res_num[j], pos=[mol.x[j], mol.y[j], mol.z[j]], element=mol.element[j], chain_id=mol.chain_id[j], segment_id=mol.seg_id[j], pdb_record=mol.pdb_record[j])
+
+            # Loop over the models again, this time twice.
+            for k in range(len(models)):
+                for l in range(len(models)):
+                    # Skip identical atoms.
+                    if k == l:
+                        continue
+
+                    # The atom index.
+                    index1 = j*len(models) + k
+                    index2 = j*len(models) + l
+
+                    # Connect to the previous atoms.
+                    web.connect_atom(mol_name=mol1.mol_name, index1=index1, index2=index2)
+
+    # Append the PDB extension if needed.
+    if isinstance(file, str):
+        # The file path.
+        file = get_file_path(file, dir)
+
+        # Add '.pdb' to the end of the file path if it isn't there yet.
+        if not search(".pdb$", file):
+            file += '.pdb'
+
+    # Open the file for writing.
+    file = open_write_file(file, force=force)
+
+    # Write the structure.
+    web.write_pdb(file)
 
 
 def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False):

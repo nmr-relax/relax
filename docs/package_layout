@@ -1,0 +1,58 @@
+
+
+Directory layout design (2013-03-01)
+====================================
+
+The following is an idea for how to lay out the directories for the relax sources.  The changes suggested must occur after the merging of the frame_order_testing branch.
+
+____________________________________________________________________________________________________
+
+Package             Description
+____________________________________________________________________________________________________
+
+analysis_lib        Analysis specific code (currently called specific_fns).
+
+auto_analyses       Unchanged from now.  A collection of massive relax scripts used to simplify the
+                    life of relax users.
+
+data_store          The relax data store and all modules which operate on it (data and generic_fns).
+
+ds_lib              All modules which operate on the relax data store (data and generic_fns).
+                    Mainly user function backends.
+
+extern              GPL compatible packages bundled with relax.
+
+graphics            Mainly a repository for all bitmap and vector graphics, but a few auxiliary
+                    functions for handling graphics within relax (e.g. icons in the GUI).
+
+gui                 The graphical UI.
+
+lib                 A set of modules and functions independent of the relax data store and specific
+                    analyses.  Half of maths_fns and some of generic_fns.  No code is allowed to
+                    reference the data store!
+
+lib.frame_order     Most of the modules of maths_fns.frame_order.
+
+lib.geometry        To include, for example, maths_fns.rotation_matrix.
+
+lib.opendx          From opendx.
+
+lib.nmr             For example maths_fns.rdc, math_fns.pcs, etc.
+
+lib.structure       From generic_fns.structure.
+
+multi               The multi-processor code.
+
+prompt              The prompt/script UI.
+
+scons               The SCons modules.
+
+target_fns          A collection of all the target functions.  This is most of the current
+                    maths_fns.  The modules contain target function classes which must present the
+                    func() method as the target function (and the optional dfunc() and d2func() for
+                    the gradient and Hessian respectively).
+
+test_suite          The relax test suite.
+
+user_functions      The definitions of the relax user functions.
+____________________________________________________________________________________________________

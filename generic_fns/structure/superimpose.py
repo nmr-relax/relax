@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,51 +29,8 @@ from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
-from generic_fns.structure.statistics import atomic_rmsd, calc_mean_structure
+from generic_fns.structure.statistics import calc_mean_structure
 from maths_fns.rotation_matrix import R_to_axis_angle
-
-
-class Pivot_finder:
-    """Class for finding the optimal pivot point for motions between the given models."""
-
-    def __init__(self, models, coord):
-        """Set up the class for pivot point optimisation.
-
-        @keyword models:    The list of models to use.  If set to None, then all models will be used.
-        @type models:       list of int or None
-        @keyword coord:     The array of molecular coordinates.  The first dimension corresponds to the model, the second the atom, the third the coordinate.
-        @type coord:        rank-3 numpy array
-        """
-
-        # Store the args.
-        self.models = models
-        self.coord = coord
-
-        # Store a copy of the coordinates for restoration.
-        self.orig_coord = deepcopy(coord)
-
-
-    def func(self, params):
-        """Target function for the optimisation of the motional pivot point.
-
-        @param params:  The parameter vector from the optimisation algorithm.
-        @type params:   list
-        @return:        The target function value defined as the combined RMSD value.
-        @rtype:         float
-        """
-
-        # The fit to mean algorithm.
-        T, R, pivot = fit_to_mean(models=self.models, coord=self.coord, centroid=params, verbosity=0)
-
-        # The RMSD.
-        val = atomic_rmsd(self.coord)
-
-        # Restore the coordinates.
-        self.coord = deepcopy(self.orig_coord)
-
-        # Return the RMSD.
-        return val
-
 
 
 def find_centroid(coords):
