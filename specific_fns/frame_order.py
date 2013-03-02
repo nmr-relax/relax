@@ -1331,9 +1331,6 @@ class Frame_order(API_base, API_common):
         @type scaling:          bool
         """
 
-        # Simulated annealing constraints.
-        #lower, upper = self._assemble_limit_arrays()
-
         # Assemble the parameter vector.
         param_vector = self._assemble_param_vector(sim_index=sim_index)
 
