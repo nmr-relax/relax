@@ -407,8 +407,19 @@ class Frame_order_analysis:
         # Select the Frame Order model.
         self.interpreter.frame_order.select_model(model=model)
 
-        # Grid search.
+        # Avoid the domain translation during the grid search.
+        changed = False
+        if hasattr(cdp, 'ave_pos_translation') and cdp.ave_pos_translation:
+            ave_pos_translation =  cdp.ave_pos_translation
+            cdp.ave_pos_translation = False
+            changed = True
+
+        # Grid search (avoid the domain translation).
         self.interpreter.grid_search(inc=self.grid_inc_rigid, constraints=False)
+
+        # Restore the translation, then minimise again.
+        if changed:
+            cdp.ave_pos_translation = ave_pos_translation
 
         # Minimise.
         self.interpreter.minimise(self.min_algor, constraints=False)
