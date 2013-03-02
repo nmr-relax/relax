@@ -1706,6 +1706,9 @@ class Frame_order(API_base, API_common):
         # Store the back-calculated data.
         self._store_bc_data(model)
 
+        # Printout.
+        print("Chi2:  %s" % chi2)
+
 
     def create_mc_data(self, data_id=None):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
