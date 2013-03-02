@@ -1703,7 +1703,7 @@ class Frame_order(API_base, API_common):
         # Set the chi2.
         cdp.chi2 = chi2
 
-        # Store the back-calculated tensors.
+        # Store the back-calculated data.
         self._store_bc_data(model)
 
 
@@ -2155,7 +2155,7 @@ class Frame_order(API_base, API_common):
         # Unpack the results.
         self._unpack_opt_results(results, scaling, scaling_matrix, sim_index)
 
-        # Store the back-calculated tensors.
+        # Store the back-calculated data.
         self._store_bc_data(model)
 
 
