@@ -99,8 +99,8 @@ structure.read_pdb('1J7O_1st_NH.pdb', dir='..', set_mol_name='N-dom')
 structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
 
 # Set up the 15N and 1H spins.
-structure.load_spins(spin_id='@N', mol_name_target='CaM', ave_pos=False)
-structure.load_spins(spin_id='@H', mol_name_target='CaM', ave_pos=False)
+structure.load_spins(spin_id='@N', ave_pos=False)
+structure.load_spins(spin_id='@H', ave_pos=False)
 spin.isotope(isotope='15N', spin_id='@N')
 spin.isotope(isotope='1H', spin_id='@H')
 
