@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,9 +24,6 @@
 This script should be run from the directory where it is found with the commands:
 
 $ ../../../../../relax full_analysis.py
-
-$ mpirun -n 3 ../../../../../relax --multi mpi4py full_analysis.py
-
 
 The free rotor pseudo-elliptic cone model is not used in this script as the cone X and Y opening angles cannot be differentiated with simply RDC and PCS data, hence this model is perfectly approximated by the free rotor isotropic cone.
 """
@@ -102,8 +99,8 @@ structure.read_pdb('1J7O_1st_NH.pdb', dir='..', set_mol_name='N-dom')
 structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
 
 # Set up the 15N and 1H spins.
-structure.load_spins(spin_id='@N', ave_pos=False)
-structure.load_spins(spin_id='@H', ave_pos=False)
+structure.load_spins(spin_id='@N', mol_name_target='CaM', ave_pos=False)
+structure.load_spins(spin_id='@H', mol_name_target='CaM', ave_pos=False)
 spin.isotope(isotope='15N', spin_id='@N')
 spin.isotope(isotope='1H', spin_id='@H')
 
@@ -112,18 +109,52 @@ dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
 dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
 dipole_pair.unit_vectors()
 
-# Loop over the alignments.
+# The lanthanides and data files.
 ln = ['dy', 'tb', 'tm', 'er']
+pcs_files = [
+    'pcs_dy.txt',
+    'pcs_tb.txt', 
+    'pcs_tm.txt', 
+    'pcs_er.txt'
+]
+pcs_files_subset = [
+    'pcs_dy_subset.txt', 
+    'pcs_tb_subset.txt', 
+    'pcs_tm_subset.txt', 
+    'pcs_er_subset.txt' 
+]
+rdc_files = [
+    'rdc_dy.txt', 
+    'rdc_tb.txt', 
+    'rdc_tm.txt', 
+    'rdc_er.txt' 
+]
+
+# The spectrometer frequencies.
+pcs_frq = [
+    700.0000000,    # Dy3+.
+    700.0000000,    # Tb3+.
+    700.0000000,    # Tm3+.
+    700.0000000,    # Er3+.
+]
+rdc_frq = [
+    900.00000000,   # Dy3+.
+    900.00000000,   # Tb3+.
+    900.00000000,   # Tm3+.
+    900.00000000,   # Er3+.
+]
+
+# Loop over the alignments.
 for i in range(len(ln)):
     # Load the RDCs.
-    rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+    rdc.read(align_id=ln[i], file=rdc_files[i], dir='.', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
     # The PCS (only a subset of ~5 spins for fast initial optimisations).
-    pcs.read(align_id=ln[i], file='pcs_%s_subset.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+    pcs.read(align_id=ln[i], file=pcs_files_subset[i], dir='.', mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
     # The temperature and field strength.
-    temperature(id=ln[i], temp=303)
-    frq.set(id=ln[i], frq=900e6)
+    temperature(id=ln[i], temp=303.0)
+    frq.set(id=ln[i], frq=rdc_frq[i], units="MHz")
 
 # Load the N-domain tensors (the full tensors).
 script('../tensors.py')
@@ -137,7 +168,7 @@ full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
 red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
 ids = ['dy', 'tb', 'tm', 'er']
 for i in range(len(full)):
-    # Initialise the reduced tensor.
+    # Initialise the reduced tensors (fitted during optimisation).
     align_tensor.init(tensor=red[i], align_id=ids[i], params=(0, 0, 0, 0, 0))
 
     # Set the domain info.
@@ -154,6 +185,9 @@ frame_order.ref_domain('N')
 frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
 frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
+# Allow the average domain to be translated during optimisation.
+#frame_order.ave_pos_translate()
+
 # Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
 frame_order.pivot(pivot, fix=True)
@@ -168,7 +202,7 @@ pipe.switch(DATA)
 
 # Load the complete PCS data into the already filled data pipe.
 for i in range(len(ln)):
-    pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+    pcs.read(align_id=ln[i], file=pcs_files[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
 
 
