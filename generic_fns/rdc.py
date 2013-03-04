@@ -51,9 +51,8 @@ def back_calc(align_id=None):
     @type align_id:         str
     """
 
-    # Arg check.
-    if align_id and align_id not in cdp.align_ids:
-        raise RelaxError("The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids))
+    # Check the pipe setup.
+    check_pipe_setup(rdc_id=align_id, sequence=True, N=True, tensors=True)
 
     # Convert the align IDs to an array, or take all IDs.
     if align_id:
@@ -124,6 +123,58 @@ def back_calc(align_id=None):
                 interatom.rdc_bc[id] = abs(interatom.rdc_bc[id])
 
 
+def check_pipe_setup(pipe=None, rdc_id=None, sequence=False, N=False, tensors=False, rdc=False):
+    """Check that the current data pipe has been setup sufficiently.
+
+    @keyword pipe:      The data pipe to check, defaulting to the current pipe.
+    @type pipe:         None or str
+    @keyword rdc_id:    The RDC ID string to check for in cdp.rdc_ids.
+    @type rdc_id:       None or str
+    @keyword sequence:  A flag which when True will invoke the sequence data check.
+    @type sequence:     bool
+    @keyword N:         A flag which if True will check that cdp.N is set.
+    @type N:            bool
+    @keyword tensors:   A flag which if True will check that alignment tensors exist.
+    @type tensors:      bool
+    @keyword rdc:       A flag which if True will check that RDCs exist.
+    @type rdc:          bool
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Test if the current data pipe exists.
+    pipes.test(pipe)
+
+    # Test if sequence data exists.
+    if sequence and not exists_mol_res_spin_data(pipe):
+        raise RelaxNoSequenceError(pipe)
+
+    # Check for dp.N.
+    if N and not hasattr(dp, 'N'):
+        raise RelaxError("The number of states N has not been set.")
+
+    # Check that alignment tensors are present.
+    if tensors and (not hasattr(dp, 'align_tensors') or len(dp.align_tensors) == 0):
+        raise RelaxNoTensorError('alignment')
+
+    # Test for the alignment ID.
+    if rdc_id and (not hasattr(dp, 'align_ids') or rdc_id not in dp.align_ids):
+        raise RelaxNoAlignError(rdc_id, pipe)
+
+    # Test if RDC data exists.
+    if rdc and not hasattr(dp, 'align_ids'):
+        raise RelaxNoAlignError()
+    if rdc and not hasattr(dp, 'rdc_ids'):
+        raise RelaxNoRDCError()
+    elif rdc and rdc_id and rdc_id not in dp.rdc_ids:
+        raise RelaxNoRDCError(rdc_id)
+
+
 def convert(value, align_id, to_intern=False):
     """Convert the RDC based on the 'D' or '2D' data type.
 
@@ -175,31 +226,13 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
     elif pipe_to == None:
         pipe_to = pipes.cdp_name()
 
-    # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    # Check the pipe setup.
+    check_pipe_setup(pipe=pipe_from, rdc_id=align_id, sequence=True, rdc=True)
+    check_pipe_setup(pipe=pipe_to, sequence=True)
 
     # Get the data pipes.
     dp_from = pipes.get_pipe(pipe_from)
     dp_to = pipes.get_pipe(pipe_to)
-
-    # Test if pipe_from contains sequence data.
-    if not exists_mol_res_spin_data(pipe_from):
-        raise RelaxNoSequenceError
-
-    # Test if pipe_to contains sequence data.
-    if not exists_mol_res_spin_data(pipe_to):
-        raise RelaxNoSequenceError
-
-    # Test if alignment ID string exists for pipe_from.
-    if align_id and (not hasattr(dp_from, 'align_ids') or align_id not in dp_from.align_ids):
-        raise RelaxNoAlignError(align_id, pipe_from)
-
-    # Test if RDC data for the alignment ID exists.
-    if not hasattr(dp_from, 'rdc_ids'):
-        raise RelaxError("No RDC data exists.")
-    elif align_id and align_id not in dp_from.rdc_ids:
-        raise RelaxNoRDCError(align_id)
 
     # Test that the interatomic data is consistent between the two data pipe.
     consistent_interatomic_data(pipe1=pipe_to, pipe2=pipe_from)
@@ -260,12 +293,8 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     @type force:        bool
     """
 
-    # Test if the current pipe exists.
-    pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True)
 
     # Does RDC data exist?
     if not hasattr(cdp, 'rdc_ids') or not cdp.rdc_ids:
@@ -341,16 +370,8 @@ def delete(align_id=None):
     @type align_id:     str or None
     """
 
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Check that the ID exists.
-    if align_id and not align_id in cdp.rdc_ids:
-        raise RelaxError("The RDC alignment id '%s' does not exist" % align_id)
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True, rdc_id=align_id, rdc=True)
 
     # The IDs.
     if not align_id:
@@ -391,6 +412,9 @@ def display(align_id=None, bc=False):
     @type bc:           bool
     """
 
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True, rdc_id=align_id, rdc=True)
+
     # Call the write method with sys.stdout as the file.
     write(align_id=align_id, file=sys.stdout, bc=bc)
 
@@ -401,6 +425,9 @@ def q_factors(spin_id=None):
     @keyword spin_id:   The spin ID string used to restrict the Q-factor calculation to a subset of all spins.
     @type spin_id:      None or str
     """
+
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True)
 
     # No RDCs, so no Q factors can be calculated.
     if not hasattr(cdp, 'rdc_ids') or not len(cdp.rdc_ids):
@@ -535,12 +562,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     @type absolute:         bool
     """
 
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True)
 
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
@@ -721,21 +744,8 @@ def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
     @type sd:           float or int.
     """
 
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test if RDC data exists.
-    if not hasattr(cdp, 'rdc_ids'):
-        raise RelaxNoRDCError()
-
-    # Test if data corresponding to 'align_id' exists.
-    if align_id and align_id not in cdp.rdc_ids:
-        raise RelaxNoRDCError(align_id)
-
-    # Arg check.
-    if align_id and align_id not in cdp.rdc_ids:
-        raise RelaxError("The alignment ID '%s' is not in the RDC ID list %s." % (align_id, cdp.rdc_ids))
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True, rdc_id=align_id, rdc=True)
 
     # Convert the align IDs to an array, or take all IDs.
     if align_id:
@@ -765,13 +775,8 @@ def weight(align_id=None, spin_id=None, weight=1.0):
     @type weight:       float or int.
     """
 
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test if data corresponding to 'align_id' exists.
-    if not hasattr(cdp, 'rdc_ids') or align_id not in cdp.rdc_ids:
-        raise RelaxNoRDCError(align_id)
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True, rdc_id=align_id, rdc=True)
 
     # Loop over the interatomic data.
     for interatom in interatomic_loop():
@@ -798,16 +803,8 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
     @type force:        bool
     """
 
-    # Test if the current pipe exists.
-    pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test if data corresponding to 'align_id' exists.
-    if not hasattr(cdp, 'rdc_ids') or align_id not in cdp.rdc_ids:
-        raise RelaxNoRDCError(align_id)
+    # Check the pipe setup.
+    check_pipe_setup(sequence=True, rdc_id=align_id, rdc=True)
 
     # Open the file for writing.
     file = open_write_file(file, dir, force)
