@@ -62,7 +62,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, translation_opt=False, pivot=zeros(3), pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, centroid=zeros(3), translation_opt=False, pivot=zeros(3), pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -101,6 +101,8 @@ class Frame_order:
         @type scaling_matrix:       numpy rank-2 array
         @keyword num_int_pts:       The number of points to use for the numerical integration technique.
         @type num_int_pts:          int
+        @keyword centroid:          The central position to rotate all atoms about.  For example this can be the centre of mass of the moving domain.
+        @type centroid:             numpy 3D rank-1 array
         @keyword translation_opt:   A flag which if True will allow the pivot point of the motion to be optimised.
         @type translation_opt:      bool
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
@@ -134,6 +136,7 @@ class Frame_order:
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
+        self.centroid = centroid
         self.translation_opt = translation_opt
         self._param_pivot = pivot
         self.pivot_opt = pivot_opt
@@ -1934,16 +1937,19 @@ class Frame_order:
         return chi2_sum
 
 
-    def calc_vectors(self, pivot, R_ave, RT_ave):
+    def calc_vectors(self, pivot=None, R_ave=None, RT_ave=None):
         """Calculate the pivot to atom and lanthanide to pivot vectors for the target functions.
 
-        @param pivot:   The pivot point.
-        @type pivot:    numpy rank-1, 3D array
-        @param R_ave:   The rotation matrix for rotating from the reference frame to the average position.
-        @type R_ave:    numpy rank-2, 3D array
-        @param RT_ave:  The transpose of R_ave.
-        @type RT_ave:   numpy rank-2, 3D array
+        @keyword pivot:     The pivot point.
+        @type pivot:        numpy rank-1, 3D array
+        @keyword R_ave:     The rotation matrix for rotating from the reference frame to the average position.
+        @type R_ave:        numpy rank-2, 3D array
+        @keyword RT_ave:    The transpose of R_ave.
+        @type RT_ave:       numpy rank-2, 3D array
         """
+
+        # Centroid translation.
+        centroid = self.centroid + self._translation_vector
 
         # The pivot to atom vectors.
         for j in range(self.num_spins):
@@ -1951,9 +1957,13 @@ class Frame_order:
             if self.pivot_opt:
                 self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
-            # The rotated and translated vectors.
-            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] + self._translation_vector - pivot)
-            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] + self._translation_vector - pivot)
+            # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
+            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - centroid) + centroid
+            self.r_pivot_atom[:, j] += self._translation_vector
+            self.r_pivot_atom[:, j] -= pivot
+            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - centroid) + centroid
+            self.r_pivot_atom_rev[:, j] += self._translation_vector
+            self.r_pivot_atom_rev[:, j] -= pivot
 
 
     def create_sobol_data(self, n=10000, dims=None):
