@@ -1948,9 +1948,6 @@ class Frame_order:
         @type RT_ave:       numpy rank-2, 3D array
         """
 
-        # Centroid translation.
-        centroid = self.centroid + self._translation_vector
-
         # The pivot to atom vectors.
         for j in range(self.num_spins):
             # The lanthanide to pivot vector.
@@ -1958,10 +1955,10 @@ class Frame_order:
                 self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
             # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
-            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - centroid) + centroid
+            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - self.centroid) + self.centroid
             self.r_pivot_atom[:, j] += self._translation_vector
             self.r_pivot_atom[:, j] -= pivot
-            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - centroid) + centroid
+            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - self.centroid) + self.centroid
             self.r_pivot_atom_rev[:, j] += self._translation_vector
             self.r_pivot_atom_rev[:, j] -= pivot
 
