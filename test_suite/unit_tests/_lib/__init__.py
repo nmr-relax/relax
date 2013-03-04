@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,38 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax unit tests."""
-
 
 __all__ = [
-    'align_tensor_testing_base',
-    'base_classes',
-    'diffusion_tensor_testing_base',
-    'minimisation_testing_base',
-    'model_free_testing_base',
-    'molecule_testing_base',
-    'n_state_model_testing_base',
-    'package_checking',
-    'relax_data_testing_base',
-    'residue_testing_base',
-    'sequence_testing_base',
-    'spin_testing_base',
-    'state_testing_base',
-    'structure_testing_base',
-    'test_float',
-    'test_relax_io',
-    'unit_test_runner',
-    'value_testing_base',
-    '_auto_analyses',
-    '_data',
-    '_generic_fns',
-    '_lib',
-    '_maths_fns',
-    '_multi',
-    '_opendx',
-    '_prompt',
-    '_scons',
-    '_specific_fns',
-    '_user_functions'
+    'geometry'
 ]
