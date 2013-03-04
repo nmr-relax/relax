@@ -303,11 +303,11 @@ def pcs_pivot_motion_rotor_qrint(sigma_i=None, full_in_ref_frame=None, r_pivot_a
 
             # The projection.
             if full_in_ref_frame[i]:
-                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
-            else:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
                 length_i = length
+            else:
+                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
+                length_i = length_rev
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
