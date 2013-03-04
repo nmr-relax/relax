@@ -30,7 +30,7 @@ from numpy.linalg import det, norm, svd
 
 # relax module import.
 from generic_fns.structure.statistics import calc_mean_structure
-from maths_fns.rotation_matrix import R_to_axis_angle
+from maths_fns.rotation_matrix import R_to_axis_angle, R_to_euler_zyz
 
 
 def find_centroid(coords):
@@ -207,6 +207,7 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
     # Calculate the rotation.
     R = kabsch_rotation(coord_from=coord_from, coord_to=coord_to, centroid_from=centroid_from, centroid_to=centroid_to)
     axis, angle = R_to_axis_angle(R)
+    a, b, g = R_to_euler_zyz(R)
 
     # Print out.
     if verbosity >= 1:
@@ -220,6 +221,7 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
         print("    [%20.15f, %20.15f, %20.15f]" % (R[1, 0], R[1, 1], R[1, 2]))
         print("    [%20.15f, %20.15f, %20.15f]]" % (R[2, 0], R[2, 1], R[2, 2]))
         print("Rotation axis:           [%20.15f, %20.15f, %20.15f]" % (axis[0], axis[1], axis[2]))
+        print("Rotation euler angles:   [%20.15f, %20.15f, %20.15f]" % (a, b, g))
         print("Rotation angle (deg):    %.15f" % (angle / 2.0 / pi * 360.0))
 
     # Return the data.

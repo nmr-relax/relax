@@ -1335,15 +1335,12 @@ class N_state_model(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
         # Set the value of N.
         cdp.N = N
 
-        # Update the model.
-        self._update_model()
+        # Update the model, if set.
+        if hasattr(cdp, 'model'):
+            self._update_model()
 
 
     def _opt_tensor(self, tensor):
