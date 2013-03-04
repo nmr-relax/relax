@@ -77,6 +77,7 @@ def back_calc(align_id=None):
     unit_vect = zeros((cdp.N, 3), float64)
 
     # Loop over the interatomic data.
+    count = 0
     for interatom in interatomic_loop():
         # Skip containers with no interatomic vectors.
         if not hasattr(interatom, 'vector'):
@@ -121,6 +122,13 @@ def back_calc(align_id=None):
             # The absolute value.
             if hasattr(interatom, 'absolute_rdc') and id in interatom.absolute_rdc.keys() and interatom.absolute_rdc[id]:
                 interatom.rdc_bc[id] = abs(interatom.rdc_bc[id])
+
+        # Increment the counter.
+        count += 1
+
+    # No RDCs calculated.
+    if not count:
+        warn(RelaxWarning("No RDCs have been back calculated, probably due to missing bond vector information."))
 
 
 def check_pipe_setup(pipe=None, rdc_id=None, sequence=False, N=False, tensors=False, rdc=False):

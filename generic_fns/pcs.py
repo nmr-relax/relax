@@ -76,6 +76,7 @@ def back_calc(align_id=None):
     unit_vect = zeros((cdp.N, 3), float64)
 
     # Loop over the spins.
+    count = 0
     for spin in spin_loop():
         # Skip spins with no position.
         if not hasattr(spin, 'pos'):
@@ -112,6 +113,13 @@ def back_calc(align_id=None):
 
             # Calculate the PCSs (in ppm).
             spin.pcs_bc[id] = ave_pcs_tensor(dj, vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id=id)].A, weights=weights) * 1e6
+
+        # Increment the counter.
+        count += 1
+
+    # No PCSs calculated.
+    if not count:
+        warn(RelaxWarning("No PCSs have been back calculated, probably due to missing spin position information."))
 
 
 def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=False):
