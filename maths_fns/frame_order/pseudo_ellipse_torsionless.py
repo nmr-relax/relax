@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,7 +34,6 @@ if dep_check.scipy_module:
 from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
 from maths_fns.frame_order.pec import pec
 from maths_fns.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
-from multi import Memo, Result_command, Slave_command
 
 
 def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, theta_y):
