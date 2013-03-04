@@ -1710,7 +1710,7 @@ class Frame_order:
         # Unpack the parameters.
         if self.translation_opt:
             self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[3:6]
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
 
