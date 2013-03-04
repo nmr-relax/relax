@@ -8,7 +8,7 @@ from numpy import array, float64
 pipe.create('data generation', 'N-state')
 
 # Load the structure.
-structure.read_pdb('fancy_mol.pdb')
+structure.read_pdb('fancy_mol.pdb', set_mol_name='fancy_mol')
 
 # Set up the 15N and 1H spin information.
 structure.load_spins()
