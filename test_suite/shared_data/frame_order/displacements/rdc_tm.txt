@@ -1,0 +1,15 @@
+# Spin_ID1              Spin_ID2                RDCs                   RDC_error    
+#fancy_mol_mol1:0@N     #fancy_mol_mol1:0@H     -6.9486687157082594    None         
+#fancy_mol_mol1:1@N     #fancy_mol_mol1:1@H     -6.9486687157082594    None         
+#fancy_mol_mol1:2@N     #fancy_mol_mol1:2@H     8.0980390454627607     None         
+#fancy_mol_mol1:3@N     #fancy_mol_mol1:3@H     8.0980390454627607     None         
+#fancy_mol_mol1:4@N     #fancy_mol_mol1:4@H     -1.1493703297545015    None         
+#fancy_mol_mol1:5@N     #fancy_mol_mol1:5@H     -1.1493703297545015    None         
+#fancy_mol_mol1:6@N     #fancy_mol_mol1:6@H     -9.2063071291236369    None         
+#fancy_mol_mol1:7@N     #fancy_mol_mol1:7@H     -9.2063071291236369    None         
+#fancy_mol_mol1:8@N     #fancy_mol_mol1:8@H     29.015553356406404     None         
+#fancy_mol_mol1:9@N     #fancy_mol_mol1:9@H     29.015553356406404     None         
+#fancy_mol_mol1:10@N    #fancy_mol_mol1:10@H    -15.262636752506486    None         
+#fancy_mol_mol1:11@N    #fancy_mol_mol1:11@H    -15.262636752506486    None         
+#fancy_mol_mol1:12@N    #fancy_mol_mol1:12@H    -4.5466094747762797    None         
+#fancy_mol_mol1:13@N    #fancy_mol_mol1:13@H    -4.5466094747762797    None         
