@@ -601,6 +601,10 @@ class Internal(Base_struct_API):
             if records[i][:3] == 'END':
                 break
 
+            # A master record, so we are done.
+            if records[i][:6] == 'MASTER':
+                break
+
             # A model termination record.
             if records[i][:6] == 'ENDMDL':
                 end = True
