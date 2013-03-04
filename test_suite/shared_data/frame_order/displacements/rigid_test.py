@@ -125,10 +125,10 @@ frame_order.pivot(pivot, fix=True)
 # Set the paramagnetic centre position.
 paramag.centre(pos=[-5, -7, -9])
 
-# Select the Frame Order model.
-frame_order.select_model(model='rigid')
+# Set the number of integration points.
+frame_order.num_int_pts(10000)
 
-# Set the real parameter values.
+# Set the real parameter values (the inverted displacement values).
 cdp.ave_pos_x = -1
 cdp.ave_pos_y = -2
 cdp.ave_pos_z = -3
@@ -136,8 +136,24 @@ cdp.ave_pos_alpha = 0.14159265359
 cdp.ave_pos_beta  = 2.0
 cdp.ave_pos_gamma = 2.14159265359
 
-# Calculate the chi2 value.
-calc()
+# Set some parameters close to zero, but far enough away from zero to allow for the numerical integration.
+cdp.cone_s1 = 0.99
+cdp.cone_theta = 0.1
+cdp.cone_theta_x = 0.1
+cdp.cone_theta_y = 0.1
+cdp.cone_sigma_max = 0.1
 
-# Attempt to mimimise.
-minimise('simplex', constraints=False)
+# Loop over all frame order models, showing that they should all have a chi-squared close to zero.
+for model in ['rigid', 'free rotor', 'rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse']:
+    # Print out.
+    text = "# Model: %s" % model
+    print("\n\n%s\n%s" % (text, '#'*len(text)))
+
+    # Select the Frame Order model.
+    frame_order.select_model(model=model)
+
+    # Calculate the chi2 value.
+    calc()
+
+    # Attempt to mimimise.
+    #minimise('simplex', constraints=False)
