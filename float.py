@@ -3,7 +3,7 @@
 # Copyright (C) 2006  Gary S Thompson (see https://gna.org/users for contact  #
 #                                      details)                               #
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -88,8 +88,13 @@ Todo:
     - Add example IEEE double.
     - Check byte/nibble attributions.
 """
+
+# Python module imports.
 from struct import pack, unpack
 import sys
+
+# relax module imports.
+from check_types import is_float
 
 
 SIGNBIT = 0x80
@@ -239,7 +244,7 @@ def floatToBinaryString(obj):
     @raise TypeError:   If the input object isn't a python float.
     """
 
-    if not isinstance(obj, float):
+    if not is_float(obj):
         raise TypeError('the object recieved wasn\'t a float, type was: %s' % type(obj))
 
     # pack float into binary string
