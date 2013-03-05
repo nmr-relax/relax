@@ -26,10 +26,6 @@
 from copy import deepcopy
 from math import acos, ceil, pi, sqrt
 from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
-try:
-    from numpy import float16
-except ImportError:
-    float16 = float32
 from numpy.linalg import norm
 
 # relax module imports.
@@ -1892,7 +1888,7 @@ class Frame_order:
         m = len(dims)
 
         # Initialise.
-        self.sobol_angles = zeros((n, m), float16)
+        self.sobol_angles = zeros((n, m), float32)
 
         # Loop over the points.
         for i in range(n):
