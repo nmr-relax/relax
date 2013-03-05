@@ -23,7 +23,7 @@
 
 This script should be run from the directory where it is found with the commands:
 
-$ ../../../../relax full_analysis.py
+$ ../../../../relax rigid_test.py
 """
 
 # Python module imports.
@@ -115,8 +115,8 @@ frame_order.ref_domain('fixed')
 # Link the domains to the PDB files.
 frame_order.domain_to_pdb(domain='fixed', pdb='displaced.pdb')
 
-# Allow the average domain to be translated during optimisation.
-frame_order.ave_pos_translate()
+# Set up the mechanics of the displacement to the average domain position.
+frame_order.average_position(pivot='com', translation=True)
 
 # Set the initial pivot point (should make no difference for the rigid model).
 pivot = array([0, 0, 0], float64)
