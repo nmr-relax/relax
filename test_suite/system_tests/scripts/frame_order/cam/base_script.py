@@ -82,12 +82,13 @@ class Base_script:
             self._execute_uf(uf_name='frame_order.num_int_pts', num=self.num_int_pts)
 
         # Check the minimum.
-        if hasattr(self, 'ave_pos_alpha'):
-            self._execute_uf(uf_name='value.set', val=self.ave_pos_alpha, param='ave_pos_alpha')
-        if hasattr(self, 'ave_pos_beta'):
-            self._execute_uf(uf_name='value.set', val=self.ave_pos_beta, param='ave_pos_beta')
-        if hasattr(self, 'ave_pos_gamma'):
-            self._execute_uf(uf_name='value.set', val=self.ave_pos_gamma, param='ave_pos_gamma')
+        if self.model not in ['free rotor', 'iso cone, free rotor']:
+            if hasattr(self, 'ave_pos_alpha'):
+                self._execute_uf(uf_name='value.set', val=self.ave_pos_alpha, param='ave_pos_alpha')
+            if hasattr(self, 'ave_pos_beta'):
+                self._execute_uf(uf_name='value.set', val=self.ave_pos_beta, param='ave_pos_beta')
+            if hasattr(self, 'ave_pos_gamma'):
+                self._execute_uf(uf_name='value.set', val=self.ave_pos_gamma, param='ave_pos_gamma')
         if hasattr(self, 'eigen_alpha'):
             self._execute_uf(uf_name='value.set', val=self.eigen_alpha, param='eigen_alpha')
         if hasattr(self, 'eigen_beta'):
@@ -170,6 +171,15 @@ class Base_script:
         # Read the structures.
         self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
+
+        # Solve the {a, b, g} -> {0, b', g'} angle conversion problem in the rotor models by pre-rotating the domain!
+        if self.model in ['free rotor', 'iso cone, free rotor']:
+            # The rotation matrix.
+            R = zeros((3, 3), float64)
+            euler_to_R_zyz(self.ave_pos_alpha, self.ave_pos_beta, self.ave_pos_gamma, R)
+
+            # Rotate.
+            self._execute_uf(uf_name='structure.rotate', R=R, atom_id='#C-dom')
 
         # Set up the 15N and 1H spins.
         self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
