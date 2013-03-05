@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,7 @@ import sys
 from generic_fns.angles import wrap_angles
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from generic_fns.mol_res_spin import spin_loop
+from generic_fns.interatomic import interatomic_loop
 from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.kronecker_product import kron_prod
 from maths_fns.rotation_matrix import axis_angle_to_R, R_to_euler_zyz
@@ -118,17 +119,17 @@ class Main:
     def _backup_pos(self):
         """Back up the positional data prior to the rotations."""
 
-        # Loop over the spins.
+        # Store and then reinitalise the atomic position.
         for spin in spin_loop():
-            # Store and then reinitalise the atomic position.
             if hasattr(spin, 'pos'):
                 spin.orig_pos = array(spin.pos, float16)
                 spin.pos = zeros((self.N, 3), float16)
 
-            # Store and then reinitalise the bond vector.
-            if hasattr(spin, 'xh_vect'):
-                spin.orig_vect = array(spin.xh_vect[0], float16)
-                spin.xh_vect = zeros((self.N, 3), float16)
+        # Store and then reinitalise the bond vector.
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'vector'):
+                interatom.orig_vect = array(interatom.vector, float16)
+                interatom.vector = zeros((self.N, 3), float16)
 
 
     def _create_distribution(self):
@@ -138,7 +139,7 @@ class Main:
         self.interpreter.pipe.create('distribution', 'N-state')
 
         # Load the original PDB.
-        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir='..')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_mol_name='C-dom')
 
         # Set up the 15N and 1H spins.
         self.interpreter.structure.load_spins(spin_id='@N', ave_pos=False)
@@ -161,7 +162,7 @@ class Main:
         # Open the output files.
         rot_file = open_write_file('rotations', compress_type=1, force=True)
 
-        # Print out.
+        # Printout.
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
 
         # Load N copies of the original C-domain.
@@ -172,15 +173,15 @@ class Main:
             # Generate the distribution specific rotation.
             self.rotation(i)
 
-            # Loop over the spins to rotate the vectors and positions.
+            # Rotate the atomic position.
             for spin in spin_loop():
-                # Rotate the atomic position.
                 if hasattr(spin, 'pos'):
-                    spin.pos[i] = dot(self.R, (spin.orig_pos - self.pivot)) + self.pivot
+                    spin.pos[i] = dot(self.R, (spin.orig_pos[0] - self.pivot)) + self.pivot
 
-                # Rotate the NH vector.
-                if hasattr(spin, 'xh_vect'):
-                    spin.xh_vect[i] = dot(self.R, spin.orig_vect)
+            # Rotate the NH vector.
+            for interatom in interatomic_loop():
+                if hasattr(interatom, 'vector'):
+                    interatom.vector[i] = dot(self.R, interatom.orig_vect)
 
             # Decompose the rotation into Euler angles and store them.
             a, b, g = R_to_euler_zyz(self.R)
@@ -243,12 +244,12 @@ class Main:
 
         # A spinner.
         if i % a == 0:
-            sys.stdout.write('\b%s' % chars[i%4])
-            sys.stdout.flush()
+            sys.stderr.write('\b%s' % chars[i%4])
+            sys.stderr.flush()
 
         # Dump the progress.
         if i % b == 0:
-            sys.stdout.write('\b%i\n' % i)
+            sys.stderr.write('\b%i\n' % i)
 
 
     def axes_to_pdb_full(self):
