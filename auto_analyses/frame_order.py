@@ -409,8 +409,22 @@ class Frame_order_analysis:
         # Select the Frame Order model.
         self.interpreter.frame_order.select_model(model=model)
 
-        # Grid search (avoid the domain translation).
-        self.interpreter.grid_search(inc=self.grid_inc_rigid, constraints=False)
+        # Split grid search if translation is active.
+        if cdp.ave_pos_translation:
+            # Printout.
+            print("\n\nTranslation active - splitting the grid search and iterating.")
+
+            # Loop twice.
+            for i in range(2):
+                # First optimise the rotation.
+                self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], constraints=False)
+
+                # Then the translation.
+                self.interpreter.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], constraints=False)
+
+        # Standard grid search.
+        else:
+            self.interpreter.grid_search(inc=self.grid_inc_rigid, constraints=False)
 
         # Minimise.
         self.interpreter.minimise(self.min_algor, constraints=False)
