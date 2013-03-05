@@ -396,7 +396,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(1.5736897169830926)
+        self.check_chi2(0.41620996733974391)
 
 
     def test_cam_pseudo_ellipse_pcs(self):
@@ -405,7 +405,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(1.4782281930066781)
+        self.check_chi2(0.32074844336329322)
 
 
     def test_cam_pseudo_ellipse_rdc(self):
@@ -423,7 +423,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(244.0949295795356)
+        self.check_chi2(215.4218668866402)
 
 
     def test_cam_pseudo_ellipse2_pcs(self):
@@ -432,7 +432,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(244.06393827120766)
+        self.check_chi2(215.39087557831226)
 
 
     def test_cam_pseudo_ellipse2_rdc(self):
@@ -1164,7 +1164,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 101224.40327)
+        self.assertAlmostEqual(cdp.chi2, 101224.40326971974)
 
 
     def test_rigid_data_to_iso_cone_torsionless_model(self):
