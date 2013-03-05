@@ -237,19 +237,19 @@ class Main:
 
 
     def _progress(self, i, a=5, b=100):
-        """A simple progress write out."""
+        """A simple progress write out (which goes to the terminal STDERR)."""
 
         # The spinner characters.
         chars = ['-', '\\', '|', '/']
 
         # A spinner.
         if i % a == 0:
-            sys.stderr.write('\b%s' % chars[i%4])
-            sys.stderr.flush()
+            sys.__stderr__.write('\b%s' % chars[i%4])
+            sys.__stderr__.flush()
 
         # Dump the progress.
         if i % b == 0:
-            sys.stderr.write('\b%i\n' % i)
+            sys.__stderr__.write('\b%i\n' % i)
 
 
     def axes_to_pdb_full(self):
