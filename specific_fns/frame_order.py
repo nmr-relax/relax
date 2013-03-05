@@ -1443,11 +1443,12 @@ class Frame_order(API_base, API_common):
 
         # Print outs.
         if sim_index == None:
-            if cdp.quad_int:
-                sys.stdout.write("Numerical integration via Scipy quadratic integration.\n")
-            else:
-                sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
-                sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
+            if cdp.model != 'rigid'
+                if cdp.quad_int:
+                    sys.stdout.write("Numerical integration via Scipy quadratic integration.\n")
+                else:
+                    sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
+                    sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
             base_data = []
             if rdcs != None and len(rdcs):
                 base_data.append("RDCs")
