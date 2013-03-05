@@ -447,8 +447,14 @@ class Frame_order_analysis:
         format_vect = "    %-20s %20s\n"
 
         # Average position.
-        if hasattr(cdp, 'ave_pos_alpha') or hasattr(cdp, 'ave_pos_beta') or hasattr(cdp, 'ave_pos_gamma'):
-            sys.stdout.write("\nAverage moving domain position Euler angles:\n")
+        if hasattr(cdp, 'ave_pos_x') or hasattr(cdp, 'ave_pos_alpha') or hasattr(cdp, 'ave_pos_beta') or hasattr(cdp, 'ave_pos_gamma'):
+            sys.stdout.write("\nAverage moving domain position:\n")
+        if hasattr(cdp, 'ave_pos_x'):
+            sys.stdout.write(format_float % ('x:', cdp.ave_pos_x))
+        if hasattr(cdp, 'ave_pos_y'):
+            sys.stdout.write(format_float % ('y:', cdp.ave_pos_y))
+        if hasattr(cdp, 'ave_pos_z'):
+            sys.stdout.write(format_float % ('z:', cdp.ave_pos_z))
         if hasattr(cdp, 'ave_pos_alpha'):
             sys.stdout.write(format_float % ('alpha:', cdp.ave_pos_alpha))
         if hasattr(cdp, 'ave_pos_beta'):
