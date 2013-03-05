@@ -315,7 +315,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
-        self.check_chi2(48.623418841452626)
+        self.check_chi2(31.400316262936347)
 
 
     def test_cam_iso_cone_free_rotor_pcs(self):
@@ -333,7 +333,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
-        self.check_chi2(17.282846954724896)
+        self.check_chi2(0.058871004304276831)
 
 
     def test_cam_iso_cone_free_rotor2(self):
@@ -1138,7 +1138,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 94337.6680299)
+        self.assertAlmostEqual(cdp.chi2, 94337.620142880114)
 
 
     def test_rigid_data_to_iso_cone_model(self):
@@ -1151,7 +1151,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 175.440396354)
+        self.assertAlmostEqual(cdp.chi2, 177.13243371265614)
 
 
     def test_rigid_data_to_iso_cone_free_rotor_model(self):
@@ -1164,7 +1164,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 101224.40326971974)
+        self.assertAlmostEqual(cdp.chi2, 101218.55718817962)
 
 
     def test_rigid_data_to_iso_cone_torsionless_model(self):
@@ -1177,7 +1177,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 2.80180329697)
+        self.assertAlmostEqual(cdp.chi2, 2.7993179077540402)
 
 
     def test_rigid_data_to_rigid_model(self):
@@ -1203,7 +1203,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.968768022709)
+        self.assertAlmostEqual(cdp.chi2, 0.96883720077954039)
 
 
     def test_rigid_data_to_pseudo_ellipse_model(self):
@@ -1216,7 +1216,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 175.440396354)
+        self.assertAlmostEqual(cdp.chi2, 177.13243371265639)
 
 
     def test_rigid_data_to_pseudo_ellipse_torsionless_model(self):
@@ -1229,4 +1229,4 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 2.80180329697)
+        self.assertAlmostEqual(cdp.chi2, 2.7993179077540522)
