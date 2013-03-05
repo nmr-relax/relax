@@ -1443,7 +1443,7 @@ class Frame_order(API_base, API_common):
 
         # Print outs.
         if sim_index == None:
-            if cdp.model != 'rigid'
+            if cdp.model != 'rigid':
                 if cdp.quad_int:
                     sys.stdout.write("Numerical integration via Scipy quadratic integration.\n")
                 else:
