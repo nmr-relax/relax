@@ -222,6 +222,9 @@ class Base_script:
         # Select the model.
         self._execute_uf(uf_name='frame_order.select_model', model=self.model)
 
+        # Set up the mechanics of the displacement to the average domain position.
+        self._execute_uf(uf_name='frame_order.average_position', pivot='motional', translation=False)
+
         # Set the reference domain.
         self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
