@@ -61,7 +61,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, centroid=zeros(3), translation_opt=False, pivot=zeros(3), pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, ave_pos_pivot=zeros(3), ave_pos_piv_sync=True, translation_opt=False, pivot=zeros(3), pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -100,8 +100,10 @@ class Frame_order:
         @type scaling_matrix:       numpy rank-2 array
         @keyword num_int_pts:       The number of points to use for the numerical integration technique.
         @type num_int_pts:          int
-        @keyword centroid:          The central position to rotate all atoms about.  For example this can be the centre of mass of the moving domain.
-        @type centroid:             numpy 3D rank-1 array
+        @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  For example this can be the centre of mass of the moving domain.
+        @type ave_pos_pivot:        numpy 3D rank-1 array
+        @keyword ave_pos_piv_sync:  A flag which if True will cause pivot point to rotate to the average domain position to be synchronised with the motional pivot.  This will cause ave_pos_pivot argument to be ignored.
+        @type ave_pos_piv_sync:     bool
         @keyword translation_opt:   A flag which if True will allow the pivot point of the motion to be optimised.
         @type translation_opt:      bool
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
@@ -135,7 +137,8 @@ class Frame_order:
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
-        self.centroid = centroid
+        self.ave_pos_pivot = ave_pos_pivot
+        self.ave_pos_piv_sync = ave_pos_piv_sync
         self.translation_opt = translation_opt
         self._param_pivot = pivot
         self.pivot_opt = pivot_opt
@@ -1891,6 +1894,12 @@ class Frame_order:
         @type RT_ave:       numpy rank-2, 3D array
         """
 
+        # The rotational pivot.
+        if self.ave_pos_piv_sync:
+            ave_pos_pivot = self._param_pivot
+        else:
+            ave_pos_pivot = self.ave_pos_pivot
+
         # The pivot to atom vectors.
         for j in range(self.num_spins):
             # The lanthanide to pivot vector.
@@ -1898,10 +1907,10 @@ class Frame_order:
                 self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
             # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
-            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - self.centroid) + self.centroid
+            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - ave_pos_pivot) + ave_pos_pivot
             self.r_pivot_atom[:, j] += self._translation_vector
             self.r_pivot_atom[:, j] -= pivot
-            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - self.centroid) + self.centroid
+            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - ave_pos_pivot) + ave_pos_pivot
             self.r_pivot_atom_rev[:, j] += self._translation_vector
             self.r_pivot_atom_rev[:, j] -= pivot
 

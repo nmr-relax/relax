@@ -1372,6 +1372,10 @@ class Frame_order(API_base, API_common):
         @type scaling:          bool
         """
 
+        # Check for the average domain displacement information.
+        if not hasattr(cdp, 'ave_pos_pivot') or not hasattr(cdp, 'ave_pos_translation'):
+            raise RelaxError("The mechanics of the displacement to the average domain position have not been set up.")
+
         # Assemble the parameter vector.
         param_vector = self._assemble_param_vector(sim_index=sim_index)
 
@@ -1408,9 +1412,6 @@ class Frame_order(API_base, API_common):
         if 'pcs' in data_types or 'pre' in data_types:
             atomic_pos, paramag_centre = self._minimise_setup_atomic_pos(sim_index=sim_index)
 
-        # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
-        com = centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
-
         # Average domain translation.
         translation_opt = False
         if not self._translation_fixed():
@@ -1430,6 +1431,16 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'num_int_pts'):
             cdp.num_int_pts = 200000
 
+        # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
+        if cdp.ave_pos_pivot == 'com':
+            com = centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
+            ave_pos_piv_sync = False
+
+        # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
+        if cdp.ave_pos_pivot == 'motional':
+            com = pivot
+            ave_pos_piv_sync = True
+
         # Print outs.
         if sim_index == None:
             if cdp.quad_int:
@@ -1445,7 +1456,7 @@ class Frame_order(API_base, API_common):
             sys.stdout.write("Base data: %s\n" % repr(base_data))
 
         # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centroid=com, translation_opt=translation_opt, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
+        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, ave_pos_pivot=com, ave_pos_piv_sync=ave_pos_piv_sync, translation_opt=translation_opt, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
 
         # Return the data.
         return target, param_vector, data_types, scaling_matrix
