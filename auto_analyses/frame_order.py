@@ -217,6 +217,8 @@ class Frame_order_analysis:
         incs = []
         if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
             incs += [None, None, None]
+        if hasattr(cdp, 'ave_pos_translation') and cdp.ave_pos_translation:
+            incs += [None, None, None]
 
         # The rotor model.
         if model == 'rotor':
