@@ -226,7 +226,7 @@ class Frame_order_analysis:
 
         # The free rotor model.
         if model == 'free rotor':
-            incs += [None, None, self.grid_inc, self.grid_inc]
+            incs += [self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The torsionless isotropic cone model.
         if model == 'iso cone, torsionless':
