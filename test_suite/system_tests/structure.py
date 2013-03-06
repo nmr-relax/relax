@@ -919,6 +919,31 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], -0.6675913)
 
 
+    def test_read_xyz_strychnine(self):
+        """Load the 'strychnine.xyz' XYZ file (using the internal structural object XYZ reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the XYZ file.
+        self.interpreter.structure.read_xyz(file='strychnine.xyz', dir=path, set_mol_name='strychnine')
+
+        # Test the molecule data.
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Load the carbon atoms and test it.
+        self.interpreter.structure.load_spins('@C')
+        self.assertEqual(count_spins(), 21)
+
+        # Load the protons.
+        self.interpreter.structure.load_spins('@H')
+        self.assertEqual(count_spins(), 43)
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+
     def test_rmsd(self):
         """Test the structure.rmsd user function."""
 
