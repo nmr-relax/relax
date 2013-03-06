@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -111,7 +111,7 @@ def create_data(method=None):
         pack_sim_data(data_index, random)
 
 
-def error_analysis(prune=0.0):
+def error_analysis():
     """Function for calculating errors from the Monte Carlo simulations.
 
     The standard deviation formula used to calculate the errors is the square root of the
@@ -126,12 +126,6 @@ def error_analysis(prune=0.0):
         - n is the total number of simulations.
         - Xi is the parameter value for simulation i.
         - Xav is the mean parameter value for all simulations.
-
-
-    @keyword prune:     The amount to prune the upper and lower tails the distribution.  If set to
-                        0.0, no simulations will be pruned.  If set to 1.0, all simulations will be
-                        pruned.  This argument should be set 0.0 to avoid meaningless statistics.
-    @type prune:        float
     """
 
     # Test if the current data pipe exists.
@@ -143,8 +137,6 @@ def error_analysis(prune=0.0):
 
     # Model loop, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
     model_loop = get_specific_fn('model_loop', cdp.pipe_type)
-    if prune > 0.0:
-        return_sim_chi2 = get_specific_fn('return_sim_chi2', cdp.pipe_type)
     return_selected_sim = get_specific_fn('return_selected_sim', cdp.pipe_type)
     return_sim_param = get_specific_fn('return_sim_param', cdp.pipe_type)
     set_error = get_specific_fn('set_error', cdp.pipe_type)
@@ -153,31 +145,6 @@ def error_analysis(prune=0.0):
     for model_info in model_loop():
         # Get the selected simulation array.
         select_sim = return_selected_sim(model_info)
-
-        # Initialise an array of indices to prune (an empty array means no pruning).
-        indices_to_skip = []
-
-        # Pruning.
-        if prune > 0.0:
-            # Get the array of simulation chi-squared values.
-            chi2_array = return_sim_chi2(model_info)
-
-            # The total number of simulations.
-            n = len(chi2_array)
-
-            # Create a sorted array of chi-squared values.
-            chi2_sorted = sorted(deepcopy(chi2_array))
-
-            # Number of indices to remove from one side of the chi2 distribution.
-            num = int(float(n) * 0.5 * prune)
-
-            # Remove the lower tail.
-            for i in range(num):
-                indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
-
-            # Remove the upper tail.
-            for i in range(n-num, n):
-                indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
         # Loop over the parameters.
         index = 0
@@ -198,10 +165,6 @@ def error_analysis(prune=0.0):
                     if not select_sim[i]:
                         continue
 
-                    # Prune.
-                    if i in indices_to_skip:
-                        continue
-
                     # Increment n.
                     n = n + 1
 
@@ -210,10 +173,6 @@ def error_analysis(prune=0.0):
                 for i in range(len(param_array)):
                     # Skip deselected simulations.
                     if not select_sim[i]:
-                        continue
-
-                    # Prune.
-                    if i in indices_to_skip:
                         continue
 
                     # Sum.
@@ -230,10 +189,6 @@ def error_analysis(prune=0.0):
                 for i in range(len(param_array)):
                     # Skip deselected simulations.
                     if not select_sim[i]:
-                        continue
-
-                    # Prune.
-                    if i in indices_to_skip:
                         continue
 
                     # Sum.
