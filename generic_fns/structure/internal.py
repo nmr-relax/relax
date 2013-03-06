@@ -2296,13 +2296,8 @@ class MolContainer:
 
             # Add the atom.
             if len(record) == 4:
-                # Attempt at determining the element, if missing.
-                element = record[0]
-                if not element:
-                    element = self._det_pdb_element(record[2])
-
                 # Add.
-                self.atom_add(atom_num=atom_number, pos=[record[1], record[2], record[3]], element=element)
+                self.atom_add(atom_name=record[0], atom_num=atom_number, pos=[record[1], record[2], record[3]], element=record[0])
 
                 # Increment of atom number
                 atom_number = atom_number + 1
