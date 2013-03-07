@@ -22,9 +22,16 @@
 # Module docstring.
 """Functions relating to line geometry."""
 
+# Python module imports.
+from numpy import dot
+from numpy.linalg import norm
+
 
 def closest_point(line_pt1=None, line_pt2=None, point=None):
     """Determine the closest position on the line to the given point.
+
+    This function defines the line using any two points on the line.
+
 
     @keyword line_pt1:  The first point defining the line.
     @type line_pt1:     numpy rank-1 array
@@ -36,3 +43,39 @@ def closest_point(line_pt1=None, line_pt2=None, point=None):
     @rtype:             numpy rank-1 array
     """
 
+    # The vector along the line.
+    vect = line_pt2 - line_pt1
+
+    # Forward.
+    return closest_point_ax(line_pt=line_pt1, axis=vect, point=point)
+
+
+def closest_point_ax(line_pt=None, axis=None, point=None):
+    """Determine the closest position on the line to the given point.
+
+    This function defines the line using any point on the line and the axis.
+
+
+    @keyword line_pt1:  The point defining the line.
+    @type line_pt1:     numpy rank-1 array
+    @keyword axis:      The axis defining the line.
+    @type axis:         numpy rank-1 array
+    @keyword point:     The point.
+    @type point:        numpy rank-1 array
+    @return:            The position on the line closest to the point.
+    @rtype:             numpy rank-1 array
+    """
+
+    # The hypotenuse.
+    hypo = point - line_pt
+    hypo_len = norm(hypo)
+    unit_hypo = hypo / hypo_len
+
+    # Normalise the axis.
+    axis = axis / norm(axis)
+
+    # The distance from the point defining the line to the closest point.
+    d = hypo_len * dot(axis, unit_hypo)
+
+    # The closest point.
+    return line_pt + d*axis
