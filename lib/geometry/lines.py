@@ -19,9 +19,20 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib geometry package - a library of functions for studies of geometry."""
+# Module docstring.
+"""Functions relating to line geometry."""
 
-__all__ = [
-    'lines'
-]
+
+def closest_point(line_pt1=None, line_pt2=None, point=None):
+    """Determine the closest position on the line to the given point.
+
+    @keyword line_pt1:  The first point defining the line.
+    @type line_pt1:     numpy rank-1 array
+    @keyword line_pt2:  The second point defining the line.
+    @type line_pt2:     numpy rank-1 array
+    @keyword point:     The point.
+    @type point:        numpy rank-1 array
+    @return:            The position on the line closest to the point.
+    @rtype:             numpy rank-1 array
+    """
+
