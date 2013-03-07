@@ -269,5 +269,4 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     text += _blank(width=total_width)
 
     # Return the table text.
-    print `text`
     return text
