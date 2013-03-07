@@ -43,9 +43,36 @@ class Test_table(TestCase):
 
         # Create the table.
         table = format_table(headings=headings, contents=contents)
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " _____________________ ",
+            "                       ",
+            "  Column 1   Column 2  ",
+            " _____________________ ",
+            "                       ",
+            "  A          2         ",
+            "  B          2         ",
+            " _____________________ ",
+            "                       "
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])
 
 
-    def test_format_table1(self):
+    def test_format_table2(self):
         """Test 2 of the lib.text.table.format_table() function."""
 
         # The table data.
@@ -59,3 +86,31 @@ class Test_table(TestCase):
 
         # Create the table.
         table = format_table(headings=headings, contents=contents, max_width=30, spacing=True, debug=True)
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " _____________________ ",
+            "                       ",
+            "  Column 1   Column 2  ",
+            " _____________________ ",
+            "                       ",
+            "  A          2         ",
+            "                       ",
+            "  B          2         ",
+            " _____________________ ",
+            "                       "
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])
