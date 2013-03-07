@@ -23,14 +23,10 @@
 """The base class for all the user function classes."""
 
 # Python module imports.
-from copy import deepcopy
 from textwrap import wrap
 
 # relax module imports.
-import ansi
-import prompt.help
 from lib.text.table import format_table
-from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
