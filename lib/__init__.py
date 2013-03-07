@@ -23,5 +23,6 @@
 """The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
 
 __all__ = [
-    'geometry'
+    'geometry',
+    'text'
 ]
