@@ -37,8 +37,8 @@ class Test_table(TestCase):
             ['Column 1', 'Column 2']
         ]
         contents = [
-            ['A', 2],
-            ['B', 2]
+            ['A', '2'],
+            ['B', '2']
         ]
 
         # Create the table.
@@ -53,8 +53,8 @@ class Test_table(TestCase):
             ['Column 1', 'Column 2']
         ]
         contents = [
-            ['A', 2],
-            ['B', 2]
+            ['A', '2'],
+            ['B', '2']
         ]
 
         # Create the table.
