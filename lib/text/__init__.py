@@ -23,5 +23,5 @@
 """The relax-lib text package - a library of functions for text manipulation."""
 
 __all__ = [
-    'tables'
+    'table'
 ]
