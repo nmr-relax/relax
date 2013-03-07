@@ -194,10 +194,10 @@ def format_table(headings=None, contents=None, max_width=None, debug=False):
 
     # The header.
     text += " " + "_" * (total_width - 2) + "\n"    # Top rule.
-    text += table_line(widths=new_widths)    # Blank line.
+    text += _table_line(widths=new_widths)    # Blank line.
     for i in range(num_head_rows):
-        text += table_line(text=headings[i], widths=new_widths)    # The headings.
-    text += table_line(widths=new_widths, bottom=True)    # Middle rule.
+        text += _table_line(text=headings[i], widths=new_widths)    # The headings.
+    text += _table_line(widths=new_widths, bottom=True)    # Middle rule.
 
     # The table contents.
     for i in range(num_rows):
@@ -223,14 +223,14 @@ def format_table(headings=None, contents=None, max_width=None, debug=False):
 
         # Blank line (between rows when asked, and for the first row after the header).
         if table.spacing or i == 0:
-            text += table_line(widths=new_widths)
+            text += _table_line(widths=new_widths)
 
         # The contents.
         for k in range(num_lines):
-            text += table_line(text=col_text[k], widths=new_widths)
+            text += _table_line(text=col_text[k], widths=new_widths)
 
     # The bottom.
-    text += table_line(widths=new_widths, bottom=True)    # Bottom rule.
+    text += _table_line(widths=new_widths, bottom=True)    # Bottom rule.
 
     # Add a newline.
     text += '\n'
