@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,48 +33,47 @@ class PackageTestCase(UnitTestCase):
     def test___all__(self):
         """Check if all modules are located within the __all__ list."""
 
+        # Initial printout.
         print("The %s.__all__ list: %s" % (self.package_name, self.package.__all__))
 
-        # Loop over all files.
+        # Check for modules/packages missing from the __all__ list.
+        print("\nChecking for modules/packages missing from the __all__ list.")
         files = listdir(self.package_path)
+        skip = ['__init__.py', '.svn']
         for file in files:
-            # Only look at the '*.py' files.
-            if not search('.py$', file):
-                continue
-
-            # Skip the __init__.py file.
-            if file == '__init__.py':
+            # Files and directories to skip.
+            if file in skip:
                 continue
 
             # Skip blacklisted files.
             if hasattr(self, 'blacklist') and file in self.blacklist:
                 continue
 
-            # Remove the '.py' part.
-            module = file[:-3]
+            # Remove the extension if needed.
+            module = file
+            if search('.py$', module):
+                module = module[:-3]
+            if search('.so$', module):
+                module = module[:-3]
 
-            # Print out.
-            print("\nFile:   %s" % file)
-            print("Checking module: %s" % module)
+            # Printout.
+            print("    Module/package:  %s" % module)
 
             # Check if the module is in __all__.
             self.assert_(module in self.package.__all__)
 
-        # Loop over all modules.
+        # Check for modules/packages in the __all__ list which do not exist.
+        print("\nChecking for modules/packages in the __all__ list which do not exist.")
         for module in self.package.__all__:
-            # The file name.
-            file = module + '.py'
+            # Printout.
+            print("    Module/package: %s" % module)
 
-            # Print out.
-            print("\nModule: %s" % module)
-            print("Checking file:   %s" % file)
-
-            # Check for the file.
-            if access(self.package_path + sep + file, F_OK):
+            # Check for the module.
+            if access(self.package_path+sep+module+'.py', F_OK):
                 continue
 
             # Check for the package.
-            if access(self.package_path + sep + module, F_OK):
+            if access(self.package_path+sep+module, F_OK):
                 continue
 
             # Doesn't exist, so fail.
