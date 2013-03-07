@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -37,3 +37,12 @@ class Test___init__(PackageTestCase):
         self.package = maths_fns
         self.package_name = 'maths_fns'
         self.package_path = sys.path[0] + sep + 'maths_fns'
+        self.blacklist = [
+            'c_chi2.c',
+            'c_chi2.h',
+            'exponential.c',
+            'exponential.h',
+            'relax_fit.c',
+            'relax_fit.h',
+            'relax_fit.so'    # May not be present on all systems.
+        ]
