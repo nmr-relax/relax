@@ -78,7 +78,7 @@ def _table_line(text=None, widths=None, bottom=False):
     return line
 
 
-def format_table(headings=None, contents=None, max_width=None, debug=False):
+def format_table(headings=None, contents=None, max_width=None, spacing=False, debug=False):
     """Format and return the table as text.
 
     @keyword headings:  The table header.
@@ -87,6 +87,8 @@ def format_table(headings=None, contents=None, max_width=None, debug=False):
     @type contents:     list of lists of str
     @keyword max_width: The maximum width of the table.
     @type max_width:    int
+    @keyword spacing:   A flag which if True will add blank line between each row.
+    @type spacing:      bool
     @keyword debug:     A flag which if True will activate a number of debugging printouts.
     @type debug:        bool
     @return:            The formatted table.
@@ -222,7 +224,7 @@ def format_table(headings=None, contents=None, max_width=None, debug=False):
                     col_text[k][j] = lines[k]
 
         # Blank line (between rows when asked, and for the first row after the header).
-        if table.spacing or i == 0:
+        if spacing or i == 0:
             text += _table_line(widths=new_widths)
 
         # The contents.

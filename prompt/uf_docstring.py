@@ -102,7 +102,7 @@ def create_table(label):
     num_cols = len(table.headings)
 
     # Generate and return the table.
-    return format_table(headings=[table.headings], contents=table.cells, max_width=status.text_width, debug=status.debug)
+    return format_table(headings=[table.headings], contents=table.cells, max_width=status.text_width, spacing=table.spacing, debug=status.debug)
 
 
 def format_text(text):
