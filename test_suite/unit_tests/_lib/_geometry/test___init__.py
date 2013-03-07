@@ -25,24 +25,15 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import maths_fns
+import lib.geometry
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the maths_fns package."""
+    """Unit tests for the lib.geometry package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = maths_fns
-        self.package_name = 'maths_fns'
-        self.package_path = sys.path[0] + sep + 'maths_fns'
-        self.blacklist = [
-            'c_chi2.c',
-            'c_chi2.h',
-            'exponential.c',
-            'exponential.h',
-            'relax_fit.c',
-            'relax_fit.h',
-            'relax_fit.so'    # May not be present on all systems.
-        ]
+        self.package = lib.geometry
+        self.package_name = 'lib.geometry'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'geometry'

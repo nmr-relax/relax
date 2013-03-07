@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,30 +19,9 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import sep
-import sys
+# Package docstring.
+"""The relax-lib text package - a library of functions for text manipulation."""
 
-# relax module imports.
-from test_suite.unit_tests.package_checking import PackageTestCase
-import maths_fns
-
-
-class Test___init__(PackageTestCase):
-    """Unit tests for the maths_fns package."""
-
-    def setUp(self):
-        """Set up for the package checking."""
-
-        self.package = maths_fns
-        self.package_name = 'maths_fns'
-        self.package_path = sys.path[0] + sep + 'maths_fns'
-        self.blacklist = [
-            'c_chi2.c',
-            'c_chi2.h',
-            'exponential.c',
-            'exponential.h',
-            'relax_fit.c',
-            'relax_fit.h',
-            'relax_fit.so'    # May not be present on all systems.
-        ]
+__all__ = [
+    'table'
+]

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,29 +20,20 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
-import sys
+from numpy import array, float64, zeros
+from unittest import TestCase
 
 # relax module imports.
-from test_suite.unit_tests.package_checking import PackageTestCase
-import maths_fns
+from lib.geometry.lines import *
 
+class Test_lines(TestCase):
+    """Unit tests for the lib.geometry.lines relax module."""
 
-class Test___init__(PackageTestCase):
-    """Unit tests for the maths_fns package."""
+    def test_closest_point(self):
+        """Test the closest_point() function."""
 
-    def setUp(self):
-        """Set up for the package checking."""
-
-        self.package = maths_fns
-        self.package_name = 'maths_fns'
-        self.package_path = sys.path[0] + sep + 'maths_fns'
-        self.blacklist = [
-            'c_chi2.c',
-            'c_chi2.h',
-            'exponential.c',
-            'exponential.h',
-            'relax_fit.c',
-            'relax_fit.h',
-            'relax_fit.so'    # May not be present on all systems.
-        ]
+        # Get and check the point.
+        pt = closest_point(line_pt1=array([1, 1, 0], float64), line_pt2=array([-1, -1, 0], float64), point=array([0, 0, 10]))
+        self.assertEqual(pt[0], 0.0)
+        self.assertEqual(pt[1], 0.0)
+        self.assertEqual(pt[2], 0.0)
