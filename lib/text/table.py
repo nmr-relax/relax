@@ -27,58 +27,82 @@ from copy import deepcopy
 from textwrap import wrap
 
 
-def _table_line(text=None, widths=None, bottom=False):
+def _blank(width=None, prefix=' ', postfix=' '):
+    """Create a blank line for the table.
+
+    @keyword width:     The total width of the table.
+    @type width:        int
+    @keyword prefix:    The text to add to the start of the line.
+    @type prefix:       str
+    @keyword postfix:   The text to add to the end of the line.
+    @type postfix:      str
+    @return:            The rule.
+    @rtype:             str
+    """
+
+    # Return the blank line.
+    return prefix + ' '*width + postfix + "\n"
+
+
+def _rule(width=None, prefix=' ', postfix=' '):
+    """Create a horizontal rule for the table.
+
+    @keyword width:     The total width of the table.
+    @type width:        int
+    @keyword prefix:    The text to add to the start of the line.
+    @type prefix:       str
+    @keyword postfix:   The text to add to the end of the line.
+    @type postfix:      str
+    @return:            The rule.
+    @rtype:             str
+    """
+
+    # Return the rule.
+    return prefix + '_'*width + postfix + "\n"
+
+
+def _table_line(text=None, widths=None, separator='   ', pad_left=' ', pad_right=' ', prefix=' ', postfix=' '):
     """Format a line of a table.
 
     @keyword text:      The list of table elements.  If not given, an empty line will be be produced.
     @type text:         list of str or None
     @keyword widths:    The list of column widths for the table.
     @type widths:       list of int
-    @keyword botton:    A flag which if True will cause a table bottom line to be produced.
-    @type bottom:       bool
+    @keyword separator: The column separation string.
+    @type separator:    str
+    @keyword pad_left:  The string to pad the left side of the table with.
+    @type pad_left:     str
+    @keyword pad_right: The string to pad the right side of the table with.
+    @type pad_right:    str
+    @keyword prefix:    The text to add to the start of the line.
+    @type prefix:       str
+    @keyword postfix:   The text to add to the end of the line.
+    @type postfix:      str
     @return:            The table line.
     @rtype:             str
     """
 
     # Initialise.
-    if bottom:
-        line = " _"
-    else:
-        line = "  "
+    line = prefix + pad_left
 
     # Loop over the columns.
     for i in range(len(widths)):
         # The column separator.
         if i > 0:
-            if bottom:
-                line += "___"
-            else:
-                line += "   "
-
-        # A bottom line.
-        if bottom:
-            line += "_" * widths[i]
-
-        # Empty line.
-        elif text == None:
-            line += " " * widths[i]
+            line += separator
 
         # The text.
-        else:
-            line += text[i]
-            line += " " * (widths[i] - len(text[i]))
+        line += text[i]
+        line += " " * (widths[i] - len(text[i]))
 
     # Close the line.
-    if bottom:
-        line += "_ \n"
-    else:
-        line += "  \n"
+    line += pad_right + postfix + "\n"
 
     # Return the text.
     return line
 
 
-def format_table(headings=None, contents=None, max_width=None, spacing=False, debug=False):
+def format_table(headings=None, contents=None, max_width=None, separator='   ', pad_left=' ', pad_right=' ', prefix=' ', postfix=' ', spacing=False, debug=False):
     """Format and return the table as text.
 
     @keyword headings:  The table header.
@@ -87,6 +111,16 @@ def format_table(headings=None, contents=None, max_width=None, spacing=False, de
     @type contents:     list of lists of str
     @keyword max_width: The maximum width of the table.
     @type max_width:    int
+    @keyword separator: The column separation string.
+    @type separator:    str
+    @keyword pad_left:  The string to pad the left side of the table with.
+    @type pad_left:     str
+    @keyword pad_right: The string to pad the right side of the table with.
+    @type pad_right:    str
+    @keyword prefix:    The text to add to the start of the line.
+    @type prefix:       str
+    @keyword postfix:   The text to add to the end of the line.
+    @type postfix:      str
     @keyword spacing:   A flag which if True will add blank line between each row.
     @type spacing:      bool
     @keyword debug:     A flag which if True will activate a number of debugging printouts.
@@ -114,11 +148,10 @@ def format_table(headings=None, contents=None, max_width=None, spacing=False, de
             if len(contents[i][j]) > widths[j]:
                 widths[j] = len(contents[i][j])
 
-    # The free space for the text.
-    used = 0
-    used += 2    # Start of the table '  '.
-    used += 2    # End of the table '  '.
-    used += 3 * (num_cols - 1)   # Middle of the table '   '.
+    # The free space for the text (subtracting the space used for the formatting).
+    used = len(pad_left)
+    used += len(pad_right)
+    used += len(separator) * (num_cols - 1)
     if max_width:
         free_space = max_width - used
     else:
@@ -195,11 +228,11 @@ def format_table(headings=None, contents=None, max_width=None, spacing=False, de
     total_width = sum(new_widths) + used
 
     # The header.
-    text += " " + "_" * (total_width - 2) + "\n"    # Top rule.
-    text += _table_line(widths=new_widths)    # Blank line.
+    text += _rule(width=total_width)    # Top rule.
+    text += _blank(width=total_width)    # Blank line.
     for i in range(num_head_rows):
-        text += _table_line(text=headings[i], widths=new_widths)    # The headings.
-    text += _table_line(widths=new_widths, bottom=True)    # Middle rule.
+        text += _table_line(text=headings[i], widths=new_widths, separator=separator, pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix)
+    text += _rule(width=total_width)    # Middle rule.
 
     # The table contents.
     for i in range(num_rows):
@@ -225,17 +258,16 @@ def format_table(headings=None, contents=None, max_width=None, spacing=False, de
 
         # Blank line (between rows when asked, and for the first row after the header).
         if spacing or i == 0:
-            text += _table_line(widths=new_widths)
+            text += _blank(width=total_width)
 
         # The contents.
         for k in range(num_lines):
-            text += _table_line(text=col_text[k], widths=new_widths)
+            text += _table_line(text=col_text[k], widths=new_widths, separator=separator, pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix)
 
-    # The bottom.
-    text += _table_line(widths=new_widths, bottom=True)    # Bottom rule.
-
-    # Add a newline.
-    text += '\n'
+    # The bottom rule, followed by a blank line.
+    text += _rule(width=total_width)
+    text += _blank(width=total_width)
 
     # Return the table text.
+    print `text`
     return text
