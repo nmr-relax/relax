@@ -39,10 +39,14 @@ class PackageTestCase(UnitTestCase):
         # Check for modules/packages missing from the __all__ list.
         print("\nChecking for modules/packages missing from the __all__ list.")
         files = listdir(self.package_path)
-        skip = ['__init__.py', '.svn']
+        skip = ['__init__.py']
         for file in files:
             # Files and directories to skip.
             if file in skip:
+                continue
+
+            # Skip hidden files and directories.
+            if search("^\.", file):
                 continue
 
             # Skip blacklisted files.
