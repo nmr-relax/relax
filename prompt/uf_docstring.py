@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,7 @@ from textwrap import wrap
 # relax module imports.
 import ansi
 import prompt.help
+from lib.text.table import format_table
 from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -104,137 +105,8 @@ def create_table(label):
     num_rows = len(table.cells)
     num_cols = len(table.headings)
 
-    # The column widths.
-    widths = []
-    for j in range(num_cols):
-        widths.append(len(table.headings[j]))
-    for i in range(num_rows):
-        for j in range(num_cols):
-            # The element is larger than the previous.
-            if len(table.cells[i][j]) > widths[j]:
-                widths[j] = len(table.cells[i][j])
-
-    # The free space for the text.
-    used = 0
-    used += 2    # Start of the table '  '.
-    used += 2    # End of the table '  '.
-    used += 3 * (num_cols - 1)   # Middle of the table '   '.
-    free_space = status.text_width - used
-
-    # The maximal width for all cells.
-    free_width = sum(widths)
-
-    # Column wrapping.
-    if free_width > free_space:
-        # Debugging printouts.
-        if status.debug:
-            print
-            print("Table column wrapping algorithm:")
-            print("%-20s %s" % ("num_cols:", num_cols))
-            print("%-20s %s" % ("free space:", free_space))
-
-        # New structures.
-        new_widths = deepcopy(widths)
-        num_cols_wrap = num_cols
-        free_space_wrap = free_space
-        col_wrap = [True] * num_cols
-
-        # Loop.
-        while True:
-            # The average column width.
-            ave_width = int(free_space_wrap / num_cols_wrap)
-
-            # Debugging printout.
-            if status.debug:
-                print("    %-20s %s" % ("ave_width:", ave_width))
-
-            # Rescale.
-            rescale = False
-            for i in range(num_cols):
-                # Remove the column from wrapping if smaller than the average wrapped width.
-                if col_wrap[i] and new_widths[i] < ave_width:
-                    # Recalculate.
-                    free_space_wrap = free_space_wrap - new_widths[i]
-                    num_cols_wrap -= 1
-                    rescale = True
-
-                    # Remove the column from wrapping.
-                    col_wrap[i] = False
-
-                    # Debugging printout.
-                    if status.debug:
-                        print("        %-20s %s" % ("remove column:", i))
-
-            # Done.
-            if not rescale:
-                # Set the column widths.
-                for i in range(num_cols):
-                    if new_widths[i] > ave_width:
-                        new_widths[i] = ave_width
-                break
-
-        # Debugging printouts.
-        if status.debug:
-            print("    %-20s %s" % ("widths:", widths))
-            print("    %-20s %s" % ("new_widths:", new_widths))
-            print("    %-20s %s" % ("num_cols:", num_cols))
-            print("    %-20s %s" % ("num_cols_wrap:", num_cols_wrap))
-            print("    %-20s %s" % ("free_space:", free_space))
-            print("    %-20s %s" % ("free_space_wrap:", free_space_wrap))
-            print("    %-20s %s" % ("col_wrap:", col_wrap))
-
-    # No column wrapping.
-    else:
-        new_widths = widths
-        col_wrap = [False] * num_cols
-
-    # The total table width.
-    total_width = sum(new_widths) + used
-
-    # The header.
-    text += " " + "_" * (total_width - 2) + "\n"    # Top rule.
-    text += table_line(widths=new_widths)    # Blank line.
-    text += table_line(text=table.headings, widths=new_widths)    # The headings.
-    text += table_line(widths=new_widths, bottom=True)    # Middle rule.
-
-    # The table contents.
-    for i in range(num_rows):
-        # Column text, with wrapping.
-        col_text = [table.cells[i]]
-        num_lines = 1
-        for j in range(num_cols):
-            if col_wrap[j]:
-                # Wrap.
-                lines = wrap(col_text[0][j], new_widths[j])
-
-                # Count the lines.
-                num_lines = len(lines)
-
-                # Replace the column text.
-                for k in range(num_lines):
-                    # New row of empty text.
-                    if len(col_text) <= k:
-                        col_text.append(['']*num_cols)
-
-                    # Pack the data.
-                    col_text[k][j] = lines[k]
-
-        # Blank line (between rows when asked, and for the first row after the header).
-        if table.spacing or i == 0:
-            text += table_line(widths=new_widths)
-
-        # The contents.
-        for k in range(num_lines):
-            text += table_line(text=col_text[k], widths=new_widths)
-
-    # The bottom.
-    text += table_line(widths=new_widths, bottom=True)    # Bottom rule.
-
-    # Add a newline.
-    text += '\n'
-
-    # Return the table text.
-    return text
+    # Generate and return the table.
+    return format_table(headings=[table.headings], contents=table.cells, max_width=status.text_width, debug=status.debug)
 
 
 def format_text(text):
