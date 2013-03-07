@@ -107,7 +107,7 @@ def format_table(headings=None, contents=None, max_width=None, spacing=False, de
         for j in range(num_cols):
             # The element is larger than the previous.
             if len(headings[i][j]) > widths[j]:
-                widths.append(len(headings[i][j]))
+                widths[j] = len(headings[i][j])
     for i in range(num_rows):
         for j in range(num_cols):
             # The element is larger than the previous.
@@ -122,7 +122,7 @@ def format_table(headings=None, contents=None, max_width=None, spacing=False, de
     if max_width:
         free_space = max_width - used
     else:
-        free_space = 1e10
+        free_space = 1000
 
     # The maximal width for all cells.
     free_width = sum(widths)
