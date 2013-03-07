@@ -55,7 +55,8 @@ class Test_table(TestCase):
             "  A          2         ",
             "  B          2         ",
             " _____________________ ",
-            "                       "
+            "                       ",
+            ""    # This is because split combined with a final \n character.
         ]
 
         # Printout.
@@ -99,7 +100,8 @@ class Test_table(TestCase):
             "                       ",
             "  B          2         ",
             " _____________________ ",
-            "                       "
+            "                       ",
+            ""    # This is because split combined with a final \n character.
         ]
 
         # Printout.
