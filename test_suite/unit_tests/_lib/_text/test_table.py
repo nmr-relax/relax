@@ -192,9 +192,9 @@ class Test_table(TestCase):
             "  Column 1   Column 2   Column 3   Column 4       ",
             " ________________________________________________ ",
             "                                                  ",
-            "  A          2          3.456      <type 'list'>  ",
+            "  A                 2      3.456   <type 'list'>  ",
             "                                                  ",
-            "  B          2          4.567      1e-06          ",
+            "  B                 2      4.567           1e-06  ",
             " ________________________________________________ ",
             "                                                  ",
             ""    # This is because split combined with a final \n character.
