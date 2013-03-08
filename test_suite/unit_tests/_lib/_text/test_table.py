@@ -23,7 +23,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from lib.text.table import format_table
+from lib.text.table import format_table, MULTI_COL
 
 
 class Test_table(TestCase):
@@ -101,6 +101,102 @@ class Test_table(TestCase):
             "  B          2         ",
             " _____________________ ",
             "                       ",
+            ""    # This is because split combined with a final \n character.
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])
+
+
+    def test_format_table3(self):
+        """Test 3 of the lib.text.table.format_table() function."""
+
+        # The table data.
+        headings = [
+            ['', 'Long text span test', MULTI_COL],
+            ['Column 1', 'Column 2', 'Column 3']
+        ]
+        contents = [
+            ['A', '2', '3.456'],
+            ['B', '2', '4.567']
+        ]
+
+        # Create the table.
+        table = format_table(headings=headings, contents=contents, spacing=True)
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " ________________________________ ",
+            "                                  ",
+            "             Long text span test  ",
+            "                                  ",
+            "  Column 1   Column 2   Column 3  ",
+            " ________________________________ ",
+            "                                  ",
+            "  A          2          3.456     ",
+            "                                  ",
+            "  B          2          4.567     ",
+            " ________________________________ ",
+            "                                  ",
+            ""    # This is because split combined with a final \n character.
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])
+
+
+    def test_format_table4(self):
+        """Test 4 of the lib.text.table.format_table() function."""
+
+        # The table data.
+        headings = [
+            [None, 'Long text span test', MULTI_COL, MULTI_COL],
+            ['Column 1', 'Column 2', 'Column 3', 'Column 4']
+        ]
+        contents = [
+            ['A', 2, 3.4561234124, [1,2.0]],
+            ['B', 2, 4.567745674, 1e-6]
+        ]
+
+        # Create the table.
+        table = format_table(headings=headings, contents=contents, spacing=True, custom_format=[None, None, '%.3f', None])
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " ___________________________________________ ",
+            "                                             ",
+            "             Long text span test             ",
+            "                                             ",
+            "  Column 1   Column 2   Column 3   Column 4  ",
+            " ___________________________________________ ",
+            "                                             ",
+            "  A                 2      3.456   [1, 2.0]  ",
+            "                                             ",
+            "  B                 2      4.568      1e-06  ",
+            " ___________________________________________ ",
+            "                                             ",
             ""    # This is because split combined with a final \n character.
         ]
 

@@ -294,7 +294,6 @@ class Relax_data_list(Base_list):
                 'text': "Set the relaxation data &type",
                 'icon': fetch_icon(uf_info.get_uf('relax_data.type').gui_icon),
                 'method': self.action_relax_data_type
-            }, {
             }
         ]
 
