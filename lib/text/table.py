@@ -102,6 +102,64 @@ def _convert_to_string(data=None, justification=None, custom_format=None):
                 data[i][j] = "%s" % data[i][j]
 
 
+def _determine_widths(data=None, widths=None, separator=None):
+    """Determine the maximum column widths needed given the data.
+
+    @keyword data:      Either the headings or content converted to strings to check the widths of.
+    @type data:         list of lists of str
+    @keyword widths:    The list of widths to start with.  If data is found to be wider than this list, then the width of that column will be expanded.
+    @type widths:       list of int
+    @keyword separator: The column separation string.
+    @type separator:    str
+    """
+
+    # The number of rows and columns.
+    num_rows = len(data)
+    num_cols = len(data[0])
+
+    # Determine the maximum column widths.
+    multi_col = False
+    for i in range(num_rows):
+        for j in range(num_cols):
+            # Switch the flag.
+            if data[i][j] == MULTI_COL:
+                multi_col = True
+
+            # Skip multicolumn entries.
+            if data[i][j] == MULTI_COL or (j < num_cols-1 and data[i][j+1] == MULTI_COL):
+                continue
+
+            # The element is larger than the previous.
+            if len(data[i][j]) > widths[j]:
+                widths[j] = len(data[i][j])
+
+    # Handle overfull multi-column cells.
+    if multi_col:
+        for i in range(num_rows):
+            for j in range(num_cols):
+                # End of multicolumn cell.
+                if data[i][j] == MULTI_COL and (j == num_cols-1 or (j < num_cols-1 and data[i][j+1] != MULTI_COL)):
+                    col_sum_width = widths[j]
+                    while 1:
+                        # Walk back.
+                        for k in range(j-1, -1, -1):
+                            col_sum_width += len(separator) + widths[k]
+
+                            # Out of the cell.
+                            if data[i][k] != MULTI_COL:
+                                break
+
+                        # Nothing more to do.
+                        break
+
+                    # The multicolumn width.
+                    multi_col_width = len(data[i][k])
+
+                    # The multicolumn cell is wider than the columns it spans, so expand the last column.
+                    if multi_col_width > col_sum_width:
+                        widths[j] += multi_col_width - col_sum_width
+
+
 def _rule(width=None, prefix=' ', postfix=' '):
     """Create a horizontal rule for the table.
 
@@ -254,31 +312,13 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
         _convert_to_string(data=headings, justification=justification_headings, custom_format=custom_format)
     _convert_to_string(data=contents, justification=justification_contents, custom_format=custom_format)
 
-    # Initialise the pre-wrapping column widths.
+    # Determine the pre-wrapping column widths.
     prewrap_widths = [0] * num_cols
-
-    # Determine the maximum column widths from the headers.
     if headings != None:
-        for i in range(num_head_rows):
-            for j in range(num_cols):
-                # Skip multicolumn entries.
-                if headings[i][j] == MULTI_COL or (j < num_cols-1 and headings[i][j+1] == MULTI_COL):
-                    continue
-
-                # The element is larger than the previous.
-                if len(headings[i][j]) > prewrap_widths[j]:
-                    prewrap_widths[j] = len(headings[i][j])
-
-    # Determine the maximum column widths from the content.
-    for i in range(num_rows):
-        for j in range(num_cols):
-            # Skip multicolumn entries.
-            if contents[i][j] == MULTI_COL or (j < num_cols-1 and contents[i][j+1] == MULTI_COL):
-                continue
-
-            # The element is larger than the previous.
-            if len(contents[i][j]) > prewrap_widths[j]:
-                prewrap_widths[j] = len(contents[i][j])
+        data = headings + contents
+    else:
+        data = contents
+    _determine_widths(data=data, widths=prewrap_widths, separator=separator)
 
     # The free space for the text (subtracting the space used for the formatting).
     used = len(pad_left)
