@@ -67,6 +67,10 @@ def _convert_to_string(data=None, justification=None, custom_format=None):
     for i in range(len(data)):
         # Loop over the columns.
         for j in range(len(data[i])):
+            # Skip multi-columns.
+            if data[i][j] == MULTI_COL:
+                continue
+
             # Default left justification.
             justification[i][j] = 'l'
 
@@ -159,6 +163,8 @@ def _table_line(text=None, widths=None, separator='   ', pad_left=' ', pad_right
             for j in range(i+1, num_col):
                 if text[j] == MULTI_COL:
                     width += len(separator) + widths[j]
+                else:
+                    break
 
             # Add the padded text.
             if justification[i] == 'l':
