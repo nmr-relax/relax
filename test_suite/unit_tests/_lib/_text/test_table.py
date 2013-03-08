@@ -212,3 +212,41 @@ class Test_table(TestCase):
         self.assertEqual(len(true_table), len(table_lines))
         for i in range(len(table_lines)):
             self.assertEqual(true_table[i], table_lines[i])
+
+
+    def test_format_table5(self):
+        """Test 5 of the lib.text.table.format_table() function - no headings."""
+
+        # The table data.
+        contents = [
+            ['A', 2],
+            ['B', 2]
+        ]
+
+        # Create the table.
+        table = format_table(contents=contents)
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " _______ ",
+            "         ",
+            "  A   2  ",
+            "  B   2  ",
+            " _______ ",
+            "         ",
+            ""    # This is because split combined with a final \n character.
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])

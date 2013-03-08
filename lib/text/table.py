@@ -217,33 +217,38 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     text = ''
     num_rows = len(contents)
     num_cols = len(contents[0])
-    num_head_rows = len(headings)
+    if headings != None:
+        num_head_rows = len(headings)
 
     # Deepcopy so that modifications to the data are not seen.
-    headings = deepcopy(headings)
+    if headings != None:
+        headings = deepcopy(headings)
     contents = deepcopy(contents)
 
     # Create data structures for specifying the cell justification.
-    justification_headings = deepcopy(headings)
+    if headings != None:
+        justification_headings = deepcopy(headings)
     justification_contents = deepcopy(contents)
 
     # Convert all data to strings.
-    _convert_to_string(data=headings, justification=justification_headings, custom_format=custom_format)
+    if headings != None:
+        _convert_to_string(data=headings, justification=justification_headings, custom_format=custom_format)
     _convert_to_string(data=contents, justification=justification_contents, custom_format=custom_format)
 
     # Initialise the pre-wrapping column widths.
     prewrap_widths = [0] * num_cols
 
     # Determine the maximum column widths from the headers.
-    for i in range(num_head_rows):
-        for j in range(num_cols):
-            # Skip multicolumn entries.
-            if headings[i][j] == MULTI_COL or (j < num_cols-1 and headings[i][j+1] == MULTI_COL):
-                continue
+    if headings != None:
+        for i in range(num_head_rows):
+            for j in range(num_cols):
+                # Skip multicolumn entries.
+                if headings[i][j] == MULTI_COL or (j < num_cols-1 and headings[i][j+1] == MULTI_COL):
+                    continue
 
-            # The element is larger than the previous.
-            if len(headings[i][j]) > prewrap_widths[j]:
-                prewrap_widths[j] = len(headings[i][j])
+                # The element is larger than the previous.
+                if len(headings[i][j]) > prewrap_widths[j]:
+                    prewrap_widths[j] = len(headings[i][j])
 
     # Determine the maximum column widths from the content.
     for i in range(num_rows):
@@ -336,13 +341,18 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     total_width = sum(new_widths) + used
 
     # The header.
-    text += _rule(width=total_width)    # Top rule.
-    text += _blank(width=total_width)    # Blank line.
-    for i in range(num_head_rows):
-        text += _table_line(text=headings[i], widths=new_widths, separator='   ', pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix, justification=justification_headings[i])
-        if i < num_head_rows-1 and spacing:
-            text += _blank(width=total_width)
-    text += _rule(width=total_width)    # Middle rule.
+    if headings != None:
+        text += _rule(width=total_width)    # Top rule.
+        text += _blank(width=total_width)    # Blank line.
+        for i in range(num_head_rows):
+            text += _table_line(text=headings[i], widths=new_widths, separator='   ', pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix, justification=justification_headings[i])
+            if i < num_head_rows-1 and spacing:
+                text += _blank(width=total_width)
+        text += _rule(width=total_width)    # Middle rule.
+
+    # No header.
+    else:
+        text += _rule(width=total_width)    # Top rule.
 
     # The table contents.
     for i in range(num_rows):
