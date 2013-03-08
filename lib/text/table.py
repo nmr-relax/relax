@@ -269,6 +269,8 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     text += _blank(width=total_width)    # Blank line.
     for i in range(num_head_rows):
         text += _table_line(text=headings[i], widths=new_widths, separator='   ', pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix)
+        if i < num_head_rows-1 and spacing:
+            text += _blank(width=total_width)
     text += _rule(width=total_width)    # Middle rule.
 
     # The table contents.
