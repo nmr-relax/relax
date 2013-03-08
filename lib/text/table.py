@@ -27,6 +27,10 @@ from copy import deepcopy
 from textwrap import wrap
 
 
+# Special variables.
+MULTI_COL = "@@MULTI@@"
+
+
 def _blank(width=None, prefix=' ', postfix=' '):
     """Create a blank line for the table.
 
