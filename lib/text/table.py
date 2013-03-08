@@ -26,6 +26,9 @@
 from copy import deepcopy
 from textwrap import wrap
 
+# relax module imports.
+from check_types import is_float
+
 
 # Special variables.
 MULTI_COL = "@@MULTI@@"
@@ -46,6 +49,34 @@ def _blank(width=None, prefix=' ', postfix=' '):
 
     # Return the blank line.
     return prefix + ' '*width + postfix + "\n"
+
+
+def _convert_to_string(data=None):
+    """Convert all elements of the given data structures to strings in place.
+
+    @keyword data:      The headings or content to convert.
+    @type data:         list of lists of anything.
+    """
+
+    # Loop over the rows.
+    for i in range(len(data)):
+        # Loop over the columns.
+        for j in range(len(data[i])):
+            # None types.
+            if data[i][j] == None:
+                data[i][j] = ''
+
+            # Int types.
+            elif isinstance(data[i][j], int):
+                data[i][j] = "%i" % data[i][j]
+
+            # Float types.
+            elif is_float(data[i][j]):
+                data[i][j] = "%g" % data[i][j]
+
+            # All other non-string types.
+            elif not isinstance(data[i][j], str):
+                data[i][j] = "%s" % data[i][j]
 
 
 def _rule(width=None, prefix=' ', postfix=' '):
@@ -159,6 +190,14 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     num_rows = len(contents)
     num_cols = len(contents[0])
     num_head_rows = len(headings)
+
+    # Deepcopy so that modifications to the data are not seen.
+    headings = deepcopy(headings)
+    contents = deepcopy(contents)
+
+    # Convert all data to strings.
+    _convert_to_string(headings)
+    _convert_to_string(contents)
 
     # Initialise the pre-wrapping column widths.
     prewrap_widths = [0] * num_cols
