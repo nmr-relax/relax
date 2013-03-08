@@ -164,3 +164,51 @@ class Test_table(TestCase):
         self.assertEqual(len(true_table), len(table_lines))
         for i in range(len(table_lines)):
             self.assertEqual(true_table[i], table_lines[i])
+
+
+    def test_format_table4(self):
+        """Test 4 of the lib.text.table.format_table() function."""
+
+        # The table data.
+        headings = [
+            [None, 'Long text span test', MULTI_COL, MULTI_COL],
+            ['Column 1', 'Column 2', 'Column 3', 'Column 4']
+        ]
+        contents = [
+            ['A', 2, 3.456, list],
+            ['B', 2, 4.567, 1e-6]
+        ]
+
+        # Create the table.
+        table = format_table(headings=headings, contents=contents, spacing=True)
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " ________________________________________________ ",
+            "                                                  ",
+            "             Long text span test                  ",
+            "                                                  ",
+            "  Column 1   Column 2   Column 3   Column 4       ",
+            " ________________________________________________ ",
+            "                                                  ",
+            "  A          2          3.456      <type 'list'>  ",
+            "                                                  ",
+            "  B          2          4.567      1e-06          ",
+            " ________________________________________________ ",
+            "                                                  ",
+            ""    # This is because split combined with a final \n character.
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])
