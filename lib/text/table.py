@@ -51,17 +51,22 @@ def _blank(width=None, prefix=' ', postfix=' '):
     return prefix + ' '*width + postfix + "\n"
 
 
-def _convert_to_string(data=None):
+def _convert_to_string(data=None, justification=None):
     """Convert all elements of the given data structures to strings in place.
 
-    @keyword data:      The headings or content to convert.
-    @type data:         list of lists of anything.
+    @keyword data:          The headings or content to convert.
+    @type data:             list of lists
+    @keyword justification: The structure to store the cell justification in.
+    @type justification:    list of lists
     """
 
     # Loop over the rows.
     for i in range(len(data)):
         # Loop over the columns.
         for j in range(len(data[i])):
+            # Default left justification.
+            justification[i][j] = 'l'
+
             # None types.
             if data[i][j] == None:
                 data[i][j] = ''
@@ -69,10 +74,12 @@ def _convert_to_string(data=None):
             # Int types.
             elif isinstance(data[i][j], int):
                 data[i][j] = "%i" % data[i][j]
+                justification[i][j] = 'r'
 
             # Float types.
             elif is_float(data[i][j]):
                 data[i][j] = "%g" % data[i][j]
+                justification[i][j] = 'r'
 
             # All other non-string types.
             elif not isinstance(data[i][j], str):
@@ -96,25 +103,27 @@ def _rule(width=None, prefix=' ', postfix=' '):
     return prefix + '_'*width + postfix + "\n"
 
 
-def _table_line(text=None, widths=None, separator='   ', pad_left=' ', pad_right=' ', prefix=' ', postfix=' '):
+def _table_line(text=None, widths=None, separator='   ', pad_left=' ', pad_right=' ', prefix=' ', postfix=' ', justification=None):
     """Format a line of a table.
 
-    @keyword text:      The list of table elements.  If not given, an empty line will be be produced.
-    @type text:         list of str or None
-    @keyword widths:    The list of column widths for the table.
-    @type widths:       list of int
-    @keyword separator: The column separation string.
-    @type separator:    str
-    @keyword pad_left:  The string to pad the left side of the table with.
-    @type pad_left:     str
-    @keyword pad_right: The string to pad the right side of the table with.
-    @type pad_right:    str
-    @keyword prefix:    The text to add to the start of the line.
-    @type prefix:       str
-    @keyword postfix:   The text to add to the end of the line.
-    @type postfix:      str
-    @return:            The table line.
-    @rtype:             str
+    @keyword text:          The list of table elements.  If not given, an empty line will be be produced.
+    @type text:             list of str or None
+    @keyword widths:        The list of column widths for the table.
+    @type widths:           list of int
+    @keyword separator:     The column separation string.
+    @type separator:        str
+    @keyword pad_left:      The string to pad the left side of the table with.
+    @type pad_left:         str
+    @keyword pad_right:     The string to pad the right side of the table with.
+    @type pad_right:        str
+    @keyword prefix:        The text to add to the start of the line.
+    @type prefix:           str
+    @keyword postfix:       The text to add to the end of the line.
+    @type postfix:          str
+    @keyword justification: The cell justification structure.  The elements should be 'l' for left justification and 'r' for right.
+    @type justification:    list of str
+    @return:                The table line.
+    @rtype:                 str
     """
 
     # Initialise.
@@ -140,13 +149,19 @@ def _table_line(text=None, widths=None, separator='   ', pad_left=' ', pad_right
                     width += len(separator) + widths[j]
 
             # Add the padded text.
-            line += text[i]
+            if justification[i] == 'l':
+                line += text[i]
             line += " " * (width - len(text[i]))
+            if justification[i] == 'r':
+                line += text[i]
 
         # Normal cell.
         else:
-            line += text[i]
+            if justification[i] == 'l':
+                line += text[i]
             line += " " * (widths[i] - len(text[i]))
+            if justification[i] == 'r':
+                line += text[i]
 
     # Close the line.
     line += pad_right + postfix + "\n"
@@ -195,9 +210,13 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     headings = deepcopy(headings)
     contents = deepcopy(contents)
 
+    # Create data structures for specifying the cell justification.
+    justification_headings = deepcopy(headings)
+    justification_contents = deepcopy(contents)
+
     # Convert all data to strings.
-    _convert_to_string(headings)
-    _convert_to_string(contents)
+    _convert_to_string(data=headings, justification=justification_headings)
+    _convert_to_string(data=contents, justification=justification_contents)
 
     # Initialise the pre-wrapping column widths.
     prewrap_widths = [0] * num_cols
@@ -307,7 +326,7 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     text += _rule(width=total_width)    # Top rule.
     text += _blank(width=total_width)    # Blank line.
     for i in range(num_head_rows):
-        text += _table_line(text=headings[i], widths=new_widths, separator='   ', pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix)
+        text += _table_line(text=headings[i], widths=new_widths, separator='   ', pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix, justification=justification_headings[i])
         if i < num_head_rows-1 and spacing:
             text += _blank(width=total_width)
     text += _rule(width=total_width)    # Middle rule.
@@ -340,7 +359,7 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
 
         # The contents.
         for k in range(num_lines):
-            text += _table_line(text=col_text[k], widths=new_widths, separator=separator, pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix)
+            text += _table_line(text=col_text[k], widths=new_widths, separator=separator, pad_left=pad_left, pad_right=pad_right, prefix=prefix, postfix=postfix, justification=justification_contents[i])
 
     # The bottom rule, followed by a blank line.
     text += _rule(width=total_width)
