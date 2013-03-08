@@ -28,6 +28,7 @@ from textwrap import wrap
 
 # relax module imports.
 from check_types import is_float
+from relax_errors import RelaxError
 
 
 # Special variables.
@@ -219,6 +220,18 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     num_cols = len(contents[0])
     if headings != None:
         num_head_rows = len(headings)
+
+    # Column number checks.
+    if custom_format != None and len(custom_format) != num_cols:
+        raise RelaxError("The number of columns is %s but the number of elements in custom_format is %s." % (num_cols, len(custom_format)))
+    if headings != None:
+        for i in range(num_head_rows):
+            if len(headings[i]) != num_cols:
+                raise RelaxError("The %s columns does not match the %s elements in the heading row %s." % (num_cols, len(headings[i]), headings[i]))
+    for i in range(num_rows):
+        if len(contents[i]) != num_cols:
+            raise RelaxError("The %s columns does not match the %s elements in the contents row %s." % (num_cols, len(contents[i]), contents[i]))
+
 
     # Deepcopy so that modifications to the data are not seen.
     if headings != None:
