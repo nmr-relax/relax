@@ -123,7 +123,7 @@ class Test_table(TestCase):
 
         # The table data.
         headings = [
-            ['Column 1', 'Long text span test', MULTI_COL],
+            ['', 'Long text span test', MULTI_COL],
             ['Column 1', 'Column 2', 'Column 3']
         ]
         contents = [
@@ -132,7 +132,7 @@ class Test_table(TestCase):
         ]
 
         # Create the table.
-        table = format_table(headings=headings, contents=contents, spacing=True, debug=True)
+        table = format_table(headings=headings, contents=contents, spacing=True)
         table_lines = table.split('\n')
 
         # The true table.
