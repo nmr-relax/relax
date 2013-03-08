@@ -250,3 +250,47 @@ class Test_table(TestCase):
         self.assertEqual(len(true_table), len(table_lines))
         for i in range(len(table_lines)):
             self.assertEqual(true_table[i], table_lines[i])
+
+
+    def test_format_table6(self):
+        """Test 6 of the lib.text.table.format_table() function - no headings."""
+
+        # The table data.
+        headings = [['Model', 'k', 'chi2', 'AIC', 'Average position', MULTI_COL, MULTI_COL, 'Motional eigenframe', MULTI_COL, MULTI_COL, 'Order parameters (deg)', MULTI_COL, MULTI_COL], [None, None, None, None, 'a', 'b', 'g', 'a', 'b/th', 'g/ph', 'thx', 'thy', 'smax']]
+        contents = [['Rigid', 6, 1611.0583844357488, 1623.0583844357488, 2.7928187044509789, 6.241673451655573, 3.3350126302921255, None, None, None, None, None, None], ['Rotor', 9, 1393.0628812874404, 1411.0628812874404, 2.3720778521835015, 6.2511294411496241, 3.7347870727084764, None, 1.3782156252713658, 5.5998324326753401, None, None, 36.651271107544183], ['Iso cone, torsionless', 9, 1407.9014811061686, 1425.9014811061686, 2.2550248034078395, 6.2368882019396619, 3.891108977360032, None, 0.25090427716293384, 1.590485101074278, 21.287274572663485, None, None], ['Iso cone', 10, 1400.3558737738815, 1420.3558737738815, 2.8146957276396858, 6.2597080483925627, 3.2956149488567879, None, 1.3956123975976844, 5.5817149266639987, 10.300677006193942, None, 32.387495822632452], ['Pseudo ellipse, torsionless', 11, 1386.6214759007082, 1408.6214759007082, 2.6253119819082835, 6.2528446735668872, 3.4989380500907097, 2.692632830571366, 0.43833843941243616, 1.3038063115520346, 33.512494725673051, 15.888178532164503, None], ['Pseudo ellipse', 12, 1378.8893702060313, 1402.8893702060313, 2.7403158840045716, 6.259192518336242, 3.3759530521363121, 6.1651101516049849, 1.3600775439064279, 5.5851511636460813, 13.646328409458231, 0.74265383200964785, 31.027675419200627]]
+
+        # Create the table.
+        table = format_table(headings=headings, contents=contents, custom_format=[None, None, "%.2f", "%.2f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.2f", "%.2f", "%.2f"])
+        table_lines = table.split('\n')
+
+        # The true table.
+        true_table = [
+            " _______________________________________________________________________________________________________________________________ ",
+            "                                                                                                                                 ",
+            "  Model                         k    chi2      AIC       Average position        Motional eigenframe     Order parameters (deg)  ",
+            "                                                         a       b       g       a       b/th    g/ph    thx     thy     smax    ",
+            " _______________________________________________________________________________________________________________________________ ",
+            "                                                                                                                                 ",
+            "  Rigid                          6   1611.06   1623.06   2.793   6.242   3.335                                                   ",
+            "  Rotor                          9   1393.06   1411.06   2.372   6.251   3.735           1.378   5.600                    36.65  ",
+            "  Iso cone, torsionless          9   1407.90   1425.90   2.255   6.237   3.891           0.251   1.590   21.29                   ",
+            "  Iso cone                      10   1400.36   1420.36   2.815   6.260   3.296           1.396   5.582   10.30            32.39  ",
+            "  Pseudo ellipse, torsionless   11   1386.62   1408.62   2.625   6.253   3.499   2.693   0.438   1.304   33.51   15.89           ",
+            "  Pseudo ellipse                12   1378.89   1402.89   2.740   6.259   3.376   6.165   1.360   5.585   13.65    0.74    31.03  ",
+            " _______________________________________________________________________________________________________________________________ ",
+            "                                                                                                                                 ",
+            ""    # This is because split combined with a final \n character.
+        ]
+
+        # Printout.
+        print("The formatted table:")
+        for i in range(len(table_lines)):
+            print("'%s'" % table_lines[i])
+        print("\nWhat the table should look like:")
+        for i in range(len(true_table)):
+            print("'%s'" % true_table[i])
+
+        # Check the table.
+        self.assertEqual(len(true_table), len(table_lines))
+        for i in range(len(table_lines)):
+            self.assertEqual(true_table[i], table_lines[i])
