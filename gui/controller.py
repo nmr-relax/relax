@@ -601,6 +601,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Initialise the base class.
         super(LogCtrl, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
+        # Turn on line wrapping.
+        self.SetWrapMode(wx.stc.STC_WRAP_WORD)
+
         # Create the standard style (style num 0).
         self.StyleSetFont(0, font.modern_small)
 
