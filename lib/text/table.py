@@ -167,7 +167,7 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     for i in range(num_head_rows):
         for j in range(num_cols):
             # Skip multicolumn entries.
-            if j < num_cols-1 and headings[i][j+1] == MULTI_COL:
+            if headings[i][j] == MULTI_COL or (j < num_cols-1 and headings[i][j+1] == MULTI_COL):
                 continue
 
             # The element is larger than the previous.
@@ -178,7 +178,7 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     for i in range(num_rows):
         for j in range(num_cols):
             # Skip multicolumn entries.
-            if j < num_cols-1 and contents[i][j+1] == MULTI_COL:
+            if contents[i][j] == MULTI_COL or (j < num_cols-1 and contents[i][j+1] == MULTI_COL):
                 continue
 
             # The element is larger than the previous.
