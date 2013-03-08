@@ -175,7 +175,7 @@ class Test_table(TestCase):
             ['Column 1', 'Column 2', 'Column 3', 'Column 4']
         ]
         contents = [
-            ['A', 2, 3.4561234124, list],
+            ['A', 2, 3.4561234124, [1,2.0]],
             ['B', 2, 4.567745674, 1e-6]
         ]
 
@@ -185,18 +185,18 @@ class Test_table(TestCase):
 
         # The true table.
         true_table = [
-            " ________________________________________________ ",
-            "                                                  ",
-            "             Long text span test                  ",
-            "                                                  ",
-            "  Column 1   Column 2   Column 3   Column 4       ",
-            " ________________________________________________ ",
-            "                                                  ",
-            "  A                 2      3.456   <type 'list'>  ",
-            "                                                  ",
-            "  B                 2      4.568           1e-06  ",
-            " ________________________________________________ ",
-            "                                                  ",
+            " ___________________________________________ ",
+            "                                             ",
+            "             Long text span test             ",
+            "                                             ",
+            "  Column 1   Column 2   Column 3   Column 4  ",
+            " ___________________________________________ ",
+            "                                             ",
+            "  A                 2      3.456   [1, 2.0]  ",
+            "                                             ",
+            "  B                 2      4.568      1e-06  ",
+            " ___________________________________________ ",
+            "                                             ",
             ""    # This is because split combined with a final \n character.
         ]
 
