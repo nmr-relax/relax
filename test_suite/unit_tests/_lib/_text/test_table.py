@@ -175,12 +175,12 @@ class Test_table(TestCase):
             ['Column 1', 'Column 2', 'Column 3', 'Column 4']
         ]
         contents = [
-            ['A', 2, 3.456, list],
-            ['B', 2, 4.567, 1e-6]
+            ['A', 2, 3.4561234124, list],
+            ['B', 2, 4.567745674, 1e-6]
         ]
 
         # Create the table.
-        table = format_table(headings=headings, contents=contents, spacing=True)
+        table = format_table(headings=headings, contents=contents, spacing=True, custom_format=[None, None, '%.3f', None])
         table_lines = table.split('\n')
 
         # The true table.
