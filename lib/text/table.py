@@ -89,6 +89,10 @@ def _convert_to_string(data=None, justification=None, custom_format=None):
                 except TypeError:
                     data[i][j] = "%s" % data[i][j]
 
+            # Bool types.
+            elif isinstance(data[i][j], bool):
+                data[i][j] = "%s" % data[i][j]
+
             # Int types.
             elif isinstance(data[i][j], int):
                 data[i][j] = "%i" % data[i][j]

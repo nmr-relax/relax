@@ -220,7 +220,7 @@ class Test_table(TestCase):
         # The table data.
         contents = [
             ['A', 2],
-            ['B', 2]
+            ['B', True]
         ]
 
         # Create the table.
@@ -229,12 +229,12 @@ class Test_table(TestCase):
 
         # The true table.
         true_table = [
-            " _______ ",
-            "         ",
-            "  A   2  ",
-            "  B   2  ",
-            " _______ ",
-            "         ",
+            " __________ ",
+            "            ",
+            "  A      2  ",
+            "  B   True  ",
+            " __________ ",
+            "            ",
             ""    # This is because split combined with a final \n character.
         ]
 
