@@ -192,7 +192,10 @@ class Mf(GuiTestCase):
 
 
     def test_mf_auto_analysis(self):
-        """Test the model-free auto-analysis."""
+        """Test the model-free auto-analysis.
+
+        This now catches bug #20603 (https://gna.org/bugs/?20603).
+        """
 
         # Simulate the new analysis wizard.
         self.app.gui.analysis.menu_new(None)
@@ -258,6 +261,9 @@ class Mf(GuiTestCase):
         ]
         for i in range(len(data)):
             self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+        # Simulate right clicking on the NOE to test the pop up menu (bug #20603, https://gna.org/bugs/?20603).
+        analysis.relax_data.on_right_click(Fake_right_click())
 
         # Dipole-dipole interaction wizard:  Initialisation.
         analysis.setup_dipole_pair()
@@ -429,3 +435,14 @@ class Mf(GuiTestCase):
         i = 0
         for interatom in interatomic_loop():
             self.assertAlmostEqual(interatom.r, 1.02 * 1e-10)
+
+
+
+class Fake_right_click:
+    """Simulate a grid_cell_right_click event ."""
+
+    def GetRow(self):
+        """Overwrite the GetRow() method."""
+
+        # Return the first row.
+        return 0
