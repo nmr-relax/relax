@@ -75,7 +75,7 @@ def _convert_to_string(data=None, justification=None, custom_format=None):
             justification[i][j] = 'l'
 
             # Right justify numbers.
-            if isinstance(data[i][j], int) or is_float(data[i][j]):
+            if not isinstance(data[i][j], bool) and (isinstance(data[i][j], int) or is_float(data[i][j])):
                 justification[i][j] = 'r'
 
             # None types.
