@@ -51,13 +51,15 @@ def _blank(width=None, prefix=' ', postfix=' '):
     return prefix + ' '*width + postfix + "\n"
 
 
-def _convert_to_string(data=None, justification=None):
+def _convert_to_string(data=None, justification=None, custom_format=None):
     """Convert all elements of the given data structures to strings in place.
 
     @keyword data:          The headings or content to convert.
     @type data:             list of lists
     @keyword justification: The structure to store the cell justification in.
     @type justification:    list of lists
+    @keyword custom_format: This list allows a custom format to be specified for each column.  The number of elements must match the number of columns.  If an element is None, then the default will be used.  Otherwise the elements must be valid string formatting constructs.
+    @type custom_format:    None or list of None and str
     """
 
     # Loop over the rows.
@@ -67,19 +69,28 @@ def _convert_to_string(data=None, justification=None):
             # Default left justification.
             justification[i][j] = 'l'
 
+            # Right justify numbers.
+            if isinstance(data[i][j], int) or is_float(data[i][j]):
+                justification[i][j] = 'r'
+
             # None types.
             if data[i][j] == None:
                 data[i][j] = ''
 
+            # Custom format (defaulting to standard string conversion if all fails).
+            elif custom_format and custom_format[j]:
+                try:
+                    data[i][j] = custom_format[j] % data[i][j]
+                except TypeError:
+                    data[i][j] = "%s" % data[i][j]
+
             # Int types.
             elif isinstance(data[i][j], int):
                 data[i][j] = "%i" % data[i][j]
-                justification[i][j] = 'r'
 
             # Float types.
             elif is_float(data[i][j]):
                 data[i][j] = "%g" % data[i][j]
-                justification[i][j] = 'r'
 
             # All other non-string types.
             elif not isinstance(data[i][j], str):
@@ -170,34 +181,36 @@ def _table_line(text=None, widths=None, separator='   ', pad_left=' ', pad_right
     return line
 
 
-def format_table(headings=None, contents=None, max_width=None, separator='   ', pad_left=' ', pad_right=' ', prefix=' ', postfix=' ', spacing=False, debug=False):
+def format_table(headings=None, contents=None, max_width=None, separator='   ', pad_left=' ', pad_right=' ', prefix=' ', postfix=' ', custom_format=None, spacing=False, debug=False):
     """Format and return the table as text.
 
     If the heading or contents contains the value of the MULTI_COL constant defined in this module, then that cell will be merged with the previous cell to allow elements to span multiple columns.
 
 
-    @keyword headings:  The table header.
-    @type headings:     list of lists of str
-    @keyword contents:  The table contents.
-    @type contents:     list of lists of str
-    @keyword max_width: The maximum width of the table.
-    @type max_width:    int
-    @keyword separator: The column separation string.
-    @type separator:    str
-    @keyword pad_left:  The string to pad the left side of the table with.
-    @type pad_left:     str
-    @keyword pad_right: The string to pad the right side of the table with.
-    @type pad_right:    str
-    @keyword prefix:    The text to add to the start of the line.
-    @type prefix:       str
-    @keyword postfix:   The text to add to the end of the line.
-    @type postfix:      str
-    @keyword spacing:   A flag which if True will add blank line between each row.
-    @type spacing:      bool
-    @keyword debug:     A flag which if True will activate a number of debugging printouts.
-    @type debug:        bool
-    @return:            The formatted table.
-    @rtype:             str
+    @keyword headings:      The table header.
+    @type headings:         list of lists of str
+    @keyword contents:      The table contents.
+    @type contents:         list of lists of str
+    @keyword max_width:     The maximum width of the table.
+    @type max_width:        int
+    @keyword separator:     The column separation string.
+    @type separator:        str
+    @keyword pad_left:      The string to pad the left side of the table with.
+    @type pad_left:         str
+    @keyword pad_right:     The string to pad the right side of the table with.
+    @type pad_right:        str
+    @keyword prefix:        The text to add to the start of the line.
+    @type prefix:           str
+    @keyword postfix:       The text to add to the end of the line.
+    @type postfix:          str
+    @keyword custom_format: This list allows a custom format to be specified for each column.  The number of elements must match the number of columns.  If an element is None, then the default will be used.  Otherwise the elements must be valid string formatting constructs.
+    @type custom_format:    None or list of None and str
+    @keyword spacing:       A flag which if True will add blank line between each row.
+    @type spacing:          bool
+    @keyword debug:         A flag which if True will activate a number of debugging printouts.
+    @type debug:            bool
+    @return:                The formatted table.
+    @rtype:                 str
     """
 
     # Initialise some variables.
@@ -215,8 +228,8 @@ def format_table(headings=None, contents=None, max_width=None, separator='   ', 
     justification_contents = deepcopy(contents)
 
     # Convert all data to strings.
-    _convert_to_string(data=headings, justification=justification_headings)
-    _convert_to_string(data=contents, justification=justification_contents)
+    _convert_to_string(data=headings, justification=justification_headings, custom_format=custom_format)
+    _convert_to_string(data=contents, justification=justification_contents, custom_format=custom_format)
 
     # Initialise the pre-wrapping column widths.
     prewrap_widths = [0] * num_cols
