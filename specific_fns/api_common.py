@@ -236,7 +236,13 @@ class API_common:
         # Convert to a list.
         data = []
         for ri_id in cdp.ri_ids:
-            data.append(spin.ri_data[ri_id])
+            # Handle missing data.
+            if ri_id not in spin.ri_data:
+                data.append(None)
+
+            # Append the value.
+            else:
+                data.append(spin.ri_data[ri_id])
 
         # Return the list.
         return data
@@ -350,9 +356,18 @@ class API_common:
 
         # Dictionary object.
         if key:
-            value = value[key]
+            # Handle missing data.
+            if key not in value:
+                value = None
+            else:
+                value = value[key]
+
             if error:
-                error = error[key]
+                # Handle missing errors.
+                if key not in error:
+                    error = None
+                else:
+                    error = error[key]
 
         # Return the data.
         if sim == None:
