@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -257,7 +257,13 @@ class API_common:
         # Convert to a list.
         error = []
         for ri_id in cdp.ri_ids:
-            error.append(spin.ri_data_err[ri_id])
+            # Handle missing data/errors.
+            if ri_id not in spin.ri_data_err:
+                error.append(None)
+
+            # Append the value.
+            else:
+                error.append(spin.ri_data_err[ri_id])
 
         # Return the list.
         return error
