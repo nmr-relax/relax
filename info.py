@@ -339,18 +339,22 @@ class Info_box(object):
         # minfx.
         package.append('minfx')
         status.append(True)
-        version.append('Unknown')
+        if hasattr(dep_check.minfx, '__version__'):
+            version.append(dep_check.minfx.__version__)
+        else:
+            version.append('Unknown')
         path.append(dep_check.minfx.__path__[0])
 
         # bmrblib.
         package.append('bmrblib')
         status.append(dep_check.bmrblib_module)
-        try:
-            dep_check.bmrblib.__path__[0]
+        if hasattr(dep_check.bmrblib, '__version__'):
+            version.append(dep_check.bmrblib.__version__)
+        else:
             version.append('Unknown')
+        try:
             path.append(dep_check.bmrblib.__path__[0])
         except:
-            version.append('')
             path.append('')
 
         # numpy.
