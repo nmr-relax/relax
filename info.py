@@ -348,12 +348,13 @@ class Info_box(object):
         # bmrblib.
         package.append('bmrblib')
         status.append(dep_check.bmrblib_module)
-        try:
-            dep_check.bmrblib.__path__[0]
+        if hasattr(dep_check.bmrblib, '__version__'):
+            version.append(dep_check.bmrblib.__version__)
+        else:
             version.append('Unknown')
+        try:
             path.append(dep_check.bmrblib.__path__[0])
         except:
-            version.append('')
             path.append('')
 
         # numpy.
