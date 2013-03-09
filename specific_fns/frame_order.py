@@ -2372,8 +2372,13 @@ class Frame_order(API_base, API_common):
             if not hasattr(interatom, 'rdc_err'):
                 raise RelaxError("The RDC errors are missing for interatomic data container between spins '%s' and '%s'." % (spin_id1, spin_id2))
 
+            # Handle missing data.
+            if align_id not in interatom.rdc_err:
+                mc_errors.append(None)
+
             # Append the data.
-            mc_errors.append(interatom.rdc_err[align_id])
+            else:
+                mc_errors.append(interatom.rdc_err[align_id])
 
         # The PCS data.
         elif data_id[0] == 'pcs':
@@ -2387,8 +2392,13 @@ class Frame_order(API_base, API_common):
             if not hasattr(spin, 'pcs_err'):
                 raise RelaxError("The PCS errors are missing for spin '%s'." % spin_id)
 
+            # Handle missing data.
+            if align_id not in spin.pcs_err:
+                mc_errors.append(None)
+
             # Append the data.
-            mc_errors.append(spin.pcs_err[align_id])
+            else:
+                mc_errors.append(spin.pcs_err[align_id])
 
         # Return the errors.
         return mc_errors
