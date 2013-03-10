@@ -1770,14 +1770,14 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
         unique_spin_num = False
 
     # The unique ID.
-    if unique_res_name and unique_spin_num:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_num=spin.num)
-    if unique_res_name and unique_spin_name:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_name=spin.name)
     if unique_res_num and unique_spin_name:
         return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_num=res.num, spin_name=spin.name)
     if unique_res_num and unique_spin_num:
         return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_num=res.num, spin_num=spin.num)
+    if unique_res_name and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_num=spin.num)
+    if unique_res_name and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_name=spin.name)
 
 
 def get_molecule_ids(selection=None):
