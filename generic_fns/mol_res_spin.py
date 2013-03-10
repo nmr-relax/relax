@@ -1734,6 +1734,52 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
     return id
 
 
+def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, spin=None):
+    """Generate a list of spin ID variants for the given set of molecule, residue and spin indices.
+
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    @keyword pipe_name: The data pipe name.
+    @type pipe_name:    str
+    @keyword mol:       The molecule container.
+    @type mol:          MoleculeContainer instance
+    @keyword res:       The residue container.
+    @type res:          ResidueContainer instance
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
+    @return:            The unique spin ID.
+    @rtype:             str
+    """
+
+    # The data pipe.
+    if pipe_cont == None:
+        pipe_cont = pipes.get_pipe(pipe_name)
+
+    # Unique info.
+    unique_res_name = True
+    if res.name != None and mol._res_name_count[res.name] > 1:
+        unique_res_name = False
+    unique_res_num = True
+    if res.num != None and mol._res_num_count[res.num] > 1:
+        unique_res_num = False
+    unique_spin_name = True
+    if spin.name != None and res._spin_name_count[spin.name] > 1:
+        unique_spin_name = False
+    unique_spin_num = True
+    if spin.num != None and res._spin_num_count[spin.num] > 1:
+        unique_spin_num = False
+
+    # The unique ID.
+    if unique_res_name and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_num=spin.num)
+    if unique_res_name and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_name=spin.name)
+    if unique_res_num and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_num=res.num, spin_name=spin.name)
+    if unique_res_num and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_num=res.num, spin_num=spin.num)
+
+
 def get_molecule_ids(selection=None):
     """Return a list of the molecule ID strings.
 
@@ -3636,7 +3682,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
 
                 # Generate the spin id.
                 if return_id:
-                    spin_id = generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name)
+                    spin_id = generate_spin_id(pipe_cont=dp, mol=mol, res=res, spin=spin)
 
                 # Yield the data.
                 if full_info and return_id:
