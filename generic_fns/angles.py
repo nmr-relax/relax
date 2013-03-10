@@ -77,7 +77,7 @@ def ellipsoid_frame():
         # Test if the vector exists.
         if not hasattr(spin, 'xh_vect'):
             # Get the spin id string.
-            spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+            spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
 
             # Throw a warning.
             warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))

@@ -431,7 +431,7 @@ class Scientific_data(Base_struct_API):
         """
 
         # Generate the selection object.
-        sel_obj = Selection(generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name))
+        sel_obj = Selection(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name))
 
         # Initialise some objects.
         vectors = []
