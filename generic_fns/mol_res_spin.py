@@ -1734,7 +1734,7 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
     return id
 
 
-def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, spin=None):
+def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, spin=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Generate a list of spin ID variants for the given set of molecule, residue and spin indices.
 
     @keyword pipe_cont: The data pipe object.
@@ -1747,6 +1747,16 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
     @type res:          ResidueContainer instance
     @keyword spin:      The spin container.
     @type spin:         SpinContainer instance
+    @keyword mol_name:  The molecule name (an alternative to the molecule container).
+    @type mol_name:     str or None
+    @keyword res_num:   The residue number (an alternative to the residue container).
+    @type res_num:      int or None
+    @keyword res_name:  The residue name (an alternative to the residue container).
+    @type res_name:     str or None
+    @keyword spin_num:  The spin number (an alternative to the spin container).
+    @type spin_num:     int or None
+    @keyword spin_name: The spin name (an alternative to the spin container).
+    @type spin_name:    str or None
     @return:            The unique spin ID.
     @rtype:             str
     """
@@ -1755,29 +1765,47 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
     if pipe_cont == None:
         pipe_cont = pipes.get_pipe(pipe_name)
 
+    # Get the containers if needed.
+    if mol == None:
+        mol = return_molecule_by_name(pipe_cont=pipe_cont, mol_name=mol_name)
+    if res == None and (res_name != None or res_num != None):
+        res = return_residue_by_info(mol=mol, res_name=res_name, res_num=res_num)
+    if spin == None and (spin_name != None or spin_num != None):
+        spin = return_spin_by_info(res=res, spin_name=spin_name, spin_num=spin_num)
+
+    # The info.
+    if mol:
+        mol_name = mol.name
+    if res:
+        res_name = res.name
+        res_num = res.num
+    if spin:
+        spin_name = spin.name
+        spin_num = spin.num
+
     # Unique info.
     unique_res_name = True
-    if res.name != None and mol._res_name_count[res.name] > 1:
+    if res and res.name != None and mol._res_name_count[res.name] > 1:
         unique_res_name = False
     unique_res_num = True
-    if res.num != None and mol._res_num_count[res.num] > 1:
+    if res and res.num != None and mol._res_num_count[res.num] > 1:
         unique_res_num = False
     unique_spin_name = True
-    if spin.name != None and res._spin_name_count[spin.name] > 1:
+    if spin and spin.name != None and res._spin_name_count[spin.name] > 1:
         unique_spin_name = False
     unique_spin_num = True
-    if spin.num != None and res._spin_num_count[spin.num] > 1:
+    if spin and spin.num != None and res._spin_num_count[spin.num] > 1:
         unique_spin_num = False
 
     # The unique ID.
     if unique_res_num and unique_spin_name:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_num=res.num, spin_name=spin.name)
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_name=spin_name)
     if unique_res_num and unique_spin_num:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_num=res.num, spin_num=spin.num)
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_num=spin_num)
     if unique_res_name and unique_spin_num:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_num=spin.num)
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_num=spin_num)
     if unique_res_name and unique_spin_name:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol.name, res_name=res.name, spin_name=spin.name)
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_name=spin_name)
 
 
 def get_molecule_ids(selection=None):
@@ -2742,15 +2770,15 @@ def return_molecule(selection=None, pipe=None):
     return mol_container
 
 
-def return_molecule_by_name(name=None, pipe_cont=None, pipe_name=None):
+def return_molecule_by_name(pipe_cont=None, pipe_name=None, mol_name=None):
     """Return the molecule container matching the given name.
 
-    @keyword name:      The molecule name.  If not supplied and only a single molecule container exists, then that container will be returned.
-    @type name:         str
     @keyword pipe_cont: The data pipe object.
     @type pipe_cont:    PipeContainer instance
     @keyword pipe_name: The data pipe name.
     @type pipe_name:    str
+    @keyword mol_name:  The molecule name.  If not supplied and only a single molecule container exists, then that container will be returned.
+    @type mol_name:     str
     @return:            The molecule container object.
     @rtype:             MoleculeContainer instance
     """
@@ -2760,7 +2788,7 @@ def return_molecule_by_name(name=None, pipe_cont=None, pipe_name=None):
         pipe_cont = pipes.get_pipe(pipe)
 
     # No molecule name specified, so assume a single molecule.
-    if name == None:
+    if mol_name == None:
         # More than one molecule.
         if len(pipe_cont.mol) > 1:
             raise RelaxError("Cannot return the molecule with no name as more than one molecule exists.")
@@ -2771,7 +2799,7 @@ def return_molecule_by_name(name=None, pipe_cont=None, pipe_name=None):
     # Loop over the molecules.
     for mol in pipe_cont.mol:
         # Return the matching molecule.
-        if mol.name == name:
+        if mol.name == mol_name:
             return mol
 
 
@@ -2835,6 +2863,42 @@ def return_residue(selection=None, pipe=None, indices=False):
         return res_container
 
 
+def return_residue_by_info(mol=None, res_name=None, res_num=None):
+    """Return the residue container matching the given name.
+
+    @keyword mol:       The molecule container.
+    @type mol:          MoleculeContainer instance
+    @keyword res_name:  The residue name.  If not supplied and only a single residue container exists, then that container will be returned.
+    @type res_name:     str
+    @keyword res_num:   The residue number.  If not supplied and only a single residue container exists, then that container will be returned.
+    @type res_num:      str
+    @return:            The residue container object.
+    @rtype:             ResidueContainer instance
+    """
+
+    # No residue name or number specified, so assume a single residue.
+    if res_name == None and res_num == None:
+        # More than one residue.
+        if len(mol.res) > 1:
+            raise RelaxError("Cannot return the residue with no name or number as more than one residue exists.")
+
+        # Return the residue.
+        return mol.res[0]
+
+    # Loop over the residues.
+    for res in mol.res:
+        # Return the matching residue.
+        if res_name != None and res_num != None:
+            if res.name == res_name and res.num == res_num:
+               return res
+        elif res_name != None:
+            if res.name == res_name:
+                return res
+        elif res_num != None:
+            if res.num == res_num:
+                return res
+
+
 def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
     """Return the spin data container corresponding to the given spin ID string.
 
@@ -2874,6 +2938,42 @@ def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
         return [dp.mol[mol_index].res[res_index].spin[spin_index]]
     else:
         return dp.mol[mol_index].res[res_index].spin[spin_index]
+
+
+def return_spin_by_info(res=None, spin_name=None, spin_num=None):
+    """Return the spin container matching the given name.
+
+    @keyword res:       The residue container.
+    @type res:          ResidueContainer instance
+    @keyword spin_name: The spin name.  If not supplied and only a single spin container exists, then that container will be returned.
+    @type spin_name:    str
+    @keyword spin_num:  The spin number.  If not supplied and only a single spin container exists, then that container will be returned.
+    @type spin_num:     str
+    @return:            The spin container object.
+    @rtype:             SpinContainer instance
+    """
+
+    # No spin name or number specified, so assume a single spin.
+    if spin_name == None and spin_num == None:
+        # More than one spin.
+        if len(res.spin) > 1:
+            raise RelaxError("Cannot return the spin with no name or number as more than one spin exists.")
+
+        # Return the spin.
+        return res.spin[0]
+
+    # Loop over the spins.
+    for spin in res.spin:
+        # Return the matching spin.
+        if spin_name != None and spin_num != None:
+            if spin.name == spin_name and spin.num == spin_num:
+               return spin
+        elif spin_name != None:
+            if spin.name == spin_name:
+                return spin
+        elif spin_num != None:
+            if spin.num == spin_num:
+                return spin
 
 
 def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi=False):
