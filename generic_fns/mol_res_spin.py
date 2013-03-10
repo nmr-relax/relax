@@ -2645,6 +2645,39 @@ def return_molecule(selection=None, pipe=None):
     return mol_container
 
 
+def return_molecule_by_name(name=None, pipe_cont=None, pipe_name=None):
+    """Return the molecule container matching the given name.
+
+    @keyword name:      The molecule name.  If not supplied and only a single molecule container exists, then that container will be returned.
+    @type name:         str
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    @keyword pipe_name: The data pipe name.
+    @type pipe_name:    str
+    @return:            The molecule container object.
+    @rtype:             MoleculeContainer instance
+    """
+
+    # The data pipe.
+    if pipe_cont == None:
+        pipe_cont = pipes.get_pipe(pipe)
+
+    # No molecule name specified, so assume a single molecule.
+    if name == None:
+        # More than one molecule.
+        if len(pipe_cont.mol) > 1:
+            raise RelaxError("Cannot return the molecule with no name as more than one molecule exists.")
+
+        # Return the molecule.
+        return pipe_cont.mol[0]
+
+    # Loop over the molecules.
+    for mol in pipe_cont.mol:
+        # Return the matching molecule.
+        if mol.name == name:
+            return mol
+
+
 def return_residue(selection=None, pipe=None, indices=False):
     """Function for returning the residue data container of the given selection.
 
