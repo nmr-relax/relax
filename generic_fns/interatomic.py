@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,6 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import Selection, count_spins, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInteratomError, RelaxInteratomInconsistentError, RelaxNoInteratomError, RelaxNoSpinError
 from relax_io import write_data
-from relax_warnings import RelaxNoSpinWarning
 
 
 def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):
