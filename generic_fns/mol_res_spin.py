@@ -2088,6 +2088,57 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
+    # Pre-parse:  Update the metadata for determining if names and numbers already exist.
+    for i in range(len(dp.mol)):
+        # Alias.
+        mol = dp.mol[i]
+
+        # The residue counts.
+        mol._res_name_count = {}
+        mol._res_num_count = {}
+
+        # Loop over the residues.
+        for j in range(len(mol.res)):
+            # Alias.
+            res = mol.res[j]
+
+            # Count the residue names.
+            if res.name != None:
+                if res.name not in mol._res_names:
+                    mol._res_name_count[res.name] = 1
+                else:
+                    mol._res_name_count[res.name] += 1
+
+            # Count the residue numbers.
+            if res.num != None:
+                if res.num not in mol._res_num_count:
+                    mol._res_num_count[res.num] = 1
+                else:
+                    mol._res_num_count[res.num] += 1
+
+            # The spin counts.
+            res._spin_name_count = {}
+            res._spin_num_count = {}
+
+            # Loop over the spins.
+            for k in range(len(res.spin)):
+                # Alias.
+                spin = res.spin[k]
+
+                # Count the spin names.
+                if spin.name != None:
+                    if spin.name not in res._spin_name_count:
+                        res._spin_name_count[spin.name] = 10
+                    else:
+                        res._spin_name_count[spin.name] += 1
+
+                # Count the spin numbers.
+                if spin.num != None:
+                    if spin.num not in res._spin_num_count:
+                        res._spin_num_count[spin.num] = 1
+                    else:
+                        res._spin_num_count[spin.num] += 1
+
     # Loop over the molecules.
     for i in range(len(dp.mol)):
         # Molecule skipping.
@@ -3300,34 +3351,62 @@ def spin_id_variants(dp=None, mol_index=None, res_index=None, spin_index=None):
     res_count = len(mol.res)
     spin_count = len(res.spin)
 
+    # Unique info.
+    unique_res_name = True
+    if res.name != None and mol._res_name_count[res.name] > 1:
+        unique_res_name = False
+    unique_res_num = True
+    if res.num != None and mol._res_num_count[res.num] > 1:
+        unique_res_num = False
+    unique_spin_name = True
+    if spin.name != None and res._spin_name_count[spin.name] > 1:
+        unique_spin_name = False
+    unique_spin_num = True
+    if spin.num != None and res._spin_num_count[spin.num] > 1:
+        unique_spin_num = False
+
     # The spin ID.
-    spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
-    spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name))
-    spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num))
+    if unique_res_name and unique_spin_name:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_name=spin.name))
+    if unique_res_name and unique_spin_num:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_num=spin.num))
+    if unique_res_num and unique_spin_name:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_name=spin.name))
+    if unique_res_num and unique_spin_num:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_num=spin.num))
 
     # The spin IDs without spin info.
     if spin_count == 1:
-        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num))
+        if unique_res_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name))
+        if unique_res_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num))
 
     # The spin IDs without residue info.
     if res_count == 1:
-        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num))
+        if unique_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_name=spin.name))
+        if unique_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num))
 
     # The spin IDs without molecule info.
     if mol_count == 1:
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, res_name=res.name, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, res_name=res.name, spin_num=spin.num))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_num=spin.num))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_num=spin.num))
+        if unique_res_name and unique_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_name=spin.name))
+        if unique_res_name and unique_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_num=spin.num))
+        if unique_res_num and unique_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_name=spin.name))
+        if unique_res_num and unique_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_num=spin.num))
+        if unique_res_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name))
+        if unique_res_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num))
+        if unique_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_name=spin.name))
+        if unique_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num))
 
     # The spin IDs without spin or residue info.
     if spin_count == 1 and res_count == 1:
@@ -3335,15 +3414,17 @@ def spin_id_variants(dp=None, mol_index=None, res_index=None, spin_index=None):
 
     # The spin IDs without spin or molecule info.
     if spin_count == 1 and mol_count == 1:
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, res_name=res.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num))
+        if unique_res_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name))
+        if unique_res_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num))
 
     # The spin IDs without residue or molecule info.
     if res_count == 1 and mol_count == 1:
-        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_num=spin.num))
+        if unique_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, spin_name=spin.name))
+        if unique_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, spin_num=spin.num))
 
     # Collect the unique IDs.
     unique = []
