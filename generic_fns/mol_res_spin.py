@@ -2104,7 +2104,7 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
 
             # Count the residue names.
             if res.name != None:
-                if res.name not in mol._res_names:
+                if res.name not in mol._res_name_count:
                     mol._res_name_count[res.name] = 1
                 else:
                     mol._res_name_count[res.name] += 1
@@ -2128,7 +2128,7 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
                 # Count the spin names.
                 if spin.name != None:
                     if spin.name not in res._spin_name_count:
-                        res._spin_name_count[spin.name] = 10
+                        res._spin_name_count[spin.name] = 1
                     else:
                         res._spin_name_count[spin.name] += 1
 
