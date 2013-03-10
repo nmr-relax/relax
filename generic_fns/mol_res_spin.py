@@ -3682,7 +3682,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
 
                 # Generate the spin id.
                 if return_id:
-                    spin_id = generate_spin_id(pipe_cont=dp, mol=mol, res=res, spin=spin)
+                    spin_id = generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
 
                 # Yield the data.
                 if full_info and return_id:
