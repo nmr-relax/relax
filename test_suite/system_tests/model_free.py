@@ -293,6 +293,16 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20464_missing_ri_data.py')
 
 
+    def test_bug_20563_missing_ri_error(self):
+        """Bug #20563 catch (https://gna.org/bugs/?20563), the failure due to missing relaxation data errors."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20563_missing_ri_error.py')
+
+
     def test_bug_20531_molmol_macro_write_relaxfault(self):
         """Bug #20531 catch (https://gna.org/bugs/?20531), the RelaxFault when creating the Molmol macros."""
 

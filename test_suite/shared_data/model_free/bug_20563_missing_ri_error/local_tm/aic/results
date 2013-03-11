@@ -1,0 +1,589 @@
+<?xml version="1.0" ?>
+<relax file_version="2" revision="18589" time="Fri Mar  8 08:01:29 2013" url="svn+ssh://bugman@svn.gna.org/svn/relax/trunk" version="repository checkout" xmlns="http://www.nmr-relax.com">
+    <pipe desc="The contents of a relax data pipe" name="aic - mf (Fri Mar  8 07:43:00 2013)" type="mf">
+        <global desc="Global data located in the top level of the data pipe">
+            <frq type="dict">
+                <value>
+                    {'r1_800': 800000000.0, 'noe': 800000000.0, 'r2_600': 600000000.0, 'r2_800': 800000000.0}
+                </value>
+                <ieee_754_byte_array>
+                    {'r1_800': [0, 0, 0, 0, 132, 215, 199, 65], 'noe': [0, 0, 0, 0, 132, 215, 199, 65], 'r2_800': [0, 0, 0, 0, 132, 215, 199, 65], 'r2_600': [0, 0, 0, 0, 163, 225, 193, 65]}
+                </ieee_754_byte_array>
+            </frq>
+            <ri_ids type="list">
+                <value>
+                    ['noe', 'r1_800', 'r2_800', 'r2_600']
+                </value>
+            </ri_ids>
+            <ri_type type="dict">
+                <value>
+                    {'r1_800': 'R1', 'noe': 'NOE', 'r2_600': 'R2', 'r2_800': 'R2'}
+                </value>
+            </ri_type>
+        </global>
+        <hybrid desc="Data pipe hybridisation information">
+            <pipes>
+                []
+            </pipes>
+        </hybrid>
+        <mol desc="Molecule container" name="PrtG" type="None">
+            <res desc="Residue container" name="LYS" num="9">
+                <spin desc="Spin container" name="N" num="11">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm4'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te', 'rex']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="float">
+                        <value>
+                            0.97252379093472074
+                        </value>
+                        <ieee_754_byte_array>
+                            [173, 176, 148, 54, 234, 30, 239, 63]
+                        </ieee_754_byte_array>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="float">
+                        <value>
+                            5.2081794836135185e-09
+                        </value>
+                        <ieee_754_byte_array>
+                            [209, 41, 232, 50, 116, 94, 54, 62]
+                        </ieee_754_byte_array>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="float">
+                        <value>
+                            3.3006251934390821e-10
+                        </value>
+                        <ieee_754_byte_array>
+                            [250, 146, 106, 112, 133, 174, 246, 61]
+                        </ieee_754_byte_array>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="float">
+                        <value>
+                            7.3540416825394723e-19
+                        </value>
+                        <ieee_754_byte_array>
+                            [168, 46, 120, 44, 178, 33, 43, 60]
+                        </ieee_754_byte_array>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="float">
+                        <value>
+                            -0.000172
+                        </value>
+                        <ieee_754_byte_array>
+                            [54, 119, 244, 191, 92, 139, 38, 191]
+                        </ieee_754_byte_array>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="float">
+                        <value>
+                            2.0304955590792497
+                        </value>
+                        <ieee_754_byte_array>
+                            [82, 89, 167, 116, 116, 62, 0, 64]
+                        </ieee_754_byte_array>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="int">
+                        <value>
+                            39
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="int">
+                        <value>
+                            117
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="int">
+                        <value>
+                            46
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="int">
+                        <value>
+                            39
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <ri_data desc="The relaxation data" type="dict">
+                        <value>
+                            {'r1_800': 1.716915, 'noe': 0.80621, 'r2_600': 19.124116, 'r2_800': 26.164312}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [127, 48, 240, 220, 123, 120, 251, 63], 'noe': [63, 169, 246, 233, 120, 204, 233, 63], 'r2_800': [33, 87, 234, 89, 16, 42, 58, 64], 'r2_600': [12, 233, 240, 16, 198, 31, 51, 64]}
+                        </ieee_754_byte_array>
+                    </ri_data>
+                    <ri_data_err desc="The relaxation data errors" type="dict">
+                        <value>
+                            {'r1_800': 0.11069, 'noe': 0.00659, 'r2_600': 0.453507, 'r2_800': 1.608742}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [131, 134, 254, 9, 46, 86, 188, 63], 'noe': [146, 179, 176, 167, 29, 254, 122, 63], 'r2_800': [226, 57, 91, 64, 104, 189, 249, 63], 'r2_600': [222, 115, 96, 57, 66, 6, 221, 63]}
+                        </ieee_754_byte_array>
+                    </ri_data_err>
+                    <element type="str">
+                        <value>
+                            'N'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '15N'
+                        </value>
+                    </isotope>
+                </spin>
+                <spin desc="Spin container" name="H" num="None">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm4'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te', 'rex']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="None">
+                        <value>
+                            None
+                        </value>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="None">
+                        <value>
+                            None
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <element type="str">
+                        <value>
+                            'H'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '1H'
+                        </value>
+                    </isotope>
+                </spin>
+            </res>
+            <res desc="Residue container" name="LYS" num="36">
+                <spin desc="Spin container" name="N" num="16">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm2'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="float">
+                        <value>
+                            0.45926066555258527
+                        </value>
+                        <ieee_754_byte_array>
+                            [148, 205, 184, 216, 134, 100, 221, 63]
+                        </ieee_754_byte_array>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="float">
+                        <value>
+                            3.555240205752422e-08
+                        </value>
+                        <ieee_754_byte_array>
+                            [198, 24, 81, 241, 72, 22, 99, 62]
+                        </ieee_754_byte_array>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="float">
+                        <value>
+                            3.2814381298474674e-09
+                        </value>
+                        <ieee_754_byte_array>
+                            [67, 4, 62, 113, 245, 47, 44, 62]
+                        </ieee_754_byte_array>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="float">
+                        <value>
+                            -0.000172
+                        </value>
+                        <ieee_754_byte_array>
+                            [54, 119, 244, 191, 92, 139, 38, 191]
+                        </ieee_754_byte_array>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="float">
+                        <value>
+                            1.5007941416681558e-29
+                        </value>
+                        <ieee_754_byte_array>
+                            [34, 17, 62, 254, 90, 6, 243, 57]
+                        </ieee_754_byte_array>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="int">
+                        <value>
+                            37
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="int">
+                        <value>
+                            108
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="int">
+                        <value>
+                            42
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="int">
+                        <value>
+                            37
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <ri_data desc="The relaxation data" type="dict">
+                        <value>
+                            {'r1_800': 1.41627, 'noe': 0.8183, 'r2_800': 31.655587}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [12, 229, 68, 187, 10, 169, 246, 63], 'noe': [58, 35, 74, 123, 131, 47, 234, 63], 'r2_800': [201, 174, 180, 140, 212, 167, 63, 64]}
+                        </ieee_754_byte_array>
+                    </ri_data>
+                    <ri_data_err desc="The relaxation data errors" type="dict">
+                        <value>
+                            {'r1_800': 0.114633, 'noe': 0.00526, 'r2_800': 1.813758}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [161, 216, 10, 154, 150, 88, 189, 63], 'noe': [207, 160, 161, 127, 130, 139, 117, 63], 'r2_800': [224, 187, 205, 27, 39, 5, 253, 63]}
+                        </ieee_754_byte_array>
+                    </ri_data_err>
+                    <element type="str">
+                        <value>
+                            'N'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '15N'
+                        </value>
+                    </isotope>
+                </spin>
+                <spin desc="Spin container" name="H" num="None">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm2'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="None">
+                        <value>
+                            None
+                        </value>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="None">
+                        <value>
+                            None
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <element type="str">
+                        <value>
+                            'H'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '1H'
+                        </value>
+                    </isotope>
+                </spin>
+            </res>
+        </mol>
+        <interatomic desc="Interatomic data container" spin_id1="#PrtG:9@N" spin_id2="#PrtG:9@H">
+            <select desc="The spin selection flag" type="bool">
+                <value>
+                    True
+                </value>
+            </select>
+            <dipole_pair type="bool">
+                <value>
+                    True
+                </value>
+            </dipole_pair>
+            <r type="float">
+                <value>
+                    1.02e-10
+                </value>
+                <ieee_754_byte_array>
+                    [11, 45, 225, 165, 156, 9, 220, 61]
+                </ieee_754_byte_array>
+            </r>
+        </interatomic>
+        <interatomic desc="Interatomic data container" spin_id1="#PrtG:36@N" spin_id2="#PrtG:36@H">
+            <select desc="The spin selection flag" type="bool">
+                <value>
+                    True
+                </value>
+            </select>
+            <dipole_pair type="bool">
+                <value>
+                    True
+                </value>
+            </dipole_pair>
+            <r type="float">
+                <value>
+                    1.02e-10
+                </value>
+                <ieee_754_byte_array>
+                    [11, 45, 225, 165, 156, 9, 220, 61]
+                </ieee_754_byte_array>
+            </r>
+        </interatomic>
+    </pipe>
+</relax>
