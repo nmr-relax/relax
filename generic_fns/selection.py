@@ -27,7 +27,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, generate_spin_id,_unique return_spin, spin_loop
+from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from relax_io import read_spin_data
