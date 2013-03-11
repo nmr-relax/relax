@@ -155,7 +155,7 @@ uf.add_keyarg(
     desc = "The residue ID string.",
     wiz_element_type = 'combo',
     wiz_combo_iter = get_residue_ids,
-    wiz_read_only = True
+    wiz_read_only = False
 )
 # Description.
 uf.desc.append(Desc_container())
