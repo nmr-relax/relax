@@ -74,16 +74,16 @@ $ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/1.0.4/minfx
-$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/1.0.2/bmrblib
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.4/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.2/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
 $ svn co http://svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
-$ svn co http://svn.gna.org/svn/minfx/1.0.4/minfx
-$ svn co http://svn.gna.org/svn/bmrblib/1.0.2/bmrblib
+$ svn co http://svn.gna.org/svn/minfx/tags/1.0.4/minfx
+$ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.2/bmrblib
 $ scons binary_dist
 
 
