@@ -248,7 +248,7 @@ class SpinList(list):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
-                        raise RelaxError("The spin number '%s' already exists." % spin_name)
+                        raise RelaxError("The spin number '%s' already exists." % spin_num)
 
                 # No spin numbers.
                 else:
