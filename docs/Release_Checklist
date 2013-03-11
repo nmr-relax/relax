@@ -47,8 +47,8 @@ $ scons clean
 
 * Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.4 minfx
-$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.2 bmrblib
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.4/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.2/bmrblib
 
 
 
