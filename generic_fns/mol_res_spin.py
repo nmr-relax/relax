@@ -1765,12 +1765,12 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
     # Get the containers if needed.
     if mol == None:
         mol = return_molecule_by_name(pipe_cont=pipe_cont, mol_name=mol_name)
-    if res == None:
+    if mol != None and res == None:
         if res_name != None or res_num != None:
             res = return_residue_by_info(mol=mol, res_name=res_name, res_num=res_num)
         elif len(mol.res) == 1:
             res = mol.res[0]
-    if spin == None:
+    if res != None and spin == None:
         if spin_name != None or spin_num != None:
             spin = return_spin_by_info(res=res, spin_name=spin_name, spin_num=spin_num)
         elif len(res.spin) == 1:
