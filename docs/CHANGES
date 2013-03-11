@@ -1,3 +1,186 @@
+Version 2.2.3
+(11 March 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.2.3
+
+    Features:
+        * Added the mol_name_target argument to the structure.load_spins user function.  This allows spins from different molecules to be placed together in the same molecule container in the relax data store.
+        * Addition of two new user functions - structure.add_model and structure.rmsd.
+        * Created the structure.web_of_motion user function.  This is used to create a special PDB file which represents the atomic motions between different structural models.  Identical atoms of the selected models are concatenated into one model, within a temporary internal structural object, and linked together using PDB CONECT records.
+        * Better PDB support in the internal structural object with:  Improvements and fixes in reading/writing, an update of the format to version 3.30, and faster PDB parsing.
+        * Creation of two new modules for better PDB support - generic_fns.structure.pdb_read and generic_fns.structure.pdb_write.
+        * Improvements to the structure.find_pivot user function including the addition of the func_tol argument to better control the simplex optimisation and the use of the logarithmic barrier function to prevent the pivot from heading to infinity when the solution is a line.
+        * Initialised a new package called 'lib' - this will in the future be an extensive collection of functions, methods, classes, objects, etc. useful for the study of all types of molecular dynamics.
+        * Line wrapping has been turned on in the relax controller in the GUI so that all text is visible.
+
+
+    Changes:
+        * The relax intro text now includes the repository URL for checked out code.  This is for preserving better debugging and logging information, so that it is clear where the code comes from.
+        * Created the Structure.test_load_spins_mol_cat system test.  This will be used to test a new 'mol_name_target' argument to the structure.load_spins user function.
+        * Created the Structure.test_delete_multi_pipe system test.  This is to check that the structure.delete user function is operating on a single data pipe.
+        * Updated the Freecode instructions in the release checklist document.
+        * Created the simple Structure.test_delete_empty system test.  This is to demonstrate a failure of the structure.delete user function when no structural data is present.
+        * Added a printout to structure.delete for when no structures are present.
+        * Created the Structure.test_rmsd system test.  This test checks the currently unimplemented structure.add_model and structure.rmsd user functions.
+        * The structural API num_molecules() method can now handle no data being present.
+        * Implemented the structure.add_model user function.
+        * Added some more checks to the Structure.test_rmsd system test.
+        * Modified the structure.add_model calls in the Structure.test_rmsd system test to include model nums.
+        * Added the 'model_num' argument to the structure.add_model user function.
+        * Modified the structure.add_atom user function to allow the position argument to be a rank-2 array.  This allows a different coordinate for each model to be specified.
+        * Spun out the atomic_rmsd() and calc_mean_structure() functions into their own module.  They were previously in the generic_fns.structure.superimpose module but are now in the new generic_fns.structure.statistics module.
+        * Added checks for the atomic information to the Structure.test_rmsd system test.  This demonstrates a failure of structure.add_atom user function when specifying different positions for the different models.
+        * Docstring addition for the generic_fns.structure.statistics.atomic_rmsd() function.
+        * Implemented the structure.rmsd user function.
+        * Fixes for the Structure.test_rmsd system test - it now passes.
+        * Created a new float_object argument type which is used by the 'pos' argument of structure.add_atom.  A new arg_check.float_object() function has been created to handle any float object greater than rank-0.
+        * Created the Structure.test_rmsd_ubi system test to better check the structure.rmsd user function.  This uses the truncated ubiquitin ensemble in the test suite shared data directories.  The RMSD matches the VMD 1.9.1 output.
+        * Added a new module generic_fns.structure.pdb_write for generating the PDB records.  This decouples the formatting code from the internal structural obect.  The PDB format has been updated to version 3.30.  There is one function for each PDB record, allowing this to be easily extended and kept up to date.
+        * Created the generic_fns.structure.pdb_read module.  This replaces the internal structural object _parse_pdb_record() method which was handling both ATOM+HETATM and CONECT records.  It should allow greater flexibility in reading data out of other PDB records in the future.  There is one function per PDB record type in this module.
+        * Added the full 1UBQ PDB structure to the relax test-suite shared data directories.  This is a small, very quick to read structure which will be used for validating the reading and writing of different PDB record types.
+        * Changes to the internal structural object.  The _parse_models_pdb() method has been renamed to _parse_pdb_coord() and the opening of the PDB file shifted into the base load_pdb() method.  This is in preparation for better parsing of PDB files to match the main sections of the PDB format, see http://www.wwpdb.org/documentation/format33/v3.3.html.
+        * Created the Structure.test_read_pdb_1UBQ to check the complete parsing of the complex PDB file.  The test is currently quite basic and needs to check more of the internal structural object.
+        * Better checks for the atomic data in the Structure.test_read_pdb_1UBQ system test.
+        * Added a series of _parse_pdb_*() methods to the internal structural object.  These correspond to each section of the PDB format version 3.30 http://www.wwpdb.org/documentation/format33/v3.3.html.  The currently loop over the records of their section, returning the remaining PDB records.  The aim is for fast parsing and breaking into sections.
+        * Faster PDB parsing by the removal of the use of the re.search() function.  Now line slices are directly compared instead.
+        * Added some more unit tests for the generic_fns.structure.pdb_read module.  These tests are not yet complete, as it is unknown what these unimplemented functions will return.
+        * Completed the unit test of the generic_fns.structure.pdb_read.helix() function.
+        * Implemented the generic_fns.structure.pdb_read.helix() function.
+        * Created the Mf.test_bug_20531_molmol_macro_write_relaxfault system test.  This is an attempt at catching bug #20531.  It creates all of the m0-m9 and tm0-tm9 models, sets some parameter values, and then attempts to create all of the Molmol macros, PyMOL macros, Grace plots and parameter text files as present in the auto_analysis.dauvergne_protocol module.
+        * The spectrometer frequency is now set in the Mf.test_bug_20531_molmol_macro_write_relaxfault system test.  This is needed for the Rex scaling.
+        * The spin name, element and isotope is now set in Mf.test_bug_20531_molmol_macro_write_relaxfault.  This is required in this system test so that the marco creation is not skipped.
+        * Added some work-arounds for the model-free specific code for when no relaxation data is present.  This is needed for the Rex scaling, as the ID of the first relaxation data set was being used to select the first frequency.  As caught by the Mf.test_bug_20531_molmol_macro_write_relaxfault system test, this fails if no relaxation data is present.
+        * Expanded the unit test of the generic_fns.structure.pdb_read.sheet() function.
+        * Implemented the PDB SHEET record parsing function generic_fns.structure.pdb_read.sheet().
+        * Extended the PDB ATOM record reading unit test to be of 80 characters in length, as per the PDB definition.
+        * Created unit tests for the generic_fns.structure.pdb_write module.  This currently covers the atom(), helix() and sheet() functions (the last 2 are not yet implemented).
+        * Implemented the PDB HELIX record writing function generic_fns.structure.pdb_write.helix().
+        * Improved PDB writing capabilities.  The functions of the generic_fns.structure.pdb_write module now all use the _handle_none() function to avoid the text "None" from appearing in the PDB file and _record_validate() to be sure the record has not been corrupted with bad input causing it to be either less or greater than 80 characters.
+        * The Mf.test_bug_20531_molmol_macro_write_relaxfault system test now catches bug #20531.  This now uses the results file attached to the bug report https://gna.org/bugs/?20531.
+        * Implemented the PDB SHEET record writing function generic_fns.structure.pdb_write.sheet().
+        * Created a unit test for the generic_fns.structure.pdb_write.het() function.
+        * Created the generic_fns.structure.pdb_write._handle_text() function.  This private function is used to convert text into PDB suitable format (uppercase and values of None converted to empty strings).
+        * The diffusion tensor PDB files are now conform better to the PDB standard.  The HET records are now correct, only capitalised text is present in the files, and trailing whitespace to character 80 has been added.
+        * Epydoc docstring formatting for the generic_fns.structure.pdb_write modules.  These large changes improve the API documentation at http://www.nmr-relax.com/api/.
+        * Created a unit test for the generic_fns.structure.pdb_write.model() function.
+        * Added a new PDB file with 3 models and a few atoms for testing of the structure.web_of_motion user function.
+        * Created the Structure.test_web_of_motion_all system test.  This is to check the new structure.web_of_motion user function.
+        * The structure.web_of_motion user function can now handle file objects as well as file names as input.
+        * Small fixes for the Structure.test_web_of_motion_all system test.
+        * Created the Structure.test_web_of_motion_12 system test to show how model sets are currently ignored.
+        * Implemented the models argument for the structure.web_of_motion user function.  This was previously not being used and was caught by the Structure.test_web_of_motion_12 system test.
+        * Created the Structure.test_web_of_motion_13 system test.  This was just to be sure that the models argument was correctly handled by the structure.web_of_motion user function.
+        * The structure.find_pivot user function now accepts the func_tol argument.  This is used to terminate the simplex optimisation when this function tolerance value is reached.
+        * Shifted the ensemble pivot finding target function into the maths_fns package.
+        * Added a sentence to the README file about the sample_scripts directory.
+        * Added a document detailing the possible future layout of relax's packages.
+        * The structure.find_pivot user function now uses the logarithmic barrier function.  This is for constrained optimisation and requires the newest minfx code.  The pivot position is constrained within a box of +/- 1000 Angstroms from zero.  This is needed for when the solution is an infinite line - i.e. a rotation axis and not a pivot point.  Previously the simplex optimisation would head toward + or - infinity.  But now with a logarithmic barrier, the simplex algorithm can stabilise and find a point on the axis very quickly, long before reaching the edges of the box.
+        * The structure.find_pivot user function now accepts the func_tol and box_limit arguments.  This allows the function tolerance for the simplex optimisation to be specified, as well as the size of the box to constrain the pivot to be within.
+        * Initialised the lib.geometry package.  This will be a library of all mathematics functions relating to geometry.
+        * Added empty packages to the unit tests for the lib and lib.geometry packages.
+        * Updated the maths_fns package __all__ list.
+        * Updated the test_suite.unit_tests package __all__ list to be more modern.
+        * The n_state_model.number_of_states user function no longer requires the N-state model to be defined.  This was only needed to update the model information, and is skipped if not set.
+        * The generic_fns.structure.superimpose.find_centroid() function now prints out Euler angles as well.
+        * Large improvements to the checking for all the rdc and pcs user functions.  The new methods check_pipe_setup() have been added to replace all other checking.  This standardises all error checking and provides much better coverage.  The results is that you will be much less likely to encounter a Python traceback when something is forgotten, and will be told via a RelaxError what is missing.
+        * The rdc.back_calc and pcs.back_calc user functions now warn if no data was calculated.  This is to inform the user about problems at the place that they occur instead of later on with, for example, the creation of empty data files.
+        * Updated the float module to handle numpy floats.  This makes the floatToBinaryString() function compatible with the numpy.float16 type.
+        * Removed the prune parameter from the backend of the monte_carlo.error_analysis user function.  This was a dangerous parameter used to mimic the 'Trim' parameter from the Modelfree4 program.  The result is bad statistics.  The probable reason for the 'Trim' parameter was the failure of model-free models in the simulations, but this issue was solved using model elimination (see http://www.nmr-relax.com/refs.html#dAuvergneGooley06).
+        * Created the Structure.test_read_xyz_strychnine system test to demonstrate a bug in the XYZ parser.  This is for the reading of XYZ structure files.
+        * Created the lib.text package for text manipulation.  The first module will be the text formatting of tables.
+        * Created the lib.geometry.lines module for performing geometric operations with lines.  This has one stub of a function lib.geometry.lines.closest_point() which will be used to find the closest point on a line to a given point.
+        * Added the package checking unit tests for the lib package.
+        * Improved the base class unit test for the package __all__ list.  Subpackages are now also checked.
+        * Blacklisted a number of files in the maths_fns package for the package __all__ list unit test.
+        * Added a unit test for the lib.geometry package __all__ list.
+        * Created a unit test for the lib.geometry.lines.closest_point() function.
+        * Created the lib.text.table module.  This originates from the prompt.uf_docstring module as most of that module is functions for creating formatted text tables.
+        * Updated the lib package __all__ list for the lib.text package.
+        * Implemented the closest_point() and closest_point_ax() functions of lib.geometry.lines.  These two functions do the same thing - find the closest point on a line to any given point - but take different arguments to define the line.
+        * Improved the package __all__ list base unit test by skipping all hidden files and directories.
+        * Refactored the lib.text.table module.  The create_table() function is now called format_table() and the table_line() function has been made private.  All references to the user function tables and the relax status object have been removed and replaced by arguments to format_table().
+        * The prompt.uf_docstring module now uses lib.text.table.format_table().  This significantly simplifies the module.
+        * Removed a number of unused imports in prompt.uf_docstring.
+        * Deleted prompt.uf_docstring.table_line() as this is now a private function of lib.text.table.
+        * Fix for lib.text.table.format_table() as table_line() is now private.
+        * Added the spacing argument to lib.text.table.format_table().  This removes the reference to the user function table spacing variable from this function and shifts it to the prompt.uf_docstring.create_table() function.
+        * Created the framework for the unit tests of the lib.text package.
+        * Created two unit tests for the lib.text.table.format_table() function.
+        * Updates to the unit tests of the lib.text.table.format_table() function.
+        * Many improvements to the lib.text.table module.  The format_table() function now accepts arguments for text to prefix and postfix to each line,the text padding to the left and right inside the table, and the text used to separate the columns.  The _blank() and _rule() private functions have been added to create distinct table elements.
+        * Created the lib.text.table.MULTI_COL constant for defining cells spanning multiple columns.  This is not used yet.
+        * Modified the Mf.test_mf_auto_analysis GUI test to catch bug #20603 (https://gna.org/bugs/?20603).
+        * Created a unit test for the lib.text.table.format_table() function to test multiple column support.  Support for content spanning multiple cells is yet to be implemented.
+        * Implemented multi-column support in lib.text.table.format_table().
+        * Spacing between heading rows is now functional in lib.text.table.format_table().
+        * Created a new unit test of lib.text.table.format_table() to check for non-string type data.
+        * The table contents are now all converted to strings in lib.text.table.format_table().  This uses the _convert_to_string() private function.
+        * Converted the test_format_table4() unit test of lib.text.table.format_table() to check justification.  The right justification of cells with numbers will be implemented to match these changes.
+        * Numbers are now right justified in cells in the lib.text.table.format_table() function.
+        * Modified the test_format_table4() unit test of lib.text.table.format_table().  This change is to test the currently unimplemented custom_format argument.  This will be used to allow special formatting in the table.  For example using '%.3f' for a float.
+        * Implemented the custom_format argument for lib.text.table.format_table().  This allows cell contents to be formatted as the user asks.  It defaults to standard string conversion is the custom conversion fails.
+        * Rounding error fix for the test_format_table4() unit test of lib.text.table.format_table().
+        * Python 3 fix for the test_format_table4() unit test of lib.text.table.format_table().  The string representation of the builtin list object is different in Python 2 vs. 3.
+        * Created the test_format_table5() unit test for lib.text.table.format_table().  This test checks what happens if no header is given to format_table().  This currently fails.
+        * The lib.text.table.format_table() function can now create a table without headers.
+        * Added column number checks for the data input into lib.text.table.format_table().
+        * Created the test_format_table6() unit test for lib.text.table.format_table().  This test shows a problem with more than one multi-column cells defined, as well as problems when a multi-column cell is wider than the sum of the widths of the columns it spans.
+        * Fix for lib.text.table.format_table() when more than one multi-column cell per row is encountered.  The algorithm for determining the total width of the multi-column cell in _table_line() was not checking if the end of the span was being reached.
+        * The lib.text.table.format_table() function now handles overfull multi-column cells.  The _determine_widths() private function has been created to better handle the determination of the table column widths.  It will now extend the width of the last column to allow overfull multi-column cells to fit.
+        * Modified the test_format_table5() unit test of lib.text.table.format_table() to check bool types.
+        * The lib.text.table.format_table() function now handles boolean types.
+        * Booleans are not numbers, so do not right justify them in lib.text.table.format_table().
+        * The minfx.__version__ value is now read for the version in the relax information printout.
+        * The bmrblib.__version__ value is now read for the version in the relax information printout.
+        * All of the specific API data and error returning common methods can now handle missing data/errors.  This affects the _return_data_relax_data() and _return_value_general() methods.
+        * Updated the release checklist to include information about updating the FSF directory.
+        * Modified the release checklist document to use the stable release tags of minfx and bmrblib.  This is instead of the code in trunk which may not always be in a stable state.
+        * Redesign of the generic_fns.mol_res_spin.generate_spin_id() function.  The function now tries to generate a unique ID based on the spin information in the specified data pipe.  This is to attempt to fix a bug uncovered by the Structure.test_read_xyz_internal2 system test.  Defaulting in all cases to the spin name rather than spin number will often fail for a small organic molecule, as the name in XYZ files is the atomic symbol and hence will almost never be unique.
+        * Created the generic_fns.mol_res_spin.return_molecule_by_name() function.  This will be used in the future as it is much faster than generic_fns.mol_res_spin.return_molecule()if the molecule name is already known.
+        * Missing import affecting the generic_fns.interatomic.create_interatom() function.
+        * Reverted the last revision (r18737) as it was not correct and RelaxErrors should be used instead.  The command used was:svn merge -r18737:18736 .
+        * Fix for the generic_fns.interatomic.create_interatom() function.  RelaxNoSpinWarning has been replaced with RelaxNoSpinError.
+        * Fixes for the metadata update of the residue and spin name and number counts.
+        * Created the generic_fns.mol_res_spin.generate_spin_id_unique() function.  This will return a truly unique spin ID string based on the current molecule, residue, and spin data structure.
+        * The spin_loop() function now uses generate_spin_id_unique() when the return_id flag is set.  This ensures that the caller received a unique spin ID which can be used to retrieve the corresponding spin container.
+        * Improved the generic_fns.mol_res_spin.generate_spin_id_unique() function.  This can now work with molecule, residue, and spin names and numbers alternatively to the containers supplied as arguments.  For this to work, the return_molecule_by_name() function has been improved and the functions return_residue_by_info() and return_spin_by_info() have been added.
+        * The pcs.read user function backend now uses generic_fns.mol_res_spin.generate_spin_id_unique().  This allows the matching spin container to always be returned for storing the data.
+        * Large speed ups of the Bmrb system tests by the deletion of most of the residues.  On one system, this cuts the time for all 3 Bmrb tests from 70 to ~12 seconds.
+        * Added the profile flag keyword argument to the relax startup script for Unix-like systems.  This is to simplify the switching on of profiling.
+        * Large cleanup and bugfixes for the molecule, residue, and spin data structure metadata maintenance.  The bugs fixed are important for non-protein molecules.  For example is the spin name is not unique per residue, or per molecule if no residues are defined, many parts of relax would fail.  All of the metadata_*() and spin_id_variants*() functions have been redesigned.  It was also identified that metadata_prune() was being used by different parts of relax for two different purposes - the removal or pruning of metadata prior to the deletion of a data structure and the clean up of no longer valid metadata.  These two goals conflicted resulting in unpredictable behaviour.  Therefore the new metadata_cleanup() and spin_id_variants_cleanup() functions have been created and the two behaviours separated.
+        * Fix for the bmrb.read user function for the recent molecule, residue and spin metadata improvements.  The generic_fns.bmrb.generate_sequence() function now calls generic_fns.mol_res_spin.metadata_clean()to be sure that the metadata is correct.  The problem is the structure of the BMRB file with no spin information in the entity record, hence the residues are created first and the spins much later in generate_sequence().
+        * Removed unused imports in the generic_fns.rdc module.
+        * The generic_fns.mol_res_spin.generate_spin_id_unique() function now handles missing spin containers.  Previously if this function was used to generate a spin ID string of a spin not in the data store,it would fail.  Now it generates an ID by defaulting to generate_spin_id().
+        * Converted many calls to generic_fns.mol_res_spin.generate_spin_id() to generate_spin_id_unique().  This will allow many future bugs to be avoided, as the spin ID string is most often used to retrieve spin containers.  By using the generate_spin_id_unique() function, the returning of spin containers will always be correct.
+        * Created the Mf.test_bug_20563_missing_ri_error system test to catch bug #20563.  The bug report is at https://gna.org/bugs/?20563.  The data added to the test suite is a highly truncated data set of a analysis completed using the data attached to the bug report.
+        * Modified the dauvergne_protocol model-free auto-analysis to aid in debugging.  The write_results_dir argument has been added to allow the test suite to read from one directory in test suite shared data directories and redirect output to a temporary directory.
+        * The files from the Mf.test_bug_20563_missing_ri_error system test are now placed in a temporary directory.  This is essential for the test suite to prevent files from going everywhere.
+        * The frq.seq user function units argument is no longer read-only.  This is needed for some of the GUI tests in the frame_order_testing branch.
+
+
+    Bugfixes:
+        * Fixes for the structure.delete user function.  This can now handle no data being present, the spin and interatomic data containers are now have their structural data properly deleted, and printouts have been added so the user knows what has happened.
+        * Bug fix for the arg_check.is_float_matrix() function for when the dimensions are not given.
+        * Fix for the structure.add_atom user function for the internal structural object.  The atomic positions for each model are now correctly set.
+        * Formatting fixes for the generic_fns.structure.pdb_write module.
+        * Fix for the classic_style() method of the model-free specific Macro class.  This was identified by the new Mf.test_bug_20531_molmol_macro_write_relaxfault system test, but would probably never be encountered by relax users.  It is not related to the bug this test is trying to catch.  The problem is if spins have model-free parameters set up but there is no model-free model initialised - then the Molmol and PyMOL macro creation would fail.
+        * Fix for bug #20531 (https://gna.org/bugs/?20531).  This is the bug of the RelaxFault during the final stages of the auto_analysis.dauvergne_protocol model-free analysis when the Molmol and PyMOL macros are being created.  The problem was caused by model m9 (just the Rex parameter) when trying to determine what the order parameter for fast (< 200ps) motions is.  The code was assuming that the model-free model would always contain an order parameter.
+        * Fix for the generic_fns.structure.pdb_write.het() function - the record now has trailing whitespace.  The PDB records require trailing whitespace to the 80th character position.
+        * Fixes for many of the generic_fns.structure.pdb_write functions.  The PDB records are now all filled with whitespace up to the 80th character.
+        * Fix for the creation of HET PDB records in the internal structural object.  The residue name and chain ID were mixed up.
+        * Fix for the generic_fns.structure.pdb_write.ter() function.  Whitespace to character 80 is now being added to the TER PDB records.
+        * Fix for the creation of the FORMUL PDB records by the internal structural object.  The component number is now set to the index of the hetrogen plus one.  This number should have been a sequential number starting at 1 and is not related to the residue number in any way.
+        * Fix for the generic_fns.structure.pdb_write.model() function.  The correct amount of whitespace is now added to the end of the record.
+        * Fix for the internal PDB reading - the MASTER record was being marked as a molecule.  Now this record is checked for and the molecule loop terminated.
+        * Bug fix for the XYZ 3D structure file reader.  The atom name is now correctly set up for each atom in the file.  The element type setting has also been simplified.
+        * Fix for bug 20603 (https://gna.org/bugs/?20603), the relaxation data right click menu failure.  The problem was that there was that the last menu item specified had no contents.  This item has been removed.
+        * Fix for bug #20563 (https://gna.org/bugs/?20563), the end failure of the model-free auto-analysis.  This was reported by Stanislava Panova (https://gna.org/users/stacy).  The problem was related to the Monte Carlo simulations.  The generic_fns.monte_carlo.create_data() function is now asking for the errors associated with a certain data point, even if that data point does not exist.  The solution was to check if the relaxation data ID string is present in spin.ri_data_err before accessing the key-value pair (in the specific API _return_error_relax_data() common method).
+        * Bug fix for the maintenance of the spin ID lookup table metadata.  This is important for small molecules.  Non-unique IDs were being placed into the lookup table,resulting in incorrect spin containers being sometimes used.  Now the molecule container has the _res_name_count and _res_num_count metadata and the residue container the _spin_name_count and _spin_num_count structures.  These are updated via metadata_update() and are used by the spin_id_variants() function to create a list of purely unique spin IDs.
+        * The spin_id argument to the residue.delete user function is no longer read-only.  This allows spin ranges or other complicated IDs to be specified.  This is needed for the Bmrb GUI tests to pass.
+        * Fix for the package __all__ list checking unit tests - *.pyc files are now skipped.
+        * Fix for one of the RelaxError messages from the SpinList.add_item() method.
+
+
+
 Version 2.2.2
 (12 February 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.2.2
