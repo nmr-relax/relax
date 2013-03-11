@@ -64,7 +64,7 @@ uf.add_keyarg(
         "MHz"
         "GHz"
     ],
-    wiz_read_only = True
+    wiz_read_only = False
 )
 # Description.
 uf.desc.append(Desc_container())
