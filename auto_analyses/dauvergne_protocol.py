@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -119,15 +119,17 @@ class dAuvergne_protocol:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, diff_tensor_grid_inc={'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, write_results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, diff_tensor_grid_inc={'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
         @keyword pipe_name:             The name of the data pipe containing the sequence info.  This data pipe should have all values set including the CSA value, the bond length, the heteronucleus name and proton name.  It should also have all relaxation data loaded.
         @type pipe_name:                str
         @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
         @type pipe_bundle:              str
-        @keyword results_dir:           The directory where files are saved in.
+        @keyword results_dir:           The directory where optimisation results will read from.  Results will also be saved to this directory if the write_results_dir argument is not given.
         @type results_dir:              str
+        @keyword write_results_dir:     The directory where optimisation results will be saved in.  If None, it will default to the value of the results_dir argument.  This is mainly used for debugging.
+        @type write_results_dir:        str or None
         @keyword diff_model:            The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.  If all or a subset of these are supplied as a list, then these will be automatically looped over and calculated.
         @type diff_model:               str or list of str
         @keyword mf_models:             The model-free models.
@@ -184,6 +186,10 @@ class dAuvergne_protocol:
             self.results_dir = results_dir + sep
         else:
             self.results_dir = getcwd() + sep
+        if write_results_dir:
+            self.write_results_dir = write_results_dir + sep
+        else:
+            self.write_results_dir = self.results_dir
 
         # Data checks.
         self.check_vars()
@@ -876,11 +882,11 @@ class dAuvergne_protocol:
         """Create Grace plots of the final model-free results."""
 
         # Save the results file.
-        dir = self.results_dir + 'final'
+        dir = self.write_results_dir + 'final'
         self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # The Grace plots.
-        dir = self.results_dir + 'final' + sep + 'grace'
+        dir = self.write_results_dir + 'final' + sep + 'grace'
         self.interpreter.grace.write(x_data_type='spin', y_data_type='s2',  file='s2.agr',        dir=dir, force=True)
         self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr',       dir=dir, force=True)
         self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr',       dir=dir, force=True)
@@ -893,7 +899,7 @@ class dAuvergne_protocol:
         self.interpreter.grace.write(x_data_type='te',   y_data_type='rex', file='te_vs_rex.agr', dir=dir, force=True)
 
         # Write the values to text files.
-        dir = self.results_dir + 'final'
+        dir = self.write_results_dir + 'final'
         self.interpreter.value.write(param='s2',       file='s2.txt',       dir=dir, force=True)
         self.interpreter.value.write(param='s2f',      file='s2f.txt',      dir=dir, force=True)
         self.interpreter.value.write(param='s2s',      file='s2s.txt',      dir=dir, force=True)
@@ -904,7 +910,7 @@ class dAuvergne_protocol:
         self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=dir, force=True)
 
         # Create the PyMOL macros.
-        dir = self.results_dir + 'final' + sep + 'pymol'
+        dir = self.write_results_dir + 'final' + sep + 'pymol'
         self.interpreter.pymol.macro_write(data_type='s2',        dir=dir, force=True)
         self.interpreter.pymol.macro_write(data_type='s2f',       dir=dir, force=True)
         self.interpreter.pymol.macro_write(data_type='s2s',       dir=dir, force=True)
@@ -918,7 +924,7 @@ class dAuvergne_protocol:
         self.interpreter.pymol.macro_write(data_type='rex',       dir=dir, force=True)
 
         # Create the Molmol macros.
-        dir = self.results_dir + 'final' + sep + 'molmol'
+        dir = self.write_results_dir + 'final' + sep + 'molmol'
         self.interpreter.molmol.macro_write(data_type='s2',        dir=dir, force=True)
         self.interpreter.molmol.macro_write(data_type='s2f',       dir=dir, force=True)
         self.interpreter.molmol.macro_write(data_type='s2s',       dir=dir, force=True)
@@ -933,7 +939,7 @@ class dAuvergne_protocol:
 
         # Create a diffusion tensor representation of the tensor, if a PDB file is present.
         if hasattr(cdp, 'structure'):
-            dir = self.results_dir + 'final'
+            dir = self.write_results_dir + 'final'
             self.interpreter.structure.create_diff_tensor_pdb(file="tensor.pdb", dir=dir, force=True)
 
 
