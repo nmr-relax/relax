@@ -171,7 +171,7 @@ class Bmrb:
             # Loop over the spins.
             for i in range(N):
                 # Generate a spin ID.
-                spin_id = mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_name=data['res_names'][i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+                spin_id = mol_res_spin.generate_spin_id_unique(mol_name=mol_names[i], res_name=data['res_names'][i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
                 # Obtain the spin.
                 spin = mol_res_spin.return_spin(spin_id)
@@ -295,7 +295,7 @@ class Bmrb:
             # Loop over the spins.
             for i in range(len(data['data_ids'])):
                 # Generate a spin ID.
-                spin_id = mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+                spin_id = mol_res_spin.generate_spin_id_unique(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
                 # Obtain the spin.
                 spin = mol_res_spin.return_spin(spin_id)

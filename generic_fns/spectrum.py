@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -31,7 +31,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from relax_io import extract_data, read_spin_data, strip, write_data
@@ -725,7 +725,7 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     # Loop over the data.
     data = []
     for mol_name, res_num, res_name, spin_num, spin_name, value in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+        id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         data.append([None, None, id, value, id])
 
     # Return the data.
@@ -804,7 +804,7 @@ def intensity_nmrview(file_data=None, int_col=None):
             raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
         # Generate the spin_id.
-        spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+        spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
 
         # Append the data.
         data.append([h_name, x_name, spin_id, intensity, line])
@@ -884,7 +884,7 @@ def intensity_sparky(file_data=None, int_col=None):
             raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
         # Generate the spin_id.
-        spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+        spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
 
         # Append the data.
         data.append([h_name, x_name, spin_id, intensity, line])
@@ -993,7 +993,7 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
             raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
         # Generate the spin_id.
-        spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+        spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
 
         # Append the data.
         data.append([h_name, x_name, spin_id, intensity, line])

@@ -210,7 +210,7 @@ class Relax_data_store(dict):
                     # Loop over the spins.
                     for spin in res.spin:
                         # The current spin ID.
-                        spin_id = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
+                        spin_id = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
 
                         # Convert proton spins (the 'heteronuc_type' variable indicates a pre-interatomic container design state).
                         if hasattr(spin, 'heteronuc_type') and hasattr(spin, 'element') and spin.element == 'H':
@@ -238,13 +238,13 @@ class Relax_data_store(dict):
                                     proton_name = 'H'
 
                                 # The two spin IDs (newly regenerated due to the above renaming).
-                                spin_id1 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=spin.name, spin_num=spin.num)
-                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name)
+                                spin_id1 = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
+                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name)
 
                                 # Fetch the proton spin if it exists.
                                 h_spin = generic_fns.mol_res_spin.return_spin(spin_id2, pipe=pipe_name)
                                 if h_spin:
-                                    spin_id2 = generic_fns.mol_res_spin.generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, spin_num=h_spin.num)
+                                    spin_id2 = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name, spin_num=h_spin.num)
 
                                 # Create a new spin container for the proton if needed.
                                 if not h_spin:

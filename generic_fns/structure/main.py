@@ -32,7 +32,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns import molmol, relax_re
 from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
@@ -301,8 +301,8 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
         if atom_name and search('\+', atom_name):
             atom_name = atom_name.replace('+', '')
 
-        # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=atom_name)
+        # The spin identification string.
+        id = generate_spin_id_unique(res_num=res_num, res_name=None, spin_num=atom_num, spin_name=atom_name)
 
         # Get the spin container.
         spin_cont = return_spin(id)
@@ -412,7 +412,7 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
             atom_name = atom_name.replace('+', '')
 
         # Generate a spin ID for the current atom.
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
+        id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
 
         # Create the spin.
         try:
@@ -801,7 +801,7 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
             continue
 
         # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name, spin_num=spin.num)
+        id = generate_spin_id_unique(res_num=res_num, res_name=None, spin_name=spin.name, spin_num=spin.num)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:

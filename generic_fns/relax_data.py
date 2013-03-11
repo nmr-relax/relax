@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import bmrb, dipole_pair
 from generic_fns.interatomic import create_interatom, return_interatom, return_interatom_list
-from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
@@ -184,8 +184,8 @@ def bmrb_read(star, sample_conditions=None):
             # Define the dipolar interaction.
             for i in range(len(data['atom_names'])):
                 # The spin IDs.
-                spin_id1 = generate_spin_id(spin_name=data['atom_names'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
-                spin_id2 = generate_spin_id(spin_name=data['atom_names_2'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
+                spin_id1 = generate_spin_id_unique(spin_name=data['atom_names'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
+                spin_id2 = generate_spin_id_unique(spin_name=data['atom_names_2'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
 
                 # Check if the container exists.
                 if return_interatom(spin_id1=spin_id1, spin_id2=spin_id2):
@@ -831,7 +831,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     if not spin_ids:
         spin_ids = []
         for i in range(N):
-            spin_ids.append(generate_spin_id(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
+            spin_ids.append(generate_spin_id_unique(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
     if not hasattr(cdp, 'frq'):
@@ -866,7 +866,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             for j in range(len(spins)):
                 if spins[j] in select_obj:
                     new_spins.append(spins[j])
-                    new_ids.append(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=spins[j].num, spin_name=spins[j].name))
+                    new_ids.append(generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=spins[j].num, spin_name=spins[j].name))
             new_id = new_ids[0]
 
         # Aliases for normal operation.
