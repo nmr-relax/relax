@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 import dep_check
 from generic_fns import exp_info
-from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_residue, return_spin, set_spin_element, set_spin_isotope
+from generic_fns.mol_res_spin import create_spin, generate_spin_id, metadata_cleanup, return_residue, return_spin, set_spin_element, set_spin_isotope
 from generic_fns.pipes import cdp_name
 from generic_fns.result_files import add_result_file
 from info import Info_box
@@ -110,6 +110,9 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
         if isotopes and elements:
             isotope = "%s%s" % (isotopes[i], elements[i])
             set_spin_isotope(spin_id=spin_id, isotope=isotope, force=True)
+
+    # Clean up the spin metadata.
+    metadata_cleanup()
 
 
 def list_sample_conditions(star):
