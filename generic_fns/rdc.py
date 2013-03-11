@@ -36,11 +36,11 @@ from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
 from generic_fns.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxAlignError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
-from relax_io import extract_data, open_write_file, strip, write_data
+from relax_errors import RelaxError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
+from relax_io import extract_data, open_write_file, write_data
 from relax_warnings import RelaxWarning
 
 
@@ -657,10 +657,6 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         # Test the error value (cannot be 0.0).
         if error == 0.0:
             raise RelaxError("An invalid error value of zero has been encountered.")
-
-        # Remap the spin IDs.
-        spin_id1 = spin1._spin_ids[0]
-        spin_id2 = spin2._spin_ids[0]
 
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)

@@ -169,10 +169,10 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None):
     # Check that the spin IDs exist.
     spin = return_spin(spin_id1, pipe)
     if spin == None:
-        raise RelaxNoSpinWarning(spin_id1)
+        raise RelaxNoSpinError(spin_id1)
     spin = return_spin(spin_id2, pipe)
     if spin == None:
-        raise RelaxNoSpinWarning(spin_id2)
+        raise RelaxNoSpinError(spin_id2)
 
     # Check if the two spin IDs have already been added.
     for i in range(len(dp.interatomic)):

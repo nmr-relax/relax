@@ -986,11 +986,10 @@ def create_molecule(mol_name=None, mol_type=None, pipe=None):
 
         # Update the private metadata.
         if len(dp.mol) == 2:
-            metadata_prune(pipe=pipe)
-            metadata_update(pipe=pipe)
+            metadata_cleanup(pipe=pipe)
         else:
-            metadata_prune(mol_index=len(dp.mol)-1, pipe=pipe)
-            metadata_update(mol_index=len(dp.mol)-1, pipe=pipe)
+            metadata_cleanup(mol_index=len(dp.mol)-1, pipe=pipe)
+        metadata_update(mol_index=len(dp.mol)-1, pipe=pipe)
 
     # Release the lock.
     finally:
@@ -1026,7 +1025,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None, pipe=None):
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Create the molecule if it does not exist.
-        mol_cont = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
+        mol_cont = return_molecule(generate_spin_id(pipe_name=pipe, mol_name=mol_name), pipe=pipe)
         if mol_cont == None:
             mol_cont = create_molecule(mol_name=mol_name, pipe=pipe)
 
@@ -1038,11 +1037,10 @@ def create_residue(res_num=None, res_name=None, mol_name=None, pipe=None):
 
         # Update the private metadata.
         if len(mol_cont.res) == 2:
-            metadata_prune(mol_index=mol_cont._mol_index, pipe=pipe)
-            metadata_update(mol_index=mol_cont._mol_index, pipe=pipe)
+            metadata_cleanup(mol_index=mol_cont._mol_index, pipe=pipe)
         else:
-            metadata_prune(mol_index=mol_cont._mol_index, res_index=len(mol_cont.res)-1, pipe=pipe)
-            metadata_update(mol_index=mol_cont._mol_index, res_index=len(mol_cont.res)-1, pipe=pipe)
+            metadata_cleanup(mol_index=mol_cont._mol_index, res_index=len(mol_cont.res)-1, pipe=pipe)
+        metadata_update(mol_index=mol_cont._mol_index, res_index=len(mol_cont.res)-1, pipe=pipe)
 
     # Release the lock.
     finally:
@@ -1158,7 +1156,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
                 spin.pos = ave[0]
 
         # Update the private metadata.
-        metadata_prune(mol_index=mol_index, res_index=res_index, pipe=pipe)
+        metadata_cleanup(mol_index=mol_index, res_index=res_index, pipe=pipe)
         metadata_update(mol_index=mol_index, res_index=res_index, pipe=pipe)
 
     # Release the lock.
@@ -1226,15 +1224,14 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
 
         # The spin index and id.
         spin_index = len(res_cont.spin) - 1
-        spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+        spin_id = generate_spin_id(pipe_cont=dp, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
         # Update the private metadata.
         if len(res_cont.spin) == 2:
-            metadata_prune(mol_index=mol_index, res_index=res_index, pipe=pipe)
-            metadata_update(mol_index=mol_index, res_index=res_index, pipe=pipe)
+            metadata_cleanup(mol_index=mol_index, res_index=res_index, pipe=pipe)
         else:
-            metadata_prune(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
-            metadata_update(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
+            metadata_cleanup(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
+        metadata_update(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
 
     # Release the lock.
     finally:
@@ -1596,43 +1593,99 @@ def first_residue_num(selection=None):
     return mol.res[0].num
 
 
-def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+def generate_spin_id(pipe_cont=None, pipe_name=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Generate the spin selection string.
 
-    @param mol_name:    The molecule name.
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    @keyword pipe_name: The data pipe name.
+    @type pipe_name:    str
+    @keyword mol_name:  The molecule name.
     @type mol_name:     str or None
-    @param res_num:     The residue number.
+    @keyword res_num:   The residue number.
     @type res_num:      int or None
-    @param res_name:    The residue name.
+    @keyword res_name:  The residue name.
     @type res_name:     str or None
-    @param spin_num:    The spin number.
+    @keyword spin_num:  The spin number.
     @type spin_num:     int or None
-    @param spin_name:   The spin name.
+    @keyword spin_name: The spin name.
     @type spin_name:    str or None
     @return:            The spin identification string.
     @rtype:             str
     """
 
+    # The data pipe.
+    if pipe_cont == None:
+        pipe_cont = pipes.get_pipe(pipe_name)
+
     # Init.
     id = ""
 
-    # Molecule name.
+    # Molecule name and container.
     if mol_name != None:
         id = id + "#" + mol_name
 
     # Residue data.
+    res_num_id = ''
+    res_name_id = ''
     if res_num != None:
-        id = id + ":" + str(res_num)
+        res_num_id = id + ":" + str(res_num)
+        res_num_exists = res_num_id in pipe_cont.mol._spin_id_lookup
+    if res_name != None:
+        res_name_id = id + ":" + res_name
+        res_name_exists = res_name_id in pipe_cont.mol._spin_id_lookup
+
+    # Select between the name and number, defaulting to the residue number if needed.
+    if res_name != None and res_num != None:
+        if res_num_exists and res_name_exists:
+            id = res_num_id
+        elif not res_num_exists or not res_name_exists:
+            id = res_num_id
+        elif res_num_exists:
+            id = res_num_id
+        elif res_name_exists:
+            id = res_name_id
+        elif res_num != None:
+            id = res_num_id
+        elif res_name != None:
+            id = res_name_id
+    elif res_num != None:
+        id = res_num_id
     elif res_name != None:
-        id = id + ":" + res_name
+        id = res_name_id
 
     # Spin data.
+    spin_num_id = ''
+    spin_name_id = ''
+    spin_num_exists = False
+    spin_name_exists = False
+    if spin_num != None:
+        spin_num_id = id + "@" + str(spin_num)
+        spin_num_exists = spin_num_id in pipe_cont.mol._spin_id_lookup
     if spin_name != None:
-        id = id + "@" + spin_name
-    elif spin_num != None:
-        id = id + "@" + str(spin_num)
+        spin_name_id = id + "@" + spin_name
+        spin_name_exists = spin_name_id in pipe_cont.mol._spin_id_lookup
 
-    # Return the spin id string.
+    # Select between the name and number, defaulting to the spin name if needed.
+    if spin_name != None and spin_num != None:
+        if spin_num_exists and spin_name_exists:
+            id = spin_name_id
+        elif not spin_num_exists or not spin_name_exists:
+            id = spin_name_id
+        elif spin_name_exists:
+            id = spin_name_id
+        elif spin_num_exists:
+            id = spin_num_id
+        elif spin_name != None:
+            id = spin_name_id
+        elif spin_num != None:
+            id = spin_num_id
+    elif spin_name != None:
+        id = spin_name_id
+    elif spin_num != None:
+        id = spin_num_id
+
+    # Return the full spin ID string.
     return id
 
 
@@ -1676,6 +1729,86 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
 
     # Return the spin id string.
     return id
+
+
+def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, spin=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    """Generate a list of spin ID variants for the given set of molecule, residue and spin indices.
+
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    @keyword pipe_name: The data pipe name.
+    @type pipe_name:    str
+    @keyword mol:       The molecule container.
+    @type mol:          MoleculeContainer instance
+    @keyword res:       The residue container.
+    @type res:          ResidueContainer instance
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
+    @keyword mol_name:  The molecule name (an alternative to the molecule container).
+    @type mol_name:     str or None
+    @keyword res_num:   The residue number (an alternative to the residue container).
+    @type res_num:      int or None
+    @keyword res_name:  The residue name (an alternative to the residue container).
+    @type res_name:     str or None
+    @keyword spin_num:  The spin number (an alternative to the spin container).
+    @type spin_num:     int or None
+    @keyword spin_name: The spin name (an alternative to the spin container).
+    @type spin_name:    str or None
+    @return:            The unique spin ID.
+    @rtype:             str
+    """
+
+    # The data pipe.
+    if pipe_cont == None:
+        pipe_cont = pipes.get_pipe(pipe_name)
+
+    # Get the containers if needed.
+    if mol == None:
+        mol = return_molecule_by_name(pipe_cont=pipe_cont, mol_name=mol_name)
+    if res == None:
+        if res_name != None or res_num != None:
+            res = return_residue_by_info(mol=mol, res_name=res_name, res_num=res_num)
+        elif len(mol.res) == 1:
+            res = mol.res[0]
+    if spin == None:
+        if spin_name != None or spin_num != None:
+            spin = return_spin_by_info(res=res, spin_name=spin_name, spin_num=spin_num)
+        elif len(res.spin) == 1:
+            spin = res.spin[0]
+
+    # The info.
+    if mol:
+        mol_name = mol.name
+    if res:
+        res_name = res.name
+        res_num = res.num
+    if spin:
+        spin_name = spin.name
+        spin_num = spin.num
+
+    # Unique info.
+    unique_res_name = True
+    if res and res.name != None and mol._res_name_count[res.name] > 1:
+        unique_res_name = False
+    unique_res_num = True
+    if res and res.num != None and mol._res_num_count[res.num] > 1:
+        unique_res_num = False
+    unique_spin_name = True
+    if spin and spin.name != None and res._spin_name_count[spin.name] > 1:
+        unique_spin_name = False
+    unique_spin_num = True
+    if spin and spin.num != None and res._spin_num_count[spin.num] > 1:
+        unique_spin_num = False
+
+    # The unique ID.
+    if unique_res_num and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_name=spin_name)
+    if unique_res_num and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_num=spin_num)
+    if unique_res_name and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_num=spin_num)
+    if unique_res_name and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_name=spin_name)
 
 
 def get_molecule_ids(selection=None):
@@ -1940,7 +2073,7 @@ def linear_ave(positions):
     return ave
 
 
-def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
+def metadata_cleanup(mol_index=None, res_index=None, spin_index=None, pipe=None):
     """Prune all of the metadata matching the given indices.
 
     @keyword mol_index:     The index of the molecule to prune.  If not supplied, all molecules will be pruned.
@@ -1962,6 +2095,9 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
+
+    # Update the metadata info counts.
+    metadata_counts(pipe_cont=dp)
 
     # Loop over the molecules.
     to_remove = []
@@ -1992,7 +2128,186 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
                 spin = res.spin[k]
 
                 # The list of IDs to remove.
-                to_remove = spin_id_variants_elim(dp=dp, mol_index=i, res_index=j, spin_index=k)
+                to_remove = spin_id_variants_cleanup(dp=dp, mol_index=i, res_index=j, spin_index=k)
+
+                # ID removal.
+                for spin_id in to_remove:
+                    # Blank IDs.
+                    if spin_id == '':
+                        continue
+
+                    # Remove from the list in the spin container itself.
+                    if spin_id in spin._spin_ids:
+                        spin._spin_ids.pop(spin._spin_ids.index(spin_id))
+
+                    # Remove the IDs from the look up table.
+                    if spin_id in dp.mol._spin_id_lookup:
+                        dp.mol._spin_id_lookup.pop(spin_id)
+
+
+def metadata_counts(pipe_cont=None):
+    """Update the molecule, residue, and spin name and number count metadata.
+
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    """
+
+    # The top level counts.
+    pipe_cont.mol._res_name_count = {}
+    pipe_cont.mol._res_num_count = {}
+    pipe_cont.mol._spin_name_count = {}
+    pipe_cont.mol._spin_num_count = {}
+
+    # Pre-parse:  Update the metadata for determining if names and numbers already exist.
+    for i in range(len(pipe_cont.mol)):
+        # Alias.
+        mol = pipe_cont.mol[i]
+
+        # The molecule level counts.
+        mol._res_name_count = {}
+        mol._res_num_count = {}
+        mol._spin_name_count = {}
+        mol._spin_num_count = {}
+
+        # Loop over the residues.
+        for j in range(len(mol.res)):
+            # Alias.
+            res = mol.res[j]
+
+            # Count the residue names.
+            if res.name != None:
+                # Top level.
+                if res.name not in pipe_cont.mol._res_name_count:
+                    pipe_cont.mol._res_name_count[res.name] = 1
+                else:
+                    pipe_cont.mol._res_name_count[res.name] += 1
+
+                # Molecule level.
+                if res.name not in mol._res_name_count:
+                    mol._res_name_count[res.name] = 1
+                else:
+                    mol._res_name_count[res.name] += 1
+
+            # Count the residue numbers.
+            if res.num != None:
+                # Top level.
+                if res.num not in pipe_cont.mol._res_num_count:
+                    pipe_cont.mol._res_num_count[res.num] = 1
+                else:
+                    pipe_cont.mol._res_num_count[res.num] += 1
+
+                # Molecule level.
+                if res.num not in mol._res_num_count:
+                    mol._res_num_count[res.num] = 1
+                else:
+                    mol._res_num_count[res.num] += 1
+
+            # The residue level counts.
+            res._spin_name_count = {}
+            res._spin_num_count = {}
+
+            # Loop over the spins.
+            for k in range(len(res.spin)):
+                # Alias.
+                spin = res.spin[k]
+
+                # Count the spin names.
+                if spin.name != None:
+                    # Top level.
+                    if spin.name not in pipe_cont.mol._spin_name_count:
+                        pipe_cont.mol._spin_name_count[spin.name] = 1
+                    else:
+                        pipe_cont.mol._spin_name_count[spin.name] += 1
+
+                    # Molecule level.
+                    if spin.name not in mol._spin_name_count:
+                        mol._spin_name_count[spin.name] = 1
+                    else:
+                        mol._spin_name_count[spin.name] += 1
+
+                    # Residue level.
+                    if spin.name not in res._spin_name_count:
+                        res._spin_name_count[spin.name] = 1
+                    else:
+                        res._spin_name_count[spin.name] += 1
+
+                # Count the spin numbers.
+                if spin.num != None:
+                    # Top level.
+                    if spin.num not in pipe_cont.mol._spin_num_count:
+                        pipe_cont.mol._spin_num_count[spin.num] = 1
+                    else:
+                        pipe_cont.mol._spin_num_count[spin.num] += 1
+
+                    # Molecule level.
+                    if spin.num not in mol._spin_num_count:
+                        mol._spin_num_count[spin.num] = 1
+                    else:
+                        mol._spin_num_count[spin.num] += 1
+
+                    # Residue level.
+                    if spin.num not in res._spin_num_count:
+                        res._spin_num_count[spin.num] = 1
+                    else:
+                        res._spin_num_count[spin.num] += 1
+
+
+def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
+    """Prune all of the metadata matching the given indices.
+
+    @keyword mol_index:     The index of the molecule to prune.  If not supplied, all molecules will be pruned.
+    @type mol_index:        int or None
+    @keyword res_index:     The index of the residue to prune.  If not supplied, all residues of the matching molecules will be pruned.
+    @type res_index:        int or None
+    @keyword spin_index:    The index of the spin to prune.  If not supplied, all spins of the matching residues will be pruned.
+    @type spin_index:       int or None
+    @keyword pipe:          The data pipe to update, defaulting to the current data pipe.
+    @type pipe:             str or None
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Update the metadata info counts.
+    metadata_counts(pipe_cont=dp)
+
+    # Loop over the molecules.
+    to_remove = []
+    for i in range(len(dp.mol)):
+        # Molecule skipping.
+        if mol_index != None and mol_index != i:
+            continue
+
+        # Alias.
+        mol = dp.mol[i]
+
+        # Loop over the residues.
+        for j in range(len(mol.res)):
+            # Residue skipping.
+            if res_index != None and res_index != j:
+                continue
+
+            # Alias.
+            res = mol.res[j]
+
+            # Loop over the spins.
+            for k in range(len(res.spin)):
+                # Spin skipping.
+                if spin_index != None and spin_index != k:
+                    continue
+
+                # Alias.
+                spin = res.spin[k]
+
+                # The list of IDs to remove.
+                to_remove = spin_id_variants_prune(dp=dp, mol_index=i, res_index=j, spin_index=k)
 
                 # ID removal.
                 for spin_id in to_remove:
@@ -2032,6 +2347,9 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
+    # Update the metadata info counts.
+    metadata_counts(pipe_cont=dp)
+
     # Loop over the molecules.
     for i in range(len(dp.mol)):
         # Molecule skipping.
@@ -2041,7 +2359,7 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
         # Alias.
         mol = dp.mol[i]
 
-        # Update the residue metadata.
+        # Update the molecule metadata.
         mol._mol_index = i
 
         # Loop over the residues.
@@ -2130,7 +2448,7 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
 
         # Generate the spin id.
         if return_id:
-            mol_id = generate_spin_id(mol.name)
+            mol_id = generate_spin_id(pipe_cont=dp, mol_name=mol.name)
 
         # Yield the molecule data container.
         if return_id:
@@ -2172,7 +2490,7 @@ def name_molecule(mol_id, name=None, force=False):
                 mol.name = name
 
             # Update the private metadata.
-            metadata_prune(mol_index=mol._mol_index)
+            metadata_cleanup(mol_index=mol._mol_index)
             metadata_update(mol_index=mol._mol_index)
 
     # Release the lock.
@@ -2202,12 +2520,12 @@ def name_residue(res_id, name=None, force=False):
         # Rename the matching residues.
         for res, mol_name in residue_loop(res_id, full_info=True):
             if res.name and not force:
-                warn(RelaxWarning("The residue '%s' is already named.  Set the force flag to rename." % generate_spin_id(mol_name, res.num, res.name)))
+                warn(RelaxWarning("The residue '%s' is already named.  Set the force flag to rename." % generate_spin_id(mol_name=mol_name, res_num=res.num, res_name=res.name)))
             else:
                 res.name = name
 
                 # Update the private metadata.
-                metadata_prune(mol_index=res._mol_index, res_index=res._res_index)
+                metadata_cleanup(mol_index=res._mol_index, res_index=res._res_index)
                 metadata_update(mol_index=res._mol_index, res_index=res._res_index)
 
     # Release the lock.
@@ -2249,7 +2567,7 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
                 spin.name = name
 
                 # Update the private metadata.
-                metadata_prune(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
+                metadata_cleanup(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
                 metadata_update(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
 
     # Release the lock.
@@ -2288,12 +2606,12 @@ def number_residue(res_id, number=None, force=False):
         # Rename the residue.
         for res, mol_name in residue_loop(res_id, full_info=True):
             if res.num and not force:
-                warn(RelaxWarning("The residue '%s' is already numbered.  Set the force flag to renumber." % generate_spin_id(mol_name, res.num, res.name)))
+                warn(RelaxWarning("The residue '%s' is already numbered.  Set the force flag to renumber." % generate_spin_id(mol_name=mol_name, res_num=res.num, res_name=res.name)))
             else:
                 res.num = number
 
                 # Update the private metadata.
-                metadata_prune(mol_index=res._mol_index, res_index=res._res_index)
+                metadata_cleanup(mol_index=res._mol_index, res_index=res._res_index)
                 metadata_update(mol_index=res._mol_index, res_index=res._res_index)
 
     # Release the lock.
@@ -2332,7 +2650,7 @@ def number_spin(spin_id=None, number=None, force=False):
                 spin.num = number
 
                 # Update the private metadata.
-                metadata_prune(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
+                metadata_cleanup(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
                 metadata_update(mol_index=spin._mol_index, res_index=spin._res_index, spin_index=spin._spin_index)
 
     # Release the lock.
@@ -2526,7 +2844,7 @@ def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):
 
             # Generate the spin id.
             if return_id:
-                res_id = generate_spin_id(mol.name, res.num, res.name)
+                res_id = generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name)
 
             # Yield the residue data container.
             if full_info and return_id:
@@ -2589,6 +2907,39 @@ def return_molecule(selection=None, pipe=None):
     return mol_container
 
 
+def return_molecule_by_name(pipe_cont=None, pipe_name=None, mol_name=None):
+    """Return the molecule container matching the given name.
+
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    @keyword pipe_name: The data pipe name.
+    @type pipe_name:    str
+    @keyword mol_name:  The molecule name.  If not supplied and only a single molecule container exists, then that container will be returned.
+    @type mol_name:     str
+    @return:            The molecule container object.
+    @rtype:             MoleculeContainer instance
+    """
+
+    # The data pipe.
+    if pipe_cont == None:
+        pipe_cont = pipes.get_pipe(pipe)
+
+    # No molecule name specified, so assume a single molecule.
+    if mol_name == None:
+        # More than one molecule.
+        if len(pipe_cont.mol) > 1:
+            raise RelaxError("Cannot return the molecule with no name as more than one molecule exists.")
+
+        # Return the molecule.
+        return pipe_cont.mol[0]
+
+    # Loop over the molecules.
+    for mol in pipe_cont.mol:
+        # Return the matching molecule.
+        if mol.name == mol_name:
+            return mol
+
+
 def return_residue(selection=None, pipe=None, indices=False):
     """Function for returning the residue data container of the given selection.
 
@@ -2649,6 +3000,42 @@ def return_residue(selection=None, pipe=None, indices=False):
         return res_container
 
 
+def return_residue_by_info(mol=None, res_name=None, res_num=None):
+    """Return the residue container matching the given name.
+
+    @keyword mol:       The molecule container.
+    @type mol:          MoleculeContainer instance
+    @keyword res_name:  The residue name.  If not supplied and only a single residue container exists, then that container will be returned.
+    @type res_name:     str
+    @keyword res_num:   The residue number.  If not supplied and only a single residue container exists, then that container will be returned.
+    @type res_num:      str
+    @return:            The residue container object.
+    @rtype:             ResidueContainer instance
+    """
+
+    # No residue name or number specified, so assume a single residue.
+    if res_name == None and res_num == None:
+        # More than one residue.
+        if len(mol.res) > 1:
+            raise RelaxError("Cannot return the residue with no name or number as more than one residue exists.")
+
+        # Return the residue.
+        return mol.res[0]
+
+    # Loop over the residues.
+    for res in mol.res:
+        # Return the matching residue.
+        if res_name != None and res_num != None:
+            if res.name == res_name and res.num == res_num:
+               return res
+        elif res_name != None:
+            if res.name == res_name:
+                return res
+        elif res_num != None:
+            if res.num == res_num:
+                return res
+
+
 def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
     """Return the spin data container corresponding to the given spin ID string.
 
@@ -2688,6 +3075,42 @@ def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
         return [dp.mol[mol_index].res[res_index].spin[spin_index]]
     else:
         return dp.mol[mol_index].res[res_index].spin[spin_index]
+
+
+def return_spin_by_info(res=None, spin_name=None, spin_num=None):
+    """Return the spin container matching the given name.
+
+    @keyword res:       The residue container.
+    @type res:          ResidueContainer instance
+    @keyword spin_name: The spin name.  If not supplied and only a single spin container exists, then that container will be returned.
+    @type spin_name:    str
+    @keyword spin_num:  The spin number.  If not supplied and only a single spin container exists, then that container will be returned.
+    @type spin_num:     str
+    @return:            The spin container object.
+    @rtype:             SpinContainer instance
+    """
+
+    # No spin name or number specified, so assume a single spin.
+    if spin_name == None and spin_num == None:
+        # More than one spin.
+        if len(res.spin) > 1:
+            raise RelaxError("Cannot return the spin with no name or number as more than one spin exists.")
+
+        # Return the spin.
+        return res.spin[0]
+
+    # Loop over the spins.
+    for spin in res.spin:
+        # Return the matching spin.
+        if spin_name != None and spin_num != None:
+            if spin.name == spin_name and spin.num == spin_num:
+               return spin
+        elif spin_name != None:
+            if spin.name == spin_name:
+                return spin
+        elif spin_num != None:
+            if spin.num == spin_num:
+                return spin
 
 
 def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi=False):
@@ -2756,7 +3179,7 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
                 spin_num = spin_num + 1
 
                 # Generate as store the spin ID.
-                spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
 
     # No unique identifier.
     if not multi and spin_num > 1:
@@ -2803,7 +3226,7 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
             # Return the spin and the spin_id string.
             if return_spin_id:
                 # The spin identification string.
-                spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+                spin_id = generate_spin_id(pipe_name=pipe, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
 
                 # Return both objects.
                 return spin, spin_id
@@ -3211,38 +3634,125 @@ def spin_id_variants(dp=None, mol_index=None, res_index=None, spin_index=None):
     res_count = len(mol.res)
     spin_count = len(res.spin)
 
-    # The spin ID.
-    spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+    # Unique top level info.
+    unique_top_level_res_name = True
+    unique_top_level_res_num = True
+    unique_top_level_spin_name = True
+    unique_top_level_spin_num = True
+    if res.name != None and dp.mol._res_name_count[res.name] > 1:
+        unique_top_level_res_name = False
+    if res.num != None and dp.mol._res_num_count[res.num] > 1:
+        unique_top_level_res_num = False
+    if spin.name != None and dp.mol._spin_name_count[spin.name] > 1:
+        unique_top_level_spin_name = False
+    if spin.num != None and dp.mol._spin_num_count[spin.num] > 1:
+        unique_top_level_spin_num = False
 
-    # The spin IDs without spin info.
-    if spin_count == 1:
-        spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
+    # Unique molecule level info.
+    unique_mol_level_res_name = True
+    unique_mol_level_res_num = True
+    unique_mol_level_spin_name = True
+    unique_mol_level_spin_num = True
+    if res.name != None and mol._res_name_count[res.name] > 1:
+        unique_mol_level_res_name = False
+    if res.num != None and mol._res_num_count[res.num] > 1:
+        unique_mol_level_res_num = False
+    if spin.name != None and mol._spin_name_count[spin.name] > 1:
+        unique_mol_level_spin_name = False
+    if spin.num != None and mol._spin_num_count[spin.num] > 1:
+        unique_mol_level_spin_num = False
 
-    # The spin IDs without residue info.
-    if res_count == 1:
-        spin_ids.append(generate_spin_id(mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
+    # Unique residue level info.
+    unique_res_level_spin_name = True
+    unique_res_level_spin_num = True
+    if spin.name != None and res._spin_name_count[spin.name] > 1:
+        unique_res_level_spin_name = False
+    if spin.num != None and res._spin_num_count[spin.num] > 1:
+        unique_res_level_spin_num = False
 
-    # The spin IDs without molecule info.
-    if mol_count == 1:
-        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+    # IDs with the molecule name.
+    if mol.name != None:
+        # IDs with the residue name.
+        if res.name != None:
+            # The molecule name, residue name and spin name.
+            if spin.name != None and unique_mol_level_res_name and unique_res_level_spin_name:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_name=spin.name))
 
-    # The spin IDs without spin or residue info.
-    if spin_count == 1 and res_count == 1:
-        spin_ids.append(generate_spin_id(mol_name=mol.name))
+            # The molecule name, residue name and spin number.
+            if spin.num != None and unique_mol_level_res_name and unique_res_level_spin_num:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_num=spin.num))
 
-    # The spin IDs without spin or molecule info.
-    if spin_count == 1 and mol_count == 1:
-        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
+            # The molecule name and residue name.
+            if spin_count == 1 and unique_mol_level_res_name:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name))
 
-    # The spin IDs without residue or molecule info.
-    if res_count == 1 and mol_count == 1:
-        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
+        # IDs with the residue number.
+        if res.num != None:
+            # The molecule name, residue number and spin name.
+            if spin.name != None and unique_mol_level_res_num and unique_res_level_spin_name:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_name=spin.name))
+
+            # The molecule name, residue number and spin number.
+            if spin.num != None and unique_mol_level_res_num and unique_res_level_spin_num:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_num=spin.num))
+
+            # The molecule name and residue number.
+            if spin_count == 1 and unique_mol_level_res_num:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num))
+
+        # The molecule name and spin name.
+        if spin.name != None and unique_mol_level_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_name=spin.name))
+
+        # The molecule name and spin number.
+        if spin.num != None and unique_mol_level_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num))
+
+        # The molecule name.
+        if spin_count == 1 and res_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name))
+
+    # IDs with the residue name.
+    if res.name != None:
+        # The residue name and spin name.
+        if spin.name != None and unique_top_level_res_name and unique_res_level_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_name=spin.name))
+
+        # The residue name and spin number.
+        if spin.num != None and unique_top_level_res_name and unique_res_level_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_num=spin.num))
+
+        # The residue name.
+        if spin_count == 1 and unique_top_level_res_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name))
+
+    # IDs with the residue number.
+    if res.num != None:
+        # The residue number and spin name.
+        if spin.name != None and unique_top_level_res_num and unique_res_level_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_name=spin.name))
+
+        # The residue number and spin number.
+        if spin.num != None and unique_top_level_res_num and unique_res_level_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_num=spin.num))
+
+        # The residue number.
+        if spin_count == 1 and unique_top_level_res_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num))
+
+    # The spin name.
+    if spin.name != None and unique_top_level_spin_name:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_name=spin.name))
+
+    # The spin number.
+    if spin.num != None and unique_top_level_spin_num:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_num=spin.num))
 
     # Return the IDs.
     return spin_ids
 
 
-def spin_id_variants_elim(dp=None, mol_index=None, res_index=None, spin_index=None):
+def spin_id_variants_cleanup(dp=None, mol_index=None, res_index=None, spin_index=None):
     """Generate a list of spin ID variants to eliminate for the given set of molecule, residue and spin indices.
 
     @keyword dp:            The data pipe to work on.
@@ -3266,37 +3776,225 @@ def spin_id_variants_elim(dp=None, mol_index=None, res_index=None, spin_index=No
     res_count = len(mol.res)
     spin_count = len(res.spin)
 
-    # The spin ID.
-    spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+    # Unique top level info.
+    unique_top_level_res_name = True
+    unique_top_level_res_num = True
+    unique_top_level_spin_name = True
+    unique_top_level_spin_num = True
+    if res.name != None and dp.mol._res_name_count[res.name] > 1:
+        unique_top_level_res_name = False
+    if res.num != None and dp.mol._res_num_count[res.num] > 1:
+        unique_top_level_res_num = False
+    if spin.name != None and dp.mol._spin_name_count[spin.name] > 1:
+        unique_top_level_spin_name = False
+    if spin.num != None and dp.mol._spin_num_count[spin.num] > 1:
+        unique_top_level_spin_num = False
 
-    # The spin IDs without spin info.
-    if spin_count > 1:
-        spin_ids.append(generate_spin_id(mol_name=mol.name, res_num=res.num, res_name=res.name))
-        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
-        spin_ids.append(generate_spin_id(mol_name=mol.name))
+    # Unique molecule level info.
+    unique_mol_level_res_name = True
+    unique_mol_level_res_num = True
+    unique_mol_level_spin_name = True
+    unique_mol_level_spin_num = True
+    if res.name != None and mol._res_name_count[res.name] > 1:
+        unique_mol_level_res_name = False
+    if res.num != None and mol._res_num_count[res.num] > 1:
+        unique_mol_level_res_num = False
+    if spin.name != None and mol._spin_name_count[spin.name] > 1:
+        unique_mol_level_spin_name = False
+    if spin.num != None and mol._spin_num_count[spin.num] > 1:
+        unique_mol_level_spin_num = False
 
-    # The spin IDs without residue info.
-    if res_count > 1:
-        spin_ids.append(generate_spin_id(mol_name=mol.name, spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
-        spin_ids.append(generate_spin_id(mol_name=mol.name))
+    # Unique residue level info.
+    unique_res_level_spin_name = True
+    unique_res_level_spin_num = True
+    if spin.name != None and res._spin_name_count[spin.name] > 1:
+        unique_res_level_spin_name = False
+    if spin.num != None and res._spin_num_count[spin.num] > 1:
+        unique_res_level_spin_num = False
 
-    # The spin IDs without molecule info.
-    if mol_count > 1:
-        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
-        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name, spin_num=spin.num, spin_name=spin.name))
+    # IDs with the molecule name.
+    if mol.name != None:
+        # IDs with the residue name.
+        if res.name != None:
+            # The molecule name, residue name and spin name.
+            if spin.name != None and (not unique_mol_level_res_name or not unique_res_level_spin_name):
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_name=spin.name))
 
-    # The spin IDs without spin or residue info.
-    if spin_count > 1 and res_count > 1:
-        spin_ids.append(generate_spin_id(mol_name=mol.name))
+            # The molecule name, residue name and spin number.
+            if spin.num != None and (not unique_mol_level_res_name or not unique_res_level_spin_num):
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_num=spin.num))
 
-    # The spin IDs without spin or molecule info.
-    if spin_count > 1 and mol_count > 1:
-        spin_ids.append(generate_spin_id(res_num=res.num, res_name=res.name))
+            # The molecule name and residue name.
+            if not unique_mol_level_res_name or spin_count > 1:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name))
 
-    # The spin IDs without residue or molecule info.
-    if res_count > 1 and mol_count > 1:
-        spin_ids.append(generate_spin_id(spin_num=spin.num, spin_name=spin.name))
+        # IDs with the residue number.
+        if res.num != None:
+            # The molecule name, residue number and spin name.
+            if spin.name != None and (not unique_mol_level_res_num or not unique_res_level_spin_name):
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_name=spin.name))
+
+            # The molecule name, residue number and spin number.
+            if spin.num != None and (not unique_mol_level_res_num or not unique_res_level_spin_num):
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_num=spin.num))
+
+            # The molecule name and residue number.
+            if not unique_mol_level_res_num or spin_count > 1:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num))
+
+        # The molecule name and spin name.
+        if spin.name != None and not unique_mol_level_spin_name:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_name=spin.name))
+
+        # The molecule name and spin number.
+        if spin.num != None and not unique_mol_level_spin_num:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num))
+
+        # The molecule name.
+        if res_count > 1 or spin_count > 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name))
+
+    # IDs with the residue name.
+    if res.name != None:
+        # The residue name and spin name.
+        if spin.name != None and (not unique_top_level_res_name and not unique_top_level_spin_name):
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_name=spin.name))
+
+        # The residue name and spin number.
+        if spin.num != None and (not unique_top_level_res_name and not unique_top_level_spin_num):
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_num=spin.num))
+
+        # The residue name.
+        if not unique_top_level_res_name or spin_count > 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name))
+
+    # IDs with the residue number.
+    if res.num != None:
+        # The residue number and spin name.
+        if spin.name != None and (not unique_top_level_res_num and not unique_top_level_spin_name):
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_name=spin.name))
+
+        # The residue number and spin number.
+        if spin.num != None and (not unique_top_level_res_num and not unique_top_level_spin_num):
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_num=spin.num))
+
+        # The residue number.
+        if not unique_top_level_res_num or spin_count > 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num))
+
+    # The spin name.
+    if spin.name != None and not unique_top_level_spin_name:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_name=spin.name))
+
+    # The spin number.
+    if spin.num != None and not unique_top_level_spin_num:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_num=spin.num))
+
+    # Return the IDs.
+    return spin_ids
+
+
+def spin_id_variants_prune(dp=None, mol_index=None, res_index=None, spin_index=None):
+    """Generate a list of spin ID variants to eliminate for the given set of molecule, residue and spin indices.
+
+    @keyword dp:            The data pipe to work on.
+    @type dp:               PipeContainer instance
+    @keyword mol_index:     The molecule index.
+    @type mol_index:        int
+    @keyword res_index:     The residue index.
+    @type res_index:        int
+    @keyword spin_index:    The spin index.
+    @type spin_index:       int
+    @return:                The list of all spin IDs matching the spin.
+    @rtype:                 list of str
+    """
+
+    # Initialise.
+    spin_ids = []
+    mol = dp.mol[mol_index]
+    res = dp.mol[mol_index].res[res_index]
+    spin = dp.mol[mol_index].res[res_index].spin[spin_index]
+    mol_count = len(dp.mol)
+    res_count = len(mol.res)
+    spin_count = len(res.spin)
+
+    # IDs with the molecule name.
+    if mol.name != None:
+        # IDs with the residue name.
+        if res.name != None:
+            # The molecule name, residue name and spin name.
+            if spin.name != None:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_name=spin.name))
+
+            # The molecule name, residue name and spin number.
+            if spin.num != None:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name, spin_num=spin.num))
+
+            # The molecule name and residue name.
+            if spin_count == 1:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_name=res.name))
+
+        # IDs with the residue number.
+        if res.num != None:
+            # The molecule name, residue number and spin name.
+            if spin.name != None:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_name=spin.name))
+
+            # The molecule name, residue number and spin number.
+            if spin.num != None:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num, spin_num=spin.num))
+
+            # The molecule name and residue number.
+            if spin_count == 1:
+                spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, res_num=res.num))
+
+        # The molecule name and spin name.
+        if spin.name != None and res_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_name=spin.name))
+
+        # The molecule name and spin number.
+        if spin.num != None and res_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name, spin_num=spin.num))
+
+        # The molecule name.
+        if res_count == 1 and spin_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, mol_name=mol.name))
+
+    # IDs with the residue name.
+    if res.name != None:
+        # The residue name and spin name.
+        if spin.name != None and mol_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_name=spin.name))
+
+        # The residue name and spin number.
+        if spin.num != None and mol_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name, spin_num=spin.num))
+
+        # The residue name.
+        if mol_count == 1 and spin_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_name=res.name))
+
+    # IDs with the residue number.
+    if res.num != None:
+        # The residue number and spin name.
+        if spin.name != None and mol_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_name=spin.name))
+
+        # The residue number and spin number.
+        if spin.num != None and mol_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num, spin_num=spin.num))
+
+        # The residue number.
+        if mol_count == 1 and spin_count == 1:
+            spin_ids.append(generate_spin_id(pipe_cont=dp, res_num=res.num))
+
+    # The spin name.
+    if spin.name != None and mol_count == 1 and res_count == 1:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_name=spin.name))
+
+    # The spin number.
+    if spin.num != None and mol_count == 1 and res_count == 1:
+        spin_ids.append(generate_spin_id(pipe_cont=dp, spin_num=spin.num))
 
     # Return the IDs.
     return spin_ids
@@ -3442,7 +4140,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
 
                 # Generate the spin id.
                 if return_id:
-                    spin_id = generate_spin_id(mol.name, res.num, res.name, spin.num, spin.name)
+                    spin_id = generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
 
                 # Yield the data.
                 if full_info and return_id:

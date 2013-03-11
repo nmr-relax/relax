@@ -4,4 +4,4 @@
 import relax
 
 # Start relax.
-relax.start()
+relax.start(profile_flag=False)

@@ -166,7 +166,7 @@ class Results:
         generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
 
         # Get the spin identification string.
-        spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
+        spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
         # Set the selection status.
         select = bool(int(spin_line[col['select']]))
@@ -701,7 +701,7 @@ class Results:
                 spin_name = file_line[col['spin_name']]
 
             # Create the spin ID.
-            spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
+            spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
             # Get the spin container.
             spin = return_spin(spin_id)

@@ -22,6 +22,9 @@ self._execute_uf(uf_name='pipe.create', pipe_name='results', pipe_type='mf')
 # Read the results.
 self._execute_uf(uf_name='results.read', file='final_results_trunc_1.3_v2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
+# Speed these tests up a bit.
+self._execute_uf(uf_name='residue.delete', res_id=':15-200')
+
 # Play with the data.
 self._execute_uf(uf_name='deselect.all')
 self._execute_uf(uf_name='select.spin', spin_id=':9@N')
