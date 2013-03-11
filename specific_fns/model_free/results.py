@@ -32,7 +32,7 @@ import sys
 import generic_fns
 from generic_fns import dipole_pair
 from generic_fns.interatomic import return_interatom, return_interatom_list
-from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_spin, spin_loop
+from generic_fns.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxInvalidDataError
 
@@ -166,7 +166,7 @@ class Results:
         generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
 
         # Get the spin identification string.
-        spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+        spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
         # Set the selection status.
         select = bool(int(spin_line[col['select']]))
@@ -701,7 +701,7 @@ class Results:
                 spin_name = file_line[col['spin_name']]
 
             # Create the spin ID.
-            spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+            spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
             # Get the spin container.
             spin = return_spin(spin_id)
@@ -712,7 +712,7 @@ class Results:
                 h_spin.select = False
                 h_spin.element = 'H'
                 h_spin.isotope = '1H'
-                spin_id2 = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
+                spin_id2 = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
                 dipole_pair.define(spin_id, spin_id2, verbose=False)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
