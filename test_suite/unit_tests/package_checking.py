@@ -49,6 +49,10 @@ class PackageTestCase(UnitTestCase):
             if search("^\.", file):
                 continue
 
+            # Skip byte-compiled files.
+            if search("pyc$", file):
+                continue
+
             # Skip blacklisted files.
             if hasattr(self, 'blacklist') and file in self.blacklist:
                 continue
