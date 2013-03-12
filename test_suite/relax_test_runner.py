@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,20 +21,14 @@
 
 # Python module imports.
 import dep_check
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
 import sys
-try:
-    from unittest import TextTestResult    # Python 2.7 and above.
-except ImportError:
-    from unittest import _TextTestResult as TextTestResult    # Python 2.6 and below.
 from unittest import TextTestRunner
 if dep_check.wx_module:
     import wx
 
 # relax module imports.
+from compat import StringIO
+from compat import TextTestResult
 from status import Status; status = Status()
 
 

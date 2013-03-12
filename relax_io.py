@@ -30,17 +30,8 @@ compression), reading and writing of files, processing of the contents of files,
 import dep_check
 
 # Python module imports.
-if dep_check.bz2_module:
-    import bz2
-    from bz2 import BZ2File
-else:
-    BZ2File = object
-if dep_check.gzip_module:
-    import gzip
 if dep_check.devnull_import:
     from os import devnull
-if dep_check.io_module:
-    import io
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext
 from re import match, search
@@ -50,6 +41,7 @@ from warnings import warn
 
 # relax module imports.
 from check_types import is_filetype, is_float
+from compat import bz2_open, gz_open
 import generic_fns
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -365,34 +357,11 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
 
         # Bzip2 compressed text.
         elif compress_type == 1:
-            if dep_check.bz2_module:
-                # Python 3.3 text mode.
-                if sys.version_info[0] == 3 and sys.version_info[1] >= 3:
-                    file_obj = bz2.open(file_path, 't')
-
-                # Python 3.0, 3.1 and 3.2 text mode.
-                elif sys.version_info[0] == 3 and sys.version_info[1] < 3:
-                    file_obj = io.TextIOWrapper(Bzip2Fixed(file_path, 'r'))
-
-                # Python 2 text mode.
-                else:
-                    file_obj = bz2.BZ2File(file_path, 'r')
-            else:
-                raise RelaxError("Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + ".")
+            file_obj = bz2_open(file=file_path, mode='r')
 
         # Gzipped compressed text.
         elif compress_type == 2:
-            # Python 3.3 text mode.
-            if sys.version_info[0] == 3 and sys.version_info[1] >= 3:
-                file_obj = gzip.open(file_path, 'rt')
-
-            # Python 3.0, 3.1 and 3.2 text mode.
-            elif sys.version_info[0] == 3 and sys.version_info[1] < 3:
-                file_obj = io.TextIOWrapper(GzipFixed(file_path, 'r'))
-
-            # Python 2 text mode.
-            else:
-                file_obj = gzip.GzipFile(file_path, 'r')
+            file_obj = gz_open(file=file_path, mode='r')
 
     # Cannot open.
     except IOError:
@@ -494,31 +463,11 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
         # Bzip2 compressed text.
         elif compress_type == 1:
-            # Python 3.3 text mode.
-            if sys.version_info[0] == 3 and sys.version_info[1] >= 3:
-                file_obj = bz2.open(file_path, 'wt')
-
-            # Python 3.0, 3.1 and 3.2 text mode.
-            elif sys.version_info[0] == 3 and sys.version_info[1] < 3:
-                file_obj = io.TextIOWrapper(Bzip2Fixed(file_path, 'w'))
-
-            # Python 2 text mode.
-            else:
-                file_obj = bz2.BZ2File(file_path, 'w')
+            file_obj = bz2_open(file=file_path, mode='w')
 
         # Gzipped compressed text.
         elif compress_type == 2:
-            # Python 3.3 text mode.
-            if sys.version_info[0] == 3 and sys.version_info[1] >= 3:
-                file_obj = gzip.open(file_path, 'wt')
-
-            # Python 3.0, 3.1 and 3.2 text mode.
-            elif sys.version_info[0] == 3 and sys.version_info[1] < 3:
-                file_obj = io.TextIOWrapper(GzipFixed(file_path, 'w'))
-
-            # Python 2 text mode.
-            else:
-                file_obj = gzip.GzipFile(file_path, 'w')
+            file_obj = gz_open(file=file_path, mode='w')
 
     # Cannot open.
     except IOError:
@@ -1167,45 +1116,6 @@ class DummyFileObject:
 
         # Return the file lines.
         return lines
-
-
-
-class Bzip2Fixed(BZ2File):
-    """Incredibly nasty hack for bzip2 files support in Python 3.0, 3.1 and 3.2."""
-
-    def flush(self):
-        pass
-
-    def read1(self, n):
-        return self.read(n)
-
-    def readable(self):
-        return True
-
-    def seekable(self):
-        return True
-
-    def writable(self):
-        return True
-
-
-
-class GzipFixed(gzip.GzipFile):
-    """Incredibly nasty hack for gzipped files support in Python 3.0, 3.1 and 3.2."""
-
-    closed = False
-
-    def read1(self, n):
-        return self.read(n)
-
-    def readable(self):
-        return True
-
-    def seekable(self):
-        return True
-
-    def writable(self):
-        return True
 
 
 
