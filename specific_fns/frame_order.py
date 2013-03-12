@@ -494,8 +494,8 @@ class Frame_order(API_base, API_common):
                 axis_sim_pos = None
                 axis_sim_neg = None
                 if sim:
-                    axis_sim_pos = axes_sim_pos[:, :, j]
-                    axis_sim_neg = axes_sim_neg[:, :, j]
+                    axis_sim_pos = axes_sim_pos[:,:, j]
+                    axis_sim_neg = axes_sim_neg[:,:, j]
 
                 # The vectors.
                 res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)

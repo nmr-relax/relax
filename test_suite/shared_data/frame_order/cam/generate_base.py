@@ -230,7 +230,7 @@ class Main:
         file.write("    gamma: %.20f\n" % g)
 
         # The spherical angle system.
-        r, t, p = cartesian_to_spherical(self.axes[:,2])
+        r, t, p = cartesian_to_spherical(self.axes[:, 2])
         file.write("\nSpherical angles of the z-axis:\n")
         file.write("    theta: %.20f\n" % t)
         file.write("    phi:   %.20f\n" % wrap_angles(p, 0, 2*pi))
@@ -259,9 +259,9 @@ class Main:
         self.interpreter.pipe.create('axes', 'N-state')
 
         # The end points of the vectors.
-        end_pt_x = self.axes[:,0] * norm(self.com - self.pivot) + self.pivot
-        end_pt_y = self.axes[:,1] * norm(self.com - self.pivot) + self.pivot
-        end_pt_z = self.axes[:,2] * norm(self.com - self.pivot) + self.pivot
+        end_pt_x = self.axes[:, 0] * norm(self.com - self.pivot) + self.pivot
+        end_pt_y = self.axes[:, 1] * norm(self.com - self.pivot) + self.pivot
+        end_pt_z = self.axes[:, 2] * norm(self.com - self.pivot) + self.pivot
 
         # Add atoms for the system.
         self.interpreter.structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=self.pivot, element='C')
@@ -285,7 +285,7 @@ class Main:
         self.interpreter.pipe.create('axes', 'N-state')
 
         # The end points of the vectors.
-        end_pt = self.axes[:,2] * norm(self.com - self.pivot) + self.pivot
+        end_pt = self.axes[:, 2] * norm(self.com - self.pivot) + self.pivot
 
         # Add atoms for the system.
         self.interpreter.structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=self.pivot, element='C')
@@ -331,7 +331,7 @@ class Main:
         # Print out.
         print("Tilt axis: %s, norm = %s" % (repr(tilt_axis), norm(tilt_axis)))
         print("CoM-pivot axis: %s, norm = %s" % (repr(axis_z), norm(axis_z)))
-        print("Rotation axis: %s, norm = %s" % (repr(self.axes[:,2]), norm(self.axes[:,2])))
+        print("Rotation axis: %s, norm = %s" % (repr(self.axes[:, 2]), norm(self.axes[:, 2])))
         print("Full axis system:\n%s" % self.axes)
         print("Full axis system Euler angles:\n\talpha: %s\n\tbeta: %s\n\tgamma: %s" % (repr(alpha), repr(beta), repr(gamma)))
 

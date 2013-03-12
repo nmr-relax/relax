@@ -149,10 +149,10 @@ def i4_sobol_generate ( m, n, skip ):
 #
 #		Output, real R(M,N), the points.
 #
-	r=zeros((m,n))
+	r=zeros((m, n))
 	for j in range (1, n+1):
 		seed = skip + j - 2
-		[ r[0:m,j-1], seed ] = i4_sobol ( m, seed )
+		[ r[0:m, j-1], seed ] = i4_sobol ( m, seed )
 	return r
 def i4_sobol ( dim_num, seed ):
 #*****************************************************************************80
@@ -245,48 +245,48 @@ def i4_sobol ( dim_num, seed ):
 #
 #	Initialize (part of) V.
 #
-		v = zeros((dim_max,log_max))
-		v[0:40,0] = transpose([ \
+		v = zeros((dim_max, log_max))
+		v[0:40, 0] = transpose([ \
 			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 			1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ])
 
-		v[2:40,1] = transpose([ \
+		v[2:40, 1] = transpose([ \
 			1, 3, 1, 3, 1, 3, 3, 1, \
 			3, 1, 3, 1, 3, 1, 1, 3, 1, 3, \
 			1, 3, 1, 3, 3, 1, 3, 1, 3, 1, \
 			3, 1, 1, 3, 1, 3, 1, 3, 1, 3 ])
 
-		v[3:40,2] = transpose([ \
+		v[3:40, 2] = transpose([ \
 			7, 5, 1, 3, 3, 7, 5, \
 			5, 7, 7, 1, 3, 3, 7, 5, 1, 1, \
 			5, 3, 3, 1, 7, 5, 1, 3, 3, 7, \
 			5, 1, 1, 5, 7, 7, 5, 1, 3, 3 ])
 
-		v[5:40,3] = transpose([ \
-			1, 7, 9,13,11, \
-			1, 3, 7, 9, 5,13,13,11, 3,15, \
-			5, 3,15, 7, 9,13, 9, 1,11, 7, \
-			5,15, 1,15,11, 5, 3, 1, 7, 9 ])
+		v[5:40, 3] = transpose([ \
+			1, 7, 9, 13, 11, \
+			1, 3, 7, 9, 5, 13, 13, 11, 3, 15, \
+			5, 3, 15, 7, 9, 13, 9, 1, 11, 7, \
+			5, 15, 1, 15, 11, 5, 3, 1, 7, 9 ])
 	
-		v[7:40,4] = transpose([ \
-			9, 3,27, \
-			15,29,21,23,19,11,25, 7,13,17, \
-			1,25,29, 3,31,11, 5,23,27,19, \
-			21, 5, 1,17,13, 7,15, 9,31, 9 ])
+		v[7:40, 4] = transpose([ \
+			9, 3, 27, \
+			15, 29, 21, 23, 19, 11, 25, 7, 13, 17, \
+			1, 25, 29, 3, 31, 11, 5, 23, 27, 19, \
+			21, 5, 1, 17, 13, 7, 15, 9, 31, 9 ])
 
-		v[13:40,5] = transpose([ \
-							37,33, 7, 5,11,39,63, \
-		 27,17,15,23,29, 3,21,13,31,25, \
-			9,49,33,19,29,11,19,27,15,25 ])
+		v[13:40, 5] = transpose([ \
+							37, 33, 7, 5, 11, 39, 63, \
+		 27, 17, 15, 23, 29, 3, 21, 13, 31, 25, \
+			9, 49, 33, 19, 29, 11, 19, 27, 15, 25 ])
 
-		v[19:40,6] = transpose([ \
+		v[19:40, 6] = transpose([ \
 			13, \
-			33,115, 41, 79, 17, 29,119, 75, 73,105, \
-			7, 59, 65, 21,	3,113, 61, 89, 45,107 ])
+			33, 115, 41, 79, 17, 29, 119, 75, 73, 105, \
+			7, 59, 65, 21,	3, 113, 61, 89, 45, 107 ])
 
-		v[37:40,7] = transpose([ \
+		v[37:40, 7] = transpose([ \
 			7, 23, 39 ])
 #
 #	Set POLY.
@@ -305,7 +305,7 @@ def i4_sobol ( dim_num, seed ):
 #
 #	Initialize row 1 of V.
 #
-		v[0,0:maxcol] = 1
+		v[0, 0:maxcol] = 1
 
 #
 #	Things to do only if the dimension changed.
@@ -325,7 +325,7 @@ def i4_sobol ( dim_num, seed ):
 #
 #	Initialize the remaining rows of V.
 #
-		for i in range(2 , dim_num+1):
+		for i in range(2, dim_num+1):
 #
 #	The bits of the integer POLY(I) gives the form of polynomial I.
 #
@@ -352,20 +352,20 @@ def i4_sobol ( dim_num, seed ):
 #	in Bratley and Fox, section 2.
 #
 			for j in range( m+1, maxcol+1 ):
-				newv = v[i-1,j-m-1]
+				newv = v[i-1, j-m-1]
 				l = 1
 				for k in range(1, m+1):
 					l = 2 * l
 					if ( includ[k-1] ):
-						newv = bitwise_xor ( int(newv), int(l * v[i-1,j-k-1]) )
-				v[i-1,j-1] = newv
+						newv = bitwise_xor ( int(newv), int(l * v[i-1, j-k-1]) )
+				v[i-1, j-1] = newv
 #
 #	Multiply columns of V by appropriate power of 2.
 #
 		l = 1
 		for j in range( maxcol-1, 0, -1):
 			l = 2 * l
-			v[0:dim_num,j-1] = v[0:dim_num,j-1] * l
+			v[0:dim_num, j-1] = v[0:dim_num, j-1] * l
 #
 #	RECIPD is 1/(common denominator of the elements in V).
 #
@@ -395,8 +395,8 @@ def i4_sobol ( dim_num, seed ):
 
 		for seed_temp in range( int(seed_save), int(seed)):
 			l = i4_bit_lo0 ( seed_temp )
-			for i in range(1 , dim_num+1):
-				lastq[i-1] = bitwise_xor ( int(lastq[i-1]), int(v[i-1,l-1]) )
+			for i in range(1, dim_num+1):
+				lastq[i-1] = bitwise_xor ( int(lastq[i-1]), int(v[i-1, l-1]) )
 
 		l = i4_bit_lo0 ( seed )
 
@@ -405,7 +405,7 @@ def i4_sobol ( dim_num, seed ):
 		for seed_temp in range( int(seed_save + 1), int(seed) ):
 			l = i4_bit_lo0 ( seed_temp )
 			for i in range(1, dim_num+1):
-				lastq[i-1] = bitwise_xor ( int(lastq[i-1]), int(v[i-1,l-1]) )
+				lastq[i-1] = bitwise_xor ( int(lastq[i-1]), int(v[i-1, l-1]) )
 
 		l = i4_bit_lo0 ( seed )
 #
@@ -423,7 +423,7 @@ def i4_sobol ( dim_num, seed ):
 	quasi=zeros(dim_num)
 	for i in range( 1, dim_num+1):
 		quasi[i-1] = lastq[i-1] * recipd
-		lastq[i-1] = bitwise_xor ( int(lastq[i-1]), int(v[i-1,l-1]) )
+		lastq[i-1] = bitwise_xor ( int(lastq[i-1]), int(v[i-1, l-1]) )
 
 	seed_save = seed
 	seed = seed + 1

@@ -56,6 +56,5 @@ def get_domain_ids():
         return []
 
     # The domain IDs, sorted.
-    ids = cdp.domain.keys()
-    ids.sort()
+    ids = sorted(cdp.domain.keys())
     return ids
