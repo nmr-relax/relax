@@ -531,7 +531,7 @@ class Model_free_main:
 
         # Take the highest frequency, if all else fails.
         else:
-            frqs = cdp.frq.values()
+            frqs = list(cdp.frq.values())
             frqs.sort()
             frq = frqs[-1]
 
