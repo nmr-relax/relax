@@ -72,7 +72,7 @@ Non-dangerous 3.0 update command
 
 This needs to be carefully checked before committing.
 
-2to3 -w \
+2to3 -j 4 -w \
 -f buffer \
 -f idioms \
 -f set_literal \
@@ -89,7 +89,7 @@ This needs to be carefully checked before committing.
 Deadly 3.0 update command
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-2to3 -w \
+2to3 -j 4 -w \
 -f except \
 -f import \
 -f imports \
