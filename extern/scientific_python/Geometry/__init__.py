@@ -56,8 +56,12 @@ if 'epydoc' in sys.modules:
     tm_name = TensorModule.__name__
     Vector.__module__ = 'Scientific.Geometry'
     Tensor.__module__ = 'Scientific.Geometry'
-    isVector.func_globals['__name__'] = 'Scientific.Geometry'
-    isTensor.func_globals['__name__'] = 'Scientific.Geometry'
+    if hasattr(isVector, 'func_globals'):    # Python 2.
+        isVector.func_globals['__name__'] = 'Scientific.Geometry'
+        isTensor.func_globals['__name__'] = 'Scientific.Geometry'
+    else:    # Python 3.
+        isVector.__globals__['__name__'] = 'Scientific.Geometry'
+        isTensor.__globals__['__name__'] = 'Scientific.Geometry'
     VectorModule.__name__ = vm_name
     TensorModule.__name__ = tm_name
     del VectorModule
