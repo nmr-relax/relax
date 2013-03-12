@@ -37,3 +37,6 @@ class Test___init__(PackageTestCase):
         self.package = lib
         self.package_name = 'lib'
         self.package_path = sys.path[0] + sep + 'lib'
+
+        # Mac OS X application fix:  Handle the py2app extension placing the Python directories into Resources/lib/python2.7 (Resources/lib is the relax lib package).
+        self.blacklist = ['python2.7']

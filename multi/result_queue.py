@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,10 +24,6 @@
 """Module containing the results queue objects."""
 
 # Python module imports.
-try:
-    import queue
-except ImportError:
-    import Queue as queue
 import sys
 import threading
 import traceback
@@ -35,6 +31,9 @@ import traceback
 # multi module imports.
 from multi.misc import raise_unimplemented
 from multi.result_commands import Result_command, Result_exception
+
+# relax module imports (for Python 3 compatibility - the compat module could be bundled with this package if separate).
+from compat import queue
 
 
 class Exit_queue_result_command(Result_command):

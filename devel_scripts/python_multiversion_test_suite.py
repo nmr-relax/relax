@@ -1,9 +1,8 @@
 #! /usr/bin/env python
 
-"""Script for blasting the relax test-suite through all possible python versions.
+"""Script for blasting the relax test-suite through all possible Python versions.
 
-This assumes that their is a directory called 'bin' in your home directory containing the Python
-versions to be tested.  This must be executed from the base relax directory.
+This assumes that there is a directory called 'bin' in your home directory containing the Python versions to be tested.  This must be executed from the base relax directory.
 """
 
 # Python module imports.

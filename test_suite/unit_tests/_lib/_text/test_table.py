@@ -175,7 +175,7 @@ class Test_table(TestCase):
             ['Column 1', 'Column 2', 'Column 3', 'Column 4']
         ]
         contents = [
-            ['A', 2, 3.4561234124, [1,2.0]],
+            ['A', 2, 3.4561234124, [1, 2.0]],
             ['B', 2, 4.567745674, 1e-6]
         ]
 

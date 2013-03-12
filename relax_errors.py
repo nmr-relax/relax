@@ -29,15 +29,12 @@ try:
     bz2 = True
 except ImportError:
     bz2 = False
-try:
-    from cPickle import dump    # Python 2 import.
-except ImportError:
-    from pickle import dump    # Python 3 import.
 from re import match
 import sys
 import time
 
 # relax module imports.
+from compat import pickle
 import ansi
 
 
@@ -90,7 +87,7 @@ def save_state():
         file = open(file_name, 'w')
 
     # Pickle the data class and write it to file
-    dump(ds, file, 1)
+    pickle.dump(ds, file, 1)
 
     # Close the file.
     file.close()

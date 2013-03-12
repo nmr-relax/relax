@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,15 +22,11 @@
 # Module docstring.
 """Module for manipulating data pipes."""
 
-
 # Python module imports
-try:
-    import __builtin__ as builtins    # Python 2 import.
-except ImportError:
-    import builtins    # Python 3 import.
 import sys
 
 # relax module imports.
+from compat import builtins
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError

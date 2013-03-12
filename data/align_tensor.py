@@ -30,7 +30,6 @@ from numpy.linalg import det, eig, eigvals
 import sys
 
 # relax module imports.
-from compat import py_version
 from data.data_classes import Element
 from data.relax_xml import fill_object_contents, xml_to_object
 from float import nan

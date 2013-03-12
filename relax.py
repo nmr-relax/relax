@@ -33,7 +33,7 @@
 # Module docstring.
 """The main module for relax execution."""
 
-# Python 2 and 3 work-arounds.
+# Set up the Python 2 and 3 work-arounds.
 import compat
 
 # Dependency checks.

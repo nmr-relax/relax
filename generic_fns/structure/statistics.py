@@ -65,9 +65,18 @@ def atomic_rmsd(coord, verbosity=0):
         if verbosity:
             print("Model %2s RMSD:  %s" % (i, model_rmsd[i]))
 
-    # Calculate the mean and standard deviation.
+    # Calculate the mean.
     rmsd_mean = mean(model_rmsd)
-    rmsd_sd = std(model_rmsd, ddof=1)
+
+    # Calculate the normal non-biased standard deviation.
+    try:
+        rmsd_sd = std(model_rmsd, ddof=1)
+
+    # Handle old numpy versions not having the ddof argument.
+    except TypeError:
+        rmsd_sd = std(model_rmsd) * sqrt(M / (M - 1.0))
+
+    # Printout.
     if verbosity:
         print("\nGlobal RMSD:  %s +/- %s" % (rmsd_mean, rmsd_sd))
 

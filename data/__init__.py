@@ -24,16 +24,13 @@
 
 
 # Python module imports.
-try:
-    import __builtin__ as builtins    # Python 2 import.
-except ImportError:
-    import builtins    # Python 3 import.
 from re import search
 from sys import stderr
 from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
+from compat import builtins
 from data.gui import Gui
 from data.pipe_container import PipeContainer
 from data.relax_xml import fill_object_contents, xml_to_object
