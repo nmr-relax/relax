@@ -444,8 +444,7 @@ class Macro:
         if hasattr(cdp, 'ri_ids'):
             frq = cdp.frq[cdp.ri_ids[0]]
         else:       # Take the highest frequency, if all else fails.
-            frqs = list(cdp.frq.values())
-            frqs.sort()
+            frqs = sorted(cdp.frq.values())
             frq = frqs[-1]
 
         # The Rex value.

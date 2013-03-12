@@ -144,7 +144,7 @@ def _determine_widths(data=None, widths=None, separator=None):
                 # End of multicolumn cell.
                 if data[i][j] == MULTI_COL and (j == num_cols-1 or (j < num_cols-1 and data[i][j+1] != MULTI_COL)):
                     col_sum_width = widths[j]
-                    while 1:
+                    while True:
                         # Walk back.
                         for k in range(j-1, -1, -1):
                             col_sum_width += len(separator) + widths[k]
