@@ -21,6 +21,7 @@
 
 # Python module imports.
 from os import F_OK, access, listdir, sep
+from os.path import isdir
 from re import search
 
 # relax module imports.
@@ -49,8 +50,8 @@ class PackageTestCase(UnitTestCase):
             if search("^\.", file):
                 continue
 
-            # Skip byte-compiled files.
-            if search("pyc$", file):
+            # Only check Python files and directories.
+            if not search("\.py$", file) and not isdir(file):
                 continue
 
             # Skip blacklisted files.
