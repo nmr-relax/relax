@@ -169,7 +169,7 @@ class Info_box(object):
             return ''
 
         # The command.
-        cmd = 'file -b %s' % path
+        cmd = "file -b '%s'" % path
 
         # Execute.
         pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
