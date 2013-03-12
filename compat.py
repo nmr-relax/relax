@@ -26,7 +26,7 @@
 try:
     import platform
 except ImportError:
-    print("The platform module cannot be imported.  Try copying the platform.py file from http://hg.python.org/cpython/file/2.3/Lib/platform.py into your lib/pythonX.X/ directory.")
+    print("The platform module cannot be imported.  For Python <= 2.2, try copying the platform.py file from http://hg.python.org/cpython/file/2.3/Lib/platform.py into your lib/pythonX.X/ directory.")
     raise
 
 # Dependency check module.
