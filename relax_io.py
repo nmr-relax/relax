@@ -30,8 +30,7 @@ compression), reading and writing of files, processing of the contents of files,
 import dep_check
 
 # Python module imports.
-if dep_check.devnull_import:
-    from os import devnull
+from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext
 from re import match, search
@@ -409,10 +408,6 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
     # The null device.
     if search('devnull', file_name):
-        # Devnull could not be imported!
-        if not dep_check.devnull_import:
-            raise RelaxError(dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4.")
-
         # Print out.
         if verbosity:
             print("Opening the null device file for writing.")

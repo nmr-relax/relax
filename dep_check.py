@@ -127,17 +127,6 @@ except ImportError:
     io_module = False
     io_module_message = message.args[0]
 
-# Devnull.
-try:
-    import os
-    from os import devnull
-    del devnull
-    devnull_import = True
-except ImportError:
-    message = sys.exc_info()[1]
-    devnull_import = False
-    devnull_import_message = message.args[0]
-
 # Scipy import.
 try:
     import scipy
