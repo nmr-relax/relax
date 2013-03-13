@@ -80,6 +80,11 @@ class Model_free_main:
     set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
     set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
 
+    write_doc = Desc_container("Model-free parameter writing details")
+    write_doc.add_paragraph("For the model-free theory, it is assumed that Rex values are scaled quadratically with field strength.  The values will seem quite small as they will be written out as a field strength independent value.  Hence please use the following formula to convert the value to that expected for a given magnetic field strength:")
+    write_doc.add_verbatim("    Rex = value * (2.0 * pi * frequency) ** 2")
+    write_doc.add_paragraph("The frequency is that of the proton in Hertz.")
+
 
     def _are_mf_params_set(self, spin):
         """Test if the model-free parameter values are set.
