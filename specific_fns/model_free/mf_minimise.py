@@ -1095,7 +1095,7 @@ class Mf_minimise:
 
                 # Checks.
                 if err != None and err == 0.0:
-                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (errid))
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (data_store.spin_id, ri_id))
                 elif err != None and err < 0.0:
                     raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, data_store.spin_id, ri_id))
 
