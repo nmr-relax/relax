@@ -42,6 +42,7 @@ class API_base(object):
     eliminate_doc = ""
     return_data_name_doc = ""
     set_doc = ""
+    write_doc = ""
 
 
     def __init__(self):
