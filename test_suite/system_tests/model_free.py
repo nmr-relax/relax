@@ -451,6 +451,16 @@ class Mf(SystemTestCase):
         self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=ds.tmpdir, force=True)
 
 
+    def test_bug_20613_auto_mf_diff_tensor_pdb(self):
+        """Bug #20613 catch (https://gna.org/bugs/?20613), the failure of the auto-analysis due to diffusion tensor PDB creation for the local tm global model."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20613_auto_mf_diff_tensor_pdb.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 

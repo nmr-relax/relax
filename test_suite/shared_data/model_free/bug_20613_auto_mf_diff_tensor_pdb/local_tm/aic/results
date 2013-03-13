@@ -1,0 +1,689 @@
+<?xml version="1.0" ?>
+<relax file_version="2" revision="18589" time="Fri Mar  8 08:01:29 2013" url="svn+ssh://bugman@svn.gna.org/svn/relax/trunk" version="repository checkout" xmlns="http://www.nmr-relax.com">
+    <pipe desc="The contents of a relax data pipe" name="aic - mf (Fri Mar  8 07:43:00 2013)" type="mf">
+        <global desc="Global data located in the top level of the data pipe">
+            <frq type="dict">
+                <value>
+                    {'r1_800': 800000000.0, 'noe': 800000000.0, 'r2_600': 600000000.0, 'r2_800': 800000000.0}
+                </value>
+                <ieee_754_byte_array>
+                    {'r1_800': [0, 0, 0, 0, 132, 215, 199, 65], 'noe': [0, 0, 0, 0, 132, 215, 199, 65], 'r2_800': [0, 0, 0, 0, 132, 215, 199, 65], 'r2_600': [0, 0, 0, 0, 163, 225, 193, 65]}
+                </ieee_754_byte_array>
+            </frq>
+            <ri_ids type="list">
+                <value>
+                    ['noe', 'r1_800', 'r2_800', 'r2_600']
+                </value>
+            </ri_ids>
+            <ri_type type="dict">
+                <value>
+                    {'r1_800': 'R1', 'noe': 'NOE', 'r2_600': 'R2', 'r2_800': 'R2'}
+                </value>
+            </ri_type>
+        </global>
+        <hybrid desc="Data pipe hybridisation information">
+            <pipes>
+                []
+            </pipes>
+        </hybrid>
+        <mol desc="Molecule container" name="PrtG" type="None">
+            <res desc="Residue container" name="LYS" num="9">
+                <spin desc="Spin container" name="N" num="11">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm4'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te', 'rex']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="float">
+                        <value>
+                            0.97252379093472074
+                        </value>
+                        <ieee_754_byte_array>
+                            [173, 176, 148, 54, 234, 30, 239, 63]
+                        </ieee_754_byte_array>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="float">
+                        <value>
+                            5.2081794836135185e-09
+                        </value>
+                        <ieee_754_byte_array>
+                            [209, 41, 232, 50, 116, 94, 54, 62]
+                        </ieee_754_byte_array>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="float">
+                        <value>
+                            3.3006251934390821e-10
+                        </value>
+                        <ieee_754_byte_array>
+                            [250, 146, 106, 112, 133, 174, 246, 61]
+                        </ieee_754_byte_array>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="float">
+                        <value>
+                            7.3540416825394723e-19
+                        </value>
+                        <ieee_754_byte_array>
+                            [168, 46, 120, 44, 178, 33, 43, 60]
+                        </ieee_754_byte_array>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="float">
+                        <value>
+                            -0.000172
+                        </value>
+                        <ieee_754_byte_array>
+                            [54, 119, 244, 191, 92, 139, 38, 191]
+                        </ieee_754_byte_array>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="float">
+                        <value>
+                            2.0304955590792497
+                        </value>
+                        <ieee_754_byte_array>
+                            [82, 89, 167, 116, 116, 62, 0, 64]
+                        </ieee_754_byte_array>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="int">
+                        <value>
+                            39
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="int">
+                        <value>
+                            117
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="int">
+                        <value>
+                            46
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="int">
+                        <value>
+                            39
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <ri_data desc="The relaxation data" type="dict">
+                        <value>
+                            {'r1_800': 1.716915, 'noe': 0.80621, 'r2_600': 19.124116, 'r2_800': 26.164312}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [127, 48, 240, 220, 123, 120, 251, 63], 'noe': [63, 169, 246, 233, 120, 204, 233, 63], 'r2_800': [33, 87, 234, 89, 16, 42, 58, 64], 'r2_600': [12, 233, 240, 16, 198, 31, 51, 64]}
+                        </ieee_754_byte_array>
+                    </ri_data>
+                    <ri_data_err desc="The relaxation data errors" type="dict">
+                        <value>
+                            {'r1_800': 0.11069, 'noe': 0.00659, 'r2_600': 0.453507, 'r2_800': 1.608742}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [131, 134, 254, 9, 46, 86, 188, 63], 'noe': [146, 179, 176, 167, 29, 254, 122, 63], 'r2_800': [226, 57, 91, 64, 104, 189, 249, 63], 'r2_600': [222, 115, 96, 57, 66, 6, 221, 63]}
+                        </ieee_754_byte_array>
+                    </ri_data_err>
+                    <element type="str">
+                        <value>
+                            'N'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '15N'
+                        </value>
+                    </isotope>
+                </spin>
+                <spin desc="Spin container" name="H" num="None">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm4'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te', 'rex']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="None">
+                        <value>
+                            None
+                        </value>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="None">
+                        <value>
+                            None
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <element type="str">
+                        <value>
+                            'H'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '1H'
+                        </value>
+                    </isotope>
+                </spin>
+            </res>
+            <res desc="Residue container" name="LYS" num="36">
+                <spin desc="Spin container" name="N" num="16">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm2'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="float">
+                        <value>
+                            0.45926066555258527
+                        </value>
+                        <ieee_754_byte_array>
+                            [148, 205, 184, 216, 134, 100, 221, 63]
+                        </ieee_754_byte_array>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="float">
+                        <value>
+                            3.555240205752422e-08
+                        </value>
+                        <ieee_754_byte_array>
+                            [198, 24, 81, 241, 72, 22, 99, 62]
+                        </ieee_754_byte_array>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="float">
+                        <value>
+                            3.2814381298474674e-09
+                        </value>
+                        <ieee_754_byte_array>
+                            [67, 4, 62, 113, 245, 47, 44, 62]
+                        </ieee_754_byte_array>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="float">
+                        <value>
+                            -0.000172
+                        </value>
+                        <ieee_754_byte_array>
+                            [54, 119, 244, 191, 92, 139, 38, 191]
+                        </ieee_754_byte_array>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="float">
+                        <value>
+                            1.5007941416681558e-29
+                        </value>
+                        <ieee_754_byte_array>
+                            [34, 17, 62, 254, 90, 6, 243, 57]
+                        </ieee_754_byte_array>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="int">
+                        <value>
+                            37
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="int">
+                        <value>
+                            108
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="int">
+                        <value>
+                            42
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="int">
+                        <value>
+                            37
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <ri_data desc="The relaxation data" type="dict">
+                        <value>
+                            {'r1_800': 1.41627, 'noe': 0.8183, 'r2_800': 31.655587}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [12, 229, 68, 187, 10, 169, 246, 63], 'noe': [58, 35, 74, 123, 131, 47, 234, 63], 'r2_800': [201, 174, 180, 140, 212, 167, 63, 64]}
+                        </ieee_754_byte_array>
+                    </ri_data>
+                    <ri_data_err desc="The relaxation data errors" type="dict">
+                        <value>
+                            {'r1_800': 0.114633, 'noe': 0.00526, 'r2_800': 1.813758}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [161, 216, 10, 154, 150, 88, 189, 63], 'noe': [207, 160, 161, 127, 130, 139, 117, 63], 'r2_800': [224, 187, 205, 27, 39, 5, 253, 63]}
+                        </ieee_754_byte_array>
+                    </ri_data_err>
+                    <element type="str">
+                        <value>
+                            'N'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '15N'
+                        </value>
+                    </isotope>
+                </spin>
+                <spin desc="Spin container" name="H" num="None">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </select>
+                    <fixed desc="The fixed flag" type="bool">
+                        <value>
+                            False
+                        </value>
+                    </fixed>
+                    <model desc="The model" type="str">
+                        <value>
+                            'tm2'
+                        </value>
+                    </model>
+                    <equation desc="The model equation" type="str">
+                        <value>
+                            'mf_orig'
+                        </value>
+                    </equation>
+                    <params desc="The model parameters" type="list">
+                        <value>
+                            ['local_tm', 's2', 'te']
+                        </value>
+                    </params>
+                    <s2 desc="S2, the model-free generalised order parameter (S2 = S2f.S2s)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2>
+                    <s2f desc="S2f, the faster motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2f>
+                    <s2s desc="S2s, the slower motion model-free generalised order parameter" type="None">
+                        <value>
+                            None
+                        </value>
+                    </s2s>
+                    <local_tm desc="The spin specific global correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </local_tm>
+                    <te desc="Single motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </te>
+                    <tf desc="Faster motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </tf>
+                    <ts desc="Slower motion effective internal correlation time (seconds)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </ts>
+                    <rex desc="Chemical exchange relaxation (sigma_ex = Rex / omega**2)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </rex>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="None">
+                        <value>
+                            None
+                        </value>
+                    </csa>
+                    <chi2 desc="Chi-squared value" type="None">
+                        <value>
+                            None
+                        </value>
+                    </chi2>
+                    <iter desc="Optimisation iterations" type="None">
+                        <value>
+                            None
+                        </value>
+                    </iter>
+                    <f_count desc="Number of function calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </f_count>
+                    <g_count desc="Number of gradient calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </g_count>
+                    <h_count desc="Number of Hessian calls" type="None">
+                        <value>
+                            None
+                        </value>
+                    </h_count>
+                    <warning desc="Optimisation warning" type="None">
+                        <value>
+                            None
+                        </value>
+                    </warning>
+                    <element type="str">
+                        <value>
+                            'H'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '1H'
+                        </value>
+                    </isotope>
+                </spin>
+            </res>
+        </mol>
+        <interatomic desc="Interatomic data container" spin_id1="#PrtG:9@N" spin_id2="#PrtG:9@H">
+            <select desc="The spin selection flag" type="bool">
+                <value>
+                    True
+                </value>
+            </select>
+            <dipole_pair type="bool">
+                <value>
+                    True
+                </value>
+            </dipole_pair>
+            <r type="float">
+                <value>
+                    1.02e-10
+                </value>
+                <ieee_754_byte_array>
+                    [11, 45, 225, 165, 156, 9, 220, 61]
+                </ieee_754_byte_array>
+            </r>
+        </interatomic>
+        <interatomic desc="Interatomic data container" spin_id1="#PrtG:36@N" spin_id2="#PrtG:36@H">
+            <select desc="The spin selection flag" type="bool">
+                <value>
+                    True
+                </value>
+            </select>
+            <dipole_pair type="bool">
+                <value>
+                    True
+                </value>
+            </dipole_pair>
+            <r type="float">
+                <value>
+                    1.02e-10
+                </value>
+                <ieee_754_byte_array>
+                    [11, 45, 225, 165, 156, 9, 220, 61]
+                </ieee_754_byte_array>
+            </r>
+        </interatomic>
+        <structure desc="Structural information" id="internal">
+            <model desc="Model container" num="1">
+                <mol_cont desc="Molecule container" name="Ap4Aase_res1-12_mol1">
+                    <atom_name type="list">
+                        <value>
+                            ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
+                        </value>
+                    </atom_name>
+                    <atom_num type="list">
+                        <value>
+                            [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 24, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 40, 41, 42, 43, 44, 45, 46, 47, 49, 50, 51, 52, 53, 54, 55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 79, 80, 81, 83, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 124, 125, 126, 128, 129, 131, 132, 133, 134, 135, 136, 137, 138, 139, 141, 142, 143, 145, 146, 148, 149, 150, 151, 152, 153, 154, 155, 156, 158, 159, 160, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 173, 174]
+                        </value>
+                    </atom_num>
+                    <bonded type="list">
+                        <value>
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+                        </value>
+                    </bonded>
+                    <chain_id type="list">
+                        <value>
+                            [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+                        </value>
+                    </chain_id>
+                    <element type="list">
+                        <value>
+                            ['N', 'C', 'H', 'H', 'C', 'O', 'H', 'H', 'H', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'C', 'H', 'H', 'H', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'S', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O']
+                        </value>
+                    </element>
+                    <file_model type="int">
+                        <value>
+                            1
+                        </value>
+                    </file_model>
+                    <file_mol_num type="int">
+                        <value>
+                            1
+                        </value>
+                    </file_mol_num>
+                    <file_name type="str">
+                        <value>
+                            'Ap4Aase_res1-12.pdb'
+                        </value>
+                    </file_name>
+                    <file_path type="str">
+                        <value>
+                            '/data/relax/1.3/test_suite/shared_data/structures'
+                        </value>
+                    </file_path>
+                    <mol_name type="str">
+                        <value>
+                            'Ap4Aase_res1-12_mol1'
+                        </value>
+                    </mol_name>
+                    <pdb_record type="list">
+                        <value>
+                            ['ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM', 'ATOM']
+                        </value>
+                    </pdb_record>
+                    <res_name type="list">
+                        <value>
+                            ['GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY']
+                        </value>
+                    </res_name>
+                    <res_num type="list">
+                        <value>
+                            [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12]
+                        </value>
+                    </res_num>
+                    <seg_id type="list">
+                        <value>
+                            [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+                        </value>
+                    </seg_id>
+                    <x type="list">
+                        <value>
+                            [8.442, 7.469, 8.013, 6.825, 6.61, 6.827, 9.398, 8.18, 8.448, 5.613, 5.281, 4.714, 5.222, 3.646, 3.332, 2.8, 4.319, 4.853, 3.587, 6.162, 4.805, 4.075, 3.593, 4.074, 4.475, 3.498, 3.572, 2.025, 1.965, 1.609, 1.176, 1.823, 0.176, 0.096, 0.509, -0.789, 0.474, 0.809, -0.595, 0.707, 4.264, 4.364, 4.809, 4.697, 5.561, 6.22, 6.156, 4.659, 4.746, 3.786, 3.77, 2.851, 2.368, 1.785, 1.177, 1.165, 2.36, 1.69, 3.546, 3.804, 3.814, 3.563, 4.442, 4.984, 5.411, 6.192, 4.872, 6.068, 6.868, 5.332, 6.747, 6.155, 5.409, 6.977, 5.721, 3.369, 2.255, 3.703, 4.604, 2.753, 1.851, 3.329, 4.182, 3.644, 2.319, 1.992, 1.854, 2.419, 1.251, 3.451, 4.359, 3.267, 2.246, 4.223, 4.054, 4.04, 5.573, 6.142, 3.488, 4.276, 2.795, 1.828, 2.929, 2.81, 1.772, 0.912, 2.067, 1.505, 0.464, 2.138, 0.938, 2.273, 4.268, 4.585, 5.076, 4.776, 6.392, 6.925, 7.12, 7.968, 7.464, 6.13, 6.384, 6.135, 4.21, 4.246, 6.325, 5.263, 7.477, 8.281, 7.587, 7.039, 9.047, 9.133, 9.654, 9.59, 10.67, 9.215, 9.19, 10.055, 8.012, 7.007, 7.361, 6.144, 5.925, 5.555, 6.329, 4.814, 4.894, 4.761]
+                        </value>
+                        <ieee_754_byte_array>
+                            [[252, 169, 241, 210, 77, 226, 32, 64], [199, 75, 55, 137, 65, 224, 29, 64], [45, 178, 157, 239, 167, 6, 32, 64], [205, 204, 204, 204, 204, 76, 27, 64], [113, 61, 10, 215, 163, 112, 26, 64], [2, 43, 135, 22, 217, 78, 27, 64], [178, 157, 239, 167, 198, 203, 34, 64], [92, 143, 194, 245, 40, 92, 32, 64], [76, 55, 137, 65, 96, 229, 32, 64], [193, 202, 161, 69, 182, 115, 22, 64], [57, 180, 200, 118, 190, 31, 21, 64], [66, 96, 229, 208, 34, 219, 18, 64], [23, 217, 206, 247, 83, 227, 20, 64], [94, 186, 73, 12, 2, 43, 13, 64], [14, 45, 178, 157, 239, 167, 10, 64], [102, 102, 102, 102, 102, 102, 6, 64], [45, 178, 157, 239, 167, 70, 17, 64], [182, 243, 253, 212, 120, 105, 19, 64], [25, 4, 86, 14, 45, 178, 12, 64], [217, 206, 247, 83, 227, 165, 24, 64], [184, 30, 133, 235, 81, 56, 19, 64], [205, 204, 204, 204, 204, 76, 16, 64], [88, 57, 180, 200, 118, 190, 12, 64], [178, 157, 239, 167, 198, 75, 16, 64], [102, 102, 102, 102, 102, 230, 17, 64], [150, 67, 139, 108, 231, 251, 11, 64], [250, 126, 106, 188, 116, 147, 12, 64], [51, 51, 51, 51, 51, 51, 0, 64], [113, 61, 10, 215, 163, 112, 255, 63], [88, 57, 180, 200, 118, 190, 249, 63], [55, 137, 65, 96, 229, 208, 242, 63], [94, 186, 73, 12, 2, 43, 253, 63], [186, 73, 12, 2, 43, 135, 198, 63], [250, 126, 106, 188, 116, 147, 184, 63], [125, 63, 53, 94, 186, 73, 224, 63], [115, 104, 145, 237, 124, 63, 233, 191], [188, 116, 147, 24, 4, 86, 222, 63], [23, 217, 206, 247, 83, 227, 233, 63], [10, 215, 163, 112, 61, 10, 227, 191], [57, 180, 200, 118, 190, 159, 230, 63], [117, 147, 24, 4, 86, 14, 17, 64], [219, 249, 126, 106, 188, 116, 17, 64], [35, 219, 249, 126, 106, 60, 19, 64], [125, 63, 53, 94, 186, 201, 18, 64], [88, 57, 180, 200, 118, 62, 22, 64], [225, 122, 20, 174, 71, 225, 24, 64], [57, 180, 200, 118, 190, 159, 24, 64], [137, 65, 96, 229, 208, 162, 18, 64], [150, 67, 139, 108, 231, 251, 18, 64], [125, 63, 53, 94, 186, 73, 14, 64], [41, 92, 143, 194, 245, 40, 14, 64], [2, 43, 135, 22, 217, 206, 6, 64], [139, 108, 231, 251, 169, 241, 2, 64], [143, 194, 245, 40, 92, 143, 252, 63], [162, 69, 182, 243, 253, 212, 242, 63], [164, 112, 61, 10, 215, 163, 242, 63], [225, 122, 20, 174, 71, 225, 2, 64], [10, 215, 163, 112, 61, 10, 251, 63], [145, 237, 124, 63, 53, 94, 12, 64], [59, 223, 79, 141, 151, 110, 14, 64], [80, 141, 151, 110, 18, 131, 14, 64], [27, 47, 221, 36, 6, 129, 12, 64], [248, 83, 227, 165, 155, 196, 17, 64], [86, 14, 45, 178, 157, 239, 19, 64], [190, 159, 26, 47, 221, 164, 21, 64], [248, 83, 227, 165, 155, 196, 24, 64], [176, 114, 104, 145, 237, 124, 19, 64], [18, 131, 192, 202, 161, 69, 24, 64], [70, 182, 243, 253, 212, 120, 27, 64], [135, 22, 217, 206, 247, 83, 21, 64], [176, 114, 104, 145, 237, 252, 26, 64], [31, 133, 235, 81, 184, 158, 24, 64], [137, 65, 96, 229, 208, 162, 21, 64], [156, 196, 32, 176, 114, 232, 27, 64], [252, 169, 241, 210, 77, 226, 22, 64], [193, 202, 161, 69, 182, 243, 10, 64], [10, 215, 163, 112, 61, 10, 2, 64], [57, 180, 200, 118, 190, 159, 13, 64], [209, 34, 219, 249, 126, 106, 18, 64], [160, 26, 47, 221, 36, 6, 6, 64], [4, 86, 14, 45, 178, 157, 253, 63], [111, 18, 131, 192, 202, 161, 10, 64], [238, 124, 63, 53, 94, 186, 16, 64], [244, 253, 212, 120, 233, 38, 13, 64], [90, 100, 59, 223, 79, 141, 2, 64], [172, 28, 90, 100, 59, 223, 255, 63], [68, 139, 108, 231, 251, 169, 253, 63], [39, 49, 8, 172, 28, 90, 3, 64], [106, 188, 116, 147, 24, 4, 244, 63], [207, 247, 83, 227, 165, 155, 11, 64], [86, 14, 45, 178, 157, 111, 17, 64], [137, 65, 96, 229, 208, 34, 10, 64], [43, 135, 22, 217, 206, 247, 1, 64], [49, 8, 172, 28, 90, 228, 16, 64], [158, 239, 167, 198, 75, 55, 16, 64], [41, 92, 143, 194, 245, 40, 16, 64], [152, 110, 18, 131, 192, 74, 22, 64], [197, 32, 176, 114, 104, 145, 24, 64], [129, 149, 67, 139, 108, 231, 11, 64], [180, 200, 118, 190, 159, 26, 17, 64], [92, 143, 194, 245, 40, 92, 6, 64], [115, 104, 145, 237, 124, 63, 253, 63], [59, 223, 79, 141, 151, 110, 7, 64], [123, 20, 174, 71, 225, 122, 6, 64], [39, 49, 8, 172, 28, 90, 252, 63], [201, 118, 190, 159, 26, 47, 237, 63], [240, 167, 198, 75, 55, 137, 0, 64], [20, 174, 71, 225, 122, 20, 248, 63], [25, 4, 86, 14, 45, 178, 221, 63], [180, 200, 118, 190, 159, 26, 1, 64], [106, 188, 116, 147, 24, 4, 238, 63], [201, 118, 190, 159, 26, 47, 2, 64], [223, 79, 141, 151, 110, 18, 17, 64], [215, 163, 112, 61, 10, 87, 18, 64], [231, 251, 169, 241, 210, 77, 20, 64], [180, 200, 118, 190, 159, 26, 19, 64], [197, 32, 176, 114, 104, 145, 25, 64], [51, 51, 51, 51, 51, 179, 27, 64], [123, 20, 174, 71, 225, 122, 28, 64], [172, 28, 90, 100, 59, 223, 31, 64], [66, 96, 229, 208, 34, 219, 29, 64], [133, 235, 81, 184, 30, 133, 24, 64], [240, 167, 198, 75, 55, 137, 25, 64], [10, 215, 163, 112, 61, 138, 24, 64], [215, 163, 112, 61, 10, 215, 16, 64], [150, 67, 139, 108, 231, 251, 16, 64], [205, 204, 204, 204, 204, 76, 25, 64], [90, 100, 59, 223, 79, 13, 21, 64], [156, 196, 32, 176, 114, 232, 29, 64], [29, 90, 100, 59, 223, 143, 32, 64], [12, 2, 43, 135, 22, 89, 30, 64], [14, 45, 178, 157, 239, 39, 28, 64], [242, 210, 77, 98, 16, 24, 34, 64], [106, 188, 116, 147, 24, 68, 34, 64], [2, 43, 135, 22, 217, 78, 35, 64], [174, 71, 225, 122, 20, 46, 35, 64], [215, 163, 112, 61, 10, 87, 37, 64], [174, 71, 225, 122, 20, 110, 34, 64], [225, 122, 20, 174, 71, 97, 34, 64], [92, 143, 194, 245, 40, 28, 36, 64], [160, 26, 47, 221, 36, 6, 32, 64], [186, 73, 12, 2, 43, 7, 28, 64], [139, 108, 231, 251, 169, 113, 29, 64], [250, 126, 106, 188, 116, 147, 24, 64], [51, 51, 51, 51, 51, 179, 23, 64], [184, 30, 133, 235, 81, 56, 22, 64], [55, 137, 65, 96, 229, 80, 25, 64], [168, 198, 75, 55, 137, 65, 19, 64], [250, 126, 106, 188, 116, 147, 19, 64], [37, 6, 129, 149, 67, 11, 19, 64]]
+                        </ieee_754_byte_array>
+                    </x>
+                    <y type="list">
+                        <value>
+                            [10.188, 9.889, 9.712, 10.745, 8.674, 7.991, 10.291, 11.073, 9.416, 8.385, 9.152, 7.243, 6.302, 7.443, 6.483, 7.963, 8.253, 7.605, 8.842, 9.327, 10.088, 7.251, 8.285, 6.099, 5.309, 5.986, 4.953, 6.396, 7.471, 6.106, 5.775, 5.225, 4.796, 4.954, 3.787, 4.949, 6.853, 7.828, 6.775, 6.72, 6.853, 8.068, 6.222, 5.251, 6.956, 6.273, 7.706, 7.634, 8.841, 6.847, 5.889, 7.36, 6.511, 8.23, 7.62, 8.669, 9.269, 9.652, 8.174, 9.362, 7.546, 6.604, 8.253, 9.095, 7.354, 7.976, 6.886, 6.258, 5.824, 5.499, 6.846, 5.57, 5.985, 5.19, 4.766, 8.771, 8.245, 9.789, 10.161, 10.351, 10.605, 11.61, 11.341, 12.287, 12.322, 11.787, 13.41, 9.322, 9.015, 8.776, 9.052, 7.758, 7.826, 7.99, 8.977, 7.248, 7.894, 8.285, 6.37, 6.214, 5.342, 5.431, 3.973, 3.943, 3.23, 3.234, 2.212, 3.991, 3.892, 3.624, 5.96, 5.908, 3.339, 3.179, 2.98, 3.15, 2.375, 2.876, 2.616, 3.262, 1.675, 3.264, 4.305, 2.758, 4.055, 2.299, 0.876, 0.258, 0.312, 0.871, -1.106, -1.253, -1.489, -2.564, -1.049, -1.041, -1.011, -0.052, -1.97, -2.74, -1.931, -2.037, -1.962, -2.949, -2.983, -3.917, -4.588, -4.488, -3.289, -3.932]
+                        </value>
+                        <ieee_754_byte_array>
+                            [[199, 75, 55, 137, 65, 96, 36, 64], [186, 73, 12, 2, 43, 199, 35, 64], [6, 129, 149, 67, 139, 108, 35, 64], [61, 10, 215, 163, 112, 125, 37, 64], [12, 2, 43, 135, 22, 89, 33, 64], [16, 88, 57, 180, 200, 246, 31, 64], [162, 69, 182, 243, 253, 148, 36, 64], [76, 55, 137, 65, 96, 37, 38, 64], [162, 69, 182, 243, 253, 212, 34, 64], [133, 235, 81, 184, 30, 197, 32, 64], [231, 251, 169, 241, 210, 77, 34, 64], [70, 182, 243, 253, 212, 248, 28, 64], [104, 145, 237, 124, 63, 53, 25, 64], [18, 131, 192, 202, 161, 197, 29, 64], [59, 223, 79, 141, 151, 238, 25, 64], [39, 49, 8, 172, 28, 218, 31, 64], [168, 198, 75, 55, 137, 129, 32, 64], [236, 81, 184, 30, 133, 107, 30, 64], [201, 118, 190, 159, 26, 175, 33, 64], [129, 149, 67, 139, 108, 167, 34, 64], [147, 24, 4, 86, 14, 45, 36, 64], [27, 47, 221, 36, 6, 1, 29, 64], [82, 184, 30, 133, 235, 145, 32, 64], [76, 55, 137, 65, 96, 101, 24, 64], [35, 219, 249, 126, 106, 60, 21, 64], [139, 108, 231, 251, 169, 241, 23, 64], [29, 90, 100, 59, 223, 207, 19, 64], [47, 221, 36, 6, 129, 149, 25, 64], [252, 169, 241, 210, 77, 226, 29, 64], [6, 129, 149, 67, 139, 108, 24, 64], [154, 153, 153, 153, 153, 25, 23, 64], [102, 102, 102, 102, 102, 230, 20, 64], [201, 118, 190, 159, 26, 47, 19, 64], [55, 137, 65, 96, 229, 208, 19, 64], [178, 157, 239, 167, 198, 75, 14, 64], [178, 157, 239, 167, 198, 203, 19, 64], [182, 243, 253, 212, 120, 105, 27, 64], [29, 90, 100, 59, 223, 79, 31, 64], [154, 153, 153, 153, 153, 25, 27, 64], [225, 122, 20, 174, 71, 225, 26, 64], [182, 243, 253, 212, 120, 105, 27, 64], [137, 65, 96, 229, 208, 34, 32, 64], [23, 217, 206, 247, 83, 227, 24, 64], [27, 47, 221, 36, 6, 1, 21, 64], [109, 231, 251, 169, 241, 210, 27, 64], [100, 59, 223, 79, 141, 23, 25, 64], [109, 231, 251, 169, 241, 210, 30, 64], [240, 167, 198, 75, 55, 137, 30, 64], [59, 223, 79, 141, 151, 174, 33, 64], [23, 217, 206, 247, 83, 99, 27, 64], [117, 147, 24, 4, 86, 142, 23, 64], [113, 61, 10, 215, 163, 112, 29, 64], [37, 6, 129, 149, 67, 11, 26, 64], [246, 40, 92, 143, 194, 117, 32, 64], [123, 20, 174, 71, 225, 122, 30, 64], [74, 12, 2, 43, 135, 86, 33, 64], [125, 63, 53, 94, 186, 137, 34, 64], [231, 251, 169, 241, 210, 77, 35, 64], [12, 2, 43, 135, 22, 89, 32, 64], [211, 77, 98, 16, 88, 185, 34, 64], [201, 118, 190, 159, 26, 47, 30, 64], [209, 34, 219, 249, 126, 106, 26, 64], [168, 198, 75, 55, 137, 129, 32, 64], [113, 61, 10, 215, 163, 48, 34, 64], [209, 34, 219, 249, 126, 106, 29, 64], [129, 149, 67, 139, 108, 231, 31, 64], [37, 6, 129, 149, 67, 139, 27, 64], [213, 120, 233, 38, 49, 8, 25, 64], [178, 157, 239, 167, 198, 75, 23, 64], [229, 208, 34, 219, 249, 254, 21, 64], [252, 169, 241, 210, 77, 98, 27, 64], [72, 225, 122, 20, 174, 71, 22, 64], [113, 61, 10, 215, 163, 240, 23, 64], [195, 245, 40, 92, 143, 194, 20, 64], [170, 241, 210, 77, 98, 16, 19, 64], [152, 110, 18, 131, 192, 138, 33, 64], [61, 10, 215, 163, 112, 125, 32, 64], [135, 22, 217, 206, 247, 147, 35, 64], [223, 79, 141, 151, 110, 82, 36, 64], [193, 202, 161, 69, 182, 179, 36, 64], [246, 40, 92, 143, 194, 53, 37, 64], [184, 30, 133, 235, 81, 56, 39, 64], [59, 223, 79, 141, 151, 174, 38, 64], [109, 231, 251, 169, 241, 146, 40, 64], [190, 159, 26, 47, 221, 164, 40, 64], [109, 231, 251, 169, 241, 146, 39, 64], [82, 184, 30, 133, 235, 209, 42, 64], [190, 159, 26, 47, 221, 164, 34, 64], [72, 225, 122, 20, 174, 7, 34, 64], [90, 100, 59, 223, 79, 141, 33, 64], [180, 200, 118, 190, 159, 26, 34, 64], [213, 120, 233, 38, 49, 8, 31, 64], [231, 251, 169, 241, 210, 77, 31, 64], [246, 40, 92, 143, 194, 245, 31, 64], [78, 98, 16, 88, 57, 244, 33, 64], [203, 161, 69, 182, 243, 253, 28, 64], [250, 126, 106, 188, 116, 147, 31, 64], [82, 184, 30, 133, 235, 145, 32, 64], [123, 20, 174, 71, 225, 122, 25, 64], [66, 96, 229, 208, 34, 219, 24, 64], [145, 237, 124, 63, 53, 94, 21, 64], [211, 77, 98, 16, 88, 185, 21, 64], [98, 16, 88, 57, 180, 200, 15, 64], [37, 6, 129, 149, 67, 139, 15, 64], [215, 163, 112, 61, 10, 215, 9, 64], [172, 28, 90, 100, 59, 223, 9, 64], [25, 4, 86, 14, 45, 178, 1, 64], [33, 176, 114, 104, 145, 237, 15, 64], [137, 65, 96, 229, 208, 34, 15, 64], [203, 161, 69, 182, 243, 253, 12, 64], [215, 163, 112, 61, 10, 215, 23, 64], [111, 18, 131, 192, 202, 161, 23, 64], [131, 192, 202, 161, 69, 182, 10, 64], [59, 223, 79, 141, 151, 110, 9, 64], [215, 163, 112, 61, 10, 215, 7, 64], [51, 51, 51, 51, 51, 51, 9, 64], [0, 0, 0, 0, 0, 0, 3, 64], [53, 94, 186, 73, 12, 2, 7, 64], [33, 176, 114, 104, 145, 237, 4, 64], [127, 106, 188, 116, 147, 24, 10, 64], [205, 204, 204, 204, 204, 204, 250, 63], [233, 38, 49, 8, 172, 28, 10, 64], [184, 30, 133, 235, 81, 56, 17, 64], [170, 241, 210, 77, 98, 16, 6, 64], [184, 30, 133, 235, 81, 56, 16, 64], [49, 8, 172, 28, 90, 100, 2, 64], [213, 120, 233, 38, 49, 8, 236, 63], [80, 141, 151, 110, 18, 131, 208, 63], [43, 135, 22, 217, 206, 247, 211, 63], [172, 28, 90, 100, 59, 223, 235, 63], [25, 4, 86, 14, 45, 178, 241, 191], [63, 53, 94, 186, 73, 12, 244, 191], [109, 231, 251, 169, 241, 210, 247, 191], [80, 141, 151, 110, 18, 131, 4, 192], [98, 16, 88, 57, 180, 200, 240, 191], [14, 45, 178, 157, 239, 167, 240, 191], [147, 24, 4, 86, 14, 45, 240, 191], [57, 180, 200, 118, 190, 159, 170, 191], [133, 235, 81, 184, 30, 133, 255, 191], [236, 81, 184, 30, 133, 235, 5, 192], [76, 55, 137, 65, 96, 229, 254, 191], [178, 157, 239, 167, 198, 75, 0, 192], [49, 8, 172, 28, 90, 100, 255, 191], [100, 59, 223, 79, 141, 151, 7, 192], [119, 190, 159, 26, 47, 221, 7, 192], [188, 116, 147, 24, 4, 86, 15, 192], [39, 49, 8, 172, 28, 90, 18, 192], [193, 202, 161, 69, 182, 243, 17, 192], [29, 90, 100, 59, 223, 79, 10, 192], [219, 249, 126, 106, 188, 116, 15, 192]]
+                        </ieee_754_byte_array>
+                    </y>
+                    <z type="list">
+                        <value>
+                            [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.88, 10.56, 10.415, 9.754, 8.9, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.64, 3.889, 4.956, 3.7, 3.43, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.35, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.03, -9.41, -8.336, -10.08, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.54, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
+                        </value>
+                        <ieee_754_byte_array>
+                            [[104, 145, 237, 124, 63, 53, 25, 64], [170, 241, 210, 77, 98, 144, 29, 64], [233, 38, 49, 8, 172, 156, 32, 64], [180, 200, 118, 190, 159, 26, 30, 64], [66, 96, 229, 208, 34, 91, 28, 64], [12, 2, 43, 135, 22, 89, 24, 64], [125, 63, 53, 94, 186, 201, 26, 64], [125, 63, 53, 94, 186, 73, 23, 64], [209, 34, 219, 249, 126, 106, 22, 64], [18, 131, 192, 202, 161, 197, 31, 64], [143, 194, 245, 40, 92, 79, 34, 64], [53, 94, 186, 73, 12, 2, 31, 64], [111, 18, 131, 192, 202, 161, 31, 64], [156, 196, 32, 176, 114, 168, 33, 64], [6, 129, 149, 67, 139, 108, 34, 64], [170, 241, 210, 77, 98, 208, 32, 64], [195, 245, 40, 92, 143, 194, 35, 64], [31, 133, 235, 81, 184, 30, 37, 64], [20, 174, 71, 225, 122, 212, 36, 64], [53, 94, 186, 73, 12, 130, 35, 64], [205, 204, 204, 204, 204, 204, 33, 64], [229, 208, 34, 219, 249, 126, 25, 64], [137, 65, 96, 229, 208, 162, 23, 64], [199, 75, 55, 137, 65, 224, 22, 64], [117, 147, 24, 4, 86, 142, 24, 64], [170, 241, 210, 77, 98, 144, 17, 64], [109, 231, 251, 169, 241, 82, 16, 64], [41, 92, 143, 194, 245, 168, 17, 64], [231, 251, 169, 241, 210, 77, 17, 64], [43, 135, 22, 217, 206, 119, 21, 64], [219, 249, 126, 106, 188, 116, 10, 64], [31, 133, 235, 81, 184, 30, 5, 64], [233, 38, 49, 8, 172, 28, 15, 64], [109, 231, 251, 169, 241, 210, 19, 64], [154, 153, 153, 153, 153, 153, 13, 64], [113, 61, 10, 215, 163, 112, 11, 64], [139, 108, 231, 251, 169, 241, 3, 64], [80, 141, 151, 110, 18, 131, 6, 64], [170, 241, 210, 77, 98, 16, 5, 64], [201, 118, 190, 159, 26, 47, 247, 63], [211, 77, 98, 16, 88, 57, 11, 64], [250, 126, 106, 188, 116, 147, 12, 64], [193, 202, 161, 69, 182, 243, 2, 64], [115, 104, 145, 237, 124, 63, 2, 64], [86, 14, 45, 178, 157, 239, 245, 63], [92, 143, 194, 245, 40, 92, 235, 63], [23, 217, 206, 247, 83, 227, 253, 63], [96, 229, 208, 34, 219, 249, 214, 63], [223, 79, 141, 151, 110, 18, 195, 63], [158, 239, 167, 198, 75, 55, 209, 191], [41, 92, 143, 194, 245, 40, 172, 191], [125, 63, 53, 94, 186, 73, 244, 191], [4, 86, 14, 45, 178, 157, 251, 191], [219, 249, 126, 106, 188, 116, 227, 191], [139, 108, 231, 251, 169, 241, 162, 63], [213, 120, 233, 38, 49, 8, 246, 191], [35, 219, 249, 126, 106, 188, 196, 63], [49, 8, 172, 28, 90, 100, 231, 63], [162, 69, 182, 243, 253, 212, 2, 192], [102, 102, 102, 102, 102, 102, 1, 192], [43, 135, 22, 217, 206, 247, 11, 192], [109, 231, 251, 169, 241, 210, 12, 192], [6, 129, 149, 67, 139, 108, 18, 192], [178, 157, 239, 167, 198, 203, 16, 192], [63, 53, 94, 186, 73, 140, 21, 192], [131, 192, 202, 161, 69, 54, 23, 192], [98, 16, 88, 57, 180, 200, 24, 192], [141, 151, 110, 18, 131, 64, 18, 192], [47, 221, 36, 6, 129, 149, 20, 192], [102, 102, 102, 102, 102, 102, 17, 192], [53, 94, 186, 73, 12, 2, 8, 192], [82, 184, 30, 133, 235, 81, 254, 191], [66, 96, 229, 208, 34, 219, 243, 191], [182, 243, 253, 212, 120, 233, 244, 191], [45, 178, 157, 239, 167, 198, 3, 192], [78, 98, 16, 88, 57, 52, 22, 192], [135, 22, 217, 206, 247, 83, 22, 192], [29, 90, 100, 59, 223, 79, 25, 192], [250, 126, 106, 188, 116, 19, 25, 192], [127, 106, 188, 116, 147, 24, 29, 192], [113, 61, 10, 215, 163, 240, 26, 192], [244, 253, 212, 120, 233, 166, 31, 192], [240, 167, 198, 75, 55, 9, 33, 192], [213, 120, 233, 38, 49, 136, 28, 192], [162, 69, 182, 243, 253, 148, 33, 192], [203, 161, 69, 182, 243, 189, 35, 192], [10, 215, 163, 112, 61, 202, 32, 192], [254, 212, 120, 233, 38, 177, 32, 192], [94, 186, 73, 12, 2, 43, 33, 192], [78, 98, 16, 88, 57, 244, 33, 192], [16, 88, 57, 180, 200, 118, 33, 192], [27, 47, 221, 36, 6, 1, 36, 192], [246, 40, 92, 143, 194, 181, 36, 192], [12, 2, 43, 135, 22, 89, 38, 192], [94, 186, 73, 12, 2, 43, 39, 192], [172, 28, 90, 100, 59, 223, 39, 192], [248, 83, 227, 165, 155, 132, 37, 192], [154, 153, 153, 153, 153, 217, 38, 192], [117, 147, 24, 4, 86, 206, 34, 192], [227, 165, 155, 196, 32, 240, 32, 192], [100, 59, 223, 79, 141, 215, 35, 192], [143, 194, 245, 40, 92, 15, 38, 192], [82, 184, 30, 133, 235, 209, 34, 192], [121, 233, 38, 49, 8, 172, 32, 192], [41, 92, 143, 194, 245, 40, 36, 192], [66, 96, 229, 208, 34, 219, 34, 192], [162, 69, 182, 243, 253, 148, 36, 192], [209, 34, 219, 249, 126, 170, 38, 192], [131, 192, 202, 161, 69, 54, 39, 192], [168, 198, 75, 55, 137, 65, 40, 192], [25, 4, 86, 14, 45, 114, 37, 192], [240, 167, 198, 75, 55, 201, 39, 192], [29, 90, 100, 59, 223, 143, 35, 192], [94, 186, 73, 12, 2, 235, 37, 192], [240, 167, 198, 75, 55, 137, 33, 192], [199, 75, 55, 137, 65, 96, 29, 192], [254, 212, 120, 233, 38, 241, 33, 192], [72, 225, 122, 20, 174, 135, 35, 192], [197, 32, 176, 114, 104, 145, 30, 192], [221, 36, 6, 129, 149, 67, 31, 192], [27, 47, 221, 36, 6, 1, 29, 192], [92, 143, 194, 245, 40, 220, 26, 192], [188, 116, 147, 24, 4, 86, 26, 192], [143, 194, 245, 40, 92, 15, 23, 192], [51, 51, 51, 51, 51, 179, 28, 192], [82, 184, 30, 133, 235, 209, 27, 192], [250, 126, 106, 188, 116, 147, 34, 192], [139, 108, 231, 251, 169, 113, 34, 192], [2, 43, 135, 22, 217, 78, 35, 192], [49, 8, 172, 28, 90, 100, 35, 192], [248, 83, 227, 165, 155, 4, 36, 192], [66, 96, 229, 208, 34, 219, 37, 192], [115, 104, 145, 237, 124, 127, 36, 192], [23, 217, 206, 247, 83, 99, 36, 192], [51, 51, 51, 51, 51, 243, 34, 192], [254, 212, 120, 233, 38, 49, 39, 192], [20, 174, 71, 225, 122, 20, 39, 192], [199, 75, 55, 137, 65, 160, 39, 192], [166, 155, 196, 32, 176, 114, 41, 192], [137, 65, 96, 229, 208, 98, 42, 192], [160, 26, 47, 221, 36, 70, 42, 192], [190, 159, 26, 47, 221, 228, 33, 192], [127, 106, 188, 116, 147, 24, 31, 192], [106, 188, 116, 147, 24, 196, 34, 192], [147, 24, 4, 86, 14, 173, 36, 192], [78, 98, 16, 88, 57, 244, 32, 192], [45, 178, 157, 239, 167, 70, 32, 192], [98, 16, 88, 57, 180, 8, 34, 192], [143, 194, 245, 40, 92, 15, 29, 192], [129, 149, 67, 139, 108, 231, 24, 192]]
+                        </ieee_754_byte_array>
+                    </z>
+                </mol_cont>
+            </model>
+        </structure>
+    </pipe>
+</relax>
