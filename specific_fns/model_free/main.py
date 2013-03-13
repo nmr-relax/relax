@@ -45,6 +45,47 @@ from user_functions.objects import Desc_container
 class Model_free_main:
     """Class containing functions specific to model-free analysis."""
 
+    default_value_doc = Desc_container("Model-free default values")
+    _table = uf_tables.add_table(label="table: mf default values", caption="Model-free default values.")
+    _table.add_headings(["Data type", "Object name", "Value"])
+    _table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
+    _table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
+    _table.add_row(["Correlation time te", "'te'", "100 * 1e-12"])
+    _table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
+    _table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
+    _table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
+    _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
+    default_value_doc.add_table(_table.label)
+
+    return_data_name_doc = Desc_container("Model-free data type string matching patterns")
+    _table = uf_tables.add_table(label="table: mf data type patterns", caption="Model-free data type string matching patterns.")
+    _table.add_headings(["Data type", "Object name"])
+    _table.add_row(["Local tm", "'local_tm'"])
+    _table.add_row(["Order parameter S2", "'s2'"])
+    _table.add_row(["Order parameter S2f", "'s2f'"])
+    _table.add_row(["Order parameter S2s", "'s2s'"])
+    _table.add_row(["Correlation time te", "'te'"])
+    _table.add_row(["Correlation time tf", "'tf'"])
+    _table.add_row(["Correlation time ts", "'ts'"])
+    _table.add_row(["Chemical exchange", "'rex'"])
+    _table.add_row(["CSA", "'csa'"])
+    return_data_name_doc.add_table(_table.label)
+
+    set_doc = Desc_container("Model-free set details")
+    set_doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.")
+    set_doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:")
+    set_doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
+    set_doc.add_paragraph("where:")
+    set_doc.add_list_element("rex is the chemical exchange value for the current frequency.")
+    set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
+    set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
+
+    write_doc = Desc_container("Model-free parameter writing details")
+    write_doc.add_paragraph("For the model-free theory, it is assumed that Rex values are scaled quadratically with field strength.  The values will seem quite small as they will be written out as a field strength independent value.  Hence please use the following formula to convert the value to that expected for a given magnetic field strength:")
+    write_doc.add_verbatim("    Rex = value * (2.0 * pi * frequency) ** 2")
+    write_doc.add_paragraph("The frequency is that of the proton in Hertz.")
+
+
     def _are_mf_params_set(self, spin):
         """Test if the model-free parameter values are set.
 
@@ -1309,18 +1350,6 @@ class Model_free_main:
             return types[param]
 
 
-    default_value_doc = Desc_container("Model-free default values")
-    _table = uf_tables.add_table(label="table: mf default values", caption="Model-free default values.")
-    _table.add_headings(["Data type", "Object name", "Value"])
-    _table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
-    _table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
-    _table.add_row(["Correlation time te", "'te'", "100 * 1e-12"])
-    _table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
-    _table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
-    _table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
-    _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
-    default_value_doc.add_table(_table.label)
-
     def default_value(self, param):
         """The default model-free parameter values.
 
@@ -2053,31 +2082,6 @@ class Model_free_main:
         # Final printout.
         if verbose and not deselect_flag:
             print("No spins have been deselected.")
-
-
-    return_data_name_doc = Desc_container("Model-free data type string matching patterns")
-    _table = uf_tables.add_table(label="table: mf data type patterns", caption="Model-free data type string matching patterns.")
-    _table.add_headings(["Data type", "Object name"])
-    _table.add_row(["Local tm", "'local_tm'"])
-    _table.add_row(["Order parameter S2", "'s2'"])
-    _table.add_row(["Order parameter S2f", "'s2f'"])
-    _table.add_row(["Order parameter S2s", "'s2s'"])
-    _table.add_row(["Correlation time te", "'te'"])
-    _table.add_row(["Correlation time tf", "'tf'"])
-    _table.add_row(["Correlation time ts", "'ts'"])
-    _table.add_row(["Chemical exchange", "'rex'"])
-    _table.add_row(["CSA", "'csa'"])
-    return_data_name_doc.add_table(_table.label)
-
-
-    set_doc = Desc_container("Model-free set details")
-    set_doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.")
-    set_doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:")
-    set_doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
-    set_doc.add_paragraph("where:")
-    set_doc.add_list_element("rex is the chemical exchange value for the current frequency.")
-    set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
-    set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
 
 
     def set_error(self, model_info, index, error):
