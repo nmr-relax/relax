@@ -827,15 +827,13 @@ def write_data(out=None, headings=None, data=None, sep=None):
             out.write('\n')
 
 
-def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None, float_format="%20.15f"):
+def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None, float_format="%20.15g"):
     """Generator function for reading the spin specific data from file.
 
     Description
     ===========
 
-    This function writes a columnar formatted file where each line corresponds to a spin system.
-    Spin identification is either through a spin ID string or through columns containing the
-    molecule name, residue name and number, and/or spin name and number.
+    This function writes a columnar formatted file where each line corresponds to a spin system.  Spin identification is either through a spin ID string or through columns containing the molecule name, residue name and number, and/or spin name and number.
 
 
     @param file:            The name of the file to write the data to (or alternatively an already opened file object).
