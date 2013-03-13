@@ -37,6 +37,14 @@ class API_base(object):
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
 
+    # Empty documentation strings.
+    default_value_doc = ""
+    eliminate_doc = ""
+    return_data_name_doc = ""
+    set_doc = ""
+    write_doc = ""
+
+
     def __init__(self):
         """Set up the specific objects."""
 
@@ -183,8 +191,6 @@ class API_base(object):
         return self.PARAMS.get_type(param)
 
 
-    # Empty documentation string.
-    default_value_doc = ""
     def default_value(self, param):
         """Return the default parameter values.
 
@@ -233,8 +239,6 @@ class API_base(object):
         raise RelaxImplementError('duplicate_data')
 
 
-    # Empty documentation string.
-    eliminate_doc = ""
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model elimination method.
 
@@ -555,8 +559,6 @@ class API_base(object):
         return self.PARAMS.get_desc(name)
 
 
-    # Empty documentation string.
-    return_data_name_doc = ""
     def return_data_name(self, param):
         """Return a unique identifying string for the given parameter.
 
@@ -636,10 +638,6 @@ class API_base(object):
 
         # Not implemented.
         raise RelaxImplementError('return_value')
-
-
-    # Empty documentation string.
-    set_doc = ""
 
 
     def set_error(self, model_info, index, error):
