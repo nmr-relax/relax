@@ -1,0 +1,327 @@
+<?xml version="1.0" ?>
+<relax file_version="2" revision="18589" time="Fri Mar  8 08:24:45 2013" url="svn+ssh://bugman@svn.gna.org/svn/relax/trunk" version="repository checkout" xmlns="http://www.nmr-relax.com">
+    <relax_gui desc="The relax GUI information store.">
+        <analyses desc="GUI information specific to relax analysis types">
+            <analysis desc="GUI information for a relax analysis">
+                <analysis_name type="str">
+                    <value>
+                        'Model-free'
+                    </value>
+                </analysis_name>
+                <analysis_type type="str">
+                    <value>
+                        'model-free'
+                    </value>
+                </analysis_type>
+                <diff_tensor_grid_inc type="dict">
+                    <value>
+                        {'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}
+                    </value>
+                </diff_tensor_grid_inc>
+                <grid_inc type="int">
+                    <value>
+                        11
+                    </value>
+                </grid_inc>
+                <local_tm_models type="list">
+                    <value>
+                        ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+                    </value>
+                </local_tm_models>
+                <max_iter type="int">
+                    <value>
+                        30
+                    </value>
+                </max_iter>
+                <mc_sim_num type="int">
+                    <value>
+                        500
+                    </value>
+                </mc_sim_num>
+                <mf_models type="list">
+                    <value>
+                        ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+                    </value>
+                </mf_models>
+                <pipe_bundle type="str">
+                    <value>
+                        'mf (Fri Mar  8 07:43:00 2013)'
+                    </value>
+                </pipe_bundle>
+                <pipe_name type="str">
+                    <value>
+                        'origin - mf (Fri Mar  8 07:43:00 2013)'
+                    </value>
+                </pipe_name>
+                <save_dir type="str">
+                    <value>
+                        '/data/relax/debugging/bug_20563'
+                    </value>
+                </save_dir>
+            </analysis>
+        </analyses>
+        <free_file_format desc="The column numbers and separator for the free format file.">
+            <data_col type="int">
+                <value>
+                    6
+                </value>
+            </data_col>
+            <error_col type="int">
+                <value>
+                    7
+                </value>
+            </error_col>
+            <mol_name_col type="int">
+                <value>
+                    1
+                </value>
+            </mol_name_col>
+            <res_name_col type="int">
+                <value>
+                    3
+                </value>
+            </res_name_col>
+            <res_num_col type="int">
+                <value>
+                    2
+                </value>
+            </res_num_col>
+            <sep type="None">
+                <value>
+                    None
+                </value>
+            </sep>
+            <spin_id_col type="None">
+                <value>
+                    None
+                </value>
+            </spin_id_col>
+            <spin_name_col type="int">
+                <value>
+                    5
+                </value>
+            </spin_name_col>
+            <spin_num_col type="int">
+                <value>
+                    4
+                </value>
+            </spin_num_col>
+        </free_file_format>
+    </relax_gui>
+    <current_pipe type="str">
+        <value>
+            'origin - mf (Fri Mar  8 07:43:00 2013)'
+        </value>
+    </current_pipe>
+    <pipe_bundles type="dict">
+        <value>
+            {'mf (Fri Mar  8 07:43:00 2013)': ['origin - mf (Fri Mar  8 07:43:00 2013)']}
+        </value>
+    </pipe_bundles>
+    <pipe desc="The contents of a relax data pipe" name="origin - mf (Fri Mar  8 07:43:00 2013)" type="mf">
+        <global desc="Global data located in the top level of the data pipe">
+            <frq type="dict">
+                <value>
+                    {'r1_800': 800000000.0, 'noe': 800000000.0, 'r2_600': 600000000.0, 'r2_800': 800000000.0}
+                </value>
+                <ieee_754_byte_array>
+                    {'r1_800': [0, 0, 0, 0, 132, 215, 199, 65], 'noe': [0, 0, 0, 0, 132, 215, 199, 65], 'r2_800': [0, 0, 0, 0, 132, 215, 199, 65], 'r2_600': [0, 0, 0, 0, 163, 225, 193, 65]}
+                </ieee_754_byte_array>
+            </frq>
+            <ri_ids type="list">
+                <value>
+                    ['noe', 'r1_800', 'r2_800', 'r2_600']
+                </value>
+            </ri_ids>
+            <ri_type type="dict">
+                <value>
+                    {'r1_800': 'R1', 'noe': 'NOE', 'r2_600': 'R2', 'r2_800': 'R2'}
+                </value>
+            </ri_type>
+        </global>
+        <hybrid desc="Data pipe hybridisation information">
+            <pipes>
+                []
+            </pipes>
+        </hybrid>
+        <exp_info desc="Experimental information">
+            <peak_intensity_type type="dict">
+                <value>
+                    {'r1_800': 'height', 'r2_600': 'height', 'noe': 'height', 'r2_800': 'height'}
+                </value>
+            </peak_intensity_type>
+            <temp_calibration type="dict">
+                <value>
+                    {'r1_800': 'methanol', 'r2_600': 'methanol', 'r2_800': 'methanol', 'noe': 'methanol'}
+                </value>
+            </temp_calibration>
+            <temp_control type="dict">
+                <value>
+                    {'r1_800': 'single scan interleaving', 'noe': 'single scan interleaving', 'r2_600': 'single scan interleaving', 'r2_800': 'single scan interleaving'}
+                </value>
+            </temp_control>
+        </exp_info>
+        <mol desc="Molecule container" name="PrtG" type="None">
+            <res desc="Residue container" name="LYS" num="9">
+                <spin desc="Spin container" name="N" num="11">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="float">
+                        <value>
+                            -0.000172
+                        </value>
+                        <ieee_754_byte_array>
+                            [54, 119, 244, 191, 92, 139, 38, 191]
+                        </ieee_754_byte_array>
+                    </csa>
+                    <ri_data desc="The relaxation data" type="dict">
+                        <value>
+                            {'r1_800': 1.716915, 'noe': 0.80621, 'r2_600': 19.124116, 'r2_800': 26.164312}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [127, 48, 240, 220, 123, 120, 251, 63], 'noe': [63, 169, 246, 233, 120, 204, 233, 63], 'r2_800': [33, 87, 234, 89, 16, 42, 58, 64], 'r2_600': [12, 233, 240, 16, 198, 31, 51, 64]}
+                        </ieee_754_byte_array>
+                    </ri_data>
+                    <ri_data_err desc="The relaxation data errors" type="dict">
+                        <value>
+                            {'r1_800': 0.11069, 'noe': 0.00659, 'r2_600': 0.453507, 'r2_800': 1.608742}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [131, 134, 254, 9, 46, 86, 188, 63], 'noe': [146, 179, 176, 167, 29, 254, 122, 63], 'r2_800': [226, 57, 91, 64, 104, 189, 249, 63], 'r2_600': [222, 115, 96, 57, 66, 6, 221, 63]}
+                        </ieee_754_byte_array>
+                    </ri_data_err>
+                    <element type="str">
+                        <value>
+                            'N'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '15N'
+                        </value>
+                    </isotope>
+                </spin>
+                <spin desc="Spin container" name="H" num="None">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <element type="str">
+                        <value>
+                            'H'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '1H'
+                        </value>
+                    </isotope>
+                </spin>
+            </res>
+            <res desc="Residue container" name="LYS" num="36">
+                <spin desc="Spin container" name="N" num="16">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <csa desc="Chemical shift anisotropy (unitless)" type="float">
+                        <value>
+                            -0.000172
+                        </value>
+                        <ieee_754_byte_array>
+                            [54, 119, 244, 191, 92, 139, 38, 191]
+                        </ieee_754_byte_array>
+                    </csa>
+                    <ri_data desc="The relaxation data" type="dict">
+                        <value>
+                            {'r1_800': 1.41627, 'noe': 0.8183, 'r2_800': 31.655587}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [12, 229, 68, 187, 10, 169, 246, 63], 'noe': [58, 35, 74, 123, 131, 47, 234, 63], 'r2_800': [201, 174, 180, 140, 212, 167, 63, 64]}
+                        </ieee_754_byte_array>
+                    </ri_data>
+                    <ri_data_err desc="The relaxation data errors" type="dict">
+                        <value>
+                            {'r1_800': 0.114633, 'noe': 0.00526, 'r2_800': 1.813758}
+                        </value>
+                        <ieee_754_byte_array>
+                            {'r1_800': [161, 216, 10, 154, 150, 88, 189, 63], 'noe': [207, 160, 161, 127, 130, 139, 117, 63], 'r2_800': [224, 187, 205, 27, 39, 5, 253, 63]}
+                        </ieee_754_byte_array>
+                    </ri_data_err>
+                    <element type="str">
+                        <value>
+                            'N'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '15N'
+                        </value>
+                    </isotope>
+                </spin>
+                <spin desc="Spin container" name="H" num="None">
+                    <select desc="The spin selection flag" type="bool">
+                        <value>
+                            True
+                        </value>
+                    </select>
+                    <element type="str">
+                        <value>
+                            'H'
+                        </value>
+                    </element>
+                    <isotope type="str">
+                        <value>
+                            '1H'
+                        </value>
+                    </isotope>
+                </spin>
+            </res>
+        </mol>
+        <interatomic desc="Interatomic data container" spin_id1="#PrtG:9@N" spin_id2="#PrtG:9@H">
+            <select desc="The spin selection flag" type="bool">
+                <value>
+                    True
+                </value>
+            </select>
+            <dipole_pair type="bool">
+                <value>
+                    True
+                </value>
+            </dipole_pair>
+            <r type="float">
+                <value>
+                    1.02e-10
+                </value>
+                <ieee_754_byte_array>
+                    [11, 45, 225, 165, 156, 9, 220, 61]
+                </ieee_754_byte_array>
+            </r>
+        </interatomic>
+        <interatomic desc="Interatomic data container" spin_id1="#PrtG:36@N" spin_id2="#PrtG:36@H">
+            <select desc="The spin selection flag" type="bool">
+                <value>
+                    True
+                </value>
+            </select>
+            <dipole_pair type="bool">
+                <value>
+                    True
+                </value>
+            </dipole_pair>
+            <r type="float">
+                <value>
+                    1.02e-10
+                </value>
+                <ieee_754_byte_array>
+                    [11, 45, 225, 165, 156, 9, 220, 61]
+                </ieee_754_byte_array>
+            </r>
+        </interatomic>
+    </pipe>
+</relax>
