@@ -583,9 +583,13 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     status.observers.result_file.notify()
 
 
-def create_rotor_pdb(axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, staggered=False):
+def create_rotor_pdb(file=None, dir=None, axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, force=False, staggered=False):
     """Create a PDB representation of a rotor motional model.
 
+    @keyword file:          The name of the PDB file to create.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the PDB file into.
+    @type dir:              str
     @keyword axis:          The vector defining the rotor axis.
     @type axis:             numpy rank-1, 3D array
     @keyword axis_pt:       A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space.
@@ -596,6 +600,8 @@ def create_rotor_pdb(axis=None, axis_pt=True, centre=None, span=2e-9, blade_leng
     @type span:             float
     @keyword blade_length:  The length of the representative rotor blades.
     @type blade_length:     float
+    @keyword force:         A flag which if set will overwrite any pre-existing file.
+    @type force:            bool
     @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
     @type staggered:        bool
     """

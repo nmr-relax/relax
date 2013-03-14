@@ -237,6 +237,24 @@ uf = uf_info.add_uf('structure.create_rotor_pdb')
 uf.title = "Create a PDB file representation of a rotor."
 uf.title_short = "Rotor PDB representation."
 uf.add_keyarg(
+    name = "file",
+    default = "rotor.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory to place the file into.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "axis",
     py_type = "float_array",
     dim = 3,
@@ -270,6 +288,13 @@ uf.add_keyarg(
     py_type = "num",
     desc_short = "blade length",
     desc = "The length of the representative rotor blades."
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if True will overwrite the file if it already exists."
 )
 uf.add_keyarg(
     name = "staggered",
