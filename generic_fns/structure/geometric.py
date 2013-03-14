@@ -22,6 +22,7 @@
 # Python module imports.
 from math import cos, pi, sin
 from numpy import arccos, array, dot, eye, float64, transpose, zeros
+from numpy.linalg import norm
 from os import getcwd
 from string import ascii_uppercase
 from warnings import warn
@@ -32,6 +33,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin
 from generic_fns import pipes
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.mass import centre_of_mass
+from lib.geometry.lines import closest_point_ax
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import get_file_path, open_write_file
@@ -605,6 +607,64 @@ def create_rotor_pdb(file=None, dir=None, axis=None, axis_pt=True, centre=None, 
     @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
     @type staggered:        bool
     """
+
+    # Convert the arguments.
+    axis = array(axis, float64)
+    axis_pt = array(axis_pt, float64)
+    centre = array(centre, float64)
+
+    # Normalise.
+    axis_norm = axis / norm(axis)
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Create the structural object.
+    structure = Internal()
+
+    # Add a structure.
+    structure.add_molecule(name='rotor')
+
+    # Alias the single molecule from the single model.
+    mol = structure.get_molecule('rotor')
+
+    # The central point.
+    point = closest_point_ax(line_pt=axis_pt, axis=axis, point=centre)
+    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='CTR', res_name='AX', res_num=1, pos=point, element='PT')
+
+    # Centre of the propellers.
+    prop1 = point + axis_norm * span * 1e10
+    mol.atom_add(pdb_record='HETATM', atom_num=2, atom_name='PRP', res_name='PR1', res_num=2, pos=prop1, element='SI')
+    mol.atom_connect(index1=0, index2=1)
+
+    # Centre of the propellers.
+    prop2 = point - axis_norm * span * 1e10
+    mol.atom_add(pdb_record='HETATM', atom_num=3, atom_name='PRP', res_name='PR2', res_num=3, pos=prop2, element='SI')
+    mol.atom_connect(index1=0, index2=2)
+
+    # Create the PDB file.
+    ######################
+
+    # Print out.
+    print("\nGenerating the PDB file.")
+
+    # Open the PDB file for writing.
+    tensor_pdb_file = open_write_file(file, dir, force=force)
+
+    # Write the data.
+    structure.write_pdb(tensor_pdb_file)
+
+    # Close the file.
+    tensor_pdb_file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    if dir == None:
+        dir = getcwd()
+    cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
+    status.observers.result_file.notify()
+
 
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
     """Create a PDB representation of the vector distribution.
