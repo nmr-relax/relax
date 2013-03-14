@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -582,6 +582,23 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
     status.observers.result_file.notify()
 
+
+def create_rotor_pdb(axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, staggered=False):
+    """Create a PDB representation of a rotor motional model.
+
+    @keyword axis:          The vector defining the rotor axis.
+    @type axis:             numpy rank-1, 3D array
+    @keyword axis_pt:       A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space.
+    @type axis_pt:          numpy rank-1, 3D array
+    @keyword centre:        The central point of the representation.  If this point is not on the rotor axis, then the closest point on the axis will be used for the centre.
+    @type centre:           numpy rank-1, 3D array
+    @keyword span:          The distance from the central point to the rotor blades (meters).
+    @type span:             float
+    @keyword blade_length:  The length of the representative rotor blades.
+    @type blade_length:     float
+    @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
+    @type staggered:        bool
+    """
 
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
     """Create a PDB representation of the vector distribution.
