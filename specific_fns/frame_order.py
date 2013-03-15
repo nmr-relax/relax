@@ -975,7 +975,7 @@ class Frame_order(API_base, API_common):
         return num
 
 
-    def _pdb_model(self, file=None, dir=None, size=30.0, inc=36, force=False):
+    def _pdb_model(self, file=None, dist_file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
         """Create a PDB file containing a geometric object representing the Frame Order cone models.
 
         @keyword file:      The name of the file of the PDB representation of the frame order dynamics to create.
@@ -990,18 +990,12 @@ class Frame_order(API_base, API_common):
         @type inc:          int
         @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
         @type force:        bool
+        @keyword neg_cone:  A flag which if True will cause the negative cone to be added to the representation.
+        @type neg_cone:     bool
         """
 
         # Test if the current data pipe exists.
         pipes.test()
-
-        # The rigid model cannot be used here.
-        if cdp.model == 'rigid':
-            raise RelaxError("The 'rigid' frame order model has no cone representation.")
-
-        # Test for the necessary data structures.
-        if not hasattr(cdp, 'pivot'):
-            raise RelaxError("The pivot point for the domain motion has not been set.")
 
         # Negative cone flag.
         neg_cone = True
