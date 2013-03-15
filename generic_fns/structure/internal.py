@@ -2310,6 +2310,17 @@ class MolContainer:
         return True
 
 
+    def last_residue(self):
+        """Return the number of the last residue.
+
+        @return:    The last residue number.
+        @rtype:     int
+        """
+
+        # Return the number.
+        return self.res_num[-1]
+
+
     def to_xml(self, doc, element):
         """Create XML elements for the contents of this molecule container.
 
