@@ -255,6 +255,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "rotor_angle",
+    default = 0.0,
+    py_type = "float",
+    desc_short = "rotor angle",
+    desc = "The angle of the rotor motion in degrees."
+)
+uf.add_keyarg(
     name = "axis",
     py_type = "float_array",
     dim = 3,
@@ -306,6 +313,10 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This creates a PDB file representation of a rotor motional model.  The model axis is defined by a vector and a single point on the axis.  The centre of the representation will be taken as the point on the rotor axis closest to the given centre position.  The size of the representation is defined by the span, which is the distance from the central point to the rotors, and the length of the blades.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following is a synthetic example:")
+uf.desc[-1].add_prompt("relax> structure.create_rotor_pdb(file='rotor.pdb', rotor_angle=20.0, axis=[0., 0., 1.], axis_pt=[1., 1., 0.], centre=[0., 0., 2.], span=2e-9, blade_length=1e-9)")
 uf.backend = generic_fns.structure.geometric.create_rotor_pdb
 uf.menu_text = "create_&rotor_pdb"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
