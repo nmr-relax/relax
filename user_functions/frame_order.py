@@ -124,8 +124,36 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 # The frame_order.pdb_model user function.
 uf = uf_info.add_uf('frame_order.pdb_model')
-uf.title = "Create a PDB file representing the Frame Order cone models."
-uf.title_short = "Cone model PDB creation."
+uf.title = "Create a PDB file representation of the frame order dynamics."
+uf.title_short = "Frame order dynamics PDB representation."
+uf.add_keyarg(
+    name = "file",
+    default = "frame_order.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the file of the PDB representation of the frame order dynamics to create.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dist_file",
+    default = "frame_order_distribution.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "distribution file name",
+    desc = "The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is to be located.",
+    can_be_none = True
+)
 uf.add_keyarg(
     name = "size",
     default = 30.0,
@@ -142,29 +170,11 @@ uf.add_keyarg(
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
-    name = "file",
-    default = "cone.pdb",
-    py_type = "str",
-    arg_type = "file sel",
-    desc_short = "file name",
-    desc = "The name of the PDB file to create.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
-    wiz_filesel_style = FD_SAVE
-)
-uf.add_keyarg(
-    name = "dir",
-    py_type = "str",
-    arg_type = "dir",
-    desc_short = "directory name",
-    desc = "The directory where the file is to be located.",
-    can_be_none = True
-)
-uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
     desc_short = "force flag",
-    desc = "A flag which, if set to True, will overwrite the any pre-existing file."
+    desc = "A flag which, if set to True, will overwrite the any pre-existing files."
 )
 # Description.
 uf.desc.append(Desc_container())

@@ -975,19 +975,20 @@ class Frame_order(API_base, API_common):
         return num
 
 
-    def _pdb_model(self, size=30.0, file=None, dir=None, inc=36, force=False):
+    def _pdb_model(self, file=None, dir=None, size=30.0, inc=36, force=False):
         """Create a PDB file containing a geometric object representing the Frame Order cone models.
 
-        @param size:        The size of the geometric object in Angstroms.
-        @type size:         float
-        @param inc:         The number of increments for the filling of the cone objects.
-        @type inc:          int
-        @param file:        The name of the PDB file to create.
+        @keyword file:      The name of the file of the PDB representation of the frame order dynamics to create.
         @type file:         str
-        @param dir:         The name of the directory to place the PDB file into.
+        @keyword dist_file: The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+        @type dist_file:    str
+        @keyword dir:       The name of the directory to place the PDB file into.
         @type dir:          str
-        @param force:       Flag which if set to True will cause any pre-existing file to be
-                            overwritten.
+        @keyword size:      The size of the geometric object in Angstroms.
+        @type size:         float
+        @keyword inc:       The number of increments for the filling of the cone objects.
+        @type inc:          int
+        @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
         @type force:        bool
         """
 
