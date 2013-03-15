@@ -694,7 +694,8 @@ class Frame_order(API_base, API_common):
             # Average multiple atomic positions.
             else:
                 # First throw a warning to tell the user what is happening.
-                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
+                if sim_index == None:
+                    warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
 
                 # The average position.
                 ave_pos = zeros(3, float64)
@@ -865,7 +866,8 @@ class Frame_order(API_base, API_common):
             # Average multiple unit vectors.
             else:
                 # First throw a warning to tell the user what is happening.
-                warn(RelaxWarning("Averaging the %s unit vectors for the RDC for the spin pair '%s' and '%s'." % (len(interatom.vector), interatom.spin_id1, interatom.spin_id2)))
+                if sim_index == None:
+                    warn(RelaxWarning("Averaging the %s unit vectors for the RDC for the spin pair '%s' and '%s'." % (len(interatom.vector), interatom.spin_id1, interatom.spin_id2)))
 
                 # The average position.
                 ave_vector = zeros(3, float64)
