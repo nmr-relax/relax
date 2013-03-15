@@ -93,35 +93,6 @@ uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
-# The frame_order.domain_to_pdb user function.
-uf = uf_info.add_uf('frame_order.domain_to_pdb')
-uf.title = "Match the domains to PDB files."
-uf.title_short = "Domains to PDB matching."
-uf.add_keyarg(
-    name = "domain",
-    py_type = "str",
-    desc_short = "domain",
-    desc = "The domain to associate the PDB file to."
-)
-uf.add_keyarg(
-    name = "pdb",
-    py_type = "str",
-    desc_short = "PDB file",
-    desc = "The PDB file to associate the domain to."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("To display the frame order cone models within Pymol, the two domains need to be associated with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving domain will be rotated to its average position.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:")
-uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')")
-uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')")
-uf.backend = frame_order_obj._domain_to_pdb
-uf.menu_text = "&domain_to_pdb"
-uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
-
-
 # The frame_order.pdb_model user function.
 uf = uf_info.add_uf('frame_order.pdb_model')
 uf.title = "Create a PDB file representation of the frame order dynamics."
