@@ -179,9 +179,12 @@ class Frame_order(API_base, API_common):
 
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
             if cdp.model in ['free rotor', 'iso cone, free rotor']:
-                param_vect = [cdp.ave_pos_beta_sim[sim_index], cdp.ave_pos_gamma_sim[sim_index]]
+                param_vect.append(cdp.ave_pos_beta_sim[sim_index])
+                param_vect.append(cdp.ave_pos_gamma_sim[sim_index])
             else:
-                param_vect = [cdp.ave_pos_alpha_sim[sim_index], cdp.ave_pos_beta_sim[sim_index], cdp.ave_pos_gamma_sim[sim_index]]
+                param_vect.append(cdp.ave_pos_alpha_sim[sim_index])
+                param_vect.append(cdp.ave_pos_beta_sim[sim_index])
+                param_vect.append(cdp.ave_pos_gamma_sim[sim_index])
 
             # Frame order eigenframe - the full frame.
             if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
