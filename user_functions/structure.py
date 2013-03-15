@@ -232,6 +232,100 @@ uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'create_diff_tensor_pdb.png'
 
 
+# The structure.create_rotor_pdb user function.
+uf = uf_info.add_uf('structure.create_rotor_pdb')
+uf.title = "Create a PDB file representation of a rotor."
+uf.title_short = "Rotor PDB representation."
+uf.add_keyarg(
+    name = "file",
+    default = "rotor.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the PDB file.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory to place the file into.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "rotor_angle",
+    default = 0.0,
+    py_type = "float",
+    desc_short = "rotor angle",
+    desc = "The angle of the rotor motion in degrees."
+)
+uf.add_keyarg(
+    name = "axis",
+    py_type = "float_array",
+    dim = 3,
+    desc_short = "rotor axis vector",
+    desc = "The vector defining the rotor axis."
+)
+uf.add_keyarg(
+    name = "axis_pt",
+    py_type = "float_array",
+    dim = 3,
+    desc_short = "rotor axis point",
+    desc = "A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space."
+)
+uf.add_keyarg(
+    name = "centre",
+    py_type = "float_array",
+    dim = 3,
+    desc_short = "central point",
+    desc = "The central point of the representation.  If this point is not on the rotor axis, then the closest point on the axis will be used for the centre."
+)
+uf.add_keyarg(
+    name = "span",
+    default = 2e-9,
+    py_type = "num",
+    desc_short = "representation span",
+    desc = "The distance from the central point to the rotor blades (meters)."
+)
+uf.add_keyarg(
+    name = "blade_length",
+    default = 5e-10,
+    py_type = "num",
+    desc_short = "blade length",
+    desc = "The length of the representative rotor blades."
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if True will overwrite the file if it already exists."
+)
+uf.add_keyarg(
+    name = "staggered",
+    default = False,
+    py_type = "bool",
+    desc_short = "staggered flag",
+    desc = "A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This creates a PDB file representation of a rotor motional model.  The model axis is defined by a vector and a single point on the axis.  The centre of the representation will be taken as the point on the rotor axis closest to the given centre position.  The size of the representation is defined by the span, which is the distance from the central point to the rotors, and the length of the blades.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("The following is a synthetic example:")
+uf.desc[-1].add_prompt("relax> structure.create_rotor_pdb(file='rotor.pdb', rotor_angle=20.0, axis=[0., 0., 1.], axis_pt=[1., 1., 0.], centre=[0., 0., 2.], span=2e-9, blade_length=1e-9)")
+uf.backend = generic_fns.structure.geometric.create_rotor_pdb
+uf.menu_text = "create_&rotor_pdb"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 700)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.create_vector_dist user function.
 uf = uf_info.add_uf('structure.create_vector_dist')
 uf.title = "Create a PDB file representation of the distribution of XH bond vectors."
