@@ -2141,6 +2141,8 @@ class MolContainer:
         @type segment_id:       str or None
         @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
         @type pdb_record:       str or None
+        @return:                The index of the added atom.
+        @rtype:                 int
         """
 
         # Append to all the arrays.
@@ -2156,6 +2158,9 @@ class MolContainer:
         self.x.append(pos[0])
         self.y.append(pos[1])
         self.z.append(pos[2])
+
+        # Return the index.
+        return len(self.atom_num) - 1
 
 
     def atom_connect(self, index1=None, index2=None):
