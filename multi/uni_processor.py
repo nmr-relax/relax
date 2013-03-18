@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -157,7 +157,7 @@ class Uni_processor(Processor):
 
         if isinstance(result, Exception):
             #FIXME: clear command queue
-		    #       and finalise mpi (or restart it if we can!
+            #       and finalise mpi (or restart it if we can!
             raise result
         elif isinstance(result, Result_command):
             memo = None

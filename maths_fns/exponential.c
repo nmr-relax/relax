@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2006-2013 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -27,8 +27,8 @@
 
 
 void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
-	/* Function to back calculate the peak intensities.
-	*/
+    /* Function to back calculate the peak intensities.
+    */
 
     /* Declarations */
     double Rx, I0;

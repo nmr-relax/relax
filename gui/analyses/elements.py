@@ -53,8 +53,8 @@ class Spin_ctrl:
         @type min:              int
         @keyword max:           The maximum value allowed.
         @type max:              int
-        @keyword tooltip:   	The tooltip which appears on hovering over the text or spin control.
-        @type tooltip:      	str
+        @keyword tooltip:       The tooltip which appears on hovering over the text or spin control.
+        @type tooltip:          str
         @keyword control:       The control class to use.
         @type control:          wx.SpinCtrl derived class
         @keyword width_text:    The width of the text element.
@@ -155,8 +155,8 @@ class Text_ctrl:
         @type text:             str
         @keyword default:       The default text of the control.
         @type default:          str
-        @keyword tooltip:   	The tooltip which appears on hovering over the text or input field.
-        @type tooltip:      	str
+        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
+        @type tooltip:          str
         @keyword button_text:   The text to display on the button.
         @type button_text:      str
         @keyword control:       The control class to use.
@@ -232,8 +232,8 @@ class Text_ctrl:
         if tooltip:
             self.label.SetToolTipString(tooltip)
             self.field.SetToolTipString(tooltip)
-	    if button:
-            	self.button.SetToolTipString(tooltip)
+            if button:
+                self.button.SetToolTipString(tooltip)
 
 
     def Enable(self, enable=True):

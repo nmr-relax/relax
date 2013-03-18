@@ -556,7 +556,7 @@ class Scientific_data(Base_struct_API):
                     return mol
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False, merge=False):
         """Function for loading the structures from the PDB file.
 
         @param file_path:       The full path of the file.
@@ -573,6 +573,8 @@ class Scientific_data(Base_struct_API):
         @type alt_loc:          str or None
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
+        @keyword merge:         A flag which if set to True will try to merge the PDB structure into the currently loaded structures.
+        @type merge:            bool
         @return:                The status of the loading of the PDB file.
         @rtype:                 bool
         """
@@ -723,7 +725,7 @@ class Scientific_data(Base_struct_API):
             model_load_num = model_load_num + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=list(range(1, len(mol_conts[0])+1)), set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=list(range(1, len(mol_conts[0])+1)), set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge)
 
         # Loading worked.
         return True

@@ -1265,7 +1265,7 @@ class Internal(Base_struct_API):
                     return mol
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False, merge=False):
         """Method for loading structures from a PDB file.
 
         @param file_path:       The full path of the PDB file.
@@ -1282,6 +1282,8 @@ class Internal(Base_struct_API):
         @type alt_loc:          str or None
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
+        @keyword merge:         A flag which if set to True will try to merge the PDB structure into the currently loaded structures.
+        @type merge:            bool
         @return:                The status of the loading of the PDB file.
         @rtype:                 bool
         """
@@ -1388,7 +1390,7 @@ class Internal(Base_struct_API):
             return False
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge)
 
         # Loading worked.
         return True
@@ -2358,6 +2360,26 @@ class MolContainer:
 
         # Return the number.
         return self.res_num[-1]
+
+
+    def merge(self, mol_cont=None):
+        """Merge the contents of the given molecule container into here.
+
+        @keyword mol_cont:      The data structure for the molecule to merge.
+        @type mol_cont:         MolContainer instance
+        """
+
+        # The current index.
+        curr_index = len(self.atom_num)
+
+        # Loop over all data.
+        for i in range(len(mol_cont.atom_num)):
+            # Add the atom.
+            self.atom_add(atom_num=curr_index+i+1, atom_name=mol_cont.atom_name[i], res_name=mol_cont.res_name[i], res_num=mol_cont.res_num[i], pos=[mol_cont.x[i], mol_cont.y[i], mol_cont.z[i]], element=mol_cont.element[i], chain_id=mol_cont.chain_id[i], pdb_record=mol_cont.pdb_record[i])
+
+            # Connect the atoms.
+            for j in range(len(mol_cont.bonded[i])):
+                self.atom_connect(index1=i+curr_index+1, index2=mol_cont.bonded[i][j]+curr_index+1)
 
 
     def to_xml(self, doc, element):

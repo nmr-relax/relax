@@ -349,7 +349,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False, merge=False):
         """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be overwritten by the derived class.
@@ -369,6 +369,8 @@ class Base_struct_API:
         @type alt_loc:          str or None
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
+        @keyword merge:         A flag which if set to True will try to merge the PDB structure into the currently loaded structures.
+        @type merge:            bool
         @return:                The status of the loading of the PDB file.
         @rtype:                 bool
         """
@@ -475,7 +477,7 @@ class Base_struct_API:
         return len(self.structural_data[0].mol)
 
 
-    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None):
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, merge=False):
         """From the given structural data, expand the structural data data structure.
 
         @param data_matrix:         A matrix of structural objects.
@@ -494,6 +496,8 @@ class Base_struct_API:
         @type file_path:            None or str
         @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
         @type file_path_abs:        None or str
+        @keyword merge:             A flag which if set to True will try to merge the structure into the currently loaded structures.
+        @type merge:                bool
         """
 
         # Test the number of models.
@@ -524,7 +528,7 @@ class Base_struct_API:
 
             # Loop over the structures.
             for j in range(len(self.structural_data[i].mol)):
-                if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
+                if not merge and self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
                     raise RelaxError("The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num))
 
         # Loop over the models.
@@ -547,23 +551,29 @@ class Base_struct_API:
             # Loop over the molecules.
             for j in range(len(set_mol_name)):
                 # Print out.
-                print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
+                if merge:
+                    print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
+                else:
+                    print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
                 # Consistency check.
-                index = len(model.mol)
+                index = len(model.mol) - 1
                 if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
                     raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
 
                 # Pack the structures.
-                model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+                if merge:
+                    mol = model.mol.merge_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+                else:
+                    mol = model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
 
                 # Set the molecule name and store the structure file info.
-                model.mol[-1].mol_name = set_mol_name[j]
-                model.mol[-1].file_name = file_name
-                model.mol[-1].file_path = file_path
-                model.mol[-1].file_path_abs = file_path_abs
-                model.mol[-1].file_mol_num = orig_mol_num[j]
-                model.mol[-1].file_model = orig_model_num[i]
+                mol.mol_name = set_mol_name[j]
+                mol.file_name = file_name
+                mol.file_path = file_path
+                mol.file_path_abs = file_path_abs
+                mol.file_mol_num = orig_mol_num[j]
+                mol.file_model = orig_model_num[i]
 
 
     def rotate(self, R=None, origin=None, model=None, atom_id=None):
@@ -1327,10 +1337,12 @@ class MolList(list):
     def add_item(self, mol_name=None, mol_cont=None):
         """Append the given MolContainer instance to the MolList.
 
-        @keyword mol_name:	The molecule number.
-        @type mol_name:      	int
-        @keyword mol_cont:   	The data structure for the molecule.
-        @type mol_cont:      	MolContainer instance
+        @keyword mol_name:      The molecule number.
+        @type mol_name:         int
+        @keyword mol_cont:      The data structure for the molecule.
+        @type mol_cont:         MolContainer instance
+        @return:                The new molecule container.
+        @rtype:                 MolContainer instance
         """
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
@@ -1349,6 +1361,9 @@ class MolList(list):
 
             # Set the name.
             self[-1].mol_name = mol_name
+
+        # Return the container.
+        return self[-1]
 
 
     def is_empty(self):
@@ -1407,6 +1422,35 @@ class MolList(list):
 
             # Execute the specific MolContainer from_xml() method.
             self[-1].from_xml(mol_node, file_version=file_version)
+
+
+    def merge_item(self, mol_name=None, mol_cont=None):
+        """Mege the given MolContainer instance into a pre-existing molecule container.
+
+        @keyword mol_name:      The molecule number.
+        @type mol_name:         int
+        @keyword mol_cont:      The data structure for the molecule.
+        @type mol_cont:         MolContainer instance
+        @return:                The new molecule container.
+        @rtype:                 MolContainer instance
+        """
+
+        # Find the molecule to merge.
+        index = None
+        for i in range(len(self)):
+            if self[i].mol_name == mol_name:
+                index = i
+                break
+
+        # No molecule found.
+        if index == None:
+            raise RelaxError("The molecule '%s' to merge with cannot be found." % mol_name)
+
+        # Merge the molecules.
+        self[index].merge(mol_cont)
+
+        # Return the container.
+        return self[index]
 
 
     def to_xml(self, doc, element):

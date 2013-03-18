@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -233,12 +233,12 @@ class Test_scientific(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@163', mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+        for mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@140', mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Test the spin info.
             self.assertEqual(mol_name, 'Ap4Aase_res1-12_mol1')
             self.assertEqual(res_num, 11)
             self.assertEqual(res_name, 'GLU')
-            self.assertEqual(spin_num, 163)
+            self.assertEqual(spin_num, 140)
             self.assertEqual(spin_name, 'OE1')
             self.assertEqual(element, 'O')
             self.assertEqual(len(pos), 1)

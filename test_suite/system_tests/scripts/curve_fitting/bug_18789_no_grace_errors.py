@@ -77,7 +77,7 @@ spectrum.baseplane_rmsd(error=16700/1e6, spectrum_id='010', spin_id=None)
 spectrum.baseplane_rmsd(error=18200/1e6, spectrum_id='040', spin_id=None)   
 spectrum.baseplane_rmsd(error=21100/1e6, spectrum_id='420', spin_id=None)   
 
-# Peak intensity error analysis.	 
+# Peak intensity error analysis.
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
