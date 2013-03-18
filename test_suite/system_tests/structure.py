@@ -348,7 +348,7 @@ class Structure(SystemTestCase):
         # Read the PDB files.
         self.interpreter.structure.read_pdb(file='Ap4Aase_res1-6.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=1)
         self.interpreter.structure.read_pdb(file='Ap4Aase_res7-12.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=1, merge=True)
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=2, merge=True)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=2)
 
         # Check that everything is ok.
         cdp.structure.validate_models()
