@@ -591,7 +591,7 @@ def display(ri_id=None):
         raise RelaxNoRiError(ri_id)
 
     # Print the data.
-    value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
+    value.write_data(param=ri_id, file=sys.stdout, return_value=return_value, return_data_desc=return_data_desc)
 
 
 def frq(ri_id=None, frq=None):
@@ -1204,4 +1204,4 @@ def write(ri_id=None, file=None, dir=None, bc=False, force=False):
         file = ri_id + ".out"
 
     # Write the data.
-    value.write(param=ri_id, file=file, dir=dir, bc=bc, force=force, return_value=return_value)
+    value.write(param=ri_id, file=file, dir=dir, bc=bc, force=force, return_value=return_value, return_data_desc=return_data_desc)

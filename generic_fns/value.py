@@ -426,23 +426,23 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
         pipes.switch(orig_pipe)
 
 
-def write(param=None, file=None, dir=None, bc=False, force=False, return_value=None):
+def write(param=None, file=None, dir=None, bc=False, force=False, return_value=None, return_data_desc=None):
     """Write data to a file.
 
-    @keyword param:         The name of the parameter to write to file.
-    @type param:            str
-    @keyword file:          The file to write the data to.
-    @type file:             str
-    @keyword dir:           The name of the directory to place the file into (defaults to the
-                            current directory).
-    @type dir:              str
-    @keyword bc:            A flag which if True will cause the back calculated values to be written.
-    @type bc:               bool
-    @keyword force:         A flag which if True will cause any pre-existing file to be overwritten.
-    @type force:            bool
-    @keyword return_value:  An optional function which if supplied will override the default value
-                            returning function.
-    @type return_value:     None or func
+    @keyword param:             The name of the parameter to write to file.
+    @type param:                str
+    @keyword file:              The file to write the data to.
+    @type file:                 str
+    @keyword dir:               The name of the directory to place the file into (defaults to the current directory).
+    @type dir:                  str
+    @keyword bc:                A flag which if True will cause the back calculated values to be written.
+    @type bc:                   bool
+    @keyword force:             A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:                bool
+    @keyword return_value:      An optional function which if supplied will override the default value returning function.
+    @type return_value:         None or func
+    @keyword return_data_desc:  An optional function which if supplied will override the default parameter description returning function.
+    @type return_data_desc:     None or func
     """
 
     # Test if the current pipe exists.
@@ -457,7 +457,7 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     file = open_write_file(file, dir, force)
 
     # Write the data.
-    write_data(param, file, bc, return_value)
+    write_data(param=param, file=file, bc=bc, return_value=return_value, return_data_desc=return_data_desc)
 
     # Close the file.
     file.close()
@@ -466,22 +466,26 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     add_result_file(type='text', label='Text', file=file_path)
 
 
-def write_data(param=None, file=None, bc=False, return_value=None):
+def write_data(param=None, file=None, bc=False, return_value=None, return_data_desc=None):
     """The function which actually writes the data.
 
-    @keyword param:         The parameter to write.
-    @type param:            str
-    @keyword file:          The file to write the data to.
-    @type file:             str
-    @keyword bc:            A flag which if True will cause the back calculated values to be written.
-    @type bc:               bool
-    @keyword return_value:  An optional function which if supplied will override the default value returning function.
-    @type return_value:     None or func
+    @keyword param:             The parameter to write.
+    @type param:                str
+    @keyword file:              The file to write the data to.
+    @type file:                 str
+    @keyword bc:                A flag which if True will cause the back calculated values to be written.
+    @type bc:                   bool
+    @keyword return_value:      An optional function which if supplied will override the default value returning function.
+    @type return_value:         None or func
+    @keyword return_data_desc:  An optional function which if supplied will override the default parameter description returning function.
+    @type return_data_desc:     None or func
     """
 
-    # Get the value and error returning function if required.
+    # Get the value and error returning function parameter description function if required.
     if not return_value:
         return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
+    if not return_data_desc:
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', pipes.get_type())
 
     # Format string.
     format = "%-30s%-30s"
@@ -494,6 +498,12 @@ def write_data(param=None, file=None, bc=False, return_value=None):
     spin_names = []
     values = []
     errors = []
+
+    # Get the parameter description and add it to the file.
+    desc = return_data_desc(param)
+    if desc:
+        file.write("# Parameter description:  %s.\n" % desc)
+        file.write("#\n")
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
