@@ -339,6 +339,21 @@ class Structure(SystemTestCase):
             i = i + 1
 
 
+    def test_read_merge(self):
+        """Test the merging of two molecules into one."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the PDB files.
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-6.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=1)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res7-12.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=1, merge=True)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, set_mol_name='Ap4Aase', set_model_num=2, merge=True)
+
+        # Check that everything is ok.
+        cdp.structure.validate_models()
+
+
     def test_read_not_pdb(self):
         """Test the reading of a file by structure.read_pdb that is not a PDB."""
 
