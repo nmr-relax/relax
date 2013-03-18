@@ -946,15 +946,35 @@ class Frame_order(API_base, API_common):
         return num
 
 
-    def _pdb_model(self, ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None, size=30.0, inc=36, force=False, neg_cone=True):
-        """Create a PDB file containing a geometric object representing the Frame Order cone models.
+    def _pdb_ave_pos(self, file=None, dir=None, force=False):
+        """Create a PDB file of the molecule with the moving domains shifted to the average position.
 
-        @keyword ave_pos_file:  The name of the file  for the average molecule structure.
-        @type ave_pos_file:     str
-        @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
-        @type rep_file:         str
-        @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-        @type dist_file:        str
+        @keyword file:  The name of the file for the average molecule structure.
+        @type file:     str
+        @keyword dir:   The name of the directory to place the PDB file into.
+        @type dir:      str
+        @keyword force: Flag which if set to True will cause any pre-existing file to be overwritten.
+        @type force:    bool
+        """
+
+
+    def _pdb_distribution(self, file=None, dir=None, force=False):
+        """Create a PDB file of a distribution of positions coving the full dynamics of the moving domain.
+
+        @keyword file:  The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+        @type file:     str
+        @keyword dir:   The name of the directory to place the PDB file into.
+        @type dir:      str
+        @keyword force: Flag which if set to True will cause any pre-existing file to be overwritten.
+        @type force:    bool
+        """
+
+
+    def _pdb_geometric_rep(self, file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
+        """Create a PDB file containing a geometric object representing the frame order dynamics.
+
+        @keyword file:          The name of the file of the PDB representation of the frame order dynamics to create.
+        @type file:             str
         @keyword dir:           The name of the directory to place the PDB file into.
         @type dir:              str
         @keyword size:          The size of the geometric object in Angstroms.
@@ -966,12 +986,6 @@ class Frame_order(API_base, API_common):
         @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
         @type neg_cone:         bool
         """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Negative cone flag.
-        neg_cone = True
 
         # Monte Carlo simulation flag.
         sim = False
@@ -1144,6 +1158,44 @@ class Frame_order(API_base, API_common):
         pdb_file = open_write_file(file, dir, force=force)
         structure.write_pdb(pdb_file)
         pdb_file.close()
+
+
+    def _pdb_model(self, ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None, size=30.0, inc=36, force=False, neg_cone=True):
+        """Create 3 different PDB files for representing the frame order dynamics of the system.
+
+        @keyword ave_pos_file:  The name of the file for the average molecule structure.
+        @type ave_pos_file:     str
+        @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
+        @type rep_file:         str
+        @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+        @type dist_file:        str
+        @keyword dir:           The name of the directory to place the PDB file into.
+        @type dir:              str
+        @keyword size:          The size of the geometric object in Angstroms.
+        @type size:             float
+        @keyword inc:           The number of increments for the filling of the cone objects.
+        @type inc:              int
+        @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
+        @type force:            bool
+        @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
+        @type neg_cone:         bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Create the average position structure.
+        self._pdb_ave_pos(file=ave_pos_file, dir=dir, force=force)
+
+        # Nothing more to do for the rigid model.
+        if cdp.model == 'rigid':
+            return
+
+        # Create the geometric representation.
+        self._pdb_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
+
+        # Create the distribution.
+        self._pdb_distribution(file=dist_file, dir=dir, force=force)
 
 
     def _pivot(self, pivot=None, fix=None):
