@@ -562,14 +562,14 @@ class Base_struct_API:
                 if merge:
                     mol = model.mol.merge_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
                 else:
-                    model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+                    mol = model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
 
                 # Set the molecule name and store the structure file info.
-                model.mol[-1].mol_name = set_mol_name[j]
-                model.mol[-1].file_name = file_name
-                model.mol[-1].file_path = file_path
-                model.mol[-1].file_mol_num = orig_mol_num[j]
-                model.mol[-1].file_model = orig_model_num[i]
+                mol.mol_name = set_mol_name[j]
+                mol.file_name = file_name
+                mol.file_path = file_path
+                mol.file_mol_num = orig_mol_num[j]
+                mol.file_model = orig_model_num[i]
 
 
     def rotate(self, R=None, origin=None, model=None, atom_id=None):
@@ -1324,10 +1324,12 @@ class MolList(list):
     def add_item(self, mol_name=None, mol_cont=None):
         """Append the given MolContainer instance to the MolList.
 
-        @keyword mol_name:	The molecule number.
+        @keyword mol_name:	    The molecule number.
         @type mol_name:      	int
         @keyword mol_cont:   	The data structure for the molecule.
         @type mol_cont:      	MolContainer instance
+        @return:                The new molecule container.
+        @rtype:                 MolContainer instance
         """
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
@@ -1346,6 +1348,9 @@ class MolList(list):
 
             # Set the name.
             self[-1].mol_name = mol_name
+
+        # Return the container.
+        return self[-1]
 
 
     def is_empty(self):
