@@ -148,7 +148,7 @@ class Frame_order_analysis:
                 self.interpreter.monte_carlo.error_analysis()
 
                 # Finish.
-                self.interpreter.results.write(file='results', force=True)
+                self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
 
             # Visualisation of the final results.
             self.visualisation(model='final')
@@ -159,7 +159,7 @@ class Frame_order_analysis:
             status.exec_lock.release()
 
         # Save the final program state.
-        self.interpreter.state.save('final_state', force=True)
+        self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
 
     def check_vars(self):
@@ -387,7 +387,7 @@ class Frame_order_analysis:
             self.interpreter.eliminate()
 
             # Save the results.
-            self.interpreter.results.write(dir=model, force=True)
+            self.interpreter.results.write(dir=self.results_dir+model, force=True)
 
             # The PDB representation of the model and visualisation script.
             self.visualisation(model=model)
@@ -413,7 +413,7 @@ class Frame_order_analysis:
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
             # The PDB representation of the model (in case this was not completed correctly).
-            self.interpreter.frame_order.pdb_model(dir=model, force=True)
+            self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
             # Nothing more to do.
             return
@@ -449,10 +449,10 @@ class Frame_order_analysis:
         self.print_results()
 
         # Save the results.
-        self.interpreter.results.write(dir=model, force=True)
+        self.interpreter.results.write(dir=self.results_dir+model, force=True)
 
         # The PDB representation of the model.
-        self.interpreter.frame_order.pdb_model(dir=model, force=True)
+        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
 
     def print_results(self):
@@ -551,7 +551,7 @@ class Frame_order_analysis:
         """
 
         # The file name.
-        path = model + sep + 'results.bz2'
+        path = self.results_dir + model + sep + 'results.bz2'
 
         # The file does not exist.
         if not access(path, F_OK):
@@ -583,17 +583,14 @@ class Frame_order_analysis:
         if model != 'final' and model != cdp.model:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model, cdp.model))
 
-        # The directory to place files into.
-        results_dir = model
-
         # The PDB representation of the model.
-        self.interpreter.frame_order.pdb_model(dir=results_dir, force=True)
+        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
         # Create the visualisation script.
-        script = open_write_file(file_name='pymol_display.py', dir=results_dir, force=True)
+        script = open_write_file(file_name='pymol_display.py', dir=self.results_dir+model, force=True)
 
         # Add a comment for the user.
-        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % results_dir)
+        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
 
         # The script contents.
         script.write("# PyMOL visualisation.\n")
