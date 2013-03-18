@@ -1232,7 +1232,7 @@ class Internal(Base_struct_API):
                     return mol
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False, merge=False):
         """Method for loading structures from a PDB file.
 
         @param file_path:       The full path of the PDB file.
@@ -1249,6 +1249,8 @@ class Internal(Base_struct_API):
         @type alt_loc:          str or None
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
+        @keyword merge:         A flag which if set to True will try to merge the PDB structure into the currently loaded structures.
+        @type merge:            bool
         @return:                The status of the loading of the PDB file.
         @rtype:                 bool
         """
@@ -1352,7 +1354,7 @@ class Internal(Base_struct_API):
             return False
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, merge=merge)
 
         # Loading worked.
         return True

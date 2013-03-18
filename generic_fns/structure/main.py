@@ -559,7 +559,7 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
             cdp.structure = Internal()
 
     # Load the structures.
-    cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, alt_loc=alt_loc, verbosity=verbosity)
+    cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, alt_loc=alt_loc, verbosity=verbosity, merge=merge)
 
     # Load into Molmol (if running).
     molmol.molmol_obj.open_pdb()
