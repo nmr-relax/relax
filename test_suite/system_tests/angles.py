@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,7 +40,7 @@ class Angles(SystemTestCase):
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
-        spin_num = [1, 11, 28, 51, 59, 71, 91, 104, 116, 133, 150, 167]
+        spin_num = [1, 10, 24, 43, 50, 61, 78, 90, 101, 115, 129, 144]
         spin_name = ['N']*12
         attached_atoms = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H']
         xh_vects = [

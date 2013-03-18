@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,7 +65,7 @@ class Unit_vectors(SystemTestCase):
         self.interpreter.dipole_pair.unit_vectors()
 
         # Leu 3.
-        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 24)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
         self.assert_(hasattr(cdp.interatomic[0], 'vector'))
         self.assertNotEqual(cdp.interatomic[0].vector, None)
@@ -116,7 +116,7 @@ class Unit_vectors(SystemTestCase):
         self.interpreter.dipole_pair.unit_vectors()
 
         # Leu 3.
-        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 24)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
         self.assert_(hasattr(cdp.interatomic[0], 'vector'))
         self.assertNotEqual(cdp.interatomic[0].vector, None)
