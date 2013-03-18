@@ -513,14 +513,14 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     @type set_model_num:    None, int, or list of int
     @keyword parser:        The parser to be used to read the PDB file.
     @type parser:           str
-    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB file does not exist.  If False, then a RelaxWarning will be trown instead.
-    @type fail:             bool
     @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
     @type alt_loc:          str or None
     @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
     @type verbosity:        int
     @keyword merge:         A flag which if set to True will try to merge the PDB structure into the currently loaded structures.
     @type merge:            bool
+    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB file does not exist.  If False, then a RelaxWarning will be trown instead.
+    @type fail:             bool
     @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the PDB file does not exist.
     """
 
