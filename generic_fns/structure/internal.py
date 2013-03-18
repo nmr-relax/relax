@@ -2323,6 +2323,26 @@ class MolContainer:
         return self.res_num[-1]
 
 
+    def merge(self, mol_cont=None):
+        """Merge the contents of the given molecule container into here.
+
+        @keyword mol_cont:      The data structure for the molecule to merge.
+        @type mol_cont:         MolContainer instance
+        """
+
+        # The current index.
+        curr_index = len(self.atom_num)
+
+        # Loop over all data.
+        for i in range(len(mol_cont.atom_num)):
+            # Add the atom.
+            self.atom_add(atom_num=curr_index+i+1, atom_name=mol_cont.atom_name[i], res_name=mol_cont.res_name[i], res_num=mol_cont.res_num[i], pos=[mol_cont.x[i], mol_cont.y[i], mol_cont.z[i]], element=mol_cont.element[i], chain_id=mol_cont.chain_id[i], pdb_record=mol_cont.pdb_record[i])
+
+            # Connect the atoms.
+            for j in range(len(mol_cont.bonded[i])):
+                self.atom_connect(index1=i+curr_index+1, index2=mol_cont.bonded[i][j]+curr_index+1)
+
+
     def to_xml(self, doc, element):
         """Create XML elements for the contents of this molecule container.
 

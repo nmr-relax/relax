@@ -1411,6 +1411,35 @@ class MolList(list):
             self[-1].from_xml(mol_node, file_version=file_version)
 
 
+    def merge_item(self, mol_name=None, mol_cont=None):
+        """Mege the given MolContainer instance into a pre-existing molecule container.
+
+        @keyword mol_name:      The molecule number.
+        @type mol_name:         int
+        @keyword mol_cont:      The data structure for the molecule.
+        @type mol_cont:         MolContainer instance
+        @return:                The new molecule container.
+        @rtype:                 MolContainer instance
+        """
+
+        # Find the molecule to merge.
+        index = None
+        for i in range(len(self)):
+            if self[i].mol_name == mol_name:
+                index = i
+                break
+
+        # No molecule found.
+        if index == None:
+            raise RelaxError("The molecule '%s' to merge with cannot be found." % mol_name)
+
+        # Merge the molecules.
+        self[index].merge(mol_cont)
+
+        # Return the container.
+        return self[index]
+
+
     def to_xml(self, doc, element):
         """Create XML elements for each molecule.
 
