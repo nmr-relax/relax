@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -206,22 +206,22 @@ class Iso3D(Base_Map):
         # Include the sphere.
         if self.num_points == 1:
             text = text + """
-// page assignment: Colour Space	order=3, windowed=0, showing=0
-// page assignment: ColourScene	order=5, windowed=0, showing=0
-// page assignment: Glyph	order=2, windowed=0, showing=0
-// page assignment: Grey Space	order=4, windowed=0, showing=0
-// page assignment: GreyScene	order=6, windowed=0, showing=0
-// page assignment: Image	order=7, windowed=0, showing=0
-// page assignment: Isosurfaces	order=1, windowed=0, showing=1"""
+// page assignment: Colour Space    order=3, windowed=0, showing=0
+// page assignment: ColourScene     order=5, windowed=0, showing=0
+// page assignment: Glyph           order=2, windowed=0, showing=0
+// page assignment: Grey Space      order=4, windowed=0, showing=0
+// page assignment: GreyScene       order=6, windowed=0, showing=0
+// page assignment: Image           order=7, windowed=0, showing=0
+// page assignment: Isosurfaces     order=1, windowed=0, showing=1"""
         # No sphere.
         else:
             text = text + """
-// page assignment: Colour Space	order=4, windowed=0, showing=0
-// page assignment: ColourScene	order=6, windowed=0, showing=0
-// page assignment: Grey Space	order=5, windowed=0, showing=0
-// page assignment: GreyScene	order=7, windowed=0, showing=0
-// page assignment: Image	order=8, windowed=0, showing=0
-// page assignment: Isosurfaces	order=2, windowed=0, showing=1"""
+// page assignment: Colour Space    order=4, windowed=0, showing=0
+// page assignment: ColourScene     order=6, windowed=0, showing=0
+// page assignment: Grey Space      order=5, windowed=0, showing=0
+// page assignment: GreyScene       order=7, windowed=0, showing=0
+// page assignment: Image           order=8, windowed=0, showing=0
+// page assignment: Isosurfaces     order=2, windowed=0, showing=1"""
 
         # Common code.
         text = text + """
@@ -1344,7 +1344,7 @@ macro Image(
             viewAngle,
             backgroundColor) [instance: 1, cache: 1];
     coloredDefaultCamera = 
-	 UpdateCamera(defaultCamera,
+        UpdateCamera(defaultCamera,
             background=backgroundColor) [instance: 1, cache: 1];
     nullDefaultCamera =
         Inquire(defaultCamera,
@@ -1394,11 +1394,11 @@ macro Image(
             AAyTickLabels,
             AAzTickLabels) [instance: 1, cache: 1];
     switchAAenable = Compute("$0+1",
-	     AAenable) [instance: 2, cache: 1];
+            AAenable) [instance: 2, cache: 1];
     object = Switch(
-	     switchAAenable,
-	     object,
-	     AAobject) [instance:4, cache: 1];
+            switchAAenable,
+            object,
+            AAobject) [instance:4, cache: 1];
     SWapproximation_options =
         Switch(
             buttonState,
@@ -1420,14 +1420,14 @@ macro Image(
             buttonDownDensity,
             buttonUpDensity) [instance: 2, cache: 1];
     switchRenderMode = Compute(
-	     "$0+1",
-	     renderMode) [instance: 3, cache: 1];
+            "$0+1",
+            renderMode) [instance: 3, cache: 1];
     approximation_options = Switch(
-	     switchRenderMode,
+            switchRenderMode,
             SWapproximation_options,
-	     HWapproximation_options) [instance: 7, cache: 1];
+            HWapproximation_options) [instance: 7, cache: 1];
     density_options = Switch(
-	     switchRenderMode,
+            switchRenderMode,
             SWdensity_options,
             HWdensity_options) [instance: 8, cache: 1];
     renderModeString = Switch(
@@ -1489,7 +1489,7 @@ macro Image(
             RECresolution,
             ImageResolution,
             RECaspect,
-	     ImageAspect) [instance: 4, cache: 1];
+            ImageAspect) [instance: 4, cache: 1];
     NoRECobject, RECNoRerenderObject, RECNoRerHW, RECRerenderObject = Route(switchRECenable, annoted_object);
     Display(
         NoRECobject,
@@ -1521,21 +1521,21 @@ macro Image(
         RECfile,
         RECformat) [instance: 1, cache: 1];
     RECupdateCamera =
-	UpdateCamera(
-	    camera,
-	    resolution=RECresolution,
-	    aspect=RECaspect) [instance: 2, cache: 1];
+       UpdateCamera(
+           camera,
+           resolution=RECresolution,
+           aspect=RECaspect) [instance: 2, cache: 1];
     Display(
         RECRerenderObject,
         camera,
         where,
         throttle) [instance: 1, cache: 1];
     RECRerenderObject =
-	ScaleScreen(
-	    RECRerenderObject,
-	    NULL,
-	    RECresolution,
-	    camera) [instance: 1, cache: 1];
+       ScaleScreen(
+           RECRerenderObject,
+           NULL,
+           RECresolution,
+           camera) [instance: 1, cache: 1];
     image =
         Render(
             RECRerenderObject,

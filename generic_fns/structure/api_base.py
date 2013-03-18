@@ -1324,10 +1324,10 @@ class MolList(list):
     def add_item(self, mol_name=None, mol_cont=None):
         """Append the given MolContainer instance to the MolList.
 
-        @keyword mol_name:	    The molecule number.
-        @type mol_name:      	int
-        @keyword mol_cont:   	The data structure for the molecule.
-        @type mol_cont:      	MolContainer instance
+        @keyword mol_name:      The molecule number.
+        @type mol_name:         int
+        @keyword mol_cont:      The data structure for the molecule.
+        @type mol_cont:         MolContainer instance
         @return:                The new molecule container.
         @rtype:                 MolContainer instance
         """

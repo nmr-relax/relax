@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Edward d'Auvergne
+ * Copyright (C) 2003-2013 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -24,31 +24,31 @@
 
 
 double chi2(double *values, double *sd, double *back_calc, int num_times) {
-	/* Function to calculate the chi-squared value.
+    /* Function to calculate the chi-squared value.
 
-	The chi-sqared equation
-	~~~~~~~~~~~~~~~~~~~~~~~
-	          _n_
-	          \    (yi - yi()) ** 2
-	Chi2()  =  >   ----------------
-	          /__    sigma_i ** 2
-	          i=1
+    The chi-sqared equation
+    ~~~~~~~~~~~~~~~~~~~~~~~
+              _n_
+              \    (yi - yi()) ** 2
+    Chi2()  =  >   ----------------
+              /__    sigma_i ** 2
+              i=1
 
-	where:
-		yi are the values of the measured data set.
-		yi() are the values of the back calculated data set.
-		sigma_i are the values of the error set.
+    where:
+        yi are the values of the measured data set.
+        yi() are the values of the back calculated data set.
+        sigma_i are the values of the error set.
 
-	The chi-squared value is returned.
-	*/
+    The chi-squared value is returned.
+    */
 
-	int i;
-	double chi2 = 0.0;
+    int i;
+    double chi2 = 0.0;
 
     /* Loop over the time points and sum the chi-squared components */
-	for (i = 0; i < num_times; ++i) {
-		chi2 = chi2 + square((values[i] - back_calc[i]) / sd[i]);
-	}
+    for (i = 0; i < num_times; ++i) {
+        chi2 = chi2 + square((values[i] - back_calc[i]) / sd[i]);
+    }
 
-	return chi2;
+    return chi2;
 }
