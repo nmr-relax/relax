@@ -957,6 +957,26 @@ class Frame_order(API_base, API_common):
         @type force:    bool
         """
 
+        # Make a copy of the structural object (so as to preserve the original structure).
+        structure = deepcopy(cdp.structure)
+
+        # First rotate the moving domain to the average position.
+        R = zeros((3, 3), float64)
+        if hasattr(cdp, 'ave_pos_alpha'):
+            euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        else:
+            euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        structure.rotate(R=R, origin=cdp.pivot, atom_id=self._domain_moving())
+
+        # Then translate the moving domain.
+        if not self._translation_fixed():
+            structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=self._domain_moving())
+
+        # Write out the PDB file.
+        file = open_write_file(file_name=file, dir=dir, force=force)
+        structure.write_pdb(file=file)
+        file.close()
+
 
     def _pdb_distribution(self, file=None, dir=None, force=False):
         """Create a PDB file of a distribution of positions coving the full dynamics of the moving domain.
