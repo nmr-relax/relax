@@ -487,7 +487,7 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
-def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc=None, verbosity=1, fail=True):
+def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc=None, verbosity=1, merge=False, fail=True):
     """The PDB loading function.
 
     Parsers
@@ -519,6 +519,8 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     @type alt_loc:          str or None
     @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
     @type verbosity:        int
+    @keyword merge:         A flag which if set to True will try to merge the PDB structure into the currently loaded structures.
+    @type merge:            bool
     @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the PDB file does not exist.
     """
 

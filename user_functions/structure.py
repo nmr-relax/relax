@@ -666,6 +666,13 @@ uf.add_keyarg(
     desc = "The PDB ATOM record 'Alternate location indicator' field value.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "merge",
+    default = False,
+    py_type = "bool",
+    desc_short = "merge structure flag",
+    desc = "A flag which if set to True will try to merge the PDB structure into the currently loaded structures."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.")
@@ -696,7 +703,7 @@ uf.desc[-1].add_prompt("relax> structure.read_pdb('lactose_MCMM4_S1_4.pdb', set_
 uf.backend = generic_fns.structure.main.read_pdb
 uf.menu_text = "read_&pdb"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 400
+uf.wizard_height_desc = 360
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_pdb.png'
 
