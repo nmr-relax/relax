@@ -946,23 +946,25 @@ class Frame_order(API_base, API_common):
         return num
 
 
-    def _pdb_model(self, file=None, dist_file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
+    def _pdb_model(self, ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None, size=30.0, inc=36, force=False, neg_cone=True):
         """Create a PDB file containing a geometric object representing the Frame Order cone models.
 
-        @keyword file:      The name of the file of the PDB representation of the frame order dynamics to create.
-        @type file:         str
-        @keyword dist_file: The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-        @type dist_file:    str
-        @keyword dir:       The name of the directory to place the PDB file into.
-        @type dir:          str
-        @keyword size:      The size of the geometric object in Angstroms.
-        @type size:         float
-        @keyword inc:       The number of increments for the filling of the cone objects.
-        @type inc:          int
-        @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
-        @type force:        bool
-        @keyword neg_cone:  A flag which if True will cause the negative cone to be added to the representation.
-        @type neg_cone:     bool
+        @keyword ave_pos_file:  The name of the file  for the average molecule structure.
+        @type ave_pos_file:     str
+        @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
+        @type rep_file:         str
+        @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+        @type dist_file:        str
+        @keyword dir:           The name of the directory to place the PDB file into.
+        @type dir:              str
+        @keyword size:          The size of the geometric object in Angstroms.
+        @type size:             float
+        @keyword inc:           The number of increments for the filling of the cone objects.
+        @type inc:              int
+        @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
+        @type force:            bool
+        @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
+        @type neg_cone:         bool
         """
 
         # Test if the current data pipe exists.
