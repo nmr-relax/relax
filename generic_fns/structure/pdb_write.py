@@ -686,7 +686,7 @@ def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
     file.write('\n')
 
 
-def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', init_seq_id='', init_icode='', end_res_name='', end_chain_id='', end_seq_num='', end_icode='', helix_class='', comment='', length=''):
+def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', init_seq_num='', init_icode='', end_res_name='', end_chain_id='', end_seq_num='', end_icode='', helix_class='', comment='', length=''):
     """Generate the HELIX record.
 
     The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#HELIX}.
@@ -788,8 +788,8 @@ def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', ini
     @type init_res_name:    str
     @keyword init_chain_id: The chain identifier
     @type init_chain_id:    str
-    @keyword init_seq_id:   The sequence number of the initial residue
-    @type init_seq_id:      int
+    @keyword init_seq_num:  The sequence number of the initial residue
+    @type init_seq_num:     int
     @keyword init_icode:    The insertion code of the initial residue
     @type init_icode:       str
     @keyword end_res_name:  The name of the terminal residue
@@ -815,7 +815,7 @@ def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', ini
         _handle_none(helix_id),
         _handle_none(init_res_name),
         _handle_none(init_chain_id),
-        _handle_none(init_seq_id),
+        _handle_none(init_seq_num),
         _handle_none(init_icode),
         _handle_none(end_res_name),
         _handle_none(end_chain_id),

@@ -445,6 +445,16 @@ class Internal(Base_struct_API):
             if lines[i][:6] not in records:
                 break
 
+            # A helix.
+            if lines[i][:5] == 'HELIX':
+                # Parse the record.
+                record_type, ser_num, helix_id, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, helix_class, comment, length = pdb_read.helix(lines[i])
+
+                # Store the data.
+                if not hasattr(self, 'helices'):
+                    self.helices = []
+                self.helices.append([helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length])
+
         # Return the remaining lines.
         return lines[i:]
 
@@ -1849,6 +1859,23 @@ class Internal(Base_struct_API):
 
             # The FORMUL record (chemical formula).
             pdb_write.formul(file, comp_num=i+1, het_id=het[1], text=formula)
+
+
+        ###############################
+        # Secondary structure section #
+        ###############################
+
+        # The HELIX records.
+        ####################
+
+        # Printout.
+        print("HELIX")
+
+        # Loop over and unpack the helix data.
+        index = 1
+        for helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length in self.helices:
+            pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=init_chain_id, init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=end_chain_id, end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
+            index += 1
 
 
         ######################
