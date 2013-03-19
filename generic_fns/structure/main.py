@@ -124,29 +124,33 @@ def connect_atom(index1=None, index2=None):
     cdp.structure.connect_atom(index1=index1, index2=index2)
 
 
-def delete():
-    """Simple function for deleting all structural data."""
+def delete(atom_id=None):
+    """Delete structural data.
+    
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
+    @type atom_id:      str or None
+    """
 
     # Test if the current data pipe exists.
     pipes.test()
 
     # Run the object method.
     if hasattr(cdp, 'structure'):
-        print("Deleting all structural data from the current pipe.")
-        cdp.structure.delete()
+        print("Deleting structural data from the current pipe.")
+        cdp.structure.delete(atom_id=atom_id)
     else:
         print("No structures are present.")
 
     # Then remove any spin specific structural info.
     print("Deleting all spin specific structural info.")
-    for spin in spin_loop():
+    for spin in spin_loop(selection=atom_id):
         # Delete positional information.
         if hasattr(spin, 'pos'):
             del spin.pos
 
     # Then remove any interatomic vector structural info.
     print("Deleting all interatomic vectors.")
-    for interatom in interatomic_loop():
+    for interatom in interatomic_loop(selection1=atom_id):
         # Delete bond vectors.
         if hasattr(interatom, 'vector'):
             del interatom.vector

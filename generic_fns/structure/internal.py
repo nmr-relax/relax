@@ -956,7 +956,7 @@ class Internal(Base_struct_API):
                     return False
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
@@ -981,6 +981,8 @@ class Internal(Base_struct_API):
         @type element_flag:         bool
         @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
+        @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
+        @type index_flag:           bool
         @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
@@ -1063,8 +1065,12 @@ class Internal(Base_struct_API):
                         atomic_tuple = atomic_tuple + (element,)
                     if pos_flag:
                         atomic_tuple = atomic_tuple + (pos,)
+                    if index_flag:
+                        atomic_tuple += (i,)
 
                     # Yield the information.
+                    if len(atomic_tuple) == 1:
+                        atomic_tuple = atomic_tuple[0]
                     yield atomic_tuple
 
             # Break out of the loop if the ave flag is set, as data from only one model is used.
@@ -1182,18 +1188,62 @@ class Internal(Base_struct_API):
             mol.atom_connect(index1=index1, index2=index2)
 
 
-    def delete(self):
-        """Delete all the structural information."""
+    def delete(self, atom_id=None):
+        """Deletion of structural information.
 
-        # Print out.
-        print("Deleting the following structural data:\n")
-        print(self.structural_data)
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
+        @type atom_id:      str or None
+        """
 
-        # Delete the structural data.
-        del self.structural_data
+        # All data.
+        if atom_id == None:
+            # Print out.
+            print("Deleting the following structural data:\n")
+            print(self.structural_data)
 
-        # Initialise the empty model list.
-        self.structural_data = ModelList()
+            # Delete the structural data.
+            del self.structural_data
+
+            # Initialise the empty model list.
+            self.structural_data = ModelList()
+
+        # Atom subset deletion.
+        else:
+            # Generate the selection object.
+            sel_obj = None
+            if atom_id:
+                sel_obj = Selection(atom_id)
+
+            # Loop over the models.
+            for model in self.model_loop():
+                # Loop over the molecules.
+                for mol_index in range(len(model.mol)):
+                    mol = model.mol[mol_index]
+
+                    # Skip non-matching molecules.
+                    if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                        continue
+
+                    # Loop over the atoms.
+                    indices = []
+                    for i in self.atom_loop(atom_id=atom_id, model_num=model.num, index_flag=True):
+                        indices.append(i)
+
+                    # Loop over the reverse indices and pop out the data.
+                    indices.reverse()
+                    for i in indices:
+                        mol.atom_num.pop(i)
+                        mol.atom_name.pop(i)
+                        mol.bonded.pop(i)
+                        mol.chain_id.pop(i)
+                        mol.element.pop(i)
+                        mol.pdb_record.pop(i)
+                        mol.res_name.pop(i)
+                        mol.res_num.pop(i)
+                        mol.seg_id.pop(i)
+                        mol.x.pop(i)
+                        mol.y.pop(i)
+                        mol.z.pop(i)
 
 
     def get_molecule(self, molecule, model=None):

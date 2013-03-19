@@ -418,19 +418,29 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.delete user function.
 uf = uf_info.add_uf('structure.delete')
-uf.title = "Delete all structural information."
+uf.title = "Delete structural information."
 uf.title_short = "Structure deletion."
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom ID string",
+    desc = "The atom identification string.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will delete all the structural information from the current data pipe.  All spin and sequence information loaded from these structures will be preserved - this only affects the structural data.")
+uf.desc[-1].add_paragraph("This will delete structural information from the current data pipe.  All spin and sequence information loaded from these structures will be preserved - this only affects the structural data.  The atom ID argument can be used to restrict deletion to parts of the loaded molecules.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("Simply type:")
+uf.desc[-1].add_paragraph("To delete everything, simply type:")
 uf.desc[-1].add_prompt("relax> structure.delete()")
+uf.desc[-1].add_paragraph("To delete residues 50 to 100 of the molecule called 'Ap4Aase', type one of:")
+uf.desc[-1].add_prompt("relax> structure.delete(':50-100')")
+uf.desc[-1].add_prompt("relax> structure.delete(atom_id=':50-100')")
 uf.backend = generic_fns.structure.main.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
-uf.wizard_size = (600, 400)
+uf.wizard_size = (700, 500)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 

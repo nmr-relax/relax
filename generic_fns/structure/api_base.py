@@ -251,8 +251,12 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def delete(self):
-        """Prototype method stub for deleting all structural data from the current data pipe."""
+    def delete(self, atom_id=None):
+        """Prototype method stub for deleting structural data from the current data pipe.
+
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
+        @type atom_id:      str or None
+        """
 
         # Raise the error.
         raise RelaxImplementError
