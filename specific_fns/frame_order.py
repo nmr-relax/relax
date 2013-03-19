@@ -966,7 +966,11 @@ class Frame_order(API_base, API_common):
             euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         else:
             euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        structure.rotate(R=R, origin=cdp.pivot, atom_id=self._domain_moving())
+        if cdp.ave_pos_pivot == 'com':
+            origin = centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
+        else:
+            origin = cdp.pivot
+        structure.rotate(R=R, origin=origin, atom_id=self._domain_moving())
 
         # Then translate the moving domain.
         if not self._translation_fixed():
