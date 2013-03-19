@@ -23,6 +23,7 @@
 """Module containing the internal relax structural object."""
 
 # Python module imports.
+from copy import deepcopy
 from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access
@@ -682,6 +683,33 @@ class Internal(Base_struct_API):
         return mol_index
 
 
+    def _residue_data(self, res_nums=None, res_names=None):
+        """Convert the residue info into a dictionary of unique residues with numbers as keys.
+
+        @keyword res_nums:  The list of residue numbers.
+        @type res_nums:     list of int
+        @keyword res_names: The list of residue names matching the numbers.
+        @type res_names:    list of str
+        @return:            The dictionary of residue names with residue numbers as keys.
+        @rtype:             dict of str
+        """
+
+        # Initialise.
+        data = {}
+
+        # Loop over the data.
+        for i in range(len(res_nums)):
+            # The residue data already exists.
+            if res_nums[i] in data:
+                continue
+
+            # Add the data.
+            data[res_nums[i]] = res_names[i]
+
+        # Return the dictionary.
+        return data
+
+
     def _validate_data_arrays(self, struct):
         """Check the validity of the data arrays in the given structure object.
 
@@ -826,6 +854,68 @@ class Internal(Base_struct_API):
 
          # Return the converted data.
         return data
+
+
+    def _trim_helix(self, helix=None, trim_res_list=[], res_data=None):
+        """Trim the given helix based on the list of deleted residue numbers.
+
+        @keyword helix:         The single helix metadata structure.
+        @type helix:            list
+        @keyword trim_res_list: The list of residue numbers which no longer exist.
+        @type trim_res_list:    list of int
+        @keyword res_data:      The dictionary of residue names with residue numbers as keys.
+        @type res_data:         dict of str
+        @return:                The trimmed helix metadata structure, or None if the whole helix is to be deleted.
+        @rtype:                 list or None
+        """
+
+        # Unpack the helix residue numbers.
+        start_res = helix[4]
+        end_res = helix[8]
+
+        # The reverse residue list.
+        trim_res_list_rev = deepcopy(trim_res_list)
+        trim_res_list_rev.reverse()
+
+        # The helix residues.
+        helix_res = list(range(start_res, end_res+1))
+
+        # Trim forwards.
+        for res_num in trim_res_list:
+            if res_num == start_res:
+                # Remove the residue.
+                helix_res.pop(0)
+
+                # No helix left.
+                if len(helix_res) == 0:
+                    break
+
+                # Realias the starting residue.
+                start_res = helix_res[0]
+
+        # No helix left.
+        if len(helix_res) == 0:
+            return None
+
+        # Trim backwards.
+        for res_num in trim_res_list_rev:
+            if res_num == end_res:
+                helix_res.pop(-1)
+                end_res = helix_res[-1]
+
+        # Replace the starting and ending residues.
+        if start_res != helix[4]:
+            helix[4] = start_res
+            helix[2] = res_data[start_res]
+        if end_res != helix[8]:
+            helix[8] = end_res
+            helix[6] = res_data[end_res]
+
+        # The helix length.
+        helix[-1] = len(helix_res)
+
+        # Return the modified helix.
+        return helix
 
 
     def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
@@ -1255,6 +1345,7 @@ class Internal(Base_struct_API):
                 sel_obj = Selection(atom_id)
 
             # Loop over the models.
+            del_res_nums = []
             for model in self.model_loop():
                 # Loop over the molecules.
                 for mol_index in range(len(model.mol)):
@@ -1269,6 +1360,9 @@ class Internal(Base_struct_API):
                     for i in self.atom_loop(atom_id=atom_id, model_num=model.num, index_flag=True):
                         indices.append(i)
 
+                    # Generate a residue data dictionary for the metadata trimming (prior to atom deletion).
+                    res_data = self._residue_data(res_nums=mol.res_num, res_names=mol.res_name)
+
                     # Loop over the reverse indices and pop out the data.
                     indices.reverse()
                     for i in indices:
@@ -1279,11 +1373,34 @@ class Internal(Base_struct_API):
                         mol.element.pop(i)
                         mol.pdb_record.pop(i)
                         mol.res_name.pop(i)
-                        mol.res_num.pop(i)
+                        del_res_nums.append(mol.res_num.pop(i))
                         mol.seg_id.pop(i)
                         mol.x.pop(i)
                         mol.y.pop(i)
                         mol.z.pop(i)
+
+            # Nothing more to do.
+            if not len(del_res_nums):
+                return
+
+            # Handle the helix metadata.
+            del_helix_indices = []
+            for i in range(len(self.helices)):
+                # Trim the helix.
+                helix = self._trim_helix(helix=self.helices[i], trim_res_list=del_res_nums, res_data=res_data)
+
+                # Trimmed helix.
+                if helix != None:
+                    self.helices[i] = helix
+
+                # No helix left.
+                else:
+                    del_helix_indices.append(i)
+
+            # Loop over the reverse helix indices and pop out the data.
+            del_helix_indices.reverse()
+            for i in del_helix_indices:
+                self.helices.pop(i)
 
 
     def get_molecule(self, molecule, model=None):
