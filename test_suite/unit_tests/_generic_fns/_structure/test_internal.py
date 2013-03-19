@@ -214,7 +214,7 @@ class Test_internal(UnitTestCase):
 
         # The helix metadata of the internal structural object.
         helix = [1, 'H1', 'ILE', 'A', 23, None, 'GLU', 'A', 34, None, 1, None, 12]
-        trimmed_helix = [1, 'H1', 'ASN', 'A', 25, None, 'GLN', 'A', 31, None, 1, None, 6]
+        trimmed_helix = [1, 'H1', 'ASN', 'A', 25, None, 'GLN', 'A', 31, None, 1, None, 7]
 
         # Trim the both ends of the helix.
         res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
@@ -229,7 +229,7 @@ class Test_internal(UnitTestCase):
 
         # The helix metadata of the internal structural object.
         helix = [1, 'H1', 'ILE', 'A', 23, None, 'GLU', 'A', 34, None, 1, None, 12]
-        trimmed_helix = [1, 'H1', 'ASN', 'A', 25, None, 'GLN', 'A', 31, None, 1, None, 6]
+        trimmed_helix = [1, 'H1', 'ASN', 'A', 25, None, 'GLN', 'A', 31, None, 1, None, 7]
 
         # Trim the both ends of the helix.
         res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
