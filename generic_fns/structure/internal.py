@@ -642,6 +642,26 @@ class Internal(Base_struct_API):
             yield mol_num, mol_records
 
 
+    def _pdb_chain_id_to_mol_index(self, chain_id=None):
+        """Convert the PDB chain ID into the molecule index in a regular way.
+
+        @keyword chain_id:  The PDB chain ID string.
+        @type chain_id:     str
+        @return:            The corresponding molecule index.
+        @rtype:             int
+        """
+
+        # Initialise.
+        mol_index = 0
+
+        # Convert to the molecule index.
+        if chain_id:
+            mol_index = uppercase.index(chain_id)
+
+        # Return the index.
+        return mol_index
+
+
     def _validate_data_arrays(self, struct):
         """Check the validity of the data arrays in the given structure object.
 
@@ -2167,26 +2187,6 @@ class MolContainer:
 
         # Return the atomic info.
         return fields
-
-
-    def _pdb_chain_id_to_mol_index(self, chain_id=None):
-        """Convert the PDB chain ID into the molecule index in a regular way.
-
-        @keyword chain_id:  The PDB chain ID string.
-        @type chain_id:     str
-        @return:            The corresponding molecule index.
-        @rtype:             int
-        """
-
-        # Initialise.
-        mol_index = 0
-
-        # Convert to the molecule index.
-        if chain_id:
-            mol_index = uppercase.index(chain_id)
-
-        # Return the index.
-        return mol_index
 
 
     def atom_add(self, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
