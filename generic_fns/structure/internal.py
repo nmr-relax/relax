@@ -1373,17 +1373,22 @@ class Internal(Base_struct_API):
                         mol.element.pop(i)
                         mol.pdb_record.pop(i)
                         mol.res_name.pop(i)
-                        del_res_nums.append(mol.res_num.pop(i))
+                        res_num = mol.res_num.pop(i)
                         mol.seg_id.pop(i)
                         mol.x.pop(i)
                         mol.y.pop(i)
                         mol.z.pop(i)
+
+                        # The residue no longer exists.
+                        if res_num not in mol.res_num and res_num not in del_res_nums:
+                            del_res_nums.append(res_num)
 
             # Nothing more to do.
             if not len(del_res_nums):
                 return
 
             # Handle the helix metadata.
+            del_res_nums.reverse()
             del_helix_indices = []
             for i in range(len(self.helices)):
                 # Trim the helix.
