@@ -283,6 +283,8 @@ class Scientific_data(Base_struct_API):
                             atomic_tuple = atomic_tuple + (pos,)
 
                         # Yield the information.
+                        if len(atomic_tuple) == 1:
+                            atomic_tuple = atomic_tuple[0]
                         yield atomic_tuple
 
             # Break out of the loop if the ave flag is set, as data from only one model is used.
