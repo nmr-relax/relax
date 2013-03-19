@@ -918,6 +918,65 @@ class Internal(Base_struct_API):
         return helix
 
 
+    def _trim_sheet(self, sheet=None, trim_res_list=[], res_data=None):
+        """Trim the given sheet based on the list of deleted residue numbers.
+
+        @keyword sheet:         The single sheet metadata structure.
+        @type sheet:            list
+        @keyword trim_res_list: The list of residue numbers which no longer exist.
+        @type trim_res_list:    list of int
+        @keyword res_data:      The dictionary of residue names with residue numbers as keys.
+        @type res_data:         dict of str
+        @return:                The trimmed sheet metadata structure, or None if the whole sheet is to be deleted.
+        @rtype:                 list or None
+        """
+
+        # Unpack the sheet residue numbers.
+        start_res = sheet[5]
+        end_res = sheet[9]
+
+        # The reverse residue list.
+        trim_res_list_rev = deepcopy(trim_res_list)
+        trim_res_list_rev.reverse()
+
+        # The sheet residues.
+        sheet_res = list(range(start_res, end_res+1))
+
+        # Trim forwards.
+        for res_num in trim_res_list:
+            if res_num == start_res:
+                # Remove the residue.
+                sheet_res.pop(0)
+
+                # No sheet left.
+                if len(sheet_res) == 0:
+                    break
+
+                # Realias the starting residue.
+                start_res = sheet_res[0]
+
+        # No sheet left.
+        if len(sheet_res) == 0:
+            return None
+
+        # Trim backwards.
+        for res_num in trim_res_list_rev:
+            if res_num == end_res:
+                sheet_res.pop(-1)
+                end_res = sheet_res[-1]
+
+        # Replace the starting and ending residues.
+        if start_res != sheet[5]:
+            sheet[5] = start_res
+            sheet[3] = res_data[start_res]
+        if end_res != sheet[9]:
+            sheet[9] = end_res
+            sheet[7] = res_data[end_res]
+
+        # Return the modified sheet.
+        return sheet
+
+
     def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
         """Add a new atom to the structural data object.
 
@@ -1387,8 +1446,10 @@ class Internal(Base_struct_API):
             if not len(del_res_nums):
                 return
 
-            # Handle the helix metadata.
+            # Fix the deleted residue number order.
             del_res_nums.reverse()
+
+            # Handle the helix metadata.
             del_helix_indices = []
             for i in range(len(self.helices)):
                 # Trim the helix.
@@ -1406,6 +1467,25 @@ class Internal(Base_struct_API):
             del_helix_indices.reverse()
             for i in del_helix_indices:
                 self.helices.pop(i)
+
+            # Handle the sheet metadata.
+            del_sheet_indices = []
+            for i in range(len(self.sheets)):
+                # Trim the sheet.
+                sheet = self._trim_sheet(sheet=self.sheets[i], trim_res_list=del_res_nums, res_data=res_data)
+
+                # Trimmed sheet.
+                if sheet != None:
+                    self.sheets[i] = sheet
+
+                # No sheet left.
+                else:
+                    del_sheet_indices.append(i)
+
+            # Loop over the reverse sheet indices and pop out the data.
+            del_sheet_indices.reverse()
+            for i in del_sheet_indices:
+                self.sheets.pop(i)
 
 
     def get_molecule(self, molecule, model=None):
