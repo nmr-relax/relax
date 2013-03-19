@@ -62,6 +62,10 @@ def revision():
 
     # Loop over the output lines.
     for line in pipe.stdout.readlines():
+        # Decode Python 3 byte arrays.
+        if hasattr(line, 'decode'):
+            line = line.decode()
+
         # Split up the line.
         row = line.split()
 
@@ -94,6 +98,10 @@ def url():
 
     # Loop over the output lines.
     for line in pipe.stdout.readlines():
+        # Decode Python 3 byte arrays.
+        if hasattr(line, 'decode'):
+            line = line.decode()
+
         # Split up the line.
         row = line.split()
 
