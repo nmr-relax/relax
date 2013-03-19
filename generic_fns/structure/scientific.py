@@ -178,7 +178,7 @@ class Scientific_data(Base_struct_API):
         return False
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
@@ -209,6 +209,8 @@ class Scientific_data(Base_struct_API):
                                     yielded.
         @type pos_flag:             bool
                                     average atom properties across all loaded structures.
+        @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
+        @type index_flag:           bool
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
         @rtype:                     tuple consisting of optional molecule name (str), residue number

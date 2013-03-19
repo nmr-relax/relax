@@ -132,7 +132,7 @@ class Base_struct_API:
         raise RelaxImplementError('are_bonded')
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
@@ -172,6 +172,8 @@ class Base_struct_API:
         @type element_flag:         bool
         @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
+        @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
+        @type index_flag:           bool
         @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
