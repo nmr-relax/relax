@@ -132,7 +132,7 @@ class Base_struct_API:
         raise RelaxImplementError('are_bonded')
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
@@ -170,6 +170,8 @@ class Base_struct_API:
         @type element_flag:         bool
         @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
+        @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
+        @type index_flag:           bool
         @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
@@ -249,8 +251,12 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def delete(self):
-        """Prototype method stub for deleting all structural data from the current data pipe."""
+    def delete(self, atom_id=None):
+        """Prototype method stub for deleting structural data from the current data pipe.
+
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
+        @type atom_id:      str or None
+        """
 
         # Raise the error.
         raise RelaxImplementError
@@ -556,8 +562,12 @@ class Base_struct_API:
                 else:
                     print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
+                # The index of the new molecule to add or merge.
+                index = len(model.mol)
+                if merge:
+                    index -= 1
+
                 # Consistency check.
-                index = len(model.mol) - 1
                 if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
                     raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
 

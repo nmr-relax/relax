@@ -23,11 +23,12 @@
 """Module containing the internal relax structural object."""
 
 # Python module imports.
+from copy import deepcopy
 from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
-from string import digits
+from string import digits, uppercase
 from warnings import warn
 
 # relax module imports.
@@ -257,7 +258,7 @@ class Internal(Base_struct_API):
 
     def _parse_pdb_connectivity_annotation(self, lines):
         """Loop over and parse the PDB connectivity annotation records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect6.html}
 
 
@@ -279,7 +280,7 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the connectivity annotation section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
@@ -334,7 +335,7 @@ class Internal(Base_struct_API):
 
     def _parse_pdb_hetrogen(self, lines):
         """Loop over and parse the PDB hetrogen records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect4.html}.
 
 
@@ -357,14 +358,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the hetrogen section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_misc(self, lines):
         """Loop over and parse the PDB miscellaneous records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect7.html}.
 
 
@@ -384,14 +385,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the miscellaneous section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_prim_struct(self, lines):
         """Loop over and parse the PDB primary structure records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect3.html}.
 
 
@@ -416,14 +417,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the primary structure section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_ss(self, lines):
         """Loop over and parse the PDB secondary structure records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
 
 
@@ -445,14 +446,34 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the secondary structure section.
             if lines[i][:6] not in records:
                 break
-        
+
+            # A helix.
+            if lines[i][:5] == 'HELIX':
+                # Parse the record.
+                record_type, ser_num, helix_id, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, helix_class, comment, length = pdb_read.helix(lines[i])
+
+                # Store the data.
+                if not hasattr(self, 'helices'):
+                    self.helices = []
+                self.helices.append([helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length])
+
+            # A sheet.
+            if lines[i][:5] == 'SHEET':
+                # Parse the record.
+                record_type, strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode = pdb_read.sheet(lines[i])
+
+                # Store the data.
+                if not hasattr(self, 'sheets'):
+                    self.sheets = []
+                self.sheets.append([strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode])
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_title(self, lines):
         """Loop over and parse the PDB title records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect2.html}.
 
 
@@ -487,14 +508,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the title section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_transform(self, lines):
         """Loop over and parse the PDB transform records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect8.html}.
 
 
@@ -517,7 +538,7 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the transform section.
             if lines[i][0: 5] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
@@ -641,6 +662,53 @@ class Internal(Base_struct_API):
         # If records is not empty then there is only a single molecule, so yield the lot.
         if len(mol_records):
             yield mol_num, mol_records
+
+
+    def _pdb_chain_id_to_mol_index(self, chain_id=None):
+        """Convert the PDB chain ID into the molecule index in a regular way.
+
+        @keyword chain_id:  The PDB chain ID string.
+        @type chain_id:     str
+        @return:            The corresponding molecule index.
+        @rtype:             int
+        """
+
+        # Initialise.
+        mol_index = 0
+
+        # Convert to the molecule index.
+        if chain_id:
+            mol_index = uppercase.index(chain_id)
+
+        # Return the index.
+        return mol_index
+
+
+    def _residue_data(self, res_nums=None, res_names=None):
+        """Convert the residue info into a dictionary of unique residues with numbers as keys.
+
+        @keyword res_nums:  The list of residue numbers.
+        @type res_nums:     list of int
+        @keyword res_names: The list of residue names matching the numbers.
+        @type res_names:    list of str
+        @return:            The dictionary of residue names with residue numbers as keys.
+        @rtype:             dict of str
+        """
+
+        # Initialise.
+        data = {}
+
+        # Loop over the data.
+        for i in range(len(res_nums)):
+            # The residue data already exists.
+            if res_nums[i] in data:
+                continue
+
+            # Add the data.
+            data[res_nums[i]] = res_names[i]
+
+        # Return the dictionary.
+        return data
 
 
     def _validate_data_arrays(self, struct):
@@ -787,6 +855,127 @@ class Internal(Base_struct_API):
 
          # Return the converted data.
         return data
+
+
+    def _trim_helix(self, helix=None, trim_res_list=[], res_data=None):
+        """Trim the given helix based on the list of deleted residue numbers.
+
+        @keyword helix:         The single helix metadata structure.
+        @type helix:            list
+        @keyword trim_res_list: The list of residue numbers which no longer exist.
+        @type trim_res_list:    list of int
+        @keyword res_data:      The dictionary of residue names with residue numbers as keys.
+        @type res_data:         dict of str
+        @return:                The trimmed helix metadata structure, or None if the whole helix is to be deleted.
+        @rtype:                 list or None
+        """
+
+        # Unpack the helix residue numbers.
+        start_res = helix[3]
+        end_res = helix[6]
+
+        # The reverse residue list.
+        trim_res_list_rev = deepcopy(trim_res_list)
+        trim_res_list_rev.reverse()
+
+        # The helix residues.
+        helix_res = list(range(start_res, end_res+1))
+
+        # Trim forwards.
+        for res_num in trim_res_list:
+            if res_num == start_res:
+                # Remove the residue.
+                helix_res.pop(0)
+
+                # No helix left.
+                if len(helix_res) == 0:
+                    break
+
+                # Realias the starting residue.
+                start_res = helix_res[0]
+
+        # No helix left.
+        if len(helix_res) == 0:
+            return None
+
+        # Trim backwards.
+        for res_num in trim_res_list_rev:
+            if res_num == end_res:
+                helix_res.pop(-1)
+                end_res = helix_res[-1]
+
+        # Replace the starting and ending residues.
+        if start_res != helix[3]:
+            helix[3] = start_res
+            helix[2] = res_data[start_res]
+        if end_res != helix[6]:
+            helix[6] = end_res
+            helix[5] = res_data[end_res]
+
+        # The helix length.
+        helix[-1] = len(helix_res)
+
+        # Return the modified helix.
+        return helix
+
+
+    def _trim_sheet(self, sheet=None, trim_res_list=[], res_data=None):
+        """Trim the given sheet based on the list of deleted residue numbers.
+
+        @keyword sheet:         The single sheet metadata structure.
+        @type sheet:            list
+        @keyword trim_res_list: The list of residue numbers which no longer exist.
+        @type trim_res_list:    list of int
+        @keyword res_data:      The dictionary of residue names with residue numbers as keys.
+        @type res_data:         dict of str
+        @return:                The trimmed sheet metadata structure, or None if the whole sheet is to be deleted.
+        @rtype:                 list or None
+        """
+
+        # Unpack the sheet residue numbers.
+        start_res = sheet[5]
+        end_res = sheet[9]
+
+        # The reverse residue list.
+        trim_res_list_rev = deepcopy(trim_res_list)
+        trim_res_list_rev.reverse()
+
+        # The sheet residues.
+        sheet_res = list(range(start_res, end_res+1))
+
+        # Trim forwards.
+        for res_num in trim_res_list:
+            if res_num == start_res:
+                # Remove the residue.
+                sheet_res.pop(0)
+
+                # No sheet left.
+                if len(sheet_res) == 0:
+                    break
+
+                # Realias the starting residue.
+                start_res = sheet_res[0]
+
+        # No sheet left.
+        if len(sheet_res) == 0:
+            return None
+
+        # Trim backwards.
+        for res_num in trim_res_list_rev:
+            if res_num == end_res:
+                sheet_res.pop(-1)
+                end_res = sheet_res[-1]
+
+        # Replace the starting and ending residues.
+        if start_res != sheet[5]:
+            sheet[5] = start_res
+            sheet[3] = res_data[start_res]
+        if end_res != sheet[9]:
+            sheet[9] = end_res
+            sheet[7] = res_data[end_res]
+
+        # Return the modified sheet.
+        return sheet
 
 
     def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
@@ -957,7 +1146,7 @@ class Internal(Base_struct_API):
                     return False
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
@@ -980,6 +1169,8 @@ class Internal(Base_struct_API):
         @type element_flag:         bool
         @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
+        @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
+        @type index_flag:           bool
         @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
@@ -1086,8 +1277,12 @@ class Internal(Base_struct_API):
                     atomic_tuple = atomic_tuple + (element,)
                 if pos_flag:
                     atomic_tuple = atomic_tuple + (pos,)
+                if index_flag:
+                    atomic_tuple += (i,)
 
                 # Yield the information.
+                if len(atomic_tuple) == 1:
+                    atomic_tuple = atomic_tuple[0]
                 yield atomic_tuple
 
 
@@ -1215,18 +1410,115 @@ class Internal(Base_struct_API):
             mol.atom_connect(index1=index1, index2=index2)
 
 
-    def delete(self):
-        """Delete all the structural information."""
+    def delete(self, atom_id=None):
+        """Deletion of structural information.
 
-        # Print out.
-        print("Deleting the following structural data:\n")
-        print(self.structural_data)
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
+        @type atom_id:      str or None
+        """
 
-        # Delete the structural data.
-        del self.structural_data
+        # All data.
+        if atom_id == None:
+            # Print out.
+            print("Deleting the following structural data:\n")
+            print(self.structural_data)
 
-        # Initialise the empty model list.
-        self.structural_data = ModelList()
+            # Delete the structural data.
+            del self.structural_data
+
+            # Initialise the empty model list.
+            self.structural_data = ModelList()
+
+        # Atom subset deletion.
+        else:
+            # Generate the selection object.
+            sel_obj = None
+            if atom_id:
+                sel_obj = Selection(atom_id)
+
+            # Loop over the models.
+            del_res_nums = []
+            for model in self.model_loop():
+                # Loop over the molecules.
+                for mol_index in range(len(model.mol)):
+                    mol = model.mol[mol_index]
+
+                    # Skip non-matching molecules.
+                    if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                        continue
+
+                    # Loop over the atoms.
+                    indices = []
+                    for i in self.atom_loop(atom_id=atom_id, model_num=model.num, index_flag=True):
+                        indices.append(i)
+
+                    # Generate a residue data dictionary for the metadata trimming (prior to atom deletion).
+                    res_data = self._residue_data(res_nums=mol.res_num, res_names=mol.res_name)
+
+                    # Loop over the reverse indices and pop out the data.
+                    indices.reverse()
+                    for i in indices:
+                        mol.atom_num.pop(i)
+                        mol.atom_name.pop(i)
+                        mol.bonded.pop(i)
+                        mol.chain_id.pop(i)
+                        mol.element.pop(i)
+                        mol.pdb_record.pop(i)
+                        mol.res_name.pop(i)
+                        res_num = mol.res_num.pop(i)
+                        mol.seg_id.pop(i)
+                        mol.x.pop(i)
+                        mol.y.pop(i)
+                        mol.z.pop(i)
+
+                        # The residue no longer exists.
+                        if res_num not in mol.res_num and res_num not in del_res_nums:
+                            del_res_nums.append(res_num)
+
+            # Nothing more to do.
+            if not len(del_res_nums):
+                return
+
+            # Fix the deleted residue number order.
+            del_res_nums.reverse()
+
+            # Handle the helix metadata.
+            del_helix_indices = []
+            for i in range(len(self.helices)):
+                # Trim the helix.
+                helix = self._trim_helix(helix=self.helices[i], trim_res_list=del_res_nums, res_data=res_data)
+
+                # Trimmed helix.
+                if helix != None:
+                    self.helices[i] = helix
+
+                # No helix left.
+                else:
+                    del_helix_indices.append(i)
+
+            # Loop over the reverse helix indices and pop out the data.
+            del_helix_indices.reverse()
+            for i in del_helix_indices:
+                self.helices.pop(i)
+
+            # Handle the sheet metadata.
+            del_sheet_indices = []
+            for i in range(len(self.sheets)):
+                # Trim the sheet.
+                sheet = self._trim_sheet(sheet=self.sheets[i], trim_res_list=del_res_nums, res_data=res_data)
+
+                # Trimmed sheet.
+                if sheet != None:
+                    self.sheets[i] = sheet
+
+                # No sheet left.
+                else:
+                    del_sheet_indices.append(i)
+
+            # Loop over the reverse sheet indices and pop out the data.
+            del_sheet_indices.reverse()
+            for i in del_sheet_indices:
+                self.sheets.pop(i)
 
 
     def get_molecule(self, molecule, model=None):
@@ -1818,6 +2110,37 @@ class Internal(Base_struct_API):
 
             # The FORMUL record (chemical formula).
             pdb_write.formul(file, comp_num=i+1, het_id=het[1], text=formula)
+
+
+        ###############################
+        # Secondary structure section #
+        ###############################
+
+        # The HELIX records.
+        ####################
+
+        if hasattr(self, 'helices') and len(self.helices):
+            # Printout.
+            print("HELIX")
+
+            # Loop over and unpack the helix data.
+            index = 1
+            for helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length in self.helices:
+                pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=init_chain_id, init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=end_chain_id, end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
+                index += 1
+
+        # The SHEET records.
+        ####################
+
+        if hasattr(self, 'sheets') and len(self.sheets):
+            # Printout.
+            print("SHEET")
+
+            # Loop over and unpack the helix data.
+            index = 1
+            for strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode in self.sheets:
+                pdb_write.sheet(file, strand=strand, sheet_id=sheet_id, num_strands=num_strands, init_res_name=init_res_name, init_chain_id=init_chain_id, init_seq_num=init_seq_num, init_icode=init_icode, end_res_name=end_res_name, end_chain_id=end_chain_id, end_seq_num=end_seq_num, end_icode=end_icode, sense=sense, cur_atom=cur_atom, cur_res_name=cur_res_name, cur_chain_id=cur_chain_id, cur_res_seq=cur_res_seq, cur_icode=cur_icode, prev_atom=prev_atom, prev_res_name=prev_res_name, prev_chain_id=prev_chain_id, prev_res_seq=prev_res_seq, prev_icode=prev_icode)
+                index += 1
 
 
         ######################

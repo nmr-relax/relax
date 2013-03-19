@@ -124,29 +124,33 @@ def connect_atom(index1=None, index2=None):
     cdp.structure.connect_atom(index1=index1, index2=index2)
 
 
-def delete():
-    """Simple function for deleting all structural data."""
+def delete(atom_id=None):
+    """Delete structural data.
+    
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
+    @type atom_id:      str or None
+    """
 
     # Test if the current data pipe exists.
     pipes.test()
 
     # Run the object method.
     if hasattr(cdp, 'structure'):
-        print("Deleting all structural data from the current pipe.")
-        cdp.structure.delete()
+        print("Deleting structural data from the current pipe.")
+        cdp.structure.delete(atom_id=atom_id)
     else:
         print("No structures are present.")
 
     # Then remove any spin specific structural info.
     print("Deleting all spin specific structural info.")
-    for spin in spin_loop():
+    for spin in spin_loop(selection=atom_id):
         # Delete positional information.
         if hasattr(spin, 'pos'):
             del spin.pos
 
     # Then remove any interatomic vector structural info.
     print("Deleting all interatomic vectors.")
-    for interatom in interatomic_loop():
+    for interatom in interatomic_loop(selection1=atom_id):
         # Delete bond vectors.
         if hasattr(interatom, 'vector'):
             del interatom.vector
@@ -194,14 +198,14 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
         # Assemble the atomic coordinates.
         coord_from = []
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_from[i], pos_flag=True):
-            coord_from.append(pos[0][0])
+            coord_from.append(pos[0])
 
         # Loop over the ending models.
         for j in range(len(model_to)):
             # Assemble the atomic coordinates.
             coord_to = []
             for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_to[j], pos_flag=True):
-                coord_to.append(pos[0][0])
+                coord_to.append(pos[0])
 
             # Send to the base container for the calculations.
             cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
@@ -244,7 +248,7 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0][0])
+            coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
     coord = array(coord)
 
@@ -611,7 +615,7 @@ def rmsd(atom_id=None, models=None):
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0][0])
+            coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
     # Calculate the RMSD.
@@ -701,7 +705,7 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0][0])
+            coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
     # The different algorithms.

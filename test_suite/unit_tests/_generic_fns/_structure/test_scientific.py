@@ -197,7 +197,7 @@ class Test_scientific(UnitTestCase):
         atom_count = 0
         for atom in self.data.atom_loop(atom_id=':PRO', res_name_flag=True):
             # Test the residue name.
-            self.assertEqual(atom[0], 'PRO')
+            self.assertEqual(atom, 'PRO')
 
             # Increment the atom count.
             atom_count = atom_count + 1
@@ -216,7 +216,7 @@ class Test_scientific(UnitTestCase):
         atom_count = 0
         for spin_name in self.data.atom_loop(atom_id='@CA', atom_name_flag=True):
             # Test the spin name.
-            self.assertEqual(spin_name[0], 'CA')
+            self.assertEqual(spin_name, 'CA')
 
             # Increment the atom count.
             atom_count = atom_count + 1
