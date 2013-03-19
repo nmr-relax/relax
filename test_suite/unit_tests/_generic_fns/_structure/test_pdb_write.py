@@ -52,7 +52,7 @@ class Test_pdb_write(UnitTestCase):
         file = DummyFileObject()
 
         # Create the PDB record.
-        pdb_write.helix(file, ser_num=1, helix_id='H1', init_res_name='ILE', init_chain_id='A', init_seq_id=23, init_icode=None, end_res_name='GLU', end_chain_id='A', end_seq_num=34, end_icode=None, helix_class=1, comment=None, length=12)
+        pdb_write.helix(file, ser_num=1, helix_id='H1', init_res_name='ILE', init_chain_id='A', init_seq_num=23, init_icode=None, end_res_name='GLU', end_chain_id='A', end_seq_num=34, end_icode=None, helix_class=1, comment=None, length=12)
 
         # Test the record.
         records = file.readlines()
