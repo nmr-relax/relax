@@ -253,6 +253,197 @@ class Test_internal(UnitTestCase):
         self.assertEqual(None, new_helix)
 
 
+    def test__trim_sheet1(self):
+        """1st test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Residues deleted before the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[1, 2, 3, 22], res_data=res_data)
+
+        # Test that nothing has happened.
+        self.assertEqual(sheet, new_sheet)
+
+
+    def test__trim_sheet2(self):
+        """2nd test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Residues deleted after the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[51, 52, 53], res_data=res_data)
+
+        # Test that nothing has happened.
+        self.assertEqual(sheet, new_sheet)
+
+
+    def test__trim_sheet3(self):
+        """3rd test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'LYS', 'A', 11, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the start of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[8, 9, 10], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet4(self):
+        """4th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'ILE', 'A', 13, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the start of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[8, 9, 10, 11, 12], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet5(self):
+        """5th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'ILE', 'A', 13, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the start of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[8, 9, 10, 11, 12, 15], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet6(self):
+        """6th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'ILE', 'A', 13, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the start of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[8, 9, 10, 11, 12, 30], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet7(self):
+        """7th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'GLU', 'A', 16, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the end of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[17, 18, 19], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet8(self):
+        """8th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim nothing.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[18, 19], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(sheet, new_sheet)
+
+
+    def test__trim_sheet9(self):
+        """9th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'THR', 'A', 14, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the end of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[15, 16, 17, 18, 19], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet10(self):
+        """10th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'THR', 'A', 14, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the end of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[11, 15, 16, 17, 18, 19], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet11(self):
+        """11th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'LYS', 'A', 11, None, 'LEU', 'A', 15, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the both ends of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[9, 10, 16, 17, 18, 19], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet12(self):
+        """12th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+        trimmed_sheet = [1, 'BET', 5, 'LYS', 'A', 11, None, 'LEU', 'A', 15, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim the both ends of the sheet.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[9, 10, 13, 16, 17, 18, 19], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(trimmed_sheet, new_sheet)
+
+
+    def test__trim_sheet13(self):
+        """13th test of the Internal._trim_sheet() method."""
+
+        # The sheet metadata of the internal structural object.
+        sheet = [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None]
+
+        # Trim everything.
+        res_data = {1: 'MET', 2: 'GLN', 3: 'ILE', 4: 'PHE', 5: 'VAL', 6: 'LYS', 7: 'THR', 8: 'LEU', 9: 'THR', 10: 'GLY', 11: 'LYS', 12: 'THR', 13: 'ILE', 14: 'THR', 15: 'LEU', 16: 'GLU', 17: 'VAL', 18: 'GLU', 19: 'PRO', 20: 'SER', 21: 'ASP', 22: 'THR', 23: 'ILE', 24: 'GLU', 25: 'ASN', 26: 'VAL', 27: 'LYS', 28: 'ALA', 29: 'LYS', 30: 'ILE', 31: 'GLN', 32: 'ASP', 33: 'LYS', 34: 'GLU'}
+        new_sheet = self.data._trim_sheet(sheet=sheet, trim_res_list=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], res_data=res_data)
+
+        # Test the trimming.
+        self.assertEqual(None, new_sheet)
+
+
     def test_atom_loop(self):
         """Test the Internal.atom_loop() method."""
 
