@@ -291,6 +291,9 @@ class Base_struct_API:
         @type file_version:     int
         """
 
+        # Recreate all base objects (i.e. metadata).
+        xml_to_object(str_node, self, file_version=file_version, blacklist=['model', 'displacements'])
+
         # Recreate the model / molecule data structure.
         model_nodes = str_node.getElementsByTagName('model')
         self.structural_data.from_xml(model_nodes, id=id, file_version=file_version)
@@ -662,6 +665,23 @@ class Base_struct_API:
         # No contents to store, so pack up the structural containers.
         if not self.structural_data.is_empty():
             self.structural_data.to_xml(doc, str_element)
+
+        # The structural metadata.
+        metadata = ['helices', 'sheets']
+        for name in metadata:
+            # The metadata does not exist.
+            if not hasattr(self, name):
+                continue
+
+            # Get the object.
+            obj = getattr(self, name)
+
+            # Create a new element for this object, and add it to the main element.
+            sub_elem = doc.createElement(name)
+            str_element.appendChild(sub_elem)
+
+            # Add the value to the sub element.
+            object_to_xml(doc, sub_elem, value=obj)
 
         # The displacement structure.
         if hasattr(self, 'displacements'):
