@@ -455,6 +455,16 @@ class Internal(Base_struct_API):
                     self.helices = []
                 self.helices.append([helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length])
 
+            # A sheet.
+            if lines[i][:5] == 'SHEET':
+                # Parse the record.
+                record_type, strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode = pdb_read.sheet(lines[i])
+
+                # Store the data.
+                if not hasattr(self, 'sheets'):
+                    self.sheets = []
+                self.sheets.append([strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode])
+
         # Return the remaining lines.
         return lines[i:]
 
@@ -1875,6 +1885,18 @@ class Internal(Base_struct_API):
         index = 1
         for helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length in self.helices:
             pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=init_chain_id, init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=end_chain_id, end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
+            index += 1
+
+        # The SHEET records.
+        ####################
+
+        # Printout.
+        print("SHEET")
+
+        # Loop over and unpack the helix data.
+        index = 1
+        for strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode in self.sheets:
+            pdb_write.sheet(file, strand=strand, sheet_id=sheet_id, num_strands=num_strands, init_res_name=init_res_name, init_chain_id=init_chain_id, init_seq_num=init_seq_num, init_icode=init_icode, end_res_name=end_res_name, end_chain_id=end_chain_id, end_seq_num=end_seq_num, end_icode=end_icode, sense=sense, cur_atom=cur_atom, cur_res_name=cur_res_name, cur_chain_id=cur_chain_id, cur_res_seq=cur_res_seq, cur_icode=cur_icode, prev_atom=prev_atom, prev_res_name=prev_res_name, prev_chain_id=prev_chain_id, prev_res_seq=prev_res_seq, prev_icode=prev_icode)
             index += 1
 
 
