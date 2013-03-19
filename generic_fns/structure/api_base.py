@@ -556,8 +556,12 @@ class Base_struct_API:
                 else:
                     print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
-                # Consistency check.
+                # The index of the new molecule to add or merge.
                 index = len(model.mol)
+                if merge:
+                    index -= 1
+
+                # Consistency check.
                 if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
                     raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
 
