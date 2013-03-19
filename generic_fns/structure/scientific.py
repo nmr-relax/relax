@@ -281,6 +281,8 @@ class Scientific_data(Base_struct_API):
                             atomic_tuple = atomic_tuple + (element,)
                         if pos_flag:
                             atomic_tuple = atomic_tuple + (pos,)
+                        if index_flag:
+                            atomic_tuple += (atom_index,)
 
                         # Yield the information.
                         if len(atomic_tuple) == 1:
