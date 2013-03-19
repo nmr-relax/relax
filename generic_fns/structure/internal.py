@@ -27,7 +27,7 @@ from copy import deepcopy
 from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access
-from string import digits, uppercase
+from string import digits, ascii_uppercase
 from warnings import warn
 
 # relax module imports.
@@ -677,7 +677,7 @@ class Internal(Base_struct_API):
 
         # Convert to the molecule index.
         if chain_id:
-            mol_index = uppercase.index(chain_id)
+            mol_index = ascii_uppercase.index(chain_id)
 
         # Return the index.
         return mol_index
