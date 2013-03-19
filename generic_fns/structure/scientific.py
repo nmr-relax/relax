@@ -181,12 +181,9 @@ class Scientific_data(Base_struct_API):
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
-                                    matching this selection will be yielded.
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
         @type atom_id:              str
-        @keyword str_id:            The structure identifier.  This can be the file name, model
-                                    number, or structure number.  If None, then all structures will
-                                    be looped over.
+        @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.  If None, then all structures will be looped over.
         @type str_id:               str, int, or None
         @keyword model_num:         Only loop over a specific model.
         @type model_num:            int or None
@@ -194,8 +191,7 @@ class Scientific_data(Base_struct_API):
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
-        @keyword res_num_flag:      A flag which if True will cause the residue number to be
-                                    yielded.
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be yielded.
         @type res_num_flag:         bool
         @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
         @type res_name_flag:        bool
@@ -205,17 +201,14 @@ class Scientific_data(Base_struct_API):
         @type atom_name_flag:       bool
         @keyword element_flag:      A flag which if True will cause the element name to be yielded.
         @type element_flag:         bool
-        @keyword pos_flag:          A flag which if True will cause the atomic position to be
-                                    yielded.
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
-                                    average atom properties across all loaded structures.
         @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
         @type index_flag:           bool
+        @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
-        @rtype:                     tuple consisting of optional molecule name (str), residue number
-                                    (int), residue name (str), atom number (int), atom name(str),
-                                    element name (str), and atomic position (array of len 3).
+        @rtype:                     tuple consisting of optional molecule name (str), residue number (int), residue name (str), atom number (int), atom name(str), element name (str), and atomic position (array of len 3).
         """
 
         # Generate the selection object.
