@@ -337,6 +337,48 @@ class Structure(SystemTestCase):
             i = i + 1
 
 
+    def test_metadata_xml(self):
+        """Test the storage and loading of metadata into an XML state file."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
+
+        # Delete a big chunk of the molecule.
+        self.interpreter.structure.delete(":35-76")
+
+        # Delete all waters.
+        self.interpreter.structure.delete(":HOH")
+
+        # Write out the results file.
+        self.tmpfile = mktemp() + '.bz2'
+        self.interpreter.results.write(self.tmpfile, dir=None)
+
+        # Create a new data pipe and load the results.
+        self.interpreter.pipe.create('xml text', 'mf')
+        self.interpreter.results.read(self.tmpfile)
+
+        # What the data should look like.
+        helices = [
+            ['H1', 'A', 'ILE', 23, 'A', 'GLU', 34, 1, 12]
+        ]
+        sheets = [
+            [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None],
+            [2, 'BET', 5, 'MET', 'A', 1, None, 'THR', 'A', 7, None, -1, None, None, None, None, None, None, None, None, None, None]
+        ]
+
+        # Check the helix data.
+        self.assert_(hasattr(cdp.structure, 'helices'))
+        self.assertEqual(len(cdp.structure.helices), 1)
+        self.assertEqual(cdp.structure.helices[0], helices[0])
+
+        # Check the sheet data.
+        self.assert_(hasattr(cdp.structure, 'sheets'))
+        self.assertEqual(len(cdp.structure.sheets), 2)
+        self.assertEqual(cdp.structure.sheets[0], sheets[0])
+        self.assertEqual(cdp.structure.sheets[1], sheets[1])
+
+
     def test_read_merge(self):
         """Test the merging of two molecules into one."""
 
