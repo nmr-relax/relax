@@ -870,8 +870,8 @@ class Internal(Base_struct_API):
         """
 
         # Unpack the helix residue numbers.
-        start_res = helix[4]
-        end_res = helix[8]
+        start_res = helix[3]
+        end_res = helix[6]
 
         # The reverse residue list.
         trim_res_list_rev = deepcopy(trim_res_list)
@@ -904,12 +904,12 @@ class Internal(Base_struct_API):
                 end_res = helix_res[-1]
 
         # Replace the starting and ending residues.
-        if start_res != helix[4]:
-            helix[4] = start_res
+        if start_res != helix[3]:
+            helix[3] = start_res
             helix[2] = res_data[start_res]
-        if end_res != helix[8]:
-            helix[8] = end_res
-            helix[6] = res_data[end_res]
+        if end_res != helix[6]:
+            helix[6] = end_res
+            helix[5] = res_data[end_res]
 
         # The helix length.
         helix[-1] = len(helix_res)
