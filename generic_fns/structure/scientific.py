@@ -168,7 +168,7 @@ class Scientific_data(Base_struct_API):
         for pos1 in self.atom_loop(atom_id=atom_id1, pos_flag=True):
             for pos2 in self.atom_loop(atom_id=atom_id2, pos_flag=True):
                 # The interatomic distance.
-                dist = linalg.norm(pos2[0]-pos1[0])
+                dist = linalg.norm(pos2-pos1)
 
                 # The atom is within the radius of 2.0 Angstrom.
                 if dist < 2.0:
