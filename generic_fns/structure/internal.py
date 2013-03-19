@@ -256,7 +256,7 @@ class Internal(Base_struct_API):
 
     def _parse_pdb_connectivity_annotation(self, lines):
         """Loop over and parse the PDB connectivity annotation records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect6.html}
 
 
@@ -278,7 +278,7 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the connectivity annotation section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
@@ -333,7 +333,7 @@ class Internal(Base_struct_API):
 
     def _parse_pdb_hetrogen(self, lines):
         """Loop over and parse the PDB hetrogen records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect4.html}.
 
 
@@ -356,14 +356,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the hetrogen section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_misc(self, lines):
         """Loop over and parse the PDB miscellaneous records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect7.html}.
 
 
@@ -383,14 +383,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the miscellaneous section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_prim_struct(self, lines):
         """Loop over and parse the PDB primary structure records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect3.html}.
 
 
@@ -415,14 +415,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the primary structure section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_ss(self, lines):
         """Loop over and parse the PDB secondary structure records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
 
 
@@ -444,14 +444,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the secondary structure section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_title(self, lines):
         """Loop over and parse the PDB title records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect2.html}.
 
 
@@ -486,14 +486,14 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the title section.
             if lines[i][:6] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
 
     def _parse_pdb_transform(self, lines):
         """Loop over and parse the PDB transform records.
-        
+
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect8.html}.
 
 
@@ -516,7 +516,7 @@ class Internal(Base_struct_API):
             # No match, therefore assume to be out of the transform section.
             if lines[i][0: 5] not in records:
                 break
-        
+
         # Return the remaining lines.
         return lines[i:]
 
