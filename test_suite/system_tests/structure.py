@@ -901,6 +901,9 @@ class Structure(SystemTestCase):
         real_data = [
             "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
             "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             \n",
+            "HELIX    1  H1 ILE A   23  GLU A   34  1                                  12    \n",
+            "SHEET    1 BET 5 GLY A  10  VAL A  17  0                                        \n",
+            "SHEET    2 BET 5 MET A   1  THR A   7 -1                                        \n",
             "ATOM      1  N   MET A   1      27.340  24.430   2.614  1.00  0.00           N  \n",
             "ATOM      2 CA   MET A   1      26.266  25.413   2.842  1.00  0.00           C  \n",
             "ATOM      3  C   MET A   1      26.913  26.639   3.531  1.00  0.00           C  \n",
