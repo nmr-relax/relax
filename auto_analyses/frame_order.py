@@ -35,6 +35,7 @@ from time import localtime
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.angles import wrap_angles
 from generic_fns.pipes import cdp_name, get_pipe
+from lib.text.sectioning import section
 from maths_fns.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
@@ -587,6 +588,7 @@ class Frame_order_analysis:
         self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
         # Create the visualisation script.
+        section(file=sys.stdout, text="Creating a PyMOL visualisation script.")
         script = open_write_file(file_name='pymol_display.py', dir=self.results_dir+model, force=True)
 
         # Add a comment for the user.
