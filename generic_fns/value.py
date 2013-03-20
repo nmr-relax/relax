@@ -428,7 +428,7 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
         pipes.switch(orig_pipe)
 
 
-def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, return_data_desc=None, bc=False, force=False):
+def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, return_data_desc=None, comment=None, bc=False, force=False):
     """Write data to a file.
 
     @keyword param:             The name of the parameter to write to file.
@@ -443,6 +443,8 @@ def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, retur
     @type return_value:         None or func
     @keyword return_data_desc:  An optional function which if supplied will override the default parameter description returning function.
     @type return_data_desc:     None or func
+    @keyword comment:           Text which will be added to the start of the file as comments.  All lines will be prefixed by '# '.
+    @type comment:              str
     @keyword bc:                A flag which if True will cause the back calculated values to be written.
     @type bc:                   bool
     @keyword force:             A flag which if True will cause any pre-existing file to be overwritten.
@@ -461,7 +463,7 @@ def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, retur
     file = open_write_file(file, dir, force)
 
     # Write the data.
-    write_data(param=param, file=file, scaling=scaling, return_value=return_value, return_data_desc=return_data_desc, bc=bc)
+    write_data(param=param, file=file, scaling=scaling, return_value=return_value, return_data_desc=return_data_desc, comment=comment, bc=bc)
 
     # Close the file.
     file.close()
@@ -470,7 +472,7 @@ def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, retur
     add_result_file(type='text', label='Text', file=file_path)
 
 
-def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, return_data_desc=None):
+def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, return_data_desc=None, comment=None):
     """The function which actually writes the data.
 
     @keyword param:             The parameter to write.
@@ -485,6 +487,8 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
     @type return_value:         None or func
     @keyword return_data_desc:  An optional function which if supplied will override the default parameter description returning function.
     @type return_data_desc:     None or func
+    @keyword comment:           Text which will be added to the start of the file as comments.  All lines will be prefixed by '# '.
+    @type comment:              str
     """
 
     # Get the value and error returning function parameter description function if required.
@@ -509,6 +513,16 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
     desc = return_data_desc(param)
     if desc:
         file.write("# Parameter description:  %s.\n" % desc)
+        file.write("#\n")
+
+    # The comments.
+    if comment:
+        # Split up the lines.
+        lines = comment.splitlines()
+
+        # Write out.
+        for line in lines:
+            file.write("# %s\n" % line)
         file.write("#\n")
 
     # Loop over the sequence.

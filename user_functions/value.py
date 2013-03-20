@@ -437,6 +437,13 @@ uf.add_keyarg(
     desc = "The factor to scale parameters by."
 )
 uf.add_keyarg(
+    name = "comment",
+    py_type = "str",
+    desc_short = "comment",
+    desc = "Text which will be added to the start of the file as comments.  All lines will be prefixed by '# '.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "bc",
     default = False,
     py_type = "bool",
