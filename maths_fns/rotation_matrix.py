@@ -336,7 +336,7 @@ def axis_angle_to_R(axis, angle, R):
     Conversion equations
     ====================
 
-    From Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix), the conversion is given by::
+    From Wikipedia (U{http://en.wikipedia.org/wiki/Rotation_matrix}), the conversion is given by::
 
         c = cos(angle); s = sin(angle); C = 1-c
         xs = x*s;   ys = y*s;   zs = z*s
@@ -392,7 +392,7 @@ def axis_angle_to_quaternion(axis, angle, quat, norm_flag=True):
     Conversion equations
     ====================
 
-    From Wolfram MathWorld (http://mathworld.wolfram.com/Quaternion.html), the conversion is given by::
+    From Wolfram MathWorld (U{http://mathworld.wolfram.com/Quaternion.html}), the conversion is given by::
 
         q = (cos(angle/2), n * sin(angle/2)),
 
@@ -750,7 +750,7 @@ def euler_to_R_xyx(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xyx convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the xyx convention is::
 
               |  cb                  sa*sb               ca*sb            |
         R  =  |  sb*sg               ca*cg - sa*cb*sg   -sa*cg - ca*cb*sg |,
@@ -810,7 +810,7 @@ def euler_to_R_xyz(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xyz convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the xyz convention is::
 
               |  cb*cg              -ca*sg + sa*sb*cg    sa*sg + ca*sb*cg |
         R  =  |  cb*sg               ca*cg + sa*sb*sg   -sa*cg + ca*sb*sg |,
@@ -870,7 +870,7 @@ def euler_to_R_xzx(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xzx convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the xzx convention is::
 
               |  cb                 -ca*sb               sa*sb            |
         R  =  |  sb*cg              -sa*sg + ca*cb*cg   -ca*sg - sa*cb*cg |,
@@ -930,7 +930,7 @@ def euler_to_R_xzy(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xzy convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the xzy convention is::
 
               |  cb*cg               sa*sg - ca*sb*cg    ca*sg + sa*sb*cg |
         R  =  |  sb                  ca*cb              -sa*cb            |,
@@ -990,7 +990,7 @@ def euler_to_R_yxy(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yxy convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the yxy convention is::
 
               |  ca*cg - sa*cb*sg    sb*sg               sa*cg + ca*cb*sg |
         R  =  |  sa*sb               cb                 -ca*sb            |,
@@ -1050,7 +1050,7 @@ def euler_to_R_yxz(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yxz convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the yxz convention is::
 
               |  ca*cg - sa*sb*sg   -cb*sg               sa*cg + ca*sb*sg |
         R  =  |  ca*sg + sa*sb*cg    cb*cg               sa*sg - ca*sb*cg |,
@@ -1110,7 +1110,7 @@ def euler_to_R_yzx(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yzx convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the yzx convention is::
 
               |  ca*cb              -sb                  sa*cb            |
         R  =  |  sa*sg + ca*sb*cg    cb*cg              -ca*sg + sa*sb*cg |,
@@ -1170,7 +1170,7 @@ def euler_to_R_yzy(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yzy convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the yzy convention is::
 
               | -sa*sg + ca*cb*cg   -sb*cg               ca*sg + sa*cb*cg |
         R  =  |  ca*sb               cb                  sa*sb            |,
@@ -1230,7 +1230,7 @@ def euler_to_R_zxy(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zxy convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the zxy convention is::
 
               |  ca*cg + sa*sb*sg   -sa*cg + ca*sb*sg    cb*sg            |
         R  =  |  sa*cb               ca*cb              -sb               |,
@@ -1290,7 +1290,7 @@ def euler_to_R_zxz(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zxz convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the zxz convention is::
 
               |  ca*cg - sa*cb*sg   -sa*cg - ca*cb*sg    sb*sg            |
         R  =  |  ca*sg + sa*cb*cg   -sa*sg + ca*cb*cg   -sb*cg            |,
@@ -1350,7 +1350,7 @@ def euler_to_R_zyx(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zyx convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the zyx convention is::
 
               |  ca*cb              -sa*cb               sb               |
         R  =  |  sa*cg + ca*sb*sg    ca*cg - sa*sb*sg   -cb*sg            |,
@@ -1410,7 +1410,7 @@ def euler_to_R_zyz(alpha, beta, gamma, R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zyz convention is::
+    According to wikipedia (U{http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices}), the rotation matrix for the zyz convention is::
 
               | -sa*sg + ca*cb*cg   -ca*sg - sa*cb*cg    sb*cg            |
         R  =  |  sa*cg + ca*cb*sg    ca*cg - sa*cb*sg    sb*sg            |,
@@ -1463,7 +1463,7 @@ def euler_to_R_zyz(alpha, beta, gamma, R):
 def matrix_indices(i, neg, alt):
     """Calculate the parameteric indices i, j, k, and h.
 
-    This is one of the algorithms of Ken Shoemake in "Euler Angle Conversion. Graphics Gems IV. Paul Heckbert (ed.). Academic Press, 1994, ISBN: 0123361567. pp. 222-229."  (http://www.graphicsgems.org/).
+    This is one of the algorithms of Ken Shoemake in "Euler Angle Conversion. Graphics Gems IV. Paul Heckbert (ed.). Academic Press, 1994, ISBN: 0123361567. pp. 222-229."  (U{http://www.graphicsgems.org/}).
 
     The indices (i, j, k) are a permutation of (x, y, z), and the index h corresponds to the row containing the Givens argument a.
 
@@ -1536,7 +1536,7 @@ def R_to_axis_angle(R):
     Conversion equations
     ====================
 
-    From Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix), the conversion is given by::
+    From Wikipedia (U{http://en.wikipedia.org/wiki/Rotation_matrix}), the conversion is given by::
 
         x = Qzy-Qyz
         y = Qxz-Qzx
@@ -1573,7 +1573,7 @@ def R_to_axis_angle(R):
 def R_to_euler(R, notation, axes_rot='static', second_sol=False):
     """Convert the rotation matrix to the given Euler angles.
 
-    This uses the algorithms of Ken Shoemake in "Euler Angle Conversion. Graphics Gems IV. Paul Heckbert (ed.). Academic Press, 1994, ISBN: 0123361567. pp. 222-229." (http://www.graphicsgems.org/).
+    This uses the algorithms of Ken Shoemake in "Euler Angle Conversion. Graphics Gems IV. Paul Heckbert (ed.). Academic Press, 1994, ISBN: 0123361567. pp. 222-229." (U{http://www.graphicsgems.org/}).
 
 
     The Euler angle notation can be one of:
@@ -1856,7 +1856,7 @@ def R_to_tilt_torsion(R):
 def R_to_quaternion(R, quat):
     """Convert a rotation matrix into quaternion form.
 
-    This is from Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion), where::
+    This is from Wikipedia (U{http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion}), where::
 
         w = 0.5*sqrt(1+Qxx+Qyy+Qzz),
         x = copysign(0.5*sqrt(1+Qxx-Qyy-Qzz),Qzy-Qyz),
@@ -2242,7 +2242,7 @@ def quaternion_to_axis_angle(quat):
     Conversion equations
     ====================
 
-    From Wolfram MathWorld (http://mathworld.wolfram.com/Quaternion.html), the conversion is given by::
+    From Wolfram MathWorld (U{http://mathworld.wolfram.com/Quaternion.html}), the conversion is given by::
 
         q = (cos(angle/2), n * sin(angle/2)),
 
@@ -2274,14 +2274,14 @@ def quaternion_to_axis_angle(quat):
 def quaternion_to_R(quat, R):
     """Convert a quaternion into rotation matrix form.
 
-    This is from Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion), where::
+    This is from Wikipedia (U{http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion}), where::
 
             | 1 - 2y**2 - 2z**2      2xy - 2zw          2xz + 2yw     |
         Q = |     2xy + 2zw      1 - 2x**2 - 2z**2      2yz - 2xw     |,
             |     2xz - 2yw          2yz + 2xw      1 - 2x**2 - 2y**2 |
 
     and where the quaternion is defined as q = (w, x, y, z).  This has been verified using Simo
-    Saerkkae's "Notes on Quaternions" at http://www.lce.hut.fi/~ssarkka/.
+    Saerkkae's "Notes on Quaternions" at U{http://www.lce.hut.fi/~ssarkka/}.
 
 
     @param quat:    The quaternion.

@@ -45,9 +45,9 @@ class Mf(GuiTestCase):
     """Class for testing various aspects specific to the model-free auto-analysis."""
 
     def test_bug_20479_gui_final_pipe(self):
-        """Catch bug #20479 (https://gna.org/bugs/?20479), the failure to load a relax state in the GUI.
+        """Catch U{bug #20479<https://gna.org/bugs/?20479>}, the failure to load a relax state in the GUI.
 
-        This was reported by Stanislava Panova (https://gna.org/users/stacy).
+        This was reported by U{Stanislava Panova<https://gna.org/users/stacy>}.
         """
 
         # Simulate the new analysis wizard.
@@ -194,7 +194,7 @@ class Mf(GuiTestCase):
     def test_mf_auto_analysis(self):
         """Test the model-free auto-analysis.
 
-        This now catches bug #20603 (https://gna.org/bugs/?20603).
+        This now catches U{bug #20603<https://gna.org/bugs/?20603>}.
         """
 
         # Simulate the new analysis wizard.

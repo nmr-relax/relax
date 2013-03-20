@@ -135,9 +135,7 @@ class Base_struct_API:
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
-        This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
-        It should loop over all atoms of the system yielding the following atomic information, if
-        the corresponding flag is True, in tuple form:
+        This method should be designed as a U{generator<http://www.python.org/dev/peps/pep-0255/>}.  It should loop over all atoms of the system yielding the following atomic information, if the corresponding flag is True, in tuple form:
 
             1.  Model number.
             2.  Molecule name.
@@ -145,8 +143,7 @@ class Base_struct_API:
             4.  Residue name.
             5.  Atom number.
             6.  Atom name.
-            7.  The element name (its atomic symbol and optionally the isotope, e.g. 'N', 'Mg',
-                '17O', '13C', etc).
+            7.  The element name (its atomic symbol and optionally the isotope, e.g. 'N', 'Mg', '17O', '13C', etc).
             8.  The position of the atom in Euclidean space.
 
 
@@ -999,7 +996,7 @@ class Displacements:
     def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None, centroid=None):
         """Calculate the rotational and translational displacements using the given coordinate sets.
 
-        This uses the Kabsch algorithm (http://en.wikipedia.org/wiki/Kabsch_algorithm).
+        This uses the U{Kabsch algorithm<http://en.wikipedia.org/wiki/Kabsch_algorithm>}.
 
 
         @keyword model_from:    The model number of the starting structure.

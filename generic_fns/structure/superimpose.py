@@ -175,7 +175,7 @@ def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
 def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroid=None, verbosity=1):
     """Calculate the rotational and translational displacements between the two given coordinate sets.
 
-    This uses the Kabsch algorithm (http://en.wikipedia.org/wiki/Kabsch_algorithm).
+    This uses the U{Kabsch algorithm<http://en.wikipedia.org/wiki/Kabsch_algorithm>}.
 
 
     @keyword name_from:     The name of the starting structure, used for the printouts.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -60,7 +60,7 @@ class Bruker(GuiTestCase, system_tests.bruker.Bruker):
 
 
     def test_bug_20152_read_dc_file(self):
-        """Test the reading of a DC file, catching bug #20152 (https://gna.org/bugs/?20152)."""
+        """Test the reading of a DC file, catching U{bug #20152<https://gna.org/bugs/?20152>}."""
 
         # Simulate the new analysis wizard.
         self.app.gui.analysis.menu_new(None)

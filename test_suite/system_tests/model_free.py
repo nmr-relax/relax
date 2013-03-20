@@ -250,7 +250,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_15050(self):
-        """Test catching bug #15050, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by Tiago Pais (https://gna.org/users/tpais)."""
+        """Test catching bug #15050, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by U{Tiago Pais<https://gna.org/users/tpais>}."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
@@ -284,7 +284,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20464_missing_ri_data(self):
-        """Bug #20464 catch (https://gna.org/bugs/?20464), the failure due to missing relaxation data."""
+        """U{Bug #20464<https://gna.org/bugs/?20464>} catch, the failure due to missing relaxation data."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -294,7 +294,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20563_missing_ri_error(self):
-        """Bug #20563 catch (https://gna.org/bugs/?20563), the failure due to missing relaxation data errors."""
+        """U{Bug #20563<https://gna.org/bugs/?20563>} catch, the failure due to missing relaxation data errors."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -304,7 +304,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20531_molmol_macro_write_relaxfault(self):
-        """Bug #20531 catch (https://gna.org/bugs/?20531), the RelaxFault when creating the Molmol macros."""
+        """U{Bug #20531<https://gna.org/bugs/?20531>} catch, the RelaxFault when creating the Molmol macros."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -366,7 +366,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20531_molmol_macro_write_relaxfault2(self):
-        """Bug #20531 catch (https://gna.org/bugs/?20531), the RelaxFault when creating the Molmol macros.
+        """U{Bug #20531<https://gna.org/bugs/?20531>} catch, the RelaxFault when creating the Molmol macros.
 
         This was the first attempt at catching the bug, but it failed.  However the code paths tested here are not tested in any other tests, so this system test will remain.
         """
@@ -452,7 +452,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20613_auto_mf_diff_tensor_pdb(self):
-        """Bug #20613 catch (https://gna.org/bugs/?20613), the failure of the auto-analysis due to diffusion tensor PDB creation for the local tm global model."""
+        """U{Bug #20613<https://gna.org/bugs/?20613>} catch, the failure of the auto-analysis due to diffusion tensor PDB creation for the local tm global model."""
 
         # Clear the data store.
         self.interpreter.reset()
