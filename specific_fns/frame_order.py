@@ -44,7 +44,6 @@ from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
 from generic_fns.structure.mass import centre_of_mass
 from generic_fns.structure.internal import Internal
-from lib.text.sectioning import section
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
@@ -958,9 +957,6 @@ class Frame_order(API_base, API_common):
         @type force:    bool
         """
 
-        # Printout.
-        section(sys.stdout, "Creating a PDB file with the moving domains shifted to the average position.")
-
         # Make a copy of the structural object (so as to preserve the original structure).
         structure = deepcopy(cdp.structure)
 
@@ -997,10 +993,6 @@ class Frame_order(API_base, API_common):
         @type force:    bool
         """
 
-        # Printout.
-        section(sys.stdout, "Creating a PDB file of a distribution of positions coving the full dynamics of the moving domain.")
-
-
 
     def _pdb_geometric_rep(self, file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
         """Create a PDB file containing a geometric object representing the frame order dynamics.
@@ -1018,9 +1010,6 @@ class Frame_order(API_base, API_common):
         @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
         @type neg_cone:         bool
         """
-
-        # Printout.
-        section(sys.stdout, "Creating a PDB file containing a geometric object representing the frame order dynamics.")
 
         # Monte Carlo simulation flag.
         sim = False
