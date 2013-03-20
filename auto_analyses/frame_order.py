@@ -35,7 +35,7 @@ from time import localtime
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.angles import wrap_angles
 from generic_fns.pipes import cdp_name, get_pipe
-from lib.text.sectioning import section
+from lib.text.sectioning import section, subsection, title
 from maths_fns.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
@@ -87,10 +87,7 @@ class Frame_order_analysis:
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
         # Initial printout.
-        text = "# Frame order auto-analysis #"
-        print("\n\n\n\n\n\n\n" + "#"*len(text))
-        print("%s" % text)
-        print("#"*len(text))
+        title(file=sys.stdout, text="Frame order auto-analysis", prespace=7)
 
         # Store the args.
         self.data_pipe_full = data_pipe_full
@@ -332,8 +329,8 @@ class Frame_order_analysis:
             # The model title.
             title = model[0].upper() + model[1:]
 
-            # Print out.
-            self.print_title(title)
+            # Printout.
+            section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
             # The data pipe name.
             self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
@@ -405,7 +402,7 @@ class Frame_order_analysis:
         title = model[0].upper() + model[1:]
 
         # Print out.
-        self.print_title(title)
+        section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
         # The data pipe name.
         self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
@@ -527,19 +524,6 @@ class Frame_order_analysis:
         sys.stdout.write("\n")
 
 
-    def print_title(self, name):
-        """Title printout for each frame order model.
-
-        @param name:    The frame order model name.
-        @type name:     str
-        """
-
-        text = "# %s frame order model #" % name
-        print("\n\n\n\n\n" + "#"*len(text))
-        print("%s" % text)
-        print("#"*len(text) + "\n")
-
-
     def read_results(self, model=None, pipe_name=None):
         """Attempt to read old results files.
 
@@ -588,7 +572,7 @@ class Frame_order_analysis:
         self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
         # Create the visualisation script.
-        section(file=sys.stdout, text="Creating a PyMOL visualisation script.")
+        subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
         script = open_write_file(file_name='pymol_display.py', dir=self.results_dir+model, force=True)
 
         # Add a comment for the user.
