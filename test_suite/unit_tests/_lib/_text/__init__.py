@@ -21,5 +21,7 @@
 
 
 __all__ = [
-    'test___init__'
+    'test___init__',
+    'test_sectioning',
+    'test_table'
 ]
