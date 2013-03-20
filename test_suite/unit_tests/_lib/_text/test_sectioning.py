@@ -23,12 +23,106 @@
 from unittest import TestCase
 
 # relax module imports.
-from lib.text.sectioning import subtitle, title
+from lib.text.sectioning import section, subsection, subsubsection, subsubtitle, subtitle, title
 from relax_io import DummyFileObject
 
 
 class Test_sectioning(TestCase):
     """Unit tests for the lib.text.sectioning relax module."""
+
+    def test_section(self):
+        """Test of the lib.text.sectioning.section() function."""
+
+        # Write out the section.
+        file = DummyFileObject()
+        section(file=file, text='Test section')
+
+        # Read the results.
+        lines = file.readlines()
+        print("Formatted section lines:  %s" % lines)
+
+        # Check the title.
+        real_lines = [
+            '\n',
+            '\n',
+            'Test section\n',
+            '============\n',
+            '\n',
+        ]
+        self.assertEqual(len(lines), len(real_lines))
+        for i in range(len(lines)):
+            self.assertEqual(lines[i], real_lines[i])
+
+
+    def test_subsection(self):
+        """Test of the lib.text.sectioning.subsection() function."""
+
+        # Write out the subsection.
+        file = DummyFileObject()
+        subsection(file=file, text='Test subsection')
+
+        # Read the results.
+        lines = file.readlines()
+        print("Formatted subsection lines:  %s" % lines)
+
+        # Check the title.
+        real_lines = [
+            '\n',
+            'Test subsection\n',
+            '---------------\n',
+            '\n',
+        ]
+        self.assertEqual(len(lines), len(real_lines))
+        for i in range(len(lines)):
+            self.assertEqual(lines[i], real_lines[i])
+
+
+    def test_subsubsection(self):
+        """Test of the lib.text.sectioning.subsubsection() function."""
+
+        # Write out the subsubsection.
+        file = DummyFileObject()
+        subsubsection(file=file, text='Test subsubsection')
+
+        # Read the results.
+        lines = file.readlines()
+        print("Formatted subsubsection lines:  %s" % lines)
+
+        # Check the title.
+        real_lines = [
+            '\n',
+            'Test subsubsection\n',
+            '~~~~~~~~~~~~~~~~~~\n',
+            '\n',
+        ]
+        self.assertEqual(len(lines), len(real_lines))
+        for i in range(len(lines)):
+            self.assertEqual(lines[i], real_lines[i])
+
+
+    def test_subsubtitle(self):
+        """Test of the lib.text.sectioning.subsubtitle() function."""
+
+        # Write out the subtitle.
+        file = DummyFileObject()
+        subsubtitle(file=file, text='Test subsubtitle')
+
+        # Read the results.
+        lines = file.readlines()
+        print("Formatted subsubtitle lines:  %s" % lines)
+
+        # Check the title.
+        real_lines = [
+            '\n',
+            '~~~~~~~~~~~~~~~~~~~~\n',
+            '~ Test subsubtitle ~\n',
+            '~~~~~~~~~~~~~~~~~~~~\n',
+            '\n',
+        ]
+        self.assertEqual(len(lines), len(real_lines))
+        for i in range(len(lines)):
+            self.assertEqual(lines[i], real_lines[i])
+
 
     def test_subtitle(self):
         """Test of the lib.text.sectioning.subtitle() function."""
@@ -42,15 +136,16 @@ class Test_sectioning(TestCase):
         print("Formatted subtitle lines:  %s" % lines)
 
         # Check the title.
-        subtitle_lines = [
+        real_lines = [
             '\n',
-            '# Test subtitle\n',
-            '###############\n',
+            '-----------------\n',
+            '- Test subtitle -\n',
+            '-----------------\n',
             '\n',
         ]
-        self.assertEqual(len(lines), len(subtitle_lines))
+        self.assertEqual(len(lines), len(real_lines))
         for i in range(len(lines)):
-            self.assertEqual(lines[i], subtitle_lines[i])
+            self.assertEqual(lines[i], real_lines[i])
 
 
     def test_title(self):
@@ -65,14 +160,14 @@ class Test_sectioning(TestCase):
         print("Formatted title lines:  %s" % lines)
 
         # Check the title.
-        title_lines = [
+        real_lines = [
             '\n',
             '\n',
-            '##############\n',
-            '# Test title #\n',
-            '##############\n',
+            '==============\n',
+            '= Test title =\n',
+            '==============\n',
             '\n',
         ]
-        self.assertEqual(len(lines), len(title_lines))
+        self.assertEqual(len(lines), len(real_lines))
         for i in range(len(lines)):
-            self.assertEqual(lines[i], title_lines[i])
+            self.assertEqual(lines[i], real_lines[i])
