@@ -71,7 +71,7 @@ def revision():
 
         # The revision.
         if len(row) and row[0] == 'Revision:':
-            return row[1]
+            return str(row[1])
 
 
 def url():
@@ -107,7 +107,7 @@ def url():
 
         # The revision.
         if len(row) and row[0] == 'URL:':
-            return row[1]
+            return str(row[1])
 
 
 def version_full():
