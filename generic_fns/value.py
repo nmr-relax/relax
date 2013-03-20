@@ -92,11 +92,13 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     minimise.reset_min_stats(pipe_to)
 
 
-def display(param=None):
+def display(param=None, scaling=1.0):
     """Display spin specific data values.
 
-    @param param:       The name of the parameter to display.
+    @keyword param:     The name of the parameter to display.
     @type param:        str
+    @keyword scaling:   The value to scale the parameter by.
+    @type scaling:      float
     """
 
     # Test if the current pipe exists.
@@ -107,7 +109,7 @@ def display(param=None):
         raise RelaxNoSequenceError
 
     # Print the data.
-    write_data(param, sys.stdout)
+    write_data(param=param, file=sys.stdout, scaling=scaling)
 
 
 def get_parameters():
@@ -426,7 +428,7 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
         pipes.switch(orig_pipe)
 
 
-def write(param=None, file=None, dir=None, bc=False, force=False, return_value=None, return_data_desc=None):
+def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, return_data_desc=None, comment=None, bc=False, force=False):
     """Write data to a file.
 
     @keyword param:             The name of the parameter to write to file.
@@ -435,14 +437,18 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     @type file:                 str
     @keyword dir:               The name of the directory to place the file into (defaults to the current directory).
     @type dir:                  str
-    @keyword bc:                A flag which if True will cause the back calculated values to be written.
-    @type bc:                   bool
-    @keyword force:             A flag which if True will cause any pre-existing file to be overwritten.
-    @type force:                bool
+    @keyword scaling:           The value to scale the parameter by.
+    @type scaling:              float
     @keyword return_value:      An optional function which if supplied will override the default value returning function.
     @type return_value:         None or func
     @keyword return_data_desc:  An optional function which if supplied will override the default parameter description returning function.
     @type return_data_desc:     None or func
+    @keyword comment:           Text which will be added to the start of the file as comments.  All lines will be prefixed by '# '.
+    @type comment:              str
+    @keyword bc:                A flag which if True will cause the back calculated values to be written.
+    @type bc:                   bool
+    @keyword force:             A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:                bool
     """
 
     # Test if the current pipe exists.
@@ -457,7 +463,7 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     file = open_write_file(file, dir, force)
 
     # Write the data.
-    write_data(param=param, file=file, bc=bc, return_value=return_value, return_data_desc=return_data_desc)
+    write_data(param=param, file=file, scaling=scaling, return_value=return_value, return_data_desc=return_data_desc, comment=comment, bc=bc)
 
     # Close the file.
     file.close()
@@ -466,19 +472,23 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     add_result_file(type='text', label='Text', file=file_path)
 
 
-def write_data(param=None, file=None, bc=False, return_value=None, return_data_desc=None):
+def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, return_data_desc=None, comment=None):
     """The function which actually writes the data.
 
     @keyword param:             The parameter to write.
     @type param:                str
     @keyword file:              The file to write the data to.
     @type file:                 str
+    @keyword scaling:           The value to scale the parameter by.
+    @type scaling:              float
     @keyword bc:                A flag which if True will cause the back calculated values to be written.
     @type bc:                   bool
     @keyword return_value:      An optional function which if supplied will override the default value returning function.
     @type return_value:         None or func
     @keyword return_data_desc:  An optional function which if supplied will override the default parameter description returning function.
     @type return_data_desc:     None or func
+    @keyword comment:           Text which will be added to the start of the file as comments.  All lines will be prefixed by '# '.
+    @type comment:              str
     """
 
     # Get the value and error returning function parameter description function if required.
@@ -505,17 +515,33 @@ def write_data(param=None, file=None, bc=False, return_value=None, return_data_d
         file.write("# Parameter description:  %s.\n" % desc)
         file.write("#\n")
 
+    # The comments.
+    if comment:
+        # Split up the lines.
+        lines = comment.splitlines()
+
+        # Write out.
+        for line in lines:
+            file.write("# %s\n" % line)
+        file.write("#\n")
+
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Get the value and error.
         value, error = return_value(spin, param, bc=bc)
 
-        # Append the data.
+        # Append the spin data (scaled).
         mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)
         spin_nums.append(spin.num)
         spin_names.append(spin.name)
+
+        # Append the scaled values and errors.
+        if value != None:
+            value *= scaling
+        if error != None:
+            error *= scaling
         values.append(value)
         errors.append(error)
 
