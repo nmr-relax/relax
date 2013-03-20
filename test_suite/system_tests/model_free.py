@@ -23,7 +23,7 @@
 from math import pi
 import platform
 import numpy
-from os import sep
+from os import path, sep, walk
 from re import search
 from shutil import copytree
 import sys
@@ -562,6 +562,169 @@ class Mf(SystemTestCase):
         i = 0
         for interatom in interatomic_loop():
             self.assertAlmostEqual(interatom.r, 1.02 * 1e-10)
+
+        # File and directory formatting strings.
+        format1 = "%s%s%s" % (ds.tmpdir, sep, '%s')
+        format2 = "%s%s%s%s%s" % (ds.tmpdir, sep, '%s', sep, '%s')
+        format3 = "%s%s%s%s%s%s%s" % (ds.tmpdir, sep, '%s', sep, '%s', sep, '%s')
+        format4 = "%s%s%s%s%s%s%s%s%s" % (ds.tmpdir, sep, '%s', sep, '%s', sep, '%s', sep, '%s')
+
+        # Check the generated directories.
+        dirs = [
+            format1 % ("local_tm"),
+            format2 % ("local_tm", "tm1"),
+            format2 % ("local_tm", "tm0"),
+            format2 % ("local_tm", "aic"),
+            format1 % ("sphere"),
+            format2 % ("sphere", "init"),
+            format2 % ("sphere", "round_1"),
+            format3 % ("sphere", "round_1", "m1"),
+            format3 % ("sphere", "round_1", "m2"),
+            format3 % ("sphere", "round_1", "aic"),
+            format3 % ("sphere", "round_1", "opt"),
+            format2 % ("sphere", "round_2"),
+            format3 % ("sphere", "round_2", "m1"),
+            format3 % ("sphere", "round_2", "m2"),
+            format3 % ("sphere", "round_2", "aic"),
+            format3 % ("sphere", "round_2", "opt"),
+            format1 % ("prolate"),
+            format2 % ("prolate", "init"),
+            format2 % ("prolate", "round_1"),
+            format3 % ("prolate", "round_1", "m1"),
+            format3 % ("prolate", "round_1", "m2"),
+            format3 % ("prolate", "round_1", "aic"),
+            format3 % ("prolate", "round_1", "opt"),
+            format2 % ("prolate", "round_2"),
+            format3 % ("prolate", "round_2", "m1"),
+            format3 % ("prolate", "round_2", "m2"),
+            format3 % ("prolate", "round_2", "aic"),
+            format3 % ("prolate", "round_2", "opt"),
+            format1 % ("oblate"),
+            format2 % ("oblate", "init"),
+            format2 % ("oblate", "round_1"),
+            format3 % ("oblate", "round_1", "m1"),
+            format3 % ("oblate", "round_1", "m2"),
+            format3 % ("oblate", "round_1", "aic"),
+            format3 % ("oblate", "round_1", "opt"),
+            format2 % ("oblate", "round_2"),
+            format3 % ("oblate", "round_2", "m1"),
+            format3 % ("oblate", "round_2", "m2"),
+            format3 % ("oblate", "round_2", "aic"),
+            format3 % ("oblate", "round_2", "opt"),
+            format1 % ("ellipsoid"),
+            format2 % ("ellipsoid", "init"),
+            format2 % ("ellipsoid", "round_1"),
+            format3 % ("ellipsoid", "round_1", "m1"),
+            format3 % ("ellipsoid", "round_1", "m2"),
+            format3 % ("ellipsoid", "round_1", "aic"),
+            format3 % ("ellipsoid", "round_1", "opt"),
+            format2 % ("ellipsoid", "round_2"),
+            format3 % ("ellipsoid", "round_2", "m1"),
+            format3 % ("ellipsoid", "round_2", "m2"),
+            format3 % ("ellipsoid", "round_2", "aic"),
+            format3 % ("ellipsoid", "round_2", "opt"),
+            format1 % ("final"),
+            format2 % ("final", "grace"),
+            format2 % ("final", "pymol"),
+            format2 % ("final", "molmol")
+        ]
+        for root, dirs, files in walk(ds.tmpdir):
+            for dir in dirs:
+                dir_path = "%s%s%s" % (root, sep, dir)
+                print("Checking for the directory '%s'." % dir_path)
+                self.assert_(path.isdir(dir_path))
+
+        # Check the generated files.
+        files = [
+            format3 % ("local_tm", "tm0", "results.bz2"),
+            format3 % ("local_tm", "tm1", "results.bz2"),
+            format3 % ("local_tm", "aic", "results.bz2"),
+            format3 % ("sphere", "init", "results.bz2"),
+            format4 % ("sphere", "round_1", "m1", "results.bz2"),
+            format4 % ("sphere", "round_1", "m2", "results.bz2"),
+            format4 % ("sphere", "round_1", "aic", "results.bz2"),
+            format4 % ("sphere", "round_1", "opt", "results.bz2"),
+            format4 % ("sphere", "round_2", "m1", "results.bz2"),
+            format4 % ("sphere", "round_2", "m2", "results.bz2"),
+            format4 % ("sphere", "round_2", "aic", "results.bz2"),
+            format4 % ("sphere", "round_2", "opt", "results.bz2"),
+            format3 % ("prolate", "init", "results.bz2"),
+            format4 % ("prolate", "round_1", "m1", "results.bz2"),
+            format4 % ("prolate", "round_1", "m2", "results.bz2"),
+            format4 % ("prolate", "round_1", "aic", "results.bz2"),
+            format4 % ("prolate", "round_1", "opt", "results.bz2"),
+            format4 % ("prolate", "round_2", "m1", "results.bz2"),
+            format4 % ("prolate", "round_2", "m2", "results.bz2"),
+            format4 % ("prolate", "round_2", "aic", "results.bz2"),
+            format4 % ("prolate", "round_2", "opt", "results.bz2"),
+            format3 % ("oblate", "init", "results.bz2"),
+            format4 % ("oblate", "round_1", "m1", "results.bz2"),
+            format4 % ("oblate", "round_1", "m2", "results.bz2"),
+            format4 % ("oblate", "round_1", "aic", "results.bz2"),
+            format4 % ("oblate", "round_1", "opt", "results.bz2"),
+            format4 % ("oblate", "round_2", "m1", "results.bz2"),
+            format4 % ("oblate", "round_2", "m2", "results.bz2"),
+            format4 % ("oblate", "round_2", "aic", "results.bz2"),
+            format4 % ("oblate", "round_2", "opt", "results.bz2"),
+            format3 % ("ellipsoid", "init", "results.bz2"),
+            format4 % ("ellipsoid", "round_1", "m1", "results.bz2"),
+            format4 % ("ellipsoid", "round_1", "m2", "results.bz2"),
+            format4 % ("ellipsoid", "round_1", "aic", "results.bz2"),
+            format4 % ("ellipsoid", "round_1", "opt", "results.bz2"),
+            format4 % ("ellipsoid", "round_2", "m1", "results.bz2"),
+            format4 % ("ellipsoid", "round_2", "m2", "results.bz2"),
+            format4 % ("ellipsoid", "round_2", "aic", "results.bz2"),
+            format4 % ("ellipsoid", "round_2", "opt", "results.bz2"),
+            format2 % ("final", "results.bz2"),
+            format2 % ("final", "s2.txt"),
+            format2 % ("final", "s2f.txt"),
+            format2 % ("final", "s2s.txt"),
+            format2 % ("final", "local_tm.txt"),
+            format2 % ("final", "te.txt"),
+            format2 % ("final", "tf.txt"),
+            format2 % ("final", "ts.txt"),
+            format2 % ("final", "rex.txt"),
+            format2 % ("final", "rex_500.txt"),
+            format2 % ("final", "rex_900.txt"),
+            format2 % ("final", "tensor.pdb"),
+            format3 % ("final", "grace", "s2.agr"),
+            format3 % ("final", "grace", "s2f.agr"),
+            format3 % ("final", "grace", "s2s.agr"),
+            format3 % ("final", "grace", "te.agr"),
+            format3 % ("final", "grace", "tf.agr"),
+            format3 % ("final", "grace", "ts.agr"),
+            format3 % ("final", "grace", "rex.agr"),
+            format3 % ("final", "grace", "s2_vs_rex.agr"),
+            format3 % ("final", "grace", "s2_vs_te.agr"),
+            format3 % ("final", "grace", "te_vs_rex.agr"),
+            format3 % ("final", "pymol", "s2.pml"),
+            format3 % ("final", "pymol", "s2f.pml"),
+            format3 % ("final", "pymol", "s2s.pml"),
+            format3 % ("final", "pymol", "amp_fast.pml"),
+            format3 % ("final", "pymol", "amp_slow.pml"),
+            format3 % ("final", "pymol", "te.pml"),
+            format3 % ("final", "pymol", "tf.pml"),
+            format3 % ("final", "pymol", "ts.pml"),
+            format3 % ("final", "pymol", "time_fast.pml"),
+            format3 % ("final", "pymol", "time_slow.pml"),
+            format3 % ("final", "pymol", "rex.pml"),
+            format3 % ("final", "molmol", "s2.mac"),
+            format3 % ("final", "molmol", "s2f.mac"),
+            format3 % ("final", "molmol", "s2s.mac"),
+            format3 % ("final", "molmol", "amp_fast.mac"),
+            format3 % ("final", "molmol", "amp_slow.mac"),
+            format3 % ("final", "molmol", "te.mac"),
+            format3 % ("final", "molmol", "tf.mac"),
+            format3 % ("final", "molmol", "ts.mac"),
+            format3 % ("final", "molmol", "time_fast.mac"),
+            format3 % ("final", "molmol", "time_slow.mac"),
+            format3 % ("final", "molmol", "rex.mac"),
+        ]
+        for root, dirs, files in walk(ds.tmpdir):
+            for file in files:
+                file_path = "%s%s%s" % (root, sep, file)
+                print("Checking for the file '%s'." % file_path)
+                self.assert_(path.isfile(file_path))
 
 
     def test_generate_ri(self):
