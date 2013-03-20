@@ -911,7 +911,8 @@ class dAuvergne_protocol:
         self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=dir, force=True)
         frqs = frq.get_values()
         for i in range(len(frqs)):
-            self.interpreter.value.write(param='rex', file='rex_%s.txt'%int(frqs[i]/1e6), dir=dir, scaling=(2.0*pi*frqs[i])**2, force=True)
+            comment = "This is the Rex value with units rad.s^-1 scaled to a magnetic field strength of %s MHz." % (frqs[i]/1e6)
+            self.interpreter.value.write(param='rex', file='rex_%s.txt'%int(frqs[i]/1e6), dir=dir, scaling=(2.0*pi*frqs[i])**2, comment=comment, force=True)
 
         # Create the PyMOL macros.
         dir = self.write_results_dir + 'final' + sep + 'pymol'
