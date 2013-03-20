@@ -21,21 +21,20 @@
 
 # Python module imports.
 from math import cos, pi, sin
-from numpy import arccos, array, cross, dot, eye, float64, transpose, zeros
-from numpy.linalg import norm
+from numpy import arccos, array, dot, eye, float64, transpose, zeros
 from os import getcwd
 from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
 from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
 from generic_fns import pipes
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.mass import centre_of_mass
-from lib.geometry.lines import closest_point_ax
-from maths_fns.rotation_matrix import axis_angle_to_R, two_vect_to_R
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
+from lib.structure.rotor import rotor_pdb
+from maths_fns.rotation_matrix import two_vect_to_R
+from relax_errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
@@ -610,48 +609,14 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
     @type staggered:        bool
     """
 
-    # Convert the arguments to numpy arrays, radians and Angstrom.
-    axis = array(axis, float64)
-    axis_pt = array(axis_pt, float64)
-    centre = array(centre, float64)
-    rotor_angle = rotor_angle / 360.0 * 2.0 * pi
-    span = span * 1e10
-    blade_length = blade_length * 1e10
-
-    # Normalise.
-    axis_norm = axis / norm(axis)
-
     # Test if the current pipe exists.
     pipes.test()
 
     # Create the structural object.
     structure = Internal()
 
-    # Add a structure.
-    structure.add_molecule(name='rotor')
-
-    # Alias the single molecule from the single model.
-    mol = structure.get_molecule('rotor')
-
-    # The central point.
-    mid_point = closest_point_ax(line_pt=axis_pt, axis=axis, point=centre)
-    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='CTR', res_name='AX', res_num=1, pos=mid_point, element='PT')
-
-    # Centre of the propellers.
-    prop1 = mid_point + axis_norm * span
-    prop1_index = 1
-    mol.atom_add(pdb_record='HETATM', atom_num=2, atom_name='PRP', res_name='PRC', res_num=2, pos=prop1, element='O')
-    mol.atom_connect(index1=0, index2=prop1_index)
-
-    # Centre of the propellers.
-    prop2 = mid_point - axis_norm * span
-    prop2_index = 2
-    mol.atom_add(pdb_record='HETATM', atom_num=3, atom_name='PRP', res_name='PRC', res_num=3, pos=prop2, element='O')
-    mol.atom_connect(index1=0, index2=prop2_index)
-
-    # Create the rotor propellers.
-    create_rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop1, axis=axis, blade_length=blade_length, staggered=staggered)
-    create_rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop2, axis=-axis, blade_length=blade_length, staggered=staggered)
+    # Generate the rotor object.
+    rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=axis_pt, centre=centre, span=span, blade_length=blade_length, staggered=staggered)
 
     # Print out.
     print("\nGenerating the PDB file.")
@@ -672,98 +637,6 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
         dir = getcwd()
     cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
     status.observers.result_file.notify()
-
-
-def create_rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, staggered=False):
-    """Create a PDB representation of a rotor motional model.
-
-    @keyword mol:           The internal structural object molecule container to add the atoms to.
-    @type mol:              MolContainer instance
-    @keyword rotor_angle:   The angle of the rotor motion in radians.
-    @type rotor_angle:      float
-    @keyword centre:        The central point of the propeller.
-    @type centre:           numpy rank-1, 3D array
-    @keyword axis:          The vector defining the rotor axis.
-    @type axis:             numpy rank-1, 3D array
-    @keyword blade_length:  The length of the representative rotor blades in Angstrom.
-    @type blade_length:     float
-    @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
-    @type staggered:        bool
-    """
-
-    # Init.
-    step_angle = 2.0 / 360.0 * 2.0 * pi
-    R = zeros((3, 3), float64)
-    res_num = mol.last_residue() + 1
-
-    # Blade vectors.
-    blades = zeros((4, 3), float64)
-    if abs(dot(axis, array([0, 0, 1], float64))) == 1.0:    # Avoid failures in artificial situations.
-        blades[0] = cross(axis, array([1, 0, 0], float64))
-    else:
-        blades[0] = cross(axis, array([0, 0, 1], float64))
-    blades[0] = blades[0] / norm(blades[0])
-    blades[1] = cross(axis, blades[0])
-    blades[1] = blades[1] / norm(blades[1])
-    blades[2] = -blades[0]
-    blades[3] = -blades[1]
-
-    # Create the 4 blades.
-    for i in range(len(blades)):
-        # Staggering.
-        if staggered and i % 2:
-            blade_origin = centre - axis * 2
-
-        # Non-staggered.
-        else:
-            blade_origin = centre
-
-        # Add an atom for the blage origin.
-        blade_origin_index = mol.atom_add(pdb_record='HETATM', atom_name='BLO', res_name='PRB', res_num=res_num, pos=blade_origin, element='O')
-
-        # The centre edge point of the blade.
-        mid_point = blade_origin + blades[i] * blade_length
-        mid_pt_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=mid_point, element='N')
-        mol.atom_connect(index1=mid_pt_index, index2=blade_origin_index)
-
-        # Build the blade.
-        angle = 0.0
-        pos_last_index = mid_pt_index
-        neg_last_index = mid_pt_index
-        while True:
-            # Increase the angle.
-            angle += step_angle
-
-            # The edge rotation.
-            if angle > rotor_angle:
-                axis_angle_to_R(axis, rotor_angle, R)
-
-            # The normal rotation matrix.
-            else:
-                axis_angle_to_R(axis, angle, R)
-
-            # The positive edge.
-            pos_point = dot(R, mid_point - blade_origin) + blade_origin
-            pos_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=pos_point, element='N')
-            mol.atom_connect(index1=pos_index, index2=pos_last_index)
-            mol.atom_connect(index1=pos_index, index2=blade_origin_index)
-
-            # The negative edge.
-            neg_point = dot(transpose(R), mid_point - blade_origin) + blade_origin
-            neg_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=neg_point, element='N')
-            mol.atom_connect(index1=neg_index, index2=neg_last_index)
-            mol.atom_connect(index1=neg_index, index2=blade_origin_index)
-
-            # Update the indices.
-            pos_last_index = pos_index
-            neg_last_index = neg_index
-
-            # Finish.
-            if angle > rotor_angle:
-                break
-
-        # Increment the residue number.
-        res_num += 1
 
 
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
