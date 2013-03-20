@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -125,6 +125,16 @@ uf.add_keyarg(
     wiz_combo_iter = value.get_parameters,
     wiz_read_only = True
 )
+uf.add_keyarg(
+    name = "scaling",
+    default = 1.0,
+    py_type = "float",
+    desc_short = "scaling",
+    desc = "The factor to scale parameters by."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The values corresponding to the given parameter will be displayed.  The scaling argument can be used to scale the parameter values.  This can be useful for example in the case of the model-free Rex parameter to obtain the spectrometer dependent value from the omega_ex field strength independent internal value.  Or to scale correlation times from seconds down to nanosecond or picosecond timescales.")
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.return_data_name_doc)
 uf.desc.append(Model_free.write_doc)
@@ -137,6 +147,9 @@ uf.desc.append(N_state_model.return_data_name_doc)
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To show all CSA values, type:")
 uf.desc[-1].add_prompt("relax> value.display('csa')")
+uf.desc[-1].add_paragraph("To display the model-free Rex values scaled to 600 MHz, type one of:")
+uf.desc[-1].add_prompt("relax> value.display('rex', scaling=(2.0*pi*600e6)**2)")
+uf.desc[-1].add_prompt("relax> value.display(param='rex', scaling=(2.0*pi*600e6)**2)")
 uf.backend = value.display
 uf.menu_text = "&display"
 uf.gui_icon = "oxygen.actions.document-preview"
@@ -417,6 +430,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "scaling",
+    default = 1.0,
+    py_type = "float",
+    desc_short = "scaling",
+    desc = "The factor to scale parameters by."
+)
+uf.add_keyarg(
     name = "bc",
     default = False,
     py_type = "bool",
@@ -432,7 +452,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The values corresponding to the given parameter will be written to file.")
+uf.desc[-1].add_paragraph("The values corresponding to the given parameter will be written to file.  The scaling argument can be used to scale the parameter values.  This can be useful for example in the case of the model-free Rex parameter to obtain the spectrometer dependent value from the omega_ex field strength independent internal value.  Or to scale correlation times from seconds down to nanosecond or picosecond timescales.")
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.return_data_name_doc)
 uf.desc.append(Model_free.write_doc)
@@ -451,6 +471,9 @@ uf.desc[-1].add_prompt("relax> value.write('noe', 'noe.out')")
 uf.desc[-1].add_prompt("relax> value.write(param='noe', file='noe.out')")
 uf.desc[-1].add_prompt("relax> value.write(param='noe', file='noe.out')")
 uf.desc[-1].add_prompt("relax> value.write(param='noe', file='noe.out', force=True)")
+uf.desc[-1].add_paragraph("To write the model-free Rex values scaled to 600 MHz to the file 'rex_600', type one of:")
+uf.desc[-1].add_prompt("relax> value.write('rex', 'rex_600', scaling=(2.0*pi*600e6)**2)")
+uf.desc[-1].add_prompt("relax> value.write(param='rex', file='rex_600', scaling=(2.0*pi*600e6)**2)")
 uf.backend = value.write
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
