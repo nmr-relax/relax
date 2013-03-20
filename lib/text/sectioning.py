@@ -44,94 +44,118 @@ def box(file=None, text=None, char=None):
     file.write("%s\n" % hline)
 
 
-def section(file=None, text=None):
+def section(file=None, text=None, prespace=2, postspace=1):
     """Format and write out a section to the given file.
 
     @keyword file:      The file object to write to.
     @type file:         file object
     @keyword text:      The section text.
     @type text:         str
+    @keyword prespace:  The number of empty lines prior to the text printout.
+    @type prespace:     int
+    @keyword postspace: The number of empty lines after the text printout.
+    @type postspace:    int
     """
 
-    # Underline the text.
-    file.write("\n\n")
+    # Format the text.
+    file.write("\n" * prespace)
     underline(file=file, text=text, char="=")
-    file.write("\n")
+    file.write("\n" * postspace)
 
 
-def subsection(file=None, text=None):
+def subsection(file=None, text=None, prespace=1, postspace=1):
     """Format and write out a subsection to the given file.
 
     @keyword file:      The file object to write to.
     @type file:         file object
     @keyword text:      The subsection text.
     @type text:         str
+    @keyword prespace:  The number of empty lines prior to the text printout.
+    @type prespace:     int
+    @keyword postspace: The number of empty lines after the text printout.
+    @type postspace:    int
     """
 
-    # Underline the text.
-    file.write("\n")
+    # Format the text.
+    file.write("\n" * prespace)
     underline(file=file, text=text, char="-")
-    file.write("\n")
+    file.write("\n" * postspace)
 
 
-def subsubsection(file=None, text=None):
+def subsubsection(file=None, text=None, prespace=1, postspace=1):
     """Format and write out a subsubsection to the given file.
 
     @keyword file:      The file object to write to.
     @type file:         file object
     @keyword text:      The subsubsection text.
     @type text:         str
+    @keyword prespace:  The number of empty lines prior to the text printout.
+    @type prespace:     int
+    @keyword postspace: The number of empty lines after the text printout.
+    @type postspace:    int
     """
 
-    # Underline the text.
-    file.write("\n")
+    # Format the text.
+    file.write("\n" * prespace)
     underline(file=file, text=text, char="~")
-    file.write("\n")
+    file.write("\n" * postspace)
 
 
-def subsubtitle(file=None, text=None):
+def subsubtitle(file=None, text=None, prespace=1, postspace=1):
     """Format and write out a subsubtitle to the given file.
 
     @keyword file:      The file object to write to.
     @type file:         file object
     @keyword text:      The subsubtitle text.
     @type text:         str
+    @keyword prespace:  The number of empty lines prior to the text printout.
+    @type prespace:     int
+    @keyword postspace: The number of empty lines after the text printout.
+    @type postspace:    int
     """
 
-    # Box the text.
-    file.write("\n")
+    # Format the text.
+    file.write("\n" * prespace)
     box(file=file, text=text, char="~")
-    file.write("\n")
+    file.write("\n" * postspace)
 
 
-def subtitle(file=None, text=None):
+def subtitle(file=None, text=None, prespace=1, postspace=1):
     """Format and write out a subtitle to the given file.
 
     @keyword file:      The file object to write to.
     @type file:         file object
     @keyword text:      The subtitle text.
     @type text:         str
+    @keyword prespace:  The number of empty lines prior to the text printout.
+    @type prespace:     int
+    @keyword postspace: The number of empty lines after the text printout.
+    @type postspace:    int
     """
 
-    # Box the text.
-    file.write("\n")
+    # Format the text.
+    file.write("\n" * prespace)
     box(file=file, text=text, char="-")
-    file.write("\n")
+    file.write("\n" * postspace)
 
 
-def title(file=None, text=None):
+def title(file=None, text=None, prespace=2, postspace=1):
     """Format and write out a title to the given file.
 
     @keyword file:      The file object to write to.
     @type file:         file object
     @keyword text:      The title text.
     @type text:         str
+    @keyword prespace:  The number of empty lines prior to the text printout.
+    @type prespace:     int
+    @keyword postspace: The number of empty lines after the text printout.
+    @type postspace:    int
     """
 
-    # Box the text.
-    file.write("\n\n")
+    # Format the text.
+    file.write("\n" * prespace)
     box(file=file, text=text, char="=")
-    file.write("\n")
+    file.write("\n" * postspace)
 
 
 def underline(file=None, text=None, char=None):
