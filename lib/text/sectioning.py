@@ -19,10 +19,54 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib text package - a library of functions for text manipulation."""
+# Module docstring.
+"""Functions for the formatting of titles, subtitles and other sectioning."""
 
-__all__ = [
-    'sectioning',
-    'table'
-]
+
+def subtitle(file=None, text=None):
+    """Format and write out a subtitle to the given file.
+
+    @keyword file:      The file object to write to.
+    @type file:         file object
+    @keyword text:      The subtitle.
+    @type text:         str
+    """
+
+    # The length and hline text.
+    length = len(text) + 2
+    hline = '#' * length
+
+    # First the spacing above the section.
+    file.write("\n")
+
+    # The text.
+    file.write("# %s\n" % text)
+    file.write("%s\n" % hline)
+
+    # Final spacing.
+    file.write("\n")
+
+
+def title(file=None, text=None):
+    """Format and write out a title to the given file.
+
+    @keyword file:      The file object to write to.
+    @type file:         file object
+    @keyword text:      The title.
+    @type text:         str
+    """
+
+    # The length and hline text.
+    length = len(text) + 4
+    hline = '#' * length
+
+    # First the spacing above the section.
+    file.write("\n\n")
+
+    # The text.
+    file.write("%s\n" % hline)
+    file.write("# %s #\n" % text)
+    file.write("%s\n" % hline)
+
+    # Final spacing.
+    file.write("\n")
