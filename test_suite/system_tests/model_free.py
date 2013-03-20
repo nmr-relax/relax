@@ -236,28 +236,28 @@ class Mf(SystemTestCase):
 
 
     def test_bug_14872_unicode_selection(self):
-        """Test catching bug #14872, the unicode string selection failure as submitted by Olivier Serve."""
+        """Test catching U{bug #14872<https://gna.org/bugs/?14872>}, the unicode string selection failure as submitted by Olivier Serve."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14872_unicode_selection.py')
 
 
     def test_bug_14941_local_tm_global_selection(self):
-        """Test catching bug #14941, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
+        """Test catching U{bug #14941<https://gna.org/bugs/?14941>}, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection.py')
 
 
     def test_bug_15050(self):
-        """Test catching bug #15050, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by U{Tiago Pais<https://gna.org/users/tpais>}."""
+        """Test catching U{bug #15050<https://gna.org/bugs/?15050>}, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by U{Tiago Pais<https://gna.org/users/tpais>}."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
 
 
     def test_bugs_12582_12591_12607(self):
-        """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
+        """Test catching bugs U{#12582<https://gna.org/bugs/?12582>}, U{#12591<https://gna.org/bugs/?12591>} and U{#12607<https://gna.org/bugs/?12607>} as submitted by Chris Brosey."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bugs_12582_12591_12607.py')
@@ -267,14 +267,14 @@ class Mf(SystemTestCase):
 
 
     def test_bug_18790(self):
-        """Test catching bug #18790, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
+        """Test catching U{bug #18790<https://gna.org/bugs/?18790>}, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
 
 
     def test_bug_20213_asn_sidechain(self):
-        """Bug #20213 catch, the model selection failure due to the presence of Asp and Gln sidechain N spins."""
+        """U{Bug #20213<https://gna.org/bugs/?20213>} catch, the model selection failure due to the presence of Asp and Gln sidechain N spins."""
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
@@ -1113,6 +1113,13 @@ class Mf(SystemTestCase):
             - S2  = 0.970
             - te  = 2048 ps
             - Rex = 0.149 s^-1
+
+        Relevant links for this test are:
+            - U{https://mail.gna.org/public/relax-devel/2009-05/msg00003.html}
+            - U{https://mail.gna.org/public/relax-users/2011-01/msg00029.html}
+            - U{http://gna.org/bugs/?12573}
+            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{http://gna.org/bugs/?14173}
         """
 
         # Setup the data pipe for optimisation.
@@ -1349,6 +1356,13 @@ class Mf(SystemTestCase):
             - S2  = 0.970
             - te  = 2048 ps
             - Rex = 0.149 s^-1
+
+        Relevant links for this test are:
+            - U{https://mail.gna.org/public/relax-devel/2009-05/msg00003.html}
+            - U{https://mail.gna.org/public/relax-users/2011-01/msg00029.html}
+            - U{http://gna.org/bugs/?12573}
+            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{http://gna.org/bugs/?14174}
         """
 
         # Setup the data pipe for optimisation.
@@ -1603,6 +1617,11 @@ class Mf(SystemTestCase):
             - S2  = 0.970
             - te  = 2048 ps
             - Rex = 0.149 s^-1
+
+        Relevant links for this test are:
+            - U{http://gna.org/bugs/?12573}
+            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{http://gna.org/bugs/?14175}
         """
 
         # Setup the data pipe for optimisation.
@@ -1745,6 +1764,11 @@ class Mf(SystemTestCase):
             - S2  = 0.970
             - te  = 2048 ps
             - Rex = 0.149 s^-1
+
+        Relevant links for this test are:
+            - U{http://gna.org/bugs/?12573}
+            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{http://gna.org/bugs/?14177}
         """
 
         # Setup the data pipe for optimisation.
@@ -1887,6 +1911,11 @@ class Mf(SystemTestCase):
             - S2  = 0.970
             - te  = 2048 ps
             - Rex = 0.149 s^-1
+
+        Relevant links for this test are:
+            - U{http://gna.org/bugs/?12573}
+            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{http://gna.org/bugs/?14176}
         """
 
         # Setup the data pipe for optimisation.

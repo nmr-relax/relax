@@ -58,7 +58,7 @@ class Peak_lists(SystemTestCase):
 
 
     def test_bug_17276_peak_lists(self):
-        """Test catching bug #17276, the duplicated peak list reading failure submitted by Leanne Minall."""
+        """Test catching U{bug #17276<https://gna.org/bugs/?17276>}, the duplicated peak list reading failure submitted by Leanne Minall."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
