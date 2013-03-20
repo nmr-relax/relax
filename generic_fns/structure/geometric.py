@@ -707,8 +707,6 @@ def create_rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, 
     blades[1] = blades[1] / norm(blades[1])
     blades[2] = -blades[0]
     blades[3] = -blades[1]
-    print axis
-    print blades
 
     # Create the 4 blades.
     for i in range(len(blades)):
