@@ -610,6 +610,57 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
     @type staggered:        bool
     """
 
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Create the structural object.
+    structure = Internal()
+
+    # Generate the rotor object.
+    rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=axis_pt, centre=centre, span=span, blade_length=blade_length, staggered=staggered)
+
+    # Print out.
+    print("\nGenerating the PDB file.")
+
+    # Open the PDB file for writing.
+    tensor_pdb_file = open_write_file(file, dir, force=force)
+
+    # Write the data.
+    structure.write_pdb(tensor_pdb_file)
+
+    # Close the file.
+    tensor_pdb_file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    if dir == None:
+        dir = getcwd()
+    cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
+    status.observers.result_file.notify()
+
+
+def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, staggered=False):
+    """Create a PDB representation of a rotor motional model.
+
+    @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
+    @type structure:        generic_fns.structure.internal.Internal instance
+    @keyword rotor_angle:   The angle of the rotor motion in degrees.
+    @type rotor_angle:      float
+    @keyword axis:          The vector defining the rotor axis.
+    @type axis:             numpy rank-1, 3D array
+    @keyword axis_pt:       A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space.
+    @type axis_pt:          numpy rank-1, 3D array
+    @keyword centre:        The central point of the representation.  If this point is not on the rotor axis, then the closest point on the axis will be used for the centre.
+    @type centre:           numpy rank-1, 3D array
+    @keyword span:          The distance from the central point to the rotor blades (meters).
+    @type span:             float
+    @keyword blade_length:  The length of the representative rotor blades.
+    @type blade_length:     float
+    @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
+    @type staggered:        bool
+    """
+
     # Convert the arguments to numpy arrays, radians and Angstrom.
     axis = array(axis, float64)
     axis_pt = array(axis_pt, float64)
@@ -620,12 +671,6 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
 
     # Normalise.
     axis_norm = axis / norm(axis)
-
-    # Test if the current pipe exists.
-    pipes.test()
-
-    # Create the structural object.
-    structure = Internal()
 
     # Add a structure.
     structure.add_molecule(name='rotor')
@@ -652,26 +697,6 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
     # Create the rotor propellers.
     create_rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop1, axis=axis, blade_length=blade_length, staggered=staggered)
     create_rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop2, axis=-axis, blade_length=blade_length, staggered=staggered)
-
-    # Print out.
-    print("\nGenerating the PDB file.")
-
-    # Open the PDB file for writing.
-    tensor_pdb_file = open_write_file(file, dir, force=force)
-
-    # Write the data.
-    structure.write_pdb(tensor_pdb_file)
-
-    # Close the file.
-    tensor_pdb_file.close()
-
-    # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    if dir == None:
-        dir = getcwd()
-    cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
-    status.observers.result_file.notify()
 
 
 def create_rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, staggered=False):
