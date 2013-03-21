@@ -37,7 +37,7 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
 
     @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
     @type structure:        generic_fns.structure.internal.Internal instance
-    @keyword rotor_angle:   The angle of the rotor motion in degrees.
+    @keyword rotor_angle:   The angle of the rotor motion in radian.
     @type rotor_angle:      float
     @keyword axis:          The vector defining the rotor axis.
     @type axis:             numpy rank-1, 3D array
@@ -57,7 +57,6 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
     axis = array(axis, float64)
     axis_pt = array(axis_pt, float64)
     centre = array(centre, float64)
-    rotor_angle = rotor_angle / 360.0 * 2.0 * pi
     span = span * 1e10
     blade_length = blade_length * 1e10
 

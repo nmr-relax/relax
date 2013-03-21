@@ -612,6 +612,9 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
     # Test if the current pipe exists.
     pipes.test()
 
+    # Convert the angle to radians.
+    rotor_angle = rotor_angle / 360.0 * 2.0 * pi
+
     # Create the structural object.
     structure = Internal()
 
