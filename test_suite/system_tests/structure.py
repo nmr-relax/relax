@@ -67,7 +67,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_sr_2998_broken_conect_records(self):
-        """Test the bug reported as the support request #2998 (https://gna.org/support/?2998), the broken CONECT records."""
+        """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -77,7 +77,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_20469_scientific_parser_xray_records(self):
-        """Test the bug #20469 (https://gna.org/bugs/?20469), the ScientificPython parser failure with X-ray records."""
+        """Test the U{bug #20469<https://gna.org/bugs/?20469>}, the ScientificPython parser failure with X-ray records."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -87,7 +87,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_20470_alternate_location_indicator(self):
-        """Catch bug #20470 (https://gna.org/bugs/?20470), the alternate location indicator problem."""
+        """Catch U{bug #20470<https://gna.org/bugs/?20470>}, the alternate location indicator problem."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'

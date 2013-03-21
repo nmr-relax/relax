@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ class Relax_data(SystemTestCase):
     """Class for testing various aspects specific to relaxation data back calculation."""
 
     def test_back_calc(self):
-        """Test the back calculation of relaxation data from model-free results."""
+        """Test the back calculation of relaxation data from model-free results (U{bug #14941<https://gna.org/bugs/?14941>})."""
 
         # Load the original state.
         self.interpreter.state.load(state='sphere_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection')
@@ -59,7 +59,7 @@ class Relax_data(SystemTestCase):
 
 
     def test_back_calc_specific(self):
-        """Test the back calculation of specific relaxation data from model-free results."""
+        """Test the back calculation of specific relaxation data from model-free results (U{bug #14941<https://gna.org/bugs/?14941>})."""
 
         # Load the original state.
         self.interpreter.state.load(state='sphere_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection')
@@ -86,7 +86,7 @@ class Relax_data(SystemTestCase):
 
 
     def test_back_calc_new(self):
-        """Test the back calculation of new relaxation data from model-free results."""
+        """Test the back calculation of new relaxation data from model-free results (U{bug #14941<https://gna.org/bugs/?14941>})."""
 
         # Load the original state.
         self.interpreter.state.load(state='sphere_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection')
@@ -113,7 +113,7 @@ class Relax_data(SystemTestCase):
 
 
     def test_delete(self):
-        """Test the relax_data.delete user function, replicating bug #19785."""
+        """Test the relax_data.delete user function, replicating U{bug #19785<https://gna.org/bugs/?19785>}."""
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_19785_relax_data_delete.py')

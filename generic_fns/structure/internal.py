@@ -259,7 +259,7 @@ class Internal(Base_struct_API):
     def _parse_pdb_connectivity_annotation(self, lines):
         """Loop over and parse the PDB connectivity annotation records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect6.html}
+        These are the records identified in the U{PDB version 3.30 documentation<http://www.wwpdb.org/documentation/format33/sect6.html>}.
 
 
         @param lines:       The lines of the PDB file excluding the sections prior to the connectivity annotation section.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -91,7 +91,7 @@ class Align_tensor(SystemTestCase):
 
 
     def test_copy(self):
-        """Test the copying of alignment tensors (to catch bug #20338, https://gna.org/bugs/?20338)."""
+        """Test the copying of alignment tensors (to catch U{bug #20338<https://gna.org/bugs/?20338>}."""
 
         # First reset.
         self.interpreter.reset()

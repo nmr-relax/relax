@@ -22,7 +22,7 @@
 # Package docstring.
 """Package for the Bieri GUI interface for relax.
 
-This GUI was announced in the post at https://mail.gna.org/public/relax-devel/2009-11/msg00005.html.
+This GUI was announced in the post at U{https://mail.gna.org/public/relax-devel/2009-11/msg00005.html}.
 """
 
 # Deps.

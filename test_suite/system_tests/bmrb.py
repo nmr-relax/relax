@@ -233,7 +233,7 @@ class Bmrb(SystemTestCase):
 
 
     def test_bug_20471_structure_present(self):
-        """Catch bug #20471 (https://gna.org/bugs/?20471), with structural data present prior to a bmrb.read call."""
+        """Catch U{bug #20471<https://gna.org/bugs/?20471>}, with structural data present prior to a bmrb.read call."""
 
         # Create the data pipe.
         self.interpreter.pipe.create('test', 'mf')
