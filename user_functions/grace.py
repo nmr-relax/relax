@@ -34,11 +34,11 @@ else:
 from generic_fns import grace, minimise
 from graphics import WIZARD_IMAGE_PATH
 from prompt.doc_string import regexp_doc
-from specific_fns.consistency_tests import Consistency_tests
-from specific_fns.jw_mapping import Jw_mapping
-from specific_fns.model_free import Model_free
-from specific_fns.noe import Noe
-from specific_fns.relax_fit import Relax_fit
+from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.model_free import Model_free
+from specific_analyses.noe import Noe
+from specific_analyses.relax_fit import Relax_fit
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

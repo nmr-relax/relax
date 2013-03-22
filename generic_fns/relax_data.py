@@ -42,7 +42,7 @@ from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from lib.io import read_spin_data, write_data
 from lib.warnings import RelaxWarning
-import specific_fns
+import specific_analyses
 
 
 # The relaxation data types supported.
@@ -97,7 +97,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
         cdp.frq[ri_id] = frq
 
     # Specific Ri back calculate function setup.
-    back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
+    back_calculate = specific_analyses.setup.get_specific_fn('back_calc_ri', pipes.get_type())
 
     # The IDs to loop over.
     if ri_id == None:

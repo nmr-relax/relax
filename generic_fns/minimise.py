@@ -29,7 +29,7 @@ from re import search
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 from lib.errors import RelaxError
-import specific_fns
+import specific_analyses
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -47,8 +47,8 @@ def calc(verbosity=1):
     pipes.test()
 
     # Specific calculate function setup.
-    calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
-    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+    calculate = specific_analyses.setup.get_specific_fn('calculate', cdp.pipe_type)
+    overfit_deselect = specific_analyses.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
     # Deselect spins lacking data:
     overfit_deselect()
@@ -106,8 +106,8 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     pipes.test()
 
     # Specific grid search function.
-    grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
-    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+    grid_search = specific_analyses.setup.get_specific_fn('grid_search', cdp.pipe_type)
+    overfit_deselect = specific_analyses.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
     # Deselect spins lacking data:
     overfit_deselect()
@@ -185,8 +185,8 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     min_options = tuple(min_options)
 
     # Specific minimisation function.
-    minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
-    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+    minimise = specific_analyses.setup.get_specific_fn('minimise', cdp.pipe_type)
+    overfit_deselect = specific_analyses.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
     # Deselect spins lacking data:
     overfit_deselect()

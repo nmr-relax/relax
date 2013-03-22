@@ -38,7 +38,7 @@ from generic_fns import pipes
 from generic_fns.result_files import add_result_file
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import get_file_path, open_read_file, open_write_file, test_binary
-from specific_fns.setup import get_specific_fn
+from specific_analyses.setup import get_specific_fn
 from status import Status; status = Status()
 
 

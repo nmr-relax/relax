@@ -67,7 +67,7 @@ class MF_memo(Memo):
         This memo stores the model-free class instance so that the _disassemble_result() method can be called to store the optimisation results.  The other args are those required by this method but not generated through optimisation.
 
         @keyword model_free:        The model-free class instance.
-        @type model_free:           specific_fns.model_free.Model_free instance
+        @type model_free:           specific_analyses.model_free.Model_free instance
         @keyword spin:              The spin data container.  If this argument is supplied, then the spin_id argument will be ignored.
         @type spin:                 SpinContainer instance
         @keyword sim_index:         The optional MC simulation index.

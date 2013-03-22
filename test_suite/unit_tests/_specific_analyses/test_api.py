@@ -26,19 +26,19 @@ import types
 from unittest import TestCase
 
 # relax module imports.
-from specific_fns.api_base import API_base
-from specific_fns.consistency_tests import Consistency_tests
-from specific_fns.frame_order import Frame_order
-from specific_fns.hybrid import Hybrid
-from specific_fns.jw_mapping import Jw_mapping
-from specific_fns.model_free import Model_free
-from specific_fns.n_state_model import N_state_model
-from specific_fns.noe import Noe
-from specific_fns.relax_fit import Relax_fit
+from specific_analyses.api_base import API_base
+from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.frame_order import Frame_order
+from specific_analyses.hybrid import Hybrid
+from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.model_free import Model_free
+from specific_analyses.n_state_model import N_state_model
+from specific_analyses.noe import Noe
+from specific_analyses.relax_fit import Relax_fit
 
 
 class Test_api(TestCase):
-    """Unit tests for the specific_fns API."""
+    """Unit tests for the specific analyses API."""
 
     def __format_method(self, name, args, varargs, varkw, defaults):
         """Method for formatting the method."""

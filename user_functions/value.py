@@ -36,12 +36,12 @@ from prompt.doc_string import regexp_doc
 from generic_fns import diffusion_tensor, pipes, value
 from graphics import WIZARD_IMAGE_PATH
 from lib.errors import RelaxError
-from specific_fns.consistency_tests import Consistency_tests
-from specific_fns.jw_mapping import Jw_mapping
-from specific_fns.model_free import Model_free
-from specific_fns.relax_fit import Relax_fit
-from specific_fns.n_state_model import N_state_model
-from specific_fns.noe import Noe
+from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.model_free import Model_free
+from specific_analyses.relax_fit import Relax_fit
+from specific_analyses.n_state_model import N_state_model
+from specific_analyses.noe import Noe
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container

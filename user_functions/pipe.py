@@ -25,7 +25,7 @@
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from generic_fns import pipes
-from specific_fns.setup import hybrid_obj
+from specific_analyses.setup import hybrid_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

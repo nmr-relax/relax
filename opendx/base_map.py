@@ -32,7 +32,7 @@ from generic_fns import diffusion_tensor
 from generic_fns import pipes
 from lib.errors import RelaxError, RelaxUnknownParamError
 from lib.io import open_write_file
-from specific_fns.setup import get_specific_fn
+from specific_analyses.setup import get_specific_fn
 
 
 

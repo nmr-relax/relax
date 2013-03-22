@@ -44,7 +44,7 @@ from multi import Processor_box
 from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
 from lib.warnings import RelaxWarning
-from specific_fns.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
+from specific_analyses.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 
 
 

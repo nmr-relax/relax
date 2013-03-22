@@ -34,7 +34,7 @@ from warnings import warn
 import arg_check
 from generic_fns import diffusion_tensor, interatomic, pipes, sequence
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
-import specific_fns
+import specific_analyses
 from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -598,7 +598,7 @@ class Model_free_main:
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+            raise RelaxFuncSetupError(specific_analyses.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -728,7 +728,7 @@ class Model_free_main:
         # Test if the pipe type is set to 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+            raise RelaxFuncSetupError(specific_analyses.setup.get_string(function_type))
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1157,7 +1157,7 @@ class Model_free_main:
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+            raise RelaxFuncSetupError(specific_analyses.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1215,7 +1215,7 @@ class Model_free_main:
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+            raise RelaxFuncSetupError(specific_analyses.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():

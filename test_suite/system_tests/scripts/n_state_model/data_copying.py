@@ -5,7 +5,7 @@ from os import sep
 
 # relax module imports.
 from lib.errors import RelaxError
-from specific_fns.setup import n_state_model_obj
+from specific_analyses.setup import n_state_model_obj
 from status import Status; status = Status()
 
 # Path of the files.

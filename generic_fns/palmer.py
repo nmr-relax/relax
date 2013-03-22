@@ -43,7 +43,7 @@ from generic_fns import diffusion_tensor, pipes
 from lib.physical_constants import return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.io import mkdir_nofail, open_write_file, test_binary
-from specific_fns.setup import model_free_obj
+from specific_analyses.setup import model_free_obj
 
 
 def __deselect_spins():

@@ -37,7 +37,7 @@ from generic_fns.result_files import add_result_file
 from info import Info_box
 from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from lib.io import get_file_path, mkdir_nofail
-import specific_fns
+import specific_analyses
 from status import Status; status = Status()
 from version import version_full
 
@@ -219,7 +219,7 @@ def read(file=None, dir=None, version=None, sample_conditions=None):
         raise RelaxFileError(file_path)
 
     # Specific results reading function.
-    read_function = specific_fns.setup.get_specific_fn('bmrb_read', ds[pipe_name].pipe_type)
+    read_function = specific_analyses.setup.get_specific_fn('bmrb_read', ds[pipe_name].pipe_type)
 
     # Read the results.
     read_function(file_path, version=version, sample_conditions=sample_conditions)
@@ -271,7 +271,7 @@ def write(file=None, dir=None, version='3.1', force=False):
         mkdir_nofail(dir, verbosity=0)
 
     # Specific results writing function.
-    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[pipe_name].pipe_type)
+    write_function = specific_analyses.setup.get_specific_fn('bmrb_write', ds[pipe_name].pipe_type)
 
     # Get the info box.
     info = Info_box()

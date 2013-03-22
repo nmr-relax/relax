@@ -34,9 +34,9 @@ from maths_fns.jw_mapping import Mapping
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from lib.warnings import RelaxDeselectWarning
-import specific_fns
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+import specific_analyses
+from specific_analyses.api_base import API_base
+from specific_analyses.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -77,7 +77,7 @@ class Jw_mapping(API_base, API_common):
         # Test if the pipe type is set to 'jw'.
         function_type = cdp.pipe_type
         if function_type != 'jw':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+            raise RelaxFuncSetupError(specific_analyses.setup.get_string(function_type))
 
         # Test if the frequency has been set.
         if hasattr(cdp, 'jw_frq'):

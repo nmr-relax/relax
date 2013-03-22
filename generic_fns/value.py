@@ -32,7 +32,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_
 from generic_fns.result_files import add_result_file
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
 from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
-import specific_fns
+import specific_analyses
 from status import Status; status = Status()
 
 
@@ -66,7 +66,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         raise RelaxNoSequenceError(pipe_to)
 
     # Specific value and error returning function.
-    return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type(pipe_from))
+    return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type(pipe_from))
 
     # Test if the data exists for pipe_to.
     for spin in spin_loop(pipe_to):
@@ -124,8 +124,8 @@ def get_parameters():
         return []
 
     # Get the specific functions.
-    data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
-    return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+    data_names = specific_analyses.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+    return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
 
     # Loop over the parameters.
     params = []
@@ -164,7 +164,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    is_spin_param = specific_fns.setup.get_specific_fn('is_spin_param', pipes.get_type())
+    is_spin_param = specific_analyses.setup.get_specific_fn('is_spin_param', pipes.get_type())
 
     # Initialise.
     spin_params = []
@@ -288,7 +288,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         min_stat = False
 
         # Specific v
-        return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
+        return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type())
 
         # Specific set function.                                                           
         set_fn = set
@@ -374,10 +374,10 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
     pipes.test()
 
     # Specific functions.
-    default_value = specific_fns.setup.get_specific_fn('default_value', pipes.get_type())
-    get_param_names = specific_fns.setup.get_specific_fn('get_param_names', pipes.get_type())
-    return_data_name = specific_fns.setup.get_specific_fn('return_data_name', pipes.get_type())
-    set_param_values = specific_fns.setup.get_specific_fn('set_param_values', pipes.get_type())
+    default_value = specific_analyses.setup.get_specific_fn('default_value', pipes.get_type())
+    get_param_names = specific_analyses.setup.get_specific_fn('get_param_names', pipes.get_type())
+    return_data_name = specific_analyses.setup.get_specific_fn('return_data_name', pipes.get_type())
+    set_param_values = specific_analyses.setup.get_specific_fn('set_param_values', pipes.get_type())
 
     # Convert numpy arrays to lists, if necessary.
     if isinstance(val, ndarray):
@@ -493,9 +493,9 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
 
     # Get the value and error returning function parameter description function if required.
     if not return_value:
-        return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
+        return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type())
     if not return_data_desc:
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', pipes.get_type())
+        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipes.get_type())
 
     # Format string.
     format = "%-30s%-30s"

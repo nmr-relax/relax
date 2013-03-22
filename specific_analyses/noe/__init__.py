@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,21 +19,34 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import sep
-import sys
+# Module docstring.
+"""Analysis specific code for the steady-state heteronuclear NOE calculation."""
+
+
+# The available modules.
+__all__ = [ 'main',
+            'pymol']
 
 # relax module imports.
-from test_suite.unit_tests.package_checking import PackageTestCase
-from specific_fns import model_free
+from specific_analyses.api_base import API_base
+from specific_analyses.api_common import API_common
+from specific_analyses.noe.main import Noe_main
 
 
-class Test___init__(PackageTestCase):
-    """Unit tests for the specific_fns.model_free package."""
+class Noe(Noe_main, API_base, API_common):
+    """Parent class containing all the NOE specific functions."""
 
-    def setUp(self):
-        """Set up for the package checking."""
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
 
-        self.package = model_free
-        self.package_name = 'specific_fns.model_free'
-        self.package_path = sys.path[0] + sep + 'specific_fns' + sep + 'model_free'
+        # Execute the base class __init__ method.
+        super(Noe, self).__init__()
+
+        # Place methods into the API.
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_value = self._return_value_general
+
+        # Set up the spin parameters.
+        self.PARAMS.add('ref', scope='spin', desc='The reference peak intensity', py_type=float, grace_string='Reference intensity')
+        self.PARAMS.add('sat', scope='spin', desc='The saturated peak intensity', py_type=float, grace_string='Saturated intensity')
+        self.PARAMS.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)

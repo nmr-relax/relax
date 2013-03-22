@@ -30,7 +30,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from specific_fns.setup import frame_order_obj
+from specific_analyses.setup import frame_order_obj
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

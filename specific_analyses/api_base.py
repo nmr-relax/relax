@@ -28,11 +28,11 @@ from copy import deepcopy
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from lib.errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
-from specific_fns.api_objects import Param_list
+from specific_analyses.api_objects import Param_list
 
 
 class API_base(object):
-    """Base class defining the specific_fns API.
+    """Base class defining the specific_analyses API.
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """

@@ -20,56 +20,56 @@
 ###############################################################################
 
 # Module docstring.
-"""The Pymol macro methods of the specific API for model-free analysis."""
+"""The Molmol macro methods of the specific API for model-free analysis."""
 
 # relax module imports.
-from specific_fns.model_free.macro_base import Macro
+from specific_analyses.model_free.macro_base import Macro
 
 
-class Pymol(Macro):
-    """Class containing the Pymol specific functions for model-free analysis."""
+class Molmol(Macro):
+    """Class containing the Molmol specific functions for model-free analysis."""
 
     def classic_colour(self, res_num=None, width=None, rgb_array=None):
         """Colour the given peptide bond."""
 
-        # Blank line (to make the macro file easier to read for the user).
+        # Ca to C bond.
+        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + repr(res_num-1) + "'")
+        self.commands.append("StyleBond neon")
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
+
+        # C to N bond.
+        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + repr(res_num-1) + "'")
+        self.commands.append("StyleBond neon")
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
+
+        # N to Ca bond.
+        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + repr(res_num) + "'")
+        self.commands.append("StyleBond neon")
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
+
+        # Blank line.
         self.commands.append("")
-
-        # Define the colour.
-        colour_name = 'pept_colour_%i' % res_num
-        self.commands.append("set_color %s, [%s, %s, %s]" % (colour_name, rgb_array[0], rgb_array[1], rgb_array[2]))
-
-        # The peptide bond.
-        self.commands.append("select pept_bond, (name ca,n and resi %i) or (name ca,c and resi %i)" % (res_num, res_num-1))
-        self.commands.append("as sticks, pept_bond")
-        self.commands.append("set_bond stick_radius, %s, pept_bond" % width)
-        self.commands.append("set_bond stick_color, %s, pept_bond" % colour_name)
-
-        # Delete the selection.
-        self.commands.append("delete pept_bond")
 
 
     def classic_header(self):
-        """Create the header for the pymol macro."""
+        """Create the header for the molmol macro."""
 
         # Hide all bonds.
-        self.commands.append("hide")
+        self.commands.append("SelectBond ''")
+        self.commands.append("StyleBond invisible")
 
         # Show the backbone bonds as lines.
-        self.commands.append("select bb, (name ca,n,c)")
-        self.commands.append("show lines, bb")
+        self.commands.append("SelectBond 'bb'")
+        self.commands.append("StyleBond line")
 
         # Colour the backbone black.
-        self.commands.append("color black, bb")
-
-        # Delete the selection.
-        self.commands.append("delete bb")
-
-        # Set the background colour to white.
-        self.commands.append("bg_color white")
+        self.commands.append("ColorBond 0 0 0")
 
 
-    def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Wrapper method for the create_macro method.
 
         @param data_type:       The parameter name or data type.

@@ -27,7 +27,7 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 class N_state_model_base_class(UnitTestCase):
     """Base class for the tests of the N-state model modules.
 
-    This includes both the 'prompt.n_state_model' and 'specific_fns.n_state_model' modules.  This base class also contains many shared unit tests.
+    This includes both the 'prompt.n_state_model' and 'specific_analyses.n_state_model' modules.  This base class also contains many shared unit tests.
     """
 
     def setUp(self):

@@ -25,7 +25,7 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Model_free_base_class(UnitTestCase):
-    """Base class for tests of both the 'prompt.model_free' and 'specific_fns.model_free' modules.
+    """Base class for tests of both the 'prompt.model_free' and 'specific_analyses.model_free' modules.
 
     This base class also contains many shared unit tests.
     """

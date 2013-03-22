@@ -35,7 +35,7 @@ from re import search
 
 # relax imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from specific_fns.setup import n_state_model_obj
+from specific_analyses.setup import n_state_model_obj
 
 
 # Create the data pipe.

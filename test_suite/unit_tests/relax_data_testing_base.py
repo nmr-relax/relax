@@ -56,7 +56,7 @@ class Relax_data_base_class(UnitTestCase):
     def test_read(self):
         """Test the reading of relaxation data.
 
-        The functions tested are both specific_fns.relax_data.read() and prompt.relax_data.read().
+        The functions tested are both specific_analyses.relax_data.read() and prompt.relax_data.read().
         """
 
         # First read the residue sequence out of the Ap4Aase 600 MHz NOE data file.

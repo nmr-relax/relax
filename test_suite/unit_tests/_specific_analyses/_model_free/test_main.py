@@ -27,13 +27,13 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes, results, structure
 from lib.errors import RelaxError
-from specific_fns.model_free import main
+from specific_analyses.model_free import main
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Test_main(UnitTestCase):
-    """Unit tests for the class methods of specific_fns.model_free.main.Model_free_main."""
+    """Unit tests for the class methods of specific_analyses.model_free.main.Model_free_main."""
 
     # Instantiate the class.
     inst = main.Model_free_main()

@@ -35,7 +35,7 @@ else:
 import colour
 from generic_fns import molmol
 from graphics import WIZARD_IMAGE_PATH
-from specific_fns.model_free.molmol import Molmol
+from specific_analyses.model_free.molmol import Molmol
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

@@ -25,7 +25,7 @@
 # relax module imports.
 from generic_fns import pipes
 from lib.errors import RelaxError
-from specific_fns.setup import get_specific_fn
+from specific_analyses.setup import get_specific_fn
 
 
 

@@ -41,7 +41,7 @@ from graphics import fetch_icon
 from lib.physical_constants import NH_BOND_LENGTH
 from lib.errors import RelaxError
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
-from specific_fns.setup import get_specific_fn
+from specific_analyses.setup import get_specific_fn
 from status import Status; status = Status()
 
 # relax GUI module imports.

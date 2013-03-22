@@ -30,7 +30,7 @@ import generic_fns
 from data.prototype import Prototype
 from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
-import specific_fns
+import specific_analyses
 
 
 class InteratomContainer(Prototype):
@@ -201,8 +201,8 @@ class InteratomList(list):
         """
 
         # Get the specific functions.
-        data_names = specific_fns.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
+        data_names = specific_analyses.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)
+        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
 
         # Loop over the containers.
         for i in range(len(self)):

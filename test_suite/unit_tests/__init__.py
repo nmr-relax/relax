@@ -50,6 +50,6 @@ __all__ = [
     '_opendx',
     '_prompt',
     '_scons',
-    '_specific_fns',
+    '_specific_analyses',
     '_user_functions'
 ]

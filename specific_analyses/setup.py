@@ -24,14 +24,14 @@
 
 # relax module imports.
 from generic_fns import pipes
-from specific_fns.consistency_tests import Consistency_tests
-from specific_fns.frame_order import Frame_order
-from specific_fns.hybrid import Hybrid
-from specific_fns.jw_mapping import Jw_mapping
-from specific_fns.model_free import Model_free
-from specific_fns.n_state_model import N_state_model
-from specific_fns.noe import Noe
-from specific_fns.relax_fit import Relax_fit
+from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.frame_order import Frame_order
+from specific_analyses.hybrid import Hybrid
+from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.model_free import Model_free
+from specific_analyses.n_state_model import N_state_model
+from specific_analyses.noe import Noe
+from specific_analyses.relax_fit import Relax_fit
 from lib.errors import RelaxError, RelaxFuncSetupError
 
 

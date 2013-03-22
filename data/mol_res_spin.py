@@ -32,7 +32,7 @@ from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from float import floatAsByteArray
 import generic_fns
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
-import specific_fns
+import specific_analyses
 
 
 # The spin system data.
@@ -317,8 +317,8 @@ class SpinList(list):
         """
 
         # Get the specific functions.
-        data_names = specific_fns.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
+        data_names = specific_analyses.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)
+        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
 
         # Loop over the spins.
         for i in range(len(self)):

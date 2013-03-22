@@ -31,7 +31,7 @@ import generic_fns.pipes
 from generic_fns.pipes import get_type, has_pipe, pipe_names, switch
 from lib.errors import RelaxError, RelaxPipeError
 from lib.io import write_data
-from specific_fns.setup import get_specific_fn
+from specific_analyses.setup import get_specific_fn
 
 
 def aic(chi2, k, n):

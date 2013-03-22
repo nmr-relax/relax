@@ -25,15 +25,15 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import specific_fns
+from specific_analyses import model_free
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the specific_fns package."""
+    """Unit tests for the specific_analyses.model_free package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = specific_fns
-        self.package_name = 'specific_fns'
-        self.package_path = sys.path[0] + sep + 'specific_fns'
+        self.package = model_free
+        self.package_name = 'specific_analyses.model_free'
+        self.package_path = sys.path[0] + sep + 'specific_analyses' + sep + 'model_free'

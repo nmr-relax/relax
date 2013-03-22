@@ -49,8 +49,8 @@ from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ra
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from lib.io import open_write_file
 from lib.warnings import RelaxWarning
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+from specific_analyses.api_base import API_base
+from specific_analyses.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

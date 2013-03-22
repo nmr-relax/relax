@@ -39,7 +39,7 @@ from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
 from lib.errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.io import extract_data, mkdir_nofail, open_write_file, strip, test_binary
-from specific_fns.setup import model_free_obj
+from specific_analyses.setup import model_free_obj
 
 
 def __deselect_spins():
