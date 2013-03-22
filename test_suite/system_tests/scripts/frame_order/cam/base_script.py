@@ -54,15 +54,11 @@ class Base_script:
 
         # Pre-created set up.
         if self.load_state:
-            # Reset the data store.
-            self.interpreter.reset()
-
-            # Load the save file.
-            self.interpreter.state.load('frame_order', dir=self.data_path)
+            self.setup_state()
 
         # New set up.
         else:
-            self.setup()
+            self.setup_full()
 
         # Optimise.
         self.optimisation()
@@ -118,7 +114,7 @@ class Base_script:
         print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
-        if hasattr(ds, 'flag_opt') and ds.flag_opt:
+        if hasattr(status, 'flag_opt') and status.flag_opt:
             self.interpreter.grid_search(inc=11)
             self.interpreter.minimise('simplex', constraints=False)
 
@@ -167,8 +163,8 @@ class Base_script:
         self.interpreter.frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
 
-    def setup(self):
-        """Optimise the frame order model."""
+    def setup_full(self):
+        """Set up the frame order model data from scratch."""
 
         # Create the data pipe.
         self.interpreter.pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -193,11 +189,11 @@ class Base_script:
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             # Load the RDCs.
-            if not hasattr(ds, 'flag_rdc') or ds.flag_rdc:
+            if not hasattr(status, 'flag_rdc') or status.flag_rdc:
                 self.interpreter.rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The PCS.
-            if not hasattr(ds, 'flag_pcs') or ds.flag_pcs:
+            if not hasattr(status, 'flag_pcs') or status.flag_pcs:
                 self.interpreter.pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
@@ -237,6 +233,19 @@ class Base_script:
 
         # Set the paramagnetic centre.
         self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
+
+
+    def setup_state(self):
+        """Set up the frame order model data from a saved state."""
+
+        # Load the save file.
+        self.interpreter.state.load('frame_order', dir=self.data_path)
+
+        # Delete the RDC and PCS data as needed.
+        if hasattr(status, 'flag_rdc') and not status.flag_rdc:
+            self.interpreter.rdc.delete()
+        if hasattr(status, 'flag_pcs') and not status.flag_pcs:
+            self.interpreter.pcs.delete()
 
 
     def transform(self):

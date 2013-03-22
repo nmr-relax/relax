@@ -82,11 +82,21 @@ class Frame_order(SystemTestCase):
     def setUp(self):
         """Set up for all the functional tests."""
 
-        # Create the data pipe.
-        self.interpreter.pipe.create('test', 'frame order')
-
         # The path to the CaM scripts.
         self.cam_path = status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep
+
+
+    def tearDown(self):
+        """Clean up after the tests."""
+
+        # Reset the relax data store.
+        self.interpreter.reset()
+
+        # Remove flags from the status object.
+        if hasattr(status, 'flag_rdc'):
+            del status.flag_rdc
+        if hasattr(status, 'flag_pcs'):
+            del status.flag_pcs
 
 
     def check_chi2(self, chi2=None, places=8):
@@ -106,9 +116,9 @@ class Frame_order(SystemTestCase):
         """Set a number of flags for the scripts."""
 
         # Store the flags.
-        ds.flag_rdc = rdc
-        ds.flag_pcs = pcs
-        ds.flag_opt = opt
+        status.flag_rdc = rdc
+        status.flag_pcs = pcs
+        status.flag_opt = opt
 
 
     def mesg_opt_debug(self):
@@ -142,13 +152,13 @@ class Frame_order(SystemTestCase):
         string = string +   "%-15s %30.17g\n" % ('ave_pos_beta:',    cdp.ave_pos_beta)
         string = string +   "%-15s %30.17g\n" % ('ave_pos_gamma:',   cdp.ave_pos_gamma)
         string = string +   "%-15s %30.17g\n" % ('chi2:',    cdp.chi2)
-        if hasattr(cdp, 'iter'):
+        if hasattr(cdp, 'iter') and cdp.iter != None:
             string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
-        if hasattr(cdp, 'f_count'):
+        if hasattr(cdp, 'f_count') and cdp.f_count != None:
             string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
-        if hasattr(cdp, 'g_count'):
+        if hasattr(cdp, 'g_count') and cdp.g_count != None:
             string = string +   "%-15s %30i\n" % ('g_count:', cdp.g_count)
-        if hasattr(cdp, 'h_count'):
+        if hasattr(cdp, 'h_count') and cdp.h_count != None:
             string = string +   "%-15s %30i\n" % ('h_count:', cdp.h_count)
         if hasattr(cdp, 'warning'):
             string = string +   "%-15s %30s\n" % ('warning:', cdp.warning)
@@ -201,8 +211,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(13.018631803+5.17902126915)
 
 
-    def test_cam_free_rotor_no_rdc(self):
-        """Test the free rotor frame order model of CaM."""
+    def test_cam_free_rotor_pcs(self):
+        """Test the free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -210,8 +220,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(13.018631803)
 
 
-    def test_cam_free_rotor_no_pcs(self):
-        """Test the free rotor frame order model of CaM."""
+    def test_cam_free_rotor_rdc(self):
+        """Test the free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -228,8 +238,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(388.898716352+5.2780738618)
 
 
-    def test_cam_free_rotor2_no_rdc(self):
-        """Test the second free rotor frame order model of CaM."""
+    def test_cam_free_rotor2_pcs(self):
+        """Test the second free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -237,8 +247,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(388.898716352)
 
 
-    def test_cam_free_rotor2_no_pcs(self):
-        """Test the second free rotor frame order model of CaM."""
+    def test_cam_free_rotor2_rdc(self):
+        """Test the second free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -252,25 +262,25 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(6.99143252681+35.790499755741962)
+        self.check_chi2(6.1160690302975809+34.254550856474211)
 
 
-    def test_cam_iso_cone_no_rdc(self):
-        """Test the isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_pcs(self):
+        """Test the isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(35.790499755741962)
+        self.check_chi2(34.254550856474211)
 
 
-    def test_cam_iso_cone_no_pcs(self):
-        """Test the isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_rdc(self):
+        """Test the isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(6.99143252681)
+        self.check_chi2(6.1160690302975809)
 
 
     def test_cam_iso_cone_free_rotor(self):
@@ -282,8 +292,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(89.2659028553+2.55339343957)
 
 
-    def test_cam_iso_cone_free_rotor_no_rdc(self):
-        """Test the isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_free_rotor_pcs(self):
+        """Test the isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -291,8 +301,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(89.2659028553)
 
 
-    def test_cam_iso_cone_free_rotor_no_pcs(self):
-        """Test the isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_free_rotor_rdc(self):
+        """Test the isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -309,8 +319,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(25.0858732306+1.95519413809)
 
 
-    def test_cam_iso_cone_free_rotor2_no_rdc(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_free_rotor2_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -318,8 +328,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(25.0858732306)
 
 
-    def test_cam_iso_cone_free_rotor2_no_pcs(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_free_rotor2_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -336,8 +346,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(86901.935712935723+2240.78657488)
 
 
-    def test_cam_iso_cone_torsionless_no_rdc(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_torsionless_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -345,8 +355,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(2240.78657488)
 
 
-    def test_cam_iso_cone_torsionless_no_pcs(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_iso_cone_torsionless_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -363,8 +373,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(41.6809179379+0.593794695247)
 
 
-    def test_cam_pseudo_ellipse_no_rdc(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_pseudo_ellipse_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -372,8 +382,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(41.6809179379)
 
 
-    def test_cam_pseudo_ellipse_no_pcs(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_pseudo_ellipse_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -390,8 +400,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(214.906630364+0.248965094372)
 
 
-    def test_cam_pseudo_ellipse_free_rotor_no_rdc(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_pseudo_ellipse_free_rotor_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -399,8 +409,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(214.906630364)
 
 
-    def test_cam_pseudo_ellipse_free_rotor_no_pcs(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_pseudo_ellipse_free_rotor_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -417,8 +427,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(1.74753535604+0.484168123653)
 
 
-    def test_cam_pseudo_ellipse_torsionless_no_rdc(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_pseudo_ellipse_torsionless_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -426,8 +436,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(1.74753535604)
 
 
-    def test_cam_pseudo_ellipse_torsionless_no_pcs(self):
-        """Test the second isotropic cone, free rotor frame order model of CaM."""
+    def test_cam_pseudo_ellipse_torsionless_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -444,8 +454,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.0811756291091+1.62132398885e-06)
 
 
-    def test_cam_rigid_no_rdc(self):
-        """Test the rigid frame order model of CaM."""
+    def test_cam_rigid_pcs(self):
+        """Test the rigid frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -453,8 +463,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(1.62132398885e-06)
 
 
-    def test_cam_rigid_no_pcs(self):
-        """Test the rigid frame order model of CaM."""
+    def test_cam_rigid_rdc(self):
+        """Test the rigid frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -471,8 +481,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.38773723555777778+0.1460413756923267)
 
 
-    def test_cam_rotor_no_rdc(self):
-        """Test the rotor frame order model of CaM."""
+    def test_cam_rotor_pcs(self):
+        """Test the rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -480,8 +490,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.38773723555777778)
 
 
-    def test_cam_rotor_no_pcs(self):
-        """Test the rotor frame order model of CaM."""
+    def test_cam_rotor_rdc(self):
+        """Test the rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
@@ -498,8 +508,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(4.24485635037+0.260243918876)
 
 
-    def test_cam_rotor2_no_rdc(self):
-        """Test the second rotor frame order model of CaM."""
+    def test_cam_rotor2_pcs(self):
+        """Test the second rotor frame order model of CaM (with only PCS data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
@@ -507,8 +517,8 @@ class Frame_order(SystemTestCase):
         self.check_chi2(4.24485635037)
 
 
-    def test_cam_rotor2_no_pcs(self):
-        """Test the second rotor frame order model of CaM."""
+    def test_cam_rotor2_rdc(self):
+        """Test the second rotor frame order model of CaM (with only RDC data)."""
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
