@@ -108,20 +108,20 @@ class Analysis:
         print cdp.chi2
 
         # Optimise.
-        #grid_search(inc=5)
+        grid_search(inc=3)
         minimise('simplex', constraints=False)
 
         # Optimise the pivot and model.
-        frame_order.pivot(pivot, fix=False)
-        minimise('simplex', constraints=False)
-
-        ## Test Monte Carlo simulations.
-        #monte_carlo.setup(number=500)
-        #monte_carlo.create_data()
-        #monte_carlo.initial_values()
+        #frame_order.pivot(pivot, fix=False)
         #minimise('simplex', constraints=False)
-        #eliminate()
-        #monte_carlo.error_analysis()
+
+        # Test Monte Carlo simulations.
+        monte_carlo.setup(number=5)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise('simplex', constraints=False)
+        eliminate()
+        monte_carlo.error_analysis()
 
 
     def original_structure(self):
