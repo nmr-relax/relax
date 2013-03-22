@@ -40,6 +40,8 @@ class Analysis(Base_script):
     eigen_gamma = 4.0322755062196229
     cone_theta_x = 0.1
     cone_theta_y = 0.5
+    cone = True
+    num_int_pts = 50
 
 
 # Execute the analysis.
