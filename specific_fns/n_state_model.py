@@ -855,7 +855,7 @@ class N_state_model(API_base, API_common):
                         interatom.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    interatom.rdc_bc[align_id] = model.Dij_theta[align_index, rdc_index]
+                    interatom.rdc_bc[align_id] = model.rdc_theta[align_index, rdc_index]
 
                     # Increment the data index if the interatom container has data.
                     rdc_index = rdc_index + 1
@@ -1775,17 +1775,17 @@ class N_state_model(API_base, API_common):
             for id in cdp.align_ids:
                 # No tensors initialised.
                 if not hasattr(cdp, 'align_tensors'):
-                    align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
                 # Find if the tensor corresponding to the id exists.
                 exists = False
                 for tensor in cdp.align_tensors:
-                    if id == tensor.name:
+                    if id == tensor.align_id:
                         exists = True
 
                 # Initialise the tensor.
                 if not exists:
-                    align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def base_data_loop(self):

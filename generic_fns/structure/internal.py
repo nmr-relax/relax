@@ -1223,7 +1223,8 @@ class Internal(Base_struct_API):
                                 continue
 
                             # Alias.
-                            mol2 = self.structural_data[j].mol[mol_index]
+                            model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
+                            mol2 = self.structural_data[model_index].mol[mol_index]
 
                             # Some sanity checks.
                             if mol2.atom_num[i] != atom_num:
@@ -1247,7 +1248,8 @@ class Internal(Base_struct_API):
                                 continue
 
                             # Alias.
-                            mol2 = self.structural_data[j].mol[mol_index]
+                            model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
+                            mol2 = self.structural_data[model_index].mol[mol_index]
 
                             # Append the position.
                             pos.append([mol2.x[i], mol2.y[i], mol2.z[i]])
@@ -1315,7 +1317,10 @@ class Internal(Base_struct_API):
         model = self.structural_data[0]
 
         # Loop over the molecules.
-        for mol in model.mol:
+        for mol_index in range(len(model.mol)):
+            # Alias.
+            mol = model.mol[mol_index]
+
             # Skip non-matching molecules.
             if mol_name and mol_name != mol.mol_name:
                 continue
@@ -1342,6 +1347,10 @@ class Internal(Base_struct_API):
                     # A single model.
                     if model_num != None and self.structural_data[j].num != model_num:
                         continue
+
+                    # Alias the molecule.
+                    model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
+                    mol = self.structural_data[model_index].mol[mol_index]
 
                     # Get the atom bonded to this model/molecule/residue/atom.
                     bonded_num, bonded_name, element, pos, attached_name, warnings = self._bonded_atom(attached_atom, index, mol)

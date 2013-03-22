@@ -198,14 +198,14 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
         # Assemble the atomic coordinates.
         coord_from = []
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_from[i], pos_flag=True):
-            coord_from.append(pos)
+            coord_from.append(pos[0])
 
         # Loop over the ending models.
         for j in range(len(model_to)):
             # Assemble the atomic coordinates.
             coord_to = []
             for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_to[j], pos_flag=True):
-                coord_to.append(pos)
+                coord_to.append(pos[0])
 
             # Send to the base container for the calculations.
             cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
@@ -248,7 +248,7 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos)
+            coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
     coord = array(coord)
 
@@ -316,12 +316,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
             continue
 
         # Add the position vector to the spin container.
-        if ave_pos:
-            spin_cont.pos = pos
-        else:
-            if not hasattr(spin_cont, 'pos'):
-                spin_cont.pos = []
-            spin_cont.pos.append(pos)
+        spin_cont.pos = pos
 
         # Store the data for a printout at the end.
         data.append([id, repr(pos)])
@@ -344,7 +339,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
                     raise RelaxNoSpinError(atom)
 
                 # Test the position.
-                if not hasattr(subspin, 'pos') or not subspin.pos:
+                if not hasattr(subspin, 'pos') or subspin.pos == None or not len(subspin.pos):
                     raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
                 # Alias the position.
@@ -707,7 +702,7 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos)
+            coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
     # The different algorithms.

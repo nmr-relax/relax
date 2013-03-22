@@ -62,6 +62,10 @@ class Align_tensor(SystemTestCase):
                 (-0.00011267453337899962, 6.412308037476237e-05, -5.7897942333203444e-05, -8.1865863377039068e-05, -2.5273427585025123e-05)
         ]
 
+        # Define the domains.
+        self.interpreter.domain(id='full')
+        self.interpreter.domain(id='red')
+
         # Set up the tensors.
         for i in range(5):
             # Load the tensor.
