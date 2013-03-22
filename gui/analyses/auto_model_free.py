@@ -40,7 +40,7 @@ from generic_fns.pipes import has_bundle, has_pipe
 from graphics import fetch_icon
 from physical_constants import NH_BOND_LENGTH
 from lib.errors import RelaxError
-from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
+from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 

@@ -24,5 +24,6 @@
 
 __all__ = [
     'sectioning',
+    'string',
     'table'
 ]

@@ -32,7 +32,7 @@ import sys
 import arg_check
 from graphics import fetch_icon
 from lib.errors import AllRelaxErrors, RelaxError
-from relax_string import strip_lead
+from lib.text.string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()

@@ -27,7 +27,7 @@ import arg_check
 from prompt.uf_docstring import bold_text, build_subtitle, create_table, format_text
 from prompt.help import relax_class_help
 from lib.errors import RelaxError
-from relax_string import strip_lead
+from lib.text.string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

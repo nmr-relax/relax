@@ -35,7 +35,7 @@ from generic_fns import frq, selection
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from relax_io import DummyFileObject
-from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
+from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()
 
 
