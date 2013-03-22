@@ -2,7 +2,7 @@
 from os import sep
 
 # relax module imports.
-from physical_constants import NH_BOND_LENGTH_RDC
+from lib.physical_constants import NH_BOND_LENGTH_RDC
 from status import Status; status = Status()
 
 

@@ -27,7 +27,7 @@ from math import pi
 from numpy import dot, sum
 
 # relax module imports.
-from physical_constants import kB, mu0
+from lib.physical_constants import kB, mu0
 
 
 def ave_pcs_tensor(dj, vect, N, A, weights=None):

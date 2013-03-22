@@ -50,7 +50,7 @@ from maths_fns.pcs import pcs_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
 from maths_fns.rdc import rdc_tensor
-from physical_constants import pcs_constant
+from lib.physical_constants import pcs_constant
 from lib.errors import RelaxError
 
 

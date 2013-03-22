@@ -35,7 +35,7 @@ import dep_check
 from generic_fns import pipes
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
-from physical_constants import N15_CSA, NH_BOND_LENGTH
+from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from lib.io import DummyFileObject, open_read_file
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase

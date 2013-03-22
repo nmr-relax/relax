@@ -41,7 +41,7 @@ from generic_fns.interatomic import interatomic_loop, return_interatom_list
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi import Processor_box
-from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
 from lib.warnings import RelaxWarning
 from specific_fns.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command

@@ -38,7 +38,7 @@ from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, return_spin, spin_loop
 from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.rotation_matrix import R_to_euler_zyz
-from physical_constants import element_from_isotope, number_from_isotope
+from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container

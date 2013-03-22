@@ -38,7 +38,7 @@ from generic_fns.interatomic import create_interatom, return_interatom, return_i
 from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
-from physical_constants import element_from_isotope, number_from_isotope
+from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from lib.io import read_spin_data, write_data
 from lib.warnings import RelaxWarning

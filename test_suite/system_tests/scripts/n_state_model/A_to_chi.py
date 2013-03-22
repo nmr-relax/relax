@@ -1,4 +1,4 @@
-from physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
+from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
 from generic_fns.align_tensor import calc_chi_tensor
 
 

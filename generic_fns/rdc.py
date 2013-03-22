@@ -38,7 +38,7 @@ from generic_fns.align_tensor import get_tensor_index
 from generic_fns.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
 from maths_fns.rdc import ave_rdc_tensor
-from physical_constants import dipolar_constant, return_gyromagnetic_ratio
+from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from lib.io import extract_data, open_write_file, write_data
 from lib.warnings import RelaxWarning

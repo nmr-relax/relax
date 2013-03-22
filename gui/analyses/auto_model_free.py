@@ -38,7 +38,7 @@ from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns.pipes import has_bundle, has_pipe
 from graphics import fetch_icon
-from physical_constants import NH_BOND_LENGTH
+from lib.physical_constants import NH_BOND_LENGTH
 from lib.errors import RelaxError
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from specific_fns.setup import get_specific_fn

@@ -4,7 +4,7 @@
 from os import sep
 
 # relax module imports.
-from physical_constants import N15_CSA
+from lib.physical_constants import N15_CSA
 from status import Status; status = Status()
 
 

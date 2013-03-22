@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
-from physical_constants import N15_CSA
+from lib.physical_constants import N15_CSA
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

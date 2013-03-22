@@ -3,7 +3,7 @@ from os import sep
 
 # relax imports.
 from generic_fns.interatomic import interatomic_loop
-from physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
+from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
 from status import Status; status = Status()
 
 

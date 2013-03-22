@@ -34,7 +34,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz
-from physical_constants import N15_CSA, NH_BOND_LENGTH
+from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from lib.io import DummyFileObject, open_read_file
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase

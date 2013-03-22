@@ -37,7 +37,7 @@ from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_index_loop, spin_loop
 from maths_fns.pcs import ave_pcs_tensor, pcs_tensor
 from maths_fns.vectors import random_unit_vector
-from physical_constants import g1H, pcs_constant
+from lib.physical_constants import g1H, pcs_constant
 from lib.errors import RelaxError, RelaxAlignError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError, RelaxPCSError
 from lib.io import open_write_file, read_spin_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning

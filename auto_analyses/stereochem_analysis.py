@@ -71,7 +71,7 @@ import sys
 from generic_fns import pipes
 from generic_fns.grace import write_xy_data, write_xy_header
 from generic_fns.selection import spin_loop
-from physical_constants import dipolar_constant, g1H, g13C
+from lib.physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.io import mkdir_nofail
