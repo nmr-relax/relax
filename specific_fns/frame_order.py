@@ -2229,9 +2229,13 @@ class Frame_order(API_base, API_common):
         # Get the parameter object names.
         param_names = self.data_names(set='params')
 
+        # The model parameters.
+        model_params = deepcopy(cdp.params)
+
         # Add some additional parameters.
         if cdp.model == 'iso cone, free rotor':
             param_names.append('cone_theta')
+            model_params.append('cone_theta')
 
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
@@ -2243,7 +2247,7 @@ class Frame_order(API_base, API_common):
         # Loop over all the parameter names.
         for object_name in param_names:
             # Not a parameter of the model.
-            if object_name not in cdp.params:
+            if object_name not in model_params:
                 continue
 
             # Name for the simulation object.
@@ -2260,7 +2264,7 @@ class Frame_order(API_base, API_common):
         # Loop over all the data names.
         for object_name in param_names:
             # Not a parameter of the model.
-            if object_name not in cdp.params:
+            if object_name not in model_params:
                 continue
 
             # Name for the simulation object.

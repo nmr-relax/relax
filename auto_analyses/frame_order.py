@@ -38,6 +38,7 @@ from generic_fns.pipes import cdp_name, get_pipe
 from maths_fns.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
+from relax_io import open_write_file
 from status import Status; status = Status()
 
 
@@ -121,22 +122,27 @@ class Frame_order_analysis:
             # The nested model optimisation protocol.
             self.optimise()
 
-            # Model selection.
-            self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
+            # The final results does not already exist.
+            if not self.read_results(model='final', pipe_name='final'):
+                # Model selection.
+                self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
 
-            # The number of integration points.
-            self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
+                # The number of integration points.
+                self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
 
-            # Monte Carlo simulations.
-            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
-            self.interpreter.eliminate()
-            self.interpreter.monte_carlo.error_analysis()
+                # Monte Carlo simulations.
+                self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+                self.interpreter.monte_carlo.create_data()
+                self.interpreter.monte_carlo.initial_values()
+                self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
+                self.interpreter.eliminate()
+                self.interpreter.monte_carlo.error_analysis()
 
-            # Finish.
-            self.interpreter.results.write(file='results', force=True)
+                # Finish.
+                self.interpreter.results.write(file='results', force=True)
+
+            # Results visualisation.
+            self.visualisation()
 
         # Clean up.
         finally:
@@ -499,3 +505,43 @@ class Frame_order_analysis:
 
         # Success.
         return True
+
+
+    def visualisation(self):
+        """Create visual representations of the frame order results.
+
+        This includes a PDB representation of the motions (the 'cone.pdb' file located in each model directory) together with a relax script for displaying the average domain positions together with the cone/motion representation in PyMOL (the 'pymol_display.py' file, also created in the model directory).
+        """
+
+        # Loop over all models.
+        for pipe_name in self.models.values() + ['final']:
+            # The directory to place files into.
+            if pipe_name == 'final':
+                results_dir = pipe_name
+            else:
+                results_dir = cdp.model
+
+            # Switch to the data pipe.
+            self.interpreter.pipe.switch(pipe_name)
+
+            # Create a PDB file representation of the motions.
+            if cdp.model != 'rigid':
+                self.interpreter.frame_order.cone_pdb(file='cone.pdb', dir=results_dir, force=True)
+
+            # Create the visualisation script.
+            script = open_write_file(file_name='pymol_display.py', dir=results_dir, force=True)
+
+            # Add a comment for the user.
+            script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % results_dir)
+
+            # The script contents.
+            script.write("# Load the relax state file.\n")
+            script.write("state.load('results')\n")
+            script.write("\n")
+            script.write("# PyMOL visualisation.\n")
+            script.write("pymol.view()\n")
+            script.write("pymol.command('show spheres')\n")
+            script.write("pymol.cone_pdb('cone.pdb')\n")
+
+            # Close the file.
+            script.close()

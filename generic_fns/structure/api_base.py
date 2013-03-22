@@ -483,7 +483,7 @@ class Base_struct_API:
         return len(self.structural_data[0].mol)
 
 
-    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, merge=False):
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, merge=False):
         """From the given structural data, expand the structural data data structure.
 
         @param data_matrix:         A matrix of structural objects.
@@ -500,6 +500,8 @@ class Base_struct_API:
         @type file_name:            None or str
         @keyword file_path:         The full path to the file specified by 'file_name'.
         @type file_path:            None or str
+        @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
+        @type file_path_abs:        None or str
         @keyword merge:             A flag which if set to True will try to merge the structure into the currently loaded structures.
         @type merge:                bool
         """
@@ -579,6 +581,7 @@ class Base_struct_API:
                 mol.mol_name = set_mol_name[j]
                 mol.file_name = file_name
                 mol.file_path = file_path
+                mol.file_path_abs = file_path_abs
                 mol.file_mol_num = orig_mol_num[j]
                 mol.file_model = orig_model_num[i]
 
