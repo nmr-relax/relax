@@ -40,6 +40,7 @@ BASE_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_
 class Base_script:
     # Class variables.
     cone = True
+    load_state = False
 
     def __init__(self, interpreter):
         """Execute the frame order analysis."""
@@ -50,6 +51,18 @@ class Base_script:
 
         # The data path.
         self.data_path = BASE_PATH + self.directory
+
+        # Pre-created set up.
+        if self.load_state:
+            # Reset the data store.
+            self.interpreter.reset()
+
+            # Load the save file.
+            self.interpreter.state.load('frame_order', dir=self.data_path)
+
+        # New set up.
+        else:
+            self.setup()
 
         # Optimise.
         self.optimisation()
@@ -68,6 +81,93 @@ class Base_script:
 
 
     def optimisation(self):
+        """Optimise the frame order model."""
+
+        # Set the number of numerical integration points.
+        if hasattr(self, 'num_int_pts'):
+            cdp.num_int_pts = self.num_int_pts
+
+        # Check the minimum.
+        if hasattr(self, 'ave_pos_alpha'):
+            self.interpreter.value.set(val=self.ave_pos_alpha, param='ave_pos_alpha')
+        if hasattr(self, 'ave_pos_beta'):
+            self.interpreter.value.set(val=self.ave_pos_beta, param='ave_pos_beta')
+        if hasattr(self, 'ave_pos_gamma'):
+            self.interpreter.value.set(val=self.ave_pos_gamma, param='ave_pos_gamma')
+        if hasattr(self, 'eigen_alpha'):
+            self.interpreter.value.set(val=self.eigen_alpha, param='eigen_alpha')
+        if hasattr(self, 'eigen_beta'):
+            self.interpreter.value.set(val=self.eigen_beta, param='eigen_beta')
+        if hasattr(self, 'eigen_gamma'):
+            self.interpreter.value.set(val=self.eigen_gamma, param='eigen_gamma')
+        if hasattr(self, 'axis_theta'):
+            self.interpreter.value.set(val=self.axis_theta, param='axis_theta')
+        if hasattr(self, 'axis_phi'):
+            self.interpreter.value.set(val=self.axis_phi, param='axis_phi')
+        if hasattr(self, 'cone_theta_x'):
+            self.interpreter.value.set(val=self.cone_theta_x, param='cone_theta_x')
+        if hasattr(self, 'cone_theta_y'):
+            self.interpreter.value.set(val=self.cone_theta_y, param='cone_theta_y')
+        if hasattr(self, 'cone_theta'):
+            self.interpreter.value.set(val=self.cone_theta, param='cone_theta')
+        if hasattr(self, 'cone_s1'):
+            self.interpreter.value.set(val=self.cone_s1, param='cone_s1')
+        if hasattr(self, 'cone_sigma_max'):
+            self.interpreter.value.set(val=self.cone_sigma_max, param='cone_sigma_max')
+        self.interpreter.calc()
+        print("\nchi2: %s" % cdp.chi2)
+
+        # Optimise.
+        if hasattr(ds, 'flag_opt') and ds.flag_opt:
+            self.interpreter.grid_search(inc=11)
+            self.interpreter.minimise('simplex', constraints=False)
+
+            # Test Monte Carlo simulations.
+            self.interpreter.monte_carlo.setup(number=3)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise('simplex', constraints=False)
+            self.interpreter.eliminate()
+            self.interpreter.monte_carlo.error_analysis()
+
+        # Write the results.
+        self.interpreter.results.write('devnull', dir=None, force=True)
+
+
+    def original_structure(self):
+        """Load the original structure into a dedicated data pipe."""
+
+        # Delete the data pipe (if a loaded state has been used).
+        if self.load_state:
+            self.interpreter.pipe.delete('orig pos')
+
+        # Create a special data pipe for the original rigid body position.
+        self.interpreter.pipe.create(pipe_name='orig pos', pipe_type='frame order')
+
+        # Load the structure.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
+
+
+    def pymol_display(self):
+        """Display the results in PyMOL."""
+
+        # Switch back to the main data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # Load the PDBs of the 2 domains.
+        self.interpreter.structure.read_pdb('1J7O_1st_NH.pdb', dir=BASE_PATH)
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
+
+        # Create the cone PDB file.
+        if self.cone:
+            self.interpreter.frame_order.cone_pdb(file='devnull', force=True)
+
+        # Set the domains.
+        self.interpreter.frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
+        self.interpreter.frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
+
+
+    def setup(self):
         """Optimise the frame order model."""
 
         # Create the data pipe.
@@ -138,85 +238,6 @@ class Base_script:
         # Set the paramagnetic centre.
         self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
 
-        # Set the number of numerical integration points.
-        if hasattr(self, 'num_int_pts'):
-            cdp.num_int_pts = self.num_int_pts
-
-        # Check the minimum.
-        if hasattr(self, 'ave_pos_alpha'):
-            self.interpreter.value.set(val=self.ave_pos_alpha, param='ave_pos_alpha')
-        if hasattr(self, 'ave_pos_beta'):
-            self.interpreter.value.set(val=self.ave_pos_beta, param='ave_pos_beta')
-        if hasattr(self, 'ave_pos_gamma'):
-            self.interpreter.value.set(val=self.ave_pos_gamma, param='ave_pos_gamma')
-        if hasattr(self, 'eigen_alpha'):
-            self.interpreter.value.set(val=self.eigen_alpha, param='eigen_alpha')
-        if hasattr(self, 'eigen_beta'):
-            self.interpreter.value.set(val=self.eigen_beta, param='eigen_beta')
-        if hasattr(self, 'eigen_gamma'):
-            self.interpreter.value.set(val=self.eigen_gamma, param='eigen_gamma')
-        if hasattr(self, 'axis_theta'):
-            self.interpreter.value.set(val=self.axis_theta, param='axis_theta')
-        if hasattr(self, 'axis_phi'):
-            self.interpreter.value.set(val=self.axis_phi, param='axis_phi')
-        if hasattr(self, 'cone_theta_x'):
-            self.interpreter.value.set(val=self.cone_theta_x, param='cone_theta_x')
-        if hasattr(self, 'cone_theta_y'):
-            self.interpreter.value.set(val=self.cone_theta_y, param='cone_theta_y')
-        if hasattr(self, 'cone_theta'):
-            self.interpreter.value.set(val=self.cone_theta, param='cone_theta')
-        if hasattr(self, 'cone_s1'):
-            self.interpreter.value.set(val=self.cone_s1, param='cone_s1')
-        if hasattr(self, 'cone_sigma_max'):
-            self.interpreter.value.set(val=self.cone_sigma_max, param='cone_sigma_max')
-        self.interpreter.calc()
-        print("\nchi2: %s" % cdp.chi2)
-
-        # Optimise.
-        if hasattr(ds, 'flag_opt') and ds.flag_opt:
-            self.interpreter.grid_search(inc=11)
-            self.interpreter.minimise('simplex', constraints=False)
-
-            # Test Monte Carlo simulations.
-            self.interpreter.monte_carlo.setup(number=3)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise('simplex', constraints=False)
-            self.interpreter.eliminate()
-            self.interpreter.monte_carlo.error_analysis()
-
-        # Write the results.
-        self.interpreter.results.write('devnull', dir=None, force=True)
-
-
-    def original_structure(self):
-        """Load the original structure into a dedicated data pipe."""
-
-        # Create a special data pipe for the original rigid body position.
-        self.interpreter.pipe.create(pipe_name='orig pos', pipe_type='frame order')
-
-        # Load the structure.
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
-
-
-    def pymol_display(self):
-        """Display the results in PyMOL."""
-
-        # Switch back to the main data pipe.
-        self.interpreter.pipe.switch('frame order')
-
-        # Load the PDBs of the 2 domains.
-        self.interpreter.structure.read_pdb('1J7O_1st_NH.pdb', dir=BASE_PATH)
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
-
-        # Create the cone PDB file.
-        if self.cone:
-            self.interpreter.frame_order.cone_pdb(file='devnull', force=True)
-
-        # Set the domains.
-        self.interpreter.frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
-        self.interpreter.frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
-
 
     def transform(self):
         """Transform the domain to the average position."""
@@ -234,6 +255,10 @@ class Base_script:
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
         pivot = cdp.pivot
+
+        # Delete the data pipe (if a loaded state has been used).
+        if self.load_state:
+            self.interpreter.pipe.delete('ave pos')
 
         # Create a special data pipe for the average rigid body position.
         self.interpreter.pipe.create(pipe_name='ave pos', pipe_type='frame order')
