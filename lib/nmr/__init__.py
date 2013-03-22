@@ -20,15 +20,8 @@
 ###############################################################################
 
 # Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+"""The relax-lib NMR package - a library of functions for NMR."""
 
 __all__ = [
-    'ansi',
-    'errors',
-    'geometry',
-    'io',
-    'nmr',
-    'physical_constants',
-    'text',
-    'warnings'
+    ''
 ]
