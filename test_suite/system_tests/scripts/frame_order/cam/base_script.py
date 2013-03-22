@@ -93,11 +93,11 @@ class Base_script:
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             # Load the RDCs.
-            if ds.flag_rdc:
+            if not hasattr(ds, 'flag_rdc') or ds.flag_rdc:
                 self.interpreter.rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The PCS.
-            if ds.flag_pcs:
+            if not hasattr(ds, 'flag_pcs') or ds.flag_pcs:
                 self.interpreter.pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
@@ -173,7 +173,7 @@ class Base_script:
         print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
-        if ds.flag_opt:
+        if hasattr(ds, 'flag_opt') and ds.flag_opt:
             self.interpreter.grid_search(inc=11)
             self.interpreter.minimise('simplex', constraints=False)
 
