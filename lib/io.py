@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2003-2013 Edward d'Auvergne                                   #
