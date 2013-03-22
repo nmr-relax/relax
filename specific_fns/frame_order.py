@@ -227,23 +227,17 @@ class Frame_order(API_base, API_common):
         @rtype:     numpy array
         """
 
-        # Get the parameter vector.
-        param_vector = self._assemble_param_vector()
-
-        # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
-
-        # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        # Set up the target function for direct calculation.
+        model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        target.func(param_vector)
+        model.func(param_vector)
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(target)
+        self._store_bc_data(model)
 
         # Return the reduced tensors.
-        return target.red_tensors_bc
+        return model.A_5D_bc
 
 
     def _base_data_types(self):
@@ -488,6 +482,31 @@ class Frame_order(API_base, API_common):
         pdb_file.close()
 
 
+    def _domain_moving(self):
+        """Return the domain ID of the moving domain.
+
+        @return:    The domain ID of the moving domain.
+        @rtype:     str
+        """
+
+        # Check that the domain is defined.
+        if not hasattr(cdp, 'domain'):
+            raise RelaxError("No domains have been defined.  Please use the domain user function.")
+
+        # Only support for 2 domains.
+        if len(cdp.domain.keys()) > 2:
+            raise RelaxError("Only two domains are supported in the frame order analysis.")
+
+        # Loop over the domains.
+        for id in cdp.domain.keys():
+            # Reference domain.
+            if id == cdp.ref_domain:
+                continue
+
+            # Return the ID.
+            return id
+
+
     def _domain_to_pdb(self, domain=None, pdb=None):
         """Match domains to PDB files.
 
@@ -616,9 +635,10 @@ class Frame_order(API_base, API_common):
             else:
                 frq.append(1e-10)
 
-            # Spin loop.
+            # Spin loop over the domain.
+            id = cdp.domain[self._domain_moving()]
             j = 0
-            for spin in spin_loop():
+            for spin in spin_loop(id):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -765,8 +785,9 @@ class Frame_order(API_base, API_common):
             rdc_err.append([])
             rdc_weight.append([])
 
-            # Spin loop.
-            for spin in spin_loop():
+            # Spin loop over the domain.
+            id = cdp.domain[self._domain_moving()]
+            for spin in spin_loop(id):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -963,8 +984,8 @@ class Frame_order(API_base, API_common):
         pipes.test()
 
         # Check that the domain is defined.
-        if not hasattr(cdp, 'domain') or domain not in cdp.domain.keys():
-            raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
+        if not hasattr(cdp, 'domain') or ref not in cdp.domain.keys():
+            raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % ref)
 
         # Test if the reference domain exists.
         exists = False
@@ -1006,8 +1027,8 @@ class Frame_order(API_base, API_common):
         self._update_model()
 
 
-    def _store_bc_tensors(self, target_fn):
-        """Store the back-calculated reduced alignment tensors.
+    def _store_bc_data(self, target_fn):
+        """Store the back-calculated data.
 
         @param target_fn:   The frame-order target function class.
         @type target_fn:    class instance
@@ -1019,7 +1040,7 @@ class Frame_order(API_base, API_common):
             name = tensor.name + ' bc'
 
             # Initialise the new tensor.
-            align_tensor.init(tensor=name, params=(target_fn.red_tensors_bc[5*i + 0], target_fn.red_tensors_bc[5*i + 1], target_fn.red_tensors_bc[5*i + 2], target_fn.red_tensors_bc[5*i + 3], target_fn.red_tensors_bc[5*i + 4]), param_types=2)
+            align_tensor.init(tensor=name, params=(target_fn.A_5D_bc[5*i + 0], target_fn.A_5D_bc[5*i + 1], target_fn.A_5D_bc[5*i + 2], target_fn.A_5D_bc[5*i + 3], target_fn.A_5D_bc[5*i + 4]), param_types=2)
 
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
@@ -1336,7 +1357,7 @@ class Frame_order(API_base, API_common):
         cdp.chi2 = chi2
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(model)
+        self._store_bc_data(model)
 
 
     def create_mc_data(self, data_id=None):
@@ -1636,7 +1657,7 @@ class Frame_order(API_base, API_common):
         self._unpack_opt_results(results, sim_index)
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(model)
+        self._store_bc_data(model)
 
 
 
