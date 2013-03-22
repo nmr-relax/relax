@@ -164,7 +164,7 @@ def pcs_numeric_int_iso_cone_qrint(points=None, theta_max=None, sigma_max=None, 
             if error_flag:
                 pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
                 pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
-                print "%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6)
+                print("%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6))
 
 
 def populate_1st_eigenframe_iso_cone(matrix, angle):

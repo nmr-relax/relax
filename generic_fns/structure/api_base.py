@@ -1176,7 +1176,7 @@ class ModelList(list):
         self.model_indices[model_num] = len(self) - 1
 
         # The sorted model numbers.
-        self.model_list = self.model_indices.keys()
+        self.model_list = list(self.model_indices.keys())
         self.model_list.sort()
 
 
