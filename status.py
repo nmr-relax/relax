@@ -73,7 +73,7 @@ class Status(object):
         """
 
         # The file to search for.
-        file_to_find = 'relax_errors.py'
+        file_to_find = 'compat.py'
 
         # Loop over the system paths, searching for the real path.
         for path in sys.path:
