@@ -29,6 +29,7 @@ __all__ = [
     'io',
     'nmr',
     'physical_constants',
+    'structure',
     'text',
     'warnings'
 ]
