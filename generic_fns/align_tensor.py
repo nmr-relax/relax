@@ -38,7 +38,7 @@ from generic_fns import pipes
 from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.io import write_data
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 def align_data_exists(tensor, pipe=None):

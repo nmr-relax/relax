@@ -32,7 +32,7 @@ from warnings import warn
 from generic_fns import grace, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=False, force=False):

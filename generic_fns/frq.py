@@ -28,7 +28,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns import pipes
 from lib.errors import RelaxError
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 def get_values():

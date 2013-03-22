@@ -41,7 +41,7 @@ from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from lib.io import read_spin_data, write_data
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 import specific_fns
 
 

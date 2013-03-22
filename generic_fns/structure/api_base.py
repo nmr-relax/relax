@@ -40,7 +40,7 @@ from float import floatAsByteArray, packBytesAsPyFloat
 from generic_fns.structure.superimpose import kabsch
 from lib.errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from lib.io import file_root
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 class Base_struct_API:

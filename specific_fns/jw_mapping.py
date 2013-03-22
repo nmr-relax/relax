@@ -33,7 +33,7 @@ from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
-from relax_warnings import RelaxDeselectWarning
+from lib.warnings import RelaxDeselectWarning
 import specific_fns
 from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common

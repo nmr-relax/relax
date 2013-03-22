@@ -57,7 +57,7 @@ from multi import Application_callback, load_multiprocessor
 from prompt import interpreter
 import lib.errors
 from lib.io import io_streams_log, io_streams_tee
-import relax_warnings
+import lib.warnings
 from status import Status; status = Status()
 import version
 
@@ -153,7 +153,7 @@ class Relax:
         """
 
         # Set up the warning system.
-        relax_warnings.setup()
+        lib.warnings.setup()
 
         # Show the version number and exit.
         if self.mode == 'version':

@@ -32,7 +32,7 @@ from generic_fns import pipes
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_loop
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 def angle_diff_frame():

@@ -41,7 +41,7 @@ from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from lib.io import extract_data, open_write_file, write_data
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 def back_calc(align_id=None):

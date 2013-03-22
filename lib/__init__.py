@@ -26,5 +26,6 @@ __all__ = [
     'errors',
     'geometry',
     'io',
-    'text'
+    'text',
+    'warnings'
 ]

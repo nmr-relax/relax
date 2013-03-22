@@ -41,7 +41,7 @@ from generic_fns.structure import pdb_read, pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 

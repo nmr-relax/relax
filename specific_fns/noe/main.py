@@ -31,7 +31,7 @@ from warnings import warn
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from lib.errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
-from relax_warnings import RelaxDeselectWarning
+from lib.warnings import RelaxDeselectWarning
 from specific_fns.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container

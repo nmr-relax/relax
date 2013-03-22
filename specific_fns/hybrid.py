@@ -30,7 +30,7 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.sequence import compare_sequence
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
-from relax_warnings import RelaxDeselectWarning
+from lib.warnings import RelaxDeselectWarning
 import specific_fns.setup
 
 

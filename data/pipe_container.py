@@ -36,7 +36,7 @@ from data.prototype import Prototype
 from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 import generic_fns
 from lib.errors import RelaxFromXMLNotEmptyError
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 class PipeContainer(Prototype):

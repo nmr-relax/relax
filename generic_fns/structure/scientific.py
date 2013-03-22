@@ -42,7 +42,7 @@ from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, t
 from generic_fns.structure.api_base import Base_struct_API
 from lib.errors import RelaxError, RelaxPdbLoadError
 from lib.io import file_root
-from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
+from lib.warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):

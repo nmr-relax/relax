@@ -32,7 +32,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, toke
 from generic_fns import xplor
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import open_read_file
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 
 
 def __file_format(lines):

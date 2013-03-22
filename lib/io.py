@@ -43,7 +43,7 @@ from check_types import is_filetype, is_float
 from compat import bz2_open, gz_open
 import generic_fns
 from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
-from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
+from lib.warnings import RelaxWarning, RelaxFileEmptyWarning
 
 
 

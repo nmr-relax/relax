@@ -36,7 +36,7 @@ from generic_fns import diffusion_tensor, interatomic, pipes, sequence
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_fns
 from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
-from relax_warnings import RelaxDeselectWarning, RelaxWarning
+from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

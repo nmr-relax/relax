@@ -36,7 +36,7 @@ from lib.structure.rotor import rotor_pdb
 from maths_fns.rotation_matrix import two_vect_to_R
 from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from lib.io import get_file_path, open_write_file
-from relax_warnings import RelaxWarning
+from lib.warnings import RelaxWarning
 from status import Status; status = Status()
 
 

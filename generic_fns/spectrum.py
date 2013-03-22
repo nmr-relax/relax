@@ -35,7 +35,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_
 from generic_fns import pipes
 from lib.errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import extract_data, read_spin_data, strip, write_data
-from relax_warnings import RelaxWarning, RelaxNoSpinWarning
+from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 
 
 

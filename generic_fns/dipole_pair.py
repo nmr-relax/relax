@@ -35,7 +35,7 @@ from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, return
 from generic_fns import pipes
 from lib.errors import RelaxError, RelaxNoInteratomError
 from lib.io import extract_data, write_data
-from relax_warnings import RelaxWarning, RelaxZeroVectorWarning
+from lib.warnings import RelaxWarning, RelaxZeroVectorWarning
 
 
 def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=True):
