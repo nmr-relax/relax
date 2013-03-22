@@ -32,7 +32,7 @@ import sys
 # relax module imports.
 from data.data_classes import Element
 from data.relax_xml import fill_object_contents, xml_to_object
-from float import nan
+from lib.float import nan
 from lib.geometry.rotations import R_to_euler_zyz
 from lib.errors import RelaxError
 

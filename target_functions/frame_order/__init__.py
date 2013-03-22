@@ -29,7 +29,7 @@ from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
-from float import isNaN
+from lib.float import isNaN
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from extern.sobol.sobol_lib import i4_sobol
 from lib.nmr.alignment_tensor import to_5D, to_tensor

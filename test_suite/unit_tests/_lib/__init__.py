@@ -23,5 +23,6 @@
 __all__ = [
     '_geometry'
     '_text'
+    'test_float',
     'test_io'
 ]

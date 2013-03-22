@@ -6,7 +6,7 @@ from numpy.linalg import norm
 from sys import stdout
 
 # relax module imports.
-from float import floatAsByteArray
+from lib.float import floatAsByteArray
 from lib.geometry.rotations import axis_angle_to_R, R_random_axis
 
 

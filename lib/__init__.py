@@ -25,6 +25,7 @@
 __all__ = [
     'ansi',
     'errors',
+    'float',
     'geometry',
     'io',
     'nmr',

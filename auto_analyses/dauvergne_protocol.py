@@ -26,7 +26,7 @@ from re import search
 from time import sleep
 
 # relax module imports.
-from float import floatAsByteArray
+from lib.float import floatAsByteArray
 from info import Info_box; info = Info_box()
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop

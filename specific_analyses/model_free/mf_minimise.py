@@ -34,7 +34,7 @@ from warnings import warn
 
 # relax module imports.
 import arg_check
-from float import isNaN, isInf
+from lib.float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.interatomic import interatomic_loop, return_interatom_list

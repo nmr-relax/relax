@@ -34,7 +34,7 @@ from warnings import warn
 
 # relax module imports.
 import arg_check
-from float import isNaN, isInf
+from lib.float import isNaN, isInf
 from generic_fns import align_tensor, pcs, pipes, rdc
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop

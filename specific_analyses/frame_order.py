@@ -35,7 +35,7 @@ from warnings import warn
 
 # relax module imports.
 import arg_check
-from float import isNaN, isInf
+from lib.float import isNaN, isInf
 from generic_fns import pipes
 from generic_fns.angles import wrap_angles
 from generic_fns.interatomic import interatomic_loop, return_interatom

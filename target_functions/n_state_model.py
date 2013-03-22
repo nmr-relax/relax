@@ -24,7 +24,7 @@ from math import sqrt
 from numpy import array, dot, eye, float64, ones, rank, transpose, zeros
 
 # relax module imports.
-from float import isNaN
+from lib.float import isNaN
 from lib.nmr.alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from target_functions.chi2 import chi2, dchi2_element, d2chi2_element
 from target_functions.paramag_centre import vectors_single_centre, vectors_centre_per_state

@@ -32,7 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from check_types import is_float
-from float import nan
+from lib.float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
 from generic_fns.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom

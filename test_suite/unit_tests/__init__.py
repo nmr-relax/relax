@@ -38,7 +38,6 @@ __all__ = [
     'spin_testing_base',
     'state_testing_base',
     'structure_testing_base',
-    'test_float',
     'unit_test_runner',
     'value_testing_base',
     '_auto_analyses',

@@ -28,7 +28,7 @@ from math import pi
 from string import ascii_letters, digits
 
 # relax module imports.
-from float import nan
+from lib.float import nan
 from lib.errors import RelaxError
 
 

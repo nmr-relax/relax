@@ -33,7 +33,7 @@ set_printoptions(precision=15, threshold=nan)
 # relax module imports.
 import arg_check
 import check_types
-from float import floatAsByteArray, packBytesAsPyFloat
+from lib.float import floatAsByteArray, packBytesAsPyFloat
 from lib.errors import RelaxError
 
 

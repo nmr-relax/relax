@@ -29,7 +29,7 @@ from re import match, search
 # relax module imports.
 from data.prototype import Prototype
 from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
-from float import floatAsByteArray
+from lib.float import floatAsByteArray
 import generic_fns
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
 import specific_analyses
