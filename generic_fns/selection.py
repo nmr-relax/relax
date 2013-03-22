@@ -409,26 +409,11 @@ def sel_domain(domain_id=None, boolean='OR', change_all=False):
     for spin, spin_id in spin_loop(return_id=True):
         # Deselect spins outside of the domain.
         if spin_id not in domain and change_all:
-            print "out: %s" % spin_id
             spin.select = False
 
         # Inside the domain.
         if spin_id in domain:
-            if boolean == 'OR':
-                print "OR: %s" % spin_id
-                spin.select = spin.select or True
-            elif boolean == 'NOR':
-                spin.select = not (spin.select or True)
-            elif boolean == 'AND':
-                spin.select = spin.select and True
-            elif boolean == 'NAND':
-                spin.select = not (spin.select and True)
-            elif boolean == 'XOR':
-                spin.select = not (spin.select and True) and (spin.select or True)
-            elif boolean == 'XNOR':
-                spin.select = (spin.select and True) or not (spin.select or True)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
+            spin.select = boolean_select(current=spin.select, boolean=boolean)
 
     # Interatomic data loop.
     for interatom in interatomic_loop():
@@ -438,21 +423,7 @@ def sel_domain(domain_id=None, boolean='OR', change_all=False):
 
         # Inside the domain.
         if interatom.spin_id1 in domain or interatom.spin_id2 in domain:
-            if boolean == 'OR':
-                interatom.select = interatom.select or True
-            elif boolean == 'NOR':
-                interatom.select = not (interatom.select or True)
-            elif boolean == 'AND':
-                interatom.select = interatom.select and True
-            elif boolean == 'NAND':
-                interatom.select = not (interatom.select and True)
-            elif boolean == 'XOR':
-                interatom.select = not (interatom.select and True) and (interatom.select or True)
-            elif boolean == 'XNOR':
-                interatom.select = (interatom.select and True) or not (interatom.select or True)
-            else:
-                raise RelaxError("Unknown boolean operator " + repr(boolean))
-
+            interatom.select = boolean_select(current=interatom.select, boolean=boolean)
 
 
 def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
