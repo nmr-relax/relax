@@ -129,7 +129,7 @@ class Frame_order_analysis:
         # Execute the full protocol.
         try:
             # The nested model optimisation protocol.
-            self.optimise()
+            self.nested_models()
 
             # The final results does not already exist.
             if not self.read_results(model='final', pipe_name='final'):
@@ -148,10 +148,10 @@ class Frame_order_analysis:
                 self.interpreter.monte_carlo.error_analysis()
 
                 # Finish.
-                self.interpreter.results.write(file='results', force=True)
+                self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
 
-            # Results visualisation.
-            self.visualisation()
+            # Visualisation of the final results.
+            self.visualisation(model='final')
 
         # Clean up.
         finally:
@@ -159,7 +159,7 @@ class Frame_order_analysis:
             status.exec_lock.release()
 
         # Save the final program state.
-        self.interpreter.state.save('final_state', force=True)
+        self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
 
     def check_vars(self):
@@ -316,7 +316,7 @@ class Frame_order_analysis:
             cdp.cone_theta_y = pipe.cone_theta
 
 
-    def optimise(self):
+    def nested_models(self):
         """Protocol for the nested optimisation of the frame order models."""
 
         # First optimise the rigid model using all data.
@@ -342,6 +342,9 @@ class Frame_order_analysis:
             if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
                 # Re-perform model elimination just in case.
                 self.interpreter.eliminate()
+
+                # The PDB representation of the model and visualisation script (in case this was not completed correctly).
+                self.visualisation(model=model)
 
                 # Skip to the next model.
                 continue
@@ -384,7 +387,10 @@ class Frame_order_analysis:
             self.interpreter.eliminate()
 
             # Save the results.
-            self.interpreter.results.write(dir=model, force=True)
+            self.interpreter.results.write(dir=self.results_dir+model, force=True)
+
+            # The PDB representation of the model and visualisation script.
+            self.visualisation(model=model)
 
 
     def optimise_rigid(self):
@@ -406,6 +412,10 @@ class Frame_order_analysis:
 
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
+            # The PDB representation of the model (in case this was not completed correctly).
+            self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+
+            # Nothing more to do.
             return
 
         # Create the data pipe using the full data set, and switch to it.
@@ -439,7 +449,10 @@ class Frame_order_analysis:
         self.print_results()
 
         # Save the results.
-        self.interpreter.results.write(dir=model, force=True)
+        self.interpreter.results.write(dir=self.results_dir+model, force=True)
+
+        # The PDB representation of the model.
+        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
 
     def print_results(self):
@@ -538,7 +551,7 @@ class Frame_order_analysis:
         """
 
         # The file name.
-        path = model + sep + 'results.bz2'
+        path = self.results_dir + model + sep + 'results.bz2'
 
         # The file does not exist.
         if not access(path, F_OK):
@@ -557,37 +570,33 @@ class Frame_order_analysis:
         return True
 
 
-    def visualisation(self):
-        """Create visual representations of the frame order results.
+    def visualisation(self, model=None):
+        """Create visual representations of the frame order results for the given model.
 
         This includes a PDB representation of the motions (the 'cone.pdb' file located in each model directory) together with a relax script for displaying the average domain positions together with the cone/motion representation in PyMOL (the 'pymol_display.py' file, also created in the model directory).
+
+        @keyword model:     The frame order model to visualise.  This should match the model of the current data pipe, unless the special value of 'final' is used to indicate the visualisation of the final results.
+        @type model:        str
         """
 
-        # Loop over all models.
-        for pipe_name in self.pipe_name_list + ['final']:
-            # Switch to the data pipe.
-            self.interpreter.pipe.switch(pipe_name)
+        # Sanity check.
+        if model != 'final' and model != cdp.model:
+            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model, cdp.model))
 
-            # The directory to place files into.
-            if pipe_name == 'final':
-                results_dir = pipe_name
-            else:
-                results_dir = cdp.model
+        # The PDB representation of the model.
+        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
 
-            # Create a PDB file representation of the motions.
-            self.interpreter.frame_order.pdb_model(file='frame_order.pdb', dist_file='frame_order_distribution.pdb', dir=results_dir, force=True)
+        # Create the visualisation script.
+        script = open_write_file(file_name='pymol_display.py', dir=self.results_dir+model, force=True)
 
-            # Create the visualisation script.
-            script = open_write_file(file_name='pymol_display.py', dir=results_dir, force=True)
+        # Add a comment for the user.
+        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
 
-            # Add a comment for the user.
-            script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % results_dir)
+        # The script contents.
+        script.write("# PyMOL visualisation.\n")
+        script.write("pymol.view()\n")
+        script.write("pymol.command('show spheres')\n")
+        script.write("pymol.frame_order(file='frame_order.pdb', dist_file='frame_order_distribution.pdb')\n")
 
-            # The script contents.
-            script.write("# PyMOL visualisation.\n")
-            script.write("pymol.view()\n")
-            script.write("pymol.command('show spheres')\n")
-            script.write("pymol.frame_order(file='frame_order.pdb', dist_file='frame_order_distribution.pdb')\n")
-
-            # Close the file.
-            script.close()
+        # Close the file.
+        script.close()

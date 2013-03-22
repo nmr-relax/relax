@@ -98,18 +98,28 @@ uf = uf_info.add_uf('frame_order.pdb_model')
 uf.title = "Create a PDB file representation of the frame order dynamics."
 uf.title_short = "Frame order dynamics PDB representation."
 uf.add_keyarg(
-    name = "file",
+    name = "ave_pos_file",
+    default = "ave_pos.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "average structure file name",
+    desc = "The name of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "rep_file",
     default = "frame_order.pdb",
     py_type = "str",
     arg_type = "file sel",
-    desc_short = "file name",
-    desc = "The name of the file of the PDB representation of the frame order dynamics to create.",
+    desc_short = "PDB representation file name",
+    desc = "The name of the PDB file for the geometric object representation of the frame order dynamics.",
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dist_file",
-    default = "frame_order_distribution.pdb",
+    default = "domain_distribution.pdb",
     py_type = "str",
     arg_type = "file sel",
     desc_short = "distribution file name",
