@@ -51,8 +51,7 @@ from maths_fns.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.pcs import pcs_tensor
-from maths_fns.rotation_matrix import euler_to_R_zyz
-from maths_fns.rotation_matrix import two_vect_to_R
+from maths_fns.rotation_matrix import euler_to_R_zyz, tilt_torsion_to_R, two_vect_to_R
 from maths_fns.rdc import rdc_tensor
 from multi import fetch_data, Processor_box
 from physical_constants import pcs_constant
@@ -334,15 +333,28 @@ class Frame_order:
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
 
+            # Pre-calculate the rotation matrices Ri_prime from the Sobol' angles.
+            for i in range(self.num_int_pts):
+                # Unpack the angles.
+                theta, phi, sigma = self.sobol_angles[i]
+
+                # The rotation matrix.
+                tilt_torsion_to_R(phi, theta, sigma, self.Ri_prime[i])
+
             # Subdivide the Sobol' data points for the slave processors.
-            blocks = []
+            blocks_sobol = []
             for block in self.subdivide(self.sobol_angles, self.processor.processor_size()):
-                blocks.append(block)
+                blocks_sobol.append(block)
+
+            # Subdivide the Ri prime data.
+            blocks_Ri_prime = []
+            for block in self.subdivide(self.Ri_prime, self.processor.processor_size()):
+                blocks_Ri_prime.append(block)
 
             # Set up the slave processors.
             self.slaves = []
             for i in range(self.processor.processor_size()):
-                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
+                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks_sobol[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=blocks_Ri_prime[i], pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -390,7 +402,7 @@ class Frame_order:
         # The rotation to the Frame Order eigenframe.
         self.R_eigen = zeros((3, 3), float64)
         self.R_ave = zeros((3, 3), float64)
-        self.Ri_prime = zeros((3, 3), float64)
+        self.Ri_prime = zeros((self.num_int_pts, 3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.
