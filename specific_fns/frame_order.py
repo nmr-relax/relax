@@ -1647,6 +1647,19 @@ class Frame_order(API_base, API_common):
         return mc_data
 
 
+    def deselect(self, model_info, sim_index=None):
+        """Deselect models or simulations.
+
+        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
+        @type sim_index:        None or int
+        """
+
+        # Set the deselection flag.
+        cdp.select = False
+
+
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model elimination method.
 
@@ -1688,7 +1701,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_theta < 0.0:
                 print(text % ("cone opening angle theta", cdp.cone_theta, "less", 0))
                 return True
-            return True
 
         # Pseudo-ellipse cone angles out of range (0.001 instead of 0.0 because of truncation in the numerical integration).
         if name == 'cone_theta_x' and hasattr(cdp, 'cone_theta_x'):
@@ -1698,7 +1710,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_theta_x < 0.001:
                 print(text % ("cone opening angle theta x", cdp.cone_theta_x, "less", 0.001))
                 return True
-            return True
         if name == 'cone_theta_y' and hasattr(cdp, 'cone_theta_y'):
             if cdp.cone_theta_y >= pi:
                 print(text % ("cone opening angle theta y", cdp.cone_theta_y, "greater", pi))
@@ -1706,7 +1717,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_theta_y < 0.001:
                 print(text % ("cone opening angle theta y", cdp.cone_theta_y, "less", 0.001))
                 return True
-            return True
 
         # Torsion angle out of range.
         if name == 'cone_sigma_max' and hasattr(cdp, 'cone_sigma_max'):
@@ -1716,7 +1726,6 @@ class Frame_order(API_base, API_common):
             if cdp.cone_sigma_max < 0.0:
                 print(text % ("torsion angle sigma_max", cdp.cone_sigma_max, "less", 0.0))
                 return True
-            return True
 
         # No failure.
         return False
@@ -2004,6 +2013,17 @@ class Frame_order(API_base, API_common):
         self._store_bc_data(model)
 
 
+    def model_desc(self, model_info):
+        """Return a description of the model.
+
+        @param model_info:  The model index from model_loop().
+        @type model_info:   int
+        @return:            The model description.
+        @rtype:             str
+        """
+
+        return ""
+
 
     def model_loop(self):
         """Dummy generator method.
@@ -2054,6 +2074,16 @@ class Frame_order(API_base, API_common):
 
         # Return the data.
         return k, n, chi2
+
+
+    def model_type(self):
+        """Return the type of the model, either being 'local' or 'global'.
+
+        @return:            The model type, one of 'local' or 'global'.
+        @rtype:             str
+        """
+
+        return 'global'
 
 
     def return_error(self, data_id):
