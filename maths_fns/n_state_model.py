@@ -916,7 +916,7 @@ class N_state_opt:
             if not self.fixed_tensors[align_index]:
                 for j in range(self.num_interatom):
                     if self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                        self.drdc_theta[align_index*5, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
+                        self.drdc_theta[align_index*5,   align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
                         self.drdc_theta[align_index*5+1, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
                         self.drdc_theta[align_index*5+2, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs, absolute=self.absolute_rdc[align_index, j])
                         self.drdc_theta[align_index*5+3, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs, absolute=self.absolute_rdc[align_index, j])

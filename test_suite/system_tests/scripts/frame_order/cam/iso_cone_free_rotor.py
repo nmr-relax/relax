@@ -40,5 +40,6 @@ class Analysis(Base_script):
     cone = True
     num_int_pts = 50
 
+
 # Execute the analysis.
 Analysis(self._execute_uf)

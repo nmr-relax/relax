@@ -1,7 +1,5 @@
 # Script for calculating the RDC alignment tensors for the test model.
 
-from string import upper
-
 
 # The tensor file for reading into relax.
 out = open('tensors.py', 'w')
@@ -47,5 +45,5 @@ for i in range(len(ln)):
     A = cdp.align_tensors[0]
 
     # Write out the tensors.
-    out.write("align_tensor.init(tensor='%s%s %s-dom', params=(%s, %s, %s, %s, %s), param_types=2)\n" % (upper(ln[i][0]), ln[i][1], 'C', A.Axx, A.Ayy, A.Axy, A.Axz, A.Ayz))
-    out.write("align_tensor.init(tensor='%s%s %s-dom', params=(%s, %s, %s, %s, %s), param_types=2, errors=True)\n" % (upper(ln[i][0]), ln[i][1], 'C', A.Axx_err, A.Ayy_err, A.Axy_err, A.Axz_err, A.Ayz_err))
+    out.write("align_tensor.init(tensor='%s%s %s-dom', params=(%s, %s, %s, %s, %s), param_types=2)\n" % (ln[i][0].upper(), ln[i][1], 'C', A.Axx, A.Ayy, A.Axy, A.Axz, A.Ayz))
+    out.write("align_tensor.init(tensor='%s%s %s-dom', params=(%s, %s, %s, %s, %s), param_types=2, errors=True)\n" % (ln[i][0].upper(), ln[i][1], 'C', A.Axx_err, A.Ayy_err, A.Axy_err, A.Axz_err, A.Ayz_err))
