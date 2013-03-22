@@ -26,8 +26,8 @@
 import dep_check
 
 # Python module imports.
-import ansi
 from code import InteractiveConsole
+from lib import ansi
 from math import pi
 from os import F_OK, access, chdir, getcwd, path
 from pydoc import pager

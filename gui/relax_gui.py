@@ -34,7 +34,7 @@ import webbrowser
 import wx
 
 # relax module imports.
-import ansi
+from lib import ansi
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from info import Info_box

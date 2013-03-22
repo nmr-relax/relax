@@ -29,7 +29,7 @@ import sys
 import warnings
 
 # relax module imports.
-import ansi
+from lib import ansi
 from status import Status; status = Status()
 
 

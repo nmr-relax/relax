@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,13 +22,10 @@
 # Module docstring.
 """Module containing ANSI escape sequences and helper functions for colour terminal output."""
 
-# Dependencies.
-import dep_check
-
 # Python module imports.
-if dep_check.ctypes_module:
+try:
     import ctypes
-else:
+except ImportError:
     ctypes = None
 import sys
 

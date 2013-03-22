@@ -35,7 +35,7 @@ import time
 
 # relax module imports.
 from compat import pickle
-import ansi
+from lib import ansi
 
 
 # Text variables.
