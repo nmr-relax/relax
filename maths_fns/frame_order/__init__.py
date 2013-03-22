@@ -32,7 +32,7 @@ from numpy.linalg import norm
 from float import isNaN
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from extern.sobol.sobol_lib import i4_sobol
-from maths_fns.alignment_tensor import to_5D, to_tensor
+from lib.nmr.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.frame_order.matrix_ops import Data, reduce_alignment_tensor
