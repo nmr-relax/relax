@@ -1,0 +1,21 @@
+
+N = 1
+Average vector length: 0.866025403784
+
+N = 10
+Average vector length: 0.0819679815538
+
+N = 100
+Average vector length: 0.0082620650415
+
+N = 1000
+Average vector length: 0.000446544348826
+
+N = 10000
+Average vector length: 0.000127752105696
+
+N = 100000
+Average vector length: 7.09521003856e-06
+
+N = 1000000
+Average vector length: 1.32445797827e-06

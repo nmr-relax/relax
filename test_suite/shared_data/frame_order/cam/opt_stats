@@ -5,7 +5,26 @@ Quadratic integration (from numpy)
 ----------------------------------
 
 Data set                    RDC + PCS               RDC                     PCS
-rigid                       0.0784083092318         ?                       ?
+rigid                       ?                       ?                       ?
+rotor                       ?                       ?                       ?
+rotor2                      ?                       ?                       ?
+rotor_2_state               ?                       ?                       ?
+free_rotor                  ?                       ?                       ?
+free_rotor2                 ?                       ?                       ?
+iso_cone                    0.047796257987533765    0.047304044109578447    0.00049221387795531329
+iso_cone_free_rotor         0.19951714134210338     0.1984082397486189      0.0011089015934844701
+iso_cone_free_rotor2        ?                       ?                       ?
+iso_cone_torsionless        ?                       ?                       ?
+pseudo_ellipse              0.0961714010098947      0.095461523976414595    0.00070987703348010067
+pseudo_ellipse_free_rotor   0.043091833395896492    0.042919565975988075    0.00017226741990841526
+pseudo_ellipse_torsionless  ?                       ?                       ?
+
+
+Quasi-random integration (from relax, 50 Sobol' pts)
+----------------------------------------------------
+
+Data set                    RDC + PCS               RDC                     PCS
+rigid                       ?                       ?                       ?
 rotor                       ?                       ?                       ?
 rotor2                      ?                       ?                       ?
 rotor_2_state               ?                       ?                       ?
@@ -15,47 +34,9 @@ iso_cone                    ?                       ?                       ?
 iso_cone_free_rotor         ?                       ?                       ?
 iso_cone_free_rotor2        ?                       ?                       ?
 iso_cone_torsionless        ?                       ?                       ?
-pseudo_ellipse              0.0961714010098947      0.095461523976414595    0.00070987703348010067
-pseudo_ellipse_free_rotor   0.043091833395896492    0.042919565975988075    0.00017226741990841526
+pseudo_ellipse              ?                       ?                       ?
+pseudo_ellipse_free_rotor   ?                       ?                       ?
 pseudo_ellipse_torsionless  ?                       ?                       ?
-
-
-Monte Carlo integration (old relax code)
-----------------------------------------
-
-Data set                    RDC + PCS               RDC                     PCS
-rigid                       0.0784083092318         ?                       ?
-rotor                       0.159097903383          ?                       ?
-rotor2                      ?                       ?                       ?
-rotor_2_state               ?                       ?                       ?
-free_rotor                  11.970932909            ?                       ?
-free_rotor2                 389.389222372           ?                       ?
-iso_cone                    6.31501550972           ?                       ?
-iso_cone_free_rotor         ?                       ?                       ?
-iso_cone_free_rotor2        ?                       ?                       ?
-iso_cone_torsionless        79161.8338624           ?                       ?
-pseudo_ellipse              3.73003376255           ?                       ?
-pseudo_ellipse_free_rotor   16.6432491662           ?                       ?
-pseudo_ellipse_torsionless  2.00525072929           ?                       ?
-
-
-Quasi-random integration (from relax, 50 Sobol' pts)
-----------------------------------------------------
-
-Data set                    RDC + PCS               RDC                     PCS
-rigid                       0.08117725043308886     1.62132398885e-06       0.0811756291091
-rotor                       0.5337786112501045      0.1460413756923267      0.38773723555777778
-rotor2                      4.505100269246          0.260243918876          4.24485635037
-rotor_2_state               ?                       ?                       ?
-free_rotor                  18.19765307215          5.17902126915           13.018631803
-free_rotor2                 394.1767902138          5.2780738618            388.898716352
-iso_cone (100 pts)          40.370619886771799      6.1160690302975809      34.254550856474211
-iso_cone_free_rotor         91.81929629487          2.55339343957           89.2659028553
-iso_cone_free_rotor2        27.04106736869          1.95519413809           25.0858732306
-iso_cone_torsionless        89142.72228781572       86901.935712935723      2240.78657488
-pseudo_ellipse              42.27471263314          0.095461523976414595    38.599806184882887
-pseudo_ellipse_free_rotor   37.718042315124755      0.042919565975988075    37.67512274914877
-pseudo_ellipse_torsionless  2.231703479693          0.484168123653          1.74753535604
 
 
 Quasi-random integration (from relax, 1e6 Sobol' pts)
@@ -63,15 +44,15 @@ Quasi-random integration (from relax, 1e6 Sobol' pts)
 
 Data set                    RDC + PCS               RDC                     PCS
 rigid                       ?                       ?                       ?
-rotor                       ?                       ?                       0.19818574794847829
+rotor                       ?                       ?                       ?
 rotor2                      ?                       ?                       ?
 rotor_2_state               ?                       ?                       ?
 free_rotor                  ?                       ?                       ?
 free_rotor2                 ?                       ?                       ?
-iso_cone                    ?                       6.1160690302975809      6.919712859834366
-iso_cone_free_rotor         ?                       ?                       ?
+iso_cone                    10.228423618653176      0.047304044109578447    10.181119574543597
+iso_cone_free_rotor         40.546048257394659      0.1984082397486189      40.347640017646029
 iso_cone_free_rotor2        ?                       ?                       ?
-iso_cone_torsionless        ?                       ?                       612.?
+iso_cone_torsionless        ?                       ?                       ?
 pseudo_ellipse              58.404185372137405      0.095461523976414595    58.308723848160987
 pseudo_ellipse_free_rotor   6.9180400971275224      0.042919565975988075    6.8751205311515342
 pseudo_ellipse_torsionless  ?                       ?                       ?

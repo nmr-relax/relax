@@ -17,7 +17,7 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    N = 100
+    N = 1000000
 
     # Cone parameters.
     THETA_MAX = 1.0
@@ -38,9 +38,20 @@ class Generate(Main):
             # The random rotation matrix.
             R_random_hypersphere(self.R)
 
+            # Rotate the Z-axis.
+            rot_axis = dot(self.R, self.axes[:,2])
+
+            # Calculate the projection and angle.
+            proj = dot(self.axes[:,2], rot_axis)
+
+            # Calculate the angle, taking float16 truncation errors into account.
+            if proj > 1.0:
+                proj = 1.0
+            elif proj < -1.0:
+                proj = -1.0
+            theta = acos(proj)
+
             # Skip the rotation if the angle is violated.
-            axis = dot(self.R, self.axes[:,2])
-            theta = acos(dot(self.axes[:,2], axis))
             if theta > self.THETA_MAX:
                 continue
 

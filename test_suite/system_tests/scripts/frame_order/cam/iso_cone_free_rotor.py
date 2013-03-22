@@ -25,6 +25,7 @@
 
 # relax module imports.
 from base_script import Base_script
+from maths_fns.order_parameters import iso_cone_theta_to_S
 
 
 class Analysis(Base_script):
@@ -32,11 +33,11 @@ class Analysis(Base_script):
     # Set up some class variables.
     directory = 'iso_cone_free_rotor'
     model = 'iso cone, free rotor'
-    ave_pos_beta = 1.1983544319568078
-    ave_pos_gamma = 0.333131539777762
-    axis_theta = 0.9600799785953431
-    axis_phi = 4.0322755062196229
-    cone_s1 = 0.91322057310490712
+    ave_pos_beta = 1.1824796065148637
+    ave_pos_gamma = 0.35360993689599368
+    axis_theta = 0.96007997859534299767
+    axis_phi = 4.03227550621962294031
+    cone_s1 = iso_cone_theta_to_S(1.0)
     cone = True
     num_int_pts = 50
 
