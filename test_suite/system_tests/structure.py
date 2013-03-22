@@ -28,7 +28,7 @@ from tempfile import mktemp
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, return_spin
-from maths_fns.rotation_matrix import euler_to_R_zyz
+from lib.geometry.rotations import euler_to_R_zyz
 from lib.errors import RelaxError
 from lib.io import DummyFileObject
 from status import Status; status = Status()

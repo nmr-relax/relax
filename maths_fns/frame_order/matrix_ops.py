@@ -29,7 +29,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from maths_fns.kronecker_product import transpose_23
-from maths_fns.rotation_matrix import tilt_torsion_to_R
+from lib.geometry.rotations import tilt_torsion_to_R
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):

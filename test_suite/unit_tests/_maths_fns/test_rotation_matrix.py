@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns.angles import wrap_angles
-from maths_fns.rotation_matrix import *
+from lib.geometry.rotations import *
 
 
 # Global variables (reusable storage).
@@ -38,7 +38,7 @@ R2 = zeros((3, 3), float64)
 
 
 class Test_rotation_matrix(TestCase):
-    """Unit tests for the maths_fns.rotation_matrix relax module."""
+    """Unit tests for the lib.geometry.rotations relax module."""
 
     def setUp(self):
         """Set up data used by the unit tests."""

@@ -45,6 +45,5 @@ __all__ = [ 'alignment_tensor',
             'ri_comps',
             'ri_prime',
             'ri',
-            'rotation_matrix',
             'weights',
             'vectors' ]

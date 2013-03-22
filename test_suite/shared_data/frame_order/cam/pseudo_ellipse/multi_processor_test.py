@@ -12,7 +12,7 @@ from numpy import array, float64, transpose, zeros
 from os import sep
 
 # relax module imports.
-from maths_fns.rotation_matrix import euler_to_R_zyz
+from lib.geometry.rotations import euler_to_R_zyz
 
 
 # Create the data pipe.

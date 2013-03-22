@@ -41,7 +41,7 @@ from time import sleep
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from generic_fns.result_files import add_result_file
-from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_axis_angle
+from lib.geometry.rotations import euler_to_R_zyz, R_to_axis_angle
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from lib.io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn

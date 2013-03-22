@@ -10,7 +10,7 @@ from numpy import dot, transpose
 from numpy.linalg import inv, norm
 
 # relax module imports.
-from maths_fns.rotation_matrix import R_random_hypersphere, R_to_tilt_torsion
+from lib.geometry.rotations import R_random_hypersphere, R_to_tilt_torsion
 
 # Base module import.
 from generate_base import Main

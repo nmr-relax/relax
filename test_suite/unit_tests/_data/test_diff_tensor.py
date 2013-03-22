@@ -26,7 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data.diff_tensor import DiffTensorData
-from maths_fns.rotation_matrix import two_vect_to_R
+from lib.geometry.rotations import two_vect_to_R
 from lib.errors import RelaxError
 
 

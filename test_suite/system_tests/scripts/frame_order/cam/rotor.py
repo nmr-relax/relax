@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base_script import Base_script
-from maths_fns.rotation_matrix import reverse_euler_zyz
+from lib.geometry.rotation_matrix import reverse_euler_zyz
 
 
 class Analysis(Base_script):

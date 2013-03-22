@@ -29,7 +29,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from lib.geometry.lines import closest_point_ax
-from maths_fns.rotation_matrix import axis_angle_to_R
+from lib.geometry.rotations import axis_angle_to_R
 
 
 def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, model=None, staggered=False):

@@ -48,7 +48,7 @@ from lib.structure.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
+from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoPCSError, RelaxNoRDCError, RelaxNoValueError, RelaxSpinTypeError
 from lib.io import open_write_file

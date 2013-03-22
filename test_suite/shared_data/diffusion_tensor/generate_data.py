@@ -30,7 +30,7 @@ from numpy import array, cross, dot, eye, float64, transpose, zeros
 from numpy.linalg import eig, inv, norm
 
 # relax module imports.
-from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, R_to_euler_zyz
+from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, R_to_euler_zyz
 from generic_fns.structure.geometric import angles_uniform, vect_dist_spherical_angles
 from generic_fns.structure.internal import Internal
 from lib.io import open_write_file

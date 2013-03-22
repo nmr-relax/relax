@@ -30,7 +30,7 @@ from numpy.linalg import det, norm, svd
 
 # relax module import.
 from generic_fns.structure.statistics import calc_mean_structure
-from maths_fns.rotation_matrix import R_to_axis_angle, R_to_euler_zyz
+from lib.geometry.rotations import R_to_axis_angle, R_to_euler_zyz
 
 
 def find_centroid(coords):

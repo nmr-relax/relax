@@ -28,7 +28,7 @@ from os import F_OK, access, sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from maths_fns.rotation_matrix import euler_to_R_zyz
+from lib.geometry.rotations import euler_to_R_zyz
 from status import Status; status = Status()
 
 

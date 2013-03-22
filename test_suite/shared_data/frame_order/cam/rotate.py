@@ -7,7 +7,7 @@ from sys import stdout
 
 # relax module imports.
 from float import floatAsByteArray
-from maths_fns.rotation_matrix import axis_angle_to_R, R_random_axis
+from lib.geometry.rotations import axis_angle_to_R, R_random_axis
 
 
 def to_ieee_754(R):

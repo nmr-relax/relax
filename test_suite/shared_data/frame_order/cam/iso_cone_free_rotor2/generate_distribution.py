@@ -9,7 +9,7 @@ from math import acos
 from numpy import dot
 
 # relax module imports.
-from maths_fns.rotation_matrix import R_random_hypersphere
+from lib.geometry.rotations import R_random_hypersphere
 
 # Base module import.
 from generate_base import Main

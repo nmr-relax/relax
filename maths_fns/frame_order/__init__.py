@@ -47,8 +47,7 @@ from maths_fns.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.pcs import pcs_tensor
-from maths_fns.rotation_matrix import euler_to_R_zyz
-from maths_fns.rotation_matrix import two_vect_to_R
+from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from maths_fns.rdc import rdc_tensor
 from lib.physical_constants import pcs_constant
 from lib.errors import RelaxError

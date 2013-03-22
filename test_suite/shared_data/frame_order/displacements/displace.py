@@ -4,7 +4,7 @@
 from numpy import array, float64, transpose, zeros
 
 # relax module imports.
-from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_euler_zyz
+from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 
 
 # Create a data pipe for the data.

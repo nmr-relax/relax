@@ -23,5 +23,6 @@
 """The relax-lib geometry package - a library of functions for studies of geometry."""
 
 __all__ = [
-    'lines'
+    'lines',
+    'rotations'
 ]
