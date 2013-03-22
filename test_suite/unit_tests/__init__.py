@@ -39,7 +39,6 @@ __all__ = [
     'state_testing_base',
     'structure_testing_base',
     'test_float',
-    'test_relax_io',
     'unit_test_runner',
     'value_testing_base',
     '_auto_analyses',
