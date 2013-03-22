@@ -37,7 +37,7 @@ class Analysis(Base_script):
     ave_pos_gamma = 3.8013235235956007
     axis_theta = 0.9600799785953431
     axis_phi = 4.0322755062196229
-    cone_theta = 1.0
+    cone_theta = 1.3
     cone = True
     load_state = False
     num_int_pts = 50
