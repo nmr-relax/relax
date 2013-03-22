@@ -11,7 +11,7 @@ DIM = 3
 OFFSET = 0.5 * ones(DIM)
 
 # Loop over different number of points.
-for exponent in range(7): 
+for exponent in range(7):
     # The number of points.
     N = int(10**exponent)
 
