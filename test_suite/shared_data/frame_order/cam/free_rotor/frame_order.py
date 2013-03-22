@@ -89,12 +89,16 @@ class Analysis:
         # Set the reference domain.
         frame_order.ref_domain('N')
 
-        # The pivot point.
+        # Set the initial pivot point.
         pivot = array([ 37.254, 0.5, 16.7465])
         frame_order.pivot(pivot, fix=True)
 
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
+
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
 
         # Check the minimum.
         value.set(param='ave_pos_beta', val=1.1838868514111507)
@@ -102,7 +106,7 @@ class Analysis:
         value.set(param='axis_theta', val=2.1815126749944502)
         value.set(param='axis_phi', val=0.89068285262982982)
         calc()
-        print("\nchi2: %s" % cdp.chi2)
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         #grid_search(inc=3)

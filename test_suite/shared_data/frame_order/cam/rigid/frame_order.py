@@ -96,12 +96,16 @@ class Analysis:
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
+
         # Check the minimum.
         value.set(param='ave_pos_alpha', val=4.3434999280669997)
         value.set(param='ave_pos_beta', val=0.43544332764249905)
         value.set(param='ave_pos_gamma', val=3.8013235235956007)
         calc()
-        print("\nchi2: %s" % cdp.chi2)
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         grid_search(inc=3)

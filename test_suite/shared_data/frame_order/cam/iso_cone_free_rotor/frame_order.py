@@ -5,6 +5,7 @@ from numpy import array, float64, transpose, zeros
 from os import sep
 
 # relax module imports.
+from maths_fns.order_parameters import iso_cone_theta_to_S
 from maths_fns.rotation_matrix import euler_to_R_zyz
 
 
@@ -96,14 +97,18 @@ class Analysis:
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
+
         # Check the minimum.
-        value.set(param='ave_pos_beta', val=1.1983544319568078)
-        value.set(param='ave_pos_gamma', val=0.333131539777762)
-        value.set(param='axis_theta', val=2.1821788938846129)
-        value.set(param='axis_phi', val=0.88498745175135329)
-        value.set(param='cone_s1', val=0.91322057310490712)
+        value.set(param='ave_pos_beta', val=1.1824796065148637)
+        value.set(param='ave_pos_gamma', val=0.35360993689599368)
+        value.set(param='axis_theta', val=0.96007997859534299767)
+        value.set(param='axis_phi', val=4.03227550621962294031)
+        value.set(param='cone_s1', val=iso_cone_theta_to_S(1.0))
         calc()
-        print("\nchi2: %s" % cdp.chi2)
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         #grid_search(inc=5)

@@ -30,6 +30,7 @@ from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, eye, float64, identity, ones, transpose, zeros
 from numpy.linalg import inv
 from re import search
+import sys
 from warnings import warn
 
 # relax module imports.
@@ -37,7 +38,7 @@ import arg_check
 from float import isNaN, isInf
 from generic_fns import pipes
 from generic_fns.angles import wrap_angles
-from generic_fns.interatomic import interatomic_loop
+from generic_fns.interatomic import interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
@@ -963,6 +964,20 @@ class Frame_order(API_base, API_common):
         return full_tensors, full_err, full_in_ref_frame
 
 
+    def _num_int_pts(self, num=200000):
+        """Set the number of integration points to use in the quasi-random Sobol' sequence.
+
+        @keyword num:   The number of integration points.
+        @type num:      int
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Store the value.
+        cdp.num_int_pts = num
+
+
     def _param_num(self):
         """Determine the number of parameters in the model.
 
@@ -1055,6 +1070,20 @@ class Frame_order(API_base, API_common):
         return True
 
 
+    def _quad_int(self, flag=False):
+        """Turn the high precision Scipy quadratic numerical integration on or off.
+
+        @keyword flag:  The flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type flag:     bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Store the flag.
+        cdp.quad_int = flag
+
+
     def _ref_domain(self, ref=None):
         """Set the reference domain for the frame order, multi-domain models.
 
@@ -1105,13 +1134,15 @@ class Frame_order(API_base, API_common):
         # Initialise the list of model parameters.
         cdp.params = []
 
-        # Scipy quadratic numerical integration.
-        if cdp.model in []:
-            cdp.quad_int = True
+        # Set the integration method if needed.
+        if not hasattr(cdp, 'quad_int'):
+            # Scipy quadratic numerical integration.
+            if cdp.model in []:
+                cdp.quad_int = True
 
-        # Quasi-random numerical integration.
-        else:
-            cdp.quad_int = False
+            # Quasi-random numerical integration.
+            else:
+                cdp.quad_int = False
 
         # Update the model.
         self._update_model()
@@ -1238,6 +1269,20 @@ class Frame_order(API_base, API_common):
         # The number of integration points.
         if not hasattr(cdp, 'num_int_pts'):
             cdp.num_int_pts = 200000
+
+        # Print outs.
+        if sim_index == None:
+            if cdp.quad_int:
+                sys.stdout.write("Numerical integration via Scipy quadratic integration.\n")
+            else:
+                sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
+                sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
+            base_data = []
+            if rdcs != None:
+                base_data.append("RDCs")
+            if pcs != None:
+                base_data.append("PCSs")
+            sys.stdout.write("Base data: %s\n" % repr(base_data))
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
@@ -1496,39 +1541,38 @@ class Frame_order(API_base, API_common):
         # First the tensors.
         yield 'A'
 
-        # Then the spin IDs for the moving domain.
+        # The moving domain ID.
         id = cdp.domain[self._domain_moving()]
-        for spin, spin_id in spin_loop(id, return_id=True):
-            # Re-initialise the data structure.
-            base_ids = [spin_id, None, None]
 
+        # Loop over the interatomic data containers for the moving domain (for the RDC data).
+        for interatom in interatomic_loop(id):
+            # Skip deselected containers.
+            if not interatom.select:
+                continue
+
+            # No RDC, so skip.
+            if not hasattr(interatom, 'rdc'):
+                continue
+
+            # Loop over the alignment IDs.
+            for align_id in cdp.rdc_ids:
+                # Yield the info set.
+                yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
+
+        # Loop over the spin containers for the moving domain (for the PCS data).
+        for spin, spin_id in spin_loop(id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # RDC data.
-            if hasattr(spin, 'rdc'):
-                base_ids[1] = 'rdc'
+            # No PCS, so skip.
+            if not hasattr(spin, 'pcs'):
+                continue
 
-                # Loop over the alignment IDs.
-                for id in cdp.rdc_ids:
-                    # Add the ID.
-                    base_ids[2] = id
-
-                    # Yield the set.
-                    yield base_ids
-
-            # PCS data.
-            if hasattr(spin, 'pcs'):
-                base_ids[1] = 'pcs'
-
-                # Loop over the alignment IDs.
-                for id in cdp.pcs_ids:
-                    # Add the ID.
-                    base_ids[2] = id
-
-                    # Yield the set.
-                    yield base_ids
+            # Loop over the alignment IDs.
+            for align_id in cdp.pcs_ids:
+                # Yield the info set.
+                yield ['pcs', spin_id, align_id]
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1558,8 +1602,8 @@ class Frame_order(API_base, API_common):
     def create_mc_data(self, data_id=None):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
 
-        @keyword data_id:   Unused.
-        @type data_id:      None
+        @keyword data_id:   The data set as yielded by the base_data_loop() generator method.
+        @type data_id:      str or list of str
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
@@ -1578,40 +1622,47 @@ class Frame_order(API_base, API_common):
                 mc_data.append(tensor.Axz)
                 mc_data.append(tensor.Ayz)
 
-        # The spin specific data.
-        else:
+        # The RDC data.
+        elif data_id[0] == 'rdc':
+            # Unpack the set.
+            data_type, spin_id1, spin_id2, align_id = data_id
+
+            # Get the interatomic data container.
+            interatom = return_interatom(spin_id1, spin_id2)
+
+            # Does back-calculated data exist?
+            if not hasattr(interatom, 'rdc_bc'):
+                self.calculate()
+
+            # The data.
+            if not hasattr(interatom, 'rdc_bc') or not interatom.rdc_bc.has_key(align_id):
+                data = None
+            else:
+                data = interatom.rdc_bc[align_id]
+
+            # Append the data.
+            mc_data.append(data)
+
+        # The PCS data.
+        elif data_id[0] == 'pcs':
+            # Unpack the set.
+            data_type, spin_id, align_id = data_id
+
             # Get the spin container.
-            spin = return_spin(data_id[0])
+            spin = return_spin(spin_id)
 
-            # RDC data.
-            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
-                # Does back-calculated data exist?
-                if not hasattr(spin, 'rdc_bc'):
-                    self.calculate()
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'pcs_bc'):
+                self.calculate()
 
-                # The data.
-                if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
-                    data = None
-                else:
-                    data = spin.rdc_bc[data_id[2]]
+            # The data.
+            if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(align_id):
+                data = None
+            else:
+                data = spin.pcs_bc[align_id]
 
-                # Append the data.
-                mc_data.append(data)
-
-            # PCS data.
-            elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
-                # Does back-calculated data exist?
-                if not hasattr(spin, 'pcs_bc'):
-                    self.calculate()
-
-                # The data.
-                if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
-                    data = None
-                else:
-                    data = spin.pcs_bc[data_id[2]]
-
-                # Append the data.
-                mc_data.append(data)
+            # Append the data.
+            mc_data.append(data)
 
         # Return the data.
         return mc_data
@@ -2053,10 +2104,10 @@ class Frame_order(API_base, API_common):
     def return_error(self, data_id):
         """Return the alignment tensor error structure.
 
-        @param data_id: The information yielded by the base_data_loop() generator method.
-        @type data_id:  None
-        @return:        The array of tensor error values.
-        @rtype:         list of float
+        @param data_id:     The data set as yielded by the base_data_loop() generator method.
+        @type data_id:      str or list of str
+        @return:            The array of tensor error values.
+        @rtype:             list of float
         """
 
         # Initialise the MC data structure.
@@ -2073,28 +2124,35 @@ class Frame_order(API_base, API_common):
                 mc_errors.append(tensor.Axz_err)
                 mc_errors.append(tensor.Ayz_err)
 
-        # The spin specific data.
-        else:
+        # The RDC data.
+        elif data_id[0] == 'rdc':
+            # Unpack the set.
+            data_type, spin_id1, spin_id2, align_id = data_id
+
+            # Get the interatomic data container.
+            interatom = return_interatom(spin_id1, spin_id2)
+
+            # Do errors exist?
+            if not hasattr(interatom, 'rdc_err'):
+                raise RelaxError("The RDC errors are missing for interatomic data container between spins '%s' and '%s'." % (spin_id1, spin_id2))
+
+            # Append the data.
+            mc_errors.append(interatom.rdc_err[align_id])
+
+        # The PCS data.
+        elif data_id[0] == 'pcs':
+            # Unpack the set.
+            data_type, spin_id, align_id = data_id
+
             # Get the spin container.
-            spin = return_spin(data_id[0])
+            spin = return_spin(spin_id)
 
-            # RDC data.
-            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
-                # Do errors exist?
-                if not hasattr(spin, 'rdc_err'):
-                    raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
+            # Do errors exist?
+            if not hasattr(spin, 'pcs_err'):
+                raise RelaxError("The PCS errors are missing for spin '%s'." % spin_id)
 
-                # Append the data.
-                mc_errors.append(spin.rdc_err[data_id[2]])
-
-            # PCS data.
-            elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
-                # Do errors exist?
-                if not hasattr(spin, 'pcs_err'):
-                    raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
-
-                # Append the data.
-                mc_errors.append(spin.pcs_err[data_id[2]])
+            # Append the data.
+            mc_errors.append(spin.pcs_err[align_id])
 
         # Return the errors.
         return mc_errors
@@ -2234,8 +2292,8 @@ class Frame_order(API_base, API_common):
     def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param data_id:     The identification data as yielded by the base_data_loop() generator method.
-        @type data_id:      string or list of str
+        @param data_id:     The data set as yielded by the base_data_loop() generator method.
+        @type data_id:      str or list of str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
@@ -2265,6 +2323,40 @@ class Frame_order(API_base, API_common):
                 tensor.set(param='Axy', value=sim_data[5*i + 2][j], category='sim', sim_index=j)
                 tensor.set(param='Axz', value=sim_data[5*i + 3][j], category='sim', sim_index=j)
                 tensor.set(param='Ayz', value=sim_data[5*i + 4][j], category='sim', sim_index=j)
+
+        # The RDC data.
+        elif data_id[0] == 'rdc':
+            # Unpack the set.
+            data_type, spin_id1, spin_id2, align_id = data_id
+
+            # Get the interatomic data container.
+            interatom = return_interatom(spin_id1, spin_id2)
+
+            # Initialise.
+            if not hasattr(interatom, 'rdc_sim'):
+                interatom.rdc_sim = {}
+                    
+            # Store the data structure.
+            interatom.rdc_sim[align_id] = []
+            for i in range(cdp.sim_number):
+                interatom.rdc_sim[align_id].append(sim_data[i][0])
+
+        # The PCS data.
+        elif data_id[0] == 'pcs':
+            # Unpack the set.
+            data_type, spin_id, align_id = data_id
+
+            # Get the spin container.
+            spin = return_spin(spin_id)
+
+            # Initialise.
+            if not hasattr(spin, 'pcs_sim'):
+                spin.pcs_sim = {}
+                
+            # Store the data structure.
+            spin.pcs_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                spin.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
     def sim_return_param(self, model_info, index):

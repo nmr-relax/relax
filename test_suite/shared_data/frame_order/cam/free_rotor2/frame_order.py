@@ -1,4 +1,4 @@
-# Script for optimising the free rotor frame order test model of CaM.
+# Script for optimising the second free rotor frame order test model of CaM.
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
@@ -96,13 +96,17 @@ class Analysis:
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
+
         # Check the minimum.
-        value.set(param='ave_pos_beta', val=2.5534876110153948)
-        value.set(param='ave_pos_gamma', val=0.47194843111649976)
-        value.set(param='axis_theta', val=1.6573281536701425)
-        value.set(param='axis_phi', val=0.89246262623423234)
+        value.set(param='ave_pos_beta', val=0.77485244603476433)
+        value.set(param='ave_pos_gamma', val=0.1420704587263735)
+        value.set(param='axis_theta', val=0.69828059079619353433)
+        value.set(param='axis_phi', val=4.03227550621962294031)
         calc()
-        print("\nchi2: %s" % cdp.chi2)
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         grid_search(inc=5)

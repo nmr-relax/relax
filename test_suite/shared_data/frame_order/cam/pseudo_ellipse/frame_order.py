@@ -1,4 +1,4 @@
-# Script for optimising the isotropic cone frame order test model of CaM.
+# Script for optimising the pseudo-ellipse frame order test model of CaM.
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
@@ -96,20 +96,22 @@ class Analysis:
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
+
         # Check the minimum.
         value.set(param='ave_pos_alpha', val=4.3434999280669997)
         value.set(param='ave_pos_beta', val=0.43544332764249905)
         value.set(param='ave_pos_gamma', val=3.8013235235956007)
-        value.set(param='eigen_alpha', val=3.1415926535897931)
-        value.set(param='eigen_beta', val=0.96007997859534311)
-        value.set(param='eigen_gamma', val=4.0322755062196229)
-        value.set(param='cone_theta_x', val=10.0 * 2.0 * pi / 360.0)
-        value.set(param='cone_theta_y', val=30.0 * 2.0 * pi / 360.0)
-        value.set(param='cone_sigma_max', val=40.0 * 2.0 * pi / 360.0)
+        value.set(param='eigen_alpha', val=3.14159265358979311600)
+        value.set(param='eigen_beta', val=0.96007997859534310869)
+        value.set(param='eigen_gamma', val=4.03227550621962294031)
+        value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0)
+        value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0)
+        value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0)
         calc()
-        print("\nchi2: %s" % cdp.chi2)
-        print("real chi2: %s" % 3.90846472844)
-        print("num_int_pts: %s" % cdp.num_int_pts)
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         #grid_search(inc=5)

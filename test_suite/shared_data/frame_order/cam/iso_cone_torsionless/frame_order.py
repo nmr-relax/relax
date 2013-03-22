@@ -1,4 +1,4 @@
-# Script for optimising the isotropic cone frame order test model of CaM.
+# Script for optimising the torsionless isotropic cone frame order test model of CaM.
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
@@ -56,7 +56,7 @@ class Analysis:
             rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
             # The PCS.
-            #pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             temperature(id=ln[i], temp=303)
@@ -96,15 +96,19 @@ class Analysis:
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
+
         # Check the minimum.
         value.set(param='ave_pos_alpha', val=4.3434999280669997)
         value.set(param='ave_pos_beta', val=0.43544332764249905)
         value.set(param='ave_pos_gamma', val=3.8013235235956007)
-        value.set(param='axis_theta', val=2.1815126749944502)
-        value.set(param='axis_phi', val=0.89068285262982982)
-        value.set(param='cone_theta', val=0.5)
+        value.set(param='axis_theta', val=0.9600799785953431)
+        value.set(param='axis_phi', val=4.0322755062196229)
+        value.set(param='cone_theta', val=1.3)
         calc()
-        print("\nchi2: %s" % cdp.chi2)
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         #grid_search(inc=5)
