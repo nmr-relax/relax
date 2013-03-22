@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,6 @@ if dep_check.scipy_module:
 
 # relax module imports.
 from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
-from multi import Memo, Result_command, Slave_command
 
 
 def compile_2nd_matrix_iso_cone_torsionless(matrix, Rx2_eigen, cone_theta):

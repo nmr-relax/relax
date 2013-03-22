@@ -45,7 +45,7 @@ from maths_fns.frame_order.free_rotor import compile_2nd_matrix_free_rotor
 from maths_fns.frame_order.iso_cone import compile_2nd_matrix_iso_cone, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint
 from maths_fns.frame_order.iso_cone_free_rotor import compile_2nd_matrix_iso_cone_free_rotor
 from maths_fns.frame_order.iso_cone_torsionless import compile_2nd_matrix_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint
-from maths_fns.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse, Memo_pcs_pseudo_ellipse_qrint, pcs_numeric_int_pseudo_ellipse, Slave_command_pcs_pseudo_ellipse_qrint
+from maths_fns.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_qrint
 from maths_fns.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
 from maths_fns.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
 from maths_fns.kronecker_product import kron_prod
@@ -54,7 +54,6 @@ from maths_fns.pcs import pcs_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
 from maths_fns.rdc import rdc_tensor
-from multi import fetch_data, Processor_box
 from physical_constants import pcs_constant
 from relax_errors import RelaxError
 
@@ -302,10 +301,6 @@ class Frame_order:
 
         # The quasi-random integration via the multi-processor.
         if not quad_int and self.pcs_flag_sum and model not in ['rigid']:
-            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-            processor_box = Processor_box()
-            self.processor = processor_box.processor
-
             # The Sobol' sequence data and target function aliases (quasi-random integration).
             if model == 'pseudo-ellipse':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
@@ -342,16 +337,6 @@ class Frame_order:
             elif model == 'free rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
-
-            # Subdivide the Sobol' data points for the slave processors.
-            blocks = []
-            for block in self.subdivide(self.sobol_angles, self.processor.processor_size()):
-                blocks.append(block)
-
-            # Set up the slave processors.
-            self.slaves = []
-            for i in range(self.processor.processor_size()):
-                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -487,9 +472,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_rotor(sigma_max=pi, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -661,9 +646,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -837,9 +822,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_iso_cone(theta_max=theta_max, sigma_max=pi, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -1013,9 +998,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -1183,9 +1168,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -1265,50 +1250,8 @@ class Frame_order:
 
         # PCS via Monte Carlo integration.
         if self.pcs_flag_sum:
-            # Clear the data structures.
-            for i in range(len(self.pcs_theta)):
-                for j in range(len(self.pcs_theta[i])):
-                    self.pcs_theta[i, j] = 0.0
-                    self.pcs_theta_err[i, j] = 0.0
-
-            # Initialise the data object for the slave results to be stored in.
-            data = Data()
-            data.num_pts = 0
-            data.pcs_theta = self.pcs_theta
-
-            # Subdivide the points.
-            for i in range(self.processor.processor_size()):
-                # Initialise the slave command and memo.
-                self.slaves[i].load_data(theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, R_eigen=self.R_eigen, RT_eigen=RT_eigen)
-
-                # Update certain data structures.
-                if self.pivot_opt:
-                    self.slaves[i].r_ln_pivot = self.r_ln_pivot
-
-                # Initialise the memo.
-                memo = Memo_pcs_pseudo_ellipse_qrint(data)
-
-                # Queue the block.
-                self.processor.add_to_queue(self.slaves[i], memo)
-
-            # Wait for completion.
-            self.processor.run_queue()
-
-            # Get the PCS values.
-            self.pcs_theta = fetch_data('pcs_theta')
-
-            # Calculate the PCS and error.
-            num = data.num_pts
-            for i in range(len(self.pcs_theta)):
-                for j in range(len(self.pcs_theta[i])):
-                    # The average PCS.
-                    self.pcs_theta[i, j] = self.pcs_const[i] * self.pcs_theta[i, j] / float(num)
-
-                    # The error.
-                    error_flag = False
-                    if error_flag:
-                        self.pcs_theta_err[i, j] = abs(self.pcs_theta_err[i, j] / float(num)  -  self.pcs_theta[i, j]**2) / float(num)
-                        self.pcs_theta_err[i, j] = c[i] * sqrt(self.pcs_theta_err[i, j])
+            # Numerical integration of the PCSs.
+            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -1392,9 +1335,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -1598,9 +1541,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -1710,7 +1653,7 @@ class Frame_order:
         # Unpack the parameters.
         if self.translation_opt:
             self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[3:6]
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
 
@@ -1748,9 +1691,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The PCS calculation.
                         vect = self.r_ln_pivot[:, 0] + r_pivot_atom
@@ -1841,9 +1784,9 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
-                        else:
                             r_pivot_atom = self.r_pivot_atom[:, j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[align_index, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -2038,11 +1981,11 @@ class Frame_order:
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[align_index]:
-                self.A_3D_bc[align_index] = dot(self.R_ave, dot(self.tensor_3D, transpose(self.R_ave)))
+                self.A_3D_bc[align_index] = dot(transpose(self.R_ave), dot(self.tensor_3D, self.R_ave))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.A_3D_bc[align_index] = dot(transpose(self.R_ave), dot(self.tensor_3D, self.R_ave))
+                self.A_3D_bc[align_index] = dot(self.R_ave, dot(self.tensor_3D, transpose(self.R_ave)))
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
             to_5D(self.A_5D_bc[index1:index2], self.A_3D_bc[align_index])

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1126,3 +1126,107 @@ class Frame_order(SystemTestCase):
 
         # Check the surrounding space.
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y'])
+
+
+    def test_rigid_data_to_free_rotor_model(self):
+        """Test the free rotor target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'free rotor'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 94337.6680299)
+
+
+    def test_rigid_data_to_iso_cone_model(self):
+        """Test the iso cone target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'iso cone'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 175.440396354)
+
+
+    def test_rigid_data_to_iso_cone_free_rotor_model(self):
+        """Test the iso cone, free rotor target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'iso cone, free rotor'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 101224.40327)
+
+
+    def test_rigid_data_to_iso_cone_torsionless_model(self):
+        """Test the iso cone, torsionless target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'iso cone, torsionless'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 2.80180329697)
+
+
+    def test_rigid_data_to_rigid_model(self):
+        """Test the rigid target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'rigid'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.0113763520134)
+
+
+    def test_rigid_data_to_rotor_model(self):
+        """Test the rotor target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'rotor'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.968768022709)
+
+
+    def test_rigid_data_to_pseudo_ellipse_model(self):
+        """Test the pseudo-ellipse target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'pseudo-ellipse'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 175.440396354)
+
+
+    def test_rigid_data_to_pseudo_ellipse_torsionless_model(self):
+        """Test the pseudo-ellipse, torsionless target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'pseudo-ellipse, torsionless'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 2.80180329697)

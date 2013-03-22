@@ -240,18 +240,25 @@ class Frame_order(API_base, API_common):
         return scaling_matrix
 
 
-    def _ave_pos_translation(self, flag=True):
-        """Allow or disallow the translation of the average domain position.
+    def _average_position(self, pivot='com', translation=True):
+        """Set up the mechanics of the average domain position.
 
-        @keyword flag:  If True, translation will be allowed.  If False, then translation will not occur.
-        @type flag:     bool
+        @keyword pivot:         What to use as the motional pivot.  This can be 'com' for the centre of mass of the moving domain, or 'motional' to link the pivot of the motion to the rotation of the average domain position.
+        @type pivot:            str
+        @keyword translation:   If True, translation to the average domain position will be allowed.  If False, then translation will not occur.
+        @type translation:      bool
         """
 
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Store the flag.
-        cdp.ave_pos_translation = flag
+        # Check the pivot value.
+        if pivot not in ['com', 'motional']:
+            raise RelaxError("The pivot for the rotation to the average domain position must be either 'com' or 'motional'.")
+
+        # Store the data.
+        cdp.ave_pos_pivot = pivot
+        cdp.ave_pos_translation = translation
 
 
     def _base_data_types(self):

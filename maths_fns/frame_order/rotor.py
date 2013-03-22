@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,12 +28,12 @@ import dep_check
 # Python module imports.
 from math import cos, pi, sin, sqrt
 from numpy import dot, inner, sinc, transpose
+from numpy.linalg import norm
 if dep_check.scipy_module:
     from scipy.integrate import quad
 
 # relax module imports.
 from maths_fns.frame_order.matrix_ops import rotate_daeg
-from multi import Memo, Result_command, Slave_command
 
 
 def compile_2nd_matrix_rotor(matrix, Rx2_eigen, smax):
@@ -303,11 +303,11 @@ def pcs_pivot_motion_rotor_qrint(sigma_i=None, full_in_ref_frame=None, r_pivot_a
 
             # The projection.
             if full_in_ref_frame[i]:
-                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
-            else:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
                 length_i = length
+            else:
+                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
+                length_i = length_rev
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i

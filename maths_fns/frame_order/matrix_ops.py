@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -212,11 +212,11 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
 
             # The projection.
             if full_in_ref_frame[i]:
-                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
-            else:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
                 length_i = length
+            else:
+                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
+                length_i = length_rev
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
@@ -356,11 +356,11 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
 
             # The projection.
             if full_in_ref_frame[i]:
-                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
-            else:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
                 length_i = length
+            else:
+                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
+                length_i = length_rev
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i

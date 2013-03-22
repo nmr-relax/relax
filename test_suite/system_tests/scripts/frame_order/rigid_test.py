@@ -23,18 +23,27 @@
 
 This script should be run from the directory where it is found with the commands:
 
-$ ../../../../relax rigid_test.py
+$ ../../../../relax full_analysis.py
 """
 
 # Python module imports.
 from numpy import array, float64
+from os import sep
+
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
+
+
+# The data path.
+PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'displacements'
 
 
 # Create the data pipe.
 pipe.create(pipe_name='rigid test', pipe_type='frame order')
 
 # Read the structures.
-structure.read_pdb('displaced.pdb', set_mol_name='fancy_mol')
+structure.read_pdb('displaced.pdb', dir=PATH, set_mol_name='fancy_mol')
 
 # Set up the 15N and 1H spins.
 structure.load_spins()
@@ -68,10 +77,10 @@ rdc_files = [
 # Loop over the alignments.
 for i in range(len(ln)):
     # Load the RDCs.
-    rdc.read(align_id=ln[i], file=rdc_files[i], dir='.', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+    rdc.read(align_id=ln[i], file=rdc_files[i], dir=PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
     # The PCS (only a subset of ~5 spins for fast initial optimisations).
-    pcs.read(align_id=ln[i], file=pcs_files[i], dir='.', mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+    pcs.read(align_id=ln[i], file=pcs_files[i], dir=PATH, mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
     # The temperature and field strength.
     temperature(id=ln[i], temp=303.0)
@@ -115,8 +124,8 @@ frame_order.ref_domain('fixed')
 # Link the domains to the PDB files.
 frame_order.domain_to_pdb(domain='fixed', pdb='displaced.pdb')
 
-# Set up the mechanics of the displacement to the average domain position.
-frame_order.average_position(pivot='com', translation=True)
+# Allow the average domain to be translated during optimisation.
+frame_order.ave_pos_translate()
 
 # Set the initial pivot point (should make no difference for the rigid model).
 pivot = array([0, 0, 0], float64)
@@ -143,17 +152,12 @@ cdp.cone_theta_x = 0.1
 cdp.cone_theta_y = 0.1
 cdp.cone_sigma_max = 0.1
 
-# Loop over all frame order models, showing that they should all have a chi-squared close to zero.
-for model in ['rigid', 'free rotor', 'rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse']:
-    # Print out.
-    text = "# Model: %s" % model
-    print("\n\n%s\n%s" % (text, '#'*len(text)))
+# Allow for stand-alone operation.
+if not hasattr(ds, 'model'):
+    ds.model = 'rigid'
 
-    # Select the Frame Order model.
-    frame_order.select_model(model=model)
+# Select the Frame Order model.
+frame_order.select_model(model=ds.model)
 
-    # Calculate the chi2 value.
-    calc()
-
-    # Attempt to mimimise.
-    #minimise('simplex', constraints=False)
+# Calculate the chi2 value.
+calc()

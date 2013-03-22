@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,6 @@ from math import cos
 # relax module imports.
 from maths_fns.frame_order.matrix_ops import rotate_daeg
 from maths_fns import order_parameters
-from multi import Memo, Result_command, Slave_command
 
 
 def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, s1):
