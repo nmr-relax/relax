@@ -42,7 +42,9 @@ import dep_check
 # Python modules.
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
-if dep_check.profile_module:
+if dep_check.cprofile_module:
+    import cProfile as profile
+elif dep_check.profile_module:
     import profile
 import pstats
 from pydoc import pager
@@ -113,7 +115,7 @@ def start(mode=None, profile_flag=False):
     # relax in profiling mode.
     else:
         def print_stats(stats, status=0):
-            pstats.Stats(stats).sort_stats('cumulative', 'name').print_stats()
+            pstats.Stats(stats).sort_stats('time', 'name').print_stats()
 
         # No profile module.
         if not dep_check.profile_module:
