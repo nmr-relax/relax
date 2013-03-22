@@ -1050,8 +1050,13 @@ class Frame_order(API_base, API_common):
                 rotor_angle = cdp.cone_sigma_max
 
             # Generate the rotor axis.
-            axis = zeros(3, float64)
-            spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], axis)
+            if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor']:
+                axis = zeros(3, float64)
+                spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], axis)
+            else:
+                axes = zeros((3, 3), float64)
+                euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
+                axis = axes[:,2]
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
             com = centre_of_mass(verbosity=0)
