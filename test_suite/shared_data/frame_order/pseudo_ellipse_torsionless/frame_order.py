@@ -57,7 +57,7 @@ class Analysis:
             rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The PCS.
-            #pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             temperature(id=ln[i], temp=303)
@@ -107,7 +107,7 @@ class Analysis:
         cdp.cone_theta_x = 0.1
         cdp.cone_theta_y = 0.5
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         #grid_search(inc=5)

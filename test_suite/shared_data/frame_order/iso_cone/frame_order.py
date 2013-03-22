@@ -106,7 +106,7 @@ class Analysis:
         cdp.cone_theta = 10.0 * 2.0 * pi / 360.0
         cdp.cone_sigma_max = 20.0 * 2.0 * pi / 360.0
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         #grid_search(inc=5)

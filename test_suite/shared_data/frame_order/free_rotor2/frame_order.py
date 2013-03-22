@@ -103,7 +103,7 @@ class Analysis:
         cdp.axis_theta = 1.6573281536701425
         cdp.axis_phi = 0.89246262623423234
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         grid_search(inc=5)
