@@ -42,25 +42,41 @@ from status import Status; status = Status()
 
 
 class Frame_order_analysis:
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], num_int_pts_full=[100, 1000, 200000], mc_sim_num=500):
+    """The frame order auto-analysis protocol."""
+
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3):
         """Perform the full frame order analysis.
 
-        @param data_pipe_full:      The name of the data pipe containing all of the RDC and PCS data.
-        @type data_pipe_full:       str
-        @param data_pipe_subset:    The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
-        @type data_pipe_subset:     str
-        @keyword pipe_bundle:       The data pipe bundle to associate all spawned data pipes with.
-        @type pipe_bundle:          str
-        @keyword results_dir:       The directory where files are saved in.
-        @type results_dir:          str
-        @keyword grid_inc:          The number of grid increments to use in the grid search of certain models.
-        @type grid_inc:             int
-        @keyword grid_inc_rigid:    The number of grid increments to use in the grid search of the initial rigid model.
-        @type grid_inc_rigid:       int
-        @keyword min_algor:         The minimisation algorithm (in most cases this should not be changed).
-        @type min_algor:            str
-        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_sim_num:           int
+        @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
+        @type data_pipe_full:           str
+        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
+        @type data_pipe_subset:         str
+        @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:              str
+        @keyword results_dir:           The directory where files are saved in.
+        @type results_dir:              str
+        @keyword grid_inc:              The number of grid increments to use in the grid search of certain models.
+        @type grid_inc:                 int
+        @keyword grid_inc_rigid:        The number of grid increments to use in the grid search of the initial rigid model.
+        @type grid_inc_rigid:           int
+        @keyword min_algor:             The minimisation algorithm (in most cases this should not be changed).
+        @type min_algor:                str
+        @keyword num_int_pts_grid:      The number of Sobol' points for the PCS numerical integration in the grid searches.
+        @type num_int_pts_grid:         int
+        @keyword num_int_pts_subset:    The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for the PCS data subset).
+        @type num_int_pts_subset:       list of int
+        @keyword func_tol_subset:       The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
+        @type func_tol_subset:          list of float
+        @keyword num_int_pts_full:      The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
+        @type num_int_pts_full:         list of int
+        @keyword func_tol_full:         The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
+        @type func_tol_full:            list of float
+        @keyword mc_sim_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:               int
+        @keyword mc_int_num:            The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
+        @type mc_int_num:               int
+        @keyword mc_func_tol:           The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
+        @type mc_func_tol:              float
         """
 
         # Execution lock.
@@ -75,8 +91,12 @@ class Frame_order_analysis:
         self.min_algor = min_algor
         self.num_int_pts_grid = num_int_pts_grid
         self.num_int_pts_subset = num_int_pts_subset
+        self.func_tol_subset = func_tol_subset
         self.num_int_pts_full = num_int_pts_full
+        self.func_tol_full = func_tol_full
         self.mc_sim_num = mc_sim_num
+        self.mc_int_pts = mc_int_pts
+        self.mc_func_tol = mc_func_tol
 
         # A dictionary of the data pipe names.
         self.models = {}
@@ -104,11 +124,14 @@ class Frame_order_analysis:
             # Model selection.
             self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
 
+            # The number of integration points.
+            self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
+
             # Monte Carlo simulations.
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor, constraints=False)
+            self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
             self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
 
@@ -131,13 +154,39 @@ class Frame_order_analysis:
         if not isinstance(self.pipe_bundle, str):
             raise RelaxError("The pipe bundle name '%s' is invalid." % self.pipe_bundle)
 
-        # Min vars.
+        # Minimisation variables.
         if not isinstance(self.grid_inc, int):
             raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
+        if not isinstance(self.grid_inc_rigid, int):
+            raise RelaxError("The grid_inc_rigid user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
         if not isinstance(self.min_algor, str):
             raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
+        if not isinstance(self.num_int_pts_grid, int):
+            raise RelaxError("The num_int_pts_grid user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
         if not isinstance(self.mc_sim_num, int):
             raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
+        if not isinstance(self.mc_int_pts, int):
+            raise RelaxError("The mc_int_pts user variable '%s' is incorrectly set.  It should be an integer." % self.mc_int_pts)
+        if not isinstance(self.mc_func_tol, float):
+            raise RelaxError("The mc_func_tol user variable '%s' is incorrectly set.  It should be a floating point number." % self.mc_func_tol)
+
+        # Zooming minimisation (PCS subset).
+        if len(self.num_int_pts_subset) != len(self.func_tol_subset):
+            raise RelaxError("The num_int_pts_subset and func_tol_subset user variables of '%s' and '%s' respectively must be of the same length." % (self.num_int_pts_subset, self.func_tol_subset))
+        for i in range(len(self.num_int_pts_subset)):
+            if not isinstance(self.num_int_pts_subset[i], int):
+                raise RelaxError("The num_int_pts_subset user variable '%s' must be a list of integers." % self.num_int_pts_subset)
+            if not isinstance(self.func_tol_subset[i], float):
+                raise RelaxError("The func_tol_subset user variable '%s' must be a list of floats." % self.func_tol_subset)
+
+        # Zooming minimisation (all RDC and PCS data).
+        if len(self.num_int_pts_full) != len(self.func_tol_full):
+            raise RelaxError("The num_int_pts_full and func_tol_full user variables of '%s' and '%s' respectively must be of the same length." % (self.num_int_pts_full, self.func_tol_full))
+        for i in range(len(self.num_int_pts_full)):
+            if not isinstance(self.num_int_pts_full[i], int):
+                raise RelaxError("The num_int_pts_full user variable '%s' must be a list of integers." % self.num_int_pts_full)
+            if not isinstance(self.func_tol_full[i], float):
+                raise RelaxError("The func_tol_full user variable '%s' must be a list of floats." % self.func_tol_full)
 
 
     def custom_grid_incs(self, model):
@@ -280,17 +329,17 @@ class Frame_order_analysis:
             self.interpreter.grid_search(inc=incs, constraints=False)
 
             # Minimise (for the PCS data subset and full RDC set).
-            for num in self.num_int_pts_subset:
-                self.interpreter.frame_order.num_int_pts(num=num)
-                self.interpreter.minimise(self.min_algor, constraints=False)
+            for i in range(len(self.num_int_pts_subset)):
+                self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_subset[i])
+                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_subset[i], constraints=False)
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.models[model])
 
             # Minimise (for the full data set).
-            for num in self.num_int_pts_full:
-                self.interpreter.frame_order.num_int_pts(num=num)
-                self.interpreter.minimise(self.min_algor, constraints=False)
+            for i in range(len(self.num_int_pts_full)):
+                self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_full[i])
+                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_full[i], constraints=False)
 
             # Results printout.
             self.print_results()

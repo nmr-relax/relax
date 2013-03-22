@@ -1660,6 +1660,29 @@ class Frame_order(API_base, API_common):
         cdp.select = False
 
 
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
+        """Duplicate the data specific to a single frame order data pipe.
+
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        @param model_info:      The model index from model_loop().
+        @type model_info:       int
+        @keyword global_stats:  The global statistics flag.
+        @type global_stats:     bool
+        @keyword verbose:       Unused.
+        @type verbose:          bool
+        """
+
+        # Check that the data pipe does not exist.
+        if pipes.has_pipe(pipe_to):
+            raise RelaxError("The data pipe '%s' already exists." % pipe_to)
+
+        # Create the pipe_to data pipe by copying.
+        pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
+
+
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model elimination method.
 
@@ -2170,6 +2193,10 @@ class Frame_order(API_base, API_common):
 
         # Loop over the residue specific parameters.
         for param in self.data_names(set='params'):
+            # Not a parameter of the model.
+            if param not in cdp.params:
+                continue
+
             # Return the parameter array.
             if index == inc:
                 setattr(cdp, param + "_err", error)
@@ -2215,6 +2242,10 @@ class Frame_order(API_base, API_common):
 
         # Loop over all the parameter names.
         for object_name in param_names:
+            # Not a parameter of the model.
+            if object_name not in cdp.params:
+                continue
+
             # Name for the simulation object.
             sim_object_name = object_name + '_sim'
 
@@ -2228,8 +2259,8 @@ class Frame_order(API_base, API_common):
 
         # Loop over all the data names.
         for object_name in param_names:
-            # Skip non-existent objects.
-            if not hasattr(cdp, object_name):
+            # Not a parameter of the model.
+            if object_name not in cdp.params:
                 continue
 
             # Name for the simulation object.
@@ -2324,8 +2355,8 @@ class Frame_order(API_base, API_common):
 
         # Loop over the parameters.
         for param in param_names:
-            # Skip non-existent objects.
-            if not hasattr(cdp, param):
+            # Not a parameter of the model.
+            if param not in cdp.params:
                 continue
 
             # Return the parameter array.
