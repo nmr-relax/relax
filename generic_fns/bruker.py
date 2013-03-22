@@ -32,7 +32,7 @@ from generic_fns.exp_info import software_select
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, set_spin_isotope, spin_loop
 from generic_fns.relax_data import pack_data, peak_intensity_type
 from lib.errors import RelaxError, RelaxNoSequenceError
-from relax_io import open_read_file
+from lib.io import open_read_file
 from physical_constants import element_from_isotope
 
 

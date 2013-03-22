@@ -21,7 +21,7 @@
 
 # relax module imports.
 from generic_fns.structure import pdb_write
-from relax_io import DummyFileObject
+from lib.io import DummyFileObject
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 

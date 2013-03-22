@@ -41,7 +41,7 @@ from generic_fns.structure.statistics import atomic_rmsd
 from generic_fns.structure.superimpose import fit_to_first, fit_to_mean
 from maths_fns.ens_pivot_finder import Pivot_finder
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
-from relax_io import get_file_path, open_write_file, write_data, write_spin_data
+from lib.io import get_file_path, open_write_file, write_data, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 

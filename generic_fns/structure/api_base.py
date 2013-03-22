@@ -39,7 +39,7 @@ from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from float import floatAsByteArray, packBytesAsPyFloat
 from generic_fns.structure.superimpose import kabsch
 from lib.errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
-from relax_io import file_root
+from lib.io import file_root
 from relax_warnings import RelaxWarning
 
 

@@ -40,7 +40,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
-from relax_io import extract_data, open_write_file, write_data
+from lib.io import extract_data, open_write_file, write_data
 from relax_warnings import RelaxWarning
 
 

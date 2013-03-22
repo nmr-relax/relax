@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,15 +24,15 @@ from os import sep
 from unittest import TestCase
 
 # relax module imports.
-import relax_io
+import lib.io
 
 
-class Test_relax_io(TestCase):
-    """Unit tests for the functions of the 'relax_io' module."""
+class Test_lib_io(TestCase):
+    """Unit tests for the functions of the 'lib.io' module."""
 
 
     def test_get_file_path(self):
-        """Test for file paths which should remain unmodified by relax_io.get_file_path."""
+        """Test for file paths which should remain unmodified by lib.io.get_file_path."""
 
         # Some file paths that shouldn't change.
         file1 = 'test'
@@ -40,13 +40,13 @@ class Test_relax_io(TestCase):
         file3 = sep+'home'+sep+'test'+sep+'aaa'
 
         # Check that nothing changes.
-        self.assertEqual(relax_io.get_file_path(file1), file1)
-        self.assertEqual(relax_io.get_file_path(file2), file2)
-        self.assertEqual(relax_io.get_file_path(file3), file3)
+        self.assertEqual(lib.io.get_file_path(file1), file1)
+        self.assertEqual(lib.io.get_file_path(file2), file2)
+        self.assertEqual(lib.io.get_file_path(file3), file3)
 
 
     def test_get_file_path_with_dir(self):
-        """The modification of file paths by relax_io.get_file_path when a directory is supplied."""
+        """The modification of file paths by lib.io.get_file_path when a directory is supplied."""
 
         # Some file paths.
         file1 = 'test'
@@ -59,18 +59,18 @@ class Test_relax_io(TestCase):
         dir3 = sep+'usr'
 
         # Check that nothing changes.
-        self.assertEqual(relax_io.get_file_path(file1, dir1), dir1+sep+file1)
-        self.assertEqual(relax_io.get_file_path(file2, dir2), dir2+sep+file2)
-        self.assertEqual(relax_io.get_file_path(file3, dir=dir3), dir3+sep+file3)
+        self.assertEqual(lib.io.get_file_path(file1, dir1), dir1+sep+file1)
+        self.assertEqual(lib.io.get_file_path(file2, dir2), dir2+sep+file2)
+        self.assertEqual(lib.io.get_file_path(file3, dir=dir3), dir3+sep+file3)
 
 
     def test_get_file_path_with_homedir(self):
-        """The modification of file paths with '~', by relax_io.get_file_path."""
+        """The modification of file paths with '~', by lib.io.get_file_path."""
 
         # Some file paths.
         file1 = '~'+sep+'test'
         file2 = '~'+sep+'test'+sep+'aaa'
 
         # Check that nothing changes.
-        self.assertNotEqual(relax_io.get_file_path(file1), file1)
-        self.assertNotEqual(relax_io.get_file_path(file2), file2)
+        self.assertNotEqual(lib.io.get_file_path(file1), file1)
+        self.assertNotEqual(lib.io.get_file_path(file2), file2)

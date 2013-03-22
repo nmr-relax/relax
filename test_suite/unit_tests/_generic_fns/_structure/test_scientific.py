@@ -29,7 +29,7 @@ import dep_check
 from generic_fns.mol_res_spin import Selection
 from generic_fns.reset import reset
 from generic_fns.structure.scientific import Scientific_data
-from relax_io import file_root
+from lib.io import file_root
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 

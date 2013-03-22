@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,7 +39,7 @@ from os import sep
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
-from relax_io import open_write_file
+from lib.io import open_write_file
 from status import Status; status = Status()
 
 # Path to the files.

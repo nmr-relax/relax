@@ -41,7 +41,7 @@ from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, tokenise
 from generic_fns.structure.api_base import Base_struct_API
 from lib.errors import RelaxError, RelaxPdbLoadError
-from relax_io import file_root
+from lib.io import file_root
 from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ import wx.stc
 # relax module imports.
 from compat import Queue
 from generic_fns.pipes import cdp_name
-from relax_io import SplitIO
+from lib.io import SplitIO
 from status import Status; status = Status()
 
 # relax GUI module imports.

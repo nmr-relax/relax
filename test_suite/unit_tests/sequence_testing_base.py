@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ except ImportError:
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from relax_io import delete
+from lib.io import delete
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 

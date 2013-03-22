@@ -33,7 +33,7 @@ from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_id_to_data_list, spin_loop
 from generic_fns import pipes
 from lib.errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
-from relax_io import open_write_file, read_spin_data, write_spin_data
+from lib.io import open_write_file, read_spin_data, write_spin_data
 
 
 
@@ -439,7 +439,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
 def write(file, dir=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, force=False):
     """Write the molecule, residue, and/or sequence data.
 
-    This calls the relax_io.write_spin_data() function to do most of the work.
+    This calls the lib.io.write_spin_data() function to do most of the work.
 
 
     @param file:                The name of the file to write the data to.

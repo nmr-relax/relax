@@ -34,7 +34,7 @@ from generic_fns.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
 from generic_fns import frq, selection
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
-from relax_io import DummyFileObject
+from lib.io import DummyFileObject
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()
 

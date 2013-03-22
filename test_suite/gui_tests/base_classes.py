@@ -40,7 +40,7 @@ from data.gui import Gui
 from generic_fns.reset import reset
 from prompt.interpreter import exec_script
 from lib.errors import RelaxError
-from relax_io import delete
+from lib.io import delete
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 

@@ -74,7 +74,7 @@ from generic_fns.selection import spin_loop
 from physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
-from relax_io import mkdir_nofail
+from lib.io import mkdir_nofail
 from status import Status; status = Status()
 
 

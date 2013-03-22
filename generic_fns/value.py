@@ -31,7 +31,7 @@ from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from generic_fns.result_files import add_result_file
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
-from relax_io import get_file_path, open_write_file, read_spin_data, write_spin_data
+from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
 import specific_fns
 from status import Status; status = Status()
 

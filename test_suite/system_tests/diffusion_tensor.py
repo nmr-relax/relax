@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,7 +33,7 @@ from generic_fns.pipes import get_pipe
 from generic_fns.reset import reset
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
-from relax_io import delete
+from lib.io import delete
 from status import Status; status = Status()
 from tempfile import mktemp
 from test_suite.system_tests.base_classes import SystemTestCase

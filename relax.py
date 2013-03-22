@@ -56,7 +56,7 @@ from info import Info_box
 from multi import Application_callback, load_multiprocessor
 from prompt import interpreter
 import lib.errors
-from relax_io import io_streams_log, io_streams_tee
+from lib.io import io_streams_log, io_streams_tee
 import relax_warnings
 from status import Status; status = Status()
 import version

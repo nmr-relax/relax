@@ -27,7 +27,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.reset import reset
 from generic_fns.structure.internal import Internal, MolContainer
-from relax_io import file_root
+from lib.io import file_root
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 

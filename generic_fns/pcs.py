@@ -39,7 +39,7 @@ from maths_fns.pcs import ave_pcs_tensor, pcs_tensor
 from maths_fns.vectors import random_unit_vector
 from physical_constants import g1H, pcs_constant
 from lib.errors import RelaxError, RelaxAlignError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError, RelaxPCSError
-from relax_io import open_write_file, read_spin_data, write_spin_data
+from lib.io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 

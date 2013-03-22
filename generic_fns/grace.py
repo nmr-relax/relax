@@ -33,7 +33,7 @@ from generic_fns.mol_res_spin import count_molecules, count_residues, count_spin
 from generic_fns import pipes
 from generic_fns.result_files import add_result_file
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
-from relax_io import get_file_path, open_write_file, test_binary
+from lib.io import get_file_path, open_write_file, test_binary
 from relax_warnings import RelaxWarning
 import specific_fns
 from status import Status; status = Status()

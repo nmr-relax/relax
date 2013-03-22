@@ -30,7 +30,7 @@ from compat import builtins
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxPipeError
-from relax_io import write_data
+from lib.io import write_data
 from status import Status; status = Status()
 
 

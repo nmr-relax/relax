@@ -2,7 +2,7 @@
 
 # relax module imports.
 from generic_fns.mol_res_spin import return_spin
-from relax_io import extract_data
+from lib.io import extract_data
 
 
 # Create the data pipe.

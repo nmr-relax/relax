@@ -29,7 +29,7 @@ from os import system
 # relax module imports.
 from opendx import isosurface_3D
 from lib.errors import RelaxError
-from relax_io import test_binary
+from lib.io import test_binary
 
 
 def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):

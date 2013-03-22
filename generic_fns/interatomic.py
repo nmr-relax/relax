@@ -31,7 +31,7 @@ import sys
 from generic_fns import pipes
 from generic_fns.mol_res_spin import Selection, count_spins, return_spin, spin_loop
 from lib.errors import RelaxError, RelaxInteratomError, RelaxInteratomInconsistentError, RelaxNoInteratomError, RelaxNoSpinError
-from relax_io import write_data
+from lib.io import write_data
 
 
 def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):

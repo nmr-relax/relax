@@ -27,7 +27,7 @@ from info import Info_box
 from data.exp_info import ExpInfo
 from generic_fns import pipes
 from lib.errors import RelaxError
-from relax_io import open_read_file
+from lib.io import open_read_file
 from version import version_full
 
 

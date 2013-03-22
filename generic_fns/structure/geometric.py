@@ -35,7 +35,7 @@ from generic_fns.structure.mass import centre_of_mass
 from lib.structure.rotor import rotor_pdb
 from maths_fns.rotation_matrix import two_vect_to_R
 from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
-from relax_io import get_file_path, open_write_file
+from lib.io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning
 from status import Status; status = Status()
 

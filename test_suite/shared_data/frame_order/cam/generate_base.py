@@ -38,7 +38,7 @@ from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.kronecker_product import kron_prod
 from maths_fns.rotation_matrix import axis_angle_to_R, R_to_euler_zyz
 from prompt.interpreter import Interpreter
-from relax_io import open_write_file
+from lib.io import open_write_file
 
 
 class Main:

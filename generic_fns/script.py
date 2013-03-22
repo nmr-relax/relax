@@ -28,7 +28,7 @@ from os import F_OK, access
 # relax module imports.
 import prompt.interpreter
 from lib.errors import RelaxError
-from relax_io import get_file_path
+from lib.io import get_file_path
 from status import Status; status = Status()
 
 

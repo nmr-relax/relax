@@ -39,7 +39,7 @@ from lib.text.sectioning import section, subsection, title
 from maths_fns.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
-from relax_io import open_write_file
+from lib.io import open_write_file
 from status import Status; status = Status()
 
 

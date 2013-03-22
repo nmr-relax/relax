@@ -34,7 +34,7 @@ from generic_fns.interatomic import create_interatom, exists_data, interatomic_l
 from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from lib.errors import RelaxError, RelaxNoInteratomError
-from relax_io import extract_data, write_data
+from lib.io import extract_data, write_data
 from relax_warnings import RelaxWarning, RelaxZeroVectorWarning
 
 

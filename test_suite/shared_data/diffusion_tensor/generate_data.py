@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,7 +33,7 @@ from numpy.linalg import eig, inv, norm
 from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, R_to_euler_zyz
 from generic_fns.structure.geometric import angles_uniform, vect_dist_spherical_angles
 from generic_fns.structure.internal import Internal
-from relax_io import open_write_file
+from lib.io import open_write_file
 
 
 def ri_data(Dx=None, Dy=None, Dz=None, R=eye(3), vectors=None, frq_label=None, wH=None, csa=None):

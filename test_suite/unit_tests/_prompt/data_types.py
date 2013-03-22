@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 from numpy import int8, int16, int32, int64, float32, float64, zeros
 
 # relax module imports.
-from relax_io import DummyFileObject
+from lib.io import DummyFileObject
 
 class Container:
     """A class to act as a container."""

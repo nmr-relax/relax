@@ -30,7 +30,7 @@ import sys
 import generic_fns.pipes
 from generic_fns.pipes import get_type, has_pipe, pipe_names, switch
 from lib.errors import RelaxError, RelaxPipeError
-from relax_io import write_data
+from lib.io import write_data
 from specific_fns.setup import get_specific_fn
 
 

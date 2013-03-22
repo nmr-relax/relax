@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from lib.text.sectioning import section, subsection, subsubsection, subsubtitle, subtitle, title
-from relax_io import DummyFileObject
+from lib.io import DummyFileObject
 
 
 class Test_sectioning(TestCase):
