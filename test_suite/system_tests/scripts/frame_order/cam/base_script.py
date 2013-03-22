@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
-from os import sep
+from os import F_OK, access, sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -41,12 +41,11 @@ class Base_script:
     cone = True
     load_state = False
 
-    def __init__(self, interpreter):
+    def __init__(self, exec_fn):
         """Execute the frame order analysis."""
 
-        # Store the interpreter.
-        self.interpreter = interpreter
-        self.interpreter.populate_self()
+        # Alias the user function executor method.
+        self._execute_uf = exec_fn
 
         # The data path.
         self.data_path = BASE_PATH + self.directory
@@ -72,7 +71,7 @@ class Base_script:
         self.pymol_display()
 
         # Save the state.
-        self.interpreter.state.save('devnull', force=True)
+        self._execute_uf(uf_name='state.save', state='devnull', force=True)
 
 
     def optimisation(self):
@@ -80,53 +79,54 @@ class Base_script:
 
         # Set the number of numerical integration points.
         if hasattr(self, 'num_int_pts'):
-            cdp.num_int_pts = self.num_int_pts
+            self._execute_uf(uf_name='frame_order.num_int_pts', num=self.num_int_pts)
 
         # Check the minimum.
-        if hasattr(self, 'ave_pos_alpha'):
-            self.interpreter.value.set(val=self.ave_pos_alpha, param='ave_pos_alpha')
-        if hasattr(self, 'ave_pos_beta'):
-            self.interpreter.value.set(val=self.ave_pos_beta, param='ave_pos_beta')
-        if hasattr(self, 'ave_pos_gamma'):
-            self.interpreter.value.set(val=self.ave_pos_gamma, param='ave_pos_gamma')
+        if self.model not in ['free rotor', 'iso cone, free rotor']:
+            if hasattr(self, 'ave_pos_alpha'):
+                self._execute_uf(uf_name='value.set', val=self.ave_pos_alpha, param='ave_pos_alpha')
+            if hasattr(self, 'ave_pos_beta'):
+                self._execute_uf(uf_name='value.set', val=self.ave_pos_beta, param='ave_pos_beta')
+            if hasattr(self, 'ave_pos_gamma'):
+                self._execute_uf(uf_name='value.set', val=self.ave_pos_gamma, param='ave_pos_gamma')
         if hasattr(self, 'eigen_alpha'):
-            self.interpreter.value.set(val=self.eigen_alpha, param='eigen_alpha')
+            self._execute_uf(uf_name='value.set', val=self.eigen_alpha, param='eigen_alpha')
         if hasattr(self, 'eigen_beta'):
-            self.interpreter.value.set(val=self.eigen_beta, param='eigen_beta')
+            self._execute_uf(uf_name='value.set', val=self.eigen_beta, param='eigen_beta')
         if hasattr(self, 'eigen_gamma'):
-            self.interpreter.value.set(val=self.eigen_gamma, param='eigen_gamma')
+            self._execute_uf(uf_name='value.set', val=self.eigen_gamma, param='eigen_gamma')
         if hasattr(self, 'axis_theta'):
-            self.interpreter.value.set(val=self.axis_theta, param='axis_theta')
+            self._execute_uf(uf_name='value.set', val=self.axis_theta, param='axis_theta')
         if hasattr(self, 'axis_phi'):
-            self.interpreter.value.set(val=self.axis_phi, param='axis_phi')
+            self._execute_uf(uf_name='value.set', val=self.axis_phi, param='axis_phi')
         if hasattr(self, 'cone_theta_x'):
-            self.interpreter.value.set(val=self.cone_theta_x, param='cone_theta_x')
+            self._execute_uf(uf_name='value.set', val=self.cone_theta_x, param='cone_theta_x')
         if hasattr(self, 'cone_theta_y'):
-            self.interpreter.value.set(val=self.cone_theta_y, param='cone_theta_y')
+            self._execute_uf(uf_name='value.set', val=self.cone_theta_y, param='cone_theta_y')
         if hasattr(self, 'cone_theta'):
-            self.interpreter.value.set(val=self.cone_theta, param='cone_theta')
+            self._execute_uf(uf_name='value.set', val=self.cone_theta, param='cone_theta')
         if hasattr(self, 'cone_s1'):
-            self.interpreter.value.set(val=self.cone_s1, param='cone_s1')
+            self._execute_uf(uf_name='value.set', val=self.cone_s1, param='cone_s1')
         if hasattr(self, 'cone_sigma_max'):
-            self.interpreter.value.set(val=self.cone_sigma_max, param='cone_sigma_max')
-        self.interpreter.calc()
+            self._execute_uf(uf_name='value.set', val=self.cone_sigma_max, param='cone_sigma_max')
+        self._execute_uf(uf_name='calc')
         print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         if hasattr(status, 'flag_opt') and status.flag_opt:
-            self.interpreter.grid_search(inc=11)
-            self.interpreter.minimise('simplex', constraints=False)
+            #self._execute_uf(uf_name='grid_search', inc=11)
+            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=10)
 
             # Test Monte Carlo simulations.
-            self.interpreter.monte_carlo.setup(number=3)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise('simplex', constraints=False)
-            self.interpreter.eliminate()
-            self.interpreter.monte_carlo.error_analysis()
+            self._execute_uf(uf_name='monte_carlo.setup', number=3)
+            self._execute_uf(uf_name='monte_carlo.create_data')
+            self._execute_uf(uf_name='monte_carlo.initial_values')
+            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=10)
+            self._execute_uf(uf_name='eliminate')
+            self._execute_uf(uf_name='monte_carlo.error_analysis')
 
         # Write the results.
-        self.interpreter.results.write('devnull', dir=None, force=True)
+        self._execute_uf(uf_name='results.write', file='devnull', dir=None, force=True)
 
 
     def original_structure(self):
@@ -134,124 +134,132 @@ class Base_script:
 
         # Delete the data pipe (if a loaded state has been used).
         if self.load_state:
-            self.interpreter.pipe.delete('orig pos')
+            self._execute_uf(uf_name='pipe.delete', pipe_name='orig pos')
 
         # Create a special data pipe for the original rigid body position.
-        self.interpreter.pipe.create(pipe_name='orig pos', pipe_type='frame order')
+        self._execute_uf(uf_name='pipe.create', pipe_name='orig pos', pipe_type='frame order')
 
         # Load the structure.
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
+        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
 
     def pymol_display(self):
         """Display the results in PyMOL."""
 
         # Switch back to the main data pipe.
-        self.interpreter.pipe.switch('frame order')
+        self._execute_uf(uf_name='pipe.switch', pipe_name='frame order')
 
         # Load the PDBs of the 2 domains.
-        self.interpreter.structure.read_pdb('1J7O_1st_NH.pdb', dir=BASE_PATH)
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
+        self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH)
+        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
         # Create the cone PDB file.
         if self.cone:
-            self.interpreter.frame_order.cone_pdb(file='devnull', force=True)
-
-        # Set the domains.
-        self.interpreter.frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
-        self.interpreter.frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
+            self._execute_uf(uf_name='frame_order.pdb_model', ave_pos_file='devnull', rep_file='devnull', dist_file='devnull', force=True)
 
 
     def setup_full(self):
         """Set up the frame order model data from scratch."""
 
         # Create the data pipe.
-        self.interpreter.pipe.create(pipe_name='frame order', pipe_type='frame order')
+        self._execute_uf(uf_name='pipe.create', pipe_name='frame order', pipe_type='frame order')
 
         # Read the structures.
-        self.interpreter.structure.read_pdb('1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
+        self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
+        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
 
-        # Load the spins.
-        self.interpreter.structure.load_spins('@N')
-        self.interpreter.structure.load_spins('@H')
+        # Solve the {a, b, g} -> {0, b', g'} angle conversion problem in the rotor models by pre-rotating the domain!
+        if self.model in ['free rotor', 'iso cone, free rotor']:
+            # The rotation matrix.
+            R = zeros((3, 3), float64)
+            euler_to_R_zyz(self.ave_pos_alpha, self.ave_pos_beta, self.ave_pos_gamma, R)
 
-        # Load the NH vectors.
-        self.interpreter.structure.vectors(spin_id='@N', attached='H', ave=False)
+            # Rotate.
+            self._execute_uf(uf_name='structure.rotate', R=R, atom_id='#C-dom')
 
-        # Set the values needed to calculate the dipolar constant.
-        self.interpreter.value.set(1.041 * 1e-10, 'r', spin_id="@N")
-        self.interpreter.value.set('15N', 'heteronuc_type', spin_id="@N")
-        self.interpreter.value.set('1H', 'proton_type', spin_id="@N")
+        # Set up the 15N and 1H spins.
+        self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
+        self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
+        self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+        self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
+
+        # Define the magnetic dipole-dipole relaxation interaction.
+        self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        self._execute_uf(uf_name='dipole_pair.unit_vectors')
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
-            # Load the RDCs.
-            if not hasattr(status, 'flag_rdc') or status.flag_rdc:
-                self.interpreter.rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            # Load the RDCs (if present).
+            if (not hasattr(status, 'flag_rdc') or status.flag_rdc) and access(self.data_path+sep+'rdc_%s.txt'%ln[i], F_OK):
+                self._execute_uf(uf_name='rdc.read', align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
-            # The PCS.
-            if not hasattr(status, 'flag_pcs') or status.flag_pcs:
-                self.interpreter.pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            # The PCS (if present).
+            if not hasattr(status, 'flag_pcs') or status.flag_pcs and access(self.data_path+sep+'pcs_%s.txt'%ln[i], F_OK):
+                self._execute_uf(uf_name='pcs.read', align_id=ln[i], file='pcs_%s_subset.txt'%ln[i], dir=self.data_path, mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
-            self.interpreter.temperature(id=ln[i], temp=303)
-            self.interpreter.frq.set(id=ln[i], frq=900e6)
+            self._execute_uf(uf_name='temperature', id=ln[i], temp=303)
+            self._execute_uf(uf_name='frq.set', id=ln[i], frq=900e6)
 
         # Load the N-domain tensors (the full tensors).
-        self.interpreter.script(BASE_PATH + 'tensors.py')
+        self._execute_uf(uf_name='script', file=BASE_PATH + 'tensors.py')
 
         # Define the domains.
-        self.interpreter.domain(id='N', spin_id=":1-78")
-        self.interpreter.domain(id='C', spin_id=":80-148")
+        self._execute_uf(uf_name='domain', id='N', spin_id=":1-78")
+        self._execute_uf(uf_name='domain', id='C', spin_id=":80-148")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
         red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
+        ids =  ['dy', 'tb', 'tm', 'er']
         for i in range(len(full)):
             # Initialise the reduced tensor.
-            self.interpreter.align_tensor.init(tensor=red[i], params=(0,0,0,0,0))
+            self._execute_uf(uf_name='align_tensor.init', tensor=red[i], align_id=ids[i], params=(0, 0, 0, 0, 0))
 
             # Set the domain info.
-            self.interpreter.align_tensor.set_domain(tensor=full[i], domain='N')
-            self.interpreter.align_tensor.set_domain(tensor=red[i], domain='C')
+            self._execute_uf(uf_name='align_tensor.set_domain', tensor=full[i], domain='N')
+            self._execute_uf(uf_name='align_tensor.set_domain', tensor=red[i], domain='C')
 
             # Specify which tensor is reduced.
-            self.interpreter.align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
+            self._execute_uf(uf_name='align_tensor.reduction', full_tensor=full[i], red_tensor=red[i])
 
         # Select the model.
-        self.interpreter.frame_order.select_model(self.model)
+        self._execute_uf(uf_name='frame_order.select_model', model=self.model)
+
+        # Set up the mechanics of the displacement to the average domain position.
+        self._execute_uf(uf_name='frame_order.average_position', pivot='motional', translation=False)
 
         # Set the reference domain.
-        self.interpreter.frame_order.ref_domain('N')
+        self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
         # Set the initial pivot point.
         pivot = array([ 37.254, 0.5, 16.7465])
-        self.interpreter.frame_order.pivot(pivot, fix=True)
+        self._execute_uf(uf_name='frame_order.pivot', pivot=pivot, fix=True)
 
         # Set the paramagnetic centre.
-        self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
+        self._execute_uf(uf_name='paramag.centre', pos=[35.934, 12.194, -4.206])
 
 
     def setup_state(self):
         """Set up the frame order model data from a saved state."""
 
         # Load the save file.
-        self.interpreter.state.load('frame_order', dir=self.data_path)
+        self._execute_uf(uf_name='state.load', state='frame_order', dir=self.data_path)
 
         # Delete the RDC and PCS data as needed.
         if hasattr(status, 'flag_rdc') and not status.flag_rdc:
-            self.interpreter.rdc.delete()
+            self._execute_uf(uf_name='rdc.delete')
         if hasattr(status, 'flag_pcs') and not status.flag_pcs:
-            self.interpreter.pcs.delete()
+            self._execute_uf(uf_name='pcs.delete')
 
 
     def transform(self):
         """Transform the domain to the average position."""
 
         # Switch back to the main data pipe.
-        self.interpreter.pipe.switch('frame order')
+        self._execute_uf(uf_name='pipe.switch', pipe_name='frame order')
 
         # The rotation matrix.
         R = zeros((3, 3), float64)
@@ -266,16 +274,16 @@ class Base_script:
 
         # Delete the data pipe (if a loaded state has been used).
         if self.load_state:
-            self.interpreter.pipe.delete('ave pos')
+            self._execute_uf(uf_name='pipe.delete', pipe_name='ave pos')
 
         # Create a special data pipe for the average rigid body position.
-        self.interpreter.pipe.create(pipe_name='ave pos', pipe_type='frame order')
+        self._execute_uf(uf_name='pipe.create', pipe_name='ave pos', pipe_type='frame order')
 
         # Load the structure.
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
+        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
         # Rotate all atoms.
-        self.interpreter.structure.rotate(R=R, origin=pivot)
+        self._execute_uf(uf_name='structure.rotate', R=R, origin=pivot)
 
         # Write out the new PDB.
-        self.interpreter.structure.write_pdb('devnull')
+        self._execute_uf(uf_name='structure.write_pdb', file='devnull')

@@ -153,6 +153,8 @@ class Frame_order(SystemTestCase):
                 string = string + "%-15s %30.17g\n" % (param, obj)
 
         string = string +   "%-15s %30.17g\n" % ('chi2:', cdp.chi2)
+        if hasattr(cdp, 'num_int_pts'):
+            string = string +   "%-15s %30i\n" % ('num_int_pts:', cdp.num_int_pts)
         if hasattr(cdp, 'iter') and cdp.iter != None:
             string = string +   "%-15s %30i\n" % ('iter:', cdp.iter)
         if hasattr(cdp, 'f_count') and cdp.f_count != None:

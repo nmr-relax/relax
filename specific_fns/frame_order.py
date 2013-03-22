@@ -33,20 +33,24 @@ from re import search
 from warnings import warn
 
 # relax module imports.
+import arg_check
 from float import isNaN, isInf
-from generic_fns import align_tensor, pipes
+from generic_fns import pipes
 from generic_fns.angles import wrap_angles
+from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import return_spin, spin_loop
+from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
-from generic_fns.structure.geometric import create_cone_pdb, generate_vector_dist, generate_vector_residues
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from relax_io import open_write_file
-from relax_warnings import RelaxWarning, RelaxDeselectWarning
+from relax_warnings import RelaxWarning
+from specific_fns.api_base import API_base
+from specific_fns.api_common import API_common
 from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common
 
@@ -237,8 +241,8 @@ class Frame_order(API_base, API_common):
         list = []
 
         # RDC search.
-        for spin in spin_loop():
-            if hasattr(spin, 'rdc'):
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
                 list.append('rdc')
                 break
 
@@ -408,11 +412,11 @@ class Frame_order(API_base, API_common):
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
-            res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+            res_num = geometric.generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
 
             # The negative.
             if neg_cone:
-                res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
         # The full axis system.
         else:
@@ -457,9 +461,9 @@ class Frame_order(API_base, API_common):
                     axis_sim_neg = axes_sim_neg[:, :, j]
 
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+                    res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
         # The cone object.
         ##################
@@ -493,11 +497,11 @@ class Frame_order(API_base, API_common):
                 cone = Iso_cone(cone_theta)
 
             # Create the positive and negative cones.
-            create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
+            geometric.create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
 
             # The negative.
             if neg_cone:
-                create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
+                geometric.create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
 
 
         # Create the PDB file.
@@ -720,11 +724,22 @@ class Frame_order(API_base, API_common):
             if not hasattr(spin, 'pcs'):
                 continue
 
-            # The position list.
-            if type(spin.pos[0]) in [float, float64]:
-                atomic_pos.append(spin.pos)
+            # A single atomic position.
+            if len(spin.pos) == 1:
+                atomic_pos.append(spin.pos[0])
+
+            # Average multiple atomic positions.
             else:
-                raise RelaxError("The spin '%s' contains more than one atomic position %s." % (spin_id, spin.pos))
+                # First throw a warning to tell the user what is happening.
+                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
+
+                # The average position.
+                ave_pos = zeros(3, float64)
+                for i in range(len(spin.pos)):
+                    ave_pos += spin.pos[i]
+
+                # Store.
+                atomic_pos.append(ave_pos)
 
         # Convert to numpy objects.
         atomic_pos = array(atomic_pos, float64)
@@ -766,11 +781,26 @@ class Frame_order(API_base, API_common):
             if not self._check_rdcs(interatom, spin1, spin2):
                 continue
 
-            # Add the vectors.
+            # A single unit vector.
             if arg_check.is_float(interatom.vector[0], raise_error=False):
-                unit_vect.append([interatom.vector])
-            else:
                 unit_vect.append(interatom.vector)
+
+            # A single unit vector.
+            elif len(interatom.vector) == 1:
+                unit_vect.append(interatom.vector[0])
+
+            # Average multiple unit vectors.
+            else:
+                # First throw a warning to tell the user what is happening.
+                warn(RelaxWarning("Averaging the %s unit vectors for the RDC for the spin pair '%s' and '%s'." % (len(interatom.vector), interatom.spin_id1, interatom.spin_id2)))
+
+                # The average position.
+                ave_vector = zeros(3, float64)
+                for i in range(len(interatom.vector)):
+                    ave_vector += interatom.vector[i]
+
+                # Store.
+                unit_vect.append(ave_vector)
 
             # Gyromagnetic ratios.
             g1 = return_gyromagnetic_ratio(spin1.isotope)
@@ -1119,7 +1149,6 @@ class Frame_order(API_base, API_common):
             # Spin loop over the domain.
             id = cdp.domain[self._domain_moving()]
             pcs_index = 0
-            rdc_index = 0
             for spin in spin_loop(id):
                 # Skip deselected spins.
                 if not spin.select:
@@ -1137,17 +1166,26 @@ class Frame_order(API_base, API_common):
                     # Increment the index.
                     pcs_index += 1
 
-                # Spins with RDC data.
-                if rdc_flag and hasattr(spin, 'rdc'):
-                    # Initialise the data structure.
-                    if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = {}
+            # Interatomic data container loop.
+            rdc_index = 0
+            for interatom in interatomic_loop(id):
+                # Get the spins.
+                spin1 = return_spin(interatom.spin_id1)
+                spin2 = return_spin(interatom.spin_id2)
 
-                    # Store the back-calculated value.
-                    spin.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+                # RDC checks.
+                if not self._check_rdcs(interatom, spin1, spin2):
+                    continue
 
-                    # Increment the index.
-                    rdc_index += 1
+                # Initialise the data structure.
+                if not hasattr(interatom, 'rdc_bc'):
+                    interatom.rdc_bc = {}
+
+                # Store the back-calculated value.
+                interatom.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+
+                # Increment the index.
+                rdc_index += 1
 
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
