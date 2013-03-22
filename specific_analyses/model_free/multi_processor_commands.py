@@ -28,7 +28,7 @@ import sys
 from re import match
 
 # relax module imports.
-from maths_fns.mf import Mf
+from target_functions.mf import Mf
 from minfx.generic import generic_minimise
 from minfx.grid import grid, grid_point_array
 from multi import Memo, Result_command, Slave_command

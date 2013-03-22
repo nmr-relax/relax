@@ -42,8 +42,8 @@ from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.mass import centre_of_mass
-from maths_fns.n_state_model import N_state_opt
-from maths_fns.potential import quad_pot
+from target_functions.n_state_model import N_state_opt
+from target_functions.potential import quad_pot
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError

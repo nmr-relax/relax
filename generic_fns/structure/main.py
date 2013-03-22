@@ -39,7 +39,7 @@ from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from generic_fns.structure.statistics import atomic_rmsd
 from generic_fns.structure.superimpose import fit_to_first, fit_to_mean
-from maths_fns.ens_pivot_finder import Pivot_finder
+from target_functions.ens_pivot_finder import Pivot_finder
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from lib.io import get_file_path, open_write_file, write_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning

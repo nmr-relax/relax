@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,11 +25,11 @@ from numpy import array, float64, ones
 from unittest import TestCase
 
 # relax module imports.
-from maths_fns.n_state_model import N_state_opt
+from target_functions.n_state_model import N_state_opt
 
 
 class Test_n_state_model(TestCase):
-    """Unit tests for the maths_fns.n_state_model relax module."""
+    """Unit tests for the target_functions.n_state_model relax module."""
 
     def test_func1(self):
         """Unit test 1 of the func() method.

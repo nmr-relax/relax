@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,11 +25,11 @@ from sys import stdout
 from unittest import TestCase
 
 # relax module imports.
-from maths_fns.kronecker_product import *
+from target_functions.kronecker_product import *
 
 
 class Test_kronecker_product(TestCase):
-    """Unit tests for the maths_fns.kronecker_product relax module."""
+    """Unit tests for the target_functions.kronecker_product relax module."""
 
     def setUp(self):
         """Set up data used by the unit tests."""

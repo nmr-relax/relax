@@ -31,7 +31,7 @@ if dep_check.scipy_module:
     from scipy.integrate import dblquad
 
 # relax module imports.
-from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
+from target_functions.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
 
 
 def compile_2nd_matrix_iso_cone_torsionless(matrix, Rx2_eigen, cone_theta):

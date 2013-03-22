@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base_script import Base_script
-from maths_fns.order_parameters import iso_cone_theta_to_S
+from target_functions.order_parameters import iso_cone_theta_to_S
 from lib.geometry.rotations import reverse_euler_zyz
 
 

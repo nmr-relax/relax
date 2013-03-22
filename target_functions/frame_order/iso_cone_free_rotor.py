@@ -26,8 +26,8 @@
 from math import cos
 
 # relax module imports.
-from maths_fns.frame_order.matrix_ops import rotate_daeg
-from maths_fns import order_parameters
+from target_functions.frame_order.matrix_ops import rotate_daeg
+from target_functions import order_parameters
 
 
 def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, s1):

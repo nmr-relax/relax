@@ -32,7 +32,7 @@ import sys
 # relax module imports.
 from data.data_classes import Element
 from data.relax_xml import fill_object_contents, xml_to_object
-from maths_fns.coord_transform import spherical_to_cartesian
+from target_functions.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import two_vect_to_R
 from lib.errors import RelaxError
 

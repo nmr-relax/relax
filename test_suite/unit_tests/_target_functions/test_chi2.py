@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,11 +24,11 @@ from numpy import array, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
-from maths_fns.chi2 import *
+from target_functions.chi2 import *
 
 
 class Test_chi2(TestCase):
-    """Unit tests for the maths_fns.chi2 relax module."""
+    """Unit tests for the target_functions.chi2 relax module."""
 
     def setUp(self):
         """Create a number of objects for the calculation and testing of the chi-squared equations."""

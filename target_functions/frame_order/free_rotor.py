@@ -23,7 +23,7 @@
 """Module for the handling of Frame Order."""
 
 # relax module imports.
-from maths_fns.frame_order.matrix_ops import rotate_daeg
+from target_functions.frame_order.matrix_ops import rotate_daeg
 
 
 def compile_2nd_matrix_free_rotor(matrix, Rx2_eigen):

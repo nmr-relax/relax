@@ -45,7 +45,7 @@ __all__ = [
     '_data',
     '_generic_fns',
     '_lib',
-    '_maths_fns',
+    '_target_functions',
     '_multi',
     '_opendx',
     '_prompt',

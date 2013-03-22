@@ -31,9 +31,9 @@ if dep_check.scipy_module:
     from scipy.integrate import dblquad, quad
 
 # relax module imports.
-from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
-from maths_fns.frame_order.pec import pec
-from maths_fns.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
+from target_functions.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
+from target_functions.frame_order.pec import pec
+from target_functions.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
 
 
 def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, theta_y):

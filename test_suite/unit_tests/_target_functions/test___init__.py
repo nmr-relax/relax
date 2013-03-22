@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,61 +20,29 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi
-from unittest import TestCase
+from os import sep
+import sys
 
 # relax module imports.
-from maths_fns.frame_order.pec import pec
+from test_suite.unit_tests.package_checking import PackageTestCase
+import target_functions
 
 
-class Test_pseudo_ellipse(TestCase):
-    """Unit tests for the maths_fns.pseudo_ellipse relax module."""
+class Test___init__(PackageTestCase):
+    """Unit tests for the target_functions package."""
 
+    def setUp(self):
+        """Set up for the package checking."""
 
-    def test_pec_0_0(self):
-        """Test the pec() function for x = 0, y = 0 (nothing)."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(0, 0), 0.0)
-
-
-    def test_pec_0_1(self):
-        """Test the pec() function for x = 0, y = 1 (nothing)."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(0, 1), 0.0)
-
-
-    def test_pec_1_0(self):
-        """Test the pec() function for x = 1, y = 0 (nothing)."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(1, 0), 0.0)
-
-
-    def test_pec_partial1(self):
-        """Test the pec() function for x = pi/2, y = pi."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(pi/2, pi), 9.2141334381797524)
-
-
-    def test_pec_partial2(self):
-        """Test the pec() function for x = pi/2, y = pi/2."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(pi/2, pi/2), 2*pi)
-
-
-    def test_pec_partial3(self):
-        """Test the pec() function for x = pi/6, y = pi/2."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(pi/6, pi/2), 2.3058688920532275)
-
-
-    def test_pec_pi_pi(self):
-        """Test the pec() function for x = pi, y = pi (full sphere)."""
-
-        # Check the value.
-        self.assertAlmostEqual(pec(pi, pi), 4*pi)
+        self.package = target_functions
+        self.package_name = 'target_functions'
+        self.package_path = sys.path[0] + sep + 'target_functions'
+        self.blacklist = [
+            'c_chi2.c',
+            'c_chi2.h',
+            'exponential.c',
+            'exponential.h',
+            'relax_fit.c',
+            'relax_fit.h',
+            'relax_fit.so'    # May not be present on all systems.
+        ]

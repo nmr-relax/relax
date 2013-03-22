@@ -46,10 +46,10 @@ class Main:
 
         # The compilation commands.
         commands = []
-        commands.append("%s -o maths_fns/c_chi2.os -c -I%s -I%s -fPIC maths_fns/c_chi2.c" % (COMPILER, include, numpy_core))
-        commands.append("%s -o maths_fns/exponential.os -c -I%s -I%s -fPIC maths_fns/exponential.c" % (COMPILER, include, numpy_core))
-        commands.append("%s -o maths_fns/relax_fit.os -c -I%s -I%s -fPIC maths_fns/relax_fit.c" % (COMPILER, include, numpy_core))
-        commands.append("%s -o maths_fns/relax_fit.so -shared maths_fns/c_chi2.os maths_fns/exponential.os maths_fns/relax_fit.os" % COMPILER)
+        commands.append("%s -o target_functions/c_chi2.os -c -I%s -I%s -fPIC target_functions/c_chi2.c" % (COMPILER, include, numpy_core))
+        commands.append("%s -o target_functions/exponential.os -c -I%s -I%s -fPIC target_functions/exponential.c" % (COMPILER, include, numpy_core))
+        commands.append("%s -o target_functions/relax_fit.os -c -I%s -I%s -fPIC target_functions/relax_fit.c" % (COMPILER, include, numpy_core))
+        commands.append("%s -o target_functions/relax_fit.so -shared target_functions/c_chi2.os target_functions/exponential.os target_functions/relax_fit.os" % COMPILER)
 
         # Execute.
         for command in commands:

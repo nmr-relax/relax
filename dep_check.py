@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -234,8 +234,8 @@ except ImportError:
 
 # Relaxation curve fitting.
 try:
-    from maths_fns import relax_fit
-    from maths_fns.relax_fit import setup
+    from target_functions import relax_fit
+    from target_functions.relax_fit import setup
     del setup
     C_module_exp_fn = True
 except ImportError:
@@ -246,7 +246,7 @@ except ImportError:
     file = 'relax_fit.so'
     if system == 'Windows' or system == 'Microsoft':
         file = 'relax_fit.pyd'
-    if not access('maths_fns' + sep + file, F_OK):
+    if not access('target_functions' + sep + file, F_OK):
         C_module_exp_fn_mesg = "ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled."
 
     # Show the full error.

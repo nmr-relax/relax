@@ -30,7 +30,7 @@ from warnings import warn
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
-from maths_fns.jw_mapping import Mapping
+from target_functions.jw_mapping import Mapping
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from lib.warnings import RelaxDeselectWarning

@@ -581,7 +581,7 @@ class Info_box(object):
         path.append("Path")
 
         # relaxation curve-fitting.
-        name.append('maths_fns.relax_fit')
+        name.append('target_functions.relax_fit')
         status.append(dep_check.C_module_exp_fn)
         if hasattr(dep_check, 'relax_fit'):
             file_type.append(self.file_type(dep_check.relax_fit.__file__))

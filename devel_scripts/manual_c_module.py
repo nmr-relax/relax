@@ -24,10 +24,10 @@ elif target == '3.3':
 numpy_include = '%s/lib/python%s/site-packages/numpy/core/include/' % (path, target)
 
 # Python 3.2 installed in the home directory.
-cmd.append("gcc -o maths_fns/c_chi2.os -c -I%s -I%s -fPIC maths_fns/c_chi2.c" % (include, numpy_include))
-cmd.append("gcc -o maths_fns/exponential.os -c -I%s -I%s -fPIC maths_fns/exponential.c" % (include, numpy_include))
-cmd.append("gcc -o maths_fns/relax_fit.os -c -I%s -I%s -fPIC maths_fns/relax_fit.c" % (include, numpy_include))
-cmd.append("gcc -o maths_fns/relax_fit.so -shared maths_fns/c_chi2.os maths_fns/exponential.os maths_fns/relax_fit.os")
+cmd.append("gcc -o target_functions/c_chi2.os -c -I%s -I%s -fPIC target_functions/c_chi2.c" % (include, numpy_include))
+cmd.append("gcc -o target_functions/exponential.os -c -I%s -I%s -fPIC target_functions/exponential.c" % (include, numpy_include))
+cmd.append("gcc -o target_functions/relax_fit.os -c -I%s -I%s -fPIC target_functions/relax_fit.c" % (include, numpy_include))
+cmd.append("gcc -o target_functions/relax_fit.so -shared target_functions/c_chi2.os target_functions/exponential.os target_functions/relax_fit.os")
 
 
 # Execute the commands.

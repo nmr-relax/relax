@@ -43,7 +43,7 @@ from user_functions.objects import Desc_container
 
 # C modules.
 if C_module_exp_fn:
-    from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
+    from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 
 class Relax_fit(API_base, API_common):

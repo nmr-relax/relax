@@ -5,7 +5,7 @@
 #                         (see https://gna.org/users/varioustoxins             #
 #                                      for contact details)                    #
 #                                                                              #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                    #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                    #
 #                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #
@@ -692,7 +692,7 @@ if __name__ == '__main__':
       <file-path>  =  a file containing a test case class files of the same
                       name with the first letter capitalised
 
-                      e.g. maths_fns/test_chi2.py will be assumed to contain
+                      e.g. target_functions/test_chi2.py will be assumed to contain
                       a test case class called Test_chi2
 
       <dir-path>   =  a path which will be recursivley searched for <file-path>s

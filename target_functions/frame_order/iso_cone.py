@@ -32,7 +32,7 @@ if dep_check.scipy_module:
     from scipy.integrate import tplquad
 
 # relax module imports.
-from maths_fns.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
+from target_functions.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
 
 
 def compile_2nd_matrix_iso_cone(matrix, Rx2_eigen, cone_theta, sigma_max):
