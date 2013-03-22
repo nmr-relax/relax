@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,32 +19,43 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package containing all of relax's number crunching code."""
+# Module docstring.
+"""Module for the handling of Frame Order."""
+
+# relax module imports.
+from maths_fns.frame_order.matrix_ops import rotate_daeg
+from multi import Memo, Result_command, Slave_command
 
 
-__all__ = [ 'alignment_tensor',
-            'chi2',
-            'coord_transform',
-            'consistency_tests',
-            'correlation_time',
-            'direction_cosine',
-            'ens_pivot_finder',
-            'frame_order',
-            'jw_mapping',
-            'jw_mf_comps',
-            'jw_mf',
-            'kronecker_product',
-            'mf',
-            'n_state_model',
-            'order_parameters',
-            'paramag_centre',
-            'pcs',
-            'potential',
-            'rdc',
-            'ri_comps',
-            'ri_prime',
-            'ri',
-            'rotation_matrix',
-            'weights',
-            'vectors' ]
+def compile_2nd_matrix_free_rotor(matrix, Rx2_eigen):
+    """Generate the rotated 2nd degree Frame Order matrix for the free rotor model.
+
+    The rotor axis is assumed to be parallel to the z-axis in the eigenframe.
+
+
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
+    @type Rx2_eigen:    numpy 9D, rank-2 array
+    """
+
+    # Zeros.
+    for i in range(9):
+        for j in range(9):
+            matrix[i, j] = 0.0
+
+    # Diagonal.
+    matrix[0, 0] = 0.5
+    matrix[1, 1] = 0.5
+    matrix[3, 3] = 0.5
+    matrix[4, 4] = 0.5
+    matrix[8, 8] = 1
+
+    # Off diagonal set 1.
+    matrix[0, 4] = matrix[4, 0] = 0.5
+
+    # Off diagonal set 2.
+    matrix[1, 3] = matrix[3, 1] = -0.5
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, Rx2_eigen)
