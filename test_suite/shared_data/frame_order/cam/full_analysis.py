@@ -164,6 +164,7 @@ paramag.centre(pos=[35.934, 12.194, -4.206])
 # Duplicate the PCS data subset data pipe to create a data pipe containing all the PCS data.
 DATA = "Data - " + PIPE_BUNDLE
 pipe.copy(pipe_from=SUBSET, pipe_to=DATA, bundle_to=PIPE_BUNDLE)
+pipe.switch(DATA)
 
 # Load the complete PCS data into the already filled data pipe.
 for i in range(len(ln)):

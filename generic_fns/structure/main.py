@@ -427,7 +427,6 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
             mol_names.append(mol_name_target)
         else:
             mol_names.append(mol_name)
-        mol_names.append(mol_name)
         res_nums.append(res_num)
         res_names.append(res_name)
         spin_nums.append(atom_num)
@@ -612,7 +611,7 @@ def rmsd(atom_id=None, models=None):
     for model in models:
         coord.append([])
         for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord[-1].append(pos)
+            coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
     # Calculate the RMSD.

@@ -28,7 +28,7 @@ from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, eye, float64, identity, ones, transpose, zeros
-from numpy.linalg import inv
+from numpy.linalg import inv, norm
 from re import search
 import sys
 from warnings import warn
@@ -639,7 +639,7 @@ class Frame_order(API_base, API_common):
                 continue
 
             # A single atomic position.
-            if len(spin.pos) == 1:
+            if spin.pos.shape == (3,):
                 atomic_pos.append(spin.pos[0])
 
             # Average multiple atomic positions.
@@ -810,12 +810,8 @@ class Frame_order(API_base, API_common):
                 continue
 
             # A single unit vector.
-            if arg_check.is_float(interatom.vector[0], raise_error=False):
+            if interatom.vector.shape == (3,):
                 unit_vect.append(interatom.vector)
-
-            # A single unit vector.
-            elif len(interatom.vector) == 1:
-                unit_vect.append(interatom.vector[0])
 
             # Average multiple unit vectors.
             else:
@@ -829,6 +825,9 @@ class Frame_order(API_base, API_common):
 
                 # Store.
                 unit_vect.append(ave_vector)
+
+            # Normalise (to be sure).
+            unit_vect[-1] = unit_vect[-1] / norm(unit_vect[-1])
 
             # Gyromagnetic ratios.
             g1 = return_gyromagnetic_ratio(spin1.isotope)
@@ -1354,9 +1353,9 @@ class Frame_order(API_base, API_common):
             rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, absolute_rdc = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Data checks.
-        if not len(pcs):
+        if pcs != None and not len(pcs):
             raise RelaxNoPCSError
-        if not len(rdcs):
+        if rdcs != None and not len(rdcs):
             raise RelaxNoRDCError
 
         # Get the atomic_positions.
