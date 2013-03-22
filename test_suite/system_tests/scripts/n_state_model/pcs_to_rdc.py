@@ -34,7 +34,7 @@ const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
 
 # The tensor.
 tensor = 'A'
-self._execute_uf(uf_name='align_tensor.init', tensor=tensor, params=(4.724/const,  11.856/const, 0, 0, 0), param_types=2)
+self._execute_uf(uf_name='align_tensor.init', tensor=tensor, params=(4.724/const,  11.856/const, 0, 0, 0), align_id=tensor, param_types=2)
 
 # The temperature.
 self._execute_uf(uf_name='temperature', id=tensor, temp=298)

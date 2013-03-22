@@ -16,6 +16,10 @@ from math import cos, pi, sqrt
 self._execute_uf('test', 'N-state', uf_name='pipe.create')
 
 
+# Define the two domains.
+domain('C')
+domain('N')
+
 # Load the C-terminal alignment tensors.
 self._execute_uf(uf_name='align_tensor.init', tensor='chi1 C-dom', params=(-1/2., -1/2.,  0.,   0.,     0.))
 self._execute_uf(uf_name='align_tensor.init', tensor='chi2 C-dom', params=(-1/8., -7/8.,  0.,   0.,     0.))
