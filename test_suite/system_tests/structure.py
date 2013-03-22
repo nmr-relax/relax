@@ -1362,7 +1362,7 @@ class Structure(SystemTestCase):
         """Test of the structure.superimpose user function, fitting to the first structure."""
 
         # Path of the structure file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
 
         # Load the two rotated structures.
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
@@ -1392,7 +1392,7 @@ class Structure(SystemTestCase):
         """Test of the structure.superimpose user function, fitting to the mean structure."""
 
         # Path of the structure file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
 
         # Load the two rotated structures.
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
@@ -1414,7 +1414,7 @@ class Structure(SystemTestCase):
         """Second test of the structure.superimpose user function, fitting to the mean structure."""
 
         # Path of the structure file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
 
         # Load the two rotated structures.
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')

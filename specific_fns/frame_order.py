@@ -725,19 +725,19 @@ class Frame_order(API_base, API_common):
                 raise RelaxError("The spin '%s' contains more than one XH bond vector %s." % (spin_id, vect))
 
             # Checks.
-            if not hasattr(spin, 'heteronucleus'):
+            if not hasattr(spin, 'heteronuc_type'):
                 raise RelaxSpinTypeError
-            if not hasattr(spin, 'proton'):
+            if not hasattr(spin, 'proton_type'):
                 raise RelaxProtonTypeError
-            if not hasattr(spin, 'bond_length'):
+            if not hasattr(spin, 'r'):
                 raise RelaxNoValueError("bond length")
 
             # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronucleus)
-            gh = return_gyromagnetic_ratio(spin.proton)
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.bond_length))
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
 
         # The RDC data.
         for align_id in cdp.align_ids:

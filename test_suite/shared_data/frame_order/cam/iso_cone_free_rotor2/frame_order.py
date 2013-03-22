@@ -47,9 +47,9 @@ class Analysis:
         structure.vectors(spin_id='@N', attached='H', ave=False)
 
         # Set the values needed to calculate the dipolar constant.
-        value.set(1.041 * 1e-10, 'bond_length', spin_id="@N")
-        value.set('15N', 'heteronucleus', spin_id="@N")
-        value.set('1H', 'proton', spin_id="@N")
+        value.set(1.041 * 1e-10, 'r', spin_id="@N")
+        value.set('15N', 'heteronuc_type', spin_id="@N")
+        value.set('1H', 'proton_type', spin_id="@N")
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
