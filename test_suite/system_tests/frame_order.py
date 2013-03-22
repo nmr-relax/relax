@@ -86,6 +86,28 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create('test', 'frame order')
 
 
+    def check_chi2(self, chi2=None, places=1):
+        """Check the function evaluation."""
+
+        # Switch back to the original pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, chi2, places, msg=self.mesg)
+
+
+    def flags(self, rdc=True, pcs=True, opt=False):
+        """Set a number of flags for the scripts."""
+
+        # Store the flags.
+        ds.flag_rdc = rdc
+        ds.flag_pcs = pcs
+        ds.flag_opt = opt
+
+
     def mesg_opt_debug(self):
         """Method for returning a string to help debug the minimisation.
 
@@ -170,64 +192,55 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
-        # Setup.
-        ds.flag_rdc = True
-        ds.flag_pcs = True
-        ds.flag_opt = False
-
-        # Execute the script.
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
-
-        # Switch back to the original pipe.
-        self.interpreter.pipe.switch('frame order')
-
-        # Get the debugging message.
-        self.mesg = self.mesg_opt_debug()
-
-        # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 13.8, 1, msg=self.mesg)
+        self.check_chi2(13.8)
 
 
-    def fixme_test_cam_free_rotor2(self):
+    def test_cam_free_rotor_no_rdc(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+        self.check_chi2(9.8)
+
+
+    def test_cam_free_rotor_no_pcs(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+        self.check_chi2(4.8)
+
+
+    def test_cam_free_rotor2(self):
         """Test the second free rotor frame order model of CaM."""
 
-        # Execute the script.
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+        self.check_chi2(396.8)
 
-        # The base data.
-        pivot = array([ 37.254, 0.5, 16.7465])
-        com = array([ 26.83678091, -12.37906417,  28.34154128])
-        pivot_com_axis = com - pivot
-        rot_axis = array([ 0.62649633,  0.77455282, -0.08700742])
 
-        # The average position CoM.
-        ave_pivot_com_axis = ds['ave pos'].CoM - pivot
+    def test_cam_free_rotor2_no_rdc(self):
+        """Test the second free rotor frame order model of CaM."""
 
-        # The projection of the CoMs onto the rotation axis.
-        orig_proj = dot(pivot_com_axis, rot_axis)
-        ave_proj = dot(ave_pivot_com_axis, rot_axis)
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+        self.check_chi2(378.7)
 
-        # Check that the projections are equal.
-        self.assertAlmostEqual(orig_proj, ave_proj, 0)
 
-        # The rotation axis.
-        self.interpreter.pipe.switch('frame order')
-        spherical_vect = zeros(3, float64)
-        spherical_vect[0] = 1.0
-        spherical_vect[1] = cdp.axis_theta
-        spherical_vect[2] = cdp.axis_phi
-        cart_vect = zeros(3, float64)
-        spherical_to_cartesian(spherical_vect, cart_vect)
-        print("\nReal rotation axis:   %s" % repr(rot_axis))
-        print("Fitted rotation axis: %s" % repr(cart_vect))
+    def test_cam_free_rotor2_no_pcs(self):
+        """Test the second free rotor frame order model of CaM."""
 
-        # The dot product.
-        angle = acos(dot(cart_vect, rot_axis))
-        if angle > pi/2:
-            angle = acos(dot(cart_vect, -rot_axis))
-
-        # Check the angle.
-        self.assertAlmostEqual(angle, 0.0, 2)
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+        self.check_chi2(5.1)
 
 
     def fixme_test_cam_iso_cone_free_rotor(self):

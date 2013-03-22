@@ -64,7 +64,7 @@ class Frame_order(API_base, API_common):
         self.eliminate = self._eliminate_false
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.set_param_values = self._set_param_values_spin
+        self.set_param_values = self._set_param_values
 
         # Set up the global parameters.
         self.PARAMS.add('ave_pos_alpha', scope='global', units='rad', desc='The average position alpha Euler angle', py_type=float, set='params', err=True, sim=True)
