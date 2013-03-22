@@ -1297,7 +1297,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
-def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_ave=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
+def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword sigma_max:     The maximum rotor angle.
@@ -1310,8 +1310,6 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
     @type r_ln_pivot:       numpy rank-1, 3D array
     @keyword A:             The full alignment tensor of the non-moving domain.
     @type A:                numpy rank-2, 3D array
-    @keyword R_ave:         The rotation matrix for rotating from the reference frame to the average position.
-    @type R_ave:            numpy rank-2, 3D array
     @keyword R_eigen:       The eigenframe rotation matrix.
     @type R_eigen:          numpy rank-2, 3D array
     @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
@@ -1329,42 +1327,33 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
     Ri_prime[2, 1] = 0.0
     Ri_prime[2, 2] = 1.0
 
-    # Pre-calculate a dot product for speed ups in the integration.
-    dot_RT_eigen_R_ave = dot(RT_eigen, R_ave)
-
     # Perform numerical integration.
-    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, r_pivot_atom, r_ln_pivot, A, R_ave, R_eigen, RT_eigen, Ri_prime, dot_RT_eigen_R_ave))
+    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
 
     # The surface area normalisation factor.
     SA = 2.0 * sigma_max
 
     # Return the value.
-    return result[0] / SA
+    return c * result[0] / SA
 
 
-def pcs_pivot_motion_rotor(sigma_i, c, r_pivot_atom, r_ln_pivot, A, R_ave, R_eigen, RT_eigen, Ri_prime, dot_RT_eigen_R_ave):
+def pcs_pivot_motion_rotor(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
     @param sigma_i:             The rotor angle for state i.
     @type sigma_i:              float
-    @param c:                   The PCS constant (without the interatomic distance and in Angstrom units).
-    @type c:                    float
     @param r_pivot_atom:        The pivot point to atom vector.
     @type r_pivot_atom:         numpy rank-1, 3D array
     @param r_ln_pivot:          The lanthanide position to pivot point vector.
     @type r_ln_pivot:           numpy rank-1, 3D array
     @param A:                   The full alignment tensor of the non-moving domain.
     @type A:                    numpy rank-2, 3D array
-    @param R_ave:               The rotation matrix for rotating from the reference frame to the average position.
-    @type R_ave:                numpy rank-2, 3D array
     @param R_eigen:             The eigenframe rotation matrix.
     @type R_eigen:              numpy rank-2, 3D array
     @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
     @type RT_eigen:             numpy rank-2, 3D array
     @param Ri_prime:            The empty rotation matrix for the in-frame rotor motion for state i.
     @type Ri_prime:             numpy rank-2, 3D array
-    @param dot_RT_eigen_R_ave:  The dot product of RT_eigen and R_ave to speed up this calculation.
-    @type dot_RT_eigen_R_ave:   numpy rank-2, 3D array
     @return:                    The PCS value for the changed position.
     @rtype:                     float
     """
@@ -1378,7 +1367,7 @@ def pcs_pivot_motion_rotor(sigma_i, c, r_pivot_atom, r_ln_pivot, A, R_ave, R_eig
     Ri_prime[1, 1] =  c_sigma
 
     # The rotation.
-    R_i = dot(R_eigen, dot(Ri_prime, dot_RT_eigen_R_ave))
+    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
 
     # Calculate the new vector.
     vect = dot(R_i, r_pivot_atom) + r_ln_pivot
@@ -1390,9 +1379,9 @@ def pcs_pivot_motion_rotor(sigma_i, c, r_pivot_atom, r_ln_pivot, A, R_ave, R_eig
     proj = dot(vect, dot(A, vect))
 
     # The PCS.
-    pcs = c / length**5 * proj
+    pcs = proj / length**5
 
-    # Return the value.
+    # Return the PCS value (without the PCS constant).
     return pcs
 
 

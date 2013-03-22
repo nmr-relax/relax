@@ -645,14 +645,6 @@ class Frame_order(API_base, API_common):
 
                 # Skip spins without PCS data.
                 if not hasattr(spin, 'pcs'):
-                    # Add rows of None if other alignment data exists.
-                    if hasattr(spin, 'rdc'):
-                        pcs[-1].append(None)
-                        pcs_err[-1].append(None)
-                        pcs_weight[-1].append(None)
-                        j = j + 1
-
-                    # Jump to the next spin.
                     continue
 
                 # Append the PCSs to the list.
@@ -1061,6 +1053,52 @@ class Frame_order(API_base, API_common):
             # Initialise the new tensor.
             align_tensor.init(tensor=name, params=(target_fn.A_5D_bc[5*i + 0], target_fn.A_5D_bc[5*i + 1], target_fn.A_5D_bc[5*i + 2], target_fn.A_5D_bc[5*i + 3], target_fn.A_5D_bc[5*i + 4]), param_types=2)
 
+        # The RDC data.
+        for i in xrange(len(cdp.align_ids)):
+            # The alignment ID.
+            align_id = cdp.align_ids[i]
+
+            # Data flags
+            rdc_flag = False
+            if hasattr(cdp, 'rdc_ids') and align_id in cdp.rdc_ids:
+                rdc_flag = True
+            pcs_flag = False
+            if hasattr(cdp, 'pcs_ids') and align_id in cdp.pcs_ids:
+                pcs_flag = True
+
+            # Spin loop over the domain.
+            id = cdp.domain[self._domain_moving()]
+            pcs_index = 0
+            rdc_index = 0
+            for spin in spin_loop(id):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Spins with PCS data.
+                if pcs_flag and hasattr(spin, 'pcs'):
+                    # Initialise the data structure.
+                    if not hasattr(spin, 'pcs_bc'):
+                        spin.pcs_bc = {}
+
+                    # Store the back-calculated value (in ppm).
+                    spin.pcs_bc[align_id] = target_fn.pcs_theta[i, pcs_index] * 1e6
+
+                    # Increment the index.
+                    pcs_index += 1
+
+                # Spins with RDC data.
+                if rdc_flag and hasattr(spin, 'rdc'):
+                    # Initialise the data structure.
+                    if not hasattr(spin, 'rdc_bc'):
+                        spin.rdc_bc = {}
+
+                    # Store the back-calculated value.
+                    spin.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+
+                    # Increment the index.
+                    rdc_index += 1
+
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
         """Initialise the target function for optimisation or direct calculation.
@@ -1194,14 +1232,17 @@ class Frame_order(API_base, API_common):
                 setattr(cdp, param, 0.0)
 
 
-    def _unpack_opt_results(self, results, sim_index=None):
+    def _unpack_opt_results(self, results, scaling=False, scaling_matrix=None, sim_index=None):
         """Unpack and store the Frame Order optimisation results.
 
-        @param results:     The results tuple returned by the minfx generic_minimise() function.
-        @type results:      tuple
-        @param sim_index:   The index of the simulation to optimise.  This should be None for normal
-                            optimisation.
-        @type sim_index:    None or int
+        @param results:             The results tuple returned by the minfx generic_minimise() function.
+        @type results:              tuple
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword scaling_matrix:    The scaling matrix.
+        @type scaling_matrix:       numpy rank-2 array
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None for normal optimisation.
+        @type sim_index:            None or int
          """
 
         # Disassemble the results.
@@ -1220,6 +1261,10 @@ class Frame_order(API_base, API_common):
         # Catch chi-squared values of NaN.
         if isNaN(func):
             raise RelaxNaNError('chi-squared')
+
+        # Scaling.
+        if scaling:
+            param_vector = dot(scaling_matrix, param_vector)
 
         # Pivot point.
         if not self._pivot_fixed():
@@ -1626,24 +1671,19 @@ class Frame_order(API_base, API_common):
         @type min_algor:        str
         @param min_options:     An array of options to be used by the minimisation algorithm.
         @type min_options:      array of str
-        @param func_tol:        The function tolerance which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
+        @param func_tol:        The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
+        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type grad_tol:         None or float
         @param max_iterations:  The maximum number of iterations for the algorithm.
         @type max_iterations:   int
         @param constraints:     If True, constraints are used during optimisation.
         @type constraints:      bool
-        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow
-                                the problem to be better conditioned.
+        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
         @type scaling:          bool
-        @param verbosity:       A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
+        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:        int
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
+        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:        None or int
         @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:            array of numbers
@@ -1678,7 +1718,7 @@ class Frame_order(API_base, API_common):
             results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
-        self._unpack_opt_results(results, sim_index)
+        self._unpack_opt_results(results, scaling, scaling_matrix, sim_index)
 
         # Store the back-calculated tensors.
         self._store_bc_data(model)
