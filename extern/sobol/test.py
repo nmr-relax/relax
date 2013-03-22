@@ -3,7 +3,7 @@ from numpy import float64, ones, zeros
 from numpy.linalg import norm
 
 # relax module imports.
-from sobol_lib import i4_sobol
+from extern.sobol.sobol_lib import i4_sobol
 
 
 # Some variables.

@@ -34,15 +34,15 @@ class Generate(Main):
         """Set up the rotation for state i."""
 
         # Loop until a valid rotation matrix is found.
-        while 1:
+        while True:
             # The random rotation matrix.
             R_random_hypersphere(self.R)
 
             # Rotate the Z-axis.
-            rot_axis = dot(self.R, self.axes[:,2])
+            rot_axis = dot(self.R, self.axes[:, 2])
 
             # Calculate the projection and angle.
-            proj = dot(self.axes[:,2], rot_axis)
+            proj = dot(self.axes[:, 2], rot_axis)
 
             # Calculate the angle, taking float16 truncation errors into account.
             if proj > 1.0:

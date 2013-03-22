@@ -35,7 +35,7 @@ class Generate(Main):
         print("Rotation angle: %s" % angle)
 
         # The rotation matrix.
-        axis_angle_to_R(self.axes[:,2], angle, self.R)
+        axis_angle_to_R(self.axes[:, 2], angle, self.R)
         print("Rotation matrix:\n%s\n" % self.R)
 
 

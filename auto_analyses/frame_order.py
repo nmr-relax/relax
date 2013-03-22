@@ -575,8 +575,7 @@ class Frame_order_analysis:
                 results_dir = cdp.model
 
             # Create a PDB file representation of the motions.
-            if cdp.model != 'rigid':
-                self.interpreter.frame_order.cone_pdb(file='cone.pdb', dir=results_dir, force=True)
+            self.interpreter.frame_order.pdb_model(file='frame_order.pdb', dist_file='frame_order_distribution.pdb', dir=results_dir, force=True)
 
             # Create the visualisation script.
             script = open_write_file(file_name='pymol_display.py', dir=results_dir, force=True)
@@ -585,13 +584,10 @@ class Frame_order_analysis:
             script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % results_dir)
 
             # The script contents.
-            script.write("# Load the relax state file.\n")
-            script.write("state.load('results')\n")
-            script.write("\n")
             script.write("# PyMOL visualisation.\n")
             script.write("pymol.view()\n")
             script.write("pymol.command('show spheres')\n")
-            script.write("pymol.cone_pdb('cone.pdb')\n")
+            script.write("pymol.frame_order(file='frame_order.pdb', dist_file='frame_order_distribution.pdb')\n")
 
             # Close the file.
             script.close()

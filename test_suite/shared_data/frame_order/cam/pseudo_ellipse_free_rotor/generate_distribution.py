@@ -37,7 +37,7 @@ class Generate(Main):
         """Set up the rotation for state i."""
 
         # Loop until a valid rotation matrix is found.
-        while 1:
+        while True:
             # The random rotation matrix.
             R_random_hypersphere(self.R)
 

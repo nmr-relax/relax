@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from numpy import bitwise_xor
-from sobol_lib import *
+from extern.sobol.sobol_lib import *
 import datetime
 def sobol_test01 ( ):
 #*****************************************************************************80
@@ -194,10 +194,10 @@ def sobol_test05 ( ):
   print('  In    Out')
   print('')
 
-  for i in range( 0 , 10+1):
+  for i in range( 0, 10+1):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out= '%6d %6d  '%( seed, seed_out )
-    for j in range( 1 , dim_num+1):
+    for j in range( 1, dim_num+1):
       out+= '%10f  '% r[j-1] 
     print(out)
     seed = seed_out
@@ -213,10 +213,10 @@ def sobol_test05 ( ):
   print('  In    Out')
   print('')
 
-  for i in range( 1 , 6):
+  for i in range( 1, 6):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out='%6d %6d  '%( seed, seed_out)
-    for j in range( 1 , dim_num+1):
+    for j in range( 1, dim_num+1):
       out+= '%10f  '% r[j-1] 
     print(out)
     seed = seed_out
@@ -231,10 +231,10 @@ def sobol_test05 ( ):
   print('  In    Out')
   print('')
 
-  for i in range( 0 , 11):
+  for i in range( 0, 11):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out='%6d %6d  '%( seed, seed_out)
-    for j in range( 1 , dim_num+1):
+    for j in range( 1, dim_num+1):
       out+= '%10f  '% r[j-1] 
     print(out)
     seed = seed_out
@@ -250,10 +250,10 @@ def sobol_test05 ( ):
   print('  In    Out')
   print('')
 
-  for i in range( 1 , 6):
+  for i in range( 1, 6):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out= '%6d %6d  '%( seed, seed_out )
-    for j in range( 1 , dim_num+1):
+    for j in range( 1, dim_num+1):
       out+= '%10f  '%r[j-1] 
     print(out)
     seed = seed_out

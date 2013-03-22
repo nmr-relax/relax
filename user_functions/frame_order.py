@@ -93,10 +93,38 @@ uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
-# The frame_order.cone_pdb user function.
-uf = uf_info.add_uf('frame_order.cone_pdb')
-uf.title = "Create a PDB file representing the Frame Order cone models."
-uf.title_short = "Cone model PDB creation."
+# The frame_order.pdb_model user function.
+uf = uf_info.add_uf('frame_order.pdb_model')
+uf.title = "Create a PDB file representation of the frame order dynamics."
+uf.title_short = "Frame order dynamics PDB representation."
+uf.add_keyarg(
+    name = "file",
+    default = "frame_order.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the file of the PDB representation of the frame order dynamics to create.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dist_file",
+    default = "frame_order_distribution.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "distribution file name",
+    desc = "The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
+    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is to be located.",
+    can_be_none = True
+)
 uf.add_keyarg(
     name = "size",
     default = 30.0,
@@ -113,69 +141,22 @@ uf.add_keyarg(
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
-    name = "file",
-    default = "cone.pdb",
-    py_type = "str",
-    arg_type = "file sel",
-    desc_short = "file name",
-    desc = "The name of the PDB file to create.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
-    wiz_filesel_style = FD_SAVE
-)
-uf.add_keyarg(
-    name = "dir",
-    py_type = "str",
-    arg_type = "dir",
-    desc_short = "directory name",
-    desc = "The directory where the file is to be located.",
-    can_be_none = True
-)
-uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
     desc_short = "force flag",
-    desc = "A flag which, if set to True, will overwrite the any pre-existing file."
+    desc = "A flag which, if set to True, will overwrite the any pre-existing files."
 )
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This function creates a PDB file containing an artificial geometric structure representing the Frame Order cone models.")
 uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the geometric object size).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
-uf.backend = frame_order_obj._cone_pdb
-uf.menu_text = "&cone_pdb"
+uf.backend = frame_order_obj._pdb_model
+uf.menu_text = "pdb_&model"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 750)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
-
-
-# The frame_order.domain_to_pdb user function.
-uf = uf_info.add_uf('frame_order.domain_to_pdb')
-uf.title = "Match the domains to PDB files."
-uf.title_short = "Domains to PDB matching."
-uf.add_keyarg(
-    name = "domain",
-    py_type = "str",
-    desc_short = "domain",
-    desc = "The domain to associate the PDB file to."
-)
-uf.add_keyarg(
-    name = "pdb",
-    py_type = "str",
-    desc_short = "PDB file",
-    desc = "The PDB file to associate the domain to."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("To display the frame order cone models within Pymol, the two domains need to be associated with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving domain will be rotated to its average position.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:")
-uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')")
-uf.desc[-1].add_prompt("relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')")
-uf.backend = frame_order_obj._domain_to_pdb
-uf.menu_text = "&domain_to_pdb"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 

@@ -34,7 +34,7 @@ class Generate(Main):
         angle = (i - self.N/2) * self.INC / 360.0 * 2.0 * pi
 
         # The rotation matrix.
-        axis_angle_to_R(self.axes[:,2], angle, self.R)
+        axis_angle_to_R(self.axes[:, 2], angle, self.R)
 
 
 # Execute the code.
