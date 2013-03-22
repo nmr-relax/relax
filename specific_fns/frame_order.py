@@ -36,7 +36,7 @@ from warnings import warn
 from float import isNaN, isInf
 from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
 from generic_fns.structure.geometric import create_cone_pdb, generate_vector_dist, generate_vector_residues
 from generic_fns.structure.internal import Internal
@@ -218,26 +218,6 @@ class Frame_order(API_base, API_common):
 
         # Return the matrix.
         return scaling_matrix
-
-
-    def _back_calc(self):
-        """Back-calculation of the reduced alignment tensor.
-
-        @return:    The reduced alignment tensors.
-        @rtype:     numpy array
-        """
-
-        # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        model.func(param_vector)
-
-        # Store the back-calculated tensors.
-        self._store_bc_data(model)
-
-        # Return the reduced tensors.
-        return model.A_5D_bc
 
 
     def _base_data_types(self):
@@ -832,8 +812,8 @@ class Frame_order(API_base, API_common):
         @type sim_index:    None or int
         @return:            The assembled data structures for using alignment tensors as the base data for optimisation.  These include:
                                 - full_tensors, the full tensors as concatenated arrays.
-                                - red_tensors, the reduced tensors as concatenated arrays.
-                                - red_err, the reduced tensor errors as concatenated arrays.
+                                - full_err, the full tensor errors as concatenated arrays.
+                                - full_in_ref_frame, the flags specifying if the tensor is the full or reduced tensor in the non-moving reference domain.
         @rtype:             tuple of 3 numpy nx5D, rank-1 arrays
         """
 
@@ -849,51 +829,41 @@ class Frame_order(API_base, API_common):
         # Initialise.
         n = len(cdp.align_tensors.reduction)
         full_tensors = zeros(n*5, float64)
-        red_tensors  = zeros(n*5, float64)
-        red_err = ones(n*5, float64) * 1e-5
+        full_err = ones(n*5, float64) * 1e-5
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
         for i, tensor in self._tensor_loop(red=False):
+            # The full tensor (simulation data).
+            if sim_index != None:
+                full_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
+                full_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
+                full_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
+                full_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
+                full_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
+
             # The full tensor.
-            full_tensors[5*i + 0] = tensor.Axx
-            full_tensors[5*i + 1] = tensor.Ayy
-            full_tensors[5*i + 2] = tensor.Axy
-            full_tensors[5*i + 3] = tensor.Axz
-            full_tensors[5*i + 4] = tensor.Ayz
+            else:
+                full_tensors[5*i + 0] = tensor.Axx
+                full_tensors[5*i + 1] = tensor.Ayy
+                full_tensors[5*i + 2] = tensor.Axy
+                full_tensors[5*i + 3] = tensor.Axz
+                full_tensors[5*i + 4] = tensor.Ayz
 
             # The full tensor corresponds to the frame of reference.
             if cdp.ref_domain == tensor.domain:
                 full_in_ref_frame[i] = 1
 
-        # Loop over the reduced tensors.
-        for i, tensor in self._tensor_loop(red=True):
-            # The reduced tensor (simulation data).
-            if sim_index != None:
-                red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
-                red_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
-                red_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
-                red_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
-                red_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
-
-            # The reduced tensor.
-            else:
-                red_tensors[5*i + 0] = tensor.Axx
-                red_tensors[5*i + 1] = tensor.Ayy
-                red_tensors[5*i + 2] = tensor.Axy
-                red_tensors[5*i + 3] = tensor.Axz
-                red_tensors[5*i + 4] = tensor.Ayz
-
-            # The reduced tensor errors.
+            # The full tensor errors.
             if hasattr(tensor, 'Axx_err'):
-                red_err[5*i + 0] = tensor.Axx_err
-                red_err[5*i + 1] = tensor.Ayy_err
-                red_err[5*i + 2] = tensor.Axy_err
-                red_err[5*i + 3] = tensor.Axz_err
-                red_err[5*i + 4] = tensor.Ayz_err
+                full_err[5*i + 0] = tensor.Axx_err
+                full_err[5*i + 1] = tensor.Ayy_err
+                full_err[5*i + 2] = tensor.Axy_err
+                full_err[5*i + 3] = tensor.Axz_err
+                full_err[5*i + 4] = tensor.Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensors, red_err, full_in_ref_frame
+        return full_tensors, full_err, full_in_ref_frame
 
 
     def _param_num(self):
@@ -973,6 +943,10 @@ class Frame_order(API_base, API_common):
         @return:    The answer to the question.
         @rtype:     bool
         """
+
+        # A pivot point is not supported by the model.
+        if cdp.model in ['rigid']:
+            return True
 
         # The PCS is loaded.
         if 'pcs' in self._base_data_types():
@@ -1125,7 +1099,7 @@ class Frame_order(API_base, API_common):
             param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
+        full_tensors, full_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = None, None, None, None, None, None, None
@@ -1310,19 +1284,19 @@ class Frame_order(API_base, API_common):
         if sim_index != None:
             # Average position parameters.
             if ave_pos_alpha != None:
-                cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, 0.0, 2.0*pi)
+                cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, cdp.ave_pos_alpha-pi, cdp.ave_pos_alpha+pi)
             if ave_pos_beta != None:
-                cdp.ave_pos_beta_sim[sim_index] = wrap_angles(ave_pos_beta, 0.0, 2.0*pi)
+                cdp.ave_pos_beta_sim[sim_index] = wrap_angles(ave_pos_beta, cdp.ave_pos_beta-pi, cdp.ave_pos_beta+pi)
             if ave_pos_gamma != None:
-                cdp.ave_pos_gamma_sim[sim_index] = wrap_angles(ave_pos_gamma, 0.0, 2.0*pi)
+                cdp.ave_pos_gamma_sim[sim_index] = wrap_angles(ave_pos_gamma, cdp.ave_pos_gamma-pi, cdp.ave_pos_gamma+pi)
 
             # Eigenframe parameters.
             if eigen_alpha != None:
-                cdp.eigen_alpha_sim[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+                cdp.eigen_alpha_sim[sim_index] = wrap_angles(eigen_alpha, cdp.eigen_alpha-pi, cdp.eigen_alpha+pi)
             if eigen_beta != None:
-                cdp.eigen_beta_sim[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+                cdp.eigen_beta_sim[sim_index] =  wrap_angles(eigen_beta, cdp.eigen_beta-pi, cdp.eigen_beta+pi)
             if eigen_gamma != None:
-                cdp.eigen_gamma_sim[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+                cdp.eigen_gamma_sim[sim_index] = wrap_angles(eigen_gamma, cdp.eigen_gamma-pi, cdp.eigen_gamma+pi)
             if axis_theta != None:
                 cdp.axis_theta_sim[sim_index] = axis_theta
             if axis_phi != None:
@@ -1394,15 +1368,50 @@ class Frame_order(API_base, API_common):
 
 
     def base_data_loop(self):
-        """Generator method for looping nothing.
+        """Generator method for looping over the base data - alignment tensors, RDCs, PCSs.
 
-        The loop essentially consists of a single element.
+        This loop first yields the string 'A' representing the alignment tensors, and then iterates for each data point (RDC, PCS) for each spin, returning the identification information.
 
-        @return:    Nothing.
-        @rtype:     None
+        @return:    The alignment tensor or a list of the spin ID string, the data type ('rdc', 'pcs') and the alignment ID.
+        @rtype:     string or list of str
         """
 
-        yield None
+        # First the tensors.
+        yield 'A'
+
+        # Then the spin IDs for the moving domain.
+        id = cdp.domain[self._domain_moving()]
+        for spin, spin_id in spin_loop(id, return_id=True):
+            # Re-initialise the data structure.
+            base_ids = [spin_id, None, None]
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # RDC data.
+            if hasattr(spin, 'rdc'):
+                base_ids[1] = 'rdc'
+
+                # Loop over the alignment IDs.
+                for id in cdp.rdc_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+            # PCS data.
+            if hasattr(spin, 'pcs'):
+                base_ids[1] = 'pcs'
+
+                # Loop over the alignment IDs.
+                for id in cdp.pcs_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1438,11 +1447,57 @@ class Frame_order(API_base, API_common):
         @rtype:             list of floats
         """
 
-        # Back calculate the tensors.
-        red_tensors_bc = self._back_calc()
+        # Initialise the MC data structure.
+        mc_data = []
+
+        # Alignment tensor data.
+        if data_id == 'A':
+            # Loop over the full tensors.
+            for i, tensor in self._tensor_loop(red=False):
+                # Append the data.
+                mc_data.append(tensor.Axx)
+                mc_data.append(tensor.Ayy)
+                mc_data.append(tensor.Axy)
+                mc_data.append(tensor.Axz)
+                mc_data.append(tensor.Ayz)
+
+        # The spin specific data.
+        else:
+            # Get the spin container.
+            spin = return_spin(data_id[0])
+
+            # RDC data.
+            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+                # Does back-calculated data exist?
+                if not hasattr(spin, 'rdc_bc'):
+                    self.calculate()
+
+                # The data.
+                if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
+                    data = None
+                else:
+                    data = spin.rdc_bc[data_id[2]]
+
+                # Append the data.
+                mc_data.append(data)
+
+            # PCS data.
+            elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+                # Does back-calculated data exist?
+                if not hasattr(spin, 'pcs_bc'):
+                    self.calculate()
+
+                # The data.
+                if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
+                    data = None
+                else:
+                    data = spin.pcs_bc[data_id[2]]
+
+                # Append the data.
+                mc_data.append(data)
 
         # Return the data.
-        return red_tensors_bc
+        return mc_data
 
 
     def get_param_names(self, model_info=None):
@@ -1496,6 +1551,9 @@ class Frame_order(API_base, API_common):
         # Test if the Frame Order model has been set up.
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('Frame Order')
+
+        # Parameter scaling.
+        scaling_matrix = self._assemble_scaling_matrix(data_types=self._base_data_types(), scaling=True)
 
         # The number of parameters.
         n = self._param_num()
@@ -1605,11 +1663,11 @@ class Frame_order(API_base, API_common):
                 # Fixed parameter.
                 if grid[j] == None:
                     # Get the current parameter value.
-                    pts[i, j] = getattr(cdp, cdp.params[j])
+                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
 
                 # Add the point coordinate.
                 else:
-                    pts[i, j] = grid[j][indices[j]]
+                    pts[i, j] = grid[j][indices[j]] / scaling_matrix[j, j]
 
             # Increment the step positions.
             for j in range(n):
@@ -1785,11 +1843,45 @@ class Frame_order(API_base, API_common):
         @rtype:         list of float
         """
 
-        # Get the tensor data structures.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
+        # Initialise the MC data structure.
+        mc_errors = []
+
+        # Alignment tensor data.
+        if data_id == 'A':
+            # Loop over the full tensors.
+            for i, tensor in self._tensor_loop(red=False):
+                # Append the errors.
+                mc_errors.append(tensor.Axx_err)
+                mc_errors.append(tensor.Ayy_err)
+                mc_errors.append(tensor.Axy_err)
+                mc_errors.append(tensor.Axz_err)
+                mc_errors.append(tensor.Ayz_err)
+
+        # The spin specific data.
+        else:
+            # Get the spin container.
+            spin = return_spin(data_id[0])
+
+            # RDC data.
+            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+                # Do errors exist?
+                if not hasattr(spin, 'rdc_err'):
+                    raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
+
+                # Append the data.
+                mc_errors.append(spin.rdc_err[data_id[2]])
+
+            # PCS data.
+            elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+                # Do errors exist?
+                if not hasattr(spin, 'pcs_err'):
+                    raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
+
+                # Append the data.
+                mc_errors.append(spin.pcs_err[data_id[2]])
 
         # Return the errors.
-        return red_tensor_err
+        return mc_errors
 
 
     def return_units(self, param):
@@ -1926,14 +2018,23 @@ class Frame_order(API_base, API_common):
     def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      None
+        @param data_id:     The identification data as yielded by the base_data_loop() generator method.
+        @type data_id:      string or list of str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
-        # Transpose the data.
-        sim_data = transpose(sim_data)
+        # Alignment tensor data.
+        if data_id == 'A':
+            # Loop over the full tensors.
+            for j, tensor in self._tensor_loop(red=False):
+                # Initialise the data if needed.
+                if not hasattr(tensor, 'Axx_sim'):
+                    tensor.Axx_sim = []
+                    tensor.Ayy_sim = []
+                    tensor.Axy_sim = []
+                    tensor.Axz_sim = []
+                    tensor.Ayz_sim = []
 
         # Loop over the reduced tensors.
         for i, tensor in self._tensor_loop(red=True):
@@ -1950,11 +2051,11 @@ class Frame_order(API_base, API_common):
                 tensor.set(param='Ayz', value=sim_data[5*i + 4][j], category='sim', sim_index=j)
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, data_id, index):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
+        @param data_id:     The identification data as yielded by the base_data_loop() generator method.
+        @type data_id:      string or list of str
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
