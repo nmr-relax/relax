@@ -121,9 +121,6 @@ for i in range(len(full)):
 # Set the reference domain.
 self._execute_uf(uf_name='frame_order.ref_domain', ref='fixed')
 
-# Link the domains to the PDB files.
-self._execute_uf(uf_name='frame_order.domain_to_pdb', domain='fixed', pdb='displaced.pdb')
-
 # Set up the mechanics of the displacement to the average domain position.
 self._execute_uf(uf_name='frame_order.average_position', pivot='com', translation=True)
 

@@ -44,6 +44,8 @@ from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
 from generic_fns.structure.mass import centre_of_mass
 from generic_fns.structure.internal import Internal
+from lib.structure.rotor import rotor_pdb
+from lib.text.sectioning import subsection
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
@@ -957,6 +959,9 @@ class Frame_order(API_base, API_common):
         @type force:    bool
         """
 
+        # Printout.
+        subsection(file=sys.stdout, text="Creating a PDB file with the moving domains shifted to the average position.")
+
         # Make a copy of the structural object (so as to preserve the original structure).
         structure = deepcopy(cdp.structure)
 
@@ -966,7 +971,11 @@ class Frame_order(API_base, API_common):
             euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         else:
             euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        structure.rotate(R=R, origin=cdp.pivot, atom_id=self._domain_moving())
+        if cdp.ave_pos_pivot == 'com':
+            origin = centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
+        else:
+            origin = cdp.pivot
+        structure.rotate(R=R, origin=origin, atom_id=self._domain_moving())
 
         # Then translate the moving domain.
         if not self._translation_fixed():
@@ -989,6 +998,10 @@ class Frame_order(API_base, API_common):
         @type force:    bool
         """
 
+        # Printout.
+        subsection(file=sys.stdout, text="Creating a PDB file of a distribution of positions coving the full dynamics of the moving domain.")
+
+
 
     def _pdb_geometric_rep(self, file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
         """Create a PDB file containing a geometric object representing the frame order dynamics.
@@ -1006,6 +1019,9 @@ class Frame_order(API_base, API_common):
         @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
         @type neg_cone:         bool
         """
+
+        # Printout.
+        subsection(file=sys.stdout, text="Creating a PDB file containing a geometric object representing the frame order dynamics.")
 
         # Monte Carlo simulation flag.
         sim = False
@@ -1025,8 +1041,38 @@ class Frame_order(API_base, API_common):
         if neg_cone:
             model_neg = structure.add_model(model=2)
 
+        # The rotor object.
+        if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse']:
+            # The rotor angle.
+            if cdp.model in ['free rotor', 'iso cone, free rotor']:
+                rotor_angle = pi
+            else:
+                rotor_angle = cdp.cone_sigma_max
+
+            # Generate the rotor axis.
+            if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor']:
+                axis = zeros(3, float64)
+                spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], axis)
+            else:
+                axes = zeros((3, 3), float64)
+                euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
+                axis = axes[:,2]
+
+            # Get the CoM of the entire molecule to use as the centre of the rotor.
+            com = centre_of_mass(verbosity=0)
+
+            # Add the rotor object to the structure as a new molecule.
+            rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=cdp.pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
+
+        # FIXME:  Temporary write out and exit.
+        print("\nGenerating the PDB file.")
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
+        return
+
         # Create the molecule.
-        structure.add_molecule(name=cdp.model)
+        structure.add_molecule(name='rest')
 
         # Alias the molecules.
         mol = model.mol[0]
