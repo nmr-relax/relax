@@ -70,8 +70,6 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
 
     # Loop over the models.
     for model in structure.model_loop(model):
-        print model
-
         # Alias the single molecule from the single model.
         mol = structure.get_molecule('rotor', model=model.num)
 
