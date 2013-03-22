@@ -45,7 +45,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, pivot_opt=False):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, pivot=None, pivot_opt=False):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -82,6 +82,8 @@ class Frame_order:
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
+        @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
+        @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
         @type pivot_opt:            bool
         """
@@ -108,6 +110,7 @@ class Frame_order:
         self.frq = frq
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
+        self._param_pivot = pivot
         self.pivot_opt = pivot_opt
 
         # Tensor setup.
@@ -189,8 +192,8 @@ class Frame_order:
         if self.rdc_flag or self.pcs_flag:
             for i in xrange(self.num_align):
                 # Loop over the RDCs.
-                for j in xrange(self.num_rdc):
-                    if self.rdc_flag:
+                if self.rdc_flag:
+                    for j in xrange(self.num_rdc):
                         if isNaN(self.rdc[i, j]):
                             # Set the flag.
                             self.missing_rdc[i, j] = 1
@@ -209,8 +212,8 @@ class Frame_order:
                         self.rdc_error[i, j] = self.rdc_error[i, j] / sqrt(rdc_weights[i, j])
 
                 # Loop over the PCSs.
-                for j in xrange(self.num_pcs):
-                    if self.pcs_flag:
+                if self.pcs_flag:
+                    for j in xrange(self.num_pcs):
                         if isNaN(self.pcs[i, j]):
                             # Set the flag.
                             self.missing_pcs[i, j] = 1
@@ -243,14 +246,16 @@ class Frame_order:
                 self.pcs_const[i] = pcs_constant(self.temp[i], self.frq[i], 1.0) * 1e30
 
         # PCS function, gradient, and Hessian matrices.
-        self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
-        self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_pcs), float64)
-        self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_pcs), float64)
+        if self.pcs_flag:
+            self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
+            self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_pcs), float64)
+            self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_pcs), float64)
 
         # RDC function, gradient, and Hessian matrices.
-        self.rdc_theta = zeros((self.num_align, self.num_rdc), float64)
-        self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
-        self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
+        if self.rdc_flag:
+            self.rdc_theta = zeros((self.num_align, self.num_rdc), float64)
+            self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
+            self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
         # The target function aliases.
         if model == 'pseudo-ellipse':
@@ -550,7 +555,7 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            pivot = params[:3]
+            self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
@@ -575,36 +580,37 @@ class Frame_order:
         RT_ave = transpose(self.R_ave)
 
         # Pre-calculate all the necessary vectors.
-        if self.pivot_opt:
-            self.calc_vectors(pivot)
+        self.calc_vectors(self._param_pivot)
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
-            # Loop over the RDCs.
-            for j in xrange(self.num_rdc):
-                # The back calculated RDC.
-                if self.rdc_flag and not self.missing_rdc[i, j]:
-                    self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
-
-            # Loop over the PCSs.
-            for j in xrange(self.num_pcs):
-                # The back calculated PCS.
-                if self.pcs_flag and not self.missing_pcs[i, j]:
-                    # Forwards and reverse rotations.
-                    if self.full_in_ref_frame[i]:
-                        R_ave = RT_ave
-                    else:
-                        R_ave = self.R_ave
-
-                    # The numerical integration.
-                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=self.r_pivot_atom[j], r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
-
-            # Calculate and sum the single alignment chi-squared value (for the RDC).
+            # RDCs.
             if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
 
-            # Calculate and sum the single alignment chi-squared value (for the PCS).
+            # PCS.
             if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            R_ave = RT_ave
+                        else:
+                            R_ave = self.R_ave
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=self.r_pivot_atom[j], r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
 
         # Return the chi-squared value.
