@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Script for optimising the rotor frame order test model of CaM."""
+"""Script for optimising the pseudo-ellipse frame order test model of CaM."""
 
 # relax module imports.
 from base_script import Base_script
@@ -30,15 +30,18 @@ from base_script import Base_script
 class Analysis(Base_script):
 
     # Set up some class variables.
-    directory = 'rotor'
-    model = 'rotor'
+    directory = 'pseudo_ellipse'
+    model = 'pseudo-ellipse'
     ave_pos_alpha = 4.3434999280669997
     ave_pos_beta = 0.43544332764249905
     ave_pos_gamma = 3.8013235235956007
-    axis_theta = 2.1815126749944502
-    axis_phi = 0.89068285262982982
-    cone_sigma_max = 30.0 / 360.0 * 2.0 * pi
-    cone = True
+    eigen_alpha = 3.1415926535897931
+    eigen_beta = 0.96007997859534311
+    eigen_gamma = 4.0322755062196229
+    cone_theta_x = 10.0 * 2.0 * pi / 360.0
+    cone_theta_y = 30.0 * 2.0 * pi / 360.0
+    cone_sigma_max = 40.0 * 2.0 * pi / 360.0
+
 
 # Execute the analysis.
-Analysis(self._execute_uf)
+Analysis(self)
