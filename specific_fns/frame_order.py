@@ -427,7 +427,7 @@ class Frame_order(API_base, API_common):
             # The axis system.
             axes = zeros((3, 3), float64)
             euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
-            print("Axis system:\n%s" % axes)
+            print(("Axis system:\n%s" % axes))
 
             # Rotations and inversions.
             axes_pos = axes
@@ -932,21 +932,12 @@ class Frame_order(API_base, API_common):
 
         # Loop over the full tensors.
         for i, tensor in self._tensor_loop(red=False):
-            # The full tensor (simulation data).
-            if sim_index != None:
-                full_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
-                full_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
-                full_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
-                full_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
-                full_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
-
             # The full tensor.
-            else:
-                full_tensors[5*i + 0] = tensor.Axx
-                full_tensors[5*i + 1] = tensor.Ayy
-                full_tensors[5*i + 2] = tensor.Axy
-                full_tensors[5*i + 3] = tensor.Axz
-                full_tensors[5*i + 4] = tensor.Ayz
+            full_tensors[5*i + 0] = tensor.Axx
+            full_tensors[5*i + 1] = tensor.Ayy
+            full_tensors[5*i + 2] = tensor.Axy
+            full_tensors[5*i + 3] = tensor.Axz
+            full_tensors[5*i + 4] = tensor.Ayz
 
             # The full tensor corresponds to the frame of reference.
             if cdp.ref_domain == tensor.domain:
@@ -1532,14 +1523,14 @@ class Frame_order(API_base, API_common):
     def base_data_loop(self):
         """Generator method for looping over the base data - alignment tensors, RDCs, PCSs.
 
-        This loop first yields the string 'A' representing the alignment tensors, and then iterates for each data point (RDC, PCS) for each spin, returning the identification information.
+        This loop yields the following:
 
-        @return:    The alignment tensor or a list of the spin ID string, the data type ('rdc', 'pcs') and the alignment ID.
-        @rtype:     string or list of str
+            - The RDC identification data for the interatomic data container and alignment.
+            - The PCS identification data for the spin data container and alignment.
+
+        @return:    The base data type ('rdc' or 'pcs'), the spin or interatomic data container information (either one or two spin IDs), and the alignment ID string.
+        @rtype:     list of str
         """
-
-        # First the tensors.
-        yield 'A'
 
         # The moving domain ID.
         id = cdp.domain[self._domain_moving()]
@@ -1603,7 +1594,7 @@ class Frame_order(API_base, API_common):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
 
         @keyword data_id:   The data set as yielded by the base_data_loop() generator method.
-        @type data_id:      str or list of str
+        @type data_id:      list of str
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
@@ -1611,19 +1602,8 @@ class Frame_order(API_base, API_common):
         # Initialise the MC data structure.
         mc_data = []
 
-        # Alignment tensor data.
-        if data_id == 'A':
-            # Loop over the full tensors.
-            for i, tensor in self._tensor_loop(red=False):
-                # Append the data.
-                mc_data.append(tensor.Axx)
-                mc_data.append(tensor.Ayy)
-                mc_data.append(tensor.Axy)
-                mc_data.append(tensor.Axz)
-                mc_data.append(tensor.Ayz)
-
         # The RDC data.
-        elif data_id[0] == 'rdc':
+        if data_id[0] == 'rdc':
             # Unpack the set.
             data_type, spin_id1, spin_id2, align_id = data_id
 
@@ -2105,7 +2085,7 @@ class Frame_order(API_base, API_common):
         """Return the alignment tensor error structure.
 
         @param data_id:     The data set as yielded by the base_data_loop() generator method.
-        @type data_id:      str or list of str
+        @type data_id:      list of str
         @return:            The array of tensor error values.
         @rtype:             list of float
         """
@@ -2113,19 +2093,8 @@ class Frame_order(API_base, API_common):
         # Initialise the MC data structure.
         mc_errors = []
 
-        # Alignment tensor data.
-        if data_id == 'A':
-            # Loop over the full tensors.
-            for i, tensor in self._tensor_loop(red=False):
-                # Append the errors.
-                mc_errors.append(tensor.Axx_err)
-                mc_errors.append(tensor.Ayy_err)
-                mc_errors.append(tensor.Axy_err)
-                mc_errors.append(tensor.Axz_err)
-                mc_errors.append(tensor.Ayz_err)
-
         # The RDC data.
-        elif data_id[0] == 'rdc':
+        if data_id[0] == 'rdc':
             # Unpack the set.
             data_type, spin_id1, spin_id2, align_id = data_id
 
@@ -2293,39 +2262,13 @@ class Frame_order(API_base, API_common):
         """Pack the Monte Carlo simulation data.
 
         @param data_id:     The data set as yielded by the base_data_loop() generator method.
-        @type data_id:      str or list of str
+        @type data_id:      list of str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
-        # Alignment tensor data.
-        if data_id == 'A':
-            # Loop over the full tensors.
-            for j, tensor in self._tensor_loop(red=False):
-                # Initialise the data if needed.
-                if not hasattr(tensor, 'Axx_sim'):
-                    tensor.Axx_sim = []
-                    tensor.Ayy_sim = []
-                    tensor.Axy_sim = []
-                    tensor.Axz_sim = []
-                    tensor.Ayz_sim = []
-
-        # Loop over the reduced tensors.
-        for i, tensor in self._tensor_loop(red=True):
-            # Set the simulation number.
-            tensor.set_sim_num(cdp.sim_number)
-
-            # Loop over the simulations.
-            for j in range(cdp.sim_number):
-                # Set the reduced tensor simulation data.
-                tensor.set(param='Axx', value=sim_data[5*i + 0][j], category='sim', sim_index=j)
-                tensor.set(param='Ayy', value=sim_data[5*i + 1][j], category='sim', sim_index=j)
-                tensor.set(param='Axy', value=sim_data[5*i + 2][j], category='sim', sim_index=j)
-                tensor.set(param='Axz', value=sim_data[5*i + 3][j], category='sim', sim_index=j)
-                tensor.set(param='Ayz', value=sim_data[5*i + 4][j], category='sim', sim_index=j)
-
         # The RDC data.
-        elif data_id[0] == 'rdc':
+        if data_id[0] == 'rdc':
             # Unpack the set.
             data_type, spin_id1, spin_id2, align_id = data_id
 
