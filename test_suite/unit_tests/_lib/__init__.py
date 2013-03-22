@@ -21,5 +21,7 @@
 
 
 __all__ = [
-    'geometry'
+    '_geometry'
+    '_text'
+    'test_io'
 ]
