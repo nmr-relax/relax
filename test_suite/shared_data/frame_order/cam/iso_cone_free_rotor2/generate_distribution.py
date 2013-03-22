@@ -21,6 +21,7 @@ class Generate(Main):
 
     # Cone parameters.
     THETA_MAX = 1.2
+    TILT_ANGLE = 15.0
 
     def __init__(self):
         """Model specific setup."""

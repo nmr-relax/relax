@@ -4,6 +4,9 @@
 import sys
 sys.path.append('..')
 
+# Python module imports.
+from math import pi
+
 # relax module imports.
 from maths_fns.rotation_matrix import axis_angle_to_R
 
@@ -15,6 +18,9 @@ class Generate(Main):
     # The number of structures.
     INC = 0.00036
     N = int(360 / INC)
+
+    # Cone parameters.
+    TILT_ANGLE = 15.0
 
     def __init__(self):
         """Model specific setup."""
