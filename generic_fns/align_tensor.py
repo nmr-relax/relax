@@ -658,7 +658,7 @@ def get_tensor_index(tensor=None, align_id=None, pipe=None):
 
 
 def get_tensor_object(tensor, pipe=None):
-    """Function for returning the AlignTensorData instance corresponding to the 'tensor' argument.
+    """Return the AlignTensorData instance corresponding to the tensor ID.
 
     @param tensor:  The alignment tensor identification string.
     @type tensor:   str
@@ -684,11 +684,43 @@ def get_tensor_object(tensor, pipe=None):
     return data
 
 
-def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, align_id=None, domain=None, errors=False):
+def get_tensor_object_from_align(align_id, pipe=None):
+    """Return the unique AlignTensorData instance corresponding to the alignment ID.
+
+    @param align_id:    The alignment ID for the unique tensor.
+    @type align_id:     str
+    @return:            The alignment tensor object corresponding to the 'tensor' arg.
+    @rtype:             AlignTensorData instance
+    """
+
+    # The data pipe to check.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Init.
+    data = None
+
+    # Loop over the tensors.
+    count = 0
+    for i in xrange(len(cdp.align_tensors)):
+        if cdp.align_tensors[i].align_id == align_id:
+            data = cdp.align_tensors[i]
+            count += 1
+
+    # Multiple matches.
+    if count > 1:
+        raise RelaxError("Multiple alignment tensors match the alignment ID '%s'." % align_id)
+    # Return the object.
+    return data
+
+
+def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', param_types=0, domain=None, errors=False):
     """Function for initialising the alignment tensor.
 
     @keyword tensor:        The alignment tensor identification string.
     @type tensor:           str
+    @keyword align_id:      The alignment ID string that the tensor corresponds to.
+    @type align_id:         str or None
     @keyword params:        The alignment tensor parameters.
     @type params:           float
     @keyword scale:         The alignment tensor eigenvalue scaling value.
@@ -697,8 +729,6 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     @type angle_units:      str
     @keyword param_types:   The type of parameters supplied.  The flag values correspond to, 0: {Axx, Ayy, Axy, Axz, Ayz}, and 1: {Azz, Axx-yy, Axy, Axz, Ayz}.
     @type param_types:      int
-    @keyword align_id:      The alignment ID string that the tensor corresponds to.
-    @type align_id:         str or None
     @keyword domain:        The domain label.
     @type domain:           str or None
     @keyword errors:        A flag which determines if the alignment tensor data or its errors are being input.
@@ -708,25 +738,28 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Test if alignment tensor data already exists.
-    if errors and not align_data_exists(tensor):
-        raise RelaxNoTensorError('alignment')
+    # Parameter checks.
+    if align_id == None:
+        raise RelaxError("The alignment ID must be given.")
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
 
+    # Test if alignment tensor data already exists.
+    if errors and not align_data_exists(align_id):
+        raise RelaxNoTensorError('alignment')
+
     # Check that the domain is defined.
     if domain and (not hasattr(cdp, 'domain') or domain not in cdp.domain.keys()):
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
     # Add the align ID to the current data pipe if needed.
-    if align_id:
-        if not hasattr(cdp, 'align_ids'):
-            cdp.align_ids = []
-        if align_id not in cdp.align_ids:
-            cdp.align_ids.append(align_id)
+    if not hasattr(cdp, 'align_ids'):
+        cdp.align_ids = []
+    if align_id not in cdp.align_ids:
+        cdp.align_ids.append(align_id)
 
     # Add the align_tensors object to the data pipe.
     if not errors:
@@ -735,11 +768,14 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
             cdp.align_tensors = AlignTensorList()
 
         # Add the tensor, if it doesn't already exist.
-        if tensor not in cdp.align_tensors.names():
+        if tensor == None or tensor not in cdp.align_tensors.names():
             cdp.align_tensors.add_item(tensor)
 
     # Get the tensor.
-    tensor_obj = get_tensor_object(tensor)
+    if tensor:
+        tensor_obj = get_tensor_object(tensor)
+    else:
+        tensor_obj = get_tensor_object_from_align(align_id)
 
     # {Sxx, Syy, Sxy, Sxz, Syz}.
     if param_types == 0:

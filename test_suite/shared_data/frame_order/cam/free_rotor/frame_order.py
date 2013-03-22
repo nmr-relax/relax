@@ -103,8 +103,8 @@ class Analysis:
         # Check the minimum.
         value.set(param='ave_pos_beta', val=1.1838868514111507)
         value.set(param='ave_pos_gamma', val=0.35219976958846927)
-        value.set(param='axis_theta', val=2.1815126749944502)
-        value.set(param='axis_phi', val=0.89068285262982982)
+        value.set(param='axis_theta', val=0.9600799785953431)
+        value.set(param='axis_phi', val=4.0322755062196229)
         calc()
         print("\nchi2: %s" % repr(cdp.chi2))
 

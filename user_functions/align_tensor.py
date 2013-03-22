@@ -188,7 +188,21 @@ uf.add_keyarg(
     name = "tensor",
     py_type = "str",
     desc_short = "tensor ID",
-    desc = "The alignment tensor identification string."
+    desc = "The optional alignment tensor ID string, required if multiple tensors exist per alignment.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "align_id",
+    py_type = "str",
+    desc_short = "alignment ID",
+    desc = "The alignment ID string that the tensor corresponds to."
+)
+uf.add_keyarg(
+    name = "domain",
+    py_type = "str",
+    desc_short = "domain ID",
+    desc = "The optional domain ID string that the tensor corresponds to.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "params",
@@ -242,20 +256,6 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.add_keyarg(
-    name = "align_id",
-    py_type = "str",
-    desc_short = "alignment ID string",
-    desc = "The optional alignment ID string that the tensor corresponds to.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "domain",
-    py_type = "str",
-    desc_short = "domain ID string",
-    desc = "The optional domain ID string that the tensor corresponds to.",
-    can_be_none = True
-)
-uf.add_keyarg(
     name = "errors",
     default = False,
     py_type = "bool",
@@ -263,7 +263,8 @@ uf.add_keyarg(
     desc = "A flag which determines if the alignment tensor data or its errors are being input."
 )
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Using this function, the alignment tensor data can be set up.  The alignment tensor parameters should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor which can be specified by the parameter types whereby the values correspond to:")
+uf.desc[-1].add_paragraph("The tensor ID is only required if there are multiple unique tensors per alignment.  An example is if internal domain motions cause multiple parts of the molecule to align differently.  The tensor ID is optional and in the case of only a single tensor per alignment, the tensor can be identified using the alignment ID instead.")
+uf.desc[-1].add_paragraph("The alignment tensor parameters should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor which can be specified by the parameter types whereby the values correspond to:")
 uf.desc[-1].add_item_list_element("0", "{Sxx, Syy, Sxy, Sxz, Syz}  (unitless),")
 uf.desc[-1].add_item_list_element("1", "{Szz, Sxx-yy, Sxy, Sxz, Syz}  (Pales default format),")
 uf.desc[-1].add_item_list_element("2", "{Axx, Ayy, Axy, Axz, Ayz}  (unitless),")
@@ -279,12 +280,12 @@ uf.desc[-1].add_item_list_element(None, "A = P - 1/3 I,")
 uf.desc[-1].add_paragraph("where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond vectors must all be of equal length.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To set a rhombic tensor to the run 'CaM', type one of:")
-uf.desc[-1].add_prompt("relax> align_tensor.init('super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
-uf.desc[-1].add_prompt("relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
+uf.desc[-1].add_paragraph("To set a rhombic tensor for the domain labelled 'domain 1' with the alignment named 'super media', type one of:")
+uf.desc[-1].add_prompt("relax> align_tensor.init('domain 1', 'super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
+uf.desc[-1].add_prompt("relax> align_tensor.init(tensor='domain 1', align_id='super media', params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)")
 uf.backend = align_tensor.init
 uf.menu_text = "&init"
-uf.wizard_height_desc = 420
+uf.wizard_height_desc = 370
 uf.wizard_size = (1000, 750)
 uf.gui_icon = "relax.align_tensor"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
