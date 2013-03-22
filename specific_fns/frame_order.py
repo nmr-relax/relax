@@ -66,7 +66,6 @@ class Frame_order(API_base, API_common):
         super(Frame_order, self).__init__()
 
         # Place methods into the API.
-        self.eliminate = self._eliminate_false
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -1648,103 +1647,79 @@ class Frame_order(API_base, API_common):
         return mc_data
 
 
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Function for returning a list of names of data structures.
+    def eliminate(self, name, value, model_info, args, sim=None):
+        """Model elimination method.
 
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'params', an array of the parameter names associated with the model.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-        The isotropic cone specific model parameters are:
-
-            - 'axis_theta', the cone axis polar angle (for the isotropic cone model).
-            - 'axis_phi', the cone axis azimuthal angle (for the isotropic cone model).
-            - 'cone_s1', the isotropic cone order parameter.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for the
-                                Frame Order parameter names, or to 'min' for minimisation specific
-                                object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
+        @param name:        The parameter name.
+        @type name:         str
+        @param value:       The parameter value.
+        @type value:        float
+        @param model_info:  The model index from model_info().
+        @type model_info:   int
+        @param args:        The elimination constant overrides.
+        @type args:         None or tuple of float
+        @keyword sim:       The Monte Carlo simulation index.
+        @type sim:          int
+        @return:            True if the model is to be eliminated, False otherwise.
+        @rtype:             bool
         """
 
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('params')
-
-        # The parameter suffix.
-        if error_names:
-            suffix = '_err'
-        elif sim_names:
-            suffix = '_sim'
+        # Text to print out if a model failure occurs.
+        text = "The %s parameter of %.5g is %s than %.5g, eliminating "
+        if sim == None:
+            text += "the model."
         else:
-            suffix = ''
+            text += "simulation %i." % sim
 
-        # Parameters.
-        if (set == 'all' or set == 'params') and hasattr(cdp, 'model'):
-            # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model not in ['free rotor', 'iso cone, free rotor']:
-                names.append('ave_pos_alpha%s' % suffix)
-            names.append('ave_pos_beta%s' % suffix)
-            names.append('ave_pos_gamma%s' % suffix)
+        # Isotropic order parameter out of range.
+        if name == 'cone_s1' and hasattr(cdp, 'cone_s1'):
+            if cdp.cone_s1 > 1.0:
+                print(text % ("cone S1 order", cdp.cone_s1, "greater", 1.0))
+                return True
+            if cdp.cone_s1 < -0.125:
+                print(text % ("cone S1 order", cdp.cone_s1, "less", -0.125))
+                return True
 
-            # Frame order eigenframe - the full frame.
-            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                names.append('eigen_alpha%s' % suffix)
-                names.append('eigen_beta%s' % suffix)
-                names.append('eigen_gamma%s' % suffix)
+        # Isotropic cone angle out of range.
+        if name == 'cone_theta' and hasattr(cdp, 'cone_theta'):
+            if cdp.cone_theta >= pi:
+                print(text % ("cone opening angle theta", cdp.cone_theta, "greater", pi))
+                return True
+            if cdp.cone_theta < 0.0:
+                print(text % ("cone opening angle theta", cdp.cone_theta, "less", 0))
+                return True
+            return True
 
-            # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
-                names.append('axis_theta%s' % suffix)
-                names.append('axis_phi%s' % suffix)
+        # Pseudo-ellipse cone angles out of range (0.001 instead of 0.0 because of truncation in the numerical integration).
+        if name == 'cone_theta_x' and hasattr(cdp, 'cone_theta_x'):
+            if cdp.cone_theta_x >= pi:
+                print(text % ("cone opening angle theta x", cdp.cone_theta_x, "greater", pi))
+                return True
+            if cdp.cone_theta_x < 0.001:
+                print(text % ("cone opening angle theta x", cdp.cone_theta_x, "less", 0.001))
+                return True
+            return True
+        if name == 'cone_theta_y' and hasattr(cdp, 'cone_theta_y'):
+            if cdp.cone_theta_y >= pi:
+                print(text % ("cone opening angle theta y", cdp.cone_theta_y, "greater", pi))
+                return True
+            if cdp.cone_theta_y < 0.001:
+                print(text % ("cone opening angle theta y", cdp.cone_theta_y, "less", 0.001))
+                return True
+            return True
 
-            # Cone parameters - pseudo-elliptic cone parameters.
-            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                names.append('cone_theta_x%s' % suffix)
-                names.append('cone_theta_y%s' % suffix)
+        # Torsion angle out of range.
+        if name == 'cone_sigma_max' and hasattr(cdp, 'cone_sigma_max'):
+            if cdp.cone_sigma_max >= pi:
+                print(text % ("torsion angle sigma_max", cdp.cone_sigma_max, "greater", pi))
+                return True
+            if cdp.cone_sigma_max < 0.0:
+                print(text % ("torsion angle sigma_max", cdp.cone_sigma_max, "less", 0.0))
+                return True
+            return True
 
-            # Cone parameters - single isotropic angle or order parameter.
-            elif cdp.model in ['iso cone', 'iso cone, torsionless']:
-                names.append('cone_theta%s' % suffix)
-            elif cdp.model in ['iso cone, free rotor']:
-                names.append('cone_s1%s' % suffix)
-
-            # Cone parameters - torsion angle.
-            if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
-                names.append('cone_sigma_max%s' % suffix)
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Return the names.
-        return names
+        # No failure.
+        return False
 
 
     def get_param_names(self, model_info=None):

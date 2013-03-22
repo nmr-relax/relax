@@ -29,6 +29,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from maths_fns.kronecker_product import transpose_23
+from maths_fns.rotation_matrix import tilt_torsion_to_R
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
@@ -152,9 +153,15 @@ def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, 
     return pcs
 
 
-def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
+    @keyword theta_i:           The half cone opening angle (polar angle).
+    @type theta_i:              float
+    @keyword phi_i:             The cone azimuthal angle.
+    @type phi_i:                float
+    @keyword sigma_i:           The torsion angle for state i.
+    @type sigma_i:              float
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
     @type full_in_ref_frame:    numpy rank-1 array
     @keyword r_pivot_atom:      The pivot point to atom vector.
@@ -180,6 +187,9 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
     @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
     @type error_flag:           bool
     """
+
+    # The rotation matrix.
+    tilt_torsion_to_R(phi_i, theta_i, sigma_i, Ri_prime)
 
     # The rotation.
     R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,319 +25,425 @@
 
 # Python module imports.
 from math import pi
-from os import sep
+from numpy import float64, zeros
+from os import F_OK, access, getcwd, sep
 from random import gauss, uniform
+import sys
 from time import localtime
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.angles import wrap_angles
+from generic_fns.pipes import cdp_name, get_pipe
+from maths_fns.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
+from relax_errors import RelaxError
+from status import Status; status = Status()
 
 
 class Frame_order_analysis:
-    def __init__(self, pipe_name, grid_incs=11, random_samples=100):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], num_int_pts_full=[100, 1000, 200000], mc_sim_num=500):
         """Perform the full frame order analysis.
 
-        @param pipe_name:           The name of the data pipe containing all of the alignment data.
-        @type pipe_name:            str
-        @keyword grid_incs:         The number of grid increments to use in the grid search of certain models.
-        @type grid_incs:            int
-        @keyword random_samples:    The number of randomisations to perform to search for the global minimum.
-        @type random_samples:       int
+        @param data_pipe_full:      The name of the data pipe containing all of the RDC and PCS data.
+        @type data_pipe_full:       str
+        @param data_pipe_subset:    The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
+        @type data_pipe_subset:     str
+        @keyword pipe_bundle:       The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:          str
+        @keyword results_dir:       The directory where files are saved in.
+        @type results_dir:          str
+        @keyword grid_inc:          The number of grid increments to use in the grid search of certain models.
+        @type grid_inc:             int
+        @keyword grid_inc_rigid:    The number of grid increments to use in the grid search of the initial rigid model.
+        @type grid_inc_rigid:       int
+        @keyword min_algor:         The minimisation algorithm (in most cases this should not be changed).
+        @type min_algor:            str
+        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:           int
         """
 
+        # Execution lock.
+        status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
+
         # Store the args.
-        ds.orig_pipe = pipe_name
-        ds.N = random_samples
+        self.data_pipe_full = data_pipe_full
+        self.data_pipe_subset = data_pipe_subset
+        self.pipe_bundle = pipe_bundle
+        self.grid_inc = grid_inc
+        self.grid_inc_rigid = grid_inc_rigid
+        self.min_algor = min_algor
+        self.num_int_pts_grid = num_int_pts_grid
+        self.num_int_pts_subset = num_int_pts_subset
+        self.num_int_pts_full = num_int_pts_full
+        self.mc_sim_num = mc_sim_num
+
+        # A dictionary of the data pipe names.
+        self.models = {}
+
+        # Project directory (i.e. directory containing the model-free model results and the newly generated files)
+        if results_dir:
+            self.results_dir = results_dir + sep
+        else:
+            self.results_dir = getcwd() + sep
+
+        # Data checks.
+        self.check_vars()
 
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
 
+        # Execute the full protocol.
+        try:
+            # The nested model optimisation protocol.
+            self.optimise()
 
-        # First block, cone-less.
-        #########################
+            # Model selection.
+            self.interpreter.model_selection(method='AIC', modsel_pipe='final')
 
-        # Start with the rigid frame order model grid search and simplex optimisation.
-        self.model_opt(model='rigid', var_name='rigid', grid_incs=grid_incs)
+            # Monte Carlo simulations.
+            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise(self.min_algor, constraints=False)
+            self.interpreter.eliminate()
+            self.interpreter.monte_carlo.error_analysis()
 
-        # Free rotor model optimisation.
-        self.model_opt(model='free rotor', var_name='free_rotor', grid_incs=[grid_incs, grid_incs, grid_incs, grid_incs])
+            # Finish.
+            self.interpreter.results.write(file='results', force=True)
 
-        # Rotor model optimisation.
-        self.model_opt(model='rotor', var_name='rotor', grid_incs=[6, 6, 6, 6, 6, 6, 10])
+        # Clean up.
+        finally:
+            # Finish and unlock execution.
+            status.exec_lock.release()
 
-
-        # Second block, isotropic cones.
-        ################################
-
-        # Torsionless isotropic cone model optimisation.
-        self.model_opt(model='iso cone, torsionless', var_name='iso_cone_torsionless', grid_incs=[None, None, grid_incs, grid_incs, grid_incs])
-
-        # Free rotor isotropic cone model optimisation.
-        self.model_opt(model='iso cone, free rotor', var_name='iso_cone_free_rotor', grid_incs=[None, None, grid_incs, grid_incs, grid_incs])
-
-        # Isotropic cone model optimisation.
-        self.model_opt(model='iso cone', var_name='iso_cone', grid_incs=[None, None, None, None, None, None, grid_incs, grid_incs])
-
-
-        # Third block, pseudo-ellipses.
-        ###############################
-
-        # Free rotor isotropic cone model optimisation.
-        self.model_opt(model='pseudo-ellipse, free rotor', var_name='pseudo_ellipse_free_rotor')
-
-        # Torsionless isotropic cone model optimisation.
-        self.model_opt(model='pseudo-ellipse, torsionless', var_name='pseudo_ellipse_torsionless')
-
-        # Isotropic cone model optimisation.
-        self.model_opt(model='pseudo-ellipse', var_name='pseudo_ellipse')
+        # Save the final program state.
+        self.interpreter.state.save('final_state', force=True)
 
 
-        # Save the program state.
-        self.interpreter.state.save('frame_order', force=True)
+    def check_vars(self):
+        """Check that the user has set the variables correctly."""
+
+        # The pipe bundle.
+        if not isinstance(self.pipe_bundle, str):
+            raise RelaxError("The pipe bundle name '%s' is invalid." % self.pipe_bundle)
+
+        # Min vars.
+        if not isinstance(self.grid_inc, int):
+            raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
+        if not isinstance(self.min_algor, str):
+            raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
+        if not isinstance(self.mc_sim_num, int):
+            raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
 
 
-    def copy_params(self, model=None):
-        """Copy the parameters over from a simpler model."""
+    def custom_grid_incs(self, model):
+        """Set up a customised grid search increment number for each model.
+
+        @param model:   The frame order model.
+        @type model:    str
+        """
+
+        # The rotor model.
+        if model == 'rotor':
+            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+
+        # The free rotor model.
+        if model == 'free rotor':
+            return [None, None, self.grid_inc, self.grid_inc]
+
+        # The torsionless isotropic cone model.
+        if model == 'iso cone, torsionless':
+            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The free rotor isotropic cone model.
         if model == 'iso cone, free rotor':
-            # The average position Euler angles from the free rotor model.
-            cdp.ave_pos_beta  = ds[ds.pipe_free_rotor_best].ave_pos_beta
-            cdp.ave_pos_gamma = ds[ds.pipe_free_rotor_best].ave_pos_gamma
-
-            # Rotation axis from the free rotor model.
-            cdp.axis_theta    = ds[ds.pipe_free_rotor_best].axis_theta
-            cdp.axis_phi      = ds[ds.pipe_free_rotor_best].axis_phi
-
-        # The torsionless isotropic cone model.
-        elif model == 'iso cone, torsionless':
-            # The average position Euler angles from the rotor model.
-            cdp.ave_pos_beta  = ds[ds.pipe_rotor_best].ave_pos_beta
-            cdp.ave_pos_gamma = ds[ds.pipe_rotor_best].ave_pos_gamma
+            return [None, None, None, None, self.grid_inc]
 
         # The isotropic cone model.
-        elif model == 'iso cone':
-            # The average position Euler angles from the rotor model.
-            cdp.ave_pos_alpha = ds[ds.pipe_rotor_best].ave_pos_alpha
-            cdp.ave_pos_beta  = ds[ds.pipe_rotor_best].ave_pos_beta
-            cdp.ave_pos_gamma = ds[ds.pipe_rotor_best].ave_pos_gamma
+        if model == 'iso cone':
+            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
-            # The eigenframe from the rotor model.
-            cdp.eigen_alpha   = ds[ds.pipe_rotor_best].eigen_alpha
-            cdp.eigen_beta    = ds[ds.pipe_rotor_best].eigen_beta
-            cdp.eigen_gamma   = ds[ds.pipe_rotor_best].eigen_gamma
+        # The torsionless pseudo-elliptic cone model.
+        if model == 'pseudo-ellipse, torsionless':
+            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
-        # The pseudo-ellipse cone model.
-        elif model == 'pseudo-ellipse, free rotor':
-            # The average position Euler angles from the rotor model.
-            cdp.ave_pos_alpha = ds[ds.pipe_iso_cone_free_rotor_best].ave_pos_alpha
-            cdp.ave_pos_beta  = ds[ds.pipe_iso_cone_free_rotor_best].ave_pos_beta
-            cdp.ave_pos_gamma = ds[ds.pipe_iso_cone_free_rotor_best].ave_pos_gamma
+        # The free rotor pseudo-elliptic cone model.
+        if model == 'pseudo-ellipse, free rotor':
+            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
-            # The eigenframe from the rotor model.
-            cdp.eigen_beta    = ds[ds.pipe_iso_cone_free_rotor_best].axis_theta
-            cdp.eigen_gamma   = ds[ds.pipe_iso_cone_free_rotor_best].axis_phi
-
-            # The x and y cone angles from the free rotor isotropic cone angle.
-            if ds[ds.pipe_iso_cone_free_rotor_best].cone_theta < 0.2:
-                cdp.cone_theta_x = 1.0
-                cdp.cone_theta_y = 1.0
-            else:
-                cdp.cone_theta_x = ds[ds.pipe_iso_cone_free_rotor_best].cone_theta
-                cdp.cone_theta_y = ds[ds.pipe_iso_cone_free_rotor_best].cone_theta
-
-        # The torsionless pseudo-ellipse cone model.
-        elif model == 'pseudo-ellipse, torsionless':
-            # The average position Euler angles from the rotor model.
-            cdp.ave_pos_alpha = ds[ds.pipe_iso_cone_torsionless_best].ave_pos_alpha
-            cdp.ave_pos_beta  = ds[ds.pipe_iso_cone_torsionless_best].ave_pos_beta
-            cdp.ave_pos_gamma = ds[ds.pipe_iso_cone_torsionless_best].ave_pos_gamma
-
-            # The eigenframe from the rotor model.
-            cdp.eigen_beta    = ds[ds.pipe_iso_cone_torsionless_best].axis_theta
-            cdp.eigen_gamma   = ds[ds.pipe_iso_cone_torsionless_best].axis_phi
-
-            # The x and y cone angles from the torsionless isotropic cone angle.
-            if ds[ds.pipe_iso_cone_torsionless_best].cone_theta < 0.2:
-                cdp.cone_theta_x = 1.0
-                cdp.cone_theta_y = 1.0
-            else:
-                cdp.cone_theta_x = ds[ds.pipe_iso_cone_torsionless_best].cone_theta
-                cdp.cone_theta_y = ds[ds.pipe_iso_cone_torsionless_best].cone_theta
-
-        # The pseudo-ellipse cone model.
-        elif model == 'pseudo-ellipse':
-            # The average position Euler angles from the rotor model.
-            cdp.ave_pos_alpha = ds[ds.pipe_iso_cone_best].ave_pos_alpha
-            cdp.ave_pos_beta  = ds[ds.pipe_iso_cone_best].ave_pos_beta
-            cdp.ave_pos_gamma = ds[ds.pipe_iso_cone_best].ave_pos_gamma
-
-            # The eigenframe from the rotor model.
-            cdp.eigen_alpha   = ds[ds.pipe_iso_cone_best].eigen_alpha
-            cdp.eigen_beta    = ds[ds.pipe_iso_cone_best].eigen_beta
-            cdp.eigen_gamma   = ds[ds.pipe_iso_cone_best].eigen_gamma
-
-            # The x and y cone angles from the isotropic cone angle.
-            if ds[ds.pipe_iso_cone_best].cone_theta < 0.2:
-                cdp.cone_theta_x = 1.0
-                cdp.cone_theta_y = 1.0
-            else:
-                cdp.cone_theta_x = ds[ds.pipe_iso_cone_best].cone_theta
-                cdp.cone_theta_y = ds[ds.pipe_iso_cone_best].cone_theta
-
-            # The torsion angle restriction from the rotor model.
-            cdp.cone_sigma_max     = ds[ds.pipe_rotor_best].cone_sigma_max
+        # The pseudo-elliptic cone model.
+        if model == 'pseudo-ellipse':
+            return [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
 
 
-    def model_failure(self):
-        """Check if the model has failed."""
+    def nested_params(self, model):
+        """Copy the parameters from the simpler nested models for faster optimisation.
 
-        # Isotropic order parameter out of range.
-        if hasattr(cdp, 'cone_s1') and (cdp.cone_s1 > 1.0 or cdp.cone_s1 < -0.125):
-            return True
+        @param model:   The frame order model.
+        @type model:    str
+        """
 
-        # Isotropic cone angle out of range.
-        if hasattr(cdp, 'cone_theta') and (cdp.cone_theta >= pi or cdp.cone_theta < 0.0):
-            return True
+        # The average position from the rigid model.
+        if model not in []:
+            # Get the rigid data pipe.
+            rigid_pipe = get_pipe(self.models['rigid'])
 
-        # Pseudo-ellipse cone angles out of range (0.001 instead of 0.0 because of truncation in the numerical integration).
-        if hasattr(cdp, 'cone_theta_x') and (cdp.cone_theta_x >= pi or cdp.cone_theta_x < 0.001):
-            return True
-        if hasattr(cdp, 'cone_theta_y') and (cdp.cone_theta_y >= pi or cdp.cone_theta_y < 0.001):
-            return True
+            # Copy the average position parameters from the rigid model.
+            if model not in ['free rotor', 'iso cone, free rotor']:
+                cdp.ave_pos_alpha = rigid_pipe.ave_pos_alpha
+            cdp.ave_pos_beta = rigid_pipe.ave_pos_beta
+            cdp.ave_pos_gamma = rigid_pipe.ave_pos_gamma
 
-        # Torsion angle out of range.
-        if hasattr(cdp, 'cone_sigma_max') and (cdp.cone_sigma_max >= pi or cdp.cone_sigma_max < 0.0):
-            return True
+        # The cone axis from the rotor model.
+        if model in ['iso cone']:
+            # Get the rotor data pipe.
+            rotor_pipe = get_pipe(self.models['rotor'])
 
-        # No failure.
-        return False
+            # Copy the cone axis.
+            cdp.axis_theta = rotor_pipe.axis_theta
+            cdp.axis_phi = rotor_pipe.axis_phi
+
+        # The cone axis from the free rotor model.
+        if model in ['iso cone, free rotor']:
+            # Get the rotor data pipe.
+            free_rotor_pipe = get_pipe(self.models['free rotor'])
+
+            # Copy the cone axis.
+            cdp.axis_theta = free_rotor_pipe.axis_theta
+            cdp.axis_phi = free_rotor_pipe.axis_phi
+
+        # The torsion from the rotor model.
+        if model in ['iso cone', 'pseudo-ellipse']:
+            # Get the rotor data pipe.
+            rotor_pipe = get_pipe(self.models['rotor'])
+
+            # Copy the cone axis.
+            cdp.cone_sigma_max = rotor_pipe.cone_sigma_max
+
+        # The cone angles from from the torsionless isotropic cone model.
+        if model in ['pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'pseudo-ellipse']:
+            # Get the rotor data pipe.
+            pipe = get_pipe(self.models['iso cone, torsionless'])
+
+            # Copy the cone axis.
+            cdp.cone_theta_x = pipe.cone_theta
+            cdp.cone_theta_y = pipe.cone_theta
 
 
-    def model_opt(self, model=None, var_name=None, grid_incs=None):
-        """Model optimisation."""
+    def optimise(self):
+        """Protocol for the nested optimisation of the frame order models."""
+
+        # First optimise the rigid model using all data.
+        self.optimise_rigid()
+
+        # Iteratively optimise the frame order models.
+        models = ['rotor', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'pseudo-ellipse']
+        for model in models:
+            # The model title.
+            title = model[0].upper() + model[1:]
+
+            # Print out.
+            self.print_title(title)
+
+            # The data pipe name.
+            self.models[model] = '%s - %s' % (title, self.pipe_bundle)
+
+            # The results file already exists, so read its contents instead.
+            if self.read_results(model=model, pipe_name=self.models[model]):
+                # Re-perform model elimination just in case.
+                self.interpreter.eliminate()
+
+                # Skip to the next model.
+                continue
+
+            # Create the data pipe using the full data set, and switch to it.
+            self.interpreter.pipe.copy(self.data_pipe_subset, self.models[model], bundle_to=self.pipe_bundle)
+            self.interpreter.pipe.switch(self.models[model])
+
+            # Select the Frame Order model.
+            self.interpreter.frame_order.select_model(model=model)
+
+            # Copy nested parameters.
+            self.nested_params(model)
+
+            # The optimisation settings.
+            self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_grid)
+            self.interpreter.frame_order.quad_int(flag=False)
+
+            # Grid search.
+            incs = self.custom_grid_incs(model)
+            self.interpreter.grid_search(inc=incs, constraints=False)
+
+            # Minimise (for the PCS data subset and full RDC set).
+            for num in self.num_int_pts_subset:
+                self.interpreter.frame_order.num_int_pts(num=num)
+                self.interpreter.minimise(self.min_algor, constraints=False)
+
+            # Copy the PCS data.
+            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.models[model])
+
+            # Minimise (for the full data set).
+            for num in self.num_int_pts_full:
+                self.interpreter.frame_order.num_int_pts(num=num)
+                self.interpreter.minimise(self.min_algor, constraints=False)
+
+            # Results printout.
+            self.print_results()
+
+            # Model elimination.
+            self.interpreter.eliminate()
+
+            # Save the results.
+            self.interpreter.results.write(dir=model, force=True)
+
+
+    def optimise_rigid(self):
+        """Optimise the rigid frame order model.
+
+        The Sobol' integration is not used here, so the algorithm is different to the other frame order models.
+        """
+
+        # The model.
+        model = 'rigid'
+        title = model[0].upper() + model[1:]
 
         # Print out.
-        text = "# %s model #" % model
+        self.print_title(title)
+
+        # The data pipe name.
+        self.models[model] = '%s - %s' % (title, self.pipe_bundle)
+
+        # The results file already exists, so read its contents instead.
+        if self.read_results(model=model, pipe_name=self.models[model]):
+            return
+
+        # Create the data pipe using the full data set, and switch to it.
+        self.interpreter.pipe.copy(self.data_pipe_full, self.models[model], bundle_to=self.pipe_bundle)
+        self.interpreter.pipe.switch(self.models[model])
+
+        # Select the Frame Order model.
+        self.interpreter.frame_order.select_model(model=model)
+
+        # Grid search.
+        self.interpreter.grid_search(inc=self.grid_inc_rigid, constraints=False)
+
+        # Minimise.
+        self.interpreter.minimise(self.min_algor, constraints=False)
+
+        # Results printout.
+        self.print_results()
+
+        # Save the results.
+        self.interpreter.results.write(dir=model, force=True)
+
+
+    def print_results(self):
+        """Print out the optimisation results for the current data pipe."""
+
+        # Header.
+        sys.stdout.write("\nFinal optimisation results:\n")
+
+        # Formatting string.
+        format_float = "    %-20s %20.15f\n"
+        format_vect = "    %-20s %20s\n"
+
+        # Average position.
+        if hasattr(cdp, 'ave_pos_alpha') or hasattr(cdp, 'ave_pos_beta') or hasattr(cdp, 'ave_pos_gamma'):
+            sys.stdout.write("\nAverage moving domain position Euler angles:\n")
+        if hasattr(cdp, 'ave_pos_alpha'):
+            sys.stdout.write(format_float % ('alpha:', cdp.ave_pos_alpha))
+        if hasattr(cdp, 'ave_pos_beta'):
+            sys.stdout.write(format_float % ('beta:', cdp.ave_pos_beta))
+        if hasattr(cdp, 'ave_pos_gamma'):
+            sys.stdout.write(format_float % ('gamma:', cdp.ave_pos_gamma))
+
+        # Frame order eigenframe.
+        if hasattr(cdp, 'eigen_alpha') or hasattr(cdp, 'eigen_beta') or hasattr(cdp, 'eigen_gamma') or hasattr(cdp, 'axis_theta') or hasattr(cdp, 'axis_phi'):
+            sys.stdout.write("\nFrame order eigenframe:\n")
+        if hasattr(cdp, 'eigen_alpha'):
+            sys.stdout.write(format_float % ('eigen alpha:', cdp.eigen_alpha))
+        if hasattr(cdp, 'eigen_beta'):
+            sys.stdout.write(format_float % ('eigen beta:', cdp.eigen_beta))
+        if hasattr(cdp, 'eigen_gamma'):
+            sys.stdout.write(format_float % ('eigen gamma:', cdp.eigen_gamma))
+
+        # The cone axis.
+        if hasattr(cdp, 'axis_theta'):
+            # The angles.
+            sys.stdout.write(format_float % ('axis theta:', cdp.axis_theta))
+            sys.stdout.write(format_float % ('axis phi:', cdp.axis_phi))
+
+            # The axis.
+            axis = zeros(3, float64)
+            spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], axis)
+            sys.stdout.write(format_vect % ('axis:', axis))
+
+        # Frame ordering.
+        if hasattr(cdp, 'cone_theta_x') or hasattr(cdp, 'cone_theta_y') or hasattr(cdp, 'cone_theta') or hasattr(cdp, 'cone_s1') or hasattr(cdp, 'cone_sigma_max'):
+            sys.stdout.write("\nFrame ordering:\n")
+        if hasattr(cdp, 'cone_theta_x'):
+            sys.stdout.write(format_float % ('cone theta_x:', cdp.cone_theta_x))
+        if hasattr(cdp, 'cone_theta_y'):
+            sys.stdout.write(format_float % ('cone theta_y:', cdp.cone_theta_y))
+        if hasattr(cdp, 'cone_theta'):
+            sys.stdout.write(format_float % ('cone theta:', cdp.cone_theta))
+        if hasattr(cdp, 'cone_s1'):
+            sys.stdout.write(format_float % ('cone s1:', cdp.cone_s1))
+        if hasattr(cdp, 'cone_sigma_max'):
+            sys.stdout.write(format_float % ('sigma_max:', cdp.cone_sigma_max))
+
+        # Minimisation statistics.
+        if hasattr(cdp, 'chi2'):
+            sys.stdout.write("\nMinimisation statistics:\n")
+        if hasattr(cdp, 'chi2'):
+            sys.stdout.write(format_float % ('chi2:', cdp.chi2))
+
+        # Final spacing.
+        sys.stdout.write("\n")
+
+
+    def print_title(self, name):
+        """Title print out for each frame order model.
+
+        @param name:    The frame order model name.
+        @type name:     str
+        """
+
+        text = "# %s frame order model #" % name
         print("\n\n\n\n\n" + "#"*len(text))
         print("%s" % text)
         print("#"*len(text) + "\n")
 
-        # The pipe name.
-        now = localtime()
-        name = '%s (%i%02i%02i_%02i%02i%02i)' % (model, now[0], now[1], now[2], now[3], now[4], now[5])
-        setattr(ds, 'pipe_%s' % var_name, name)
 
-        # Create the data pipe by copying, and switch to it.
-        self.interpreter.pipe.copy(ds.orig_pipe, name)
-        self.interpreter.pipe.switch(name)
+    def read_results(self, model=None, pipe_name=None):
+        """Attempt to read old results files.
 
-        # Select the Frame Order model.
-        self.interpreter.frame_order.select_model(model=model)
-        print("\nModel parameters:")
-        for i in range(len(cdp.params)):
-            print("    %s" % cdp.params[i])
-        print
+        @keyword model:     The frame order model.
+        @type model:        str
+        @keyword pipe_name: The name of the data pipe to use for this model.
+        @type pipe_name:    str
+        @return:            True if the file exists and has been read, False otherwise.
+        @rtype:             bool
+        """
 
-        # Copy parameters over from the other models.
-        self.copy_params(model)
+        # The file name.
+        path = model + sep + 'results.bz2'
 
-        # Grid search.
-        if grid_incs:
-            self.interpreter.grid_search(inc=grid_incs, constraints=False)
+        # The file does not exist.
+        if not access(path, F_OK):
+            return False
 
-        # Minimise.
-        self.interpreter.minimise('simplex', constraints=False)
+        # Create an empty data pipe.
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='frame order')
 
-        # Save the result.
-        self.interpreter.results.write(dir=var_name, force=True)
+        # Read the results file.
+        self.interpreter.results.read(path)
 
-        # Random sampling to better locate the minimum (skipping the rigid model).
-        if model != 'rigid':
-            self.random_sampling(model=model, var_name=var_name, parent_pipe=name)
+        # Results printout.
+        self.print_results()
 
-
-    def random_sampling(self, model=None, var_name=None, parent_pipe=None):
-        """Duplicate the model data, randomise certain parameters, and then re-optimise."""
-
-        # Init the random pipe storage.
-        name = 'pipe_' + var_name + '_rand'
-        setattr(ds, name, [])
-        pipe_list = getattr(ds, name)
-
-        # Init the best data pipe info.
-        best_chi2 = ds[parent_pipe].chi2
-        best_pipe = parent_pipe
-
-        # Loop over the samples.
-        for i in range(ds.N):
-            # Print out.
-            text = "# Random sample %s." % i
-            print("\n\n%s" % text)
-            print("#"*len(text) + "\n")
-
-            # A new data pipe.
-            now = localtime()
-            pipe_name = '%s, random sample %s (%i%02i%02i_%02i%02i%02i)' % (model, i, now[0], now[1], now[2], now[3], now[4], now[5])
-            pipe_list.append(pipe_name)
-
-            # Create the data pipe by copying the best one, and switch to it.
-            self.interpreter.pipe.copy(best_pipe, pipe_name)
-            self.interpreter.pipe.switch(pipe_name)
-
-            # Average position randomisation (Gaussian).
-            sigma = pi / 2.0
-            cdp.ave_pos_alpha = wrap_angles(gauss(ds[parent_pipe].ave_pos_alpha, sigma), 0.0, 2.0*pi)
-            cdp.ave_pos_beta  = wrap_angles(gauss(ds[parent_pipe].ave_pos_beta,  sigma), 0.0, 2.0*pi)
-            cdp.ave_pos_gamma = wrap_angles(gauss(ds[parent_pipe].ave_pos_gamma, sigma), 0.0, 2.0*pi)
-
-            # Eigenframe randomisation (Gaussian).
-            sigma = pi
-            if hasattr(cdp, 'eigen_alpha'):
-                cdp.eigen_alpha = wrap_angles(gauss(ds[parent_pipe].eigen_alpha, sigma), 0.0, 2.0*pi)
-                cdp.eigen_beta  = wrap_angles(gauss(ds[parent_pipe].eigen_beta,  sigma), 0.0, 2.0*pi)
-                cdp.eigen_gamma = wrap_angles(gauss(ds[parent_pipe].eigen_gamma, sigma), 0.0, 2.0*pi)
-            elif hasattr(cdp, 'axis_theta'):
-                cdp.axis_theta  = wrap_angles(gauss(ds[parent_pipe].axis_theta,  sigma), 0.0, 2.0*pi)
-                cdp.axis_phi    = wrap_angles(gauss(ds[parent_pipe].axis_phi,    sigma), 0.0, 2.0*pi)
-
-            # Cone randomisation (uniform).
-            if hasattr(cdp, 'cone_theta'):
-                cdp.cone_theta     = uniform(0.0, pi)
-            elif hasattr(cdp, 'cone_theta_x'):
-                cdp.cone_theta_x   = uniform(0.0, pi)
-                cdp.cone_theta_y   = uniform(0.0, pi)
-            elif hasattr(cdp, 'cone_s1'):
-                cdp.cone_s1        = uniform(-0.125, 1.0)
-            if hasattr(cdp, 'cone_sigma_max'):
-                cdp.cone_sigma_max = uniform(0.0, pi)
-
-            # Minimise.
-            self.interpreter.minimise('simplex', constraints=False)
-
-            # Save the result.
-            self.interpreter.results.write(dir=var_name+sep+'random_sample_%s'%i, force=True)
-
-            # Model failure, so do no check for a better minimum.
-            if self.model_failure():
-                continue
-
-            # Better minimum?
-            if cdp.chi2 < best_chi2:
-                best_chi2 = cdp.chi2
-                best_pipe = pipe_name
-
-        # Print out.
-        print("\n\nThe original minimum is at:")
-        print("    chi2: %s" % ds[parent_pipe].chi2)
-
-        print("\nThe best minimum is:")
-        print("    pipe_name: %s" % best_pipe)
-        print("    chi2: %s" % best_chi2)
-
-        # Set the best pipe.
-        setattr(ds, 'pipe_' + var_name + '_best', best_pipe)
+        # Success.
+        return True
