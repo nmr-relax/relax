@@ -106,7 +106,7 @@ uf.add_keyarg(
     desc_short = "tensor",
     desc = "The alignment tensor identification string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True,
     can_be_none = True
 )
@@ -130,7 +130,7 @@ uf.add_keyarg(
     desc_short = "tensor",
     desc = "The alignment tensor identification string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True,
     can_be_none = True
 )
@@ -160,7 +160,7 @@ uf.add_keyarg(
     desc_short = "tensor ID",
     desc = "The alignment tensor identification string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True,
     can_be_none = True
 )
@@ -195,7 +195,10 @@ uf.add_keyarg(
     name = "align_id",
     py_type = "str",
     desc_short = "alignment ID",
-    desc = "The alignment ID string that the tensor corresponds to."
+    desc = "The alignment ID string that the tensor corresponds to.",
+    wiz_element_type = "combo",
+    wiz_combo_iter = align_tensor.get_tensor_ids,
+    wiz_read_only = False
 )
 uf.add_keyarg(
     name = "domain",
@@ -312,7 +315,7 @@ uf.add_keyarg(
     desc_short = "alignment tensor IDs",
     desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
     wiz_element_type = "combo_list",
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True,
     can_be_none = True
 )
@@ -336,7 +339,7 @@ uf.add_keyarg(
     desc_short = "full tensor",
     desc = "The full alignment tensor.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True
 )
 uf.add_keyarg(
@@ -345,7 +348,7 @@ uf.add_keyarg(
     desc_short = "reduced tensor",
     desc = "The reduced alignment tensor.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True
 )
 # Description.
@@ -370,7 +373,7 @@ uf.add_keyarg(
     desc_short = "tensor ID",
     desc = "The alignment tensor to assign the domain label to.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True,
 )
 uf.add_keyarg(
@@ -413,7 +416,7 @@ uf.add_keyarg(
     desc_short = "alignment tensor IDs",
     desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
     wiz_element_type = "combo_list",
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_tensor_ids,
     wiz_read_only = True,
     can_be_none = True
 )

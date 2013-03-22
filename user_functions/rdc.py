@@ -56,7 +56,7 @@ uf.add_keyarg(
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_align_ids,
     wiz_read_only = True,
     can_be_none = True
 )
@@ -215,7 +215,7 @@ uf.add_keyarg(
     desc_short = "alignment ID string",
     desc = "The alignment ID string of the data to delete.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_align_ids,
     wiz_read_only = True,
     can_be_none = True
 )
@@ -243,7 +243,7 @@ uf.add_keyarg(
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_align_ids,
     wiz_read_only = True
 )
 uf.add_keyarg(
@@ -276,7 +276,7 @@ uf.add_keyarg(
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids
+    wiz_combo_iter = align_tensor.get_align_ids
 )
 uf.add_keyarg(
     name = "file",
@@ -444,7 +444,7 @@ uf.add_keyarg(
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_align_ids,
     wiz_read_only = True
 )
 uf.add_keyarg(
@@ -479,7 +479,7 @@ uf.add_keyarg(
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = align_tensor.get_ids,
+    wiz_combo_iter = align_tensor.get_align_ids,
     wiz_read_only = True
 )
 uf.add_keyarg(

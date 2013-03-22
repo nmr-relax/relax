@@ -334,7 +334,7 @@ class Frame_order:
             # Set up the slave processors.
             self.slaves = []
             for i in range(self.processor.processor_size()):
-                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
+                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
 
         # The target function aliases (Scipy numerical integration).
         else:

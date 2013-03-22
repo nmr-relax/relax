@@ -39,6 +39,9 @@ class Align_tensor(SystemTestCase):
         # Temp file name.
         ds.tmpfile = mktemp()
 
+        # The alignment.
+        align_id = 'test'
+
         # Tensor name lists.
         self.full_list = ['0 full', '1 full', '2 full', '3 full', '4 full']
         self.red_list = ['0 red', '1 red', '2 red', '3 red', '4 red']
@@ -69,12 +72,12 @@ class Align_tensor(SystemTestCase):
         # Set up the tensors.
         for i in range(5):
             # Load the tensor.
-            self.interpreter.align_tensor.init(tensor=self.full_list[i], params=self.tensors_full[i], param_types=0)
-            self.interpreter.align_tensor.init(tensor=self.red_list[i], params=self.tensors_red[i], param_types=0)
+            self.interpreter.align_tensor.init(tensor=self.full_list[i], align_id=align_id, params=self.tensors_full[i], param_types=0)
+            self.interpreter.align_tensor.init(tensor=self.red_list[i], align_id=align_id, params=self.tensors_red[i], param_types=0)
 
             # Errors.
-            self.interpreter.align_tensor.init(tensor=self.full_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
-            self.interpreter.align_tensor.init(tensor=self.red_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
+            self.interpreter.align_tensor.init(tensor=self.full_list[i], align_id=align_id, params=(error, error, error, error, error), param_types=0, errors=True)
+            self.interpreter.align_tensor.init(tensor=self.red_list[i], align_id=align_id, params=(error, error, error, error, error), param_types=0, errors=True)
 
             # Domain.
             self.interpreter.align_tensor.set_domain(tensor=self.full_list[i], domain='full')
