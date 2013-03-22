@@ -37,7 +37,7 @@ from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_rotor
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
-from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
 from pcs import pcs_tensor
 from physical_constants import pcs_constant
@@ -400,45 +400,6 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_iso_cone_elements(self, params):
-        """Target function for isotropic cone model optimisation using the Frame Order matrix.
-
-        This function optimises by directly matching the elements of the 2nd degree Frame Order
-        super matrix.  The cone axis spherical angles theta and phi and the cone angle theta are the
-        3 parameters optimised in this model.
-
-        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two are the polar and azimuthal angles of the cone axis theta_cone is the isotropic cone angle.
-        @type params:   list of float
-        @return:        The chi-squared or SSE value.
-        @rtype:         float
-        """
-
-        # Break up the parameters.
-        theta, phi, theta_cone = params
-
-        # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, theta, phi, theta_cone)
-
-        # Make the Frame Order matrix contiguous.
-        self.frame_order_2nd = self.frame_order_2nd.copy()
-
-        # Reshape the numpy arrays for use in the chi2() function.
-        self.data.shape = (81,)
-        self.frame_order_2nd.shape = (81,)
-        self.errors.shape = (81,)
-
-        # Get the chi-squared value.
-        val = chi2(self.data, self.frame_order_2nd, self.errors)
-
-        # Reshape the arrays back to normal.
-        self.data.shape = (9, 9)
-        self.frame_order_2nd.shape = (9, 9)
-        self.errors.shape = (9, 9)
-
-        # Return the chi2 value.
-        return val
-
-
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation.
 
@@ -450,17 +411,76 @@ class Frame_order:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameters.
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max = params
+        if self.pivot_opt:
+            self._param_pivot = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
+        else:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params
+
+        # Generate the cone axis from the spherical angles.
+        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+
+        # Pre-calculate the eigenframe rotation matrix.
+        two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max)
+        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, Rx2_eigen, cone_theta, sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # RDCs.
+            if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
+
+            # PCS.
+            if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom[j]
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
+                chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
+
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
+        return chi2_sum
 
 
     def func_iso_cone_free_rotor(self, params):
@@ -560,17 +580,76 @@ class Frame_order:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameters.
-        ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params
+        if self.pivot_opt:
+            self._param_pivot = params[:3]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
+        else:
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params
+
+        # Generate the cone axis from the spherical angles.
+        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+
+        # Pre-calculate the eigenframe rotation matrix.
+        two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_theta)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, self.Rx2_eigen, cone_theta)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # RDCs.
+            if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
+
+            # PCS.
+            if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom[j]
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
+                chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
+
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
+        return chi2_sum
 
 
     def func_pseudo_ellipse(self, params):
@@ -582,17 +661,73 @@ class Frame_order:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameters.
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
+        if self.pivot_opt:
+            self._param_pivot = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
+        else:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
+
+        # Average position rotation.
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y, cone_sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # RDCs.
+            if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
+
+            # PCS.
+            if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom[j]
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
+                chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
+
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
+        return chi2_sum
 
 
     def func_pseudo_ellipse_free_rotor(self, params):
@@ -604,17 +739,73 @@ class Frame_order:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameters.
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+        if self.pivot_opt:
+            self._param_pivot = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+        else:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+
+        # Average position rotation.
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # RDCs.
+            if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
+
+            # PCS.
+            if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom[j]
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
+                chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
+
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
+        return chi2_sum
 
 
     def func_pseudo_ellipse_torsionless(self, params):
@@ -626,17 +817,73 @@ class Frame_order:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameters.
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+        if self.pivot_opt:
+            self._param_pivot = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+        else:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+
+        # Average position rotation.
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # RDCs.
+            if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
+
+            # PCS.
+            if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom[j]
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
+                chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
+
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
+        return chi2_sum
 
 
     def func_rigid(self, params):
@@ -825,7 +1072,7 @@ class Frame_order:
         """
 
         # Alignment tensor rotation.
-        euler_to_R(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.R_ave)
+        euler_to_R_zyz(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.R_ave)
 
         # Back calculate the rotated tensors.
         for i in range(self.num_tensors):

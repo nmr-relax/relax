@@ -33,9 +33,9 @@ paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # Loop over the alignments.
 tensors = ['dy', 'tb', 'tm', 'er']
-for i in range(len(cdp.align_tensors)):
+for i in range(len(tensors)):
     # The tag.
-    tag = cdp.align_tensors[i].name
+    tag = tensors[i]
 
     # The temperature and field strength.
     temperature(id=tag, temp=303)
