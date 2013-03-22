@@ -25,7 +25,7 @@ from numpy import array, dot, float64, transpose, zeros
 from unittest import TestCase
 
 # relax module imports.
-from data.diff_tensor import DiffTensorData
+from data_store.diff_tensor import DiffTensorData
 from lib.geometry.rotations import two_vect_to_R
 from lib.errors import RelaxError
 

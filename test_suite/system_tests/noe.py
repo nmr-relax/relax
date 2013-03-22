@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from os import sep
 from tempfile import mktemp
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase

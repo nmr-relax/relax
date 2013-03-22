@@ -27,7 +27,7 @@ import wx
 import wx.grid
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
 from graphics import fetch_icon
 from lib.errors import RelaxError

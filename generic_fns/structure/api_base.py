@@ -35,7 +35,7 @@ from types import MethodType
 from warnings import warn
 
 # relax module import.
-from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
+from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from lib.float import floatAsByteArray, packBytesAsPyFloat
 from generic_fns.structure.superimpose import kabsch
 from lib.errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError

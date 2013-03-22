@@ -31,8 +31,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from data.exp_info import ExpInfo
+from data_store import Relax_data_store; ds = Relax_data_store()
+from data_store.exp_info import ExpInfo
 from generic_fns import bmrb, dipole_pair
 from generic_fns.interatomic import create_interatom, return_interatom, return_interatom_list
 from generic_fns.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop

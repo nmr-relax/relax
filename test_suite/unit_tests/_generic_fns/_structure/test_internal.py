@@ -24,7 +24,7 @@ from os import path, sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.reset import reset
 from generic_fns.structure.internal import Internal, MolContainer
 from lib.io import file_root

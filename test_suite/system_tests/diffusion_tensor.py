@@ -26,8 +26,8 @@ from os import sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from data.diff_tensor import DiffTensorSimList
+from data_store import Relax_data_store; ds = Relax_data_store()
+from data_store.diff_tensor import DiffTensorSimList
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
 from generic_fns.reset import reset

@@ -6,7 +6,7 @@ from numpy.linalg import norm
 from os import sep
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.rotation_matrix import R_to_euler_zyz
 from target_functions.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()

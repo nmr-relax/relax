@@ -25,7 +25,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from status import Status; status = Status()

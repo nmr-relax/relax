@@ -27,13 +27,13 @@ from re import match
 from warnings import warn
 
 # relax module imports.
-from data.align_tensor import AlignTensorList
-from data.diff_tensor import DiffTensorData
-from data.exp_info import ExpInfo
-from data.interatomic import InteratomList
-from data.mol_res_spin import MoleculeList
-from data.prototype import Prototype
-from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from data_store.align_tensor import AlignTensorList
+from data_store.diff_tensor import DiffTensorData
+from data_store.exp_info import ExpInfo
+from data_store.interatomic import InteratomList
+from data_store.mol_res_spin import MoleculeList
+from data_store.prototype import Prototype
+from data_store.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 import generic_fns
 from lib.errors import RelaxFromXMLNotEmptyError
 from lib.warnings import RelaxWarning

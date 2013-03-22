@@ -27,7 +27,7 @@ from numpy import array, float64, transpose, zeros
 from os import F_OK, access, sep
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.rotations import euler_to_R_zyz
 from status import Status; status = Status()
 

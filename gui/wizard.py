@@ -27,7 +27,7 @@ import wx
 from wx.lib import buttons, scrolledpanel
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxImplementError
 from status import Status; status = Status()
 

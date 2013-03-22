@@ -26,7 +26,7 @@ from tempfile import mkdtemp
 import wx
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import cdp_name

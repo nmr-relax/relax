@@ -31,7 +31,7 @@ from re import search
 import string
 
 # relax module imports.
-from data.diff_tensor import DiffTensorData
+from data_store.diff_tensor import DiffTensorData
 from generic_fns import pipes
 from generic_fns.angles import fold_spherical_angles, wrap_angles
 from generic_fns.interatomic import return_interatom_list

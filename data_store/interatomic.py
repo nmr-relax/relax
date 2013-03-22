@@ -27,8 +27,8 @@ from re import match
 
 # relax module imports.
 import generic_fns
-from data.prototype import Prototype
-from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
+from data_store.prototype import Prototype
+from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
 import specific_analyses
 

@@ -5,7 +5,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from lib.errors import RelaxError
 from status import Status; status = Status()

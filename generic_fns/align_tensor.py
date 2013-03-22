@@ -32,7 +32,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from data.align_tensor import AlignTensorList
+from data_store.align_tensor import AlignTensorList
 from generic_fns.angles import wrap_angles
 from generic_fns import pipes
 from lib.physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio

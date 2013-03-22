@@ -24,7 +24,7 @@
 
 # relax module imports.
 from info import Info_box
-from data.exp_info import ExpInfo
+from data_store.exp_info import ExpInfo
 from generic_fns import pipes
 from lib.errors import RelaxError
 from lib.io import open_read_file

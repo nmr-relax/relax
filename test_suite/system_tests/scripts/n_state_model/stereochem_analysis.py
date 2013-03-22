@@ -49,7 +49,7 @@ import sys
 
 # relax module imports.
 from auto_analyses.stereochem_analysis import Stereochem_analysis
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 

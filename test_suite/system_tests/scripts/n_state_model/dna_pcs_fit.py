@@ -4,7 +4,7 @@
 from os import sep
 
 # relax imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 

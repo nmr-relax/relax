@@ -23,7 +23,7 @@
 from numpy import array
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import metadata_update
 from lib.errors import RelaxError, RelaxNoPipeError

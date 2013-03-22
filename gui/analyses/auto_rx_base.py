@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ import wx
 
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
 from generic_fns.pipes import has_bundle, has_pipe
 from status import Status; status = Status()

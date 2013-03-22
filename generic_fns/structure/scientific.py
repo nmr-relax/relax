@@ -36,7 +36,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from data.relax_xml import fill_object_contents, xml_to_object
+from data_store.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, tokenise
 from generic_fns.structure.api_base import Base_struct_API

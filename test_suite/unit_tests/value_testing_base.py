@@ -23,7 +23,7 @@
 from math import pi
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor, pipes
 from lib.errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
 from test_suite.unit_tests.base_classes import UnitTestCase

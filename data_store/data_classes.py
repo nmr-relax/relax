@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@ from re import search
 from numpy import ndarray
 
 # relax module imports.
-from data.relax_xml import fill_object_contents, xml_to_object
+from data_store.relax_xml import fill_object_contents, xml_to_object
 
 
 class Element(object):

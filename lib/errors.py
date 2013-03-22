@@ -68,7 +68,7 @@ def save_state():
 
     # relax data store singleton import.  Must be done here!
     try:
-        from data import Relax_data_store; ds = Relax_data_store()
+        from data_store import Relax_data_store; ds = Relax_data_store()
 
     # Ok, this is not relax so don't do anything!
     except ImportError:

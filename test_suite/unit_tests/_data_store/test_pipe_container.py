@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data.pipe_container import PipeContainer
+from data_store.pipe_container import PipeContainer
 
 
 class Test_pipe_container(TestCase):

@@ -565,7 +565,7 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 
 To enable advanced Python\index{Python} scripting and control many parts of relax have been designed in an object oriented fashion.  If you would like to play with internals of the program the entirety of relax is accessible by importation.  For example all data is contained within the object called the relax data store which, to be able to access it, needs be imported by typing:
 
-\example{relax> from data import Relax\_data\_store; ds = Relax\_data\_store()}
+\example{relax> from data\_store import Relax\_data\_store; ds = Relax\_data\_store()}
 
 The \prompt{ds} object is a dictionary type which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
 

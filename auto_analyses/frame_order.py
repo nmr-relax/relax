@@ -32,7 +32,7 @@ import sys
 from time import localtime
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.angles import wrap_angles
 from generic_fns.pipes import cdp_name, get_pipe
 from lib.text.sectioning import section, subsection, title

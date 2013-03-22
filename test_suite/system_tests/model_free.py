@@ -30,7 +30,7 @@ import sys
 from tempfile import mkdtemp
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns import pipes
 from generic_fns.interatomic import interatomic_loop

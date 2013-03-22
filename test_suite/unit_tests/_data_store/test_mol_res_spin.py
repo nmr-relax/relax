@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data.mol_res_spin import MoleculeList
+from data_store.mol_res_spin import MoleculeList
 
 
 class Test_mol_res_spin(TestCase):

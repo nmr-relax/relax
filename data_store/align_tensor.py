@@ -30,8 +30,8 @@ from numpy.linalg import det, eig, eigvals
 import sys
 
 # relax module imports.
-from data.data_classes import Element
-from data.relax_xml import fill_object_contents, xml_to_object
+from data_store.data_classes import Element
+from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.float import nan
 from lib.geometry.rotations import R_to_euler_zyz
 from lib.errors import RelaxError

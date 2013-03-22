@@ -35,8 +35,8 @@ import wx
 
 # relax module imports.
 from lib import ansi
-from data import Relax_data_store; ds = Relax_data_store()
-from data.gui import Gui
+from data_store import Relax_data_store; ds = Relax_data_store()
+from data_store.gui import Gui
 from info import Info_box
 from generic_fns import state
 from generic_fns.pipes import cdp_name

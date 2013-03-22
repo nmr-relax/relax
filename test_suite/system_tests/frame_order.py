@@ -30,7 +30,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from target_functions.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz

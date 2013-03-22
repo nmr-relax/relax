@@ -34,7 +34,7 @@ from os import getcwd, listdir
 from re import search
 
 # relax imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from specific_analyses.setup import n_state_model_obj
 
 

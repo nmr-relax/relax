@@ -28,7 +28,7 @@ from re import search
 from tempfile import mktemp
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
 from status import Status; status = Status()

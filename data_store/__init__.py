@@ -31,9 +31,9 @@ import xml.dom.minidom
 
 # relax module imports.
 from compat import builtins
-from data.gui import Gui
-from data.pipe_container import PipeContainer
-from data.relax_xml import fill_object_contents, xml_to_object
+from data_store.gui import Gui
+from data_store.pipe_container import PipeContainer
+from data_store.relax_xml import fill_object_contents, xml_to_object
 import generic_fns
 from lib.errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from status import Status; status = Status()

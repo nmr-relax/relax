@@ -35,8 +35,8 @@ import dep_check
 
 # relax module imports.
 from compat import queue
-from data import Relax_data_store; ds = Relax_data_store()
-from data.gui import Gui
+from data_store import Relax_data_store; ds = Relax_data_store()
+from data_store.gui import Gui
 from generic_fns.reset import reset
 from prompt.interpreter import exec_script
 from lib.errors import RelaxError

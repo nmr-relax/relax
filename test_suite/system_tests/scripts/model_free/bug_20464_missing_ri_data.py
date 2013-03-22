@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 

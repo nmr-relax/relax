@@ -33,7 +33,7 @@ import wx.lib.mixins.listctrl
 
 # relax module imports.
 from auto_analyses import dauvergne_protocol
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns.pipes import has_bundle, has_pipe
