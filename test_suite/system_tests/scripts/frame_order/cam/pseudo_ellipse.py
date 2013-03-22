@@ -35,12 +35,12 @@ class Analysis(Base_script):
     ave_pos_alpha = 4.3434999280669997
     ave_pos_beta = 0.43544332764249905
     ave_pos_gamma = 3.8013235235956007
-    eigen_alpha = 3.1415926535897931
-    eigen_beta = 0.96007997859534311
-    eigen_gamma = 4.0322755062196229
-    cone_theta_x = 10.0 * 2.0 * pi / 360.0
-    cone_theta_y = 30.0 * 2.0 * pi / 360.0
-    cone_sigma_max = 40.0 * 2.0 * pi / 360.0
+    eigen_alpha = 3.14159265358979311600
+    eigen_beta = 0.96007997859534310869
+    eigen_gamma = 4.03227550621962294031
+    cone_theta_x = 30.0 * 2.0 * pi / 360.0
+    cone_theta_y = 50.0 * 2.0 * pi / 360.0
+    cone_sigma_max = 60.0 * 2.0 * pi / 360.0
     cone = True
     num_int_pts = 50
 

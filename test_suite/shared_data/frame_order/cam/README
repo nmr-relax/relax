@@ -71,3 +71,30 @@ The rotations used were:
 
 The paramagnetic centre will be assumed to be the second calcium in the 1J7O_1st_NH PDB file (A1001).  This position is:
     centre = array([35.934, 12.194, -4.206])
+
+
+
+Data creation and analysis
+==========================
+
+
+In the subdirectories, the steps to create the data are:
+
+1.  Modify the 'generate_distribution.py' to create the desired distribution.  Then generate the distribution of structures by typing:
+
+$ rm -f generate_distribution.log; ../../../../../relax -t generate_distribution.log generate_distribution.py; bzip2 -f generate_distribution.log
+
+
+2.  Calculate the reduced C-domain tensors from the new RDC data with the 'tensor_fit.py' script.  This also requires no modifications.  Just type:
+
+$ rm -f tensor_fit.log; ../../../../../relax -t tensor_fit.log tensor_fit.py; bzip2 -f tensor_fit.log
+
+
+3.  Perform the frame order analysis.  Select the appropriate model in the 'frame_order.py' script.
+
+$ rm -f frame_order.log; ../../../../../relax -t frame_order.log frame_order.py; bzip2 -f frame_order.log
+
+
+4.  For PyMOL visualisation, type:
+
+$ ../../../../../relax animate.py
