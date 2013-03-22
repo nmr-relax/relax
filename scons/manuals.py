@@ -106,7 +106,8 @@ def compile_api_manual_html(target, source, env):
         'minfx.scipy_subset',
         'multi.test_implementation',
         'multi.test_implementation2',
-        'sample_scripts'
+        'sample_scripts',
+        'test_suite.system_tests.scripts'
     ]
 
     # output

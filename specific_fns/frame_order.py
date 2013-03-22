@@ -47,7 +47,7 @@ from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoPCSError, RelaxNoRDCError, RelaxNoValueError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
 from specific_fns.api_base import API_base
@@ -616,6 +616,58 @@ class Frame_order(API_base, API_common):
         return list(row)
 
 
+    def _minimise_setup_atomic_pos(self, sim_index=None):
+        """Set up the atomic position data structures for optimisation using PCSs and PREs as base data sets.
+
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The atomic positions (the first index is the spins, the second is the structures, and the third is the atomic coordinates) and the paramagnetic centre.
+        @rtype:             numpy rank-3 array, numpy rank-1 array.
+        """
+
+        # Initialise.
+        atomic_pos = []
+
+        # Store the atomic positions.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Only use spins with alignment/paramagnetic data.
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'pre'):
+                continue
+
+            # A single atomic position.
+            if len(spin.pos) == 1:
+                atomic_pos.append(spin.pos[0])
+
+            # Average multiple atomic positions.
+            else:
+                # First throw a warning to tell the user what is happening.
+                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
+
+                # The average position.
+                ave_pos = zeros(3, float64)
+                for i in range(len(spin.pos)):
+                    ave_pos += spin.pos[i]
+
+                # Store.
+                atomic_pos.append(ave_pos)
+
+        # Convert to numpy objects.
+        atomic_pos = array(atomic_pos, float64)
+
+        # The paramagnetic centre.
+        if not hasattr(cdp, 'paramagnetic_centre'):
+            paramag_centre = zeros(3, float64)
+        else:
+            paramag_centre = array(cdp.paramagnetic_centre)
+
+        # Return the data structures.
+        return atomic_pos, paramag_centre
+
+
     def _minimise_setup_pcs(self, sim_index=None):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
@@ -642,14 +694,16 @@ class Frame_order(API_base, API_common):
         pcs = []
         pcs_err = []
         pcs_weight = []
-        atomic_pos = []
         temp = []
         frq = []
 
         # The PCS data.
-        for align_id in cdp.align_ids:
-            # No RDC or PCS data, so jump to the next alignment.
-            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids) and (hasattr(cdp, 'pcs_ids') and not align_id in cdp.pcs_ids):
+        for i in range(len(cdp.align_ids)):
+            # Alias the ID.
+            align_id = cdp.align_ids[i]
+
+            # Skip non-optimised data.
+            if not self._opt_uses_align_data(align_id):
                 continue
 
             # Append empty arrays to the PCS structures.
@@ -660,14 +714,18 @@ class Frame_order(API_base, API_common):
             # Get the temperature for the PCS constant.
             if align_id in cdp.temperature:
                 temp.append(cdp.temperature[align_id])
+
+            # The temperature must be given!
             else:
-                temp.append(0.0)
+                raise RelaxError("The experimental temperature for the alignment ID '%s' has not been set." % align_id)
 
             # Get the spectrometer frequency in Tesla units for the PCS constant.
             if align_id in cdp.frq:
                 frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
+
+            # The frequency must be given!
             else:
-                frq.append(1e-10)
+                raise RelaxError("The spectrometer frequency for the alignment ID '%s' has not been set." % align_id)
 
             # Spin loop over the domain.
             id = cdp.domain[self._domain_moving()]
@@ -682,7 +740,7 @@ class Frame_order(API_base, API_common):
                     continue
 
                 # Append the PCSs to the list.
-                if align_id in list(spin.pcs.keys()):
+                if align_id in spin.pcs.keys():
                     if sim_index != None:
                         pcs[-1].append(spin.pcs_sim[align_id][sim_index])
                     else:
@@ -691,13 +749,13 @@ class Frame_order(API_base, API_common):
                     pcs[-1].append(None)
 
                 # Append the PCS errors.
-                if hasattr(spin, 'pcs_err') and align_id in list(spin.pcs_err.keys()):
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
                     pcs_err[-1].append(spin.pcs_err[align_id])
                 else:
                     pcs_err[-1].append(None)
 
                 # Append the weight.
-                if hasattr(spin, 'pcs_weight') and align_id in list(spin.pcs_weight.keys()):
+                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
                     pcs_weight[-1].append(spin.pcs_weight[align_id])
                 else:
                     pcs_weight[-1].append(1.0)
@@ -714,38 +772,8 @@ class Frame_order(API_base, API_common):
         pcs = pcs * 1e-6
         pcs_err = pcs_err * 1e-6
 
-        # Store the atomic positions.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Only use spins with PCS data.
-            if not hasattr(spin, 'pcs'):
-                continue
-
-            # A single atomic position.
-            if len(spin.pos) == 1:
-                atomic_pos.append(spin.pos[0])
-
-            # Average multiple atomic positions.
-            else:
-                # First throw a warning to tell the user what is happening.
-                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
-
-                # The average position.
-                ave_pos = zeros(3, float64)
-                for i in range(len(spin.pos)):
-                    ave_pos += spin.pos[i]
-
-                # Store.
-                atomic_pos.append(ave_pos)
-
-        # Convert to numpy objects.
-        atomic_pos = array(atomic_pos, float64)
-
         # Return the data structures.
-        return pcs, pcs_err, pcs_weight, atomic_pos, array(cdp.paramagnetic_centre), temp, frq
+        return pcs, pcs_err, pcs_weight, temp, frq
 
 
     def _minimise_setup_rdcs(self, sim_index=None):
@@ -832,9 +860,12 @@ class Frame_order(API_base, API_common):
                 unit_vect[i] = [[None, None, None]]*num
 
         # The RDC data.
-        for align_id in cdp.align_ids:
-            # No RDC data, so jump to the next alignment.
-            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids):
+        for i in range(len(cdp.align_ids)):
+            # Alias the ID.
+            align_id = cdp.align_ids[i]
+
+            # Skip non-optimised data.
+            if not self._opt_uses_align_data(align_id):
                 continue
 
             # Append empty arrays to the RDC structures.
@@ -862,15 +893,21 @@ class Frame_order(API_base, API_common):
                 value = None
                 error = None
 
-                # The RDC.
-                if sim_index != None:
-                    value = interatom.rdc_sim[align_id][sim_index]
-                else:
-                    value = interatom.rdc[align_id]
+                # Pseudo-atom set up.
+                if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc.keys():
+                    raise RelaxError("Psuedo-atoms are currently not supported for the frame order analysis.")
 
-                # The error.
-                if hasattr(interatom, 'rdc_err') and align_id in list(interatom.rdc_err.keys()):
-                    error = interatom.rdc_err[align_id]
+                # Normal set up.
+                elif align_id in interatom.rdc.keys():
+                    # The RDC.
+                    if sim_index != None:
+                        value = interatom.rdc_sim[align_id][sim_index]
+                    else:
+                        value = interatom.rdc[align_id]
+
+                    # The error.
+                    if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                        error = interatom.rdc_err[align_id]
 
                 # Append the RDCs to the list.
                 rdc[-1].append(value)
@@ -879,13 +916,13 @@ class Frame_order(API_base, API_common):
                 rdc_err[-1].append(error)
 
                 # Append the weight.
-                if hasattr(interatom, 'rdc_weight') and align_id in list(interatom.rdc_weight.keys()):
+                if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
                     rdc_weight[-1].append(interatom.rdc_weight[align_id])
                 else:
                     rdc_weight[-1].append(1.0)
 
                 # Append the absolute value flag.
-                if hasattr(interatom, 'absolute_rdc') and align_id in list(interatom.absolute_rdc.keys()):
+                if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
                     absolute[-1].append(interatom.absolute_rdc[align_id])
                 else:
                     absolute[-1].append(False)
@@ -966,6 +1003,76 @@ class Frame_order(API_base, API_common):
 
         # Store the value.
         cdp.num_int_pts = num
+
+
+    def _opt_uses_align_data(self, align_id=None):
+        """Determine if the PCS or RDC data for the given alignment ID is needed for optimisation.
+
+        @keyword align_id:  The optional alignment ID string.
+        @type align_id:     str
+        @return:            True if alignment data is to be used for optimisation, False otherwise.
+        @rtype:             bool
+        """
+
+        # No alignment IDs.
+        if not hasattr(cdp, 'align_ids'):
+            return False
+
+        # Convert the align IDs to an array, or take all IDs.
+        if align_id:
+            align_ids = [align_id]
+        else:
+            align_ids = cdp.align_ids
+
+        # Check the PCS and RDC.
+        for align_id in align_ids:
+            if self._opt_uses_pcs(align_id) or self._opt_uses_rdc(align_id):
+                return True
+
+        # No alignment data is used for optimisation.
+        return False
+
+
+    def _opt_uses_pcs(self, align_id):
+        """Determine if the PCS data for the given alignment ID is needed for optimisation.
+
+        @param align_id:    The alignment ID string.
+        @type align_id:     str
+        @return:            True if the PCS data is to be used for optimisation, False otherwise.
+        @rtype:             bool
+        """
+
+        # No alignment IDs.
+        if not hasattr(cdp, 'pcs_ids'):
+            return False
+
+        # No PCS data for the alignment.
+        if align_id not in cdp.pcs_ids:
+            return False
+
+        # The PCS data is to be used for optimisation.
+        return True
+
+
+    def _opt_uses_rdc(self, align_id):
+        """Determine if the RDC data for the given alignment ID is needed for optimisation.
+
+        @param align_id:    The alignment ID string.
+        @type align_id:     str
+        @return:            True if the RDC data is to be used for optimisation, False otherwise.
+        @rtype:             bool
+        """
+
+        # No alignment IDs.
+        if not hasattr(cdp, 'rdc_ids'):
+            return False
+
+        # No RDC data for the alignment.
+        if align_id not in cdp.rdc_ids:
+            return False
+
+        # The RDC data is to be used for optimisation.
+        return True
 
 
     def _param_num(self):
@@ -1237,14 +1344,25 @@ class Frame_order(API_base, API_common):
         full_tensors, full_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = None, None, None, None, None, None, None
+        pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
+            pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, absolute_rdc = None, None, None, None, None, None
         if 'rdc' in data_types:
             rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, absolute_rdc = self._minimise_setup_rdcs(sim_index=sim_index)
+
+        # Data checks.
+        if not len(pcs):
+            raise RelaxNoPCSError
+        if not len(rdcs):
+            raise RelaxNoRDCError
+
+        # Get the atomic_positions.
+        atomic_pos, paramag_centre, centre_fixed = None, None, True
+        if 'pcs' in data_types or 'pre' in data_types:
+            atomic_pos, paramag_centre = self._minimise_setup_atomic_pos(sim_index=sim_index)
 
         # The fixed pivot point.
         pivot = None
@@ -1268,14 +1386,14 @@ class Frame_order(API_base, API_common):
                 sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
                 sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
             base_data = []
-            if rdcs != None:
+            if rdcs != None and len(rdcs):
                 base_data.append("RDCs")
-            if pcs != None:
+            if pcs != None and len(pcs):
                 base_data.append("PCSs")
             sys.stdout.write("Base data: %s\n" % repr(base_data))
 
         # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
+        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
 
         # Return the data.
         return target, param_vector, data_types, scaling_matrix
