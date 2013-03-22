@@ -24,8 +24,12 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, pi, sqrt
-from numpy import array, dot, float16, float64, ones, transpose, zeros
+from math import acos, ceil, pi, sqrt
+from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
+try:
+    from numpy import float16
+except ImportError:
+    float16 = float32
 from numpy.linalg import norm
 
 # relax module imports.
@@ -35,11 +39,12 @@ from extern.sobol.sobol_lib import i4_sobol
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_qrint, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, Data, Memo_pcs_pseudo_ellipse_qrint, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint, Slave_command_pcs_pseudo_ellipse_qrint
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
+from multi import Processor_box
 from pcs import pcs_tensor
 from physical_constants import pcs_constant
 from rdc import rdc_tensor
@@ -49,7 +54,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, num_int_pts=500, pivot=None, pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, pivot=zeros(3), pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -191,11 +196,11 @@ class Frame_order:
 
         # Missing data matrices (RDC).
         if self.rdc_flag:
-            self.missing_rdc = zeros((self.num_align, self.num_rdc), float64)
+            self.missing_rdc = zeros((self.num_align, self.num_rdc), uint8)
 
         # Missing data matrices (PCS).
         if self.pcs_flag:
-            self.missing_pcs = zeros((self.num_align, self.num_pcs), float64)
+            self.missing_pcs = zeros((self.num_align, self.num_pcs), uint8)
 
         # Clean up problematic data and put the weights into the errors..
         if self.rdc_flag or self.pcs_flag:
@@ -248,7 +253,10 @@ class Frame_order:
             self.pcs_const = zeros(self.num_align, float64)
             self.r_pivot_atom = zeros((3, self.num_pcs), float64)
             self.r_pivot_atom_rev = zeros((3, self.num_pcs), float64)
+            self.r_pivot_atom_rev = zeros((3, self.num_pcs), float64)
             self.r_ln_pivot = zeros((3, self.num_pcs), float64)
+            for j in xrange(self.num_pcs):
+                self.r_ln_pivot[:, j] = pivot - self.paramag_centre
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
@@ -269,8 +277,13 @@ class Frame_order:
             self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
-        # The Sobol' sequence data and target function aliases (quasi-random integration).
+        # The quasi-random integration via the multi-processor.
         if not quad_int:
+            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+            processor_box = Processor_box() 
+            self.processor = processor_box.processor
+
+            # The Sobol' sequence data and target function aliases (quasi-random integration).
             if model == 'pseudo-ellipse':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_qrint
@@ -306,6 +319,16 @@ class Frame_order:
             elif model == 'free rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
+
+            # Subdivide the Sobol' data points for the slave processors.
+            blocks = []
+            for block in self.subdivide(self.sobol_angles, self.processor.processor_size()):
+                blocks.append(block)
+
+            # Set up the slave processors.
+            self.slaves = []
+            for i in range(self.processor.processor_size()):
+                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -1149,8 +1172,48 @@ class Frame_order:
 
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
-            # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            # Clear the data structures.
+            for i in range(len(self.pcs_theta)):
+                for j in range(len(self.pcs_theta[i])):
+                    self.pcs_theta[i, j] = 0.0
+                    self.pcs_theta_err[i, j] = 0.0
+
+            # Initialise the data object for the slave results to be stored in.
+            data = Data()
+            data.num_pts = 0
+            data.pcs_theta = self.pcs_theta
+
+            # Subdivide the points.
+            for i in range(self.processor.processor_size()):
+                # Initialise the slave command and memo.
+                self.slaves[i].load_data(theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, R_eigen=self.R_eigen, RT_eigen=RT_eigen)
+
+                # Update certain data structures.
+                if self.pivot_opt:
+                    self.slaves[i].r_ln_pivot = self.r_ln_pivot
+
+                # Initialise the memo.
+                memo = Memo_pcs_pseudo_ellipse_qrint(data)
+
+                # Queue the block.
+                self.processor.add_to_queue(self.slaves[i], memo)
+
+            # Wait for completion.
+            self.processor.run_queue()
+
+            # Calculate the PCS and error.
+            num = data.num_pts
+            for i in range(len(self.pcs_theta)):
+                for j in range(len(self.pcs_theta[i])):
+                    # The average PCS.
+                    self.pcs_theta[i, j] = self.pcs_const[i] * self.pcs_theta[i, j] / float(num)
+
+                    # The error.
+                    error_flag = False
+                    if error_flag:
+                        self.pcs_theta_err[i, j] = abs(self.pcs_theta_err[i, j] / float(num)  -  self.pcs_theta[i, j]**2) / float(num)
+                        self.pcs_theta_err[i, j] = c[i] * sqrt(self.pcs_theta_err[i, j])
+                        print "%8.3f +/- %-8.3f" % (self.pcs_theta[i, j]*1e6, self.pcs_theta_err[i, j]*1e6)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1708,7 +1771,8 @@ class Frame_order:
         # The pivot to atom vectors.
         for j in xrange(self.num_pcs):
             # The lanthanide to pivot vector.
-            self.r_ln_pivot[:, j] = pivot - self.paramag_centre
+            if self.pivot_opt:
+                self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
             # The rotated vectors.
             self.r_pivot_atom[:, j] = dot(R_ave, self.pcs_atoms[j] - pivot)
@@ -1798,3 +1862,34 @@ class Frame_order:
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
             to_5D(self.A_5D_bc[index1:index2], self.A_3D_bc[i])
+
+
+    def subdivide(self, points, processors):
+        """Split the points up into a number of blocks based on the number of processors.
+
+        @param points:      The integration points to split up.
+        @type points:       numpy rank-2, 3D array
+        @param processors:  The number of slave processors.
+        @type processors:   int
+        """
+
+        # Uni-processor mode, so no need to split.
+        if processors == 1:
+            yield points
+
+        # Multi-processor mode.
+        else:
+            # The number of points.
+            N = len(points)
+
+            # The number of points per block (rounding up when needed so that there are no accidentally left out points).
+            block_size = int(ceil(N / float(processors)))
+
+            # Loop over the blocks.
+            for i in range(processors):
+                # The indices.
+                index1 = i*block_size
+                index2 = (i+1)*block_size
+
+                # Yield the next block.
+                yield points[index1:index2]
