@@ -44,6 +44,7 @@ from generic_fns.structure import geometric
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
 from generic_fns.structure.mass import centre_of_mass
 from generic_fns.structure.internal import Internal
+from lib.structure.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
@@ -1040,8 +1041,33 @@ class Frame_order(API_base, API_common):
         if neg_cone:
             model_neg = structure.add_model(model=2)
 
+        # The rotor object.
+        if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse']:
+            # The rotor angle.
+            if cdp.model in ['free rotor', 'iso cone, free rotor']:
+                rotor_angle = pi
+            else:
+                rotor_angle = cdp.cone_sigma_max
+
+            # Generate the rotor axis.
+            axis = zeros(3, float64)
+            spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], axis)
+
+            # Get the CoM of the entire molecule to use as the centre of the rotor.
+            com = centre_of_mass(verbosity=0)
+
+            # Add the rotor object to the structure as a new molecule.
+            rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=cdp.pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
+
+        # FIXME:  Temporary write out and exit.
+        print("\nGenerating the PDB file.")
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
+        return
+
         # Create the molecule.
-        structure.add_molecule(name=cdp.model)
+        structure.add_molecule(name='rest')
 
         # Alias the molecules.
         mol = model.mol[0]
