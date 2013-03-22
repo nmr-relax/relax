@@ -174,6 +174,13 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     # Update the tensor's name.
     dp_to.align_tensors[index_to].set('name', tensor_to)
 
+    # Add the align ID to the target data pipe if needed.
+    align_id = dp_from.align_tensors[index_from].align_id
+    if not hasattr(dp_to, 'align_ids'):
+        dp_to.align_ids = []
+    if align_id not in dp_to.align_ids:
+        dp_to.align_ids.append(align_id)
+
 
 def data_names():
     """Function for returning a list of names of data structures associated with the sequence."""
@@ -672,12 +679,12 @@ def get_tensor_index(tensor=None, align_id=None, pipe=None):
 
     # No match.
     if count == 0:
-        warn(RelaxWarning("No alignment tensors match the tensor name '%s' or alignment ID '%s'." % (tensor, align_id)))
+        warn(RelaxWarning("No alignment tensors match the tensor name '%s' or alignment ID '%s' in the data pipe '%s'." % (tensor, align_id, pipe)))
         return None
 
     # More than one match.
     if count > 1: 
-        warn(RelaxWarning("More than one alignment tensors matches the tensor name '%s' or alignment ID '%s'." % (tensor, align_id)))
+        warn(RelaxWarning("More than one alignment tensors matches the tensor name '%s' or alignment ID '%s' in the data pipe '%s'." % (tensor, align_id, pipe)))
         return None
 
     # Return the index.

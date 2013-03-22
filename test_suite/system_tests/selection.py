@@ -78,3 +78,49 @@ class Selection(SystemTestCase):
 
         # Check the data.
         self.check_spin_selection([False]*9)
+
+
+    def test_select_domain_bool_and(self):
+        """Check the operation of the select.domain user function using the AND boolean."""
+
+        # First deselect some spins.
+        self.interpreter.deselect.spin(":1@C")
+        self.interpreter.deselect.spin(":2@H")
+        self.interpreter.deselect.spin(":2@C")
+        self.interpreter.deselect.spin(":3@H")
+
+        # Display the sequence.
+        self.interpreter.sequence.display()
+
+        # Define the domain.
+        self.interpreter.domain(id='N', spin_id=":1-2")
+
+        # Select the domain.
+        self.interpreter.select.domain(domain_id='N', boolean="AND")
+
+        # Check the selections.
+        selection = [False, True, True, False, True, False] + [False]*3
+        self.check_spin_selection(selection)
+
+
+    def test_select_domain_bool_or(self):
+        """Check the operation of the select.domain user function using the OR boolean."""
+
+        # First deselect some spins.
+        self.interpreter.deselect.spin(":1@C")
+        self.interpreter.deselect.spin(":2@H")
+        self.interpreter.deselect.spin(":2@C")
+        self.interpreter.deselect.spin(":3@H")
+
+        # Display the sequence.
+        self.interpreter.sequence.display()
+
+        # Define the domain.
+        self.interpreter.domain(id='N', spin_id=":1-2")
+
+        # Select the domain.
+        self.interpreter.select.domain(domain_id='N', boolean="OR", change_all=False)
+
+        # Check the selections.
+        selection = [True]*6 + [True, True, False]
+        self.check_spin_selection(selection)
