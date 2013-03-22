@@ -39,26 +39,25 @@ class Analysis:
         structure.read_pdb('1J7O_1st_NH.pdb', dir='..', set_mol_name='N-dom')
         structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
 
-        # Load the spins.
-        structure.load_spins('@N')
-        structure.load_spins('@H')
+        # Set up the 15N and 1H spins.
+        structure.load_spins(spin_id='@N', ave_pos=False)
+        structure.load_spins(spin_id='@H', ave_pos=False)
+        spin.isotope(isotope='15N', spin_id='@N')
+        spin.isotope(isotope='1H', spin_id='@H')
 
-        # Load the NH vectors.
-        structure.vectors(spin_id='@N', attached='H', ave=False)
-
-        # Set the values needed to calculate the dipolar constant.
-        value.set(1.041 * 1e-10, 'r', spin_id="@N")
-        value.set('15N', 'heteronuc_type', spin_id="@N")
-        value.set('1H', 'proton_type', spin_id="@N")
+        # Define the magnetic dipole-dipole relaxation interaction.
+        dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        dipole_pair.unit_vectors()
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             # Load the RDCs.
-            rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
             # The PCS.
-            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             temperature(id=ln[i], temp=303)
@@ -69,7 +68,7 @@ class Analysis:
 
         # Define the domains.
         domain(id='N', spin_id=":1-78")
-        domain(id='C', spin_id=":80-144")
+        domain(id='C', spin_id=":80-148")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -99,11 +98,12 @@ class Analysis:
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
         # Check the minimum.
-        value.set(param='ave_pos_beta', val=1.1321377968123119)
-        value.set(param='ave_pos_gamma', val=0.029867114268410672)
-        value.set(param='axis_theta', val=0.69828059268540488)
-        value.set(param='axis_phi', val=-2.2509097944247132)
-        value.set(param='cone_s1', val=iso_cone_theta_to_S(20.0 * 2.0 * pi / 360.0))
+        value.set(param='ave_pos_beta', val=0.77485244603476433)
+        value.set(param='ave_pos_gamma', val=0.1420704587263735)
+        value.set(param='axis_theta', val=0.69828059079619353433)
+        value.set(param='axis_phi', val=4.03227550621962294031)
+        value.set(param='cone_s1', val=iso_cone_theta_to_S(1.2))
+        cdp.num_int_pts = 1000000
         calc()
         print("\nchi2: %s" % cdp.chi2)
 
