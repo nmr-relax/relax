@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -296,4 +296,28 @@ uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 560
 uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.ave_pos_translate user function.
+uf = uf_info.add_uf('frame_order.ave_pos_translate')
+uf.title = "Allow the average domain position to translate."
+uf.title_short = "Average position translation."
+uf.add_keyarg(
+    name = "flag",
+    default = True,
+    py_type = "bool",
+    desc_short = "translation flag",
+    desc = "A flag specifying if the average domain position should be allowed to translate during optimisation.  If False, then translation can be disabled."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the average domain position to translate during optimisation.  By default, only a rotation of the initial structure of the domain is rotated to the average position.  This option will be ignored if no PDC data is present, as RDCs contain zero information about the translation of the domain.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To allow translation of the average domain position during optimisation, type one of:")
+uf.desc[-1].add_prompt("relax> frame_order.translate(True)")
+uf.desc[-1].add_prompt("relax> frame_order.translate(flat=True)")
+uf.backend = frame_order_obj._ave_pos_translation
+uf.menu_text = "&translate"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'

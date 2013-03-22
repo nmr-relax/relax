@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -62,7 +62,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, pivot=zeros(3), pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, translation_opt=False, pivot=zeros(3), pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -101,6 +101,8 @@ class Frame_order:
         @type scaling_matrix:       numpy rank-2 array
         @keyword num_int_pts:       The number of points to use for the numerical integration technique.
         @type num_int_pts:          int
+        @keyword translation_opt:   A flag which if True will allow the pivot point of the motion to be optimised.
+        @type translation_opt:      bool
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
         @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
@@ -132,6 +134,7 @@ class Frame_order:
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
+        self.translation_opt = translation_opt
         self._param_pivot = pivot
         self.pivot_opt = pivot_opt
 
@@ -162,6 +165,9 @@ class Frame_order:
                 self.pcs_flag[align_index] = False
         self.rdc_flag_sum = sum(self.rdc_flag)
         self.pcs_flag_sum = sum(self.pcs_flag)
+
+        # Default translation vector (if not optimised).
+        self._translation_vector = zeros(3, float64)
 
         # Some checks.
         if self.rdc_flag_sum and (rdc_vect == None or not len(rdc_vect)):
@@ -418,7 +424,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
         else:
@@ -502,7 +515,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
         else:
@@ -578,7 +598,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
         else:
@@ -662,7 +689,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
         else:
@@ -737,7 +771,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
         else:
@@ -824,7 +865,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
         else:
@@ -902,7 +950,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
         else:
@@ -986,7 +1041,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
         else:
@@ -1061,7 +1123,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
         else:
@@ -1142,7 +1211,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
         else:
@@ -1256,7 +1332,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
         else:
@@ -1337,7 +1420,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
         else:
@@ -1448,7 +1538,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
         else:
@@ -1529,7 +1626,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
         else:
@@ -1601,7 +1705,11 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
+        if self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[:3]
+        else:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
 
         # The average frame rotation matrix (and reduce and rotate the tensors).
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma)
@@ -1670,7 +1778,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
         else:
@@ -1754,7 +1869,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.pivot_opt:
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._translation_vector = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[6:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
+        elif self.pivot_opt:
             self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
         else:
@@ -1829,9 +1951,9 @@ class Frame_order:
             if self.pivot_opt:
                 self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
-            # The rotated vectors.
-            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - pivot)
-            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - pivot)
+            # The rotated and translated vectors.
+            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] + self._translation_vector - pivot)
+            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] + self._translation_vector - pivot)
 
 
     def create_sobol_data(self, n=10000, dims=None):

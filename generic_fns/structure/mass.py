@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ from relax_warnings import RelaxWarning
 
 
 
-def centre_of_mass(atom_id=None, model=None, return_mass=False):
+def centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
     """Calculate and return the centre of mass of the structure.
 
     @keyword atom_id:       The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
@@ -40,6 +40,8 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False):
     @type model:            int or None
     @keyword return_mass:   A flag which if False will cause only the centre of mass to be returned, but if True will cause the centre of mass and the mass itself to be returned as a tuple.
     @type return_mass:      bool
+    @keyword verbosity:     The amount of text to print out.  0 results in no printouts, 1 the full amount.
+    @type verbosity:        int
     @return:                The centre of mass vector, and additionally the mass.
     @rtype:                 list of 3 floats (or tuple of a list of 3 floats and one float)
     """
@@ -49,7 +51,8 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False):
         raise RelaxNoPdbError
 
     # Print out.
-    print("Calculating the centre of mass.")
+    if verbosity:
+        print("Calculating the centre of mass.")
 
     # Initialise the centre of mass.
     R = zeros(3, float64)
@@ -108,8 +111,9 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False):
     R = R / M
 
     # Final printout.
-    print("    Total mass:      M = " + repr(M))
-    print("    Centre of mass:  R = " + repr(R))
+    if verbosity:
+        print("    Total mass:      M = " + repr(M))
+        print("    Centre of mass:  R = " + repr(R))
 
     # Return the centre of mass.
     if return_mass:

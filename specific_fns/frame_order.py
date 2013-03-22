@@ -71,6 +71,9 @@ class Frame_order(API_base, API_common):
         self.set_param_values = self._set_param_values_global
 
         # Set up the global parameters.
+        self.PARAMS.add('ave_pos_x', scope='global', units='rad', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('ave_pos_y', scope='global', units='rad', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('ave_pos_z', scope='global', units='rad', desc='The average position z translation', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('ave_pos_alpha', scope='global', units='rad', desc='The average position alpha Euler angle', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('ave_pos_beta', scope='global', units='rad', desc='The average position beta Euler angle', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('ave_pos_gamma', scope='global', units='rad', desc='The average position gamma Euler angle', py_type=float, set='params', err=True, sim=True)
@@ -124,6 +127,12 @@ class Frame_order(API_base, API_common):
 
         # Normal values.
         if sim_index == None:
+            # Average position translation.
+            if not self._translation_fixed():
+                param_vect.append(cdp.ave_pos_x)
+                param_vect.append(cdp.ave_pos_y)
+                param_vect.append(cdp.ave_pos_z)
+
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
             if cdp.model in ['free rotor', 'iso cone, free rotor']:
                 param_vect.append(cdp.ave_pos_beta)
@@ -161,6 +170,12 @@ class Frame_order(API_base, API_common):
 
         # Simulation values.
         else:
+            # Average position translation.
+            if not self._translation_fixed():
+                param_vect.append(cdp.ave_pos_x_sim[sim_index])
+                param_vect.append(cdp.ave_pos_y_sim[sim_index])
+                param_vect.append(cdp.ave_pos_z_sim[sim_index])
+
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
             if cdp.model in ['free rotor', 'iso cone, free rotor']:
                 param_vect = [cdp.ave_pos_beta_sim[sim_index], cdp.ave_pos_gamma_sim[sim_index]]
@@ -222,6 +237,20 @@ class Frame_order(API_base, API_common):
 
         # Return the matrix.
         return scaling_matrix
+
+
+    def _ave_pos_translation(self, flag=True):
+        """Allow or disallow the translation of the average domain position.
+
+        @keyword flag:  If True, translation will be allowed.  If False, then translation will not occur.
+        @type flag:     bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Store the flag.
+        cdp.ave_pos_translation = flag
 
 
     def _base_data_types(self):
@@ -644,6 +673,10 @@ class Frame_order(API_base, API_common):
 
             # A single atomic position.
             if spin.pos.shape == (3,):
+                atomic_pos.append(spin.pos)
+
+            # A single model (rank-2 array of a single position).
+            elif spin.pos.shape == (1, 3):
                 atomic_pos.append(spin.pos[0])
 
             # Average multiple atomic positions.
@@ -655,6 +688,7 @@ class Frame_order(API_base, API_common):
                 ave_pos = zeros(3, float64)
                 for i in range(len(spin.pos)):
                     ave_pos += spin.pos[i]
+                ave_pos = ave_pos / len(spin.pos)
 
                 # Store.
                 atomic_pos.append(ave_pos)
@@ -1092,6 +1126,10 @@ class Frame_order(API_base, API_common):
         # Determine the data type.
         data_types = self._base_data_types()
 
+        # Average domain position translation.
+        if not self._translation_fixed():
+            num += 3
+
         # The pivot point.
         if not self._pivot_fixed():
             num += 3
@@ -1325,9 +1363,6 @@ class Frame_order(API_base, API_common):
         @type scaling:          bool
         """
 
-        # Simulated annealing constraints.
-        #lower, upper = self._assemble_limit_arrays()
-
         # Assemble the parameter vector.
         param_vector = self._assemble_param_vector(sim_index=sim_index)
 
@@ -1364,6 +1399,11 @@ class Frame_order(API_base, API_common):
         if 'pcs' in data_types or 'pre' in data_types:
             atomic_pos, paramag_centre = self._minimise_setup_atomic_pos(sim_index=sim_index)
 
+        # Average domain translation.
+        translation_opt = False
+        if not self._translation_fixed():
+            translation_opt = True
+
         # The fixed pivot point.
         pivot = None
         if hasattr(cdp, 'pivot'):
@@ -1393,7 +1433,7 @@ class Frame_order(API_base, API_common):
             sys.stdout.write("Base data: %s\n" % repr(base_data))
 
         # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
+        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, translation_opt=translation_opt, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
 
         # Return the data.
         return target, param_vector, data_types, scaling_matrix
@@ -1427,6 +1467,23 @@ class Frame_order(API_base, API_common):
             yield i, data[list[i][index]]
 
 
+    def _translation_fixed(self):
+        """Is the translation of the average domain position fixed?
+
+        @return:    The answer to the question.
+        @rtype:     bool
+        """
+
+        # PCS data must be present.
+        if 'pcs' in self._base_data_types():
+            # The fixed flag is not set.
+            if hasattr(cdp, 'ave_pos_translation') and cdp.ave_pos_translation:
+                return False
+
+        # Default to being fixed.
+        return True
+
+
     def _update_model(self):
         """Update the model parameters as necessary."""
 
@@ -1438,6 +1495,12 @@ class Frame_order(API_base, API_common):
             cdp.params.append('pivot_x')
             cdp.params.append('pivot_y')
             cdp.params.append('pivot_z')
+
+        # The average domain position translation parameters.
+        if not self._translation_fixed():
+            cdp.params.append('ave_pos_x')
+            cdp.params.append('ave_pos_y')
+            cdp.params.append('ave_pos_z')
 
         # The tensor rotation, or average domain position.
         if cdp.model not in ['free rotor', 'iso cone, free rotor']:
@@ -1519,6 +1582,16 @@ class Frame_order(API_base, API_common):
             # Then remove it from the params.
             param_vector = param_vector[3:]
 
+        # Average domain position translation.
+        ave_pos_x, ave_pos_y, ave_pos_z = None, None, None
+        if not self._translation_fixed():
+            ave_pos_x = param_vector[0]
+            ave_pos_y = param_vector[1]
+            ave_pos_z = param_vector[2]
+
+            # Remove the parameters from the array.
+            param_vector = param_vector[3:]
+
         # Unpack the parameters.
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma = None, None, None
         eigen_alpha, eigen_beta, eigen_gamma = None, None, None
@@ -1553,6 +1626,12 @@ class Frame_order(API_base, API_common):
         # Monte Carlo simulation data structures.
         if sim_index != None:
             # Average position parameters.
+            if ave_pos_x != None:
+                cdp.ave_pos_x_sim[sim_index] = ave_pos_x
+            if ave_pos_y != None:
+                cdp.ave_pos_y_sim[sim_index] = ave_pos_y
+            if ave_pos_z != None:
+                cdp.ave_pos_z_sim[sim_index] = ave_pos_z
             if ave_pos_alpha != None:
                 cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, cdp.ave_pos_alpha-pi, cdp.ave_pos_alpha+pi)
             if ave_pos_beta != None:
@@ -1596,6 +1675,12 @@ class Frame_order(API_base, API_common):
         # Normal data structures.
         else:
             # Average position parameters.
+            if ave_pos_x != None:
+                cdp.ave_pos_x = ave_pos_x
+            if ave_pos_y != None:
+                cdp.ave_pos_y = ave_pos_y
+            if ave_pos_z != None:
+                cdp.ave_pos_z = ave_pos_z
             if ave_pos_alpha != None:
                 cdp.ave_pos_alpha = wrap_angles(ave_pos_alpha, 0.0, 2.0*pi)
             if ave_pos_beta != None:
@@ -1700,8 +1785,11 @@ class Frame_order(API_base, API_common):
         # Set the chi2.
         cdp.chi2 = chi2
 
-        # Store the back-calculated tensors.
+        # Store the back-calculated data.
         self._store_bc_data(model)
+
+        # Printout.
+        print("Chi2:  %s" % chi2)
 
 
     def create_mc_data(self, data_id=None):
@@ -1966,6 +2054,11 @@ class Frame_order(API_base, API_common):
                 lower = cdp.pivot[2] - 10.0
                 upper = cdp.pivot[2] + 10.0
 
+            # Average domain position translation (in a +/- 5 Angstrom box).
+            if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
+                lower = -5
+                upper = 5
+
             # Linear angle grid from 0 to one inc before 2pi.
             if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
                 lower = 0.0
@@ -2079,7 +2172,9 @@ class Frame_order(API_base, API_common):
         @rtype:             list of float
         """
 
-        # Average position Euler angles.
+        # Average domain position.
+        if param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
+            return [-100.0, 100]
         if param in ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma']:
             return [0.0, 2*pi]
 
@@ -2152,7 +2247,7 @@ class Frame_order(API_base, API_common):
         # Unpack the results.
         self._unpack_opt_results(results, scaling, scaling_matrix, sim_index)
 
-        # Store the back-calculated tensors.
+        # Store the back-calculated data.
         self._store_bc_data(model)
 
 
@@ -2284,7 +2379,9 @@ class Frame_order(API_base, API_common):
         @rtype:         str
         """
 
-        # Average position Euler angles.
+        # Average domain position.
+        if param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
+            return 'Angstrom'
         if param in ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma']:
             return 'rad'
 
