@@ -1,6 +1,10 @@
 ###############################################################################
 #                                                                             #
+<<<<<<< .working
 # Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+=======
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+>>>>>>> .merge-right.r15129
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -178,7 +182,7 @@ class Scientific_data(Base_struct_API):
         return False
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
@@ -187,8 +191,6 @@ class Scientific_data(Base_struct_API):
         @type str_id:               str, int, or None
         @keyword model_num:         Only loop over a specific model.
         @type model_num:            int or None
-        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
-        @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
         @keyword res_num_flag:      A flag which if True will cause the residue number to be yielded.
@@ -211,87 +213,114 @@ class Scientific_data(Base_struct_API):
         @rtype:                     tuple consisting of optional molecule name (str), residue number (int), residue name (str), atom number (int), atom name(str), element name (str), and atomic position (array of len 3).
         """
 
+        # Check that the structure is loaded.
+        if not len(self.structural_data):
+            raise RelaxNoPdbError
+
         # Generate the selection object.
-        sel_obj = Selection(atom_id)
+        sel_obj = None
+        if atom_id:
+            sel_obj = Selection(atom_id)
 
-        # Model loop.
-        for model in self.model_loop():
-            # Loop over the molecules.
-            for mol_index in range(len(model.mol)):
-                mol = model.mol[mol_index]
+        # Obtain all data from the first model (except the position data).
+        model = self.structural_data[0]
 
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                    continue
+        # Loop over the molecules.
+        for mol_index in range(len(model.mol)):
+            mol = model.mol[mol_index]
 
-                # Loop over the residues.
-                for res, res_num, res_name, res_index in self.__residue_loop(mol, sel_obj):
-                    # Loop over the atoms of the residue.
-                    atom_index = -1
-                    for atom in res:
-                        # Atom number, name, index, and element type.
-                        atom_num = atom.properties['serial_number']
-                        atom_name = atom.name
-                        element = atom.properties['element']
-                        atom_index = atom_index + 1
+            # Skip non-matching molecules.
+            if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                continue
 
-                        # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
-                            continue
+            # Loop over the residues.
+            for res, res_num, res_name, res_index in self.__residue_loop(mol, sel_obj):
+                # Loop over the atoms of the residue.
+                atom_index = -1
+                for atom in res:
+                    # Atom number, name, index, and element type.
+                    atom_num = atom.properties['serial_number']
+                    atom_name = atom.name
+                    element = atom.properties['element']
+                    atom_index = atom_index + 1
 
-                        # The atom position.
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
+                        continue
+
+                    # The atom position.
+                    if pos_flag:
+                        # Average the position.
                         if ave:
                             pos = self.__ave_atom_pos(mol_index, res_index, atom_index)
+
+                        # All positions.
                         else:
-                            pos = atom.position.array
+                            # Initialise.
+                            pos = []
 
-                        # The molecule name.
-                        mol_name = mol.mol_name
+                            # Loop over the models.
+                            for j in range(len(self.structural_data)):
+                                # A single model.
+                                if model_num != None and self.structural_data[j].num != model_num:
+                                    continue
 
-                        # Replace empty variables with None.
-                        if not mol.mol_name:
-                            mol_name = None
-                        if not res_num:
-                            res_num = None
-                        if not res_name:
-                            res_name = None
-                        if not atom_num:
-                            atom_num = None
-                        if not atom_name:
-                            atom_name = None
+                                # Alias.
+                                mol2 = self.structural_data[j].mol[mol_index]
 
-                        # Build the tuple to be yielded.
-                        atomic_tuple = ()
-                        if model_num_flag:
-                            if ave:
-                                atomic_tuple = atomic_tuple + (None,)
-                            else:
-                                atomic_tuple = atomic_tuple + (model.num,)
-                        if mol_name_flag:
-                            atomic_tuple = atomic_tuple + (mol_name,)
-                        if res_num_flag:
-                            atomic_tuple = atomic_tuple + (res_num,)
-                        if res_name_flag:
-                            atomic_tuple = atomic_tuple + (res_name,)
-                        if atom_num_flag:
-                            atomic_tuple = atomic_tuple + (atom_num,)
-                        if atom_name_flag:
-                            atomic_tuple = atomic_tuple + (atom_name,)
-                        if element_flag:
-                            atomic_tuple = atomic_tuple + (element,)
-                        if pos_flag:
-                            atomic_tuple = atomic_tuple + (pos,)
-                        if index_flag:
-                            atomic_tuple += (atom_index,)
+                                # The residue.
+                                if mol2.mol_type != 'other':
+                                    res = mol2.data.residues[res_index]
+                                else:
+                                    res = mol2.data[res_index]
 
-                        # Yield the information.
-                        if len(atomic_tuple) == 1:
-                            atomic_tuple = atomic_tuple[0]
-                        yield atomic_tuple
+                                # The atom.
+                                atom = res[atom_index]
 
-            # Break out of the loop if the ave flag is set, as data from only one model is used.
-            if ave:
-                break
+                                # Append the position.
+                                pos.append(atom.position.array)
+
+                            # Convert.
+                            pos = array(pos, float64)
+
+                    # The molecule name.
+                    mol_name = mol.mol_name
+
+                    # Replace empty variables with None.
+                    if not mol.mol_name:
+                        mol_name = None
+                    if not res_num:
+                        res_num = None
+                    if not res_name:
+                        res_name = None
+                    if not atom_num:
+                        atom_num = None
+                    if not atom_name:
+                        atom_name = None
+
+                    # Build the tuple to be yielded.
+                    atomic_tuple = ()
+                    if mol_name_flag:
+                        atomic_tuple = atomic_tuple + (mol_name,)
+                    if res_num_flag:
+                        atomic_tuple = atomic_tuple + (res_num,)
+                    if res_name_flag:
+                        atomic_tuple = atomic_tuple + (res_name,)
+                    if atom_num_flag:
+                        atomic_tuple = atomic_tuple + (atom_num,)
+                    if atom_name_flag:
+                        atomic_tuple = atomic_tuple + (atom_name,)
+                    if element_flag:
+                        atomic_tuple = atomic_tuple + (element,)
+                    if pos_flag:
+                        atomic_tuple = atomic_tuple + (pos,)
+                    if index_flag:
+                        atomic_tuple += (atom_index,)
+
+                    # Yield the information.
+                    if len(atomic_tuple) == 1:
+                        atomic_tuple = atomic_tuple[0]
+                    yield atomic_tuple
 
 
     def attached_atom(self, atom_id=None, attached_atom=None, model=None):
@@ -378,9 +407,9 @@ class Scientific_data(Base_struct_API):
         pos = zeros(3, float64)
 
         # Loop over the models.
-        for model in self.model_loop():
+        for j in range(len(self.structural_data)):
             # The exact molecule.
-            mol = model.mol[mol_index]
+            mol = self.structural_data[j].mol[mol_index]
 
             # The residue.
             if mol.mol_type != 'other':

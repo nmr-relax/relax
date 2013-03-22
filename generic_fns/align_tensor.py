@@ -29,6 +29,7 @@ from numpy import arccos, dot, float64, linalg, zeros
 from numpy.linalg import norm
 from re import search
 import sys
+from warnings import warn
 
 # relax module imports.
 from data.align_tensor import AlignTensorList
@@ -160,8 +161,8 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         dp_to.align_tensors.add_item(tensor_to)
 
     # Find the tensor index.
-    index_from = get_tensor_index(tensor_from, pipe_from)
-    index_to = get_tensor_index(tensor_to, pipe_to)
+    index_from = get_tensor_index(tensor=tensor_from, pipe=pipe_from)
+    index_to = get_tensor_index(tensor=tensor_to, pipe=pipe_to)
 
     # Copy the data.
     if index_to == None:
@@ -258,7 +259,7 @@ def delete(tensor=None):
         print("Removing the '%s' tensor." % tensor)
 
         # Find the tensor index.
-        index = get_tensor_index(tensor)
+        index = get_tensor_index(tensor=tensor)
 
         # Delete the alignment data.
         cdp.align_tensors.pop(index)

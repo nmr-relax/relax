@@ -540,18 +540,18 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for model_num, mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@140', model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+        for mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@140', mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Test the spin info.
-            self.assertEqual(model_num, 1)
             self.assertEqual(mol_name, self.test_pdb_root+'_mol1')
             self.assertEqual(res_num, 11)
             self.assertEqual(res_name, 'GLU')
             self.assertEqual(spin_num, 140)
             self.assertEqual(spin_name, 'OE1')
             self.assertEqual(element, 'O')
-            self.assertEqual(pos[0], float('10.055'))
-            self.assertEqual(pos[1], float('-2.74'))
-            self.assertEqual(pos[2], float('-13.193'))
+            self.assertEqual(pos.shape, (1, 3))
+            self.assertEqual(pos[0, 0], float('10.055'))
+            self.assertEqual(pos[0, 1], float('-2.74'))
+            self.assertEqual(pos[0, 2], float('-13.193'))
 
             # Increment the atom count.
             atom_count = atom_count + 1
