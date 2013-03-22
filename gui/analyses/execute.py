@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from threading import Thread
 from traceback import print_exc
 
 # relax module imports.
-from relax_errors import RelaxImplementError
+from lib.errors import RelaxImplementError
 from status import Status; status = Status()
 
 

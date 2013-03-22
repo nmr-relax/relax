@@ -35,7 +35,7 @@ else:
 from prompt.doc_string import regexp_doc
 from generic_fns import diffusion_tensor, pipes, value
 from graphics import WIZARD_IMAGE_PATH
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free

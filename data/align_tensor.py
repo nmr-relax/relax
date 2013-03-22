@@ -34,7 +34,7 @@ from data.data_classes import Element
 from data.relax_xml import fill_object_contents, xml_to_object
 from float import nan
 from maths_fns.rotation_matrix import R_to_euler_zyz
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 def calc_A(Axx, Ayy, Azz, Axy, Axz, Ayz):

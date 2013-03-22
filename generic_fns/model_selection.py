@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ import sys
 # relax module imports.
 import generic_fns.pipes
 from generic_fns.pipes import get_type, has_pipe, pipe_names, switch
-from relax_errors import RelaxError, RelaxPipeError
+from lib.errors import RelaxError, RelaxPipeError
 from relax_io import write_data
 from specific_fns.setup import get_specific_fn
 

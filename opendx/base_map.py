@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ from time import asctime, localtime
 # relax module imports.
 from generic_fns import diffusion_tensor
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxUnknownParamError
+from lib.errors import RelaxError, RelaxUnknownParamError
 from relax_io import open_write_file
 from specific_fns.setup import get_specific_fn
 

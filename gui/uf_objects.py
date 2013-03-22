@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ import sys
 # relax module imports.
 import arg_check
 from graphics import fetch_icon
-from relax_errors import AllRelaxErrors, RelaxError
+from lib.errors import AllRelaxErrors, RelaxError
 from relax_string import strip_lead
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()

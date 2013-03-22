@@ -26,7 +26,7 @@ This module currently used the PDB format version 3.30 from July, 2011 U{http://
 """
 
 # relax module imports.
-from relax_errors import RelaxImplementError
+from lib.errors import RelaxImplementError
 
 
 def atom(record):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from re import search
 # relax module imports.
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 import specific_fns
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()

@@ -37,7 +37,7 @@ if dep_check.bmrblib_module:
 from generic_fns import bmrb, diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_warnings import RelaxWarning
 
 

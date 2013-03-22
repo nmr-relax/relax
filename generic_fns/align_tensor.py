@@ -36,7 +36,7 @@ from data.align_tensor import AlignTensorList
 from generic_fns.angles import wrap_angles
 from generic_fns import pipes
 from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from relax_io import write_data
 from relax_warnings import RelaxWarning
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,7 +21,7 @@
 
 # relax module imports.
 from generic_fns import align_tensor
-from relax_errors import RelaxStrError, RelaxUnknownParamError
+from lib.errors import RelaxStrError, RelaxUnknownParamError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 

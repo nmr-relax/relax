@@ -10,7 +10,7 @@
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 

@@ -41,7 +41,7 @@ from info import Info_box
 from generic_fns import state
 from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
-from relax_errors import RelaxNoPipeError
+from lib.errors import RelaxNoPipeError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 from version import version

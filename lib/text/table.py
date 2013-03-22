@@ -28,7 +28,7 @@ from textwrap import wrap
 
 # relax module imports.
 from check_types import is_float
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 # Special variables.

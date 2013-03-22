@@ -34,7 +34,7 @@ from data.data_classes import Element
 from data.relax_xml import fill_object_contents, xml_to_object
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import two_vect_to_R
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 def calc_Diso(tm):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxFileEmptyError
+from lib.errors import RelaxError, RelaxFileEmptyError
 from relax_io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from specific_fns.setup import get_specific_fn
 

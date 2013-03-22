@@ -32,7 +32,7 @@ from specific_fns.model_free import Model_free
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
-from relax_errors import RelaxError, RelaxFuncSetupError
+from lib.errors import RelaxError, RelaxFuncSetupError
 
 
 # Instantiate all classes.

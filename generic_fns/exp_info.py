@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,7 @@
 from info import Info_box
 from data.exp_info import ExpInfo
 from generic_fns import pipes
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_io import open_read_file
 from version import version_full
 

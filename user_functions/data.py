@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,10 +24,9 @@
 
 # Python module imports.
 from re import search
-from relax_errors import RelaxError
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from user_functions.objects import Class_container, Table, Uf_container
 
 

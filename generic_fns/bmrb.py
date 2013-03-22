@@ -35,7 +35,7 @@ from generic_fns.mol_res_spin import create_spin, generate_spin_id, metadata_cle
 from generic_fns.pipes import cdp_name
 from generic_fns.result_files import add_result_file
 from info import Info_box
-from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
+from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 import specific_fns
 from status import Status; status = Status()

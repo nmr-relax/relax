@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxListStrError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.model_free_testing_base import Model_free_base_class
 
 # Unit test imports.

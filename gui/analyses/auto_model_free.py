@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,7 +39,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin
 from generic_fns.pipes import has_bundle, has_pipe
 from graphics import fetch_icon
 from physical_constants import NH_BOND_LENGTH
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()

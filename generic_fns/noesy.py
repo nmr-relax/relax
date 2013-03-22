@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ from warnings import warn
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, tokenise
 from generic_fns import xplor
-from relax_errors import RelaxError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_read_file
 from relax_warnings import RelaxWarning
 

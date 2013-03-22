@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import copy_residue, create_residue, metadata_update
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxMultiMolIDError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from lib.errors import RelaxError, RelaxMultiMolIDError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 

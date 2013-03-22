@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,7 +33,7 @@ from arg_check import is_float
 from generic_fns.interatomic import create_interatom, exists_data, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoInteratomError
+from lib.errors import RelaxError, RelaxNoInteratomError
 from relax_io import extract_data, write_data
 from relax_warnings import RelaxWarning, RelaxZeroVectorWarning
 

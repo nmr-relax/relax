@@ -39,7 +39,7 @@ from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure import pdb_read, pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
-from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
+from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
 from relax_warnings import RelaxWarning
 

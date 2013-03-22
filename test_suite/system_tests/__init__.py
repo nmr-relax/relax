@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@ from re import search
 from unittest import TestSuite
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 # relax system/functional test module imports.
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data.align_tensor import AlignTensorData
 from generic_fns.align_tensor import kappa
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 class Test_align_tensor(TestCase):

@@ -42,7 +42,7 @@ from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, retu
 from maths_fns.mf import Mf
 from multi import Processor_box
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
+from lib.errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
 from specific_fns.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 

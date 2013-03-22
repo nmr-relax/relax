@@ -31,7 +31,7 @@ from random import gauss
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn
 
 

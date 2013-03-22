@@ -32,7 +32,7 @@ from maths_fns.pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, ave_pcs_
 from maths_fns.rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from physical_constants import pcs_constant
-from relax_errors import RelaxError, RelaxImplementError
+from lib.errors import RelaxError, RelaxImplementError
 
 
 class N_state_opt:

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ from textwrap import wrap
 import wx
 
 # relax module imports.
-from relax_errors import AllRelaxErrors
+from lib.errors import AllRelaxErrors
 from status import Status; status = Status()
 
 # relax GUI module imports.

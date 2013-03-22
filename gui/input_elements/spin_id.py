@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ import wx
 
 # relax module imports.
 from generic_fns.mol_res_spin import id_string_doc
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 # relax GUI module imports.
 from gui.fonts import font

@@ -34,7 +34,7 @@ set_printoptions(precision=15, threshold=nan)
 import arg_check
 import check_types
 from float import floatAsByteArray, packBytesAsPyFloat
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 def fill_object_contents(doc, elem, object=None, blacklist=[]):

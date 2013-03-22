@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ from threading import Lock, RLock
 
 # relax module imports.
 from compat import Queue
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 class Status(object):

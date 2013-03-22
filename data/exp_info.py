@@ -24,7 +24,7 @@
 
 # relax module imports.
 from data.data_classes import RelaxListType, Element
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 class ExpInfo(Element):

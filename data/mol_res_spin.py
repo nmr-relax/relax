@@ -31,7 +31,7 @@ from data.prototype import Prototype
 from data.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from float import floatAsByteArray
 import generic_fns
-from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
+from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
 import specific_fns
 
 

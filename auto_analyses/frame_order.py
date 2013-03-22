@@ -38,7 +38,7 @@ from generic_fns.pipes import cdp_name, get_pipe
 from lib.text.sectioning import section, subsection, title
 from maths_fns.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_io import open_write_file
 from status import Status; status = Status()
 

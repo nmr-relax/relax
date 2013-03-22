@@ -55,7 +55,7 @@ import sys
 from info import Info_box
 from multi import Application_callback, load_multiprocessor
 from prompt import interpreter
-import relax_errors
+import lib.errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
 from status import Status; status = Status()
@@ -259,7 +259,7 @@ class Relax:
 
         # Unknown mode.
         else:
-            raise relax_errors.RelaxError("The '%s' mode is unknown." % self.mode)
+            raise lib.errors.RelaxError("The '%s' mode is unknown." % self.mode)
 
 
     def arguments(self):
@@ -475,8 +475,8 @@ class RelaxParser(OptionParser):
 
         # Raise a clean error.
         try:
-            raise relax_errors.RelaxError(message)
-        except relax_errors.AllRelaxErrors:
+            raise lib.errors.RelaxError(message)
+        except lib.errors.AllRelaxErrors:
             instance = sys.exc_info()[1]
             sys.stderr.write(instance.__str__())
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ else:
 
 # relax module imports.
 from graphics import IMAGE_PATH
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 class Class_container:

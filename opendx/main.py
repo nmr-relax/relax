@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from os import system
 
 # relax module imports.
 from opendx import isosurface_3D
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_io import test_binary
 
 

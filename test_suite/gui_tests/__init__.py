@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from unittest import TestSuite
 import wx
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 # relax GUI test module imports.
 from test_suite.gui_tests.bmrb import Bmrb

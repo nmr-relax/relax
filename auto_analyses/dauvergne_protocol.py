@@ -33,7 +33,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id,
 from generic_fns.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
 from generic_fns import frq, selection
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
+from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from relax_io import DummyFileObject
 from relax_string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()

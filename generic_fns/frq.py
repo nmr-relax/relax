@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import pipes
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_warnings import RelaxWarning
 
 

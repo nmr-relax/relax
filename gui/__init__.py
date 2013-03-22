@@ -37,7 +37,7 @@ if dep_check.wx_module:
 # relax module imports.
 import generic_fns
 from graphics import IMAGE_PATH
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.

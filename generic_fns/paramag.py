@@ -31,7 +31,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns import grace, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
+from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
 from relax_warnings import RelaxWarning
 
 

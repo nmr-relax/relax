@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from wx.lib import buttons, scrolledpanel
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxImplementError
+from lib.errors import RelaxImplementError
 from status import Status; status = Status()
 
 # relax GUI module imports.

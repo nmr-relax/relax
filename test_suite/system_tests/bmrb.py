@@ -30,7 +30,7 @@ from tempfile import mktemp
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

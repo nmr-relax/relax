@@ -29,7 +29,7 @@ from warnings import warn
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()

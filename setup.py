@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -46,7 +46,7 @@ except ImportError:
 import sys
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 from version import version_full
 

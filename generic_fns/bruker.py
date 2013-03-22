@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ from generic_fns import value
 from generic_fns.exp_info import software_select
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, set_spin_isotope, spin_loop
 from generic_fns.relax_data import pack_data, peak_intensity_type
-from relax_errors import RelaxError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_read_file
 from physical_constants import element_from_isotope
 

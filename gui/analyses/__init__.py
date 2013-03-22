@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,7 +34,7 @@ from data.gui import Gui
 import dep_check
 from generic_fns import pipes
 from generic_fns.reset import reset
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.

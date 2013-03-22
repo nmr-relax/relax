@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # relax module imports.
 import dep_check
-from relax_errors import RelaxError, RelaxNoPdbError
+from lib.errors import RelaxError, RelaxNoPdbError
 
 
 def view():

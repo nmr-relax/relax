@@ -29,7 +29,7 @@ This module currently used the PDB format version 3.30 from July, 2011 U{http://
 from textwrap import wrap
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 def _handle_none(value):

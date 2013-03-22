@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,7 +36,7 @@ from time import sleep
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from generic_fns.result_files import add_result_file
-from relax_errors import RelaxError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxNoSequenceError
 from relax_io import get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()

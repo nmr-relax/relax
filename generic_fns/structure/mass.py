@@ -26,7 +26,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
 from physical_constants import return_atomic_mass
-from relax_errors import RelaxError, RelaxNoPdbError
+from lib.errors import RelaxError, RelaxNoPdbError
 from relax_warnings import RelaxWarning
 
 

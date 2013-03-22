@@ -34,7 +34,7 @@ from generic_fns import dipole_pair
 from generic_fns.interatomic import return_interatom, return_interatom_list
 from generic_fns.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxInvalidDataError
+from lib.errors import RelaxError, RelaxInvalidDataError
 
 
 

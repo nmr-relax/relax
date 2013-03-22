@@ -4,7 +4,7 @@
 from os import sep
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from specific_fns.setup import n_state_model_obj
 from status import Status; status = Status()
 

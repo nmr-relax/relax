@@ -27,7 +27,7 @@ from copy import deepcopy
 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
 from specific_fns.api_objects import Param_list
 
 

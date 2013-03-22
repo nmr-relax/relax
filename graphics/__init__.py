@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,7 @@
 from os import sep
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 
 # GUI image and icon paths.

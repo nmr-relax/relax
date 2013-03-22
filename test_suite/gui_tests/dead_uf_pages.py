@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,7 @@
 import sys
 
 # relax module imports.
-from relax_errors import RelaxNoPipeError
+from lib.errors import RelaxNoPipeError
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.

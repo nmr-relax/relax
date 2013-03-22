@@ -29,7 +29,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

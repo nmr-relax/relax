@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,7 +22,7 @@
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
+from lib.errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@ from unittest import TestCase
 # relax module imports.
 from data.diff_tensor import DiffTensorData
 from maths_fns.rotation_matrix import two_vect_to_R
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 class Test_diff_tensor(TestCase):

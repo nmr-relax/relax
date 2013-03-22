@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003--2012 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,7 @@
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
+from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
 
 
 def fix(element, fixed):

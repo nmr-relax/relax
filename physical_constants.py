@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ from string import ascii_letters, digits
 
 # relax module imports.
 from float import nan
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 # Misc. constants.

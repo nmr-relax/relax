@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -73,7 +73,7 @@ from generic_fns.grace import write_xy_data, write_xy_header
 from generic_fns.selection import spin_loop
 from physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_io import mkdir_nofail
 from status import Status; status = Status()
 

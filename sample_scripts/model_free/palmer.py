@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2001-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2001-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ The three stages in this script, which can be set below, are:
 """
 
 # relax module imports.
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 
 
 # Set the stage of analysis.

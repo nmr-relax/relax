@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ import wx.grid
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
 from graphics import fetch_icon
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from status import Status; status = Status()
 
 # relax GUI module imports.

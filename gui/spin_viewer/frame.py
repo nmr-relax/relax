@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ import wx
 from generic_fns.pipes import cdp_name, pipe_names
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
 from status import Status; status = Status()
-from relax_errors import RelaxNoPipeError
+from lib.errors import RelaxNoPipeError
 
 # relax GUI module imports.
 from gui.icons import relax_icons

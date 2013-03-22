@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from re import search
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.reset import reset
-from relax_errors import RelaxError
+from lib.errors import RelaxError
 from relax_io import open_read_file, open_write_file
 from status import Status; status = Status()
 
