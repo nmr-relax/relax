@@ -28,9 +28,9 @@ from float import isNaN
 from lib.nmr.alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from maths_fns.chi2 import chi2, dchi2_element, d2chi2_element
 from maths_fns.paramag_centre import vectors_single_centre, vectors_centre_per_state
-from maths_fns.pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, ave_pcs_tensor_ddeltaij_dc, pcs_constant_grad, pcs_tensor
-from maths_fns.rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
+from lib.nmr.pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, ave_pcs_tensor_ddeltaij_dc, pcs_constant_grad, pcs_tensor
 from lib.geometry.rotations import euler_to_R_zyz
+from lib.nmr.rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from lib.physical_constants import pcs_constant
 from lib.errors import RelaxError, RelaxImplementError
 

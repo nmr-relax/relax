@@ -23,5 +23,7 @@
 """The relax-lib NMR package - a library of functions for NMR."""
 
 __all__ = [
-    'alignment_tensor'
+    'alignment_tensor',
+    'pcs',
+    'rdc'
 ]
