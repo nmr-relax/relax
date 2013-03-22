@@ -155,11 +155,7 @@ class Base_script:
 
         # Create the cone PDB file.
         if self.cone:
-            self._execute_uf(uf_name='frame_order.cone_pdb', file='devnull', force=True)
-
-        # Set the domains.
-        self._execute_uf(uf_name='frame_order.domain_to_pdb', domain='N', pdb='1J7O_1st_NH.pdb')
-        self._execute_uf(uf_name='frame_order.domain_to_pdb', domain='C', pdb='1J7P_1st_NH_rot.pdb')
+            self._execute_uf(uf_name='frame_order.pdb_model', ave_pos_file='devnull', rep_file='devnull', dist_file='devnull', force=True)
 
 
     def setup_full(self):
