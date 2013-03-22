@@ -99,7 +99,7 @@ class Frame_order(SystemTestCase):
             del status.flag_pcs
 
 
-    def check_chi2(self, chi2=0.0, places=8):
+    def check_chi2(self, chi2=0.0, places=1):
         """Check the function evaluation."""
 
         # Switch back to the original pipe.
@@ -108,8 +108,22 @@ class Frame_order(SystemTestCase):
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()
 
+        # Scale the chi2 values down.
+        if chi2 > 1000.0:
+            chi2 = chi2 / 1000.0
+            chi2_fit = cdp.chi2 / 1000.0
+        elif chi2 > 100.0:
+            chi2 = chi2 / 100.0
+            chi2_fit = cdp.chi2 / 100.0
+        elif chi2 > 10.0:
+            chi2 = chi2 / 10.0
+            chi2_fit = cdp.chi2 / 10.0
+        else:
+            chi2 = chi2
+            chi2_fit = cdp.chi2
+
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, chi2, places, msg=self.mesg)
+        self.assertAlmostEqual(chi2_fit, chi2, places, msg=self.mesg)
 
 
     def flags(self, rdc=True, pcs=True, opt=False):

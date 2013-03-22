@@ -85,6 +85,12 @@ class Frame_order_analysis:
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
+        # Initial printout.
+        text = "# Frame order auto-analysis #"
+        print("\n\n\n\n\n\n\n" + "#"*len(text))
+        print("%s" % text)
+        print("#"*len(text))
+
         # Store the args.
         self.data_pipe_full = data_pipe_full
         self.data_pipe_subset = data_pipe_subset
