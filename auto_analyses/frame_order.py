@@ -45,7 +45,7 @@ from status import Status; status = Status()
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 200000], func_tol_full=[1e-2, 1e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3, models=['rigid', 'free rotor', 'rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse']):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -78,6 +78,8 @@ class Frame_order_analysis:
         @type mc_int_num:               int
         @keyword mc_func_tol:           The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
         @type mc_func_tol:              float
+        @keyword models:                The frame order models to use in the analysis.  The 'rigid' model must be included as this is essential for the analysis.
+        @type models:                   list of str
         """
 
         # Execution lock.
@@ -98,10 +100,11 @@ class Frame_order_analysis:
         self.mc_sim_num = mc_sim_num
         self.mc_int_pts = mc_int_pts
         self.mc_func_tol = mc_func_tol
+        self.models = models
 
-        # A dictionary of the data pipe names.
-        self.models = {}
-        self.pipes = []
+        # A dictionary and list of the data pipe names.
+        self.pipe_name_dict = {}
+        self.pipe_name_list = []
 
         # Project directory (i.e. directory containing the model-free model results and the newly generated files)
         if results_dir:
@@ -125,7 +128,7 @@ class Frame_order_analysis:
             # The final results does not already exist.
             if not self.read_results(model='final', pipe_name='final'):
                 # Model selection.
-                self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipes)
+                self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipe_name_list)
 
                 # The number of integration points.
                 self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
@@ -245,7 +248,7 @@ class Frame_order_analysis:
         # The average position from the rigid model.
         if model not in []:
             # Get the rigid data pipe.
-            rigid_pipe = get_pipe(self.models['rigid'])
+            rigid_pipe = get_pipe(self.pipe_name_dict['rigid'])
 
             # Copy the average position parameters from the rigid model.
             if model not in ['free rotor', 'iso cone, free rotor']:
@@ -256,7 +259,7 @@ class Frame_order_analysis:
         # The cone axis from the rotor model.
         if model in ['iso cone']:
             # Get the rotor data pipe.
-            rotor_pipe = get_pipe(self.models['rotor'])
+            rotor_pipe = get_pipe(self.pipe_name_dict['rotor'])
 
             # Copy the cone axis.
             cdp.axis_theta = rotor_pipe.axis_theta
@@ -265,7 +268,7 @@ class Frame_order_analysis:
         # The cone axis from the free rotor model.
         if model in ['iso cone, free rotor']:
             # Get the rotor data pipe.
-            free_rotor_pipe = get_pipe(self.models['free rotor'])
+            free_rotor_pipe = get_pipe(self.pipe_name_dict['free rotor'])
 
             # Copy the cone axis.
             cdp.axis_theta = free_rotor_pipe.axis_theta
@@ -274,7 +277,7 @@ class Frame_order_analysis:
         # The torsion from the rotor model.
         if model in ['iso cone', 'pseudo-ellipse']:
             # Get the rotor data pipe.
-            rotor_pipe = get_pipe(self.models['rotor'])
+            rotor_pipe = get_pipe(self.pipe_name_dict['rotor'])
 
             # Copy the cone axis.
             cdp.cone_sigma_max = rotor_pipe.cone_sigma_max
@@ -282,7 +285,7 @@ class Frame_order_analysis:
         # The cone angles from from the torsionless isotropic cone model.
         if model in ['pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'pseudo-ellipse']:
             # Get the rotor data pipe.
-            pipe = get_pipe(self.models['iso cone, torsionless'])
+            pipe = get_pipe(self.pipe_name_dict['iso cone, torsionless'])
 
             # Copy the cone axis.
             cdp.cone_theta_x = pipe.cone_theta
@@ -296,8 +299,11 @@ class Frame_order_analysis:
         self.optimise_rigid()
 
         # Iteratively optimise the frame order models.
-        models = ['rotor', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'pseudo-ellipse']
-        for model in models:
+        for model in self.models:
+            # Skip the already optimised rigid model.
+            if model == 'rigid':
+                continue
+
             # The model title.
             title = model[0].upper() + model[1:]
 
@@ -305,11 +311,11 @@ class Frame_order_analysis:
             self.print_title(title)
 
             # The data pipe name.
-            self.models[model] = '%s - %s' % (title, self.pipe_bundle)
-            self.pipes.append(self.models[model])
+            self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
+            self.pipe_name_list.append(self.pipe_name_dict[model])
 
             # The results file already exists, so read its contents instead.
-            if self.read_results(model=model, pipe_name=self.models[model]):
+            if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
                 # Re-perform model elimination just in case.
                 self.interpreter.eliminate()
 
@@ -317,8 +323,8 @@ class Frame_order_analysis:
                 continue
 
             # Create the data pipe using the full data set, and switch to it.
-            self.interpreter.pipe.copy(self.data_pipe_subset, self.models[model], bundle_to=self.pipe_bundle)
-            self.interpreter.pipe.switch(self.models[model])
+            self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+            self.interpreter.pipe.switch(self.pipe_name_dict[model])
 
             # Select the Frame Order model.
             self.interpreter.frame_order.select_model(model=model)
@@ -340,7 +346,7 @@ class Frame_order_analysis:
                 self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_subset[i], constraints=False)
 
             # Copy the PCS data.
-            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.models[model])
+            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
             # Minimise (for the full data set).
             for i in range(len(self.num_int_pts_full)):
@@ -371,16 +377,16 @@ class Frame_order_analysis:
         self.print_title(title)
 
         # The data pipe name.
-        self.models[model] = '%s - %s' % (title, self.pipe_bundle)
-        self.pipes.append(self.models[model])
+        self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
+        self.pipe_name_list.append(self.pipe_name_dict[model])
 
         # The results file already exists, so read its contents instead.
-        if self.read_results(model=model, pipe_name=self.models[model]):
+        if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
             return
 
         # Create the data pipe using the full data set, and switch to it.
-        self.interpreter.pipe.copy(self.data_pipe_full, self.models[model], bundle_to=self.pipe_bundle)
-        self.interpreter.pipe.switch(self.models[model])
+        self.interpreter.pipe.copy(self.data_pipe_full, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+        self.interpreter.pipe.switch(self.pipe_name_dict[model])
 
         # Select the Frame Order model.
         self.interpreter.frame_order.select_model(model=model)
@@ -514,15 +520,15 @@ class Frame_order_analysis:
         """
 
         # Loop over all models.
-        for pipe_name in self.models.values() + ['final']:
+        for pipe_name in self.pipe_name_list + ['final']:
+            # Switch to the data pipe.
+            self.interpreter.pipe.switch(pipe_name)
+
             # The directory to place files into.
             if pipe_name == 'final':
                 results_dir = pipe_name
             else:
                 results_dir = cdp.model
-
-            # Switch to the data pipe.
-            self.interpreter.pipe.switch(pipe_name)
 
             # Create a PDB file representation of the motions.
             if cdp.model != 'rigid':

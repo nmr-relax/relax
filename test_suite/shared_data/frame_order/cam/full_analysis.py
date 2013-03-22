@@ -26,6 +26,9 @@ This script should be run from the directory where it is found with the commands
 $ ../../../../../relax full_analysis.py
 
 $ mpirun -n 3 ../../../../../relax --multi mpi4py full_analysis.py
+
+
+The free rotor pseudo-elliptic cone model is not used in this script as the cone X and Y opening angles cannot be differentiated with simply RDC and PCS data, hence this model is perfectly approximated by the free rotor isotropic cone.
 """
 
 # Python module imports.
@@ -72,6 +75,17 @@ MC_INT_PTS = 100
 # The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
 MC_FUNC_TOL = 1e-2
 
+# The frame order models to use.
+MODELS = [
+    'rigid',
+    'free rotor',
+    'rotor',
+    'iso cone, torsionless',
+    'iso cone, free rotor',
+    'iso cone',
+    'pseudo-ellipse, torsionless',
+    'pseudo-ellipse'
+]
 
 # Set up the base data pipes.
 #############################
@@ -161,4 +175,4 @@ for i in range(len(ln)):
 ############
 
 # Do not change!
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL, models=MODELS)

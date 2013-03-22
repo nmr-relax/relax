@@ -56,7 +56,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "inc",
-    default = 40,
+    default = 36,
     py_type = "int",
     desc_short = "increment number",
     desc = "The number of increments used to create the geometric object.",
