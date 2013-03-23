@@ -1,6 +1,6 @@
 from numpy import array, float64, zeros
 
-from generic_fns.frame_order import print_frame_order_2nd_degree
+from pipe_control.frame_order import print_frame_order_2nd_degree
 from lib.algebra.kronecker_product import kron_prod
 
 

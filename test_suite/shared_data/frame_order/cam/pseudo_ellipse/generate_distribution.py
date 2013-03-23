@@ -9,7 +9,7 @@ from math import cos, pi, sin, sqrt
 from numpy import dot, transpose
 
 # relax module imports.
-from generic_fns.angles import wrap_angles
+from pipe_control.angles import wrap_angles
 from lib.geometry.rotations import R_random_hypersphere, R_to_tilt_torsion
 
 # Base module import.

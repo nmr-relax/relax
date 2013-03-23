@@ -2,7 +2,7 @@
 # The CoM is not the real one as only the N, H, and Ca2+ atoms are used.
 
 # relax module imports.
-from generic_fns.structure.mass import centre_of_mass
+from pipe_control.structure.mass import centre_of_mass
 
 
 # The PDB files.
