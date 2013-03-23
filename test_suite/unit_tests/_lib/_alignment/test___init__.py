@@ -36,4 +36,4 @@ class Test___init__(PackageTestCase):
 
         self.package = lib.alignment
         self.package_name = 'lib.alignment'
-        self.package_path = sys.path[0] + sep + 'lib' + sep + 'nmr'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'alignment'
