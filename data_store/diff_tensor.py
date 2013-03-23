@@ -30,7 +30,7 @@ from numpy import array, float64, dot, identity, transpose, zeros
 import sys
 
 # relax module imports.
-from data_store.objects.data_classes import Element
+from data_store.data_classes import Element
 from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import two_vect_to_R

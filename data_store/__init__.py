@@ -31,8 +31,8 @@ import xml.dom.minidom
 
 # relax module imports.
 from compat import builtins
-from data_store.objects.gui import Gui
-from data_store.objects.pipe_container import PipeContainer
+from data_store.gui import Gui
+from data_store.pipe_container import PipeContainer
 from data_store.relax_xml import fill_object_contents, xml_to_object
 import generic_fns
 from lib.errors import RelaxError, RelaxPipeError, RelaxNoPipeError
@@ -40,8 +40,16 @@ from status import Status; status = Status()
 import version
 
 
-__all__ = [
-    'relax_xml'
+__all__ = [ 'align_tensor',
+            'data_classes',
+            'diff_tensor',
+            'exp_info',
+            'gui',
+            'interatomic',
+            'mol_res_spin',
+            'pipe_container',
+            'prototype',
+            'relax_xml'
 ]
 
 
