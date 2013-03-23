@@ -32,6 +32,7 @@ from pipe_control import diffusion_tensor
 from pipe_control import pipes
 from lib.errors import RelaxError, RelaxUnknownParamError
 from lib.io import open_write_file
+from lib.opendx.files import write_config, write_general, write_point, write_program
 from specific_analyses.setup import get_specific_fn
 
 
@@ -121,59 +122,24 @@ class Base_Map:
         # Get the date.
         self.get_date()
 
+        # Create the strings associated with the map axes.
+        self.map_axes()
+
         # Create the OpenDX .net program file.
-        self.create_program()
+        write_program(file_prefix=self.file_prefix, point_file=self.point_file, dir=self.dir, inc=self.inc, N=self.n, num_points=self.num_points, labels=self.labels, tick_locations=self.tick_locations, tick_values=self.tick_values, date=self.date)
 
         # Create the OpenDX .cfg program configuration file.
-        self.create_config()
+        write_config(file_prefix=self.file_prefix, dir=self.dir, date=self.date)
 
         # Create the OpenDX .general file.
-        self.create_general()
+        write_general(file_prefix=self.file_prefix, dir=self.dir, inc=self.inc)
 
         # Create the OpenDX .general and data files for the given point.
         if self.num_points == 1:
-            self.create_point()
+            write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, bounds=self.bounds, N=self.n)
 
         # Generate the map.
         self.create_map()
-
-
-    def create_config(self):
-        """Function for creating the OpenDX .cfg program configuration file."""
-
-        # Print out.
-        print("\nCreating the OpenDX .cfg program configuration file.")
-
-        # Open the file.
-        config_file = open_write_file(file_name=self.file_prefix+".cfg", dir=self.dir, force=True)
-
-        # Get the text of the configuration file.
-        text = self.config_text()
-
-        # Write the text.
-        config_file.write(text)
-
-        # Close the file.
-        config_file.close()
-
-
-    def create_general(self):
-        """Function for creating the OpenDX .general file."""
-
-        # Print out.
-        print("\nCreating the OpenDX .general file.")
-
-        # Open the file.
-        general_file = open_write_file(file_name=self.file_prefix+".general", dir=self.dir, force=True)
-
-        # Get the text of the configuration file.
-        text = self.general_text()
-
-        # Write the text.
-        general_file.write(text)
-
-        # Close the file.
-        general_file.close()
 
 
     def create_map(self):
@@ -190,82 +156,6 @@ class Base_Map:
 
         # Close the file.
         map_file.close()
-
-
-    def create_point(self):
-        """Function for creating a sphere at a given position within the 3D map.
-
-        The formula used to calculate the coordinate position is::
-
-                            V - L
-            coord =   Inc * -----
-                            U - L
-
-        where:
-            - V is the coordinate or parameter value.
-            - L is the lower bound value.
-            - U is the upper bound value.
-            - Inc is the number of increments.
-
-        Both a data file and .general file will be created.
-        """
-
-        # Print out.
-        print("\nCreating the OpenDX .general and data files for the given point.")
-
-        # Open the files.
-        point_file = open_write_file(file_name=self.point_file, dir=self.dir, force=True)
-        point_file_general = open_write_file(file_name=self.point_file+".general", dir=self.dir, force=True)
-
-        # Calculate the coordinate values.
-        coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
-        for i in range(self.n):
-            point_file.write("%-15.5g" % coords[i])
-        point_file.write("1\n")
-
-        # Get the text of the point .general file.
-        text = self.point_text()
-
-        # Write the text.
-        point_file_general.write(text)
-
-        # Close the data and .general files.
-        point_file.close()
-        point_file_general.close()
-
-
-    def create_program(self):
-        """Function for creating the OpenDX .net program file."""
-
-        # Print out.
-        print("\nCreating the OpenDX .net program file.")
-
-        # Open the file.
-        program_file = open_write_file(file_name=self.file_prefix+".net", dir=self.dir, force=True)
-
-        # Create the strings associated with the map axes.
-        self.map_axes()
-
-        # Corners.
-        self.corners = "{[0"
-        for i in range(self.n - 1):
-            self.corners = self.corners + " 0"
-        self.corners = self.corners + "] [" + repr(self.inc)
-        for i in range(self.n - 1):
-            self.corners = self.corners + " "  + repr(self.inc)
-        self.corners = self.corners + "]}"
-
-        # Sphere size.
-        self.sphere_size = repr(0.025 * (self.inc + 1.0))
-
-        # Get the text of the program.
-        text = self.program_text()
-
-        # Write the text.
-        program_file.write(text)
-
-        # Close the file.
-        program_file.close()
 
 
     def get_date(self):

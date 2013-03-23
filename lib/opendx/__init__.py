@@ -23,5 +23,5 @@
 """The relax-lib NMR package - a library of functions for interacting with the OpenDX software."""
 
 __all__ = [
-    ''
+    'files'
 ]
