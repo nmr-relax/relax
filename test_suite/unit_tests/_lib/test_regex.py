@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,29 +23,29 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import relax_re
+from lib import regex
 
 
-class Test_relax_re(TestCase):
-    """Unit tests for the functions of the 'generic_fns.relax_re' module."""
+class Test_regex(TestCase):
+    """Unit tests for the functions of the 'lib.regex' module."""
 
-    # Place the generic_fns.relax_re module into the class namespace.
-    relax_re_fns = relax_re
+    # Place the lib.regex module into the class namespace.
+    regex = regex
 
 
     def test_search(self):
-        """Test the proper behaviour of the generic_fns.relax_re.search() function."""
+        """Test the proper behaviour of the lib.regex.search() function."""
 
         # Test a number of calls which should return True.
-        self.assertEqual(True, self.relax_re_fns.search('H', 'H'))
-        self.assertEqual(True, self.relax_re_fns.search('H*', 'H'))
-        self.assertEqual(True, self.relax_re_fns.search('H*', 'H1'))
-        self.assertEqual(True, self.relax_re_fns.search('H1', 'H1'))
-        self.assertEqual(True, self.relax_re_fns.search('^H*', 'H'))
-        self.assertEqual(True, self.relax_re_fns.search('^H*$', 'H'))
-        self.assertEqual(True, self.relax_re_fns.search('^H*$', 'H'))
+        self.assertEqual(True, self.regex.search('H', 'H'))
+        self.assertEqual(True, self.regex.search('H*', 'H'))
+        self.assertEqual(True, self.regex.search('H*', 'H1'))
+        self.assertEqual(True, self.regex.search('H1', 'H1'))
+        self.assertEqual(True, self.regex.search('^H*', 'H'))
+        self.assertEqual(True, self.regex.search('^H*$', 'H'))
+        self.assertEqual(True, self.regex.search('^H*$', 'H'))
 
         # Test a number of calls which should return False.
-        self.assertEqual(False, self.relax_re_fns.search('H*', 'NH'))
-        self.assertEqual(False, self.relax_re_fns.search('H', 'HN'))
-        self.assertEqual(False, self.relax_re_fns.search('H', 'H1'))
+        self.assertEqual(False, self.regex.search('H*', 'NH'))
+        self.assertEqual(False, self.regex.search('H', 'HN'))
+        self.assertEqual(False, self.regex.search('H', 'H1'))

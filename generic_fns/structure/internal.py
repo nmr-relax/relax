@@ -33,11 +33,12 @@ from warnings import warn
 
 # relax module imports.
 from data_store.relax_xml import fill_object_contents, xml_to_object
-from generic_fns import pipes, relax_re
+from generic_fns import pipes
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure import pdb_read, pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
+from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
@@ -91,7 +92,7 @@ class Internal(Base_struct_API):
         # Loop over the bonded atoms.
         matching_list = []
         for bonded_index in mol.bonded[index]:
-            if relax_re.search(mol.atom_name[bonded_index], attached_atom):
+            if regex.search(mol.atom_name[bonded_index], attached_atom):
                 matching_list.append(bonded_index)
         num_attached = len(matching_list)
 
@@ -107,7 +108,7 @@ class Internal(Base_struct_API):
 
         # No attached atoms.
         if num_attached == 0:
-            if relax_re.search('@*', attached_atom):
+            if regex.search('@*', attached_atom):
                 matching_list = []
                 bonded_num=[]
                 bonded_name=[]

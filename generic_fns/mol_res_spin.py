@@ -41,7 +41,8 @@ from warnings import warn
 
 # relax module imports.
 from data_store.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from generic_fns import exp_info, pipes, relax_re
+from generic_fns import exp_info, pipes
+from lib import regex
 from lib.check_types import is_unicode
 from lib.errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from lib.warnings import RelaxWarning
@@ -206,7 +207,7 @@ class Selection(object):
                 select_mol = True
 
             # A true match.
-            elif relax_re.search(self.molecules, mol.name):
+            elif regex.search(self.molecules, mol.name):
                 select_mol = True
         else:
             # No molecule container sent in, therefore the molecule is assumed to match.
@@ -223,7 +224,7 @@ class Selection(object):
                 select_res = True
 
             # A true match.
-            elif res.num in self.residues or relax_re.search(self.residues, res.name):
+            elif res.num in self.residues or regex.search(self.residues, res.name):
                 select_res = True
         else:
             # No residue container sent in, therefore the residue is assumed to match.
@@ -240,7 +241,7 @@ class Selection(object):
                 select_spin = True
 
             # A true match.
-            elif spin.num in self.spins or relax_re.search(self.spins, spin.name):
+            elif spin.num in self.spins or regex.search(self.spins, spin.name):
                 select_spin = True
         else:
             # No spin container sent in, therefore the spin is assumed to match.
@@ -292,7 +293,7 @@ class Selection(object):
             return self._intersect[0].contains_mol(mol) and self._intersect[1].contains_mol(mol)
 
         # The check.
-        if relax_re.search(self.molecules, mol):
+        if regex.search(self.molecules, mol):
             return True
 
         # Nothingness.
@@ -331,7 +332,7 @@ class Selection(object):
         select_res = False
 
         # The residue checks.
-        if res_num in self.residues or relax_re.search(self.residues, res_name):
+        if res_num in self.residues or regex.search(self.residues, res_name):
             select_res = True
 
         # Nothingness.
@@ -377,7 +378,7 @@ class Selection(object):
         select_spin = False
 
         # The spin checks.
-        if spin_num in self.spins or relax_re.search(self.spins, spin_name):
+        if spin_num in self.spins or regex.search(self.spins, spin_name):
             select_spin = True
 
         # Nothingness.

@@ -37,9 +37,10 @@ from warnings import warn
 
 # relax module imports.
 from data_store.relax_xml import fill_object_contents, xml_to_object
-from generic_fns import pipes, relax_re
+from generic_fns import pipes
 from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, tokenise
 from generic_fns.structure.api_base import Base_struct_API
+from lib import regex
 from lib.errors import RelaxError, RelaxPdbLoadError
 from lib.io import file_root
 from lib.warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -79,7 +80,7 @@ class Scientific_data(Base_struct_API):
         # The find the attached atom in the residue (FIXME).
         matching_list = []
         for atom in list(res.atoms.keys()):
-            if relax_re.search(atom, attached_atom):
+            if regex.search(atom, attached_atom):
                 matching_list.append(atom)
         num_attached = len(matching_list)
 

@@ -40,6 +40,7 @@ __all__ = [
     'model_selection',
     'order',
     'physical_constants',
+    'regex',
     'spectral_densities',
     'structure',
     'text',

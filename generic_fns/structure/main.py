@@ -30,7 +30,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from generic_fns import molmol, relax_re
+from generic_fns import molmol
 from generic_fns.interatomic import interatomic_loop
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
