@@ -77,7 +77,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will execute OpenDX to display the space maps created previously by the dx.map user function.  This will work for any type of OpenDX map.")
-uf.backend = opendx.main.run
+uf.backend = pipe_control.opendx.main.run
 uf.menu_text = "&execute"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (700, 500)
@@ -203,7 +203,7 @@ uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', 
 uf.desc[-1].add_paragraph("To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te, Rex}, name the results 'test', and to place the files in the current directory, use one of the following commands:")
 uf.desc[-1].add_prompt("relax> dx.map(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)")
 uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)")
-uf.backend = opendx.main.map
+uf.backend = pipe_control.opendx.main.map
 uf.menu_text = "&map"
 uf.gui_icon = "relax.grid_search"
 uf.wizard_height_desc = 280
