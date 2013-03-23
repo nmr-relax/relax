@@ -23,7 +23,7 @@
 """The GUI data objects of the relax data store."""
 
 # relax module imports.
-from data_store.data_classes import Element, RelaxListType
+from data_store.objects.data_classes import Element, RelaxListType
 from data_store.relax_xml import xml_to_object
 
 

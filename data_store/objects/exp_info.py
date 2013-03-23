@@ -23,7 +23,7 @@
 """The experimental information data container of the relax data store."""
 
 # relax module imports.
-from data_store.data_classes import RelaxListType, Element
+from data_store.objects.data_classes import RelaxListType, Element
 from lib.errors import RelaxError
 
 

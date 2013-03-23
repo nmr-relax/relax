@@ -27,7 +27,7 @@ import numpy
 from re import match, search
 
 # relax module imports.
-from data_store.prototype import Prototype
+from data_store.objects.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from lib.float import floatAsByteArray
 import generic_fns

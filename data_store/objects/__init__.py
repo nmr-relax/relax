@@ -23,4 +23,13 @@
 """Package of objects making up the relax data storage object."""
 
 __all__ = [
+    'align_tensor',
+    'data_classes',
+    'diff_tensor',
+    'exp_info',
+    'gui',
+    'interatomic',
+    'mol_res_spin',
+    'pipe_container',
+    'prototype'
 ]
