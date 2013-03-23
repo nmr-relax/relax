@@ -31,7 +31,6 @@ __all__ = [
     'frame_order',
     'jw_mapping',
     'jw_mf_comps',
-    'jw_mf',
     'mf',
     'n_state_model',
     'order_parameters',
