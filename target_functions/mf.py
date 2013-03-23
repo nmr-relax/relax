@@ -26,7 +26,7 @@ from numpy import dot, float64, ones, sum, transpose, zeros
 
 # relax module imports.
 from lib.errors import RelaxError
-from target_functions.direction_cosine import *
+from lib.diffusion.direction_cosine import calc_ellipsoid_di, calc_ellipsoid_ddi, calc_ellipsoid_d2di, calc_spheroid_di, calc_spheroid_ddi, calc_spheroid_d2di
 from target_functions.weights import *
 from target_functions.correlation_time import *
 from target_functions.jw_mf_comps import *
