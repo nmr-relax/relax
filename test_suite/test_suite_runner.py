@@ -41,7 +41,7 @@ from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 if dep_check.wx_module:
     from gui import relax_gui
     from gui import interpreter
-from lib.text.sectioning import subtitle, title
+from lib.text.sectioning import section, title
 from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
@@ -195,7 +195,7 @@ class Test_suite_runner:
         self.summary_skipped()
 
         # Subtitle.
-        subtitle(file=sys.stdout, text="Synopsis")
+        section(file=sys.stdout, text="Synopsis")
 
         # System/functional test summary.
         if hasattr(self, 'system_result'):
@@ -252,7 +252,7 @@ class Test_suite_runner:
 
         # The missing modules.
         missing_modules = sorted(system_count.keys())
-        subtitle(file=sys.stdout, text="Optional packages/modules")
+        section(file=sys.stdout, text="Optional packages/modules")
 
         # Nothing missing.
         if not missing_modules:
