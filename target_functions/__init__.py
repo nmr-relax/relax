@@ -30,7 +30,6 @@ __all__ = [
     'ens_pivot_finder',
     'frame_order',
     'jw_mapping',
-    'jw_mf_comps',
     'mf',
     'n_state_model',
     'order_parameters',

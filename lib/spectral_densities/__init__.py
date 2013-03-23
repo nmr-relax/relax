@@ -23,5 +23,6 @@
 """The relax-lib NMR package - a library of functions for power spectral density functions."""
 
 __all__ = [
-    'model_free'
+    'model_free',
+    'model_free_components'
 ]
