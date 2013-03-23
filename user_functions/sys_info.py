@@ -23,7 +23,7 @@
 """The sys_info user function definitions."""
 
 # relax module imports.
-from generic_fns.sys_info import sys_info
+from info import print_sys_info
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -37,7 +37,7 @@ uf.display = True
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will display all of the relax, Python, python package and hardware information currently being used by relax.  This is useful for seeing if all packages are up to date and if the correct software versions are being used.  It is also very useful information for reporting relax bugs.")
-uf.backend = sys_info
+uf.backend = print_sys_info
 uf.menu_text = "s&ys_info"
 uf.gui_icon = "oxygen.actions.help-about"
 uf.wizard_size = (700, 400)

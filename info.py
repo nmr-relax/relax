@@ -50,6 +50,17 @@ from status import Status; status = Status()
 from version import revision, url, version, version_full
 
 
+def print_sys_info():
+    """Print out the system information."""
+
+    # Initialise the info box.
+    info = Info_box()
+
+    # Print all info.
+    print(info.sys_info())
+
+
+
 class Info_box(object):
     """A container storing information about relax."""
 

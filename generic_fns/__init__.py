@@ -60,7 +60,6 @@ __all__ = [ 'align_tensor',
             'spectrum',
             'state',
             'structure',
-            'sys_info',
             'temperature',
             'value',
             'vmd'
