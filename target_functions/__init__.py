@@ -25,7 +25,6 @@
 
 __all__ = [
     'chi2',
-    'coord_transform',
     'consistency_tests',
     'correlation_time',
     'direction_cosine',
