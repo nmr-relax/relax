@@ -23,6 +23,7 @@
 """The relax-lib NMR package - a library of functions for rotational diffusion."""
 
 __all__ = [
+    'correlation_time',
     'direction_cosine',
     'weights'
 ]

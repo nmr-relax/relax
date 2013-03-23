@@ -26,7 +26,6 @@
 __all__ = [
     'chi2',
     'consistency_tests',
-    'correlation_time',
     'ens_pivot_finder',
     'frame_order',
     'jw_mapping',
