@@ -27,14 +27,14 @@ from unittest import TestCase
 # relax module imports.
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.coord_transform import cartesian_to_spherical
-from target_functions.frame_order import *
+from lib.frame_order import *
 from lib.algebra.kronecker_product import transpose_23
 from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 
 
 class Test_frame_order_matrix_ops(TestCase):
-    """Unit tests for the target_functions.frame_order_matrix_ops relax module."""
+    """Unit tests for the lib.frame_order_matrix_ops relax module."""
 
     def __init__(self, methodName='runTest'):
         """Skip the tests if scipy is not installed.

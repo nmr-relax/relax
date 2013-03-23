@@ -24,7 +24,7 @@ from math import pi
 from unittest import TestCase
 
 # relax module imports.
-from target_functions.frame_order.pec import pec
+from lib.frame_order.pec import pec
 
 
 class Test_pseudo_ellipse(TestCase):
