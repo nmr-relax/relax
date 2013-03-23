@@ -23,7 +23,6 @@
 """Module for selecting the best model."""
 
 # Python module imports.
-from math import log
 import sys
 
 # relax module imports.
@@ -31,77 +30,8 @@ import generic_fns.pipes
 from generic_fns.pipes import get_type, has_pipe, pipe_names, switch
 from lib.errors import RelaxError, RelaxPipeError
 from lib.io import write_data
+from lib.model_selection import aic, aicc, bic
 from specific_analyses.setup import get_specific_fn
-
-
-def aic(chi2, k, n):
-    """Akaike's Information Criteria (AIC).
-
-    The formula is::
-
-        AIC = chi2 + 2k
-
-
-    @param chi2:    The minimised chi-squared value.
-    @type chi2:     float
-    @param k:       The number of parameters in the model.
-    @type k:        int
-    @param n:       The dimension of the relaxation data set.
-    @type n:        int
-    @return:        The AIC value.
-    @rtype:         float
-    """
-
-    return chi2 + 2.0*k
-
-
-def aicc(chi2, k, n):
-    """Small sample size corrected AIC.
-
-    The formula is::
-
-                           2k(k + 1)
-        AICc = chi2 + 2k + ---------
-                           n - k - 1
-
-
-    @param chi2:    The minimised chi-squared value.
-    @type chi2:     float
-    @param k:       The number of parameters in the model.
-    @type k:        int
-    @param n:       The dimension of the relaxation data set.
-    @type n:        int
-    @return:        The AIC value.
-    @rtype:         float
-    """
-
-    if n > (k+1):
-        return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
-    elif n == (k+1):
-        raise RelaxError("The size of the dataset, n=%s, is too small for this model of size k=%s.  This situation causes a fatal division by zero as:\n    AICc = chi2 + 2k + 2k*(k + 1) / (n - k - 1).\n\nPlease use AIC model selection instead." % (n, k))
-    elif n < (k+1):
-        raise RelaxError("The size of the dataset, n=%s, is too small for this model of size k=%s.  This situation produces a negative, and hence nonsense, AICc score as:\n    AICc = chi2 + 2k + 2k*(k + 1) / (n - k - 1).\n\nPlease use AIC model selection instead." % (n, k))
-
-
-def bic(chi2, k, n):
-    """Bayesian or Schwarz Information Criteria.
-
-    The formula is::
-
-        BIC = chi2 + k ln n
-
-
-    @param chi2:    The minimised chi-squared value.
-    @type chi2:     float
-    @param k:       The number of parameters in the model.
-    @type k:        int
-    @param n:       The dimension of the relaxation data set.
-    @type n:        int
-    @return:        The AIC value.
-    @rtype:         float
-    """
-
-    return chi2 + k * log(n)
 
 
 def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
