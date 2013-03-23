@@ -32,7 +32,6 @@ __all__ = [
     'jw_mapping',
     'jw_mf_comps',
     'jw_mf',
-    'kronecker_product',
     'mf',
     'n_state_model',
     'order_parameters',

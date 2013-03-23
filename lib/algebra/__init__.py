@@ -23,5 +23,5 @@
 """The relax-lib NMR package - a library of functions for advanced linear algebra not present in numpy."""
 
 __all__ = [
-    ''
+    'kronecker_product'
 ]
