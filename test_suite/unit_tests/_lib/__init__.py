@@ -21,6 +21,7 @@
 
 
 __all__ = [
+    '_alignment'
     '_geometry'
     '_text'
     'test_float',

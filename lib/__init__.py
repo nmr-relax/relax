@@ -23,12 +23,12 @@
 """The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
 
 __all__ = [
+    'alignment',
     'ansi',
     'errors',
     'float',
     'geometry',
     'io',
-    'nmr',
     'physical_constants',
     'structure',
     'text',

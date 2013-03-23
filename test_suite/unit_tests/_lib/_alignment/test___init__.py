@@ -29,11 +29,11 @@ import lib.geometry
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the lib.nmr package."""
+    """Unit tests for the lib.alignment package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = lib.nmr
-        self.package_name = 'lib.nmr'
+        self.package = lib.alignment
+        self.package_name = 'lib.alignment'
         self.package_path = sys.path[0] + sep + 'lib' + sep + 'nmr'

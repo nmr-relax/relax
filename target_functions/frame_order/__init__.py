@@ -32,7 +32,7 @@ from numpy.linalg import norm
 from lib.float import isNaN
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from extern.sobol.sobol_lib import i4_sobol
-from lib.nmr.alignment_tensor import to_5D, to_tensor
+from lib.alignment.alignment_tensor import to_5D, to_tensor
 from target_functions.chi2 import chi2
 from target_functions.coord_transform import spherical_to_cartesian
 from target_functions.frame_order.matrix_ops import Data, reduce_alignment_tensor
@@ -46,9 +46,9 @@ from target_functions.frame_order.pseudo_ellipse_free_rotor import compile_2nd_m
 from target_functions.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
 from target_functions.kronecker_product import kron_prod
 from target_functions import order_parameters
-from lib.nmr.pcs import pcs_tensor
+from lib.alignment.pcs import pcs_tensor
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
-from lib.nmr.rdc import rdc_tensor
+from lib.alignment.rdc import rdc_tensor
 from lib.physical_constants import pcs_constant
 from lib.errors import RelaxError
 
