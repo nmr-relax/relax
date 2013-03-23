@@ -28,7 +28,7 @@ from re import search
 import sys
 
 # relax module imports.
-from arg_check import is_int
+from lib.arg_check import is_int
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_id_to_data_list, spin_loop
 from generic_fns import pipes

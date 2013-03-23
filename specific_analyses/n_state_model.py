@@ -33,7 +33,7 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from lib.float import isNaN, isInf
 from generic_fns import align_tensor, pcs, pipes, rdc
 from generic_fns.interatomic import interatomic_loop
@@ -1051,7 +1051,7 @@ class N_state_model(API_base, API_common):
                 continue
 
             # Add the vectors.
-            if arg_check.is_float(interatom.vector[0], raise_error=False):
+            if lib.arg_check.is_float(interatom.vector[0], raise_error=False):
                 unit_vect.append([interatom.vector])
             else:
                 unit_vect.append(interatom.vector)
@@ -2609,8 +2609,8 @@ class N_state_model(API_base, API_common):
         """
 
         # Checks.
-        arg_check.is_str_list(param, 'parameter name')
-        arg_check.is_list(value, 'parameter value')
+        lib.arg_check.is_str_list(param, 'parameter name')
+        lib.arg_check.is_list(value, 'parameter value')
 
         # Loop over the parameters.
         for i in range(len(param)):

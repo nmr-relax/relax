@@ -23,7 +23,7 @@
 """The special auto-generated user function and class objects."""
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from prompt.uf_docstring import bold_text, build_subtitle, create_table, format_text
 from prompt.help import relax_class_help
 from lib.errors import RelaxError
@@ -167,53 +167,53 @@ class Uf_object(object):
 
             # Check if the correct Python object type has been supplied.
             if py_type == 'bool':
-                arg_check.is_bool(value, desc_short)
+                lib.arg_check.is_bool(value, desc_short)
             elif py_type == 'float':
-                arg_check.is_float(value, desc_short, can_be_none=can_be_none)
+                lib.arg_check.is_float(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'float_array':
-                arg_check.is_float_array(value, desc_short, size=dim, can_be_none=can_be_none)
+                lib.arg_check.is_float_array(value, desc_short, size=dim, can_be_none=can_be_none)
             elif py_type == 'float_matrix':
-                arg_check.is_float_matrix(value, desc_short, dim=dim, can_be_none=can_be_none)
+                lib.arg_check.is_float_matrix(value, desc_short, dim=dim, can_be_none=can_be_none)
             elif py_type == 'float_object':
-                arg_check.is_float_object(value, desc_short, dim=dim, can_be_none=can_be_none)
+                lib.arg_check.is_float_object(value, desc_short, dim=dim, can_be_none=can_be_none)
             elif py_type == 'func':
-                arg_check.is_func(value, desc_short, can_be_none=can_be_none)
+                lib.arg_check.is_func(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'int':
-                arg_check.is_int(value, desc_short, can_be_none=can_be_none)
+                lib.arg_check.is_int(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'int_list':
-                arg_check.is_int_list(value, desc_short, size=dim, can_be_none=can_be_none)
+                lib.arg_check.is_int_list(value, desc_short, size=dim, can_be_none=can_be_none)
             elif py_type == 'int_or_int_list':
-                arg_check.is_int_or_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
+                lib.arg_check.is_int_or_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
             elif py_type == 'list':
-                arg_check.is_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'none':
-                arg_check.is_none(value, desc_short)
+                lib.arg_check.is_none(value, desc_short)
             elif py_type == 'num':
-                arg_check.is_num(value, desc_short, can_be_none=can_be_none)
+                lib.arg_check.is_num(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'num_list':
-                arg_check.is_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'num_or_num_tuple':
-                arg_check.is_num_or_num_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_num_or_num_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'num_tuple':
-                arg_check.is_num_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_num_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'str':
-                arg_check.is_str(value, desc_short, can_be_none=can_be_none)
+                lib.arg_check.is_str(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'str_list':
-                arg_check.is_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'str_list_of_lists':
-                arg_check.is_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=True)
+                lib.arg_check.is_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=True)
             elif py_type == 'str_or_inst':
-                arg_check.is_str_or_inst(value, desc_short, can_be_none=can_be_none)
+                lib.arg_check.is_str_or_inst(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'str_or_num_or_str_num_list':
-                arg_check.is_str_or_num_or_str_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_str_or_num_or_str_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'str_or_num_list':
-                arg_check.is_str_or_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_str_or_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'str_or_str_list':
-                arg_check.is_str_or_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_str_or_str_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'tuple':
-                arg_check.is_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'val_or_list':
-                arg_check.is_val_or_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+                lib.arg_check.is_val_or_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             else:
                 raise RelaxError("User function %s - the Python object type '%s' is unknown." % (self._name, py_type))
 

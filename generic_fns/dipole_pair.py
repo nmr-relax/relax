@@ -29,7 +29,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from arg_check import is_float
+from lib.arg_check import is_float
 from generic_fns.interatomic import create_interatom, exists_data, interatomic_loop, return_interatom
 from generic_fns.mol_res_spin import Selection, exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes

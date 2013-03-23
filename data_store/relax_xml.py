@@ -31,7 +31,7 @@ from re import search
 set_printoptions(precision=15, threshold=nan)
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 import check_types
 from lib.float import floatAsByteArray, packBytesAsPyFloat
 from lib.errors import RelaxError
@@ -178,7 +178,7 @@ def object_to_xml(doc, elem, value=None):
             val_elem.appendChild(doc.createTextNode(repr(ieee_obj)))
 
     # Store matrices of floats as IEEE-754 byte arrays.
-    elif arg_check.is_float_matrix(value, raise_error=False):
+    elif lib.arg_check.is_float_matrix(value, raise_error=False):
         # The converted list.
         ieee_obj = []
         for i in range(len(value)):

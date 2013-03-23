@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 import os
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from status import Status; status = Status()
 
 
@@ -54,5 +54,5 @@ class Ls:
 def system(command):
     """Function which executes the user supplied shell command."""
 
-    arg_check.is_str(command, 'command')
+    lib.arg_check.is_str(command, 'command')
     stat = os.system(command)

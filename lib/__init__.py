@@ -25,6 +25,7 @@
 __all__ = [
     'alignment',
     'ansi',
+    'arg_check',
     'auto_relaxation',
     'errors',
     'float',

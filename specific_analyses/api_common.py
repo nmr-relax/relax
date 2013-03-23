@@ -26,7 +26,7 @@
 from copy import deepcopy
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from data_store.mol_res_spin import SpinContainer
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from lib.errors import RelaxError, RelaxLenError, RelaxNoSequenceError
@@ -419,8 +419,8 @@ class API_common:
         """
 
         # Checks.
-        arg_check.is_str_list(param, 'parameter name')
-        arg_check.is_list(value, 'parameter value')
+        lib.arg_check.is_str_list(param, 'parameter name')
+        lib.arg_check.is_list(value, 'parameter value')
 
         # Loop over the parameters.
         for i in range(len(param)):
@@ -453,8 +453,8 @@ class API_common:
         """
 
         # Checks.
-        arg_check.is_str_list(param, 'parameter name')
-        arg_check.is_list(value, 'parameter value')
+        lib.arg_check.is_str_list(param, 'parameter name')
+        lib.arg_check.is_list(value, 'parameter value')
 
         # Loop over the parameters.
         for i in range(len(param)):

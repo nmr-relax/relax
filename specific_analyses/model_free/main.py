@@ -31,7 +31,7 @@ from types import MethodType
 from warnings import warn
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from generic_fns import diffusion_tensor, interatomic, pipes, sequence
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_analyses
@@ -2208,7 +2208,7 @@ class Model_free_main:
         """
 
         # Checks.
-        arg_check.is_str_list(param, 'parameter name')
+        lib.arg_check.is_str_list(param, 'parameter name')
 
         # Separate out the diffusion tensor parameters from the model-free parameters.
         diff_params = []

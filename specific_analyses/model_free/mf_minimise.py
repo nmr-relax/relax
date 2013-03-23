@@ -33,7 +33,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from lib.float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
@@ -1145,7 +1145,7 @@ class Mf_minimise:
                 # Vectors.
                 if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                     # Check that this is a single vector!
-                    if arg_check.is_num_list(interatoms[i].vector[0], raise_error=False):
+                    if lib.arg_check.is_num_list(interatoms[i].vector[0], raise_error=False):
                         raise RelaxMultiVectorError(data_store.spin_id)
 
                     # Store the vector.
@@ -1356,7 +1356,7 @@ class Mf_minimise:
                     raise RelaxNoVectorsError
 
                 # Test if multiple unit vectors exist.
-                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(interatom, 'vector') and arg_check.is_num_list(interatom.vector[0], raise_error=False):
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(interatom, 'vector') and lib.arg_check.is_num_list(interatom.vector[0], raise_error=False):
                     raise RelaxMultiVectorError
 
                 # The interacting spin.

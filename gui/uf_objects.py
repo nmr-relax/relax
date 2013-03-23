@@ -29,7 +29,7 @@ from wx.lib import scrolledpanel
 import sys
 
 # relax module imports.
-import arg_check
+import lib.arg_check
 from graphics import fetch_icon
 from lib.errors import AllRelaxErrors, RelaxError
 from lib.text.string import strip_lead
@@ -903,7 +903,7 @@ class Uf_page(Wiz_page):
                 choices = []
                 data = []
                 for vals in iterator():
-                    if arg_check.is_tuple(vals, size=2, raise_error=False):
+                    if lib.arg_check.is_tuple(vals, size=2, raise_error=False):
                         choices.append(vals[0])
                         data.append(vals[1])
                     else:
