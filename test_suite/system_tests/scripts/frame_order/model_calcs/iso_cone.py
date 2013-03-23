@@ -6,7 +6,7 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from lib.geometry.rotation_matrix import R_to_euler_zyz
+from lib.geometry.rotations import R_to_euler_zyz
 from status import Status; status = Status()
 
 

@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base_script import Base_script
-from lib.geometry.rotation_matrix import reverse_euler_zyz
+from lib.geometry.rotations import reverse_euler_zyz
 
 
 class Analysis(Base_script):
