@@ -29,7 +29,7 @@ if dep_check.wx_module:
     import wx
 
 # Formatting.
-from test_suite.formatting import subtitle, summary_line, title
+from test_suite.formatting import summary_line
 
 # Import the test suite categories.
 if dep_check.wx_module:
@@ -41,6 +41,7 @@ from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 if dep_check.wx_module:
     from gui import relax_gui
     from gui import interpreter
+from lib.text.sectioning import subtitle, title
 from test_suite.relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
@@ -110,7 +111,7 @@ class Test_suite_runner:
         """
 
         # Print a header.
-        title('GUI tests')
+        title(file=sys.stdout, text='GUI tests')
 
         # Run the tests.
         if dep_check.wx_module:
@@ -154,7 +155,7 @@ class Test_suite_runner:
         """
 
         # Print a header.
-        title('System / functional tests')
+        title(file=sys.stdout, text='System / functional tests')
 
         # Run the tests.
         system_runner = System_test_runner()
@@ -173,7 +174,7 @@ class Test_suite_runner:
         """
 
         # Print a header.
-        title('Unit tests')
+        title(file=sys.stdout, text='Unit tests')
 
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
@@ -188,13 +189,13 @@ class Test_suite_runner:
         """Print out a summary of the relax test suite."""
 
         # Title.
-        title("Summary of the relax test suite")
+        title(file=sys.stdout, text="Summary of the relax test suite")
 
         # The skipped tests.
         self.summary_skipped()
 
         # Subtitle.
-        subtitle("Synopsis")
+        subtitle(file=sys.stdout, text="Synopsis")
 
         # System/functional test summary.
         if hasattr(self, 'system_result'):
@@ -251,7 +252,7 @@ class Test_suite_runner:
 
         # The missing modules.
         missing_modules = sorted(system_count.keys())
-        subtitle("Optional packages/modules")
+        subtitle(file=sys.stdout, text="Optional packages/modules")
 
         # Nothing missing.
         if not missing_modules:
