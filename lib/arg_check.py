@@ -79,7 +79,7 @@ def is_float(arg, name=None, can_be_none=False, raise_error=True):
         return True
 
     # Check for a float.
-    if check_types.is_float(arg):
+    if lib.check_types.is_float(arg):
         return True
 
     # Fail.
@@ -129,7 +129,7 @@ def is_float_array(arg, name=None, size=None, can_be_none=False, raise_error=Tru
     else:
         for i in range(len(arg)):
             # Fail if not a float.
-            if not check_types.is_float(arg[i]):
+            if not lib.check_types.is_float(arg[i]):
                 fail = True
 
     # Fail.
@@ -204,7 +204,7 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
 
             # Check for float elements.
             for j in range(len(arg[i])):
-                if not check_types.is_float(arg[i][j]):
+                if not lib.check_types.is_float(arg[i][j]):
                     fail = True
 
     # Fail.
@@ -284,7 +284,7 @@ def is_float_object(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
 
         # Check for float elements.
         for i in range(len(elements)):
-            if not check_types.is_float(elements[i]):
+            if not lib.check_types.is_float(elements[i]):
                 fail = True
 
     # Fail.
@@ -623,7 +623,7 @@ def is_num(arg, name=None, can_be_none=False, raise_error=True):
         return True
 
     # Check for floats and integers (avoiding Booleans).
-    if (check_types.is_float(arg) or isinstance(arg, int)) and not isinstance(arg, bool):
+    if (lib.check_types.is_float(arg) or isinstance(arg, int)) and not isinstance(arg, bool):
         return True
 
     # Fail.
@@ -679,7 +679,7 @@ def is_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not check_types.is_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if (not lib.check_types.is_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
                 fail = True
 
     # Fail.
@@ -810,7 +810,7 @@ def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=Fals
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not check_types.is_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if (not lib.check_types.is_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
                 fail = True
 
     # Fail.
@@ -962,7 +962,7 @@ def is_str_or_inst(arg, name=None, can_be_none=False, raise_error=True):
         return True
 
     # Check for a string.
-    if isinstance(arg, str) or check_types.is_filetype(arg) or isinstance(arg, DummyFileObject):
+    if isinstance(arg, str) or lib.check_types.is_filetype(arg) or isinstance(arg, DummyFileObject):
         return True
 
     # Fail.
