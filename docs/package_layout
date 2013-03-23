@@ -10,15 +10,10 @@ ________________________________________________________________________________
 Package             Description
 ____________________________________________________________________________________________________
 
-analysis_lib        Analysis specific code (currently called specific_fns).
-
 auto_analyses       Unchanged from now.  A collection of massive relax scripts used to simplify the
                     life of relax users.
 
 data_store          The relax data store and all modules which operate on it (data and generic_fns).
-
-ds_lib              All modules which operate on the relax data store (data and generic_fns).
-                    Mainly user function backends.
 
 extern              GPL compatible packages bundled with relax.
 
@@ -37,17 +32,21 @@ lib.geometry        To include, for example, maths_fns.rotation_matrix.
 
 lib.opendx          From opendx.
 
-lib.nmr             For example maths_fns.rdc, math_fns.pcs, etc.
+lib.alignment       For example maths_fns.rdc, math_fns.pcs, etc.
 
 lib.structure       From generic_fns.structure.
 
 multi               The multi-processor code.
 
+pipe_control        All modules which are used to manage data in the relax data pipes.  This is most of generic_fns.
+
 prompt              The prompt/script UI.
 
 scons               The SCons modules.
 
-target_fns          A collection of all the target functions.  This is most of the current
+specific_analyses   Analysis specific code (currently called specific_fns).
+
+target_functions    A collection of all the target functions.  This is most of the current
                     maths_fns.  The modules contain target function classes which must present the
                     func() method as the target function (and the optional dfunc() and d2func() for
                     the gradient and Hessian respectively).
