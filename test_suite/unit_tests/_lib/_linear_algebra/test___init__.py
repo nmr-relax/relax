@@ -36,4 +36,4 @@ class Test___init__(PackageTestCase):
 
         self.package = lib.linear_algebra
         self.package_name = 'lib.linear_algebra'
-        self.package_path = sys.path[0] + sep + 'lib' + sep + 'lib.linear_algebra'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'linear_algebra'
