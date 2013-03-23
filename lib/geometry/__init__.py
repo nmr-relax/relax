@@ -24,5 +24,6 @@
 
 __all__ = [
     'lines',
-    'rotations'
+    'rotations',
+    'vectors'
 ]
