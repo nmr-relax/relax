@@ -19,21 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
 
 __all__ = [
-    'alignment',
-    'ansi',
-    'auto_relaxation',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'physical_constants',
-    'spectral_densities',
-    'structure',
-    'text',
-    'warnings'
+    'test___init__'
 ]
