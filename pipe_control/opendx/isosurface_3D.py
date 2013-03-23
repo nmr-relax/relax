@@ -107,21 +107,3 @@ class Iso3D(Base_Map):
         # Unfix the diffusion tensor.
         if unfix:
             cdp.diff_tensor.fixed = False
-
-
-    def point_text(self):
-        """Function for creating the text of the .general file for the point."""
-
-        # Generate the import text.
-        text = ""
-        text = text + "file = " + self.point_file + "\n"
-        text = text + "points = 1\n"
-        text = text + "format = ascii\n"
-        text = text + "interleaving = field\n"
-        text = text + "field = locations, field0\n"
-        text = text + "structure = 3-vector, scalar\n"
-        text = text + "type = float, float\n\n"
-        text = text + "end\n"
-
-        # Return the text.
-        return text
