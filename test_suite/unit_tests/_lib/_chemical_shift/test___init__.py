@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,25 +19,21 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+# Python module imports.
+from os import sep
+import sys
 
-__all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'chemical_shift',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'physical_constants',
-    'spectral_densities',
-    'structure',
-    'text',
-    'warnings'
-]
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+import lib.chemical_shift
+
+
+class Test___init__(PackageTestCase):
+    """Unit tests for the lib.chemical_shift package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = lib.chemical_shift
+        self.package_name = 'lib.chemical_shift'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'chemical_shift'
