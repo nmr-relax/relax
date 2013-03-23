@@ -47,7 +47,7 @@ from generic_fns.structure.internal import Internal
 from lib.structure.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from target_functions import frame_order, order_parameters
-from target_functions.coord_transform import spherical_to_cartesian
+from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoPCSError, RelaxNoRDCError, RelaxNoValueError, RelaxSpinTypeError

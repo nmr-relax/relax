@@ -36,7 +36,7 @@ from generic_fns import pipes
 from generic_fns.angles import fold_spherical_angles, wrap_angles
 from generic_fns.interatomic import return_interatom_list
 from generic_fns.mol_res_spin import get_molecule_names, return_spin, spin_loop
-from target_functions.coord_transform import cartesian_to_spherical
+from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import R_to_euler_zyz
 from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError

@@ -32,7 +32,7 @@ import sys
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from target_functions.coord_transform import spherical_to_cartesian
+from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from lib.io import DummyFileObject, open_read_file

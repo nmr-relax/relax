@@ -6,7 +6,7 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from target_functions.coord_transform import cartesian_to_spherical
+from lib.geometry.coord_transform import cartesian_to_spherical
 from status import Status; status = Status()
 
 

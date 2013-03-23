@@ -36,7 +36,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from generic_fns.angles import wrap_angles
 from generic_fns.pipes import cdp_name, get_pipe
 from lib.text.sectioning import section, subsection, title
-from target_functions.coord_transform import spherical_to_cartesian
+from lib.geometry.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.io import open_write_file

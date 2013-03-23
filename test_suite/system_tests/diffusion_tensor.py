@@ -31,7 +31,7 @@ from data_store.diff_tensor import DiffTensorSimList
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
 from generic_fns.reset import reset
-from target_functions.coord_transform import spherical_to_cartesian
+from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from lib.io import delete
 from status import Status; status = Status()

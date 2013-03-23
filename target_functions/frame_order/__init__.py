@@ -34,7 +34,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from extern.sobol.sobol_lib import i4_sobol
 from lib.alignment.alignment_tensor import to_5D, to_tensor
 from target_functions.chi2 import chi2
-from target_functions.coord_transform import spherical_to_cartesian
+from lib.geometry.coord_transform import spherical_to_cartesian
 from target_functions.frame_order.matrix_ops import Data, reduce_alignment_tensor
 from target_functions.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
 from target_functions.frame_order.free_rotor import compile_2nd_matrix_free_rotor

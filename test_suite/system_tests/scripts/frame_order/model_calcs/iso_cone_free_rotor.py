@@ -7,7 +7,7 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from target_functions.coord_transform import cartesian_to_spherical
+from lib.geometry.coord_transform import cartesian_to_spherical
 from target_functions.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 
