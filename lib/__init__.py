@@ -39,5 +39,6 @@ __all__ = [
     'spectral_densities',
     'structure',
     'text',
-    'warnings'
+    'warnings',
+    'xplor'
 ]

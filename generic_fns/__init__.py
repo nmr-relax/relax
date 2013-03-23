@@ -64,6 +64,5 @@ __all__ = [ 'align_tensor',
             'sys_info',
             'temperature',
             'value',
-            'vmd',
-            'xplor'
+            'vmd'
 ]
