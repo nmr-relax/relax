@@ -24,7 +24,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from test_suite.unit_tests.package_checking import PackageTestCase
 
 
