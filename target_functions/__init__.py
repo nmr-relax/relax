@@ -35,6 +35,5 @@ __all__ = [
     'paramag_centre',
     'potential',
     'ri_comps',
-    'ri_prime',
     'weights'
 ]

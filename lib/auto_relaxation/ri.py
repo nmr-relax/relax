@@ -22,7 +22,7 @@
 
 # relax module imports.
 from target_functions.ri_comps import r1_comps, dr1_comps, d2r1_comps
-from target_functions.ri_prime import func_ri_prime
+from lib.auto_relaxation.ri_prime import func_ri_prime
 
 
 # Calculate the NOE value.
