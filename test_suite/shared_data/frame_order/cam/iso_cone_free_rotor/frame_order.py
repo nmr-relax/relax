@@ -5,8 +5,8 @@ from numpy import array, float64, transpose, zeros
 from os import sep
 
 # relax module imports.
-from target_functions.order_parameters import iso_cone_theta_to_S
 from lib.geometry.rotations import euler_to_R_zyz
+from lib.order.order_parameters import iso_cone_theta_to_S
 
 
 class Analysis:

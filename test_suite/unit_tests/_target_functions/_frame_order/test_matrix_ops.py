@@ -29,7 +29,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from lib.geometry.coord_transform import cartesian_to_spherical
 from target_functions.frame_order import *
 from lib.algebra.kronecker_product import transpose_23
-from target_functions.order_parameters import iso_cone_theta_to_S
+from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 
 

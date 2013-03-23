@@ -32,7 +32,6 @@ __all__ = [
     'jw_mapping',
     'mf',
     'n_state_model',
-    'order_parameters',
     'paramag_centre',
     'potential',
     'ri_comps',

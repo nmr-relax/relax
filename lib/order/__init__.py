@@ -23,5 +23,5 @@
 """The relax-lib NMR package - a library of functions for order and entropy."""
 
 __all__ = [
-    ''
+    'order_parameters'
 ]

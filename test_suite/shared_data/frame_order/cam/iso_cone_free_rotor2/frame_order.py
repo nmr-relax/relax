@@ -6,7 +6,7 @@ from os import sep
 
 # relax module imports.
 from lib.geometry.rotations import euler_to_R_zyz
-from target_functions.order_parameters import iso_cone_theta_to_S
+from lib.order.order_parameters import iso_cone_theta_to_S
 
 
 class Analysis:
