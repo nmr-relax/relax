@@ -40,3 +40,9 @@ class Test___init__(PackageTestCase):
 
         # Mac OS X application fix:  Handle the py2app extension placing the Python directories into Resources/lib/python2.7 (Resources/lib is the relax lib package).
         self.blacklist = ['python2.7']
+
+
+    def test_correct_package(self):
+        """Just be sure that the correct package is loaded."""
+
+        self.assert_('model_selection' in self.package.__all__)
