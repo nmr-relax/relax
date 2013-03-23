@@ -24,11 +24,11 @@ from math import pi
 from unittest import TestCase
 
 # relax module imports.
-from lib.frame_order.pec import pec
+from lib.geometry.pec import pec
 
 
 class Test_pseudo_ellipse(TestCase):
-    """Unit tests for the target_functions.pseudo_ellipse relax module."""
+    """Unit tests for the lib.geometry.pec relax module."""
 
 
     def test_pec_0_0(self):

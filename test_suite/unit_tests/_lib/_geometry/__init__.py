@@ -21,5 +21,8 @@
 
 
 __all__ = [
-    'lines'
+    'test___init_',
+    'test_lines',
+    'test_pec',
+    'test_rotations'
 ]

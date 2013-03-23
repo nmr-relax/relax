@@ -23,5 +23,4 @@
 __all__ = [
     'test___init__',
     'test_kronecker_prod'
-    'test_pec'
 ]
