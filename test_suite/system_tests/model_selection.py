@@ -24,7 +24,7 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
+from pipe_control import pipes
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

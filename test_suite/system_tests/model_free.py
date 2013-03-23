@@ -32,9 +32,9 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from generic_fns import pipes
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control import pipes
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import spin_loop
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from lib.io import DummyFileObject, open_read_file
 from status import Status; status = Status()

@@ -301,7 +301,7 @@ class Uf_container(object):
     @type title_short:          str or None
     @ivar kargs:                The list of keyword argument details.
     @type kargs:                list of dict
-    @ivar backend:              The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'generic_fns.pipes.create'.  Note, this should be importable as __import__(backend)!
+    @ivar backend:              The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'pipe_control.pipes.create'.  Note, this should be importable as __import__(backend)!
     @type backend:              executable object
     @ivar display:              A flag specifying if the user function displays output to STDOUT.  This is used for certain UIs to display that output.
     @type display:              str

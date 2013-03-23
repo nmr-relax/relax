@@ -25,7 +25,7 @@ from numpy import array, eye, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns.frame_order import print_frame_order_2nd_degree
+from pipe_control.frame_order import print_frame_order_2nd_degree
 from lib.geometry.coord_transform import cartesian_to_spherical
 from target_functions.frame_order import *
 from lib.algebra.kronecker_product import transpose_23

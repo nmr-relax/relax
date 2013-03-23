@@ -35,14 +35,14 @@ from warnings import warn
 
 # relax module imports.
 from lib.float import isNaN, isInf
-from generic_fns import pipes
-from generic_fns.angles import wrap_angles
-from generic_fns.interatomic import interatomic_loop, return_interatom
-from generic_fns.mol_res_spin import return_spin, spin_loop
-from generic_fns.structure import geometric
-from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
-from generic_fns.structure.mass import centre_of_mass
-from generic_fns.structure.internal import Internal
+from pipe_control import pipes
+from pipe_control.angles import wrap_angles
+from pipe_control.interatomic import interatomic_loop, return_interatom
+from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.structure import geometric
+from pipe_control.structure.cones import Iso_cone, Pseudo_elliptic
+from pipe_control.structure.mass import centre_of_mass
+from pipe_control.structure.internal import Internal
 from lib.structure.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from target_functions import frame_order

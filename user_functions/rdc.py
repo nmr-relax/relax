@@ -31,8 +31,8 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from generic_fns import align_tensor, pipes, rdc
-from generic_fns.mol_res_spin import get_spin_ids
+from pipe_control import align_tensor, pipes, rdc
+from pipe_control.mol_res_spin import get_spin_ids
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

@@ -23,7 +23,7 @@
 """The dx user function definitions for controlling the OpenDX visualisation software."""
 
 # relax module imports.
-from generic_fns import diffusion_tensor
+from pipe_control import diffusion_tensor
 from graphics import WIZARD_IMAGE_PATH
 import opendx.main
 from prompt.doc_string import regexp_doc

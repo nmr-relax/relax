@@ -38,7 +38,7 @@ with the command:
 from os import sep
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import spin_loop
 from lib.io import open_write_file
 from status import Status; status = Status()
 

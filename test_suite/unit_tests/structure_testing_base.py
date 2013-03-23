@@ -25,7 +25,7 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Structure_base_class(UnitTestCase):
-    """Base class for the tests of both the 'prompt.structure' and 'generic_fns.structure' modules.
+    """Base class for the tests of both the 'prompt.structure' and 'pipe_control.structure' modules.
 
     This base class also contains many shared unit tests.
     """

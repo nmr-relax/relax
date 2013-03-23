@@ -32,7 +32,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from generic_fns import pipes, relax_data
+from pipe_control import pipes, relax_data
 from graphics import WIZARD_IMAGE_PATH
 from lib.physical_constants import NH_BOND_LENGTH
 from user_functions.data import Uf_info; uf_info = Uf_info()

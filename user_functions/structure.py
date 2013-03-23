@@ -33,8 +33,8 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-import generic_fns.structure.geometric
-import generic_fns.structure.main
+import pipe_control.structure.geometric
+import pipe_control.structure.main
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -118,7 +118,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows atoms to be added to the internal structural object.  To use the same atomic coordinates for all models, the atomic position can be an array of 3 values.  Alternatively different coordinates can be used for each model if the atomic position is a rank-2 array where the first dimension matches the number of models currently present.")
-uf.backend = generic_fns.structure.main.add_atom
+uf.backend = pipe_control.structure.main.add_atom
 uf.menu_text = "&add_atom"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_size = (900, 700)
@@ -138,7 +138,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows new models to be added to the internal structural object.  Note that no structural information is allowed to be present")
-uf.backend = generic_fns.structure.main.add_model
+uf.backend = pipe_control.structure.main.add_model
 uf.menu_text = "&add_model"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_size = (700, 400)
@@ -166,7 +166,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows atoms to be connected in the internal structural object.  The global index is normally equal to the PDB atom number minus 1.")
-uf.backend = generic_fns.structure.main.connect_atom
+uf.backend = pipe_control.structure.main.connect_atom
 uf.menu_text = "co&nnect_atom"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
@@ -223,7 +223,7 @@ table.add_row(["30", "5.56e6", "10"])
 uf.desc[-1].add_table(table.label)
 uf.desc[-1].add_paragraph("The scaling value has been fixed to facilitate comparisons within or between publications, but can be changed to vary the size of the tensor geometric object if necessary.  Reporting the rotational diffusion rate per Angstrom within figure legends would be useful.")
 uf.desc[-1].add_paragraph("To create the tensor PDB representation, a number of algorithms are utilised.  Firstly the centre of mass is calculated for the selected residues and is represented in the PDB by a C atom.  Then the axes of the diffusion are calculated, as unit vectors scaled to the appropriate length (multiplied by the eigenvalue Dx, Dy, Dz, Dpar, Dper, or Diso as well as the scale value), and a C atom placed at the position of this vector plus the centre of mass.  Finally a uniform distribution of vectors on a sphere is generated using spherical coordinates.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These unit vectors, which are distributed within the PDB frame and are of 1 Angstrom in length, are first rotated into the diffusion frame using a rotation matrix (the spherical diffusion tensor is not rotated).  Then they are multiplied by the diffusion tensor matrix to extend the vector out to the correct length, and finally multiplied by the scale value so that the vectors reasonably superimpose onto the macromolecular structure.  The last set of algorithms place all this information into a PDB file.  The distribution of vectors are represented by H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines.")
-uf.backend = generic_fns.structure.geometric.create_diff_tensor_pdb
+uf.backend = pipe_control.structure.geometric.create_diff_tensor_pdb
 uf.menu_text = "&create_diff_tensor_pdb"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 450
@@ -317,7 +317,7 @@ uf.desc[-1].add_paragraph("This creates a PDB file representation of a rotor mot
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("The following is a synthetic example:")
 uf.desc[-1].add_prompt("relax> structure.create_rotor_pdb(file='rotor.pdb', rotor_angle=20.0, axis=[0., 0., 1.], axis_pt=[1., 1., 0.], centre=[0., 0., 2.], span=2e-9, blade_length=1e-9)")
-uf.backend = generic_fns.structure.geometric.create_rotor_pdb
+uf.backend = pipe_control.structure.geometric.create_rotor_pdb
 uf.menu_text = "create_&rotor_pdb"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 400
@@ -373,7 +373,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This creates a PDB file containing an artificial vectors, the length of which default to 20 Angstrom.  A structure must have previously been read into relax.  The origin of the vector distribution is located at the centre of mass (of the selected residues).  This vector distribution PDB file can subsequently be read into any molecular viewer.")
 uf.desc[-1].add_paragraph("Because of the symmetry of the diffusion tensor reversing the orientation of the XH bond vector has no effect.  Therefore by setting the symmetry flag two chains 'A' and 'B' will be added to the PDB file whereby chain 'B' is chain 'A' with the XH bonds reversed.")
-uf.backend = generic_fns.structure.geometric.create_vector_dist
+uf.backend = pipe_control.structure.geometric.create_vector_dist
 uf.menu_text = "cr&eate_vector_dist"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 400
@@ -409,7 +409,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("For a model-free backbone amide nitrogen analysis whereby the N spins have already been created, to obtain the backbone N positions from the file '1F3Y.pdb' (which is a single protein), type the following two user functions:")
 uf.desc[-1].add_prompt("relax> structure.read_pdb('1F3Y.pdb')")
 uf.desc[-1].add_prompt("relax> structure.get_pos(spin_id='@N')")
-uf.backend = generic_fns.structure.main.get_pos
+uf.backend = pipe_control.structure.main.get_pos
 uf.menu_text = "&get_pos"
 uf.wizard_height_desc = 300
 uf.wizard_size = (800, 600)
@@ -437,7 +437,7 @@ uf.desc[-1].add_prompt("relax> structure.delete()")
 uf.desc[-1].add_paragraph("To delete residues 50 to 100 of the molecule called 'Ap4Aase', type one of:")
 uf.desc[-1].add_prompt("relax> structure.delete(':50-100')")
 uf.desc[-1].add_prompt("relax> structure.delete(atom_id=':50-100')")
-uf.backend = generic_fns.structure.main.delete
+uf.backend = pipe_control.structure.main.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_size = (700, 500)
@@ -493,7 +493,7 @@ uf.desc[-1].add_prompt("relax> structure.displacement(model_to=5)")
 uf.desc[-1].add_paragraph("To determine the displacement of model 2 to model 3, type one of:")
 uf.desc[-1].add_prompt("relax> structure.displacement(2, 3)")
 uf.desc[-1].add_prompt("relax> structure.displacement(model_from=2, model_to=3)")
-uf.backend = generic_fns.structure.main.displacement
+uf.backend = pipe_control.structure.main.displacement
 uf.menu_text = "displace&ment"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
@@ -544,7 +544,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.")
 uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the search to certain molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
-uf.backend = generic_fns.structure.main.find_pivot
+uf.backend = pipe_control.structure.main.find_pivot
 uf.menu_text = "&find_pivot"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
@@ -601,7 +601,7 @@ uf.desc[-1].add_prompt("relax> structure.load_spins(spin_id=\":U@C6\")")
 uf.desc[-1].add_paragraph("Alternatively using some Python programming:")
 uf.desc[-1].add_prompt("relax> for id in [\":A@C8\", \":A@C2\", \":G@C8\", \":G@N1\", \":C@C5\", \":C@C6\", \":U@N3\", \":U@C5\", \":U@C6\"]:")
 uf.desc[-1].add_prompt("relax>     structure.load_spins(spin_id=id)")
-uf.backend = generic_fns.structure.main.load_spins
+uf.backend = pipe_control.structure.main.load_spins
 uf.menu_text = "&load_spins"
 uf.gui_icon = "relax.spin"
 uf.wizard_height_desc = 300
@@ -710,7 +710,7 @@ uf.desc[-1].add_prompt("relax> structure.read_pdb('lactose_MCMM4_S1_1.pdb', set_
 uf.desc[-1].add_prompt("relax> structure.read_pdb('lactose_MCMM4_S1_2.pdb', set_mol_name='lactose_MCMM4_S1', set_model_num=2)")
 uf.desc[-1].add_prompt("relax> structure.read_pdb('lactose_MCMM4_S1_3.pdb', set_mol_name='lactose_MCMM4_S1', set_model_num=3)")
 uf.desc[-1].add_prompt("relax> structure.read_pdb('lactose_MCMM4_S1_4.pdb', set_mol_name='lactose_MCMM4_S1', set_model_num=4)")
-uf.backend = generic_fns.structure.main.read_pdb
+uf.backend = pipe_control.structure.main.read_pdb
 uf.menu_text = "read_&pdb"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 360
@@ -788,7 +788,7 @@ uf.desc[-1].add_prompt("relax> structure.read_xyz('test_1.xyz', set_mol_name='te
 uf.desc[-1].add_prompt("relax> structure.read_xyz('test_2.xyz', set_mol_name='test_2', set_model_num=2)")
 uf.desc[-1].add_prompt("relax> structure.read_xyz('test_3.xyz', set_mol_name='test_3', set_model_num=3)")
 uf.desc[-1].add_prompt("relax> structure.read_xyz('test_4.xyz', set_mol_name='test_4', set_model_num=4)")
-uf.backend = generic_fns.structure.main.read_xyz
+uf.backend = pipe_control.structure.main.read_xyz
 uf.menu_text = "read_&xyz"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 400
@@ -815,7 +815,7 @@ uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the RMSD, simply type:")
 uf.desc[-1].add_prompt("relax> structure.rmsd()")
-uf.backend = generic_fns.structure.main.rmsd
+uf.backend = pipe_control.structure.main.rmsd
 uf.menu_text = "&rmsd"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
@@ -858,7 +858,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to rotate the internal structural data by the given rotation matrix.  If the origin is supplied, then this will act as the pivot of the rotation.  Otherwise, all structural data will be rotated about the point [0, 0, 0].  The rotation can be restricted to one specific model.")
-uf.backend = generic_fns.structure.main.rotate
+uf.backend = pipe_control.structure.main.rotate
 uf.menu_text = "&rotate"
 uf.wizard_height_desc = 300
 uf.wizard_size = (800, 600)
@@ -921,7 +921,7 @@ uf.desc[-1].add_prompt("relax> structure.superimpose(method='fit to mean', atom_
 uf.desc[-1].add_paragraph("To superimpose model 2 onto model 3 using backbone heavy atoms, type one of:")
 uf.desc[-1].add_prompt("relax> structure.superimpose([3, 2], 'fit to first', '@N,C,CA,O')")
 uf.desc[-1].add_prompt("relax> structure.superimpose(models=[3, 2], method='fit to first', atom_id='@N,C,CA,O')")
-uf.backend = generic_fns.structure.main.superimpose
+uf.backend = pipe_control.structure.main.superimpose
 uf.menu_text = "&superimpose"
 uf.wizard_apply_button = False
 uf.wizard_height_desc = 450
@@ -957,7 +957,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to translate the internal structural data by the given translation vector.  The translation can be restricted to one specific model.")
-uf.backend = generic_fns.structure.main.translate
+uf.backend = pipe_control.structure.main.translate
 uf.menu_text = "&translate"
 uf.wizard_size = (750, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
@@ -1007,7 +1007,7 @@ uf.desc[-1].add_paragraph("To create a web of motion for the models 1, 3, and 5,
 uf.desc[-1].add_prompt("relax> structure.web_of_motion('web.pdb', '.', [1, 3, 5])")
 uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', models=[1, 3, 5])")
 uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', dir='.', models=[1, 3, 5])")
-uf.backend = generic_fns.structure.main.web_of_motion
+uf.backend = pipe_control.structure.main.web_of_motion
 uf.menu_text = "&web_of_motion"
 uf.wizard_size = (900, 600)
 uf.wizard_apply_button = False
@@ -1083,7 +1083,7 @@ uf.desc[-1].add_prompt("relax> structure.write_pdb(file='ensemble.pdb', dir='pdb
 uf.desc[-1].add_paragraph("To write model number 3 into the new file 'test.pdb', use one of:")
 uf.desc[-1].add_prompt("relax> structure.write_pdb('test.pdb', model_num=3)")
 uf.desc[-1].add_prompt("relax> structure.write_pdb(file='test.pdb', model_num=3)")
-uf.backend = generic_fns.structure.main.write_pdb
+uf.backend = pipe_control.structure.main.write_pdb
 uf.menu_text = "&write_pdb"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400

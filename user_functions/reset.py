@@ -23,7 +23,7 @@
 """The reset user function definitions."""
 
 # relax module imports.
-import generic_fns.reset
+import pipe_control.reset
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -36,7 +36,7 @@ uf.title_short = "Reset relax."
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("All of the data of the relax data storage object will be erased and hence relax will return to its initial state.")
-uf.backend = generic_fns.reset.reset
+uf.backend = pipe_control.reset.reset
 uf.menu_text = "&reset"
 uf.gui_icon = "oxygen.actions.dialog-close"
 uf.gui_sync = True    # Force synchronous operation, as asynchronous calls kill the GUI!

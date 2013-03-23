@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from re import search
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import return_spin
+from pipe_control.mol_res_spin import return_spin
 
 # GUI module imports.
 from gui import paths

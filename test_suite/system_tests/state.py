@@ -28,9 +28,9 @@ from tempfile import mktemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.pipes import VALID_TYPES, get_pipe
-from generic_fns.reset import reset
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.pipes import VALID_TYPES, get_pipe
+from pipe_control.reset import reset
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

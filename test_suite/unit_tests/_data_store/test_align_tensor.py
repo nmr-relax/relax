@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data_store.align_tensor import AlignTensorData
-from generic_fns.align_tensor import kappa
+from pipe_control.align_tensor import kappa
 from lib.errors import RelaxError
 
 

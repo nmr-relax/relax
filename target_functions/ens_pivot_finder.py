@@ -26,8 +26,8 @@
 from copy import deepcopy
 
 # relax module import.
-from generic_fns.structure.statistics import atomic_rmsd
-from generic_fns.structure.superimpose import fit_to_mean
+from pipe_control.structure.statistics import atomic_rmsd
+from pipe_control.structure.superimpose import fit_to_mean
 
 
 class Pivot_finder:

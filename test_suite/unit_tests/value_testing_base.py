@@ -24,13 +24,13 @@ from math import pi
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import diffusion_tensor, pipes
+from pipe_control import diffusion_tensor, pipes
 from lib.errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Value_base_class(UnitTestCase):
-    """Base class for the tests of both the 'prompt.value' and 'generic_fns.value' modules.
+    """Base class for the tests of both the 'prompt.value' and 'pipe_control.value' modules.
 
     This base class also contains many shared unit tests.
     """
@@ -104,7 +104,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_j0(self):
         """Set the consistency testing parameter J(0) for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -121,7 +121,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_f_eta(self):
         """Set the consistency testing parameter F_eta for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -138,7 +138,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_f_r2(self):
         """Set the consistency testing parameter F_R2 for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -155,7 +155,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_csa(self):
         """Set the consistency testing CSA parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -172,7 +172,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_orientation(self):
         """Set the consistency testing theta angle for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -189,7 +189,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_tc(self):
         """Set the consistency testing approximate correlation time for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -206,7 +206,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_diff_j0_f_eta_f_r2(self):
         """Set different consistency tests parameters J(0), F_eta, F_R2 for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -227,7 +227,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_all_spins_same_j0_f_eta_f_r2(self):
         """Set consistency tests parameters J(0), F_eta, F_R2 for all spins to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -248,7 +248,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_j0(self):
         """Set the consistency testing parameter J(0) to the default value (there is none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -261,7 +261,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_f_eta(self):
         """Set the consistency tests parameter F_eta to the default value (there is none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -274,7 +274,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_f_r2(self):
         """Set the consistency tests parameter F_R2 to the default value (there is none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -287,7 +287,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_csa(self):
         """Set the consistency testing CSA parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -304,7 +304,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_orientation(self):
         """Set the consistency testing theta angle parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -321,7 +321,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_tc(self):
         """Set the consistency testing approximate correlation time parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -338,7 +338,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_defaults_j0_f_eta_f_r2(self):
         """Set different consistency testing parameters J(0), F_eta, F_R2 to the default values (there are none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -351,7 +351,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_j0(self):
         """Set the consistency tests parameter J(0) for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -368,7 +368,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_f_eta(self):
         """Set the consistency tests parameter F_eta for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -385,7 +385,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_f_r2(self):
         """Set the consistency tests parameter F_R2 for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -402,7 +402,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_csa(self):
         """Set the consistency tests CSA parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -419,7 +419,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_orientation(self):
         """Set the consistency tests theta angle parameter for a single spin.
         
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
         
         # Set the current data pipe to 'ct'.
@@ -436,7 +436,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_tc(self):
         """Set the consistency tests approximate correlation time parameter for a single spin.
         
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
         
         # Set the current data pipe to 'ct'.
@@ -453,7 +453,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_diff_j0_f_eta_f_r2(self):
         """Set different consistency tests parameters J(0), F_eta, F_R2 for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -474,7 +474,7 @@ class Value_base_class(UnitTestCase):
     def test_set_ct_single_spin_same_j0_f_eta_f_r2(self):
         """Set consistency tests parameters J(0), F_eta, F_R2 for a single spin to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'ct'.
@@ -502,7 +502,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_tm(self):
         """Set the spherical diffusion tensor tm parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -521,7 +521,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Diso(self):
         """Set the spherical diffusion tensor Diso parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -540,7 +540,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Da(self):
         """Try to set the spherical diffusion tensor Da parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -556,7 +556,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dr(self):
         """Try to set the spherical diffusion tensor Dr parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -572,7 +572,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dx(self):
         """Try to set the spherical diffusion tensor Dx parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -588,7 +588,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dy(self):
         """Try to set the spherical diffusion tensor Dy parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -604,7 +604,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dz(self):
         """Try to set the spherical diffusion tensor Dz parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -620,7 +620,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dpar(self):
         """Try to set the spherical diffusion tensor Dpar parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -636,7 +636,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dper(self):
         """Try to set the spherical diffusion tensor Dper parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -652,7 +652,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_Dratio(self):
         """Try to set the spherical diffusion tensor Dratio parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -668,7 +668,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_alpha(self):
         """Try to set the spherical diffusion tensor alpha parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -684,7 +684,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_beta(self):
         """Try to set the spherical diffusion tensor beta parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -700,7 +700,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_gamma(self):
         """Try to set the spherical diffusion tensor gamma parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -716,7 +716,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_theta(self):
         """Try to set the spherical diffusion tensor theta parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -732,7 +732,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_default_phi(self):
         """Try to set the spherical diffusion tensor phi parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -748,7 +748,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_tm(self):
         """Set the spheroidal diffusion tensor tm parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -767,7 +767,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Diso(self):
         """Set the spheroidal diffusion tensor Diso parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -786,7 +786,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Da(self):
         """Set the spheroidal diffusion tensor Da parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -805,7 +805,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dr(self):
         """Set the spheroidal diffusion tensor Dr parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -821,7 +821,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dx(self):
         """Set the spheroidal diffusion tensor Dx parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -837,7 +837,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dy(self):
         """Set the spheroidal diffusion tensor Dy parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -853,7 +853,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dz(self):
         """Set the spheroidal diffusion tensor Dz parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -869,7 +869,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dpar(self):
         """Try to set the spheroidal diffusion tensor Dpar parameter to the default value (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -885,7 +885,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dper(self):
         """Try to set the spheroidal diffusion tensor Dper parameter to the default value (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -901,7 +901,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dratio(self):
         """Set the spheroidal diffusion tensor Dratio parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -920,7 +920,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_alpha(self):
         """Try to set the spheroidal diffusion tensor alpha parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -936,7 +936,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_beta(self):
         """Try to set the spheroidal diffusion tensor beta parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -952,7 +952,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_gamma(self):
         """Try to set the spheroidal diffusion tensor gamma parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -968,7 +968,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_theta(self):
         """Set the spheroidal diffusion tensor theta parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -987,7 +987,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_phi(self):
         """Set the spheroidal diffusion tensor phi parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1006,7 +1006,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_tm_Da(self):
         """Set the spheroidal diffusion tensor parameters {tm, Da} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1026,7 +1026,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Diso_Da(self):
         """Set the spheroidal diffusion tensor parameters {Diso, Da} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1046,7 +1046,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_tm_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {tm, Dratio} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1066,7 +1066,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dpar_Dper(self):
         """Set the spheroidal diffusion tensor parameters {Dpar, Dper} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1086,7 +1086,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dper_Dpar(self):
         """Set the spheroidal diffusion tensor parameters {Dper, Dpar} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1106,7 +1106,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Diso_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {Diso, Dratio} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1126,7 +1126,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_default_Dpar_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {Dpar, Dratio} to the default values (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1142,7 +1142,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_tm(self):
         """Set the ellipsoidal diffusion tensor tm parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1161,7 +1161,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Diso(self):
         """Set the ellipsoidal diffusion tensor Diso parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1180,7 +1180,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Da(self):
         """Set the ellipsoidal diffusion tensor Da parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1199,7 +1199,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dr(self):
         """Set the ellipsoidal diffusion tensor Dr parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1218,7 +1218,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dx(self):
         """Set the ellipsoidal diffusion tensor Dx parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1234,7 +1234,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dy(self):
         """Set the ellipsoidal diffusion tensor Dy parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1250,7 +1250,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dz(self):
         """Set the ellipsoidal diffusion tensor Dz parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1266,7 +1266,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dpar(self):
         """Try to set the ellipsoidal diffusion tensor Dpar parameter to the default value (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1282,7 +1282,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dper(self):
         """Try to set the ellipsoidal diffusion tensor Dper parameter to the default value (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1298,7 +1298,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dratio(self):
         """Set the ellipsoidal diffusion tensor Dratio parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1314,7 +1314,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_alpha(self):
         """Try to set the ellipsoidal diffusion tensor alpha parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1333,7 +1333,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_beta(self):
         """Try to set the ellipsoidal diffusion tensor beta parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1352,7 +1352,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_gamma(self):
         """Try to set the ellipsoidal diffusion tensor gamma parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1371,7 +1371,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_theta(self):
         """Set the ellipsoidal diffusion tensor theta parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1387,7 +1387,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_phi(self):
         """Set the ellipsoidal diffusion tensor phi parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1403,7 +1403,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_diff_tm_Da_Dr(self):
         """Set the ellipsoidal diffusion tensor parameters {tm, Da, Dr} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1424,7 +1424,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Diso_Da_Dr(self):
         """Set the ellipsoidal diffusion tensor parameters {Diso, Da, Dr} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1445,7 +1445,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_Dx_Dy_Dz(self):
         """Set the ellipsoidal diffusion tensor parameters {Dx, Dy, Dz} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1466,7 +1466,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_default_tm_Diso_Dr(self):
         """Try to set the ellipsoidal diffusion tensor parameters {tm, Diso, Dr} to the default values (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1482,7 +1482,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_tm(self):
         """Set the spherical diffusion tensor tm parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1501,7 +1501,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Diso(self):
         """Set the spherical diffusion tensor Diso parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1520,7 +1520,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Da(self):
         """Try to set the spherical diffusion tensor Da parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1536,7 +1536,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dr(self):
         """Try to set the spherical diffusion tensor Dr parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1552,7 +1552,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dx(self):
         """Try to set the spherical diffusion tensor Dx parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1568,7 +1568,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dy(self):
         """Try to set the spherical diffusion tensor Dy parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1584,7 +1584,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dz(self):
         """Try to set the spherical diffusion tensor Dz parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1600,7 +1600,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dpar(self):
         """Try to set the spherical diffusion tensor Dpar parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1616,7 +1616,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dper(self):
         """Try to set the spherical diffusion tensor Dper parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1632,7 +1632,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_Dratio(self):
         """Try to set the spherical diffusion tensor Dratio parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1648,7 +1648,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_alpha(self):
         """Try to set the spherical diffusion tensor alpha parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1664,7 +1664,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_beta(self):
         """Try to set the spherical diffusion tensor beta parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1680,7 +1680,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_gamma(self):
         """Try to set the spherical diffusion tensor gamma parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1696,7 +1696,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_theta(self):
         """Try to set the spherical diffusion tensor theta parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1712,7 +1712,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_sphere_set_phi(self):
         """Try to set the spherical diffusion tensor phi parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1728,7 +1728,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_tm(self):
         """Set the spheroidal diffusion tensor tm parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1747,7 +1747,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Diso(self):
         """Set the spheroidal diffusion tensor Diso parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1766,7 +1766,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Da(self):
         """Set the spheroidal diffusion tensor Da parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1785,7 +1785,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dr(self):
         """Set the spheroidal diffusion tensor Dr parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1801,7 +1801,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dx(self):
         """Set the spheroidal diffusion tensor Dx parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1817,7 +1817,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dy(self):
         """Set the spheroidal diffusion tensor Dy parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1833,7 +1833,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dz(self):
         """Set the spheroidal diffusion tensor Dz parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1849,7 +1849,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dpar(self):
         """Try to set the spheroidal diffusion tensor Dpar parameter (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1865,7 +1865,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dper(self):
         """Try to set the spheroidal diffusion tensor Dper parameter (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1881,7 +1881,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_Dratio(self):
         """Set the spheroidal diffusion tensor Dratio parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1900,7 +1900,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_alpha(self):
         """Try to set the spheroidal diffusion tensor alpha parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1916,7 +1916,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_beta(self):
         """Try to set the spheroidal diffusion tensor beta parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1932,7 +1932,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_gamma(self):
         """Try to set the spheroidal diffusion tensor gamma parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1948,7 +1948,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_theta(self):
         """Set the spheroidal diffusion tensor theta parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1967,7 +1967,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_phi(self):
         """Set the spheroidal diffusion tensor phi parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -1986,7 +1986,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_tm_Da(self):
         """Set the spheroidal diffusion tensor parameters {tm, Da}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2006,7 +2006,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_Diso_Da(self):
         """Set the spheroidal diffusion tensor parameters {Diso, Da}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2026,7 +2026,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_tm_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {tm, Dratio}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2046,7 +2046,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_Dpar_Dper(self):
         """Set the spheroidal diffusion tensor parameters {Dpar, Dper}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2066,7 +2066,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_Dper_Dpar(self):
         """Set the spheroidal diffusion tensor parameters {Dper, Dpar}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2086,7 +2086,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_Diso_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {Diso, Dratio}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2106,7 +2106,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_spheroid_set_diff_Dpar_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {Dpar, Dratio} (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2122,7 +2122,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_tm(self):
         """Set the ellipsoidal diffusion tensor tm parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2141,7 +2141,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Diso(self):
         """Set the ellipsoidal diffusion tensor Diso parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2160,7 +2160,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Da(self):
         """Set the ellipsoidal diffusion tensor Da parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2179,7 +2179,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dr(self):
         """Set the ellipsoidal diffusion tensor Dr parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2198,7 +2198,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dx(self):
         """Set the ellipsoidal diffusion tensor Dx parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2214,7 +2214,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dy(self):
         """Set the ellipsoidal diffusion tensor Dy parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2230,7 +2230,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dz(self):
         """Set the ellipsoidal diffusion tensor Dz parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2246,7 +2246,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dpar(self):
         """Try to set the ellipsoidal diffusion tensor Dpar parameter (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2262,7 +2262,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dper(self):
         """Try to set the ellipsoidal diffusion tensor Dper parameter (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2278,7 +2278,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_Dratio(self):
         """Set the ellipsoidal diffusion tensor Dratio parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2294,7 +2294,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_alpha(self):
         """Try to set the ellipsoidal diffusion tensor alpha parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2313,7 +2313,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_beta(self):
         """Try to set the ellipsoidal diffusion tensor beta parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2332,7 +2332,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_gamma(self):
         """Try to set the ellipsoidal diffusion tensor gamma parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2351,7 +2351,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_theta(self):
         """Set the ellipsoidal diffusion tensor theta parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2367,7 +2367,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_phi(self):
         """Set the ellipsoidal diffusion tensor phi parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2383,7 +2383,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_diff_tm_Da_Dr(self):
         """Set the ellipsoidal diffusion tensor parameters {tm, Da, Dr}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2404,7 +2404,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_diff_Diso_Da_Dr(self):
         """Set the ellipsoidal diffusion tensor parameters {Diso, Da, Dr}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2425,7 +2425,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_diff_Dx_Dy_Dz(self):
         """Set the ellipsoidal diffusion tensor parameters {Dx, Dy, Dz}.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2446,7 +2446,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_same_Dx_Dy_Dz(self):
         """Set the ellipsoidal diffusion tensor parameters {Dx, Dy, Dz} all to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2467,7 +2467,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_diff_ellipsoid_set_diff_tm_Diso_Dr(self):
         """Try to set the ellipsoidal diffusion tensor parameters {tm, Diso, Dr} (this should not be possible).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2490,7 +2490,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_all_spins_j0(self):
         """Set the RSDM parameter J(0) for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2507,7 +2507,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_all_spins_jwx(self):
         """Set the RSDM parameter J(wX) for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2524,7 +2524,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_all_spins_jwh(self):
         """Set the RSDM parameter J(wH) for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2541,7 +2541,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_all_spins_csa(self):
         """Set the RSDM CSA parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2558,7 +2558,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_all_spins_diff_j0_jwx_jwh(self):
         """Set different RSDM parameters J(0), J(wX), J(wH) for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2579,7 +2579,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_all_spins_same_j0_jwx_jwh(self):
         """Set RSDM parameters J(0), J(wX), J(wH) for all spins to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2600,7 +2600,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_defaults_j0(self):
         """Set the RSDM parameter J(0) to the default value (there is none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2613,7 +2613,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_defaults_jwx(self):
         """Set the RSDM parameter J(wX) to the default value (there is none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2626,7 +2626,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_defaults_jwh(self):
         """Set the RSDM parameter J(wH) to the default value (there is none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2639,7 +2639,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_defaults_csa(self):
         """Set the RSDM CSA parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2656,7 +2656,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_defaults_j0_jwx_jwh(self):
         """Set different RSDM parameters J(0), J(wX), J(wH) to the default values (there are none!).
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2669,7 +2669,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_single_spin_j0(self):
         """Set the RSDM parameter J(0) for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2686,7 +2686,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_single_spin_jwx(self):
         """Set the RSDM parameter J(wX) for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2703,7 +2703,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_single_spin_jwh(self):
         """Set the RSDM parameter J(wH) for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2720,7 +2720,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_single_spin_csa(self):
         """Set the RSDM CSA parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2737,7 +2737,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_single_spin_diff_j0_jwx_jwh(self):
         """Set different RSDM parameters J(0), J(wX), J(wH) for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2758,7 +2758,7 @@ class Value_base_class(UnitTestCase):
     def test_set_jw_single_spin_same_j0_jwx_jwh(self):
         """Set RSDM parameters J(0), J(wX), J(wH) for a single spin to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'jw'.
@@ -2785,7 +2785,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_local_tm(self):
         """Set the model-free local tm parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2802,7 +2802,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_s2(self):
         """Set the model-free S2 parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2819,7 +2819,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_s2f(self):
         """Set the model-free S2f parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2836,7 +2836,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_s2s(self):
         """Set the model-free S2s parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2853,7 +2853,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_te(self):
         """Set the model-free te parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2870,7 +2870,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_tf(self):
         """Set the model-free tf parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2887,7 +2887,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_ts(self):
         """Set the model-free ts parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2904,7 +2904,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_rex(self):
         """Set the model-free Rex parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2921,7 +2921,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_csa(self):
         """Set the model-free CSA parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2938,7 +2938,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_diff_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters for all spins to different values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2957,7 +2957,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_all_spins_same_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters for all spins to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2976,7 +2976,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_local_tm(self):
         """Set the model-free local tm parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -2993,7 +2993,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_s2(self):
         """Set the model-free S2 parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3010,7 +3010,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_s2f(self):
         """Set the model-free S2f parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3027,7 +3027,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_s2s(self):
         """Set the model-free S2s parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3044,7 +3044,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_te(self):
         """Set the model-free te parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3061,7 +3061,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_tf(self):
         """Set the model-free tf parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3078,7 +3078,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_ts(self):
         """Set the model-free ts parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3095,7 +3095,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_rex(self):
         """Set the model-free Rex parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3112,7 +3112,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_csa(self):
         """Set the model-free CSA parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3129,7 +3129,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_defaults_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3148,7 +3148,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_local_tm(self):
         """Set the model-free local tm parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3165,7 +3165,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_s2(self):
         """Set the model-free S2 parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3182,7 +3182,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_s2f(self):
         """Set the model-free S2f parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3199,7 +3199,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_s2s(self):
         """Set the model-free S2s parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3216,7 +3216,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_te(self):
         """Set the model-free te parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3233,7 +3233,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_tf(self):
         """Set the model-free tf parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3250,7 +3250,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_ts(self):
         """Set the model-free ts parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3267,7 +3267,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_rex(self):
         """Set the model-free Rex parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3284,7 +3284,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_csa(self):
         """Set the model-free CSA parameter for a single spin.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3301,7 +3301,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_diff_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters for a single spin to different values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3320,7 +3320,7 @@ class Value_base_class(UnitTestCase):
     def test_set_mf_single_spin_same_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters for a single spin to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'mf'.
@@ -3345,7 +3345,7 @@ class Value_base_class(UnitTestCase):
     def test_set_n_state_model_rx(self):
         """Set the N-state model curve fitting alpha2 parameter.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'n_state'.
@@ -3370,7 +3370,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_all_spins_rx(self):
         """Set the relaxation curve fitting Rx parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3387,7 +3387,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_all_spins_i0(self):
         """Set the relaxation curve fitting I0 parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3404,7 +3404,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_all_spins_iinf(self):
         """Set the relaxation curve fitting Iinf parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3421,7 +3421,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_all_spins_diff_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to different values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3440,7 +3440,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_all_spins_same_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3459,7 +3459,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_defaults_rx(self):
         """Set the relaxation curve fitting Rx parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3476,7 +3476,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_defaults_i0(self):
         """Set the relaxation curve fitting I0 parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3493,7 +3493,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_defaults_iinf(self):
         """Set the relaxation curve fitting Iinf parameter to the default value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3510,7 +3510,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_defaults_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} to the default values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3529,7 +3529,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_single_spin_rx(self):
         """Set the relaxation curve fitting Rx parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3546,7 +3546,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_single_spin_i0(self):
         """Set the relaxation curve fitting I0 parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3563,7 +3563,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_single_spin_iinf(self):
         """Set the relaxation curve fitting Iinf parameter for all spins.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3580,7 +3580,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_single_spin_diff_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to different values.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.
@@ -3599,7 +3599,7 @@ class Value_base_class(UnitTestCase):
     def test_set_relax_fit_single_spin_same_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to the same value.
 
-        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        The functions tested are both pipe_control.value.set() and prompt.value.set().
         """
 
         # Set the current data pipe to 'relax_fit'.

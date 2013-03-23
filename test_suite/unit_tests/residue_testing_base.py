@@ -21,13 +21,13 @@
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
+from pipe_control import pipes
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Residue_base_class(UnitTestCase):
-    """Testing base class for 'prompt.residue' and corresponding 'generic_fns.mol_res_spin' fns.
+    """Testing base class for 'prompt.residue' and corresponding 'pipe_control.mol_res_spin' fns.
 
     This base class also contains many shared unit tests.
     """
@@ -72,7 +72,7 @@ class Residue_base_class(UnitTestCase):
     def test_copy_residue_between_molecules(self):
         """Test the copying of the residue data between different molecules.
 
-        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        The function tested is both pipe_control.mol_res_spin.copy_residue() and
         prompt.residue.copy().
         """
 
@@ -106,7 +106,7 @@ class Residue_base_class(UnitTestCase):
     def test_copy_residue_between_pipes(self):
         """Test the copying of the residue data between different data pipes.
 
-        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        The function tested is both pipe_control.mol_res_spin.copy_residue() and
         prompt.residue.copy().
         """
 
@@ -149,7 +149,7 @@ class Residue_base_class(UnitTestCase):
     def test_copy_residue_between_pipes_fail_no_pipe(self):
         """Test the copying of the residue data between different data pipes.
 
-        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        The function tested is both pipe_control.mol_res_spin.copy_residue() and
         prompt.residue.copy().
         """
 
@@ -168,7 +168,7 @@ class Residue_base_class(UnitTestCase):
     def test_copy_residue_within_molecule(self):
         """Test the copying of the residue data within a single molecule.
 
-        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        The function tested is both pipe_control.mol_res_spin.copy_residue() and
         prompt.residue.copy().
         """
 
@@ -219,7 +219,7 @@ class Residue_base_class(UnitTestCase):
     def test_copy_residue_within_molecule_fail1(self):
         """The failure of copying residue data within a molecule of a non-existent residue.
 
-        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        The function tested is both pipe_control.mol_res_spin.copy_residue() and
         prompt.residue.copy().
         """
 
@@ -234,7 +234,7 @@ class Residue_base_class(UnitTestCase):
     def test_copy_residue_within_molecule_fail2(self):
         """The failure of copying residue data within a molecule to a residue which already exists.
 
-        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        The function tested is both pipe_control.mol_res_spin.copy_residue() and
         prompt.residue.copy().
         """
 
@@ -249,7 +249,7 @@ class Residue_base_class(UnitTestCase):
     def test_create_residue(self):
         """Test the creation of a residue.
 
-        The function tested is both generic_fns.mol_res_spin.create_residue() and
+        The function tested is both pipe_control.mol_res_spin.create_residue() and
         prompt.residue.create().
         """
 
@@ -275,7 +275,7 @@ class Residue_base_class(UnitTestCase):
     def test_create_residue_fail(self):
         """Test the failure of residue creation (by supplying two residues with the same number).
 
-        The function tested is both generic_fns.mol_res_spin.create_residue() and
+        The function tested is both pipe_control.mol_res_spin.create_residue() and
         prompt.residue.create().
         """
 
@@ -289,7 +289,7 @@ class Residue_base_class(UnitTestCase):
     def test_delete_residue_name(self):
         """Test residue deletion using residue name identifiers.
 
-        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        The function tested is both pipe_control.mol_res_spin.delete_residue() and
         prompt.residue.delete().
         """
 
@@ -317,7 +317,7 @@ class Residue_base_class(UnitTestCase):
     def test_delete_residue_num(self):
         """Test residue deletion using residue number identifiers.
 
-        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        The function tested is both pipe_control.mol_res_spin.delete_residue() and
         prompt.residue.delete().
         """
 
@@ -349,7 +349,7 @@ class Residue_base_class(UnitTestCase):
     def test_delete_residue_all(self):
         """Test the deletion of all residues.
 
-        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        The function tested is both pipe_control.mol_res_spin.delete_residue() and
         prompt.residue.delete().
         """
 
@@ -375,7 +375,7 @@ class Residue_base_class(UnitTestCase):
     def test_delete_residue_shift(self):
         """Test the deletion of multiple residues.
 
-        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        The function tested is both pipe_control.mol_res_spin.delete_residue() and
         prompt.residue.delete().
         """
 
@@ -403,7 +403,7 @@ class Residue_base_class(UnitTestCase):
     def test_delete_residue_fail(self):
         """Test the failure of residue deletion when an atom id is supplied.
 
-        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        The function tested is both pipe_control.mol_res_spin.delete_residue() and
         prompt.residue.delete().
         """
 
@@ -414,7 +414,7 @@ class Residue_base_class(UnitTestCase):
     def test_display_residue(self):
         """Test the display of residue information.
 
-        The function tested is both generic_fns.mol_res_spin.display_residue() and
+        The function tested is both pipe_control.mol_res_spin.display_residue() and
         prompt.residue.display().
         """
 
@@ -431,7 +431,7 @@ class Residue_base_class(UnitTestCase):
     def test_display_residue_fail(self):
         """Test the failure of the display of residue information.
 
-        The function tested is both generic_fns.mol_res_spin.display_residue() and
+        The function tested is both pipe_control.mol_res_spin.display_residue() and
         prompt.residue.display().
         """
 
@@ -445,7 +445,7 @@ class Residue_base_class(UnitTestCase):
     def test_name_residue(self):
         """Test the renaming of a residue.
 
-        The function tested is both generic_fns.mol_res_spin.name_residue() and
+        The function tested is both pipe_control.mol_res_spin.name_residue() and
         prompt.residue.name().
         """
 
@@ -465,7 +465,7 @@ class Residue_base_class(UnitTestCase):
     def test_name_residue_many(self):
         """Test the renaming of multiple residues.
 
-        The function tested is both generic_fns.mol_res_spin.name_residue() and
+        The function tested is both pipe_control.mol_res_spin.name_residue() and
         prompt.residue.name().
         """
 
@@ -501,7 +501,7 @@ class Residue_base_class(UnitTestCase):
     def test_name_residue_no_spin(self):
         """Test the failure of naming a residue when a spin id is given.
 
-        The function tested is both generic_fns.mol_res_spin.name_residue() and
+        The function tested is both pipe_control.mol_res_spin.name_residue() and
         prompt.residue.name().
         """
 
@@ -512,7 +512,7 @@ class Residue_base_class(UnitTestCase):
     def test_number_residue(self):
         """Test the renumbering of a residue.
 
-        The function tested is both generic_fns.mol_res_spin.number_residue() and
+        The function tested is both pipe_control.mol_res_spin.number_residue() and
         prompt.residue.number().
         """
 
@@ -532,7 +532,7 @@ class Residue_base_class(UnitTestCase):
     def test_number_residue_many_fail(self):
         """Test the numbering of multiple residues.
 
-        The function tested is both generic_fns.mol_res_spin.number_residue() and
+        The function tested is both pipe_control.mol_res_spin.number_residue() and
         prompt.residue.number().
         """
 
@@ -559,7 +559,7 @@ class Residue_base_class(UnitTestCase):
     def test_number_residue_no_spin(self):
         """Test the failure of naming a residue when a spin id is given.
 
-        The function tested is both generic_fns.mol_res_spin.number_residue() and
+        The function tested is both pipe_control.mol_res_spin.number_residue() and
         prompt.residue.number().
         """
 

@@ -37,7 +37,7 @@ import dep_check
 from compat import queue
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
-from generic_fns.reset import reset
+from pipe_control.reset import reset
 from prompt.interpreter import exec_script
 from lib.errors import RelaxError
 from lib.io import delete

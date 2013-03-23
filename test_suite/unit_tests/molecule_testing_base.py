@@ -21,14 +21,14 @@
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import copy_residue, create_residue, metadata_update
-from generic_fns import pipes
+from pipe_control.mol_res_spin import copy_residue, create_residue, metadata_update
+from pipe_control import pipes
 from lib.errors import RelaxError, RelaxMultiMolIDError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Molecule_base_class(UnitTestCase):
-    """Testing base class for 'prompt.molecule' and corresponding 'generic_fns.mol_spin_res' fns.
+    """Testing base class for 'prompt.molecule' and corresponding 'pipe_control.mol_spin_res' fns.
 
     This base class also contains many shared unit tests.
     """
@@ -76,7 +76,7 @@ class Molecule_base_class(UnitTestCase):
     def test_copy_molecule_between_pipes(self):
         """Test the copying of the molecule data between different data pipes.
 
-        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        The function tested is both pipe_control.mol_res_spin.copy_molecule() and
         prompt.molecule.copy().
         """
 
@@ -129,7 +129,7 @@ class Molecule_base_class(UnitTestCase):
     def test_copy_molecule_between_pipes_fail_no_pipe(self):
         """Test the failure of copying of the molecule data between different data pipes.
 
-        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        The function tested is both pipe_control.mol_res_spin.copy_molecule() and
         prompt.molecule.copy().
         """
 
@@ -152,7 +152,7 @@ class Molecule_base_class(UnitTestCase):
     def test_copy_molecule_within_pipe(self):
         """Test the copying of the molecule data within a single data pipe.
 
-        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        The function tested is both pipe_control.mol_res_spin.copy_molecule() and
         prompt.molecule.copy().
         """
 
@@ -214,7 +214,7 @@ class Molecule_base_class(UnitTestCase):
     def test_copy_molecule_within_pipe_fail(self):
         """Test the failure of the copying of the molecule data within a molecule.
 
-        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        The function tested is both pipe_control.mol_res_spin.copy_molecule() and
         prompt.molecule.copy().
         """
 
@@ -232,7 +232,7 @@ class Molecule_base_class(UnitTestCase):
     def test_create_molecule(self):
         """Test the creation of a molecule data structure.
 
-        The function tested is both generic_fns.mol_res_spin.create_molecule() and
+        The function tested is both pipe_control.mol_res_spin.create_molecule() and
         prompt.molecule.create().
         """
 
@@ -253,7 +253,7 @@ class Molecule_base_class(UnitTestCase):
     def test_create_molecule_fail(self):
         """Test the failure of molecule creation by supplying two molecules with the same name.
 
-        The function tested is both generic_fns.mol_res_spin.create_molecule() and
+        The function tested is both pipe_control.mol_res_spin.create_molecule() and
         prompt.molecule.create().
         """
 
@@ -267,7 +267,7 @@ class Molecule_base_class(UnitTestCase):
     def test_delete_molecule(self):
         """Test molecule deletion.
 
-        The function tested is both generic_fns.mol_res_spin.delete_molecule() and
+        The function tested is both pipe_control.mol_res_spin.delete_molecule() and
         prompt.molecule.delete().
         """
 
@@ -295,7 +295,7 @@ class Molecule_base_class(UnitTestCase):
     def test_delete_molecule_all(self):
         """Test the deletion of all molecules.
 
-        The function tested is both generic_fns.mol_res_spin.delete_molecule() and
+        The function tested is both pipe_control.mol_res_spin.delete_molecule() and
         prompt.molecule.delete().
         """
 
@@ -320,7 +320,7 @@ class Molecule_base_class(UnitTestCase):
     def test_delete_molecule_fail(self):
         """Test the failure of molecule deletion when a residue or spin id is supplied.
 
-        The function tested is both generic_fns.mol_res_spin.delete_molecule() and
+        The function tested is both pipe_control.mol_res_spin.delete_molecule() and
         prompt.molecule.delete().
         """
 
@@ -334,7 +334,7 @@ class Molecule_base_class(UnitTestCase):
     def test_display_molecule(self):
         """Test the display of molecular information.
 
-        The function tested is both generic_fns.mol_res_spin.display_molecule() and
+        The function tested is both pipe_control.mol_res_spin.display_molecule() and
         prompt.molecule.display().
         """
 
@@ -350,7 +350,7 @@ class Molecule_base_class(UnitTestCase):
     def test_display_molecule_fail(self):
         """Test the failure of the display of molecule information.
 
-        The function tested is both generic_fns.mol_res_spin.display_molecule() and
+        The function tested is both pipe_control.mol_res_spin.display_molecule() and
         prompt.molecule.display().
         """
 
@@ -365,7 +365,7 @@ class Molecule_base_class(UnitTestCase):
     def test_name_molecule(self):
         """Test the renaming of a molecule.
 
-        The function tested is both generic_fns.mol_res_spin.name_molecule() and
+        The function tested is both pipe_control.mol_res_spin.name_molecule() and
         prompt.molecule.name().
         """
 
@@ -385,7 +385,7 @@ class Molecule_base_class(UnitTestCase):
     def test_name_molecule_fail(self):
         """Test the failure of naming a molecule when a residue or spin id is given.
 
-        The function tested is both generic_fns.mol_res_spin.name_molecule() and
+        The function tested is both pipe_control.mol_res_spin.name_molecule() and
         prompt.molecule.name().
         """
 
@@ -399,7 +399,7 @@ class Molecule_base_class(UnitTestCase):
     def test_name_molecule_many_fail(self):
         """Test the failure of the naming of multiple molecules to the same name.
 
-        The function tested is both generic_fns.mol_res_spin.name_molecule() and
+        The function tested is both pipe_control.mol_res_spin.name_molecule() and
         prompt.molecule.name().
         """
 

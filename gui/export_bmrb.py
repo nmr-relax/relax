@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,8 +26,8 @@
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import molecule_loop
-from generic_fns.pipes import cdp_name, pipe_names, switch
+from pipe_control.mol_res_spin import molecule_loop
+from pipe_control.pipes import cdp_name, pipe_names, switch
 from graphics import IMAGE_PATH, fetch_icon
 from status import Status; status = Status()
 

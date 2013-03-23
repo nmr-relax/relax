@@ -27,7 +27,7 @@ from copy import deepcopy
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import id_string_doc
+from pipe_control.mol_res_spin import id_string_doc
 from lib.errors import RelaxError
 
 # relax GUI module imports.

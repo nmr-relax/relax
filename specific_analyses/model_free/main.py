@@ -32,8 +32,8 @@ from warnings import warn
 
 # relax module imports.
 import lib.arg_check
-from generic_fns import diffusion_tensor, interatomic, pipes, sequence
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
+from pipe_control import diffusion_tensor, interatomic, pipes, sequence
+from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_analyses
 from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
 from lib.warnings import RelaxDeselectWarning, RelaxWarning

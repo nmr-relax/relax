@@ -29,7 +29,7 @@ from wx.lib import buttons
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns.pipes import cdp_name, pipe_names
+from pipe_control.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
 
 # relax GUI module imports.

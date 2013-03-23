@@ -28,7 +28,7 @@ from copy import deepcopy
 # relax module imports.
 import lib.arg_check
 from data_store.mol_res_spin import SpinContainer
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from lib.errors import RelaxError, RelaxLenError, RelaxNoSequenceError
 
 

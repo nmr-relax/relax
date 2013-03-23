@@ -35,7 +35,7 @@ __all__ = [ 'bmrb',
 ]
 
 # relax module imports.
-from generic_fns import diffusion_tensor, relax_data
+from pipe_control import diffusion_tensor, relax_data
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common

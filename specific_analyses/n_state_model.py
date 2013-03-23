@@ -35,13 +35,13 @@ from warnings import warn
 # relax module imports.
 import lib.arg_check
 from lib.float import isNaN, isInf
-from generic_fns import align_tensor, pcs, pipes, rdc
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import return_spin, spin_loop
-from generic_fns.structure import geometric
-from generic_fns.structure.cones import Iso_cone
-from generic_fns.structure.internal import Internal
-from generic_fns.structure.mass import centre_of_mass
+from pipe_control import align_tensor, pcs, pipes, rdc
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.structure import geometric
+from pipe_control.structure.cones import Iso_cone
+from pipe_control.structure.internal import Internal
+from pipe_control.structure.mass import centre_of_mass
 from target_functions.n_state_model import N_state_opt
 from target_functions.potential import quad_pot
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R

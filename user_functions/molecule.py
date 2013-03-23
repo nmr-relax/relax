@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,8 +23,8 @@
 """The molecule user function definitions."""
 
 # relax module imports.
-from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, copy_molecule, create_molecule, delete_molecule, display_molecule, get_molecule_ids, id_string_doc, name_molecule, type_molecule
-from generic_fns import pipes
+from pipe_control.mol_res_spin import ALLOWED_MOL_TYPES, copy_molecule, create_molecule, delete_molecule, display_molecule, get_molecule_ids, id_string_doc, name_molecule, type_molecule
+from pipe_control import pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,8 +23,8 @@
 """The spin user function definitions."""
 
 # relax module imports.
-from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, get_molecule_names, get_residue_ids, get_residue_names, get_residue_nums, get_spin_ids, id_string_doc, name_spin, number_spin, set_spin_element, set_spin_isotope
-from generic_fns import pipes
+from pipe_control.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, get_molecule_names, get_residue_ids, get_residue_names, get_residue_nums, get_spin_ids, id_string_doc, name_spin, number_spin, set_spin_element, set_spin_isotope
+from pipe_control import pipes
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

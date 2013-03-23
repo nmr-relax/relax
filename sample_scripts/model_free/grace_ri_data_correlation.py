@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,8 +23,8 @@
 
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
-from generic_fns.relax_data import num_frq
+from pipe_control.mol_res_spin import spin_loop
+from pipe_control.relax_data import num_frq
 
 
 def grace_header(file):

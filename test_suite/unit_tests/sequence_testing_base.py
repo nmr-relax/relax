@@ -30,14 +30,14 @@ except ImportError:
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
+from pipe_control import pipes
 from lib.io import delete
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Sequence_base_class(UnitTestCase):
-    """Base class for the tests of both the 'prompt.sequence' and 'generic_fns.sequence' modules.
+    """Base class for the tests of both the 'prompt.sequence' and 'pipe_control.sequence' modules.
 
     This base class also contains many shared unit tests.
     """
@@ -59,7 +59,7 @@ class Sequence_base_class(UnitTestCase):
     def test_copy_protein_sequence(self):
         """Test the copying of an amino acid sequence.
 
-        The functions tested are generic_fns.sequence.copy() and prompt.sequence.copy().
+        The functions tested are pipe_control.sequence.copy() and prompt.sequence.copy().
         """
 
         # Get the data pipe.
@@ -102,7 +102,7 @@ class Sequence_base_class(UnitTestCase):
     def test_display_protein_sequence(self):
         """Test the display of an amino acid sequence.
 
-        The functions tested are generic_fns.sequence.display() and prompt.sequence.display().
+        The functions tested are pipe_control.sequence.display() and prompt.sequence.display().
         """
 
         # Get the data pipe.
@@ -123,7 +123,7 @@ class Sequence_base_class(UnitTestCase):
     def test_read_protein_noe_data(self):
         """Test the reading of the amino acid sequence out of a protein NOE data file.
 
-        The functions tested are generic_fns.sequence.read() and prompt.sequence.read().
+        The functions tested are pipe_control.sequence.read() and prompt.sequence.read().
         """
 
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
@@ -141,7 +141,7 @@ class Sequence_base_class(UnitTestCase):
     def test_write_protein_sequence(self):
         """Test the writing of an amino acid sequence.
 
-        The functions tested are generic_fns.sequence.write() and prompt.sequence.write().
+        The functions tested are pipe_control.sequence.write() and prompt.sequence.write().
         """
 
         # Get the data pipe.

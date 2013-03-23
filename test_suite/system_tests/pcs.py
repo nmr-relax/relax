@@ -29,7 +29,7 @@ from re import search
 from tempfile import mkdtemp
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_spins, spin_loop
+from pipe_control.mol_res_spin import count_spins, spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

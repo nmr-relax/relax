@@ -27,7 +27,7 @@ from numpy.linalg import norm
 from random import gauss
 
 # relax module imports.
-import generic_fns
+import pipe_control
 from lib.geometry.vectors import random_unit_vector
 
 
@@ -1665,9 +1665,9 @@ def R_to_euler(R, notation, axes_rot='static', second_sol=False):
         beta = -beta
         gamma = gamma + pi
 
-    alpha = generic_fns.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-    beta  = generic_fns.angles.wrap_angles(beta,  0.0, 2.0*pi)
-    gamma = generic_fns.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+    alpha = pipe_control.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+    beta  = pipe_control.angles.wrap_angles(beta,  0.0, 2.0*pi)
+    gamma = pipe_control.angles.wrap_angles(gamma, 0.0, 2.0*pi)
 
     # Return the Euler angles.
     return alpha, beta, gamma

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ import wx.lib.buttons
 
 # relax module imports.
 from status import Status; status = Status()
-from generic_fns.spectrum import replicated_flags, replicated_ids
+from pipe_control.spectrum import replicated_flags, replicated_ids
 from graphics import fetch_icon
 from user_functions.data import Uf_info; uf_info = Uf_info()
 

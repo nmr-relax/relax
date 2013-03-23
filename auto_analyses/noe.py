@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2010 Michael Bieri                                            #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -27,8 +27,8 @@
 from os import sep
 
 # relax module imports.
-from generic_fns.pipes import cdp_name, has_pipe, switch
-import generic_fns.structure.main
+from pipe_control.pipes import cdp_name, has_pipe, switch
+import pipe_control.structure.main
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 

@@ -31,8 +31,8 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
-from generic_fns.pipes import has_bundle, has_pipe
+from pipe_control.mol_res_spin import are_spins_named, exists_mol_res_spin_data
+from pipe_control.pipes import has_bundle, has_pipe
 from status import Status; status = Status()
 
 # relax GUI module imports.

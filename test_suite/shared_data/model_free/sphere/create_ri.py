@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,7 @@ Each vector will have the model-free parameter values of S2 = 0.8, te = 20 ns, R
 """
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import spin_loop
 
 
 # Create the data pipe.

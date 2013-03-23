@@ -33,7 +33,7 @@ else:
 
 # relax module imports.
 from prompt.doc_string import regexp_doc
-from generic_fns import diffusion_tensor, pipes, value
+from pipe_control import diffusion_tensor, pipes, value
 from graphics import WIZARD_IMAGE_PATH
 from lib.errors import RelaxError
 from specific_analyses.consistency_tests import Consistency_tests

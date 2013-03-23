@@ -41,7 +41,7 @@ from warnings import warn
 
 # relax module imports.
 from compat import bz2_open, gz_open
-import generic_fns
+import pipe_control
 from lib.check_types import is_filetype, is_float
 from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from lib.warnings import RelaxWarning, RelaxFileEmptyWarning
@@ -554,7 +554,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         # Convert.
         # Validate the sequence.
         try:
-            generic_fns.sequence.validate_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col)
+            pipe_control.sequence.validate_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col)
         except RelaxInvalidSeqError:
             # Extract the message string, without the RelaxError bit.
             msg = sys.exc_info()[1]
@@ -573,7 +573,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
                 warn(RelaxWarning("Invalid spin ID, skipping the line %s" % line))
                 continue
 
-            mol_name, res_num, res_name, spin_num, spin_name = generic_fns.mol_res_spin.spin_id_to_data_list(line[spin_id_col-1])
+            mol_name, res_num, res_name, spin_num, spin_name = pipe_control.mol_res_spin.spin_id_to_data_list(line[spin_id_col-1])
 
         # Convert the spin data.
         else:

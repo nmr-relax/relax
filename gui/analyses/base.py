@@ -30,8 +30,8 @@ from wx.lib import buttons
 from wx.lib import scrolledpanel
  
 # relax module imports.
-from generic_fns.mol_res_spin import count_spins
-from generic_fns.pipes import cdp_name, has_pipe
+from pipe_control.mol_res_spin import count_spins
+from pipe_control.pipes import cdp_name, has_pipe
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 

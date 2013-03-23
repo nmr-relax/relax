@@ -23,7 +23,7 @@
 from os import sep
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 

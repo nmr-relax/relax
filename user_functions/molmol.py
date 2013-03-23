@@ -33,7 +33,7 @@ else:
 
 # relax module imports.
 import colour
-from generic_fns import molmol
+from pipe_control import molmol
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.model_free.molmol import Molmol
 from user_functions.data import Uf_info; uf_info = Uf_info()

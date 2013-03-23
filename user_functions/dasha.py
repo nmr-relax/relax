@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 """The dasha user function definitions for controlling the Dasha model-free software."""
 
 # relax module imports.
-from generic_fns import dasha
+from pipe_control import dasha
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

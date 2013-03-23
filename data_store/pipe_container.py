@@ -34,7 +34,7 @@ from data_store.interatomic import InteratomList
 from data_store.mol_res_spin import MoleculeList
 from data_store.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
-import generic_fns
+import pipe_control
 from lib.errors import RelaxFromXMLNotEmptyError
 from lib.warnings import RelaxWarning
 
@@ -243,9 +243,9 @@ class PipeContainer(Prototype):
             # Create the structural object.
             fail = False
             if parser == 'scientific':
-                self.structure = generic_fns.structure.scientific.Scientific_data()
+                self.structure = pipe_control.structure.scientific.Scientific_data()
             elif parser == 'internal':
-                self.structure = generic_fns.structure.internal.Internal()
+                self.structure = pipe_control.structure.internal.Internal()
             else:
                 warn(RelaxWarning("The structural file parser " + repr(parser) + " is unknown.  The structure will not be loaded."))
                 fail = True

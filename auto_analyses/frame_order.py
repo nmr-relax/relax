@@ -33,8 +33,8 @@ from time import localtime
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns.angles import wrap_angles
-from generic_fns.pipes import cdp_name, get_pipe
+from pipe_control.angles import wrap_angles
+from pipe_control.pipes import cdp_name, get_pipe
 from lib.text.sectioning import section, subsection, title
 from lib.geometry.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter

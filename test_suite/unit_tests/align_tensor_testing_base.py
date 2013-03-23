@@ -24,8 +24,8 @@ from math import pi
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
-from generic_fns.reset import reset
+from pipe_control import pipes
+from pipe_control.reset import reset
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -33,7 +33,7 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 class Align_tensor_base_class(UnitTestCase):
     """Base class for the tests of the alignment tensor modules.
 
-    This includes both the 'prompt.align_tensor' and 'generic_fns.align_tensor' modules.  This base class also contains many shared unit tests.
+    This includes both the 'prompt.align_tensor' and 'pipe_control.align_tensor' modules.  This base class also contains many shared unit tests.
     """
 
     def setUp(self):
@@ -52,7 +52,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_copy_pull(self):
         """Test the copying of an alignment tensor (pulling the data from another pipe).
 
-        The functions tested are both generic_fns.align_tensor.copy() and
+        The functions tested are both pipe_control.align_tensor.copy() and
         prompt.align_tensor.copy().
         """
 
@@ -79,7 +79,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_copy_push(self):
         """Test the copying of an alignment tensor (pushing the data from another pipe).
 
-        The functions tested are both generic_fns.align_tensor.copy() and
+        The functions tested are both pipe_control.align_tensor.copy() and
         prompt.align_tensor.copy().
         """
 
@@ -103,7 +103,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_copy_fail(self):
         """Test the failure of copying of an alignment tensor (target and source are the same).
 
-        The functions tested are both generic_fns.align_tensor.copy() and
+        The functions tested are both pipe_control.align_tensor.copy() and
         prompt.align_tensor.copy().
         """
 
@@ -117,7 +117,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_delete(self):
         """Test the deletion of the alignment tensor data structure.
 
-        The functions tested are both generic_fns.align_tensor.delete() and
+        The functions tested are both pipe_control.align_tensor.delete() and
         prompt.align_tensor.delete().
         """
 
@@ -137,7 +137,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_delete_fail_no_data(self):
         """Failure of deletion of the alignment tensor data structure when there is no data.
 
-        The functions tested are both generic_fns.align_tensor.delete() and
+        The functions tested are both pipe_control.align_tensor.delete() and
         prompt.align_tensor.delete().
         """
 
@@ -148,7 +148,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_delete_fail_no_pipe(self):
         """Failure of deletion of the alignment tensor data structure when there is no data pipe.
 
-        The functions tested are both generic_fns.align_tensor.delete() and
+        The functions tested are both pipe_control.align_tensor.delete() and
         prompt.align_tensor.delete().
         """
 
@@ -162,7 +162,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_display(self):
         """Display an alignment tensor.
 
-        The functions tested are both generic_fns.align_tensor.display() and
+        The functions tested are both pipe_control.align_tensor.display() and
         prompt.align_tensor.display().
         """
 
@@ -176,7 +176,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_display_fail_no_data(self):
         """Failure of the display of the alignment tensor data structure when there is no data.
 
-        The functions tested are both generic_fns.align_tensor.display() and
+        The functions tested are both pipe_control.align_tensor.display() and
         prompt.align_tensor.display().
         """
 
@@ -187,7 +187,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_display_fail_no_pipe(self):
         """Failure of the display of the alignment tensor data structure when there is no data pipe.
 
-        The functions tested are both generic_fns.align_tensor.display() and
+        The functions tested are both pipe_control.align_tensor.display() and
         prompt.align_tensor.display().
         """
 
@@ -201,7 +201,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_init_bad_angle_units(self):
         """Test the failure of setting up a alignment tensor when angle_units is incorrect.
 
-        The functions tested are both generic_fns.align_tensor.init() and
+        The functions tested are both pipe_control.align_tensor.init() and
         prompt.align_tensor.init().
         """
 
@@ -212,7 +212,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_init(self):
         """Test the setting up of an alignment tensor.
 
-        The functions tested are both generic_fns.align_tensor.init() and
+        The functions tested are both pipe_control.align_tensor.init() and
         prompt.align_tensor.init().
         """
 
@@ -233,7 +233,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_matrix_angles_identity(self):
         """Test the matrix angles for a 5x5 identity matrix.
 
-        The functions tested are both generic_fns.align_tensor.matrix_angles() and
+        The functions tested are both pipe_control.align_tensor.matrix_angles() and
         prompt.align_tensor.matrix_angles().
         """
 
@@ -285,7 +285,7 @@ class Align_tensor_base_class(UnitTestCase):
     def test_svd_identity(self):
         """Test the SVD and condition number for a 5x5 identity matrix.
 
-        The functions tested are both generic_fns.align_tensor.svd() and
+        The functions tested are both pipe_control.align_tensor.svd() and
         prompt.align_tensor.svd().
         """
 

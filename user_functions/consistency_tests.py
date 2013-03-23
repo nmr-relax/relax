@@ -24,7 +24,7 @@
 """The consistency_tests user function definitions."""
 
 # relax module imports.
-from generic_fns import frq
+from pipe_control import frq
 from graphics import ANALYSIS_IMAGE_PATH
 from specific_analyses.setup import consistency_tests_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()

@@ -28,9 +28,9 @@ import sys
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.diff_tensor import DiffTensorSimList
-from generic_fns.mol_res_spin import spin_loop
-from generic_fns.pipes import get_pipe
-from generic_fns.reset import reset
+from pipe_control.mol_res_spin import spin_loop
+from pipe_control.pipes import get_pipe
+from pipe_control.reset import reset
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from lib.io import delete

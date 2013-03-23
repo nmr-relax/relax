@@ -28,7 +28,7 @@ from random import shuffle, uniform
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns.angles import wrap_angles
+from pipe_control.angles import wrap_angles
 from lib.geometry.rotations import *
 
 

@@ -31,8 +31,8 @@ from numpy.linalg import eig, inv, norm
 
 # relax module imports.
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, R_to_euler_zyz
-from generic_fns.structure.geometric import angles_uniform, vect_dist_spherical_angles
-from generic_fns.structure.internal import Internal
+from pipe_control.structure.geometric import angles_uniform, vect_dist_spherical_angles
+from pipe_control.structure.internal import Internal
 from lib.io import open_write_file
 
 

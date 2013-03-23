@@ -29,11 +29,11 @@ from re import search
 import sys
 
 # relax module imports.
-import generic_fns
-from generic_fns import dipole_pair
-from generic_fns.interatomic import return_interatom, return_interatom_list
-from generic_fns.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
-from generic_fns import pipes
+import pipe_control
+from pipe_control import dipole_pair
+from pipe_control.interatomic import return_interatom, return_interatom_list
+from pipe_control.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control import pipes
 from lib.errors import RelaxError, RelaxInvalidDataError
 
 
@@ -163,7 +163,7 @@ class Results:
             spin_name = spin_line[col['spin_name']]
 
         # Generate the sequence.
-        generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
+        pipe_control.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
 
         # Get the spin identification string.
         spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
@@ -171,9 +171,9 @@ class Results:
         # Set the selection status.
         select = bool(int(spin_line[col['select']]))
         if select:
-            generic_fns.selection.sel_spin(spin_id)
+            pipe_control.selection.sel_spin(spin_id)
         else:
-            generic_fns.selection.desel_spin(spin_id)
+            pipe_control.selection.desel_spin(spin_id)
 
 
     def _load_model_free_data(self, spin_line, col, data_set, spin, spin_id, verbosity=1):
@@ -604,7 +604,7 @@ class Results:
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            generic_fns.structure.main.read_pdb(file=pdb, set_model_num=pdb_model, fail=False, verbosity=verbosity)
+            pipe_control.structure.main.read_pdb(file=pdb, set_model_num=pdb_model, fail=False, verbosity=verbosity)
             return True
         else:
             return False
@@ -801,7 +801,7 @@ class Results:
             all_select_sim = all_select_sim.tolist()
 
             # Set up the Monte Carlo simulations.
-            generic_fns.monte_carlo.setup(number=len(sims), all_select_sim=all_select_sim)
+            pipe_control.monte_carlo.setup(number=len(sims), all_select_sim=all_select_sim)
 
             # Turn the simulation state to off!
             cdp.sim_state = False
@@ -1066,7 +1066,7 @@ class Results:
                 spheroid_type = diff_type
 
             # Set the diffusion tensor.
-            generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
+            pipe_control.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
     def _set_xh_vect(self, spin_line, col, spin, spin_id1=None, spin_id2=None, verbosity=1):

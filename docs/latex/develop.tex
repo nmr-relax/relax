@@ -368,7 +368,7 @@ being located at \href{https://mail.gna.org/public/relax-commits/2006-09/msg0006
 <E1GTt6C-0005rk-8q@subversion.gna.org>) for r2593.
 
 However this was not the only place that the Scientific Python PDB data structure peptide\_chains was
-being accessed.  The chains were being accessed in the file `generic\_fns/sequence.py' when the
+being accessed.  The chains were being accessed in the file `pipe\_control/sequence.py' when the
 sequence was being read out of the PDB file.  This has now been modified with changes similar to
 r2591 and r2593.
 \end{exampleenv}
@@ -667,7 +667,7 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.  This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
 
-\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \directory{generic\_fns/}.
+\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \directory{pipe\_control/}.
 
 \item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \module{minimise()} method is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \file{specific\_fns/specific\_setup.py}.
 

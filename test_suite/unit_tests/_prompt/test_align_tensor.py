@@ -20,7 +20,7 @@
 ###############################################################################
 
 # relax module imports.
-from generic_fns import align_tensor
+from pipe_control import align_tensor
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxTupleNumError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class

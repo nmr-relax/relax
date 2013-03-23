@@ -26,7 +26,7 @@
 from re import match
 
 # relax module imports.
-import generic_fns
+import pipe_control
 from data_store.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
@@ -201,8 +201,8 @@ class InteratomList(list):
         """
 
         # Get the specific functions.
-        data_names = specific_analyses.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)
-        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
+        data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_control.pipes.get_type(), raise_error=False)
+        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_control.pipes.get_type(), raise_error=False)
 
         # Loop over the containers.
         for i in range(len(self)):

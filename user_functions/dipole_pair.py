@@ -31,7 +31,7 @@ else:
     FD_OPEN = -1
 
 # relax module imports.
-from generic_fns import pipes, dipole_pair
+from pipe_control import pipes, dipole_pair
 from graphics import WIZARD_IMAGE_PATH
 from lib.physical_constants import NH_BOND_LENGTH
 from user_functions.data import Uf_info; uf_info = Uf_info()

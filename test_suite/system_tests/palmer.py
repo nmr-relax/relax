@@ -28,8 +28,8 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from generic_fns import pipes
-from generic_fns.mol_res_spin import return_spin
+from pipe_control import pipes
+from pipe_control.mol_res_spin import return_spin
 from lib.errors import RelaxError
 from lib.io import test_binary
 from status import Status; status = Status()

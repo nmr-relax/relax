@@ -8,8 +8,8 @@
 # Extract Data to Table
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
-from generic_fns import pipes
+from pipe_control.mol_res_spin import spin_loop
+from pipe_control import pipes
 from lib.errors import RelaxError
 
 
@@ -133,8 +133,8 @@ grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', force=True)
 # Create S2 Macro for PyMol 
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
-from generic_fns import pipes
+from pipe_control.mol_res_spin import spin_loop
+from pipe_control import pipes
 
 #create file
 

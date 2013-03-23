@@ -27,9 +27,9 @@ import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import spin_loop
-from generic_fns.pipes import cdp_name
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import spin_loop
+from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 

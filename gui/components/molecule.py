@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
-from generic_fns.mol_res_spin import molecule_loop, return_molecule
+from pipe_control.mol_res_spin import molecule_loop, return_molecule
 from graphics import fetch_icon
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()

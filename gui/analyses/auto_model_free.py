@@ -34,9 +34,9 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from generic_fns.pipes import has_bundle, has_pipe
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.pipes import has_bundle, has_pipe
 from graphics import fetch_icon
 from lib.physical_constants import NH_BOND_LENGTH
 from lib.errors import RelaxError

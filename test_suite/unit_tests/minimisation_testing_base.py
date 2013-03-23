@@ -27,7 +27,7 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 class Minimisation_base_class(UnitTestCase):
     """Base class for the tests of the minimisation modules.
     
-    This includes both the 'prompt.minimisation' and 'generic_fns.minimise' modules.  The base class also contains many shared unit tests.
+    This includes both the 'prompt.minimisation' and 'pipe_control.minimise' modules.  The base class also contains many shared unit tests.
     """
 
 

@@ -26,9 +26,9 @@
 from warnings import warn
 
 # relax module imports.
-from generic_fns import pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data
-from generic_fns.sequence import compare_sequence
+from pipe_control import pipes
+from pipe_control.mol_res_spin import exists_mol_res_spin_data
+from pipe_control.sequence import compare_sequence
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 from lib.warnings import RelaxDeselectWarning
 import specific_analyses.setup

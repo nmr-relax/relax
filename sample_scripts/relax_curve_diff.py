@@ -32,7 +32,7 @@ To use this script, R1 or R2 exponential curve fitting must have previously have
 from numpy import float64, array, identity, sqrt, zeros
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import spin_loop
 from target_functions.relax_fit import back_calc_I, func, setup
 
 

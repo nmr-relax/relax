@@ -24,14 +24,14 @@ from numpy import array
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
-from generic_fns.mol_res_spin import metadata_update
+from pipe_control import pipes
+from pipe_control.mol_res_spin import metadata_update
 from lib.errors import RelaxError, RelaxNoPipeError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Spin_base_class(UnitTestCase):
-    """Testing base class for 'prompt.spin' and corresponding 'generic_fns.mol_res_spin' fns.
+    """Testing base class for 'prompt.spin' and corresponding 'pipe_control.mol_res_spin' fns.
 
     This base class also contains many shared unit tests.
     """
@@ -112,7 +112,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin(self):
         """Test the copying of the spin data within the same residue.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -138,7 +138,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_between_molecules(self):
         """Test the copying of the spin data between different molecules.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -168,7 +168,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_between_residues(self):
         """Test the copying of the spin data between different residues.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -198,7 +198,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_between_pipes(self):
         """Test the copying of the spin data between different data pipes.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -228,7 +228,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_between_pipes_fail(self):
         """Test the copying of the spin data between different data pipes.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -240,7 +240,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_fail1(self):
         """Test the failure of the copying of the spin data of a non-existent residue.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -251,7 +251,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_fail2(self):
         """Test the failure of the copying of the spin data of a non-existent spin.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -262,7 +262,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_fail3(self):
         """Test the failure of the copying of the spin data to a non-existent residue.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -273,7 +273,7 @@ class Spin_base_class(UnitTestCase):
     def test_copy_spin_fail4(self):
         """Test the failure of the copying of the spin data to a number which already exists.
 
-        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        The function tested is both pipe_control.mol_res_spin.copy_spin() and
         prompt.spin.copy().
         """
 
@@ -284,7 +284,7 @@ class Spin_base_class(UnitTestCase):
     def test_create_pseudo_spin(self):
         """Test the creation of a pseudo-atom.
 
-        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        The function tested is both pipe_control.mol_res_spin.create_pseudo_spin() and
         prompt.spin.create_pseudo().
         """
 
@@ -336,7 +336,7 @@ class Spin_base_class(UnitTestCase):
     def test_create_pseudo_spin2(self):
         """Test the creation of a pseudo-atom (test 2).
 
-        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        The function tested is both pipe_control.mol_res_spin.create_pseudo_spin() and
         prompt.spin.create_pseudo().
         """
 
@@ -385,7 +385,7 @@ class Spin_base_class(UnitTestCase):
     def test_create_spin(self):
         """Test the creation of a spin.
 
-        The function tested is both generic_fns.mol_res_spin.create_spin() and
+        The function tested is both pipe_control.mol_res_spin.create_spin() and
         prompt.spin.create().
         """
 
@@ -411,7 +411,7 @@ class Spin_base_class(UnitTestCase):
     def test_create_spin_fail(self):
         """Test the failure of spin creation (by supplying two spins with the same number).
 
-        The function tested is both generic_fns.mol_res_spin.create_spin() and
+        The function tested is both pipe_control.mol_res_spin.create_spin() and
         prompt.spin.create().
         """
 
@@ -425,7 +425,7 @@ class Spin_base_class(UnitTestCase):
     def test_delete_spin_name(self):
         """Test spin deletion using spin name identifiers.
 
-        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        The function tested is both pipe_control.mol_res_spin.delete_spin() and
         prompt.spin.delete().
         """
 
@@ -444,7 +444,7 @@ class Spin_base_class(UnitTestCase):
     def test_delete_spin_num(self):
         """Test spin deletion using spin number identifiers.
 
-        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        The function tested is both pipe_control.mol_res_spin.delete_spin() and
         prompt.spin.delete().
         """
 
@@ -463,7 +463,7 @@ class Spin_base_class(UnitTestCase):
     def test_delete_spin_all(self):
         """Test the deletion of all spins in one residue.
 
-        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        The function tested is both pipe_control.mol_res_spin.delete_spin() and
         prompt.spin.delete().
         """
 
@@ -481,7 +481,7 @@ class Spin_base_class(UnitTestCase):
     def test_delete_spin_shift(self):
         """Test the deletion of multiple spins.
 
-        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        The function tested is both pipe_control.mol_res_spin.delete_spin() and
         prompt.spin.delete().
         """
 
@@ -503,7 +503,7 @@ class Spin_base_class(UnitTestCase):
     def test_display_spin(self):
         """Test the display of spin information.
 
-        The function tested is both generic_fns.mol_res_spin.display_spin() and
+        The function tested is both pipe_control.mol_res_spin.display_spin() and
         prompt.spin.display().
         """
 
@@ -518,7 +518,7 @@ class Spin_base_class(UnitTestCase):
     def test_name_spin(self):
         """Test the renaming of a spin.
 
-        The function tested is both generic_fns.mol_res_spin.name_spin() and
+        The function tested is both pipe_control.mol_res_spin.name_spin() and
         prompt.spin.name().
         """
 
@@ -545,7 +545,7 @@ class Spin_base_class(UnitTestCase):
     def test_name_spin_many(self):
         """Test the renaming of multiple spins.
 
-        The function tested is both generic_fns.mol_res_spin.name_spin() and
+        The function tested is both pipe_control.mol_res_spin.name_spin() and
         prompt.spin.name().
         """
 
@@ -570,7 +570,7 @@ class Spin_base_class(UnitTestCase):
     def test_number_spin(self):
         """Test the numbering of a spin.
 
-        The function tested is both generic_fns.mol_res_spin.number_spin() and
+        The function tested is both pipe_control.mol_res_spin.number_spin() and
         prompt.spin.number().
         """
 
@@ -601,7 +601,7 @@ class Spin_base_class(UnitTestCase):
     def test_number_spin_many_fail(self):
         """Test the renaming of multiple spins.
 
-        The function tested is both generic_fns.mol_res_spin.number_spin() and
+        The function tested is both pipe_control.mol_res_spin.number_spin() and
         prompt.spin.number().
         """
 

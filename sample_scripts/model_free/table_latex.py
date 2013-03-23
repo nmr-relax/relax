@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ with the command:
 """
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import spin_loop
 
 
 # Name of the results file.

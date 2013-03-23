@@ -7,8 +7,8 @@ from numpy.linalg import norm
 from os import sep
 
 # relax imports.
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import return_spin, spin_loop
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
 

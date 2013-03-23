@@ -25,14 +25,14 @@ from tempfile import mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
-from generic_fns.reset import reset
+from pipe_control import pipes
+from pipe_control.reset import reset
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class State_base_class(UnitTestCase):
-    """Base class for the tests of both the 'prompt.state' and 'generic_fns.state' modules.
+    """Base class for the tests of both the 'prompt.state' and 'pipe_control.state' modules.
 
     This base class also contains shared unit tests.
     """
@@ -40,7 +40,7 @@ class State_base_class(UnitTestCase):
     def test_load(self):
         """The unpickling and restoration of the relax data storage singleton.
 
-        This tests the normal operation of the generic_fns.state.load() function.
+        This tests the normal operation of the pipe_control.state.load() function.
         """
 
         # Test the contents of the empty singleton.
@@ -64,7 +64,7 @@ class State_base_class(UnitTestCase):
     def test_load_and_modify(self):
         """The modification of an unpickled and restored relax data storage singleton.
 
-        This tests the normal operation of the generic_fns.state.load() function.
+        This tests the normal operation of the pipe_control.state.load() function.
         """
 
         # Test the contents of the empty singleton.
@@ -94,7 +94,7 @@ class State_base_class(UnitTestCase):
     def test_load_and_reset(self):
         """The resetting of an unpickled and restored relax data storage singleton.
 
-        This tests the normal operation of the generic_fns.state.load() function.
+        This tests the normal operation of the pipe_control.state.load() function.
         """
 
         # Test the contents of the empty singleton.
@@ -117,7 +117,7 @@ class State_base_class(UnitTestCase):
     def test_save(self):
         """The pickling and saving of the relax data storage singleton.
 
-        This tests the normal operation of the generic_fns.state.save() function.
+        This tests the normal operation of the pipe_control.state.save() function.
         """
 
         # Create a temporary file descriptor.

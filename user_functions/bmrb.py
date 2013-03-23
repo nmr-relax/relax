@@ -32,7 +32,7 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from generic_fns import bmrb, exp_info, pipes
+from pipe_control import bmrb, exp_info, pipes
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

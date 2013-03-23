@@ -26,7 +26,7 @@
 import wx
 
 # relax module imports.
-from generic_fns.pipes import cdp_name, pipe_names
+from pipe_control.pipes import cdp_name, pipe_names
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
 from status import Status; status = Status()
 from lib.errors import RelaxNoPipeError

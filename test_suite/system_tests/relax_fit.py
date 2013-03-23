@@ -27,8 +27,8 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from generic_fns.mol_res_spin import spin_index_loop, spin_loop
-from generic_fns import pipes
+from pipe_control.mol_res_spin import spin_index_loop, spin_loop
+from pipe_control import pipes
 from lib.errors import RelaxError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase

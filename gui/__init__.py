@@ -35,7 +35,7 @@ if dep_check.wx_module:
     import wx
 
 # relax module imports.
-import generic_fns
+import pipe_control
 from graphics import IMAGE_PATH
 from lib.errors import RelaxError
 from status import Status; status = Status()
@@ -86,7 +86,7 @@ class App(wx.App):
 
         # First run the script before the GUI is built.
         if script_file:
-            generic_fns.script.script(script_file)
+            pipe_control.script.script(script_file)
 
         # Execute the base class method.
         super(App, self).__init__(redirect=redirect, filename=filename, useBestVisual=useBestVisual, clearSigInt=clearSigInt)

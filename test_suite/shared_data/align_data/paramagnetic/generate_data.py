@@ -4,8 +4,8 @@ from numpy import dot, float64, array
 from numpy.linalg import norm
 
 # relax module imports.
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import spin_loop
 
 
 # Some constants.

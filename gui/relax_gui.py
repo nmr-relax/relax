@@ -38,9 +38,9 @@ from lib import ansi
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
 from info import Info_box
-from generic_fns import state
-from generic_fns.pipes import cdp_name
-from generic_fns.reset import reset
+from pipe_control import state
+from pipe_control.pipes import cdp_name
+from pipe_control.reset import reset
 from lib.errors import RelaxNoPipeError
 from lib.io import io_streams_restore
 from status import Status; status = Status()

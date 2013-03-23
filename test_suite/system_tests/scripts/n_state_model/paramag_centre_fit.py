@@ -6,7 +6,7 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
+from pipe_control import pipes
 from status import Status; status = Status()
 
 

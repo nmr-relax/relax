@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes, sequence
+from pipe_control import pipes, sequence
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -33,7 +33,7 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 class Relax_data_base_class(UnitTestCase):
     """Base class for the tests of the relaxation data tensor modules.
 
-    This includes both the 'prompt.relax_data' and 'generic_fns.relax_data' modules.  The base class also contains many shared unit tests.
+    This includes both the 'prompt.relax_data' and 'pipe_control.relax_data' modules.  The base class also contains many shared unit tests.
     """
 
     def setUp(self):

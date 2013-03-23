@@ -23,7 +23,7 @@
 """Module for handling the setup of the specific analyses."""
 
 # relax module imports.
-from generic_fns import pipes
+from pipe_control import pipes
 from specific_analyses.consistency_tests import Consistency_tests
 from specific_analyses.frame_order import Frame_order
 from specific_analyses.hybrid import Hybrid

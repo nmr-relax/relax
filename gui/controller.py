@@ -30,7 +30,7 @@ import wx.stc
 
 # relax module imports.
 from compat import Queue
-from generic_fns.pipes import cdp_name
+from pipe_control.pipes import cdp_name
 from lib.io import SplitIO
 from status import Status; status = Status()
 

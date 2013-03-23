@@ -34,7 +34,7 @@ from compat import builtins
 from data_store.gui import Gui
 from data_store.pipe_container import PipeContainer
 from data_store.relax_xml import fill_object_contents, xml_to_object
-import generic_fns
+import pipe_control
 from lib.errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from status import Status; status = Status()
 import version
@@ -207,7 +207,7 @@ class Relax_data_store(dict):
                     # Loop over the spins.
                     for spin in res.spin:
                         # The current spin ID.
-                        spin_id = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
+                        spin_id = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
 
                         # Convert proton spins (the 'heteronuc_type' variable indicates a pre-interatomic container design state).
                         if hasattr(spin, 'heteronuc_type') and hasattr(spin, 'element') and spin.element == 'H':
@@ -222,9 +222,9 @@ class Relax_data_store(dict):
                             # Name the spin if needed.
                             if spin.name == None:
                                 if search('N', spin.isotope):
-                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='N', pipe=pipe_name)
+                                    pipe_control.mol_res_spin.name_spin(spin_id=spin_id, name='N', pipe=pipe_name)
                                 elif search('C', spin.isotope):
-                                    generic_fns.mol_res_spin.name_spin(spin_id=spin_id, name='C', pipe=pipe_name)
+                                    pipe_control.mol_res_spin.name_spin(spin_id=spin_id, name='C', pipe=pipe_name)
 
                             # An attached proton - convert into a spin container.
                             if (hasattr(spin, 'attached_proton') and spin.attached_proton != None) or (hasattr(spin, 'proton_type') and spin.proton_type != None):
@@ -235,28 +235,28 @@ class Relax_data_store(dict):
                                     proton_name = 'H'
 
                                 # The two spin IDs (newly regenerated due to the above renaming).
-                                spin_id1 = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
-                                spin_id2 = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name)
+                                spin_id1 = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
+                                spin_id2 = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name)
 
                                 # Fetch the proton spin if it exists.
-                                h_spin = generic_fns.mol_res_spin.return_spin(spin_id2, pipe=pipe_name)
+                                h_spin = pipe_control.mol_res_spin.return_spin(spin_id2, pipe=pipe_name)
                                 if h_spin:
-                                    spin_id2 = generic_fns.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name, spin_num=h_spin.num)
+                                    spin_id2 = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name, spin_num=h_spin.num)
 
                                 # Create a new spin container for the proton if needed.
                                 if not h_spin:
-                                    h_spin = generic_fns.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
+                                    h_spin = pipe_control.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
                                     h_spin.select = False
 
                                 # Set up a dipole interaction between the two spins if needed.
                                 if not hasattr(h_spin, 'element'):
-                                    generic_fns.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
+                                    pipe_control.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
                                 if not hasattr(h_spin, 'isotope'):
-                                    generic_fns.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
-                                generic_fns.dipole_pair.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
+                                    pipe_control.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
+                                pipe_control.dipole_pair.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
 
                                 # Get the interatomic data container.
-                                interatom = generic_fns.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2, pipe=pipe_name)
+                                interatom = pipe_control.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2, pipe=pipe_name)
 
                                 # Set the interatomic distance.
                                 if hasattr(spin, 'r'):
@@ -474,8 +474,8 @@ class Relax_data_store(dict):
                     raise RelaxPipeError(pipe_name)
 
                 # Valid type check.
-                if not pipe_type in generic_fns.pipes.VALID_TYPES:
-                    raise RelaxError("The data pipe type '%s' is invalid and must be one of the strings in the list %s." % (pipe_type, generic_fns.pipes.VALID_TYPES))
+                if not pipe_type in pipe_control.pipes.VALID_TYPES:
+                    raise RelaxError("The data pipe type '%s' is invalid and must be one of the strings in the list %s." % (pipe_type, pipe_control.pipes.VALID_TYPES))
 
             # Load the data pipes.
             for pipe_node in pipe_nodes:
@@ -501,7 +501,7 @@ class Relax_data_store(dict):
 
         # Finally update the molecule, residue, and spin metadata for each data pipe.
         for pipe in pipes:
-            generic_fns.mol_res_spin.metadata_update(pipe=pipe)
+            pipe_control.mol_res_spin.metadata_update(pipe=pipe)
 
         # Backwards compatibility transformations.
         self._back_compat_hook(file_version, pipes=pipes)

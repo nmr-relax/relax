@@ -28,8 +28,8 @@ from re import match
 from warnings import warn
 
 # relax module imports.
-from generic_fns import pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from pipe_control import pipes
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from lib.errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from lib.warnings import RelaxDeselectWarning
 from specific_analyses.api_common import API_common

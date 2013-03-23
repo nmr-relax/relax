@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,9 +26,9 @@
 from os import sep
 
 # relax module imports.
-from generic_fns.mol_res_spin import get_spin_ids
-from generic_fns import pipes
-from generic_fns.interatomic import copy, create_interatom
+from pipe_control.mol_res_spin import get_spin_ids
+from pipe_control import pipes
+from pipe_control.interatomic import copy, create_interatom
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

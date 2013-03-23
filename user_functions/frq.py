@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 """The frq user function definitions for manipulating spectrometer frequencies."""
 
 # relax module imports.
-import generic_fns.frq
+import pipe_control.frq
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -69,7 +69,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the spectrometer frequency of a given experiment to be set.  The expected units are that of the proton resonance frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file for the exact value.")
-uf.backend = generic_fns.frq.set
+uf.backend = pipe_control.frq.set
 uf.menu_text = "&set"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (750, 500)

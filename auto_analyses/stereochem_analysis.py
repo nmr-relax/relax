@@ -68,9 +68,9 @@ if dep_check.subprocess_module:
 import sys
 
 # relax module imports.
-from generic_fns import pipes
-from generic_fns.grace import write_xy_data, write_xy_header
-from generic_fns.selection import spin_loop
+from pipe_control import pipes
+from pipe_control.grace import write_xy_data, write_xy_header
+from pipe_control.selection import spin_loop
 from lib.physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError

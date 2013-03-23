@@ -29,8 +29,8 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from generic_fns.interatomic import interatomic_loop
-from generic_fns.mol_res_spin import spin_loop
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import spin_loop
 from lib.io import test_binary
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase

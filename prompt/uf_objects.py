@@ -230,7 +230,7 @@ class Uf_object(object):
         @type title:            str
         @keyword kargs:         The list of keyword argument details.
         @type kargs:            list of dict
-        @keyword backend:       The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'generic_fns.pipes.create'.  Note, this should be importable as __import__(backend)!
+        @keyword backend:       The user function back end.  This should be a string version with full module path of the function which executes the back end.  For example 'pipe_control.pipes.create'.  Note, this should be importable as __import__(backend)!
         @type backend:          executable object
         @keyword desc:          The full, multi-paragraph description.
         @type desc:             str

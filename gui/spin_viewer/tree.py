@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,9 +27,9 @@
 import wx
 
 # relax module imports.
-from generic_fns.selection import is_mol_selected, is_res_selected, is_spin_selected
-from generic_fns.mol_res_spin import get_molecule_ids, molecule_loop, residue_loop, return_molecule, return_residue, return_spin, spin_loop
-from generic_fns.pipes import cdp_name, get_pipe
+from pipe_control.selection import is_mol_selected, is_res_selected, is_spin_selected
+from pipe_control.mol_res_spin import get_molecule_ids, molecule_loop, residue_loop, return_molecule, return_residue, return_spin, spin_loop
+from pipe_control.pipes import cdp_name, get_pipe
 from graphics import fetch_icon
 from status import Status; status = Status()
 
