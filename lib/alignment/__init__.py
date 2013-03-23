@@ -24,6 +24,7 @@
 
 __all__ = [
     'alignment_tensor',
+    'paramag_centre',
     'pcs',
     'rdc'
 ]
