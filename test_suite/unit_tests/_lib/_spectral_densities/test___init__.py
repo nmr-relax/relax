@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import lib.geometry
+import lib.spectral_densities
 
 
 class Test___init__(PackageTestCase):

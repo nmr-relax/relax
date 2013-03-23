@@ -24,6 +24,7 @@ from os import sep
 import sys
 
 # relax module imports.
+import data_store
 from data_store import Relax_data_store; ds = Relax_data_store()
 from test_suite.unit_tests.package_checking import PackageTestCase
 
@@ -33,15 +34,15 @@ class Empty_container:
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the data.Relax_data_store class."""
+    """Unit tests for the data_store package."""
 
     def setUp(self):
         """Set up a complex relax data store."""
 
         # Package info.
-        self.package = data
-        self.package_name = 'data'
-        self.package_path = sys.path[0] + sep + 'data'
+        self.package = data_store
+        self.package_name = 'data_store'
+        self.package_path = sys.path[0] + sep + 'data_store'
         
         # Add an empty data container as a new pipe.
         ds['empty'] = Empty_container()

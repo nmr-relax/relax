@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import lib.geometry
+import lib.frame_order
 
 
 class Test___init__(PackageTestCase):
