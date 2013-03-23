@@ -30,15 +30,70 @@ from time import asctime, localtime
 # relax module imports.
 from pipe_control import diffusion_tensor
 from pipe_control import pipes
+from pipe_control import value
 from lib.errors import RelaxError, RelaxUnknownParamError
 from lib.io import open_write_file
 from lib.opendx.files import write_config, write_general, write_point, write_program
 from specific_analyses.setup import get_specific_fn
 
 
+def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
+    """Map the space corresponding to the spin identifier and create the OpenDX files.
+
+    @keyword params:        
+    @type params:           
+    @keyword map_type:      The type of map to create.  The available options are:
+                                - 'Iso3D', a 3D isosurface visualisation of the space.
+    @type map_type:         str
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword inc:           The resolution of the plot.  This is the number of increments per
+                            dimension.
+    @type inc:              int
+    @keyword lower:         The lower bounds of the space to map.  If supplied, this should be a
+                            list of floats, its length equal to the number of parameters in the
+                            model.
+    @type lower:            None or list of float
+    @keyword upper:         The upper bounds of the space to map.  If supplied, this should be a
+                            list of floats, its length equal to the number of parameters in the
+                            model.
+    @type upper:            None or list of float
+    @keyword axis_incs:     The number of tick marks to display in the OpenDX plot in each
+                            dimension.
+    @type axis_incs:        int
+    @keyword file_prefix:   The file prefix for all the created files.
+    @type file_prefix:      str
+    @keyword dir:           The directory to place the files into.
+    @type dir:              str or None
+    @keyword point:         If supplied, a red sphere will be placed at these coordinates.
+    @type point:            None or list of float
+    @keyword point_file:    The file prefix for the point output files.
+    @type point_file:       str or None
+    @keyword remap:         A function which is used to remap the space.  The function should accept
+                            the parameter array (list of float) and return an array of equal length
+                            (again list of float).
+    @type remap:            None or func
+    """
+
+    # Check the args.
+    if inc <= 1:
+        raise RelaxError("The increment value needs to be greater than 1.")
+    if axis_incs <= 1:
+        raise RelaxError("The axis increment value needs to be greater than 1.")
+
+    # Space type.
+    if map_type.lower() == "iso3d":
+        if len(params) != 3:
+            raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
+
+        # Create the map.
+        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap)
+    else:
+        raise RelaxError("The map type '" + map_type + "' is not supported.")
 
 
-class Base_Map:
+
+class Map:
     """The space mapping base class."""
 
     def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap):
@@ -152,7 +207,7 @@ class Base_Map:
         map_file = open_write_file(file_name=self.file_prefix, dir=self.dir, force=True)
 
         # Generate and write the text of the map.
-        self.map_text(map_file)
+        self.map_3D_text(map_file)
 
         # Close the file.
         map_file.close()
@@ -193,6 +248,80 @@ class Base_Map:
 
             # Append the parameter name.
             self.param_names.append(name)
+
+
+    def map_3D_text(self, map_file):
+        """Function for creating the text of a 3D map."""
+
+        # Initialise.
+        values = zeros(3, float64)
+        percent = 0.0
+        percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
+        print("%-10s%8.3f%-1s" % ("Progress:", percent, "%"))
+
+        # Fix the diffusion tensor.
+        unfix = False
+        if hasattr(cdp, 'diff_tensor') and not cdp.diff_tensor.fixed:
+            cdp.diff_tensor.fixed = True
+            unfix = True
+
+        # Initial value of the first parameter.
+        values[0] = self.bounds[0, 0]
+
+        # The model identifier.
+
+        # Loop over the first parameter.
+        for i in range((self.inc + 1)):
+            # Initial value of the second parameter.
+            values[1] = self.bounds[1, 0]
+
+            # Loop over the second parameter.
+            for j in range((self.inc + 1)):
+                # Initial value of the third parameter.
+                values[2] = self.bounds[2, 0]
+
+                # Loop over the third parameter.
+                for k in range((self.inc + 1)):
+                    # Set the parameter values.
+                    if self.spin_id:
+                        value.set(val=values, param=self.params, spin_id=self.spin_id, force=True)
+                    else:
+                        value.set(val=values, param=self.params, force=True)
+
+                    # Calculate the function values.
+                    if self.spin_id:
+                        self.calculate(spin_id=self.spin_id, verbosity=0)
+                    else:
+                        self.calculate(verbosity=0)
+
+                    # Get the minimisation statistics for the model.
+                    if self.spin_id:
+                        k, n, chi2 = self.model_stats(spin_id=self.spin_id)
+                    else:
+                        k, n, chi2 = self.model_stats(model_info=0)
+
+                    # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
+                    if chi2 > 1e20:
+                        map_file.write("%30f\n" % 1e20)
+                    else:
+                        map_file.write("%30f\n" % chi2)
+
+                    # Increment the value of the third parameter.
+                    values[2] = values[2] + self.step_size[2]
+
+                # Progress incrementation and printout.
+                percent = percent + percent_inc
+                print("%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2))
+
+                # Increment the value of the second parameter.
+                values[1] = values[1] + self.step_size[1]
+
+            # Increment the value of the first parameter.
+            values[0] = values[0] + self.step_size[0]
+
+        # Unfix the diffusion tensor.
+        if unfix:
+            cdp.diff_tensor.fixed = False
 
 
     def map_axes(self):

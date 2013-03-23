@@ -26,7 +26,7 @@
 from pipe_control import diffusion_tensor
 from graphics import WIZARD_IMAGE_PATH
 import lib.opendx.execute
-import pipe_control.opendx.main
+import pipe_control.opendx
 from prompt.doc_string import regexp_doc
 from specific_analyses.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -204,7 +204,7 @@ uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', 
 uf.desc[-1].add_paragraph("To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te, Rex}, name the results 'test', and to place the files in the current directory, use one of the following commands:")
 uf.desc[-1].add_prompt("relax> dx.map(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)")
 uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)")
-uf.backend = pipe_control.opendx.main.map
+uf.backend = pipe_control.opendx.map
 uf.menu_text = "&map"
 uf.gui_icon = "relax.grid_search"
 uf.wizard_height_desc = 280
