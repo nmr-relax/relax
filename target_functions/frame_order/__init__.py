@@ -45,10 +45,10 @@ from target_functions.frame_order.pseudo_ellipse import compile_2nd_matrix_pseud
 from target_functions.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
 from target_functions.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
 from lib.algebra.kronecker_product import kron_prod
-from target_functions import order_parameters
 from lib.alignment.pcs import pcs_tensor
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.alignment.rdc import rdc_tensor
+from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
 from lib.errors import RelaxError
 
