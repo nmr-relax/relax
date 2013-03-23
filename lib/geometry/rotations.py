@@ -28,7 +28,7 @@ from random import gauss
 
 # relax module imports.
 import generic_fns
-from target_functions.vectors import random_unit_vector
+from lib.geometry.vectors import random_unit_vector
 
 
 # Global variables.

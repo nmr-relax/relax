@@ -43,5 +43,5 @@ __all__ = [ 'alignment_tensor',
             'ri_comps',
             'ri_prime',
             'ri',
-            'weights',
-            'vectors' ]
+            'weights'
+]
