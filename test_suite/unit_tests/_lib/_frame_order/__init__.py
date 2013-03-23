@@ -23,5 +23,4 @@
 __all__ = [
     'test___init__',
     'test_matrix_ops',
-    'test_pec'
 ]
