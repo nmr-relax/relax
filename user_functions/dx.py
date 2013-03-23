@@ -25,7 +25,7 @@
 # relax module imports.
 from pipe_control import diffusion_tensor
 from graphics import WIZARD_IMAGE_PATH
-import opendx.main
+import pipe_control.opendx.main
 from prompt.doc_string import regexp_doc
 from specific_analyses.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()

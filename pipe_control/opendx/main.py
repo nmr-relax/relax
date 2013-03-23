@@ -27,7 +27,7 @@
 from os import system
 
 # relax module imports.
-from opendx import isosurface_3D
+from pipe_control.opendx import isosurface_3D
 from lib.errors import RelaxError
 from lib.io import test_binary
 

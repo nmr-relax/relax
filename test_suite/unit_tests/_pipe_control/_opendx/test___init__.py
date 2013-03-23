@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,15 +25,15 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import opendx
+import pipe_control.opendx
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the opendx package."""
+    """Unit tests for the pipe_control.opendx package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = opendx
-        self.package_name = 'opendx'
-        self.package_path = sys.path[0] + sep + 'opendx'
+        self.package = pipe_control.opendx
+        self.package_name = 'pipe_control.opendx'
+        self.package_path = sys.path[0] + sep + 'pipe_control.opendx'

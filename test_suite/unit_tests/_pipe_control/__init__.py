@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,8 @@
 ###############################################################################
 
 
-__all__ = ['_structure',
+__all__ = ['_opendx',
+           '_structure',
            'test_molecule',
            'test_pipes',
            'test_relax_data',

@@ -29,7 +29,7 @@ from numpy import float64, zeros
 # relax module imports.
 from pipe_control import pipes
 from pipe_control import value
-from opendx.base_map import Base_Map
+from pipe_control.opendx.base_map import Base_Map
 
 
 class Iso3D(Base_Map):
