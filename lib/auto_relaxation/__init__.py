@@ -23,5 +23,5 @@
 """The relax-lib NMR package - a library of functions for auto-relaxation rates."""
 
 __all__ = [
-    ''
+    'ri'
 ]

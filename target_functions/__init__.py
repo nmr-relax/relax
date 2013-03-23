@@ -36,6 +36,5 @@ __all__ = [
     'potential',
     'ri_comps',
     'ri_prime',
-    'ri',
     'weights'
 ]
