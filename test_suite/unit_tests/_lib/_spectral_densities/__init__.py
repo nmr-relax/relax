@@ -19,11 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib NMR package - a library of functions for alignment-based NMR data."""
 
 __all__ = [
-    'alignment_tensor',
-    'pcs',
-    'rdc'
+    'test___init__'
 ]

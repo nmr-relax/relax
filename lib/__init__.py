@@ -25,11 +25,13 @@
 __all__ = [
     'alignment',
     'ansi',
+    'auto_relaxation',
     'errors',
     'float',
     'geometry',
     'io',
     'physical_constants',
+    'spectral_densities',
     'structure',
     'text',
     'warnings'

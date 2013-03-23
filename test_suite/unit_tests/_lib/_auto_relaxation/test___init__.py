@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,11 +19,21 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib NMR package - a library of functions for alignment-based NMR data."""
+# Python module imports.
+from os import sep
+import sys
 
-__all__ = [
-    'alignment_tensor',
-    'pcs',
-    'rdc'
-]
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+import lib.geometry
+
+
+class Test___init__(PackageTestCase):
+    """Unit tests for the lib.auto_relaxation package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = lib.auto_relaxation
+        self.package_name = 'lib.auto_relaxation'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'auto_relaxation'
