@@ -27,6 +27,7 @@ __all__ = [
     'ansi',
     'arg_check',
     'auto_relaxation',
+    'check_types',
     'errors',
     'float',
     'frame_order',

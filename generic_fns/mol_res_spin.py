@@ -40,9 +40,9 @@ from textwrap import fill
 from warnings import warn
 
 # relax module imports.
-from check_types import is_unicode
 from data_store.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import exp_info, pipes, relax_re
+from lib.check_types import is_unicode
 from lib.errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from lib.warnings import RelaxWarning
 from status import Status; status = Status()

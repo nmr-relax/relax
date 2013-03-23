@@ -32,13 +32,13 @@ from string import digits, ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from check_types import is_float
 from data_store.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure import pdb_read, pdb_write
 from generic_fns.structure.api_base import Base_struct_API, ModelList, Displacements
+from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
 from lib.warnings import RelaxWarning

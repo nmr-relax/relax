@@ -27,7 +27,7 @@ from copy import deepcopy
 from textwrap import wrap
 
 # relax module imports.
-from check_types import is_float
+from lib.check_types import is_float
 from lib.errors import RelaxError
 
 

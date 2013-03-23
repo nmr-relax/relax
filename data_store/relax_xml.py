@@ -32,7 +32,7 @@ set_printoptions(precision=15, threshold=nan)
 
 # relax module imports.
 import lib.arg_check
-import check_types
+import lib.check_types
 from lib.float import floatAsByteArray, packBytesAsPyFloat
 from lib.errors import RelaxError
 
@@ -129,19 +129,19 @@ def object_to_xml(doc, elem, value=None):
     elem.setAttribute('type', py_type)
 
     # Store floats as IEEE-754 byte arrays (for full precision storage).
-    if check_types.is_float(value):
+    if lib.check_types.is_float(value):
         val_elem = doc.createElement('ieee_754_byte_array')
         elem.appendChild(val_elem)
         val_elem.appendChild(doc.createTextNode(repr(floatAsByteArray(value))))
 
     # Store lists with floats as IEEE-754 byte arrays.
-    elif (isinstance(value, list) or isinstance(value, ndarray)) and len(value) and check_types.is_float(value[0]):
+    elif (isinstance(value, list) or isinstance(value, ndarray)) and len(value) and lib.check_types.is_float(value[0]):
         # The converted list.
         ieee_obj = []
         conv = False
         for i in range(len(value)):
             # A float.
-            if check_types.is_float(value[i]):
+            if lib.check_types.is_float(value[i]):
                 ieee_obj.append(floatAsByteArray(value[i]))
                 conv = True
 
@@ -164,7 +164,7 @@ def object_to_xml(doc, elem, value=None):
         ieee_obj = {}
         conv = False
         for key in list(value.keys()):
-            if check_types.is_float(value[key]):
+            if lib.check_types.is_float(value[key]):
                 ieee_obj[key] = floatAsByteArray(value[key])
                 conv = True
 

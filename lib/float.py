@@ -94,7 +94,7 @@ from struct import pack, unpack
 import sys
 
 # relax module imports.
-from check_types import is_float
+from lib.check_types import is_float
 
 
 SIGNBIT = 0x80

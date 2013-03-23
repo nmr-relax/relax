@@ -40,9 +40,9 @@ from sys import stdin, stdout, stderr
 from warnings import warn
 
 # relax module imports.
-from check_types import is_filetype, is_float
 from compat import bz2_open, gz_open
 import generic_fns
+from lib.check_types import is_filetype, is_float
 from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from lib.warnings import RelaxWarning, RelaxFileEmptyWarning
 

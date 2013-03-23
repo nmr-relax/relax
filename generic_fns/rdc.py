@@ -31,7 +31,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from check_types import is_float
+from lib.check_types import is_float
 from lib.float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
