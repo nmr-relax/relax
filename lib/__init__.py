@@ -23,7 +23,6 @@
 """The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
 
 __all__ = [
-    'algebra',
     'alignment',
     'ansi',
     'arg_check',
@@ -37,7 +36,9 @@ __all__ = [
     'frame_order',
     'geometry',
     'io',
+    'linear_algebra',
     'model_selection',
+    'opendx',
     'order',
     'physical_constants',
     'regex',
