@@ -22,7 +22,10 @@
 
 __all__ = [
     '_alignment'
+    '_auto_relaxation'
+    '_frame_order'
     '_geometry'
+    '_spectral_densities'
     '_text'
     'test_float',
     'test_io'
