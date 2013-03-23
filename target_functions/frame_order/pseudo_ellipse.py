@@ -32,8 +32,8 @@ if dep_check.scipy_module:
     from scipy.integrate import quad, tplquad
 
 # relax module imports.
+from lib.geometry.pec import pec
 from target_functions.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
-from target_functions.frame_order.pec import pec
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):

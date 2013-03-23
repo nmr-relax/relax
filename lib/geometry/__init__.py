@@ -25,6 +25,7 @@
 __all__ = [
     'coord_transform',
     'lines',
+    'pec',
     'rotations',
     'vectors'
 ]

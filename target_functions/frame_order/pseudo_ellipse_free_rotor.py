@@ -31,8 +31,8 @@ if dep_check.scipy_module:
     from scipy.integrate import quad
 
 # relax module imports.
+from lib.geometry.pec import pec
 from target_functions.frame_order.matrix_ops import rotate_daeg
-from target_functions.frame_order.pec import pec
 from target_functions.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
 
 
