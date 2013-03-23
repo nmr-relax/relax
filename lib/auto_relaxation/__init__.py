@@ -24,5 +24,6 @@
 
 __all__ = [
     'ri',
+    'ri_comps',
     'ri_prime'
 ]

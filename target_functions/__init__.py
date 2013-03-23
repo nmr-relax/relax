@@ -34,6 +34,5 @@ __all__ = [
     'n_state_model',
     'paramag_centre',
     'potential',
-    'ri_comps',
     'weights'
 ]

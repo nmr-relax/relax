@@ -24,7 +24,7 @@ from math import pi
 from numpy import float64, zeros
 
 # relax module imports.
-from target_functions.ri_comps import calc_fixed_csa, calc_fixed_dip, comp_csa_const_func, comp_dip_const_func
+from lib.auto_relaxation.ri_comps import calc_fixed_csa, calc_fixed_dip, comp_csa_const_func, comp_dip_const_func
 
 
 class Mapping:
