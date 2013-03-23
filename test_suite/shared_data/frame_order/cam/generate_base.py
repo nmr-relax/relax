@@ -31,7 +31,7 @@ import sys
 
 # relax module imports.
 from pipe_control.angles import wrap_angles
-from pipe_control.frame_order import print_frame_order_2nd_degree
+from lib.frame_order.format import print_frame_order_2nd_degree
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.interatomic import interatomic_loop
 from lib.geometry.coord_transform import cartesian_to_spherical

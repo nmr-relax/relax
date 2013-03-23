@@ -5,7 +5,7 @@ from numpy import array, float64, kron, zeros
 
 # relax module imports.
 from lib.algebra.kronecker_product import kron_prod
-from pipe_control.frame_order import print_frame_order_2nd_degree
+from lib.frame_order.format import print_frame_order_2nd_degree
 
 
 # Load the matrices.

@@ -30,7 +30,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from lib.float import isNaN
-from pipe_control.frame_order import print_frame_order_2nd_degree
+from lib.frame_order.format import print_frame_order_2nd_degree
 from extern.sobol.sobol_lib import i4_sobol
 from lib.alignment.alignment_tensor import to_5D, to_tensor
 from target_functions.chi2 import chi2
