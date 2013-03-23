@@ -25,15 +25,15 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import lib.geometry
+import lib.linear_algebra
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the lib.algebra package."""
+    """Unit tests for the lib.linear_algebra package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = lib.algebra
-        self.package_name = 'lib.algebra'
-        self.package_path = sys.path[0] + sep + 'lib' + sep + 'algebra'
+        self.package = lib.linear_algebra
+        self.package_name = 'lib.linear_algebra'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'lib.linear_algebra'

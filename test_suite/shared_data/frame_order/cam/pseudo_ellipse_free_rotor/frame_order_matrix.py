@@ -1,7 +1,7 @@
 from numpy import array, float64, zeros
 
 from lib.frame_order.format import print_frame_order_2nd_degree
-from lib.algebra.kronecker_product import kron_prod
+from lib.linear_algebra.kronecker_product import kron_prod
 
 
 # Store the rotation matrices.

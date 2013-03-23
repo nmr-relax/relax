@@ -28,7 +28,7 @@ from unittest import TestCase
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.frame_order import *
-from lib.algebra.kronecker_product import transpose_23
+from lib.linear_algebra.kronecker_product import transpose_23
 from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 

@@ -25,6 +25,7 @@ __all__ = [
     '_auto_relaxation'
     '_frame_order'
     '_geometry'
+    '_linear_algebra'
     '_spectral_densities'
     '_text'
     'test_float',

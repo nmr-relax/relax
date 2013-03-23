@@ -25,7 +25,7 @@ from sys import stdout
 from unittest import TestCase
 
 # relax module imports.
-from lib.algebra.kronecker_product import *
+from lib.linear_algebra.kronecker_product import *
 
 
 class Test_kronecker_product(TestCase):

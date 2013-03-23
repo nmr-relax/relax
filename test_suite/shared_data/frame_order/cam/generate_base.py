@@ -35,7 +35,7 @@ from lib.frame_order.format import print_frame_order_2nd_degree
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.interatomic import interatomic_loop
 from lib.geometry.coord_transform import cartesian_to_spherical
-from lib.algebra.kronecker_product import kron_prod
+from lib.linear_algebra.kronecker_product import kron_prod
 from lib.geometry.rotations import axis_angle_to_R, R_to_euler_zyz
 from prompt.interpreter import Interpreter
 from lib.io import open_write_file

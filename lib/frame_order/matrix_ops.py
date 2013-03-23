@@ -28,7 +28,7 @@ from numpy import dot, inner, transpose
 from numpy.linalg import norm
 
 # relax module imports.
-from lib.algebra.kronecker_product import transpose_23
+from lib.linear_algebra.kronecker_product import transpose_23
 from lib.geometry.rotations import tilt_torsion_to_R
 
 

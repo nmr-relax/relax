@@ -44,7 +44,7 @@ from lib.frame_order.iso_cone_torsionless import compile_2nd_matrix_iso_cone_tor
 from lib.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_qrint
 from lib.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
 from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
-from lib.algebra.kronecker_product import kron_prod
+from lib.linear_algebra.kronecker_product import kron_prod
 from lib.alignment.pcs import pcs_tensor
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.alignment.rdc import rdc_tensor
