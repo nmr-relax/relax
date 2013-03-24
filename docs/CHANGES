@@ -1,3 +1,69 @@
+Version 2.2.5
+(24 March 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/2.2.5
+
+    Features:
+        * The files created by the value.write user function now include a header describing the parameter.
+        * The relax internal structural object now supports the merger of molecules.  This can be useful if different domains of one system are in two PDB files or are split in the one file.
+        * The structure.delete user function can now be used to delete parts of molecules down to the level of individual atoms.
+        * Helix and sheet information from PDB files are now stored in the internal structural object as metadata.  The structure.read_pdb and structure.write_pdb user functions will preserve this information.
+        * The numbers output by the value.display and value.write user functions can now be scaled.
+        * The model-free auto-analysis now generates field strength dependent Rex files for each field present.
+
+
+    Changes:
+        * Added a comment to the output from value.display and value.write to describe the parameter.  This idea is discussed at http://thread.gmane.org/gmane.science.nmr.relax.user/1428.  The idea is to take the parameter description from the specific analysis API and add it to the top of the file or output.  This is to help understand what the Rex value are.  For example for the Rex parameter the first line would be: "# Parameter description:  Chemical exchange relaxation (sigma_ex = Rex / omega**2)."
+        * Created the Structure.test_read_merge system test to test a new concept - merging of structures.  The idea is to add the merge argument to the structure.read_pdb user function to allow two different structures in two PDB files to be merged.  This is useful if structures of individual domains have have been solved separately and are located in two PDB files.  Then with the merge flag, you will not need to use and external program or hand edit PDB files to join them.
+        * Added the merge flag to the structure.read_pdb user function.  This currently does nothing.
+        * The merge flag for the structure.read_pdb user function is now propagated to the pack_structs() method.  This structure API method calls the ModelList.merge_item() method which is yet to be implemented.
+        * The MolList.add_item() structural API method now returns the added molecule container.  This is used by the pack_structs() method to alias the molecule, and will be required when structure merging is implemented.
+        * Whitespace fixes - replaced many instances of the tab character '\t' with 4 spaces.
+        * Implemented the merging of structural objects.  This allows the merge flag of the structure.read_pdb user function to work.
+        * The printouts from the structure.read_pdb user function are now different with the merge flag set.  The text now says that the molecules are being merged rather than added.
+        * Sections of molecules can now be deleted using the structure.delete user function.  The atom ID argument has been added and this is now propagated into the internal structural object.  This ID string can be used to delete subsets of the 3D structural data in the relax data store.
+        * Created the Structure.test_read_write_pdb_1UBQ system test.  This is for checking the use of the structure.delete user function with the atom ID argument.
+        * The Structure.test_read_write_pdb_1UBQ system test now checks for HELIX and SHEET records.  This is not implemented yet, but the idea is that the structure.read_pdb and structure.write_pdb should preserve the helix and sheet information present in the original PDB and that the internal structural object should store this information.
+        * Created the internal structural object _pdb_chain_id_to_mol_index() method.  This will be used to convert PDB chain IDs, which are used to indicate different molecules in the PDB, into molecule indices for the internal structural object.
+        * HELIX PDB records are now read, stored, and written out by the internal structural object.  This affects the structure.read_pdb and structure.write_pdb user functions.  The helix is stored as a metadata type object - its elements do not correspond to the atoms in the structural object.
+        * SHEET PDB records are now read, stored, and written out by the internal structural object.  This affects the structure.read_pdb and structure.write_pdb user functions.  The sheet is stored as a metadata type object - its elements do not correspond to the atoms in the structural object.
+        * Created 13 unit tests of the Internal._trim_helix() internal structural object method.
+        * Added the index_flag argument to all structural API atom_loop() methods.
+        * Implemented the internal structural object _trim_helix() method.  This is used when the structure.delete user function is called to trim and remove the helix metadata.  For this to work, the additional method _residue_data() was written to create a dictionary with residue numbers as keys and the residue names as numbers.  This dictionary is used by _trim_helix() to change the residue names in the helix metadata.
+        * Created 13 unit tests of the Internal._trim_sheet() internal structural object method.  These are mirror the 13 unit tests of Internal._trim_helix().
+        * Implemented the Internal._trim_sheet() internal structural object method.  This is also now used by the structure.delete user function to remove sheet metadata for residues which no longer exist.
+        * Modified the ScientificPython structural object atom_loop() method to match the internal object.  If only one element is returned from the atom_loop(), then this is returned as a single item rather than a tuple of length 1.
+        * Lots of fixes for the change to the structural API atom_loop() method.  This method when returning a single item now returns a single item rather than a tuple of length 1.
+        * The index_flag argument to the ScientificPython structural object atom_loop() method is now used.
+        * Created the Structure.test_metadata_xml system test.  This is used to check that the structural metadata (currently helices and sheets) are stored in the relax XML save files and then can be read back into relax again.
+        * The helix and sheet metadata is now stored in and read from relax XML state files.
+        * Added the scaling argument to the value.display and value.write user functions.  The idea comes from a suggestion by Angelo Figueiredo <am dott figueiredo att fct dott unl dott pt> and was discussed at http://thread.gmane.org/gmane.science.nmr.relax.user/1428/focus=1430.  This allows the user to scale parameters to any value, for example scaling the Rex value to the field strength dependent value.
+        * The model-free auto-analysis (the dauvergne_protocol) now generates field strength dependent Rex files.  The idea comes from a suggestion by Angelo Figueiredo <am dott figueiredo att fct dott unl dott pt> and was discussed at http://thread.gmane.org/gmane.science.nmr.relax.user/1428/focus=1430.  One file per field strength is generated and named 'rex_600' for 600 MHz, for example.  The new scaling argument of the value.write user function is being used to scale the tiny field strength independent value used internally in relax to the Rex value in rad.s^-1 that you would see in an R2 data set.
+        * Added the new 'comment' argument to the value.write user function.  This is used to add user comments to the top of the file.
+        * The model-free auto-analysis (the dauvergne_protocol module) now adds comments to the Rex files.  This is through the new comment argument of the value.write user function.  These comments explain that the Rex values are scaled to the stated field strength.
+        * Modified the Mf.test_dauvergne_protocol system test to check for all the files and directories created.
+        * Created the new lib.text.sectioning module for formatting titles, subtitles and other sectioning text.  The two functions title() and subtitle() have been implemented.
+        * Created unit tests for the title() and subtitle() functions of the lib.text.sectioning module.
+        * Expansion of the lib.text.sectioning module.  The following new functions have been added:  box(), section(), subsection(), subsubsection(),subtitle(), subsubtitle(), underline().
+        * Expanded the unit testing of the lib.text.sectioning module to cover all title and section functions.
+        * Added prespace and postspace arguments to the *section() and *title() functions of lib.text.sectioning.  Through these arguments, the amount of spacing above and below the section text can be controlled.
+        * Split the generic_fns.structure.geometric.create_rotor_pdb() function.  The non-relax specific code has been shifted into the rotor_pdb() function.
+        * Initialised the lib.structure package - this is currently empty.
+        * Shifted the rotor creation components from generic_fns.structure.geometric to lib.structure.rotor.  The create_rotor_pdb() function remains in place as this is the user function backend which checks for data pipes and updates the status object, but the rotor_pdb() and create_rotor_propellers() functions have been moved into the relax library.  The create_rotor_propellers() function has been renamed to lib.structure.rotor.rotor_propellers().
+        * Converted links in all docstrings to use the Epydoc hyperlink notation.  This will allow links to be clickable for the API documentation (http://www.nmr-relax.com/api/).
+        * Added Epydoc hyperlink markup for the bug tracker in the system test docstring where missing.  This is for a better API documentation (http://www.nmr-relax.com/api/).
+        * The lib.structure.rotor.rotor_pdb() rotor_angle argument should now be in radians.  This does not affect the structure.create_rotor_pdb() user function as the generic_fns.structure.geometric.create_rotor_pdb() function converts the value to radians prior to calling the rotor_pdb() function.
+        * The lib.structure.rotor.rotor_pdb() function can now handle structural models.  The model number argument has been added to allow the rotor structure to be added to a single model, or to all models if not supplied.
+
+
+    Bugfixes:
+        * Fix for a copy and paste error in the Structure.test_read_merge system test.
+        * Fixes for all the Ap4Aase truncated PDB files.  The atom numbers are now sequential, as defined by the PDB standard.
+        * Bug fix for the structural data consistency test in the pack_structs() structural API method.  The index was not correct causing failures in certain rare cases.
+        * Python 3 fix for an import into the generic_fns.structure.internal module.
+        * Python 3 fixes for the relax version information for code checked out from the relax repository.  The subversion version.revision() and version.url() functions now handle the Python 3 issue of Popen working with byte arrays instead of normal strings.
+
+
+
 Version 2.2.4
 (17 March 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.2.4
