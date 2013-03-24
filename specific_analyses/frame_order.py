@@ -40,7 +40,7 @@ from pipe_control.angles import wrap_angles
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure import geometric
-from pipe_control.structure.mass import centre_of_mass
+from pipe_control.structure.mass import pipe_centre_of_mass
 from lib.structure.cones import Iso_cone, Pseudo_elliptic
 from lib.structure.internal.object import Internal
 from lib.structure.represent.rotor import rotor_pdb
@@ -972,7 +972,7 @@ class Frame_order(API_base, API_common):
         else:
             euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         if cdp.ave_pos_pivot == 'com':
-            origin = centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
+            origin = pipe_centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
         else:
             origin = cdp.pivot
         structure.rotate(R=R, origin=origin, atom_id=self._domain_moving())
@@ -1059,7 +1059,7 @@ class Frame_order(API_base, API_common):
                 axis = axes[:,2]
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
-            com = centre_of_mass(verbosity=0)
+            com = pipe_centre_of_mass(verbosity=0)
 
             # Add the rotor object to the structure as a new molecule.
             rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=cdp.pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
@@ -1524,7 +1524,7 @@ class Frame_order(API_base, API_common):
 
         # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
         if cdp.ave_pos_pivot == 'com':
-            com = centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
+            com = pipe_centre_of_mass(atom_id=self._domain_moving(), verbosity=0)
             ave_pos_piv_sync = False
 
         # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
