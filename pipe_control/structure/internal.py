@@ -28,13 +28,13 @@ from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
-from string import digits, ascii_uppercase
+from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from data_store.relax_xml import fill_object_contents, xml_to_object
+from data_store.relax_xml import object_to_xml, xml_to_object
 from pipe_control.mol_res_spin import Selection
-from pipe_control.structure.api_base import Base_struct_API, Displacements
+from pipe_control.structure.api_base import Displacements
 from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
@@ -46,13 +46,18 @@ from lib.warnings import RelaxWarning
 
 
 
-class Internal(Base_struct_API):
+class Internal:
     """The internal relax structural data object.
 
-    The structural data object for this class is a container possessing a number of different arrays
-    corresponding to different structural information.  These objects are described in the
-    structural container docstring.
+    The structural data object for this class is a container possessing a number of different arrays corresponding to different structural information.  These objects are described in the structural container docstring.
     """
+
+    def __init__(self):
+        """Initialise the structural object."""
+
+        # Initialise the empty model list.
+        self.structural_data = ModelList()
+
 
     def _bonded_atom(self, attached_atom, index, mol):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
@@ -1122,6 +1127,18 @@ class Internal(Base_struct_API):
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
+        This method should be designed as a U{generator<http://www.python.org/dev/peps/pep-0255/>}.  It should loop over all atoms of the system yielding the following atomic information, if the corresponding flag is True, in tuple form:
+
+            1.  Model number.
+            2.  Molecule name.
+            3.  Residue number.
+            4.  Residue name.
+            5.  Atom number.
+            6.  Atom name.
+            7.  The element name (its atomic symbol and optionally the isotope, e.g. 'N', 'Mg', '17O', '13C', etc).
+            8.  The position of the atom in Euclidean space.
+
+
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
         @type atom_id:              str
         @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.  If None, then all structures will be looped over.
@@ -1491,6 +1508,85 @@ class Internal(Base_struct_API):
                 self.sheets.pop(i)
 
 
+    def empty(self):
+        """Report if the structural data structure is empty or not.
+
+        @return:    True if empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # Check the ModelList structure.
+        if len(self.structural_data) == 0:
+            return True
+        else:
+            return False
+
+
+    def from_xml(self, str_node, dir=None, file_version=1):
+        """Recreate the structural object from the XML structural object node.
+
+        @param str_node:        The structural object XML node.
+        @type str_node:         xml.dom.minicompat.Element instance
+        @keyword dir:           The name of the directory containing the results file.
+        @type dir:              str
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
+        """
+
+        # Recreate all base objects (i.e. metadata).
+        xml_to_object(str_node, self, file_version=file_version, blacklist=['model', 'displacements'])
+
+        # Recreate the model / molecule data structure.
+        model_nodes = str_node.getElementsByTagName('model')
+        self.structural_data.from_xml(model_nodes, file_version=file_version)
+
+        # The displacement structure.
+        disp_nodes = str_node.getElementsByTagName('displacements')
+        if len(disp_nodes):
+            # Initialise the object.
+            self.displacements = Displacements()
+
+            # Recreate the molecule data structures for the current model.
+            self.displacements.from_xml(disp_nodes[0], file_version=file_version)
+
+
+    def get_model(self, model):
+        """Return or create the model.
+
+        @param model:   The model number.
+        @type model:    int or None
+        @return:        The ModelContainer corresponding to the model number or that newly created.
+        @rtype:         ModelContainer instance
+        """
+
+        # Check if the target is a single model.
+        if model == None and self.num_models() > 1:
+            raise RelaxError("The target model cannot be determined as there are %s models already present." % self.num_modes())
+
+        # No model specified.
+        if model == None:
+            # Create the first model, if necessary.
+            if self.num_models():
+                self.structural_data.add_item()
+
+            # Alias the first model.
+            model_cont = self.structural_data[0]
+
+        # The model has been specified.
+        else:
+            # Get the preexisting model.
+            found = False
+            for model_cont in self.structural_data:
+                if model_cont.num == model:
+                    found = True
+                    break
+
+            # Add the model if it doesn't exist.
+            if not found:
+                self.structural_data.add_item(model)
+                model_cont = self.structural_data[-1]
+
+
     def get_molecule(self, molecule, model=None):
         """Return the molecule.
 
@@ -1767,6 +1863,177 @@ class Internal(Base_struct_API):
         return True
 
 
+    def model_loop(self, model=None):
+        """Generator method for looping over the models in numerical order.
+
+        @keyword model: Limit the loop to a single number.
+        @type model:    int
+        @return:        The model structural object.
+        @rtype:         ModelContainer container
+        """
+
+        # A single model.
+        if model:
+            for i in range(len(self.structural_data)):
+                if self.structural_data[i].num == model:
+                    yield self.structural_data[i]
+
+        # All models.
+        else:
+            # The models.
+            model_nums = []
+            for i in range(len(self.structural_data)):
+                if self.structural_data[i].num != None:
+                    model_nums.append(self.structural_data[i].num)
+
+            # Sort.
+            if model_nums:
+                model_nums.sort()
+
+            # Loop over the models in order.
+            for model_num in model_nums:
+                # Find the model.
+                for i in range(len(self.structural_data)):
+                    # Yield the model.
+                    if self.structural_data[i].num == model_num:
+                        yield self.structural_data[i]
+
+            # No models, so just yield the single container.
+            if not model_nums:
+                yield self.structural_data[0]
+
+
+    def num_models(self):
+        """Method for returning the number of models.
+
+        @return:    The number of models in the structural object.
+        @rtype:     int
+        """
+
+        return len(self.structural_data)
+
+
+    def num_molecules(self):
+        """Method for returning the number of molecules.
+
+        @return:    The number of molecules in the structural object.
+        @rtype:     int
+        """
+
+        # No data.
+        if self.empty():
+            return 0
+
+        # Validate the structural object.
+        self.validate()
+
+        # Return the number.
+        return len(self.structural_data[0].mol)
+
+
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, merge=False):
+        """From the given structural data, expand the structural data data structure.
+
+        @param data_matrix:         A matrix of structural objects.
+        @type data_matrix:          list of lists of structural objects
+        @keyword orig_model_num:    The original model numbers (for storage).
+        @type orig_model_num:       list of int
+        @keyword set_model_num:     The new model numbers (for model renumbering).
+        @type set_model_num:        list of int
+        @keyword orig_mol_num:      The original molecule numbers (for storage).
+        @type orig_mol_num:         list of int
+        @keyword set_mol_name:      The new molecule names.
+        @type set_mol_name:         list of str
+        @keyword file_name:         The name of the file from which the molecular data has been extracted.
+        @type file_name:            None or str
+        @keyword file_path:         The full path to the file specified by 'file_name'.
+        @type file_path:            None or str
+        @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
+        @type file_path_abs:        None or str
+        @keyword merge:             A flag which if set to True will try to merge the structure into the currently loaded structures.
+        @type merge:                bool
+        """
+
+        # Test the number of models.
+        if len(orig_model_num) != len(data_matrix):
+            raise RelaxError("Structural data mismatch, %s original models verses %s in the structural data." % (len(orig_model_num), len(data_matrix)))
+
+        # Test the number of molecules.
+        if len(orig_mol_num) != len(data_matrix[0]):
+            raise RelaxError("Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0])))
+
+        # Model numbers do not change.
+        if not set_model_num:
+            set_model_num = orig_model_num
+
+        # Test the model mapping.
+        if len(set_model_num) != len(data_matrix):
+            raise RelaxError("Failure of the mapping of new model numbers, %s new model numbers verses %s models in the structural data." % (len(set_model_num), len(data_matrix)))
+
+        # Test the molecule mapping.
+        if len(set_mol_name) != len(data_matrix[0]):
+            raise RelaxError("Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_name), len(data_matrix[0])))
+
+        # Test that the target models and structures are absent, and get the already existing model numbers.
+        current_models = []
+        for i in range(len(self.structural_data)):
+            # Create a list of current models.
+            current_models.append(self.structural_data[i].num)
+
+            # Loop over the structures.
+            for j in range(len(self.structural_data[i].mol)):
+                if not merge and self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
+                    raise RelaxError("The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num))
+
+        # Loop over the models.
+        for i in range(len(set_model_num)):
+            # The model doesn't currently exist.
+            if set_model_num[i] not in current_models:
+                # Create the model.
+                self.structural_data.add_item(set_model_num[i])
+
+                # Add the model number to the current_models list.
+                current_models.append(set_model_num[i])
+
+                # Get the model.
+                model = self.structural_data[-1]
+
+            # Otherwise get the pre-existing model.
+            else:
+                model = self.structural_data[current_models.index(set_model_num[i])]
+
+            # Loop over the molecules.
+            for j in range(len(set_mol_name)):
+                # Print out.
+                if merge:
+                    print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
+                else:
+                    print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
+
+                # The index of the new molecule to add or merge.
+                index = len(model.mol)
+                if merge:
+                    index -= 1
+
+                # Consistency check.
+                if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
+                    raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
+
+                # Pack the structures.
+                if merge:
+                    mol = model.mol.merge_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+                else:
+                    mol = model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+
+                # Set the molecule name and store the structure file info.
+                mol.mol_name = set_mol_name[j]
+                mol.file_name = file_name
+                mol.file_path = file_path
+                mol.file_path_abs = file_path_abs
+                mol.file_mol_num = orig_mol_num[j]
+                mol.file_model = orig_model_num[i]
+
+
     def rotate(self, R=None, origin=None, model=None, atom_id=None):
         """Rotate the structural information about the given origin.
 
@@ -1812,6 +2079,31 @@ class Internal(Base_struct_API):
                     mol.z[i] = pos[2]
 
 
+    def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):
+        """Add the new molecule name to the target data structure.
+
+        @keyword set:       The list of new molecule names.  If not supplied, the names will be
+                            generated from the file name.
+        @type set:          None or list of str
+        @keyword target:    The target molecule name data structure to which the new name will be
+                            appended.
+        @type target:       list
+        @keyword index:     The molecule index, matching the set argument.
+        @type index:        int
+        @keyword mol_num:   The molecule number.
+        @type mol_num:      int
+        @keyword file:      The name of the file, excluding all directories.
+        @type file:         str
+        """
+
+        # Set the target molecule name.
+        if set:
+            target.append(set[index])
+        else:
+            # Set the name to the file name plus the structure number.
+            target.append(file_root(file) + '_mol' + repr(mol_num))
+
+
     def translate(self, T=None, model=None, atom_id=None):
         """Displace the structural information by the given translation vector.
 
@@ -1846,6 +2138,56 @@ class Internal(Base_struct_API):
                     mol.x[i] = mol.x[i] + T[0]
                     mol.y[i] = mol.y[i] + T[1]
                     mol.z[i] = mol.z[i] + T[2]
+
+
+    def to_xml(self, doc, element):
+        """Prototype method for converting the structural object to an XML representation.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the alignment tensors XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the structural element and add it to the higher level element.
+        str_element = doc.createElement('structure')
+        element.appendChild(str_element)
+
+        # Set the structural attributes.
+        str_element.setAttribute('desc', 'Structural information')
+
+        # No contents to store, so pack up the structural containers.
+        if not self.structural_data.is_empty():
+            self.structural_data.to_xml(doc, str_element)
+
+        # The structural metadata.
+        metadata = ['helices', 'sheets']
+        for name in metadata:
+            # The metadata does not exist.
+            if not hasattr(self, name):
+                continue
+
+            # Get the object.
+            obj = getattr(self, name)
+
+            # Create a new element for this object, and add it to the main element.
+            sub_elem = doc.createElement(name)
+            str_element.appendChild(sub_elem)
+
+            # Add the value to the sub element.
+            object_to_xml(doc, sub_elem, value=obj)
+
+        # The displacement structure.
+        if hasattr(self, 'displacements'):
+            # Create an XML element.
+            disp_element = doc.createElement('displacements')
+            str_element.appendChild(disp_element)
+
+            # Set the attributes.
+            disp_element.setAttribute('desc', 'The rotational and translational displacements between models')
+
+            # Add the displacement data.
+            self.displacements.to_xml(doc, disp_element)
 
 
     def validate_models(self):
@@ -1892,10 +2234,7 @@ class Internal(Base_struct_API):
     def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.
 
-        A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
-        are created.  To create the non-standard residue records HET, HETNAM, and FORMUL, the data
-        structure 'het_data' is created.  It is an array of arrays where the first dimension
-        corresponds to a different residue and the second dimension has the elements:
+        A number of PDB records including HET, HETNAM, FORMUL, HELIX, SHEET, HETATM, TER, CONECT, MASTER, and END are created.  To create the non-standard residue records HET, HETNAM, and FORMUL, the data structure 'het_data' is created.  It is an array of arrays where the first dimension corresponds to a different residue and the second dimension has the elements:
 
             0.  Residue number.
             1.  Residue name.
@@ -1907,8 +2246,7 @@ class Internal(Base_struct_API):
 
         @param file:            The PDB file object.  This object must be writable.
         @type file:             file object
-        @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
-                                models will be placed into the file.
+        @keyword model_num:     The model to place into the PDB file.  If not supplied, then all models will be placed into the file.
         @type model_num:        None or int
         """
 
@@ -2271,3 +2609,27 @@ class Internal(Base_struct_API):
 
         print("END")
         pdb_write.end(file)
+
+
+    def validate(self):
+        """Check the integrity of the structural data.
+
+        The number of molecules must be the same in all models.
+        """
+
+        # Reference number of molecules.
+        num_mols = len(self.structural_data[0].mol)
+
+        # Loop over all other models.
+        for i in range(1, len(self.structural_data)):
+            # Model alias.
+            model_i = self.structural_data[i]
+
+            # Size check.
+            if num_mols != len(model_i.mol):
+                raise RelaxError("The structural object is not valid - the number of molecules is not the same for all models.")
+
+            # Molecule name check.
+            for j in range(len(model_i.mol)):
+                if model_i.mol[j].mol_name != self.structural_data[0].mol[j].mol_name:
+                    raise RelaxError("The molecule name '%s' of model %s does not match the corresponding molecule '%s' of model %s." % (model_i.mol[j].mol_name, model_i.num, self.structural_data[0].mol[j].mol_name, self.structural_data[0].num))
