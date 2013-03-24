@@ -23,6 +23,7 @@
 """The relax-lib structure package - a library of functions handling structural information."""
 
 __all__ = [
+    'cones',
     'mass',
     'pdb_read',
     'pdb_write',
