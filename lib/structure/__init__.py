@@ -27,7 +27,6 @@ __all__ = [
     'mass',
     'pdb_read',
     'pdb_write',
-    'rotor',
     'statistics',
     'superimpose'
 ]
