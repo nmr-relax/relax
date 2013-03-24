@@ -20,10 +20,12 @@ $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
 
 
-* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  Commit the changes and then port the revision back into the main line.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
+* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
 
 $ svn log -v -r18314:HEAD > log
 $ devel_scripts/log_converter.py log
+
+Commit the changes.  Port the revision back into the main line.
 
 
 
@@ -42,6 +44,8 @@ $ svn add docs/relax.pdf
 and commit all the changes.  Clean up the temporary files with:
 
 $ scons clean
+
+Copy the PDF manual to the mirror directory for the relax download site for uploading in one of the steps below.
 
 
 
@@ -88,7 +92,7 @@ $ scons binary_dist
 
 
 
-* Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  First make sure the mirror directory contains all of the files so that the next command does not accidentally delete files:
+* Move the distribution files and their signatures to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  First make sure the mirror directory contains all of the files so that the next command does not accidentally delete files:
 
 $ rsync -av --progress --no-perms --rsh="ssh" bugman@download.gna.org:/upload/relax/ .
 
