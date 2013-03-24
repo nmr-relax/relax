@@ -38,7 +38,7 @@ from pipe_control.structure.internal import Internal
 from target_functions.ens_pivot_finder import Pivot_finder
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from lib.io import get_file_path, open_write_file, write_data, write_spin_data
-from lib.structure.displacements import Displacements
+from lib.structure.internal.displacements import Displacements
 from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
 from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning

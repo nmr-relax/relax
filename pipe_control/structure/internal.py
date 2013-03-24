@@ -39,7 +39,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
 from lib.structure import pdb_read, pdb_write
-from lib.structure.displacements import Displacements
+from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
 from lib.warnings import RelaxWarning
