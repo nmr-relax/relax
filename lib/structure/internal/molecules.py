@@ -22,6 +22,9 @@
 # Module docstring.
 """The objects representing molecules in the internal structural object."""
 
+# Python module imports.
+from string import digits
+
 # relax module import.
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError
 from lib.structure import pdb_read
