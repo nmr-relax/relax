@@ -61,7 +61,7 @@ def parse_token(token, verbosity=False):
     id_list = []
     for token in tokens:
         # Split by the ',' character.
-        elements = split(',', token)
+        elements = token.split(',')
 
         # Loop over the elements.
         for element in elements:
@@ -207,7 +207,7 @@ def tokenise(selection):
             raise RelaxError("Only one '&' boolean operator is supported for the residue component of individual spin IDs.")
 
         # Split by '&'.
-        res_token = split('&', res_info)
+        res_token = res_info.split('&')
 
         # Check and remove the ':' character.
         for i in range(len(res_token)):
@@ -241,7 +241,7 @@ def tokenise(selection):
             raise RelaxError("Only one '&' boolean operator is supported for the spin component of individual spin IDs.")
 
         # Split by '&'.
-        spin_token = split('&', spin_info)
+        spin_token = spin_info.split('&')
 
         # Check and remove the ':' character.
         for i in range(len(spin_token)):
