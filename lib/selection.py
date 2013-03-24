@@ -440,6 +440,30 @@ class Selection(object):
         return select_spin and select_res and select_mol
 
 
+    def contains_spin_id(self, spin_id):
+        """Is the molecule, residue, and/or spin of the spin_id string located in the selection.
+
+        Only the simple selections allowed by the tokenise function are currently supported.
+
+
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        @return:        The answer of whether the molecule, residue, and/or spin corresponding to the spin_id string found within the selection object.
+        @rtype:         bool
+        """
+
+        # No ID string.
+        if spin_id == '':
+            warn(RelaxWarning("The spin ID string '' is empty."))
+            return False
+
+        # Parse the spin_id string.
+        mol_name, res_num, res_name, spin_num, spin_name = spin_id_to_data_list(spin_id)
+
+        # Check if the spin is in the selection object.
+        return self.contains_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol=mol_name)
+
+
     def has_molecules(self):
         """Determine if the selection object contains molecules.
 
