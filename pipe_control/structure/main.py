@@ -36,7 +36,6 @@ from pipe_control.mol_res_spin import create_spin, exists_mol_res_spin_data, gen
 from pipe_control import pipes
 from pipe_control.structure.api_base import Displacements
 from pipe_control.structure.internal import Internal
-from pipe_control.structure.scientific import Scientific_data
 from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
 from target_functions.ens_pivot_finder import Pivot_finder
@@ -90,10 +89,6 @@ def add_model(model_num=None):
     # Place the structural object into the relax data store if needed.
     if not hasattr(cdp, 'structure'):
         cdp.structure = Internal()
-
-    # The structural object can only be the internal object.
-    if cdp.structure.id != 'internal':
-        raise RelaxError("Models can only be added to the internal structural object.")
 
     # Check the structural object is empty.
     if cdp.structure.num_molecules() != 0:
@@ -451,23 +446,14 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
-def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc=None, verbosity=1, merge=False, fail=True):
+def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False, fail=True):
     """The PDB loading function.
-
-    Parsers
-    =======
-
-    A number of parsers are available for reading PDB files.  These include:
-
-        - 'scientific', the Scientific Python PDB parser.
-        - 'internal', a low quality yet fast PDB parser built into relax.
-
 
     @keyword file:          The name of the PDB file to read.
     @type file:             str
     @keyword dir:           The directory where the PDB file is located.  If set to None, then the file will be searched for in the current directory.
     @type dir:              str or None
-    @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
+    @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
     @type read_mol:         None, int, or list of int
     @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
     @type set_mol_name:     None, str, or list of str
@@ -475,8 +461,6 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     @type read_model:       None, int, or list of int
     @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the PDB model numbers will be preserved, if they exist.
     @type set_model_num:    None, int, or list of int
-    @keyword parser:        The parser to be used to read the PDB file.
-    @type parser:           str
     @keyword alt_loc:       The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
     @type alt_loc:          str or None
     @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
@@ -511,16 +495,9 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
-    # Check that the parser is the same as the currently loaded PDB files.
-    if hasattr(cdp, 'structure') and cdp.structure.id != parser:
-        raise RelaxError("The " + repr(parser) + " parser does not match the " + repr(cdp.structure.id) + " parser of the PDB loaded into the current pipe.")
-
-    # Place the parser specific structural object into the relax data store.
+    # Place the internal structural object into the relax data store.
     if not hasattr(cdp, 'structure'):
-        if parser == 'scientific':
-            cdp.structure = Scientific_data()
-        elif parser == 'internal':
-            cdp.structure = Internal()
+        cdp.structure = Internal()
 
     # Load the structures.
     cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, alt_loc=alt_loc, verbosity=verbosity, merge=merge)
@@ -921,10 +898,6 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
     # Validate the models.
     cdp.structure.validate_models()
 
-    # Check the structural object type.
-    if cdp.structure.id != 'internal':
-        raise RelaxError("The %s structure type is not supported." % cdp.structure.id)
-
     # Initialise the structural object.
     web = Internal()
 
@@ -1004,10 +977,6 @@ def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False)
     # Check if the structural object exists.
     if not hasattr(cdp, 'structure'):
         raise RelaxError("No structural data is present in the current data pipe.")
-
-    # Check if the structural object is writable.
-    if cdp.structure.id in ['scientific']:
-        raise RelaxError("The structures from the " + cdp.structure.id + " parser are not writable.")
 
     # The file path.
     file_path = get_file_path(file, dir)

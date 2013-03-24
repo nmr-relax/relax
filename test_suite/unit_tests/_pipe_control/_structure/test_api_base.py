@@ -29,23 +29,11 @@ from unittest import TestCase
 import dep_check
 from pipe_control.structure.api_base import Base_struct_API
 from pipe_control.structure.internal import Internal
-from pipe_control.structure.scientific import Scientific_data
 from status import Status; status = Status()
 
 
 class Test_api_base(TestCase):
     """Unit tests for the structural API base class."""
-
-    def __init__(self, methodName='runTest'):
-        """Skip scientific Python tests if not installed.
-
-        @keyword methodName:    The name of the test.
-        @type methodName:       str
-        """
-
-        # Execute the base class method.
-        super(Test_api_base, self).__init__(methodName)
-
 
     def format_method(self, name, args, varargs, varkw, defaults):
         """Method for formatting the method."""
@@ -137,65 +125,6 @@ class Test_api_base(TestCase):
 
             # Get the object in the derived class.
             obj = getattr(internal, name)
-
-            # Not present.
-            if name not in base_names:
-                self.fail('The object ' + repr(name) + ' ' + repr(type(obj)) + ' cannot be found in the structural API base class.')
-
-
-    def test_Scientific_method_args(self):
-        """The args of the public methods of the Scientific structural object must be the same as the API base class."""
-
-        # The base and Scientific objects.
-        base = Base_struct_API()
-        sci = Scientific_data()
-
-        # Loop over the objects in the Scientific object.
-        for name in dir(sci):
-            # Skip anything starting with '_'.
-            if search('^_', name):
-                continue
-
-            # Get the object in the two classes.
-            obj_base = getattr(base, name)
-            obj_sci = getattr(sci, name)
-
-            # Skip non-method objects.
-            if not isinstance(obj_base, types.MethodType):
-                continue
-
-            # Get the args and their default values.
-            args_base, varargs_base, varkw_base, defaults_base = getargspec(obj_base)
-            args_sci, varargs_sci, varkw_sci, defaults_sci = getargspec(obj_sci)
-
-            # Check the args.
-            if args_base != args_sci or varargs_base != varargs_sci or varkw_base != varkw_sci or defaults_base != defaults_sci:
-                # Get string representations of the methods.
-                doc_base = self.format_method(name, args_base, varargs_base, varkw_base, defaults_base)
-                doc_sci = self.format_method(name, args_sci, varargs_sci, varkw_sci, defaults_sci)
-
-                # Fail.
-                self.fail('The args of the method\n\t' + doc_sci + '\ndo not match those of the API method\n\t' + doc_base)
-
-
-    def test_Scientific_objects(self):
-        """Are the initial public objects of the Scientific structural object all within the API base class?"""
-
-        # The base and Scientific objects.
-        base = Base_struct_API()
-        sci = Scientific_data()
-
-        # The objects in the base class.
-        base_names = dir(base)
-
-        # Loop over the objects in the Scientific object.
-        for name in dir(sci):
-            # Skip anything starting with '_'.
-            if search('^_', name):
-                continue
-
-            # Get the object in the derived class.
-            obj = getattr(sci, name)
 
             # Not present.
             if name not in base_names:

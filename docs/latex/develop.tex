@@ -218,35 +218,35 @@ The following conventions are for general code cleanliness and readability:
 An example which shows most of these conventions is:
 \begin{footnotesize}
 \begin{verbatim*}
-class Scientific_data(Base_struct_API):
-    """The Scientific Python specific data object."""
+class Internal:
+    """The internal relax structural data object.
 
-    # Identification string.
-    id = 'scientific'
+    The structural data object for this class is a container possessing a number of different arrays
+    corresponding to different structural information.  These objects are described in the
+    structural container docstring.
+    """
 
-
-    def __find_bonded_atom(self, attached_atom, mol_type, res):
-        """Find the atom named attached_atom directly bonded to the desired atom.
+    def _bonded_atom(self, attached_atom, index, mol):
+        """Find the atom named attached_atom directly bonded to the atom located at the index.
 
         @param attached_atom:   The name of the attached atom to return.
         @type attached_atom:    str
-        @param mol_type:        The type of the molecule.  This can be one of 'protein', 'nucleic acid',
-                                or 'other'.
-        @type mol_type:         str
-        @param res:             The Scientific Python residue object.
-        @type res:              Scientific Python residue instance
+        @param index:           The index of the atom which the attached atom is attached to.
+        @type index:            int
+        @param mol:             The molecule container.
+        @type mol:              MolContainer instance
         @return:                A tuple of information about the bonded atom.
-        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
-                                name (str), and atomic position (Numeric array of len 3)
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element name (str), and atomic position (Numeric array of len 3)
         """
 
         # Init.
         bonded_found = False
 
-        # The attached atom is in the residue.
-        if attached_atom in res.atoms:
-            # The bonded atom object.
-            bonded = res[attached_atom]
+        # No bonded atoms, so determine the connectivities.
+        if not mol.bonded[index]:
+            # Determine the molecule type if needed.
+            if not hasattr(mol, 'type'):
+                self._mol_type(mol)
 \end{verbatim*}
 \end{footnotesize}
 

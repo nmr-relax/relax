@@ -237,22 +237,13 @@ class PipeContainer(Prototype):
         # Get the structural object nodes and, if they exist, fill the contents.
         str_nodes = pipe_node.getElementsByTagName('structure')
         if str_nodes:
-            # Get the object type.
-            parser = str(str_nodes[0].getAttribute('id'))
-
             # Create the structural object.
             fail = False
-            if parser == 'scientific':
-                self.structure = pipe_control.structure.scientific.Scientific_data()
-            elif parser == 'internal':
-                self.structure = pipe_control.structure.internal.Internal()
-            else:
-                warn(RelaxWarning("The structural file parser " + repr(parser) + " is unknown.  The structure will not be loaded."))
-                fail = True
+            self.structure = pipe_control.structure.internal.Internal()
 
             # Fill its contents.
             if not fail:
-                self.structure.from_xml(str_nodes[0], dir=dir, id=parser, file_version=file_version)
+                self.structure.from_xml(str_nodes[0], dir=dir, file_version=file_version)
 
 
     def is_empty(self):

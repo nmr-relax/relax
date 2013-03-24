@@ -49,10 +49,6 @@ class Base_struct_API:
     All API methods are prototyped here as stub methods.
     """
 
-    # Identification string.
-    id = 'API'
-
-
     def __init__(self):
         """Initialise the structural object."""
 
@@ -273,15 +269,13 @@ class Base_struct_API:
             return False
 
 
-    def from_xml(self, str_node, dir=None, id=None, file_version=1):
+    def from_xml(self, str_node, dir=None, file_version=1):
         """Recreate the structural object from the XML structural object node.
 
         @param str_node:        The structural object XML node.
         @type str_node:         xml.dom.minicompat.Element instance
         @keyword dir:           The name of the directory containing the results file.
         @type dir:              str
-        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
-        @type id:               str
         @keyword file_version:  The relax XML version of the XML file.
         @type file_version:     int
         """
@@ -291,7 +285,7 @@ class Base_struct_API:
 
         # Recreate the model / molecule data structure.
         model_nodes = str_node.getElementsByTagName('model')
-        self.structural_data.from_xml(model_nodes, id=id, file_version=file_version)
+        self.structural_data.from_xml(model_nodes, file_version=file_version)
 
         # The displacement structure.
         disp_nodes = str_node.getElementsByTagName('displacements')
@@ -363,7 +357,7 @@ class Base_struct_API:
 
         @param file_path:       The full path of the PDB file.
         @type file_path:        str
-        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
         @type read_mol:         None, int, or list of int
         @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
         @type set_mol_name:     None, str, or list of str
@@ -391,8 +385,7 @@ class Base_struct_API:
         @param file_path:       The full path of the XYZ file.
         @type file_path:        str
         @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
-                                molecules are determined differently by the different parsers, but
-                                are numbered consecutively from 1.  If set to None, then all
+                                molecules are numbered consecutively from 1.  If set to None, then all
                                 molecules will be loaded.
         @type read_mol:         None, int, or list of int
         @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
@@ -658,7 +651,6 @@ class Base_struct_API:
 
         # Set the structural attributes.
         str_element.setAttribute('desc', 'Structural information')
-        str_element.setAttribute('id', self.id)
 
         # No contents to store, so pack up the structural containers.
         if not self.structural_data.is_empty():
@@ -1035,15 +1027,13 @@ class Displacements:
         self._rotation_angle[model_from][model_to] = angle
 
 
-    def from_xml(self, str_node, dir=None, id=None, file_version=1):
+    def from_xml(self, str_node, dir=None, file_version=1):
         """Recreate the structural object from the XML structural object node.
 
         @param str_node:        The structural object XML node.
         @type str_node:         xml.dom.minicompat.Element instance
         @keyword dir:           The name of the directory containing the results file.
         @type dir:              str
-        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
-        @type id:               str
         @keyword file_version:  The relax XML version of the XML file.
         @type file_version:     int
         """

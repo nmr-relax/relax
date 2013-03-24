@@ -101,13 +101,11 @@ class ModelList(list):
         return False
 
 
-    def from_xml(self, model_nodes, id=None, file_version=1):
+    def from_xml(self, model_nodes, file_version=1):
         """Recreate a model list data structure from the XML model nodes.
 
         @param model_nodes:     The model XML nodes.
         @type model_nodes:      xml.dom.minicompat.NodeList instance
-        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
-        @type id:               str
         @keyword file_version:  The relax XML version of the XML file.
         @type file_version:     int
         """
@@ -128,7 +126,7 @@ class ModelList(list):
             mol_nodes = model_node.getElementsByTagName('mol_cont')
 
             # Recreate the molecule data structures for the current model.
-            self[-1].mol.from_xml(mol_nodes, id=id, file_version=file_version)
+            self[-1].mol.from_xml(mol_nodes, file_version=file_version)
 
 
     def to_xml(self, doc, element):

@@ -40,7 +40,7 @@ class Load_spins(SystemTestCase):
 
 
     def test_load_spins_from_small_molecule(self):
-        """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
+        """Test the loading of spins from a small molecule."""
 
         # Execute a relax script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')

@@ -25,6 +25,5 @@ __all__ = [
     'test__init__',
     'test_internal',
     'test_pdb_read',
-    'test_pdb_write',
-    'test_scientific'
+    'test_pdb_write'
 ]

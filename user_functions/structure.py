@@ -634,7 +634,7 @@ uf.add_keyarg(
     name = "read_mol",
     py_type = "int_or_int_list",
     desc_short = "molecule number to read",
-    desc = "If set, only the given molecule(s) will be read.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
+    desc = "If set, only the given molecule(s) will be read.  The molecules are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -659,17 +659,6 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "parser",
-    default = "internal",
-    py_type = "str",
-    desc_short = "PDB parser",
-    desc = "The PDB parser used to read the file.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["Fast internal PDB parser", "Scientific Python PDB parser"],
-    wiz_combo_data = ["internal", "scientific"],
-    wiz_read_only = True
-)
-uf.add_keyarg(
     name = "alt_loc",
     py_type = "str",
     desc_short = "alternate location indicator",
@@ -686,10 +675,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.")
-uf.desc[-1].add_paragraph("A few different PDB parsers can be used to read the structural data.  The choice of which to use depends on whether your PDB file is supported by that reader.  These are selected by setting the parser to one of:")
-uf.desc[-1].add_item_list_element("'internal'", "A fast PDB parser built into relax.")
-uf.desc[-1].add_item_list_element("'scientific'", "The Scientific Python PDB parser.")
-uf.desc[-1].add_paragraph("In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB readers in relax recognise this.  The molecule level is quite different between the Scientific Python and internal readers.  For how Scientific Python defines molecules, please see its documentation.  The internal reader is far simpler as it defines molecules using the TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.")
+uf.desc[-1].add_paragraph("In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB readers in relax recognise this.  The internal reader defines molecules using the TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.")
 uf.desc[-1].add_paragraph("Setting the molecule name allows the molecule within the PDB (within one model) to have a custom name.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.")
 uf.desc[-1].add_paragraph("Note that relax will complain if it cannot work out what to do.")
 uf.desc[-1].add_paragraph("This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.")
@@ -699,9 +685,9 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all models and all molecules, type one of:")
 uf.desc[-1].add_prompt("relax> structure.read_pdb('test.pdb', '~/pdb')")
 uf.desc[-1].add_prompt("relax> structure.read_pdb(file='test.pdb', dir='pdb')")
-uf.desc[-1].add_paragraph("To load the 10th model from the file 'test.pdb' using the Scientific Python PDB parser and naming it 'CaM', use one of:")
-uf.desc[-1].add_prompt("relax> structure.read_pdb('test.pdb', read_model=10, set_mol_name='CaM', parser='scientific')")
-uf.desc[-1].add_prompt("relax> structure.read_pdb(file='test.pdb', read_model=10, set_mol_name='CaM', parser='scientific')")
+uf.desc[-1].add_paragraph("To load the 10th model from the file 'test.pdb' and naming it 'CaM', use one of:")
+uf.desc[-1].add_prompt("relax> structure.read_pdb('test.pdb', read_model=10, set_mol_name='CaM')")
+uf.desc[-1].add_prompt("relax> structure.read_pdb(file='test.pdb', read_model=10, set_mol_name='CaM')")
 uf.desc[-1].add_paragraph("To load models 1 and 5 from the file 'test.pdb' as two different structures of the same model, type one of:")
 uf.desc[-1].add_prompt("relax> structure.read_pdb('test.pdb', read_model=[1, 5], set_model_num=[1, 1])")
 uf.desc[-1].add_prompt("relax> structure.read_pdb('test.pdb', set_mol_name=['CaM_1', 'CaM_2'], read_model=[1, 5], set_model_num=[1, 1])")
@@ -743,7 +729,7 @@ uf.add_keyarg(
     name = "read_mol",
     py_type = "int_or_int_list",
     desc_short = "molecule number to read",
-    desc = "If set, only the given molecule(s) will be read.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
+    desc = "If set, only the given molecule(s) will be read.  The molecules are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
     can_be_none = True
 )
 uf.add_keyarg(

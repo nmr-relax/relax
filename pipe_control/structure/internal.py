@@ -53,10 +53,6 @@ class Internal(Base_struct_API):
     structural container docstring.
     """
 
-    # Identification string.
-    id = 'internal'
-
-
     def _bonded_atom(self, attached_atom, index, mol):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
 
@@ -67,8 +63,7 @@ class Internal(Base_struct_API):
         @param mol:             The molecule container.
         @type mol:              MolContainer instance
         @return:                A tuple of information about the bonded atom.
-        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
-                                name (str), and atomic position (Numeric array of len 3)
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element name (str), and atomic position (Numeric array of len 3)
         """
 
         # Init.

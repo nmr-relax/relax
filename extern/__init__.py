@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,5 +22,6 @@
 # Package docstring.
 """External Python modules bundled with relax."""
 
-__all__ = [ 'scientific_python',
-            'sobol' ]
+__all__ = [
+    'sobol'
+]

@@ -40,6 +40,5 @@ __all__ = [
     'geometric',
     'internal',
     'main',
-    'mass',
-    'scientific'
+    'mass'
 ]

@@ -519,13 +519,11 @@ class MolList(list):
         return False
 
 
-    def from_xml(self, mol_nodes, id=None, file_version=1):
+    def from_xml(self, mol_nodes, file_version=1):
         """Recreate a molecule list data structure from the XML molecule nodes.
 
         @param mol_nodes:       The molecule XML nodes.
         @type mol_nodes:        xml.dom.minicompat.NodeList instance
-        @keyword id:            The specific structural object ID string.  This can be 'scientific', 'internal', etc.
-        @type id:               str
         @keyword file_version:  The relax XML version of the XML file.
         @type file_version:     int
         """
