@@ -33,7 +33,6 @@ from warnings import warn
 
 # relax module imports.
 from data_store.relax_xml import fill_object_contents, xml_to_object
-from pipe_control.mol_res_spin import spin_loop
 from pipe_control.mol_res_spin import Selection
 from pipe_control.structure.api_base import Base_struct_API, ModelList, Displacements
 from lib import regex
@@ -107,27 +106,7 @@ class Internal(Base_struct_API):
 
         # No attached atoms.
         if num_attached == 0:
-            if regex.search('@*', attached_atom):
-                matching_list = []
-                bonded_num=[]
-                bonded_name=[]
-                element=[]
-                pos=[]
-                for spin, mol_name, res_num, res_name in spin_loop(selection=attached_atom, full_info=True):
-                    bonded_num.append(spin.num)
-                    bonded_name.append(spin.name)
-                    element.append(spin.element)
-                    pos.append(spin.pos)
-                if len(bonded_num) == 1:
-                    return bonded_num[0], bonded_name[0], element[0], pos[0], attached_atom, None
-                elif len(bonded_num) > 1:
-                    # Return nothing but a warning.
-                    return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_names)
-                elif len(bonded_num) > 1:
-                    # Return nothing but a warning.
-                    return None, None, None, None, None, "No attached atom could be found"
-            else:
-                return None, None, None, None, None, "No attached atom could be found"
+            return None, None, None, None, None, "No attached atom could be found"
 
         # The bonded atom info.
         index = matching_list[0]
