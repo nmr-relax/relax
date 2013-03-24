@@ -1806,7 +1806,7 @@ class Internal:
             set_model_num = [set_model_num]
 
         # Loop over all models in the XYZ file.
-        mol_index=0
+        mol_index = 0
         model_index = 0
         xyz_model_increment = 0
         orig_model_num = []
@@ -1832,7 +1832,7 @@ class Internal:
             if set_mol_name:
                 new_mol_name.append(set_mol_name[mol_index])
             else:
-                if mol_index==0:
+                if mol_index == 0:
                    #Set the name to the file name plus the structure number.
                    new_mol_name.append(file_root(file) + '_mol' + repr(mol_index+1))
 
@@ -1855,8 +1855,8 @@ class Internal:
             # Increment the model index.
             model_index = model_index + 1
 
-        orig_mol_num=[0]
         # Create the structural data data structures.
+        orig_mol_num = [0]
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs)
 
         # Loading worked.
