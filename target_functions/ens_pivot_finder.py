@@ -26,7 +26,7 @@
 from copy import deepcopy
 
 # relax module import.
-from pipe_control.structure.statistics import atomic_rmsd
+from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_mean
 
 

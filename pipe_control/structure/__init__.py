@@ -45,5 +45,4 @@ __all__ = [
     'pdb_read',
     'pdb_write',
     'scientific',
-    'statistics'
 ]

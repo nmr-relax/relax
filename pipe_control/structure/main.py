@@ -37,7 +37,7 @@ from pipe_control import pipes
 from pipe_control.structure.api_base import Displacements
 from pipe_control.structure.internal import Internal
 from pipe_control.structure.scientific import Scientific_data
-from pipe_control.structure.statistics import atomic_rmsd
+from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
 from target_functions.ens_pivot_finder import Pivot_finder
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError

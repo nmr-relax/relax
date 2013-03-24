@@ -24,5 +24,6 @@
 
 __all__ = [
     'rotor',
+    'statistics',
     'superimpose'
 ]

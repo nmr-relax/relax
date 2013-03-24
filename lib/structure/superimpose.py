@@ -29,7 +29,7 @@ from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
-from pipe_control.structure.statistics import calc_mean_structure
+from lib.structure.statistics import calc_mean_structure
 from lib.geometry.rotations import R_to_axis_angle, R_to_euler_zyz
 
 
