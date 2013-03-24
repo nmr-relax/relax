@@ -40,6 +40,7 @@ from lib.float import floatAsByteArray, packBytesAsPyFloat
 from lib.structure.superimpose import kabsch
 from lib.errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from lib.io import file_root
+from lib.structure.internal.models import ModelList, ModelContainer
 from lib.warnings import RelaxWarning
 
 

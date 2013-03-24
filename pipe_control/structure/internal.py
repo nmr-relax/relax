@@ -41,6 +41,7 @@ from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
 from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.models import ModelList
+from lib.structure.internal.molecules import MolContainer
 from lib.warnings import RelaxWarning
 
 

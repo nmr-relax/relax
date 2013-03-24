@@ -24,6 +24,7 @@
 
 # relax module import.
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError
+from lib.structure import pdb_read
 
 
 class MolContainer:
