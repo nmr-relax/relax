@@ -27,10 +27,11 @@ from warnings import warn
 
 # relax module imports.
 from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import Selection, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_id_to_data_list, spin_loop
 from pipe_control import pipes
 from lib.errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from lib.io import read_spin_data
+from lib.selection import Selection
 from lib.warnings import RelaxNoSpinWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -406,24 +407,28 @@ def sel_domain(domain_id=None, boolean='OR', change_all=False):
     domain = Selection(cdp.domain[domain_id])
 
     # Loop over the spins and select as required.
-    for spin, spin_id in spin_loop(return_id=True):
-        # Deselect spins outside of the domain.
-        if spin_id not in domain and change_all:
-            spin.select = False
-
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Inside the domain.
-        if spin_id in domain:
+        if domain.contains_spin(spin_name=spin.name, spin_num=spin.num, res_name=res_name, res_num=res_num, mol=mol_name):
             spin.select = boolean_select(current=spin.select, boolean=boolean)
+
+        # Deselect spins outside of the domain.
+        elif change_all:
+            spin.select = False
 
     # Interatomic data loop.
     for interatom in interatomic_loop():
-        # Deselect containers outside of the domain.
-        if (interatom.spin_id1 not in domain and interatom.spin_id2 not in domain) and change_all:
-            interatom.select = False
+        # Decode the spin ids.
+        mol_name1, res_num1, res_name1, spin_num1, spin_name1 = spin_id_to_data_list(interatom.spin_id1)
+        mol_name2, res_num2, res_name2, spin_num2, spin_name2 = spin_id_to_data_list(interatom.spin_id2)
 
         # Inside the domain.
-        if interatom.spin_id1 in domain or interatom.spin_id2 in domain:
+        if domain.contains_spin(spin_name=spin_name1, spin_num=spin_num1, res_name=res_name1, res_num=res_num1, mol=mol_name1) or domain.contains_spin(spin_name=spin_name2, spin_num=spin_num2, res_name=res_name2, res_num=res_num2, mol=mol_name2):
             interatom.select = boolean_select(current=interatom.select, boolean=boolean)
+
+        # Deselect containers outside of the domain.
+        elif change_all:
+            interatom.select = False
 
 
 def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
