@@ -70,7 +70,7 @@ class Test_main(UnitTestCase):
         results.read(file='final_results_trunc_1.3_v2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Duplicate the data.
         self.inst.duplicate_data('orig', 'new', model_info=0)
@@ -89,7 +89,7 @@ class Test_main(UnitTestCase):
         results.read(file='final_results_trunc_1.3_v2', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Duplicate the data, model by model.
         self.inst.duplicate_data('orig', 'new', model_info=0)
@@ -105,13 +105,13 @@ class Test_main(UnitTestCase):
         results.read(file='final_results_trunc_1.3_v1', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Create a new model-free data pipe.
         ds.add(pipe_name='new', pipe_type='mf')
 
         # Load the structure for the second pipe.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Modify the structure.
         dp = pipes.get_pipe('new')
