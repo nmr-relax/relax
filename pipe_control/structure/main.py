@@ -24,7 +24,7 @@ from math import sqrt
 from minfx.generic import generic_minimise
 from numpy import array, dot, float64, ndarray, zeros
 from numpy.linalg import norm
-from os import F_OK, access
+from os import F_OK, access, getcwd
 from re import search
 import sys
 from warnings import warn
@@ -34,15 +34,18 @@ from pipe_control import molmol
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from pipe_control import pipes
+from pipe_control.structure.mass import pipe_centre_of_mass
 from target_functions.ens_pivot_finder import Pivot_finder
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from lib.io import get_file_path, open_write_file, write_data, write_spin_data
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
+from lib.structure.represent.diffusion_tensor import diffusion_tensor
 from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
 from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
+from status import Status; status = Status()
 
 
 def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
@@ -176,6 +179,119 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
     cdp.result_files.append(['cone_pdb', 'Cone PDB', get_file_path(file, dir)])
+    status.observers.result_file.notify()
+
+
+def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
+    """Create the PDB representation of the diffusion tensor.
+
+    @keyword scale: The scaling factor for the diffusion tensor.
+    @type scale:    float
+    @keyword file:  The name of the PDB file to create.
+    @type file:     str
+    @keyword dir:   The name of the directory to place the PDB file into.
+    @type dir:      str
+    @keyword force: Flag which if set to True will overwrite any pre-existing file.
+    @type force:    bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Calculate the centre of mass.
+    com = pipe_centre_of_mass()
+
+    # Create the structural object.
+    structure = Internal()
+
+    # Create an array of data pipes to loop over (hybrid support).
+    if cdp.pipe_type == 'hybrid':
+        pipe_list = cdp.hybrid_pipes
+    else:
+        pipe_list = [pipes.cdp_name()]
+
+    # The molecule names.
+    if cdp.pipe_type == 'hybrid':
+        mol_names = []
+        for pipe in pipe_list:
+            mol_names.append('diff_tensor_' % pipe)
+    else:
+        mol_names = ['diff_tensor']
+
+    # Loop over the pipes.
+    for pipe_index in range(len(pipe_list)):
+        # Get the pipe container.
+        pipe = pipes.get_pipe(pipe_list[pipe_index])
+
+        # Test if the diffusion tensor data is loaded.
+        if not hasattr(pipe, 'diff_tensor'):
+            raise RelaxNoTensorError('diffusion')
+
+        # Test if a structure has been loaded.
+        if not hasattr(cdp, 'structure'):
+            raise RelaxNoPdbError
+
+        # Add a new structure.
+        structure.add_molecule(name=mol_names[pipe_index])
+
+        # Alias the single molecule from the single model.
+        mol = structure.get_molecule(mol_names[pipe_index])
+
+        # The diffusion tensor type.
+        diff_type = pipe.diff_tensor.type
+        if diff_type == 'spheroid':
+            diff_type = pipe.diff_tensor.spheroid_type
+
+        # Simulation info.
+        sim_num = None
+        if hasattr(pipe.diff_tensor, 'tm_sim'):
+            # The number.
+            sim_num = len(pipe.diff_tensor.tm_sim)
+
+        # Tensor axes.
+        axes = []
+        sim_axes = []
+        if diff_type in ['oblate', 'prolate']:
+            axes.append(pipe.diff_tensor.Dpar * pipe.diff_tensor.Dpar_unit)
+            if sim_num != None:
+                sim_axes.append([])
+                for i in range(sim_num):
+                    sim_axes[0].append(pipe.diff_tensor.Dpar_sim[i] * pipe.diff_tensor.Dpar_unit_sim[i])
+
+        if diff_type == 'ellipsoid':
+            axes.append(pipe.diff_tensor.Dx * pipe.diff_tensor.Dx_unit)
+            axes.append(pipe.diff_tensor.Dy * pipe.diff_tensor.Dy_unit)
+            axes.append(pipe.diff_tensor.Dz * pipe.diff_tensor.Dz_unit)
+            if sim_num != None:
+                sim_axes.append([])
+                sim_axes.append([])
+                sim_axes.append([])
+                for i in range(sim_num):
+                    sim_axes[0].append(pipe.diff_tensor.Dx_sim[i] * pipe.diff_tensor.Dx_unit_sim[i])
+                    sim_axes[1].append(pipe.diff_tensor.Dy_sim[i] * pipe.diff_tensor.Dy_unit_sim[i])
+                    sim_axes[2].append(pipe.diff_tensor.Dz_sim[i] * pipe.diff_tensor.Dz_unit_sim[i])
+
+        # Create the object.
+        diffusion_tensor(mol=mol, tensor=pipe.diff_tensor.tensor, tensor_diag=pipe.diff_tensor.tensor_diag, diff_type=diff_type, rotation=pipe.diff_tensor.rotation, axes=axes, sim_axes=sim_axes, com=com, scale=scale)
+
+
+    # Create the PDB file.
+    ######################
+
+    # Print out.
+    print("\nGenerating the PDB file.")
+
+    # Create the PDB file.
+    tensor_pdb_file = open_write_file(file, dir, force=force)
+    structure.write_pdb(tensor_pdb_file)
+    tensor_pdb_file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    if dir == None:
+        dir = getcwd()
+    cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
     status.observers.result_file.notify()
 
 

@@ -30,7 +30,7 @@ from warnings import warn
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from pipe_control import pipes
-from pipe_control.structure.mass import centre_of_mass
+from pipe_control.structure.mass import pipe_centre_of_mass
 from lib.geometry.rotations import two_vect_to_R
 from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from lib.io import get_file_path, open_write_file
@@ -105,209 +105,6 @@ def angles_uniform(inc=None):
     return phi, theta
 
 
-def autoscale_tensor(method='mass'):
-    """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
-
-    @keyword method:    The method used to determine the scaling of the diffusion tensor object.
-    @type method:       str
-    @return:            The scaling factor.
-    @rtype:             float
-    """
-
-    # Centre of mass method.
-    if method == 'mass':
-        com, mass = centre_of_mass(return_mass=True)
-        scale = mass * 6.8e-11
-        return scale
-
-    # Autoscaling method.
-    warn(RelaxWarning("Autoscale method %s not implimented. Reverting to scale=1.8e-6 A.s" % method))
-    return 1.8e-6
-
-
-def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
-    """Create the PDB representation of the diffusion tensor.
-
-    @keyword scale: The scaling factor for the diffusion tensor.
-    @type scale:    float
-    @keyword file:  The name of the PDB file to create.
-    @type file:     str
-    @keyword dir:   The name of the directory to place the PDB file into.
-    @type dir:      str
-    @keyword force: Flag which if set to True will overwrite any pre-existing file.
-    @type force:    bool
-    """
-
-    # Arguments.
-    if scale == 'mass':
-        scale = autoscale_tensor(scale)
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Create an array of data pipes to loop over (hybrid support).
-    if cdp.pipe_type == 'hybrid':
-        pipe_list = cdp.hybrid_pipes
-    else:
-        pipe_list = [pipes.cdp_name()]
-
-    # Create the structural object.
-    structure = Internal()
-
-    # Add a structure.
-    structure.add_molecule(name='diff_tensor')
-
-    # Alias the single molecule from the single model.
-    mol = structure.get_molecule('diff_tensor')
-
-    # Loop over the pipes.
-    for pipe_index in range(len(pipe_list)):
-        # Get the pipe container.
-        pipe = pipes.get_pipe(pipe_list[pipe_index])
-
-
-        # Tests.
-        ########
-
-        # Test if the diffusion tensor data is loaded.
-        if not hasattr(pipe, 'diff_tensor'):
-            raise RelaxNoTensorError('diffusion')
-
-        # Test if a structure has been loaded.
-        if not hasattr(cdp, 'structure'):
-            raise RelaxNoPdbError
-
-
-        # Initialise.
-        #############
-
-        # Initialise the residue number.
-        res_num = 1
-
-        # The chain identifier.
-        chain_id = ascii_uppercase[pipe_index]
-
-        # Atom ID extension (allow for multiple chains for hybrid data pipes).
-        atom_id_ext = '_' + chain_id
-
-        # Print out.
-        print("\nChain " + chain_id + "\n")
-
-
-        # Centre of mass.
-        #################
-
-        # Calculate the centre of mass.
-        CoM = centre_of_mass()
-
-        # Add the central atom.
-        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R'+atom_id_ext, res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, segment_id=None, element='C')
-
-        # Increment the residue number.
-        res_num = res_num + 1
-
-
-        # Vector distribution.
-        ######################
-
-        # Print out.
-        print("\nGenerating the geometric object.")
-
-        # Swap the x and z axes for the oblate spheroid (the vector distributions are centred on the z-axis).
-        if pipe.diff_tensor.type == 'spheroid' and pipe.diff_tensor.spheroid_type == 'oblate':
-            # 90 deg rotation about the diffusion frame y-axis.
-            y_rot = array([[  0, 0,  1],
-                           [  0, 1,  0],
-                           [ -1, 0,  0]], float64)
-
-            # Rotate the tensor and rotation matrix.
-            rotation = dot(transpose(pipe.diff_tensor.rotation), y_rot)
-            tensor = dot(y_rot, dot(pipe.diff_tensor.tensor_diag, transpose(y_rot)))
-            tensor = dot(rotation, dot(tensor, transpose(rotation)))
-
-        # All other systems stay as normal.
-        else:
-            tensor = pipe.diff_tensor.tensor
-            rotation = pipe.diff_tensor.rotation
-
-        # The distribution.
-        generate_vector_dist(mol=mol, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=rotation, warp=tensor, scale=scale, inc=20)
-
-        # Increment the residue number.
-        res_num = res_num + 1
-
-
-        # Axes of the tensor.
-        #####################
-
-        # Create the unique axis of the spheroid.
-        if pipe.diff_tensor.type == 'spheroid':
-            # Print out.
-            print("\nGenerating the unique axis of the diffusion tensor.")
-            print("    Scaling factor:                      " + repr(scale))
-
-            # Simulations.
-            if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_vectors = []
-                for i in range(len(pipe.diff_tensor.tm_sim)):
-                    sim_vectors.append(pipe.diff_tensor.Dpar_sim[i] * pipe.diff_tensor.Dpar_unit_sim[i])
-            else:
-                sim_vectors = None
-
-            # Generate the axes representation.
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dpar*pipe.diff_tensor.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-
-
-        # Create the three axes of the ellipsoid.
-        if pipe.diff_tensor.type == 'ellipsoid':
-            # Print out.
-            print("Generating the three axes of the ellipsoid.")
-            print("    Scaling factor:                      " + repr(scale))
-
-            # Simulations.
-            if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_Dx_vectors = []
-                sim_Dy_vectors = []
-                sim_Dz_vectors = []
-                for i in range(len(pipe.diff_tensor.tm_sim)):
-                    sim_Dx_vectors.append(pipe.diff_tensor.Dx_sim[i] * pipe.diff_tensor.Dx_unit_sim[i])
-                    sim_Dy_vectors.append(pipe.diff_tensor.Dy_sim[i] * pipe.diff_tensor.Dy_unit_sim[i])
-                    sim_Dz_vectors.append(pipe.diff_tensor.Dz_sim[i] * pipe.diff_tensor.Dz_unit_sim[i])
-            else:
-                sim_Dx_vectors = None
-                sim_Dy_vectors = None
-                sim_Dz_vectors = None
-
-            # Generate the axes representation.
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dx', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dy', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dz', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-
-
-    # Create the PDB file.
-    ######################
-
-    # Print out.
-    print("\nGenerating the PDB file.")
-
-    # Open the PDB file for writing.
-    tensor_pdb_file = open_write_file(file, dir, force=force)
-
-    # Write the data.
-    structure.write_pdb(tensor_pdb_file)
-
-    # Close the file.
-    tensor_pdb_file.close()
-
-    # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    if dir == None:
-        dir = getcwd()
-    cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
-    status.observers.result_file.notify()
-
-
 def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, force=False, staggered=False):
     """Create a PDB representation of a rotor motional model.
 
@@ -362,7 +159,7 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
         cdp.result_files = []
     if dir == None:
         dir = getcwd()
-    cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
+    cdp.result_files.append(['rotor_pdb', 'Rotor PDB', get_file_path(file, dir)])
     status.observers.result_file.notify()
 
 
@@ -423,7 +220,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     #################
 
     # Calculate the centre of mass.
-    R = centre_of_mass()
+    R = pipe_centre_of_mass()
 
     # Increment the residue number.
     res_num = res_num + 1
@@ -602,10 +399,10 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
                     print("%sEdge phi pos: %s" % (" "*8, edge_phi[i]))
                     print("%sEdge atom: %s" % (" "*8, edge_atom[i]))
 
-            # Rotate the vector into the diffusion frame.
+            # Rotate the vector into the frame.
             vector = dot(R, vectors[i + j*len(theta)])
 
-            # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
+            # Warp the vector.
             vector = dot(warp, vector)
 
             # Scale the vector.
