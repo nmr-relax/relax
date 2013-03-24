@@ -26,8 +26,9 @@ import sys
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.reset import reset
-from pipe_control.structure.internal import Internal, MolContainer
 from lib.io import file_root
+from lib.structure.internal.molecules import MolContainer
+from lib.structure.internal.object import Internal
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 

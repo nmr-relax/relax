@@ -25,5 +25,6 @@
 __all__ = [
     'displacements',
     'models',
-    'molecules'
+    'molecules',
+    'object'
 ]

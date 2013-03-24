@@ -34,8 +34,8 @@ from data_store.interatomic import InteratomList
 from data_store.mol_res_spin import MoleculeList
 from data_store.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
-import pipe_control
 from lib.errors import RelaxFromXMLNotEmptyError
+from lib.structure.internal.object import Internal
 from lib.warnings import RelaxWarning
 
 
@@ -239,7 +239,7 @@ class PipeContainer(Prototype):
         if str_nodes:
             # Create the structural object.
             fail = False
-            self.structure = pipe_control.structure.internal.Internal()
+            self.structure = Internal()
 
             # Fill its contents.
             if not fail:

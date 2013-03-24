@@ -41,8 +41,8 @@ from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
-from pipe_control.structure.internal import Internal
 from lib.structure.cones import Iso_cone, Pseudo_elliptic
+from lib.structure.internal.object import Internal
 from lib.structure.represent.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from target_functions import frame_order

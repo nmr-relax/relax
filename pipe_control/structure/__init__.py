@@ -37,7 +37,6 @@ independent of parser, writer, etc.
 
 __all__ = [
     'geometric',
-    'internal',
     'main',
     'mass'
 ]

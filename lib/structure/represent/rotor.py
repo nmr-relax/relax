@@ -36,7 +36,7 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
     """Create a PDB representation of a rotor motional model.
 
     @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
-    @type structure:        pipe_control.structure.internal.Internal instance
+    @type structure:        lib.structure.internal.object.Internal instance
     @keyword rotor_angle:   The angle of the rotor motion in radian.
     @type rotor_angle:      float
     @keyword axis:          The vector defining the rotor axis.
