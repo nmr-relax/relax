@@ -255,16 +255,3 @@ class Test_structure(Structure_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', set_model_num=data[1])
-
-
-    def test_read_pdb_argfail_parser(self):
-        """The parser arg test of the structure.read_pdb() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.structure_fns.read_pdb, parser=data[1])
