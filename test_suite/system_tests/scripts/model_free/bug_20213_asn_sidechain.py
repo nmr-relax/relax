@@ -44,7 +44,7 @@ pipe.create(name, 'mf', bundle=pipe_bundle)
 data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'bug_20213_asn_sidechain' + sep
 
 # Load PDB file
-structure.read_pdb(file='./1U06-H_trunc.pdb', dir=data_path, read_mol=1, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc='A')
+structure.read_pdb(file='./1U06-H_trunc.pdb', dir=data_path, read_mol=1, set_mol_name=None, read_model=None, set_model_num=None, alt_loc='A')
 
 # Set up spins and isotopes
 structure.load_spins(spin_id=':47@N*', ave_pos=True)

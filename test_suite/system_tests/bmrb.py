@@ -240,7 +240,7 @@ class Bmrb(SystemTestCase):
 
         # Load the PDB file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-        self.interpreter.structure.read_pdb(file='1RTE_H_trunc.pdb', dir=path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', alt_loc='A')
+        self.interpreter.structure.read_pdb(file='1RTE_H_trunc.pdb', dir=path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc='A')
 
         # Set up the 15N and 1H spins.
         self.interpreter.structure.load_spins(spin_id='@N', ave_pos=True)

@@ -47,7 +47,7 @@ num = 1
 for file in files:
     print(file)
     if search('.pdb$', file):
-        structure.read_pdb(file=file, parser='internal', set_model_num=num, set_mol_name='conf')
+        structure.read_pdb(file=file, set_model_num=num, set_mol_name='conf')
         num += 1
 NUM_STR = num - 1
 
@@ -109,7 +109,7 @@ pipe.create('tag', 'N-state')
 # Load all the tag structures.
 NUM_TAG = 1000
 for i in range(NUM_TAG):
-    structure.read_pdb(file='LactoseMCMM4_'+`i+1`, dir='../../../structures/tag_1000/080704_MCMM4_aligned-forEd1000', parser='internal', set_model_num=i+1, set_mol_name='tag')
+    structure.read_pdb(file='LactoseMCMM4_'+`i+1`, dir='../../../structures/tag_1000/080704_MCMM4_aligned-forEd1000', set_model_num=i+1, set_mol_name='tag')
 
 # Load the lanthanide atoms.
 structure.load_spins(spin_id=':4@C1', ave_pos=False)

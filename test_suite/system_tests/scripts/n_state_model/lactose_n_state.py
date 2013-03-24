@@ -24,7 +24,7 @@ if not hasattr(ds, 'model'):
 # Load the structures.
 NUM_STR = 4
 for i in range(NUM_STR):
-    self._execute_uf(uf_name='structure.read_pdb', file='lactose_MCMM4_S1_'+repr(i+1), dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
+    self._execute_uf(uf_name='structure.read_pdb', file='lactose_MCMM4_S1_'+repr(i+1), dir=str_path, set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
 
 # Set up the 13C and 1H spins information.
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@C*', ave_pos=False)
@@ -76,7 +76,7 @@ self._execute_uf(uf_name='pipe.create', pipe_name='tag', pipe_type='N-state')
 # Load all the tag structures.
 NUM_TAG = 10
 for i in range(NUM_TAG):
-    self._execute_uf(uf_name='structure.read_pdb', file='tag_MCMM4_'+repr(i+1), dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='tag')
+    self._execute_uf(uf_name='structure.read_pdb', file='tag_MCMM4_'+repr(i+1), dir=str_path, set_model_num=i+1, set_mol_name='tag')
 
 # Load the lanthanide atoms.
 self._execute_uf(uf_name='structure.load_spins', spin_id='@C1', ave_pos=False)
