@@ -20,13 +20,12 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import float64, zeros
 from warnings import warn
 
 # relax module imports.
 from pipe_control.mol_res_spin import return_molecule, return_residue, return_spin
-from lib.physical_constants import return_atomic_mass
-from lib.errors import RelaxError, RelaxNoPdbError
+from lib.errors import RelaxNoPdbError
+from lib import mass
 from lib.warnings import RelaxWarning
 
 
@@ -50,17 +49,9 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
     if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
 
-    # Print out.
-    if verbosity:
-        print("Calculating the centre of mass.")
-
-    # Initialise the centre of mass.
-    R = zeros(3, float64)
-
-    # Initialise the total mass.
-    M = 0.0
-
     # Loop over all atoms.
+    coord = []
+    element_list = []
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=True):
         # Initialise the spin id string.
         id = ''
@@ -95,28 +86,15 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
             warn(RelaxWarning("Skipping the atom '%s' as the element type cannot be determined." % id))
             continue
 
-        # Atomic mass.
-        try:
-            mass = return_atomic_mass(element)
-        except RelaxError:
-            warn(RelaxWarning("Skipping the atom '%s' as the element '%s' is unknown." % (id, element)))
+        # Store the position and element.
+        coord.append(pos)
+        element_list.append(element)
 
-        # Total mass.
-        M = M + mass
-
-        # Sum of mass * position.
-        R = R + mass * pos
-
-    # Normalise.
-    R = R / M
-
-    # Final printout.
-    if verbosity:
-        print("    Total mass:      M = " + repr(M))
-        print("    Centre of mass:  R = " + repr(R))
+    # Calculate the CoM.
+    com, mass = mass.centre_of_mass(pos=coord, elements=element_list)
 
     # Return the centre of mass.
     if return_mass:
-        return R, M
+        return com, mass
     else:
-        return R
+        return com
