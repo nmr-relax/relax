@@ -33,7 +33,6 @@ from warnings import warn
 
 # relax module imports.
 from data_store.relax_xml import fill_object_contents, xml_to_object
-from pipe_control import pipes
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.mol_res_spin import Selection
 from pipe_control.structure.api_base import Base_struct_API, ModelList, Displacements
@@ -1004,9 +1003,6 @@ class Internal(Base_struct_API):
         @type pdb_record:       str or None
         """
 
-        # Test if the current data pipe exists.
-        pipes.test()
-
         # Add a model if not present.
         if len(self.structural_data) == 0:
             self.add_model()
@@ -1394,9 +1390,6 @@ class Internal(Base_struct_API):
         @keyword index2:    The global index of the first atom.
         @type index2:       str
         """
-
-        # Test if the current data pipe exists.
-        pipes.test()
 
         # Add the molecule, if it does not exist.
         if self.get_molecule(mol_name) == None:
