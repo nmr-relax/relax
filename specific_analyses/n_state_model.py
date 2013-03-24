@@ -47,6 +47,7 @@ from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ra
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from lib.io import open_write_file
 from lib.structure.cones import Iso_cone
+from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
 from lib.structure.internal.object import Internal
 from lib.warnings import RelaxWarning
 from specific_analyses.api_base import API_base
@@ -521,14 +522,14 @@ class N_state_model(API_base, API_common):
         # Generate the cone outer edge.
         print("\nGenerating the cone outer edge.")
         cap_start_atom = mol.atom_num[-1]+1
-        geometric.cone_edge(mol=mol, cone=cone, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
+        cone_edge(mol=mol, cone=cone, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
             geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
-            geometric.stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
+            stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
 
         # Create the PDB file.
         print("\nGenerating the PDB file.")
