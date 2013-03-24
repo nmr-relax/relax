@@ -26,5 +26,6 @@ This includes tensors, cones, rotors, axis systems, etc.
 """
 
 __all__ = [
+    'cone',
     'rotor'
 ]

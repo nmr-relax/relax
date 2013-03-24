@@ -39,6 +39,7 @@ from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSeque
 from lib.io import get_file_path, open_write_file, write_data, write_spin_data
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
+from lib.structure.represent.cone import cone
 from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
 from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -117,6 +118,65 @@ def connect_atom(index1=None, index2=None):
 
     # Add the atoms.
     cdp.structure.connect_atom(index1=index1, index2=index2)
+
+
+def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False, axis_flag=True):
+    """Create a PDB representation of the given cone object.
+
+    @keyword mol:           The molecule container.
+    @type mol:              MolContainer instance
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi, the phi_max() method for returning the phi value for the given theta.
+    @type cone:             class instance
+    @keyword start_res:     The starting residue number.
+    @type start_res:        str
+    @keyword apex:          The apex of the cone.
+    @type apex:             rank-1, 3D numpy array
+    @keyword axis:          The central axis of the cone.  If not supplied, the z-axis will be used.
+    @type axis:             rank-1, 3D numpy array
+    @keyword R:             The rotation matrix.
+    @type R:                rank-2, 3D numpy array
+    @keyword inc:           The increment number used to determine the number of latitude and longitude lines.
+    @type inc:              int
+    @keyword scale:         The scaling factor to stretch the unit cone by.
+    @type scale:            float
+    @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
+    @type distribution:     str
+    @keyword file:          The name of the PDB file to create.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the PDB file into.
+    @type dir:              str
+    @keyword force:         Flag which if set to True will overwrite any pre-existing file.
+    @type force:            bool
+    @keyword axis_flag:     A flag which if True will create the cone's axis.
+    @type axis_flag:        bool
+    """
+
+    # No molecule supplied.
+    if mol == None:
+        # Create the structural object.
+        structure = Internal()
+
+        # Add a molecule.
+        structure.add_molecule(name='cone')
+
+        # Alias the single molecule from the single model.
+        mol = structure.structural_data[0].mol[0]
+
+    # Create the object.
+    cone(mol=mol, cone=cone, start_res=start_res, apex=apex, axis=axis, R=R, inc=inc, scale=scale, distribution=distribution, axis_flag=axis_flag)
+
+    # Create the PDB file.
+    if file != None:
+        print("\nGenerating the PDB file.")
+        pdb_file = open_write_file(file_name=file, dir=dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['cone_pdb', 'Cone PDB', get_file_path(file, dir)])
+    status.observers.result_file.notify()
 
 
 def delete(atom_id=None):
