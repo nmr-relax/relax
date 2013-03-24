@@ -20,16 +20,16 @@
 ###############################################################################
 
 # relax module imports.
-from pipe_control.structure import pdb_write
+from lib.structure import pdb_write
 from lib.io import DummyFileObject
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Test_pdb_write(UnitTestCase):
-    """Unit tests for the functions of the 'pipe_control.structure.pdb_write' module."""
+    """Unit tests for the functions of the 'lib.structure.pdb_write' module."""
 
     def test_atom(self):
-        """Test the pipe_control.structure.pdb_write.atom() function."""
+        """Test the lib.structure.pdb_write.atom() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -46,7 +46,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_helix(self):
-        """Test the pipe_control.structure.pdb_write.helix() function."""
+        """Test the lib.structure.pdb_write.helix() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -63,7 +63,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_het(self):
-        """Test the pipe_control.structure.pdb_write.het() function."""
+        """Test the lib.structure.pdb_write.het() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -80,7 +80,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_model(self):
-        """Test the pipe_control.structure.pdb_write.model() function."""
+        """Test the lib.structure.pdb_write.model() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()
@@ -97,7 +97,7 @@ class Test_pdb_write(UnitTestCase):
 
 
     def test_sheet(self):
-        """Test the pipe_control.structure.pdb_write.sheet() function."""
+        """Test the lib.structure.pdb_write.sheet() function."""
 
         # A dummy file to write to.
         file = DummyFileObject()

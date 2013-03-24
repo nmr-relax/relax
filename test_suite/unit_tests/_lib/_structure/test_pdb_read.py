@@ -20,15 +20,15 @@
 ###############################################################################
 
 # relax module imports.
-from pipe_control.structure import pdb_read
+from lib.structure import pdb_read
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Test_pdb_read(UnitTestCase):
-    """Unit tests for the functions of the 'pipe_control.structure.pdb_read' module."""
+    """Unit tests for the functions of the 'lib.structure.pdb_read' module."""
 
     def test_atom(self):
-        """Test the pipe_control.structure.pdb_read.atom() function."""
+        """Test the lib.structure.pdb_read.atom() function."""
 
         # Parse a PDB record.
         record = pdb_read.atom('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C  ')
@@ -52,7 +52,7 @@ class Test_pdb_read(UnitTestCase):
 
 
     def test_helix(self):
-        """Test the pipe_control.structure.pdb_read.helix() function."""
+        """Test the lib.structure.pdb_read.helix() function."""
 
         # Parse a PDB record (from the 1UBQ PDB file).
         record = pdb_read.helix('HELIX    1  H1 ILE A   23  GLU A   34  1                                  12    ')
@@ -75,7 +75,7 @@ class Test_pdb_read(UnitTestCase):
 
 
     def test_sheet(self):
-        """Test the pipe_control.structure.pdb_read.sheet() function."""
+        """Test the lib.structure.pdb_read.sheet() function."""
 
         # Parse a PDB record (from the 1UBQ PDB file).
         record = pdb_read.sheet('SHEET    1 BET 5 GLY A  10  VAL A  17  0                                        ')

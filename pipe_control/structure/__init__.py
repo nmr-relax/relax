@@ -42,7 +42,5 @@ __all__ = [
     'internal',
     'main',
     'mass',
-    'pdb_read',
-    'pdb_write',
     'scientific',
 ]
