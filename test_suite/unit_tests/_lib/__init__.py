@@ -29,5 +29,7 @@ __all__ = [
     '_spectral_densities'
     '_text'
     'test_float',
-    'test_io'
+    'test_io',
+    'test_regex',
+    'test_selection'
 ]
