@@ -25,13 +25,13 @@ from warnings import warn
 # relax module imports.
 from pipe_control.mol_res_spin import return_molecule, return_residue, return_spin
 from lib.errors import RelaxNoPdbError
-from lib.structure import mass
+from lib.structure.mass import centre_of_mass
 from lib.warnings import RelaxWarning
 
 
 
-def centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
-    """Calculate and return the centre of mass of the structure.
+def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
+    """Calculate and return the centre of mass of the structures in the current data pipe.
 
     @keyword atom_id:       The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
     @type atom_id:          str or None
@@ -91,7 +91,7 @@ def centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
         element_list.append(element)
 
     # Calculate the CoM.
-    com, mass = mass.centre_of_mass(pos=coord, elements=element_list)
+    com, mass = centre_of_mass(pos=coord, elements=element_list)
 
     # Return the centre of mass.
     if return_mass:
