@@ -582,8 +582,7 @@ class Internal:
     def _parse_mols(self, records):
         """Generator function for looping over the molecules in the PDB records of a model.
 
-        @param records:     The list of PDB records for the model, or if no models exist the entire
-                            PDB file.
+        @param records:     The list of PDB records for the model, or if no models exist the entire PDB file.
         @type records:      list of str
         @return:            The molecule number and all the records for that molecule.
         @rtype:             tuple of int and list of str
@@ -1759,20 +1758,13 @@ class Internal:
 
         @param file_path:       The full path of the XYZ file.
         @type file_path:        str
-        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
-                                molecules are determined differently by the different parsers, but
-                                are numbered consecutively from 1.  If set to None, then all
-                                molecules will be loaded.
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
         @type read_mol:         None, int, or list of int
-        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
-                                then the molecules will be automatically labelled based on the file
-                                name or other information.
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
         @type set_mol_name:     None, str, or list of str
-        @keyword read_model:    The XYZ model to extract from the file.  If set to None, then all
-                                models will be loaded.
+        @keyword read_model:    The XYZ model to extract from the file.  If set to None, then all models will be loaded.
         @type read_model:       None, int, or list of int
-        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
-                                the XYZ model numbers will be preserved, if they exist.
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the XYZ model numbers will be preserved, if they exist.
         @type set_model_num:    None, int, or list of int
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
@@ -2082,11 +2074,9 @@ class Internal:
     def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):
         """Add the new molecule name to the target data structure.
 
-        @keyword set:       The list of new molecule names.  If not supplied, the names will be
-                            generated from the file name.
+        @keyword set:       The list of new molecule names.  If not supplied, the names will be generated from the file name.
         @type set:          None or list of str
-        @keyword target:    The target molecule name data structure to which the new name will be
-                            appended.
+        @keyword target:    The target molecule name data structure to which the new name will be appended.
         @type target:       list
         @keyword index:     The molecule index, matching the set argument.
         @type index:        int
