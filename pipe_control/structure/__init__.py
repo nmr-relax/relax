@@ -35,14 +35,15 @@ This package has well defined API implemented as class methods for accessing str
 independent of parser, writer, etc.
 """
 
-__all__ = [ 'api_base',
-            'cones',
-            'geometric',
-            'internal',
-            'main',
-            'mass',
-            'pdb_read',
-            'pdb_write',
-            'scientific',
-            'statistics',
-            'superimpose' ]
+__all__ = [
+    'api_base',
+    'cones',
+    'geometric',
+    'internal',
+    'main',
+    'mass',
+    'pdb_read',
+    'pdb_write',
+    'scientific',
+    'statistics'
+]

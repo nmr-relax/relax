@@ -37,7 +37,7 @@ from warnings import warn
 # relax module import.
 from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
 from lib.float import floatAsByteArray, packBytesAsPyFloat
-from pipe_control.structure.superimpose import kabsch
+from lib.structure.superimpose import kabsch
 from lib.errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from lib.io import file_root
 from lib.warnings import RelaxWarning
