@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from pipe_control import pipes
-from pipe_control.mol_res_spin import Selection, count_spins, return_spin, spin_loop
+from pipe_control.mol_res_spin import Selection, count_spins, return_spin, spin_id_to_data_list, spin_loop
 from lib.errors import RelaxError, RelaxInteratomError, RelaxInteratomInconsistentError, RelaxNoInteratomError, RelaxNoSpinError
 from lib.io import write_data
 
@@ -279,21 +279,27 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True)
 
         # Aliases.
         interatom = dp.interatomic[i]
-        mol_index1, res_index1, spin_index1 = cdp.mol._spin_id_lookup[interatom.spin_id1]
-        mol_index2, res_index2, spin_index2 = cdp.mol._spin_id_lookup[interatom.spin_id2]
-        mol1 =  cdp.mol[mol_index1]
-        res1 =  cdp.mol[mol_index1].res[res_index1]
-        spin1 = cdp.mol[mol_index1].res[res_index1].spin[spin_index1]
-        mol2 = cdp.mol[mol_index2]
-        res2 =  cdp.mol[mol_index2].res[res_index2]
-        spin2 = cdp.mol[mol_index2].res[res_index2].spin[spin_index2]
+
+        # Decode the spin ids.
+        mol_name1, res_num1, res_name1, spin_num1, spin_name1 = spin_id_to_data_list(interatom.spin_id1)
+        mol_name2, res_num2, res_name2, spin_num2, spin_name2 = spin_id_to_data_list(interatom.spin_id2)
+
+        # The different selection combinations.
+        if select_obj:
+            sel1 = select_obj.contains_spin(spin_name=spin_name1, spin_num=spin_num1, res_name=res_name1, res_num=res_num1, mol=mol_name1)
+            sel2 = select_obj.contains_spin(spin_name=spin_name2, spin_num=spin_num2, res_name=res_name2, res_num=res_num2, mol=mol_name2)
+        if select_obj1:
+            sel11 = select_obj1.contains_spin(spin_name=spin_name1, spin_num=spin_num1, res_name=res_name1, res_num=res_num1, mol=mol_name1)
+            sel12 = select_obj1.contains_spin(spin_name=spin_name2, spin_num=spin_num2, res_name=res_name2, res_num=res_num2, mol=mol_name2)
+            sel21 = select_obj2.contains_spin(spin_name=spin_name1, spin_num=spin_num1, res_name=res_name1, res_num=res_num1, mol=mol_name1)
+            sel22 = select_obj2.contains_spin(spin_name=spin_name2, spin_num=spin_num2, res_name=res_name2, res_num=res_num2, mol=mol_name2)
 
         # Check that the selections are met.
         if select_obj:
-            if (mol1, res1, spin1) not in select_obj and (mol2, res2, spin2) not in select_obj:
+            if not sel1 and not sel2:
                 continue
         if select_obj1:
-            if not ((mol1, res1, spin1) in select_obj1 or (mol2, res2, spin2) in select_obj1) or not ((mol1, res1, spin1) in select_obj2 or (mol2, res2, spin2) in select_obj2):
+            if not (sel11 or sel12) or not (sel21 or sel22):
                 continue
 
         # Return the container.
