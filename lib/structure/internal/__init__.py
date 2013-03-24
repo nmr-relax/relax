@@ -23,6 +23,7 @@
 """The relax-lib structure.internal package - the internal structural object."""
 
 __all__ = [
+    'displacements',
     'models',
     'molecules'
 ]

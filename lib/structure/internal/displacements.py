@@ -20,12 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The API for accessing, creating, and modifying structural information.
-
-The full API is documented within this base class object.  Each available API call is given as a
-prototype method stub (or functional method) with all arguments, raised errors, and return values
-documented.
-"""
+"""The objects representing displacement information in the internal structural object."""
 
 # relax module import.
 from data_store.relax_xml import object_to_xml, xml_to_object
