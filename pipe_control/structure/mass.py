@@ -25,7 +25,7 @@ from warnings import warn
 # relax module imports.
 from pipe_control.mol_res_spin import return_molecule, return_residue, return_spin
 from lib.errors import RelaxNoPdbError
-from lib import mass
+from lib.structure import mass
 from lib.warnings import RelaxWarning
 
 

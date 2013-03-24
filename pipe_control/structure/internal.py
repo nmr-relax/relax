@@ -36,12 +36,12 @@ from data_store.relax_xml import fill_object_contents, xml_to_object
 from pipe_control import pipes
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.mol_res_spin import Selection
-from pipe_control.structure import pdb_read, pdb_write
 from pipe_control.structure.api_base import Base_struct_API, ModelList, Displacements
 from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
+from lib.structure import pdb_read, pdb_write
 from lib.warnings import RelaxWarning
 
 
