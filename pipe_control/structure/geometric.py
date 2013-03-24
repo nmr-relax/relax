@@ -32,7 +32,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from pipe_control import pipes
 from pipe_control.structure.internal import Internal
 from pipe_control.structure.mass import centre_of_mass
-from lib.structure.representation.rotor import rotor_pdb
+from lib.structure.represent.rotor import rotor_pdb
 from lib.geometry.rotations import two_vect_to_R
 from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from lib.io import get_file_path, open_write_file
