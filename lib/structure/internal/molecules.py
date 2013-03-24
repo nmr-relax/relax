@@ -24,10 +24,13 @@
 
 # Python module imports.
 from string import digits
+from warnings import warn
 
 # relax module import.
+from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError
 from lib.structure import pdb_read
+from lib.warnings import RelaxWarning
 
 
 class MolContainer:
