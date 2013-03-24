@@ -1150,7 +1150,7 @@ def find_index(selection=None, pipe=None, global_index=True):
                 global_i = global_i + 1
 
                 # Stop if the spin matches the selection.
-                if (mol, res, spin) in select_obj:
+                if select_obj.contains_spin(spin_num=spin.num, spin_name=spin.name, res_num=res.num, res_name=res.name, mol=mol.name):
                     # Return the indices.
                     if global_index:
                         return global_i
@@ -2022,7 +2022,7 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
     # Loop over the molecules.
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
+        if not select_obj.contains_mol(mol.name):
             continue
 
         # Generate the spin id.
@@ -2418,7 +2418,7 @@ def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if (mol, res) not in select_obj:
+            if not select_obj.contains_res(res_num=res.num, res_name=res.name, mol=mol.name):
                 continue
 
             # Generate the spin id.
@@ -2465,7 +2465,7 @@ def return_molecule(selection=None, pipe=None):
     mol_container = None
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
+        if not select_obj.contains_mol(mol=mol.name):
             continue
 
         # Skip named molecules if the selection is None.
@@ -2549,7 +2549,7 @@ def return_residue(selection=None, pipe=None, indices=False):
     res_container = None
     for i in range(len(dp.mol)):
         # Skip the molecule if there is no match to the selection.
-        if dp.mol[i] not in select_obj:
+        if not select_obj.contains_mol(mol=dp.mol[i].name):
             continue
 
         # Store the molecule index.
@@ -2558,7 +2558,7 @@ def return_residue(selection=None, pipe=None, indices=False):
         # Loop over the residues.
         for j in range(len(dp.mol[i].res)):
             # Skip the residue if there is no match to the selection.
-            if dp.mol[i].res[j] not in select_obj:
+            if not select_obj.contains_res(res_num=dp.mol[i].res[j].num, res_name=dp.mol[i].res[j].name, mol=dp.mol[i].name):
                 continue
 
             # Store the residue container and index.
@@ -2733,19 +2733,19 @@ def return_spin_from_selection(selection=None, pipe=None, full_info=False, multi
     spin_ids = []
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
+        if not select_obj.contains_mol(mol=mol.name):
             continue
 
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if not select_obj.contains_res(res_num=res.num, res_name=res.name, mol=mol.name):
                 continue
 
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if spin not in select_obj:
+                if not select_obj.contains_spin(spin_num=spin.num, spin_name=spin.name, res_num=res.num, res_name=res.name, mol=mol.name):
                     continue
 
                 # Store all data.
@@ -2844,7 +2844,7 @@ def return_spin_indices(spin_id=None, pipe=None):
         # Loop over the molecules.
         for i in range(len(dp.mol)):
             # Skip the molecule if there is no match to the selection.
-            if dp.mol[i] not in select_obj:
+            if not select_obj.contains_mol(mol=dp.mol[i].name):
                 continue
 
             # The molecule index.
@@ -2853,7 +2853,7 @@ def return_spin_indices(spin_id=None, pipe=None):
             # Loop over the residues.
             for j in range(len(dp.mol[i].res)):
                 # Skip the residue if there is no match to the selection.
-                if dp.mol[i].res[j] not in select_obj:
+                if not select_obj.contains_res(res_num=dp.mol[i].res[j].num, res_name=dp.mol[i].res[j].name, mol=dp.mol[i].name):
                     continue
 
                 # The residue index.
@@ -2862,7 +2862,7 @@ def return_spin_indices(spin_id=None, pipe=None):
                 # Loop over the spins.
                 for k in range(len(dp.mol[i].res[j].spin)):
                     # Skip the spin if there is no match to the selection.
-                    if dp.mol[i].res[j].spin[k] not in select_obj:
+                    if not select_obj.contains_spin(spin_num=dp.mol[i].res[j].spin[k].num, spin_name=dp.mol[i].res[j].spin[k].name, res_num=dp.mol[i].res[j].num, res_name=dp.mol[i].res[j].name, mol=dp.mol[i].name):
                         continue
 
                     # The spin index.
@@ -3579,51 +3579,6 @@ def spin_id_variants_prune(dp=None, mol_index=None, res_index=None, spin_index=N
     return spin_ids
 
 
-def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
-    """Function for determining if the spin is located within the list of spins.
-
-    @param spin_list:       The list of spins.  The first dimension corresponds to different spins, the second corresponds to the spin information columns.
-    @type spin_list:        list of lists of str
-    @keyword mol_name_col:  The column containing the molecule name information.
-    @type mol_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.
-    @type res_num_col:      int or None
-    @keyword res_name_col:  The column containing the residue name information.
-    @type res_name_col:     int or None
-    @keyword spin_num_col:  The column containing the spin number information.
-    @type spin_num_col:     int or None
-    @keyword spin_name_col: The column containing the spin name information.
-    @type spin_name_col:    int or None
-    @keyword mol_name:      The molecule name.
-    @type mol_name:         str or None
-    @keyword res_num:       The residue number.
-    @type res_num:          int or None
-    @keyword res_name:      The residue name.
-    @type res_name:         str or None
-    @keyword spin_num:      The spin number.
-    @type spin_num:         int or None
-    @keyword spin_name:     The spin name.
-    @type spin_name:        str or None
-    @return:                The answer of whether the spin is within the list.
-    @rtype:                 bool
-    """
-
-    # Create a selection object based on the spin.
-    select_obj = Selection(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name))
-
-    # Loop over the spins.
-    for spin in spin_list:
-        # Generate the spin identification string.
-        spin_id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
-        # There is a hit.
-        if spin_id in select_obj:
-            return True
-
-    # Not in the list.
-    return False
-
-
 def spin_index_loop(selection=None, pipe=None):
     """Generator function for looping over all selected spins, returning the mol-res-spin indices.
 
@@ -3668,7 +3623,7 @@ def spin_index_loop(selection=None, pipe=None):
                 spin = dp.mol[mol_index].res[res_index].spin[spin_index]
 
                 # Skip the spin if there is no match to the selection.
-                if (mol, res, spin) not in select_obj:
+                if not select_obj.contains_spin(spin_num=spin.num, spin_name=spin.name, res_num=res.num, res_name=res.name, mol=mol.name):
                     continue
 
                 # Yield the spin system specific indices.
@@ -3714,7 +3669,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if (mol, res, spin) not in select_obj:
+                if not select_obj.contains_spin(spin_num=spin.num, spin_name=spin.name, res_num=res.num, res_name=res.name, mol=mol.name):
                     continue
 
                 # Generate the spin id.
