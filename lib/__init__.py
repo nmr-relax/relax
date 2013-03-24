@@ -42,6 +42,7 @@ __all__ = [
     'order',
     'physical_constants',
     'regex',
+    'selection',
     'spectral_densities',
     'structure',
     'text',
