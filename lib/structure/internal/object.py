@@ -33,11 +33,11 @@ from warnings import warn
 
 # relax module imports.
 from data_store.relax_xml import object_to_xml, xml_to_object
-from pipe_control.mol_res_spin import Selection
 from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
+from lib.selection import Selection
 from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
