@@ -21,9 +21,6 @@
 
 
 __all__ = [
-    'test_api_base',
     'test__init__',
-    'test_internal',
-    'test_pdb_read',
-    'test_pdb_write'
+    'test_internal'
 ]
