@@ -25,8 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from numpy import cross, float64, int32, ones, transpose, zeros
-from numpy.linalg import norm, svd
+from numpy import float64, int32, zeros
 from re import search
 import string
 
@@ -36,8 +35,7 @@ from pipe_control import pipes
 from pipe_control.angles import fold_spherical_angles, wrap_angles
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import get_molecule_names, return_spin, spin_loop
-from lib.geometry.coord_transform import cartesian_to_spherical
-from lib.geometry.rotations import R_to_euler_zyz
+from lib.diffusion.main import tensor_eigen_system, tensor_info_table
 from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -416,92 +414,13 @@ def display():
     if not diff_data_exists():
         raise RelaxNoTensorError('diffusion')
 
-    # Spherical diffusion.
+    # Printout.
     if cdp.diff_tensor.type == 'sphere':
-        # Tensor type.
-        print("Type:  Spherical diffusion")
-
-        # Parameters.
-        print("\nParameters {tm}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-
-        # Alternate parameters.
-        print("\nAlternate parameters {Diso}.")
-        print("Diso (1/s):  " + repr(cdp.diff_tensor.Diso))
-
-        # Fixed flag.
-        print("\nFixed:  " + repr(cdp.diff_tensor.fixed))
-
-    # Spheroidal diffusion.
+        tensor_info_table(type='sphere', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, fixed=cdp.diff_tensor.fixed)
     elif cdp.diff_tensor.type == 'spheroid':
-        # Tensor type.
-        print("Type:  Spheroidal diffusion")
-
-        # Parameters.
-        print("\nParameters {tm, Da, theta, phi}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
-
-        # Alternate parameters.
-        print("\nAlternate parameters {Diso, Da, theta, phi}.")
-        print("Diso (1/s):  " + repr(cdp.diff_tensor.Diso))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
-
-        # Alternate parameters.
-        print("\nAlternate parameters {Dpar, Dper, theta, phi}.")
-        print("Dpar (1/s):  " + repr(cdp.diff_tensor.Dpar))
-        print("Dper (1/s):  " + repr(cdp.diff_tensor.Dper))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
-
-        # Alternate parameters.
-        print("\nAlternate parameters {tm, Dratio, theta, phi}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-        print("Dratio:  " + repr(cdp.diff_tensor.Dratio))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
-
-        # Fixed flag.
-        print("\nFixed:  " + repr(cdp.diff_tensor.fixed))
-
-    # Ellipsoidal diffusion.
+        tensor_info_table(type='spheroid', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, Da=cdp.diff_tensor.Da, Dpar=cdp.diff_tensor.Dpar, Dper=cdp.diff_tensor.Dpar, Dratio=cdp.diff_tensor.Dratio, theta=cdp.diff_tensor.theta, phi=cdp.diff_tensor.phi, fixed=cdp.diff_tensor.fixed)
     elif cdp.diff_tensor.type == 'ellipsoid':
-        # Tensor type.
-        print("Type:  Ellipsoidal diffusion")
-
-        # Parameters.
-        print("\nParameters {tm, Da, Dr, alpha, beta, gamma}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("Dr:  " + repr(cdp.diff_tensor.Dr))
-        print("alpha (rad):  " + repr(cdp.diff_tensor.alpha))
-        print("beta (rad):  " + repr(cdp.diff_tensor.beta))
-        print("gamma (rad):  " + repr(cdp.diff_tensor.gamma))
-
-        # Alternate parameters.
-        print("\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}.")
-        print("Diso (1/s):  " + repr(cdp.diff_tensor.Diso))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("Dr:  " + repr(cdp.diff_tensor.Dr))
-        print("alpha (rad):  " + repr(cdp.diff_tensor.alpha))
-        print("beta (rad):  " + repr(cdp.diff_tensor.beta))
-        print("gamma (rad):  " + repr(cdp.diff_tensor.gamma))
-
-        # Alternate parameters.
-        print("\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}.")
-        print("Dx (1/s):  " + repr(cdp.diff_tensor.Dx))
-        print("Dy (1/s):  " + repr(cdp.diff_tensor.Dy))
-        print("Dz (1/s):  " + repr(cdp.diff_tensor.Dz))
-        print("alpha (rad):  " + repr(cdp.diff_tensor.alpha))
-        print("beta (rad):  " + repr(cdp.diff_tensor.beta))
-        print("gamma (rad):  " + repr(cdp.diff_tensor.gamma))
-
-        # Fixed flag.
-        print("\nFixed:  " + repr(cdp.diff_tensor.fixed))
+        tensor_info_table(type='ellipsoid', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, Da=cdp.diff_tensor.Da, Dr=cdp.diff_tensor.Dr, Dx=cdp.diff_tensor.Dx, Dy=cdp.diff_tensor.Dy, Dz=cdp.diff_tensor.Dz, alpha=cdp.diff_tensor.alpha, beta=cdp.diff_tensor.beta, gamma=cdp.diff_tensor.gamma, fixed=cdp.diff_tensor.fixed)
 
 
 def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
@@ -1052,28 +971,6 @@ table.add_row(["The third Euler angle of the ellipsoid diffusion tensor - gamma"
 table.add_row(["The polar angle defining the major axis of the spheroid diffusion tensor - theta", "'theta'", "'theta'"])
 table.add_row(["The azimuthal angle defining the major axis of the spheroid diffusion tensor - phi", "'phi'", "'phi'"])
 __return_data_name_doc__.add_table(table.label)
-
-
-def return_eigenvalues():
-    """Function for returning Dx, Dy, and Dz."""
-
-    # Reassign the data.
-    data = cdp.diff_tensor
-
-    # Diso.
-    Diso = 1.0 / (6.0 * data.tm)
-
-    # Dx.
-    Dx = Diso - 1.0/3.0 * data.Da * (1.0  +  3.0 * data.Dr)
-
-    # Dy.
-    Dy = Diso - 1.0/3.0 * data.Da * (1.0  -  3.0 * data.Dr)
-
-    # Dz.
-    Dz = Diso + 2.0/3.0 * data.Da
-
-    # Return the eigenvalues.
-    return Dx, Dy, Dz
 
 
 def return_units(param):
@@ -1673,61 +1570,6 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 
     # Set the orientational parameters.
     set(value=[theta, phi], param=['theta', 'phi'])
-
-
-def tensor_eigen_system(tensor):
-    """Determine the eigenvalues and vectors for the tensor, sorting the entries.
-
-    @return:    The eigenvalues, rotation matrix, and the Euler angles in zyz notation.
-    @rtype:     3D rank-1 array, 3D rank-2 array, float, float, float
-    """
-
-    # Eigenvalues.
-    R, Di, A = svd(tensor)
-    D_diag = zeros((3, 3), float64)
-    for i in range(3):
-        D_diag[i, i] = Di[i]
-
-    # Reordering structure.
-    reorder_data = []
-    for i in range(3):
-        reorder_data.append([Di[i], i])
-    reorder_data.sort()
-
-    # The indices.
-    reorder = zeros(3, int)
-    Di_sort = zeros(3, float)
-    for i in range(3):
-        Di_sort[i], reorder[i] = reorder_data[i]
-
-    # Reorder columns.
-    R_new = zeros((3, 3), float64)
-    for i in range(3):
-        R_new[:, i] = R[:, reorder[i]]
-
-    # Switch from the left handed to right handed universes (if needed).
-    if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
-        R_new[:, 2] = -R_new[:, 2]
-
-    # Reverse the rotation.
-    R_new = transpose(R_new)
-
-    # Euler angles (reverse rotation in the rotated axis system).
-    gamma, beta, alpha = R_to_euler_zyz(R_new)
-
-    # Collapse the pi axis rotation symmetries.
-    if alpha >= pi:
-        alpha = alpha - pi
-    if gamma >= pi:
-        alpha = pi - alpha
-        beta = pi - beta
-        gamma = gamma - pi
-    if beta >= pi:
-        alpha = pi - alpha
-        beta = beta - pi
-
-    # Return the values.
-    return Di_sort, R_new, alpha, beta, gamma
 
 
 def test_params(num_params):

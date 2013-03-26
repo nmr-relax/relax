@@ -25,5 +25,6 @@
 __all__ = [
     'correlation_time',
     'direction_cosine',
+    'main',
     'weights'
 ]
