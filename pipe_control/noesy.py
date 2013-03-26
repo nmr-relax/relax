@@ -29,9 +29,9 @@ from warnings import warn
 # relax module imports.
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, tokenise
-from lib import xplor
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import open_read_file
+from lib.software import xplor
 from lib.warnings import RelaxWarning
 
 
