@@ -21,5 +21,6 @@
 
 
 __all__ = [
+    '_opendx',
     'test___init__'
 ]

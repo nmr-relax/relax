@@ -23,5 +23,6 @@
 """The relax-lib NMR package - a library of functions for creating input, reading output and control of external software."""
 
 __all__ = [
-    'grace'
+    'grace',
+    'opendx'
 ]

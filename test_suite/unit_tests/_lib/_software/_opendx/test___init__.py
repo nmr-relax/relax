@@ -25,15 +25,15 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import lib.opendx
+import lib.software.opendx
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the lib.opendx package."""
+    """Unit tests for the lib.software.opendx package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = lib.opendx
-        self.package_name = 'lib.opendx'
-        self.package_path = sys.path[0] + sep + 'lib' + sep + 'opendx'
+        self.package = lib.software.opendx
+        self.package_name = 'lib.software.opendx'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'software' + sep + 'opendx'

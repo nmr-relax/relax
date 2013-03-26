@@ -33,7 +33,7 @@ from pipe_control import pipes
 from pipe_control import value
 from lib.errors import RelaxError, RelaxUnknownParamError
 from lib.io import open_write_file
-from lib.opendx.files import write_config, write_general, write_point, write_program
+from lib.software.opendx.files import write_config, write_general, write_point, write_program
 from specific_analyses.setup import get_specific_fn
 
 

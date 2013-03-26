@@ -38,7 +38,6 @@ __all__ = [
     'io',
     'linear_algebra',
     'model_selection',
-    'opendx',
     'order',
     'physical_constants',
     'regex',
