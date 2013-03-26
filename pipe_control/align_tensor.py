@@ -35,7 +35,7 @@ from warnings import warn
 from data_store.align_tensor import AlignTensorList
 from pipe_control.angles import wrap_angles
 from pipe_control import pipes
-from lib.physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
+from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.io import write_data
 from lib.warnings import RelaxWarning
@@ -83,32 +83,6 @@ def all_tensors_fixed():
 
     # All tensors are fixed.
     return True
-
-
-def calc_chi_tensor(A, B0, T):
-    """Convert the alignment tensor into the magnetic susceptibility (chi) tensor.
-
-    A can be either the full tensor (3D or 5D), a component Aij of the tensor, Aa, or Ar, anything that can be multiplied by the constants to convert from one to the other.
-
-
-    @param A:       The alignment tensor or alignment tensor component.
-    @type A:        numpy array or float
-    @param B0:      The magnetic field strength in Hz.
-    @type B0:       float
-    @param T:       The temperature in Kalvin.
-    @type T:        float
-    @return:        A multiplied by the PCS constant.
-    @rtype:         numpy array or float
-    """
-
-    # B0 in Tesla.
-    B0 = 2.0 * pi * B0 / g1H
-
-    # The conversion factor.
-    conv = 15.0 * mu0 * kB * T / B0**2
-
-    # Return the converted value.
-    return conv * A
 
 
 def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
@@ -986,32 +960,6 @@ def map_bounds(param):
     # gamma.
     elif param == 'gamma':
         return [0, 2*pi]
-
-
-def kappa(nuc1='15N', nuc2='1H'):
-    """Function for calculating the kappa constant.
-
-    The kappa constant is::
-
-        kappa = -3/(8pi^2).gI.gS.mu0.h_bar,
-
-    where gI and gS are the gyromagnetic ratios of the I and S spins, mu0 is the permeability of
-    free space, and h_bar is Planck's constant divided by 2pi.
-
-    @param nuc1:    The first nucleus type.
-    @type nuc1:     str
-    @param nuc2:    The first nucleus type.
-    @type nuc2:     str
-    @return:        The kappa constant value.
-    @rtype:         float
-    """
-
-    # Gyromagnetic ratios.
-    gI = return_gyromagnetic_ratio(nuc1)
-    gS = return_gyromagnetic_ratio(nuc2)
-
-    # Kappa.
-    return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar
 
 
 def map_labels(index, params, bounds, swap, inc):

@@ -25,6 +25,35 @@
 # Python imports.
 from numpy.linalg import eigvals
 
+# relax module imports.
+from lib.physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
+
+
+def calc_chi_tensor(A, B0, T):
+    """Convert the alignment tensor into the magnetic susceptibility (chi) tensor.
+
+    A can be either the full tensor (3D or 5D), a component Aij of the tensor, Aa, or Ar, anything that can be multiplied by the constants to convert from one to the other.
+
+
+    @param A:       The alignment tensor or alignment tensor component.
+    @type A:        numpy array or float
+    @param B0:      The magnetic field strength in Hz.
+    @type B0:       float
+    @param T:       The temperature in Kalvin.
+    @type T:        float
+    @return:        A multiplied by the PCS constant.
+    @rtype:         numpy array or float
+    """
+
+    # B0 in Tesla.
+    B0 = 2.0 * pi * B0 / g1H
+
+    # The conversion factor.
+    conv = 15.0 * mu0 * kB * T / B0**2
+
+    # Return the converted value.
+    return conv * A
+
 
 def dAi_dAxx(A):
     """The dAi/dAxx gradient.
@@ -124,6 +153,32 @@ def dAi_dAyz(A):
     A[0, 0] = 0.0;  A[0, 1] = 0.0;  A[0, 2] = 0.0
     A[1, 0] = 0.0;  A[1, 1] = 0.0;  A[1, 2] = 1.0
     A[2, 0] = 0.0;  A[2, 1] = 1.0;  A[2, 2] = 0.0
+
+
+def kappa(nuc1='15N', nuc2='1H'):
+    """Function for calculating the kappa constant.
+
+    The kappa constant is::
+
+        kappa = -3/(8pi^2).gI.gS.mu0.h_bar,
+
+    where gI and gS are the gyromagnetic ratios of the I and S spins, mu0 is the permeability of
+    free space, and h_bar is Planck's constant divided by 2pi.
+
+    @param nuc1:    The first nucleus type.
+    @type nuc1:     str
+    @param nuc2:    The first nucleus type.
+    @type nuc2:     str
+    @return:        The kappa constant value.
+    @rtype:         float
+    """
+
+    # Gyromagnetic ratios.
+    gI = return_gyromagnetic_ratio(nuc1)
+    gS = return_gyromagnetic_ratio(nuc2)
+
+    # Kappa.
+    return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar
 
 
 def maxA(tensor):
