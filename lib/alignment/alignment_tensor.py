@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,6 +23,7 @@
 """Module for the manipulation of alignment tensors."""
 
 # Python imports.
+from math import pi
 from numpy.linalg import eigvals
 
 # relax module imports.
