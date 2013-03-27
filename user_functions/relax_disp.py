@@ -43,7 +43,7 @@ uf = uf_info.add_uf('relax_disp.calc_r2eff')
 uf.title = "Calculate the effective transversal relaxation rate from the peak intensities."
 uf.title_short = "R2eff calculation."
 uf.add_keyarg(
-    name = "exp",
+    name = "exp_type",
     default = "cpmg",
     py_type = "str",
     desc_short = "experiment type",
@@ -154,7 +154,7 @@ uf = uf_info.add_uf('relax_disp.exp_type')
 uf.title = "Select the type of relaxation dispersion experiments to analyse."
 uf.title_short = "Relaxation dispersion type selection."
 uf.add_keyarg(
-    name = "exp",
+    name = "exp_type",
     default = "cpmg",
     py_type = "str",
     desc_short = "experiment type",
@@ -167,7 +167,7 @@ uf.desc[-1].add_paragraph("The supported experiments will include CPMG ('cpmg') 
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg' for all selected spins, type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg')")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp='cpmg')")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg')")
 uf.backend = relax_disp_obj._exp_type
 uf.menu_text = "&exp_type"
 uf.wizard_size = (800, 500)
