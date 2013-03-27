@@ -246,7 +246,7 @@ class Relax_disp(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        pipes.test
+        pipes.test()
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -266,7 +266,7 @@ class Relax_disp(Common_functions):
 
         # Make sure the experiment type is set to 'cpmg'.
         if not cdp.exp_type == 'cpmg':
-            raise RelaxError, "To use the function cpmg_delay(), the experiment type must be set to 'cpmg'."
+            raise RelaxError, "To use this user function, the experiment type must be set to 'cpmg'."
 
         # Test the CPMG constant time delay (T) has not already been set.
         if cdp.delayT.has_key(id):
@@ -540,7 +540,7 @@ class Relax_disp(Common_functions):
         """
 
         # Test if the current pipe exists.
-        pipes.test
+        pipes.test()
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()
