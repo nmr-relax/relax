@@ -157,7 +157,7 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.r2[pos])
+                scaling_matrix[i, i] = 1e-1
 
             # Chemical exchange contribution to 'R2' scaling.
             elif spin.params[i] == 'Rex':
@@ -165,7 +165,7 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.rex[pos])
+                scaling_matrix[i, i] = 1e-1
 
             # Exchange rate scaling.
             elif spin.params[i] == 'kex':
@@ -173,7 +173,7 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.kex[pos])
+                scaling_matrix[i, i] = 1e-4
 
             # Transversal relaxation rate for state A scaling
             elif spin.params[i] == 'R2A':
@@ -181,7 +181,7 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.r2a[pos])
+                scaling_matrix[i, i] = 1e-1
 
             # Exchange rate from state A to state B scaling.
             elif spin.params[i] == 'kA':
@@ -189,7 +189,7 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.ka[pos])
+                scaling_matrix[i, i] = 1e-4
 
             # Chemical shift difference between states A and B scaling.
             elif spin.params[i] == 'dw':
@@ -197,7 +197,7 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.dw[pos])
+                scaling_matrix[i, i] = 1e-3
 
             # Increment i.
             i = i + 1
@@ -497,17 +497,17 @@ class Relax_disp(Common_functions):
         | Data type                                         | Object name   | Value    |
         |___________________________________________________|_______________|__________|
         |                                                   |               |          |
-        | Transversal relaxation rate                       | 'R2'          | 8.0      |
+        | Transversal relaxation rate                       | 'R2'          | 15.0     |
         |                                                   |               |          |
-        | Chemical exchange contribution to 'R2'            | 'Rex'         | 2.0      |
+        | Chemical exchange contribution to 'R2'            | 'Rex'         | 5.0      |
         |                                                   |               |          |
         | Exchange rate                                     | 'kex'         | 10000.0  |
         |                                                   |               |          |
-        | Transversal relaxation rate for state A           | 'R2A'         | 8.0      |
+        | Transversal relaxation rate for state A           | 'R2A'         | 15.0     |
         |                                                   |               |          |
         | Exchange rate from state A to state B             | 'kA'          | 10000.0  |
         |                                                   |               |          |
-        | Chemical shift difference between states A and B  | 'dw'          | 100      |
+        | Chemical shift difference between states A and B  | 'dw'          | 1000.0   |
         |                                                   |               |          |
         |___________________________________________________|_______________|__________|
 
@@ -515,11 +515,11 @@ class Relax_disp(Common_functions):
 
         # Transversal relaxation rate.
         if param == 'R2':
-            return 8.0
+            return 15.0
 
         # Chemical exchange contribution to 'R2'.
         if param == 'Rex':
-            return 2.0
+            return 5.0
 
         # Exchange rate.
         if param == 'kex':
@@ -527,7 +527,7 @@ class Relax_disp(Common_functions):
 
         # Transversal relaxation rate for state A.
         if param == 'R2A' :
-            return 8.0
+            return 15.0
 
         # Exchange rate from state A to state B.
         if param == 'kA' :
@@ -535,7 +535,7 @@ class Relax_disp(Common_functions):
 
         # Chemical shift difference between states A and B.
         if param == 'dw' :
-            return 100
+            return 1000.0
 
 
     def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
