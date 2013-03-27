@@ -33,6 +33,7 @@ __all__ = [ 'api_base',
             'model_free',
             'n_state_model',
             'noe',
+            'relax_disp',
             'relax_fit',
             'setup'
 ]
