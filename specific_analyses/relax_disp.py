@@ -25,7 +25,7 @@
 """The relaxation dispersion curve fitting specific code."""
 
 # Python module imports.
-from numpy import array, average, dot, float64, identity, zeros
+from numpy import array, average, dot, float64, identity, log, zeros
 from numpy.linalg import inv
 from re import match, search
 
