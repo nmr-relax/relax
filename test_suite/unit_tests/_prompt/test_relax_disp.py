@@ -75,7 +75,7 @@ class Test_relax_disp(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.calc_r2eff, delayT=data[1])
+            self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.calc_r2eff, id='test', delayT=data[1])
 
 
     def test_relax_calc_r2eff_argfail_int_cpmg(self):
@@ -88,7 +88,7 @@ class Test_relax_disp(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, int_cpmg=data[1])
+            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', int_cpmg=data[1])
 
 
     def test_relax_calc_r2eff_argfail_int_ref(self):
@@ -101,7 +101,7 @@ class Test_relax_disp(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, int_ref=data[1])
+            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', int_ref=data[1])
 
 
     def test_relax_cpmg_delayT_argfail_id(self):
