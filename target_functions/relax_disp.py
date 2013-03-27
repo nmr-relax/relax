@@ -28,9 +28,11 @@ from target_functions.chi2 import chi2
 
 
 class Dispersion:
-    def __init__(self, num_params=None, num_times=None, values=None, sd=None, cpmg_frqs=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_times=None, values=None, sd=None, cpmg_frqs=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
+        @keyword model:             The relaxation dispersion model to fit.
+        @type model:                str
         @keyword num_param:         The number of parameters in the model.
         @type num_param:            int
         @keyword num_times:         The number of relaxation times.
@@ -52,6 +54,10 @@ class Dispersion:
         self.sd = sd
         self.cpmg_frqs = cpmg_frqs
         self.scaling_matrix = scaling_matrix
+
+        # Set up the model.
+        if model == 'fast':
+            self.func = self.func_fast_2site
 
 
     def func_fast_2site(self, params):

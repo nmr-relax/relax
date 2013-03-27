@@ -960,7 +960,7 @@ class Relax_disp(API_base, API_common):
             else:
                 values = spin.sim_intensities[sim_index]
 
-            model = Dispersion(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=values, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.curve_type, num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=values, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
