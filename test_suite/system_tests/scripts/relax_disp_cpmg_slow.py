@@ -1,4 +1,4 @@
-# Script for CPMG relaxation dispersion curve fitting in the fast-exchange limit.
+# Script for CPMG relaxation dispersion curve fitting in the slow-exchange limit.
 
 import sys
 
@@ -71,7 +71,7 @@ cpmg_frq = [
 relax_disp.exp_type('cpmg')
 
 # Set the relaxation dispersion curve type.
-relax_disp.select_model('fast')
+relax_disp.select_model('slow')
 
 # Loop over the spectra.
 for i in xrange(len(names)):
