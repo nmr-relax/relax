@@ -7,28 +7,64 @@ import sys
 pipe.create('rex', 'relax_disp')
 
 # The path to the data files.
-data_path = sys.path[-1] + '/test_suite/shared_data/disp_curve_fitting'
+data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/dataset_1'
 
 # Load the sequence.
-sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
+sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/dataset_1')
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
+# Relaxation dispersion magnetic field (in Hz).
+frq.set(id='500', frq=500.0 * 1e6)
+
 # Spectrum names.
 names = [
-    'T2_ncyc1_ave'
+    'reference.in',
+    '66.667.in',
+    '1000.in',
+    '133.33.in',
+    '933.33.in',
+    '200.in',
+    '866.67.in',
+    '266.67.in',
+    '800.in',
+    '333.33.in',
+    '733.33.in',
+    '400.in',
+    '666.67.in',
+    '466.67.in',
+    '600.in',
+    '533.33.in',
+    '133.33.in.bis',
+    '933.33.in.bis',
+    '533.33.in.bis'
 ]
 
-# Relaxation dispersion magnetic field (in Hz).
-frq.set(id='600', frq=600.0 * 1e6)
-
 # Relaxation dispersion CPMG constant time delay T (in s).
-relax_disp.cpmg_delayT(id='600', delayT=0.020)
+relax_disp.cpmg_delayT(id='500', delayT=0.030)
 
 # Relaxation dispersion CPMG frequencies (in Hz).
 cpmg_frq = [
-    0.1936
+    None,
+    66.667,
+    1000,
+    133.33,
+    933.33,
+    200,
+    866.67,
+    266.67,
+    800,
+    333.33,
+    733.33,
+    400,
+    666.67,
+    466.67,
+    600,
+    533.33,
+    133.33,
+    933.33,
+    533.33
 ]
 
 # Set the relaxation dispersion experiment type.
@@ -40,13 +76,15 @@ relax_disp.select_model('fast')
 # Loop over the spectra.
 for i in xrange(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i], dir=data_path, spectrum_id=names[i], int_method='height')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(cpmg_frq=cpmg_frq[i], spectrum_id=names[i])
 
 # Specify the duplicated spectra.
-#spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
+spectrum.replicated(spectrum_ids=['133.33.in', '133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['533.33.in', '533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['933.33.in', '933.33.in.bis'])
 
 # Peak intensity error analysis.
 spectrum.error_analysis()
