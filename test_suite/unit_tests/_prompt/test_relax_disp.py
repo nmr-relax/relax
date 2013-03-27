@@ -102,3 +102,16 @@ class Test_relax_disp(TestCase):
 
         # The argument test.
         self.assertRaises(RelaxStrError, self.relax_disp_fns.exp_type, exp=data[1])
+
+
+    def test_relax_select_model_argfail_model(self):
+        """The model arg test of the relax_disp.select_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+        # The argument test.
+        self.assertRaises(RelaxStrError, self.relax_disp_fns.select_model, model=data[1])
