@@ -1101,14 +1101,6 @@ class Relax_disp(Common_functions):
                 continue
 
 
-    def r2eff_read(self):
-        """Function for reading 'R2eff' values directly, instead of calculating them within relax
-        starting from the intensities.
-
-        THIS FUNCTION IS NOT WRITTEN YET.
-        """
-
-
     def return_data(self, spin):
         """Function for returning the peak intensity data structure.
 
