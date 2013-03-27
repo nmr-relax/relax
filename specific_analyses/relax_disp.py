@@ -207,7 +207,7 @@ class Relax_disp(Common_functions):
         cdp.cpmg_frqs[index] = frq
 
 
-    def cpmg_delayT(id=None, delayT=None):
+    def cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
         @keyword id:       The experimental identification string (allowing for multiple experiments
@@ -216,16 +216,6 @@ class Relax_disp(Common_functions):
         @keyword delayT:   The CPMG constant time delay (T) in s.
         @type delayT:      float
         """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "delayT("
-            text = text + "id=" + `id`
-            text = text + ", delayT=" + `delayT` + ")"
-            print text
-
-        # Test if the current data pipe exists.
-        pipes.test()
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
