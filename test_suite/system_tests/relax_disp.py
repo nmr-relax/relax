@@ -59,8 +59,9 @@ class Relax_disp(TestCase):
         ds.__reset__()
 
 
-    def test_curve_fitting(self):
-        """Test the relaxation dispersion curve fitting C modules."""
+    def test_curve_fitting_cpmg_fast(self):
+        """Test the relaxation dispersion curve fitting C modules for CPMG data in the
+        fast-exchange limit."""
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_disp.py')
