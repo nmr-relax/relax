@@ -64,4 +64,12 @@ class Relax_disp(TestCase):
         fast-exchange limit."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_disp.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_disp_cpmg_fast.py')
+
+
+    def test_curve_fitting_cpmg_slow(self):
+        """Test the relaxation dispersion curve fitting C modules for CPMG data in the
+        slow-exchange limit."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_disp_cpmg_slow.py')
