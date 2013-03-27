@@ -1138,7 +1138,7 @@ class Relax_disp(Common_functions):
         |                                                   |                |                          |
         | Chemical shift difference between states A and B  | 'dw'           | '^[Dd]w$'                |
         |                                                   |                |                          |
-        | Peak intensities (series)                         | 'intensities'  | '^[Ii]nt$                |
+        | Peak intensities (series)                         | 'intensities'  | '^[Ii]nt$'               |
         |                                                   |                |                          |
         | CPMG pulse train frequency (series)               | 'cpmg_frqs'    | '^[Cc]pmg[ -_][Ff]rqs$'  |
         |___________________________________________________|________________|__________________________|
