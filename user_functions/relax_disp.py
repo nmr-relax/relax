@@ -44,10 +44,20 @@ uf.title = "Calculate the effective transversal relaxation rate from the peak in
 uf.title_short = "R2eff calculation."
 uf.add_keyarg(
     name = "exp_type",
-    default = "cpmg",
+    default = "CPMG",
     py_type = "str",
     desc_short = "experiment type",
-    desc = "The relaxation dispersion experiment type, either 'cpmg' or 'r1rho'."
+    desc = "The relaxation dispersion experiment type, either 'cpmg' or 'r1rho'.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "CPMG",
+        "R1rho"
+    ],
+    wiz_combo_data = [
+        "cpmg",
+        "r1rho"
+    ],
+    wiz_read_only = True
 )
 uf.add_keyarg(
     name = "id",
@@ -91,7 +101,7 @@ uf.desc[-1].add_prompt("relax> relax_disp.calc_r2eff(exp_type='cpmg', id='600', 
 uf.desc[-1].add_paragraph("ANOTHER EXAMPLE FOR BATCH USE (FROM PEAK INTENSITY LISTS) WILL SOON BE ADDED.")
 uf.backend = relax_disp_obj._calc_r2eff
 uf.menu_text = "&calc_r2eff"
-uf.wizard_size = (800, 500)
+uf.wizard_size = (900, 600)
 
 
 # The relax_disp.cpmg_delayT user function.
@@ -164,7 +174,17 @@ uf.add_keyarg(
     default = "cpmg",
     py_type = "str",
     desc_short = "experiment type",
-    desc = "The type of relaxation dispersion experiment performed."
+    desc = "The type of relaxation dispersion experiment performed.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "CPMG",
+        "R1rho"
+    ],
+    wiz_combo_data = [
+        "cpmg",
+        "r1rho"
+    ],
+    wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -176,7 +196,7 @@ uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg')")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg')")
 uf.backend = relax_disp_obj._exp_type
 uf.menu_text = "&exp_type"
-uf.wizard_size = (800, 500)
+uf.wizard_size = (800, 400)
 
 
 # The relax_disp.select_model user function.
@@ -235,6 +255,6 @@ uf.desc[-1].add_prompt("relax> relax_disp.select_model(model='fast')")
 uf.backend = relax_disp_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
-uf.wizard_height_desc = 300
-uf.wizard_size = (800, 500)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
