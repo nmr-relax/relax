@@ -38,6 +38,56 @@ uf_class.menu_text = "&relax_disp"
 uf_class.gui_icon = "relax.relax_disp"
 
 
+# The relax_disp.calc_r2eff user function.
+uf = uf_info.add_uf('relax_disp.calc_r2eff')
+uf.title = "Calculate the effective transversal relaxation rate from the peak intensities."
+uf.title_short = "R2eff calculation."
+uf.add_keyarg(
+    name = "exp",
+    default = "cpmg",
+    py_type = "str",
+    desc_short = "experiment type",
+    desc = "The relaxation dispersion experiment type, either 'cpmg' or 'r1rho'."
+)
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "experiment ID",
+    desc = "The experiment identification string."
+)
+uf.add_keyarg(
+    name = "delayT",
+    py_type = "float",
+    desc_short = "CPMG time delay",
+    desc = "The CPMG constant time delay (T) in s."
+)
+uf.add_keyarg(
+    name = "int_cpmg",
+    default = "0.0",
+    py_type = "float",
+    desc_short = "CPMG peak intensity",
+    desc = "Intensity of the peak in the CPMG spectrum.."
+)
+uf.add_keyarg(
+    name = "int_ref",
+    default = "0.0",
+    py_type = "float",
+    desc_short = "reference peak intensity",
+    desc = "Intensity of the peak in the reference spectrum.."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows one to extract 'r2eff' values from peak intensities.")
+uf.desc[-1].add_paragraph("If 'cpmg' is chosen, the equation used is:")
+uf.desc[-1].add_verbatim("""
+    r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+""")
+uf.desc[-1].add_paragraph("If 'r1rho' is chosen, nothing happens yet, as the code is not implemented.")
+uf.backend = relax_disp_obj._calc_r2eff
+uf.menu_text = "&calc_r2eff"
+uf.wizard_size = (800, 500)
+
+
 # The relax_disp.cpmg_delayT user function.
 uf = uf_info.add_uf('relax_disp.cpmg_delayT')
 uf.title = "Set the CPMG constant time delay (T) of the experiment."

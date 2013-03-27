@@ -245,10 +245,17 @@ class Relax_disp(Common_functions):
         """Calculate the effective transversal relaxation rate from the peak intensities. The
         equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
 
-        If 'cpmg' is chosen, the equation used is:
-        r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
-
-        If 'r1rho' is chosen, nothing happens yet, as the code is not implemented.
+        @keyword exp_type:   The experiment type, either 'cpmg' or 'r1rho'.
+        @type exp_type:      str
+        @keyword id:         The experimental identification string (allowing for multiple experiments
+                             per data pipe).
+        @type id:            str
+        @keyword delayT:     The CPMG constant time delay (T) in s.
+        @type delayT:        float
+        @keyword int_cpmg:   The intensity of the peak in the CPMG spectrum.
+        @type int_cpmg:      float
+        @keyword int_ref:    The intensity of the peak in the reference spectrum.
+        @type int_ref:       float
         """
 
         if exp_type == 'cpmg':
