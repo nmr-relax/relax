@@ -2,6 +2,9 @@
 The dataset contained in this folder was published in:
 	Hansen, Vallurupalli & Kay, 2008, JPhysChemB, 112: 5898-5904.
 
+It contains the data recorded at 500 MHz using the improved pulse sequence with 1H CW decoupling
+during the CPMG period.
+
 It was was friendly provided by Dr Flemming Hansen.
 	flemming AT pound DOT med DOT utoronto DOT ca
 

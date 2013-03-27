@@ -7,10 +7,10 @@ import sys
 pipe.create('rex', 'relax_disp')
 
 # The path to the data files.
-data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/dataset_1'
+data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/dataset_1-a'
 
 # Load the sequence.
-sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/dataset_1')
+sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/dataset_1-a')
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
