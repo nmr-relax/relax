@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -46,7 +46,7 @@ class Test_relax_disp(TestCase):
         self.interpreter.on(verbose=False)
 
         # Alias the user function class.
-        self.relax_fit_fns = self.interpreter.relax_fit
+        self.relax_disp_fns = self.interpreter.relax_disp
 
 
     def test_relax_calc_r2eff_argfail_exp_type(self):
