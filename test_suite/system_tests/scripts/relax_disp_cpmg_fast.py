@@ -7,7 +7,8 @@ import sys
 pipe.create('rex', 'relax_disp')
 
 # The path to the data files.
-data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/500_MHz'
+data_path_1 = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/500_MHz'
+data_path_2 = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/800_MHz'
 
 # Load the sequence.
 sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen')
@@ -23,6 +24,7 @@ relax_disp.select_model('fast')
 
 # Relaxation dispersion magnetic field (in Hz).
 frq.set(id='500', frq=500.0 * 1e6)
+frq.set(id='800', frq=800.0 * 1e6)
 
 # Spectrum names.
 names = [
@@ -49,6 +51,7 @@ names = [
 
 # Relaxation dispersion CPMG constant time delay T (in s).
 relax_disp.cpmg_delayT(id='500', delayT=0.030)
+relax_disp.cpmg_delayT(id='800', delayT=0.030)
 
 # Relaxation dispersion CPMG frequencies (in Hz).
 cpmg_frq = [
@@ -76,7 +79,8 @@ cpmg_frq = [
 # Loop over the spectra.
 for i in xrange(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i], dir=data_path, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i], dir=data_path_1, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i], dir=data_path_2, spectrum_id=names[i], int_method='height')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(cpmg_frq=cpmg_frq[i], spectrum_id=names[i])
@@ -90,7 +94,8 @@ spectrum.replicated(spectrum_ids=['933.33.in_sparky', '933.33.in.bis_sparky'])
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path)
+deselect.read(file='unresolved', dir=data_path_1)
+deselect.read(file='unresolved', dir=data_path_2)
 
 # Grid search.
 grid_search(inc=11)
