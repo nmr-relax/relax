@@ -207,6 +207,41 @@ class Relax_disp(Common_functions):
         cdp.cpmg_frqs[index] = frq
 
 
+    def cpmg_delayT(id=None, delayT=None):
+        """Set the CPMG constant time delay (T) of the experiment.
+
+        @keyword id:       The experimental identification string (allowing for multiple experiments
+                           per data pipe).
+        @type id:          str
+        @keyword delayT:   The CPMG constant time delay (T) in s.
+        @type delayT:      float
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "delayT("
+            text = text + "id=" + `id`
+            text = text + ", delayT=" + `delayT` + ")"
+            print text
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Set up the dictionnary data structure if it doesn't exist yet.
+        if not hasattr(cdp, 'delayT'):
+            cdp.delayT = {}
+
+        # Test the CPMG constant time delay (T) has not already been set.
+        if cdp.delayT.has_key(id):
+           raise RelaxError, "The CPMG constant time delay (T) for the experiment " + `id` + " has already been set."
+
+        # Set the CPMG constant time delay (T).
+        cdp.delayT[id] = delayT
+
+
     def create_mc_data(self, spin_id):
         """Create the Monte Carlo peak intensity data.
 

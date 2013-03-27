@@ -38,6 +38,30 @@ uf_class.menu_text = "&relax_disp"
 uf_class.gui_icon = "relax.relax_disp"
 
 
+# The relax_disp.cpmg_delayT user function.
+uf = uf_info.add_uf('relax_disp.cpmg_delayT')
+uf.title = "Set the CPMG constant time delay (T) of the experiment."
+uf.title_short = "CPMG time delay."
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "experiment ID",
+    desc = "The experiment identification string."
+)
+uf.add_keyarg(
+    name = "delayT",
+    py_type = "float",
+    desc_short = "CPMG time delay",
+    desc = "The CPMG constant time delay (T) in s."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the CPMG constant time delay (T) of a given experiment to be set.")
+uf.backend = relax_disp_obj._cpmg_delayT
+uf.menu_text = "&cpmg_delayT"
+uf.wizard_size = (800, 500)
+
+
 # The relax_disp.exp_type user function.
 uf = uf_info.add_uf('relax_disp.exp_type')
 uf.title = "Select the type of relaxation dispersion experiments to analyse."
