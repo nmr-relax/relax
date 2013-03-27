@@ -211,7 +211,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The supported equations will include the default fast-exchange limit as well as the slow-exchange limit.")
 uf.desc.append(Desc_container("The preset experiments"))
-uf.desc[-1].add_paragraph("The parameters of these two models are")
+uf.desc[-1].add_paragraph("The parameters of these two models are:")
 uf.desc[-1].add_item_list_element("'fast'", "[R2, Rex, kex],")
 uf.desc[-1].add_item_list_element("'slow'", "[R2A, kA, dw].")
 uf.desc[-1].add_paragraph("The equation for fast exchange is:")
