@@ -143,17 +143,17 @@ class Relax_disp(Common_functions):
 
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
-            # Relaxation rate.
-            if spin.params[i] == 'Rx':
-                pass
-
-            # Intensity scaling.
-            elif search('^i', spin.params[i]):
+            # Effective transversal relaxation rate scaling.
+            if spin.params[i] == 'R2eff':
                 # Find the position of the first CPMG pulse train frequency point.
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.intensities[pos])
+                scaling_matrix[i, i] = 1.0 / average(spin.r2effs[pos])
+
+            # No scaling for other parameters.
+            else:
+                pass
 
             # Increment i.
             i = i + 1
