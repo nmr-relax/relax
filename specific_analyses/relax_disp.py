@@ -725,27 +725,34 @@ class Relax_disp(Common_functions):
         Standard notation
         =================
 
-        The relaxation rate constraints are::
+        The different constraints are::
 
-            Rx >= 0
+            R2 >= 0
+            Rex >= 0
+            kex >= 0
 
-        The intensity constraints are::
-
-            I0 >= 0
-            Iinf >= 0
+            R2A >= 0
+            kA >= 0
+            dw >= 0
 
 
         Matrix notation
         ===============
 
-        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
+        In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter
         values, and b is a vector of scalars, these inequality constraints are::
 
-            | 1  0  0 |     |  Rx  |      |    0    |
+            | 1  0  0 |     |  R2  |      |    0    |
             |         |     |      |      |         |
-            | 1  0  0 |  .  |  I0  |  >=  |    0    |
+            | 1  0  0 |  .  |  Rex |      |    0    |
             |         |     |      |      |         |
-            | 1  0  0 |     | Iinf |      |    0    |
+            | 1  0  0 |     |  kex |      |    0    |
+            |         |     |      |  >=  |         |
+            | 1  0  0 |     |  R2A |      |    0    |
+            |         |     |      |      |         |
+            | 1  0  0 |     |  kA  |      |    0    |
+            |         |     |      |      |         |
+            | 1  0  0 |     |  dw  |      |    0    |
 
 
         @keyword spin:              The spin data container.
@@ -764,17 +771,25 @@ class Relax_disp(Common_functions):
 
         # Loop over the parameters.
         for k in xrange(len(spin.params)):
-            # Relaxation rate.
-            if spin.params[k] == 'Rx':
-                # Rx >= 0.
+            # Relaxation rates and Rex.
+            if search('^R', spin.params[k]):
+                # R2, Rex, R2A >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j = j + 1
 
-            # Intensity parameter.
-            elif search('^I', spin.params[k]):
-                # I0, Iinf >= 0.
+            # Exchange rates.
+            elif search('^k', spin.params[k]):
+                # kex, kA >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j = j + 1
+
+            # Chemical exchange difference.
+            elif spin.params[k] == 'dw':
+                # dw >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
