@@ -25,6 +25,7 @@
 
 # relax module imports.
 from lib.dispersion.equations import fast_2site
+from lib.errors import RelaxError
 from target_functions.chi2 import chi2
 
 
@@ -59,6 +60,8 @@ class Dispersion:
         # Set up the model.
         if model == 'fast':
             self.func = self.func_fast_2site
+        else:
+            raise RelaxError("The relaxation dispersion model '%s' is not supported yet." % model)
 
 
     def func_fast_2site(self, params):
