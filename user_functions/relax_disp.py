@@ -139,7 +139,7 @@ uf.title = "Set the CPMG frequency associated with a given spectrum."
 uf.title_short = "CPMG frequency setting."
 uf.add_keyarg(
     name = "cpmg_frq",
-    py_type = "float",
+    py_type = "num",
     desc_short = "CPMG frequency (Hz)",
     desc = "The frequency, in Hz, of the CPMG pulse train.",
     can_be_none = True
