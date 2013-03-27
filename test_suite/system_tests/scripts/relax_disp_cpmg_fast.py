@@ -1,19 +1,21 @@
 # Script for CPMG relaxation dispersion curve fitting in the fast-exchange limit.
 
 # Python module imports.
-import __main__
 from os import sep
+
+# relax module imports.
+from status import Status; status = Status()
 
 
 # Create the data pipe.
 pipe.create('rex', 'relax_disp')
 
 # The path to the data files.
-data_path1 = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen'+sep+'500_MHz'
-data_path2 = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen'+sep+'800_MHz'
+data_path1 = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen'+sep+'500_MHz'
+data_path2 = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen'+sep+'800_MHz'
 
 # Load the sequence.
-sequence.read('fake_sequence.in', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen', res_num_col=1, res_name_col=2)
+sequence.read('fake_sequence.in', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
@@ -96,8 +98,8 @@ spectrum.replicated(spectrum_ids=['933.33.in_sparky', '933.33.in.bis_sparky'])
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path_1)
-deselect.read(file='unresolved', dir=data_path_2)
+deselect.read(file='unresolved', dir=data_path_1, res_num_col=1)
+deselect.read(file='unresolved', dir=data_path_2, res_num_col=1)
 
 # Grid search.
 grid_search(inc=11)
