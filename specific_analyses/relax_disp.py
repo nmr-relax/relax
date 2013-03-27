@@ -310,7 +310,7 @@ class Relax_disp(API_base, API_common):
 
         # Set the CPMG constant time delay (T).
         cdp.delayT[id] = delayT
-        print "The CPMG delay T for experiment " + `id` + " has been set to " + `cdp.delayT[id]`  + " s."
+        print("The CPMG delay T for experiment '%s' has been set to %s s." % (id, cdp.delayT[id]))
 
 
     def _cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
@@ -630,12 +630,12 @@ class Relax_disp(API_base, API_common):
 
         # CPMG relaxation dispersion experiments.
         if exp_type == 'cpmg':
-            print "CPMG relaxation dispersion experiments."
+            print("CPMG relaxation dispersion experiments.")
             cdp.exp_type = 'cpmg'
 
         # R1rho relaxation dispersion experiments.
         elif exp_type == 'r1rho':
-            print "R1rho relaxation dispersion experiments."
+            print("R1rho relaxation dispersion experiments.")
             cdp.exp_type = 'r1rho'
 
         # Invalid relaxation dispersion experiment.
@@ -939,17 +939,17 @@ class Relax_disp(API_base, API_common):
 
             # Print out.
             if verbosity >= 1:
-                # Individual spin print out.
+                # Individual spin printout.
                 if verbosity >= 2:
-                    print "\n\n"
+                    print("\n\n")
 
-                string = "Fitting to spin " + `spin_id`
-                print "\n\n" + string
-                print len(string) * '~'
+                string = "Fitting to spin '%s'" % spin_id
+                print("\n\n%s" % string)
+                print(len(string) * '~')
 
-                # Grid search print out.
+                # Grid search printout.
                 if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+                    print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
 
             # Initialise the function to minimise.
@@ -1274,12 +1274,12 @@ class Relax_disp(API_base, API_common):
 
         # Fast-exchange regime.
         if model == 'fast':
-            print "Fast-exchange regime."
+            print("Fast-exchange regime.")
             params = ['R2', 'Rex', 'kex']
 
         # Slow-exchange regime.
         elif model == 'slow':
-            print "Slow-exchange regime."
+            print("Slow-exchange regime.")
             params = ['R2A', 'kA', 'dw']
 
         # Invalid model.
