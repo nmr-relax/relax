@@ -46,13 +46,13 @@ class Relax_disp(Common_functions):
     """Class containing functions for relaxation curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):
-        """Assemble the exponential curve parameter vector (as a numpy array).
+        """Assemble the dispersion relaxation curve-fitting parameter vector (as a numpy array).
 
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
-        @return:                An array of the parameter values of the exponential model.
+        @return:                An array of the parameter values of the dispersion relaxation model.
         @rtype:                 numpy array
         """
 
@@ -61,32 +61,59 @@ class Relax_disp(Common_functions):
 
         # Loop over the model parameters.
         for i in xrange(len(spin.params)):
-            # Relaxation rate.
-            if spin.params[i] == 'Rx':
+            # Transversal relaxation rate.
+            if spin.params[i] == 'R2':
                 if sim_index != None:
-                    param_vector.append(spin.rx_sim[sim_index])
-                elif spin.rx == None:
+                    param_vector.append(spin.r2_sim[sim_index])
+                elif spin.r2 == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(spin.rx)
+                    param_vector.append(spin.r2)
 
-            # Initial intensity.
-            elif spin.params[i] == 'I0':
+            # Chemical exchange contribution to 'R2'.
+            elif spin.params[i] == 'Rex':
                 if sim_index != None:
-                    param_vector.append(spin.i0_sim[sim_index])
-                elif spin.i0 == None:
+                    param_vector.append(spin.rex_sim[sim_index])
+                elif spin.rex == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(spin.i0)
+                    param_vector.append(spin.rex)
 
-            # Intensity at infinity.
-            elif spin.params[i] == 'Iinf':
+            # Exchange rate.
+            elif spin.params[i] == 'kex':
                 if sim_index != None:
-                    param_vector.append(spin.iinf_sim[sim_index])
-                elif spin.iinf == None:
+                    param_vector.append(spin.kex_sim[sim_index])
+                elif spin.kex == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(spin.iinf)
+                    param_vector.append(spin.kex)
+
+            # Relaxation rate for state A.
+            if spin.params[i] == 'R2A':
+                if sim_index != None:
+                    param_vector.append(spin.r2a_sim[sim_index])
+                elif spin.r2a == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.r2a)
+
+            # Exchange rate from state A to state B.
+            if spin.params[i] == 'ka':
+                if sim_index != None:
+                    param_vector.append(spin.ka_sim[sim_index])
+                elif spin.ka == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.ka)
+
+            # Chemical shift difference between states A and B.
+            if spin.params[i] == 'dw':
+                if sim_index != None:
+                    param_vector.append(spin.dw_sim[sim_index])
+                elif spin.dw == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.dw)
 
         # Return a numpy array.
         return array(param_vector, float64)
