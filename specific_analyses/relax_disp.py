@@ -39,14 +39,14 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNo
 
 # C modules.
 if C_module_exp_fn:
-    from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
+    from maths_fns.relax_disp import setup, func, dfunc, d2func, back_calc_I
 
 
 class Relax_disp(Common_functions):
     """Class containing functions for relaxation dispersion curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):
-        """Assemble the dispersion relaxation dispersion curve-fitting parameter vector (as a numpy array).
+        """Assemble the dispersion relaxation dispersion curve fitting parameter vector (as a numpy array).
 
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
@@ -228,7 +228,7 @@ class Relax_disp(Common_functions):
         # Create a scaling matrix.
         scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
 
-        # Initialise the relaxation fit functions.
+        # Initialise the relaxation dispersion fit functions.
         setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=spin.intensities, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
