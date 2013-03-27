@@ -122,7 +122,7 @@ class Relax_disp(Common_functions):
 
             # Intensity scaling.
             elif search('^i', spin.params[i]):
-                # Find the position of the first time point.
+                # Find the position of the first CPMG pulse train frequency point.
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
@@ -135,15 +135,15 @@ class Relax_disp(Common_functions):
         return scaling_matrix
 
 
-    def back_calc(self, spin=None, relax_time_index=None):
-        """Back-calculation of peak intensity for the given relaxation time.
+    def back_calc(self, spin=None, cpmg_frq_index=None):
+        """Back-calculation of peak intensity for the given CPMG pulse train frequency.
 
-        @keyword spin:              The spin container.
-        @type spin:                 SpinContainer instance
-        @keyword relax_time_index:  The index for the desired relaxation time.
-        @type relax_time_index:     int
-        @return:                    The peak intensity for the desired relaxation time.
-        @rtype:                     float
+        @keyword spin:            The spin container.
+        @type spin:               SpinContainer instance
+        @keyword cpmg_frq_index:  The index for the desired CPMG pulse train frequency.
+        @type cpmg_frq_index:     int
+        @return:                  The peak intensity for the desired CPMG pulse train frequency.
+        @rtype:                   float
         """
 
         # Alias the current data pipe.
@@ -165,7 +165,7 @@ class Relax_disp(Common_functions):
         results = back_calc_I()
 
         # Return the correct peak height.
-        return results[relax_time_index]
+        return results[cpmg_frq_index]
 
 
     def cpmg_frq(self, frq=0, spectrum_id=None):
@@ -239,7 +239,7 @@ class Relax_disp(Common_functions):
         # Loop over the spectral time points.
         for j in xrange(len(cdp.cpmg_frqs)):
             # Back calculate the value.
-            value = self.back_calc(spin=spin, relax_time_index=j)
+            value = self.back_calc(spin=spin, cpmg_frq_index=j)
 
             # Append the value.
             mc_data.append(value)
