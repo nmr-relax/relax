@@ -201,7 +201,7 @@ class Relax_disp(Common_functions):
         """Set the CPMG frequency associated with a given spectrum.
 
         @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
-        @type cpmg_frq:         int
+        @type cpmg_frq:         float
         @keyword spectrum_id:   The spectrum identification string.
         @type spectrum_id:      str
         """
@@ -214,7 +214,8 @@ class Relax_disp(Common_functions):
             raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
 
         # Store the CPMG frequency in the class instance.
-        self.__cpmg_frq = int(cpmg_frq)
+        if cpmg_frq != None:
+            self.__cpmg_frq = float(cpmg_frq)
 
         # The index.
         index = cdp.spectrum_ids.index(spectrum_id)

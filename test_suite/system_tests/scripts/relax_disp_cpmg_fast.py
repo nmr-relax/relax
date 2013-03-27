@@ -82,9 +82,9 @@ for i in xrange(len(names)):
     relax_disp.cpmg_frq(cpmg_frq=cpmg_frq[i], spectrum_id=names[i])
 
 # Specify the duplicated spectra.
-spectrum.replicated(spectrum_ids=['133.33.in', '133.33.in.bis'])
-spectrum.replicated(spectrum_ids=['533.33.in', '533.33.in.bis'])
-spectrum.replicated(spectrum_ids=['933.33.in', '933.33.in.bis'])
+spectrum.replicated(spectrum_ids=['133.33.in_sparky', '133.33.in.bis_sparky'])
+spectrum.replicated(spectrum_ids=['533.33.in_sparky', '533.33.in.bis_sparky'])
+spectrum.replicated(spectrum_ids=['933.33.in_sparky', '933.33.in.bis_sparky'])
 
 # Peak intensity error analysis.
 spectrum.error_analysis()
