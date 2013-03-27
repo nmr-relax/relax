@@ -245,6 +245,9 @@ class Relax_disp(Common_functions):
         @type delayT:      float
         """
 
+        # Test if the current data pipe exists.
+        pipes.test
+
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
@@ -252,12 +255,26 @@ class Relax_disp(Common_functions):
         if not hasattr(cdp, 'delayT'):
             cdp.delayT = {}
 
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Make sure the experiment type is set to 'cpmg'.
+        if not cdp.exp_type == 'cpmg':
+            raise RelaxError, "To use the function cpmg_delay(), the experiment type must be set to 'cpmg'."
+
         # Test the CPMG constant time delay (T) has not already been set.
         if cdp.delayT.has_key(id):
            raise RelaxError, "The CPMG constant time delay (T) for the experiment " + `id` + " has already been set."
 
         # Set the CPMG constant time delay (T).
         cdp.delayT[id] = delayT
+        print "The CPMG delay T for experiment " + `id` + " has been set to " + `cdp.delayT[id]`  + " s."
 
 
     def create_mc_data(self, spin_id):
@@ -540,11 +557,12 @@ class Relax_disp(Common_functions):
         # CPMG relaxation dispersion experiments.
         if exp == 'cpmg':
             print "CPMG relaxation dispersion experiments."
+            cdp.exp_type = 'cpmg'
 
         # R1rho relaxation dispersion experiments.
         elif exp == 'r1rho':
-            #print "R1rho relaxation dispersion experiments."
-            raise RelaxError, "R1rho relaxation dispersion experiments have not been implemented yet."
+            print "R1rho relaxation dispersion experiments."
+            cdp.exp_type = 'r1rho'
 
         # Invalid relaxation dispersion experiment.
         else:
@@ -1155,6 +1173,10 @@ class Relax_disp(Common_functions):
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
+
+        # Test if the experiment type is set.
+        if not hasattr(cdp, 'exp_type'):
+            raise RelaxError, "The relaxation dispersion experiment type has not been set."
 
         # Fast-exchange regime.
         if model == 'fast':
