@@ -24,6 +24,7 @@
 """Target functions for relaxation dispersion."""
 
 # relax module imports.
+from lib.dispersion.equations import fast_2site
 from target_functions.chi2 import chi2
 
 
@@ -74,7 +75,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Back calculated the effective transversal relaxation rates.
-        dispersion(params=params, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc, num_times=self.num_times);
+        fast_2site(params=params, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc, num_times=self.num_times)
 
         # Calculate and return the chi-squared value.
         return chi2(values, back_calc, sd)
