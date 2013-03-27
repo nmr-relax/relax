@@ -1149,11 +1149,14 @@ class Relax_disp(Common_functions):
     def set_doc(self):
         """
         Relaxation dispersion curve fitting set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and
-        the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen
-        model is that of the exponential curve which decays to zero.
+        Only three parameters can be set for either the slow- or the fast-exchange regime. For the
+        slow-exchange regime, these parameters include the transversal relaxation rate for state A
+        (R2A), the exchange rate from state A to state (kA) and the chemical shift difference
+        between states A and B (dw). For the fast-exchange regime, these include the transversal
+        relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate
+        (kex). Setting parameters for a non selected model has no effect.
         """
 
 
