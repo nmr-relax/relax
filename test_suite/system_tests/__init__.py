@@ -57,6 +57,7 @@ from test_suite.system_tests.peak_lists import Peak_lists
 from test_suite.system_tests.pipes import Pipes
 from test_suite.system_tests.rdc import Rdc
 from test_suite.system_tests.relax_data import Relax_data
+from test_suite.system_tests.relax_disp import Relax_disp
 from test_suite.system_tests.relax_fit import Relax_fit
 from test_suite.system_tests.results import Results
 from test_suite.system_tests.selection import Selection
@@ -91,6 +92,7 @@ __all__ = ['align_tensor',
            'pipes',
            'rdc',
            'relax_data',
+           'relax_disp',
            'relax_fit',
            'results',
            'scripts',
@@ -179,6 +181,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_data))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Relax_disp))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
             suite_array.append(TestLoader().loadTestsFromTestCase(Results))
             suite_array.append(TestLoader().loadTestsFromTestCase(Selection))
