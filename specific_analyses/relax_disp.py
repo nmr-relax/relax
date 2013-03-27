@@ -257,14 +257,14 @@ class Relax_disp(API_base, API_common):
 
         # Avoid division by zero.
         if int_ref == 0:
-            raise RelaxError, "The reference peak intensity should not have a value of 0 (zero)"
+            raise RelaxError("The reference peak intensity should not have a value of 0 (zero).")
 
         # Avoid other inmpossible mathematical situation.
         if int_cpmg == 0:
-            raise RelaxError, "The CPMG peak intensity should not have a value of 0 (zero)"
+            raise RelaxError("The CPMG peak intensity should not have a value of 0 (zero).")
 
         if delayT == 0:
-            raise RelaxError, "The CPMG constant time delay (T) should not have a value of 0 (zero)"
+            raise RelaxError("The CPMG constant time delay (T) should not have a value of 0 (zero).")
 
         if exp_type == 'cpmg' and delayT != None:
             r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
@@ -294,7 +294,7 @@ class Relax_disp(API_base, API_common):
         # Test if the pipe type is set to 'relax_disp'.
         function_type = cdp.pipe_type
         if function_type != 'relax_disp':
-            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -302,11 +302,11 @@ class Relax_disp(API_base, API_common):
 
         # Make sure the experiment type is set to 'cpmg'.
         if not cdp.exp_type == 'cpmg':
-            raise RelaxError, "To use this user function, the experiment type must be set to 'cpmg'."
+            raise RelaxError("To use this user function, the experiment type must be set to 'cpmg'.")
 
         # Test the CPMG constant time delay (T) has not already been set.
         if cdp.delayT.has_key(id):
-           raise RelaxError, "The CPMG constant time delay (T) for the experiment " + `id` + " has already been set."
+           raise RelaxError("The CPMG constant time delay (T) for the experiment '%s' has already been set." % id)
 
         # Set the CPMG constant time delay (T).
         cdp.delayT[id] = delayT
@@ -327,7 +327,7 @@ class Relax_disp(API_base, API_common):
 
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
+            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
 
         # Store the CPMG frequency in the class instance.
         if cpmg_frq != None:
@@ -622,7 +622,7 @@ class Relax_disp(API_base, API_common):
         # Test if the pipe type is set to 'relax_disp'.
         function_type = cdp.pipe_type
         if function_type != 'relax_disp':
-            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -640,7 +640,7 @@ class Relax_disp(API_base, API_common):
 
         # Invalid relaxation dispersion experiment.
         else:
-            raise RelaxError, "The relaxation dispersion experiment '" + exp_type + "' is invalid."
+            raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -705,22 +705,22 @@ class Relax_disp(API_base, API_common):
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
-            raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
         # Lower bounds.
         if lower != None:
             if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
+                raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
         if upper != None:
             if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
+                raise RelaxLenError('upper bounds', n)
 
         # Increment.
         if type(inc) == list:
             if len(inc) != n:
-                raise RelaxLenError, ('increment', n)
+                raise RelaxLenError('increment', n)
             inc = inc
         elif type(inc) == int:
             temp = []
@@ -767,7 +767,7 @@ class Relax_disp(API_base, API_common):
         for i in xrange(len(min_options)):
             grid_size = grid_size * min_options[i][0]
         if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
+            raise RelaxError("A grid search of size %s is too large." % grid_size)
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
@@ -1262,7 +1262,7 @@ class Relax_disp(API_base, API_common):
         # Test if the pipe type is set to 'relax_disp'.
         function_type = cdp.pipe_type
         if function_type != 'relax_disp':
-            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1270,7 +1270,7 @@ class Relax_disp(API_base, API_common):
 
         # Test if the experiment type is set.
         if not hasattr(cdp, 'exp_type'):
-            raise RelaxError, "The relaxation dispersion experiment type has not been set."
+            raise RelaxError("The relaxation dispersion experiment type has not been set.")
 
         # Fast-exchange regime.
         if model == 'fast':
@@ -1284,7 +1284,7 @@ class Relax_disp(API_base, API_common):
 
         # Invalid model.
         else:
-            raise RelaxError, "The model '" + model + "' is invalid."
+            raise RelaxError("The model '" + model + "' is invalid.")
 
         # Set up the model.
         self.model_setup(model, params)
@@ -1319,7 +1319,7 @@ class Relax_disp(API_base, API_common):
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'sim_intensities'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.sim_intensities = sim_data
