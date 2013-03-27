@@ -170,11 +170,11 @@ class Relax_disp(Common_functions):
         return results[result_index]
 
 
-    def cpmg_frq(self, frq=0, spectrum_id=None):
+    def cpmg_frq(self, cpmg_frq=0, spectrum_id=None):
         """Set the CPMG frequency associated with a given spectrum.
 
-        @keyword frq:           The frequency, in Hz, of the CPMG pulse train.
-        @type frq:              int
+        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
+        @type cpmg_frq:         int
         @keyword spectrum_id:   The spectrum identification string.
         @type spectrum_id:      str
         """
@@ -187,7 +187,7 @@ class Relax_disp(Common_functions):
             raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
 
         # Store the CPMG frequency in the class instance.
-        self.__cpmg_frq = int(frq)
+        self.__cpmg_frq = int(cpmg_frq)
 
         # The index.
         index = cdp.spectrum_ids.index(spectrum_id)
@@ -204,7 +204,7 @@ class Relax_disp(Common_functions):
                 break
 
         # Add the frequency at the correct position.
-        cdp.cpmg_frqs[index] = frq
+        cdp.cpmg_frqs[index] = cpmg_frq
 
 
     def cpmg_delayT(self, id=None, delayT=None):

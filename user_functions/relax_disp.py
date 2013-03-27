@@ -72,9 +72,9 @@ uf = uf_info.add_uf('relax_disp.cpmg_frq')
 uf.title = "Set the CPMG frequency associated with a given spectrum."
 uf.title_short = "CPMG frequency setting."
 uf.add_keyarg(
-    name = "frq",
+    name = "cpmg_frq",
     py_type = "float",
-    desc_short = "frequency (Hz)",
+    desc_short = "CPMG frequency (Hz)",
     desc = "The frequency, in Hz, of the CPMG pulse train."
 )
 uf.add_keyarg(
@@ -90,10 +90,10 @@ uf.desc[-1].add_paragraph("This allows the CPMG pulse train frequency of a given
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To identify the reference spectrum called 'reference_spectrum', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(0, 'reference_spectrum')")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(frq=0, spectrum_id='reference_spectrum')")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=0, spectrum_id='reference_spectrum')")
 uf.desc[-1].add_paragraph("To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(frq=200, spectrum_id='200_Hz_spectrum')")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=200, spectrum_id='200_Hz_spectrum')")
 uf.backend = relax_disp_obj._cpmg_frq
 uf.menu_text = "&cpmg_frq"
 uf.wizard_size = (800, 500)

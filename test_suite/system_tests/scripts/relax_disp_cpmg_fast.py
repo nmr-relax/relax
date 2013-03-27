@@ -27,7 +27,7 @@ frq.set(id='600', frq=600.0 * 1e6)
 relax_disp.cpmg_delayT(id='600', delayT=0.020)
 
 # Relaxation dispersion CPMG frequencies (in Hz).
-relax_disp.cpmg_frq = [
+cpmg_frq = [
     0.1936
 ]
 
@@ -43,7 +43,7 @@ for i in xrange(len(names)):
     spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
 
     # Set the relaxation dispersion CPMG frequencies.
-    relax_disp.relax_time(frq=frq[i], spectrum_id=names[i])
+    relax_disp.cpmg_frq(cpmg_frq=cpmg_frq[i], spectrum_id=names[i])
 
 # Specify the duplicated spectra.
 #spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
