@@ -38,6 +38,7 @@ from specific_analyses.consistency_tests import Consistency_tests
 from specific_analyses.jw_mapping import Jw_mapping
 from specific_analyses.model_free import Model_free
 from specific_analyses.noe import Noe
+from specific_analyses.relax_disp import Relax_disp
 from specific_analyses.relax_fit import Relax_fit
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -186,6 +187,7 @@ uf.desc[-1].add_paragraph("Normalisation is only allowed for series type data, f
 uf.desc.append(regexp_doc)
 uf.desc.append(minimise.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
+uf.desc.append(Relax_disp.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(Jw_mapping.return_data_name_doc)
 uf.desc.append(Consistency_tests.return_data_name_doc)
