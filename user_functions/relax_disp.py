@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,81 +21,81 @@
 ###############################################################################
 
 # Module docstring.
-"""The relax_fit user function definitions."""
+"""The relax_disp user function definitions."""
 
 # relax module imports.
 from pipe_control import spectrum
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.setup import relax_fit_obj
+from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
 
 # The user function class.
-uf_class = uf_info.add_class('relax_fit')
+uf_class = uf_info.add_class('relax_disp')
 uf_class.title = "Class for relaxation curve fitting."
-uf_class.menu_text = "&relax_fit"
-uf_class.gui_icon = "relax.relax_fit"
+uf_class.menu_text = "&relax_disp"
+uf_class.gui_icon = "relax.relax_disp"
 
 
-# The relax_fit.relax_time user function.
-uf = uf_info.add_uf('relax_fit.relax_time')
-uf.title = "Set the relaxation delay time associated with each spectrum."
-uf.title_short = "Relaxation delay time setting."
+# The relax_disp.exp_type user function.
+uf = uf_info.add_uf('relax_disp.exp_type')
+uf.title = "Select the type of relaxation dispersion experiments to analyse."
+uf.title_short = "Relaxation dispersion type selection."
 uf.add_keyarg(
-    name = "time",
-    default = 0.0,
-    py_type = "num",
-    desc_short = "relaxation time",
-    desc = "The time, in seconds, of the relaxation period."
-)
-uf.add_keyarg(
-    name = "spectrum_id",
+    name = "exp",
+    default = "cpmg",
     py_type = "str",
-    desc_short = "spectrum identification string",
-    desc = "The spectrum identification string.",
-    wiz_element_type = 'combo',
-    wiz_combo_iter = spectrum.get_ids,
-    wiz_read_only = True
+    desc_short = "experiment type",
+    desc = "The type of relaxation dispersion experiment performed."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.")
-uf.backend = relax_fit_obj._relax_time
-uf.menu_text = "&relax_time"
-uf.gui_icon = "oxygen.actions.chronometer"
-uf.wizard_size = (700, 500)
+uf.desc[-1].add_paragraph("The supported experiments will include CPMG ('cpmg') and R1rho ('r1rho').")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg' for all selected spins, type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg')")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp='cpmg')")
+uf.backend = relax_disp_obj._exp_type
+uf.menu_text = "&exp_type"
+uf.wizard_size = (800, 500)
 
 
-# The relax_fit.select_model user function.
-uf = uf_info.add_uf('relax_fit.select_model')
-uf.title = "Select the relaxation curve type."
-uf.title_short = "Relaxation curve type selection."
+# The relax_disp.select_model user function.
+uf = uf_info.add_uf('relax_disp.select_model')
+uf.title = "Select the relaxation dispersion curve type."
+uf.title_short = "Relaxation dispersion curve type selection."
 uf.display = True
 uf.add_keyarg(
     name = "model",
-    default = "exp",
+    default = "fast",
     py_type = "str",
     desc_short = "model",
-    desc = "The type of relaxation curve to fit.",
+    desc = "The type of relaxation dispersion curve to fit (relating to the NMR time scale).",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "exp: [Rx, I0]",
-        "inv: [Rx, I0, Iinf]"
+        "fast: [R2, Rex, kex]",
+        "slow: [R2A, kA, dw]"
     ],
     wiz_combo_data = [
-        "exp",
-        "inv"
+        "fast",
+        "slow"
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv'.")
+uf.desc[-1].add_paragraph("The supported equations will include the default fast-exchange limit as well as the slow-exchange limit.")
 uf.desc[-1].add_paragraph("The parameters of these two models are")
-uf.desc[-1].add_item_list_element("'exp'", "[Rx, I0],")
-uf.desc[-1].add_item_list_element("'inv'", "[Rx, I0, Iinf].")
-uf.backend = relax_fit_obj._select_model
+uf.desc[-1].add_item_list_element("'fast'", "[R2, Rex, kex],")
+uf.desc[-1].add_item_list_element("'slow'", "[R2A, kA, dw].")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To pick the model 'fast' for all selected spins, type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.select_model('fast')")
+uf.desc[-1].add_prompt("relax> relax_disp.select_model(model='fast')")
+uf.backend = relax_disp_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 300
