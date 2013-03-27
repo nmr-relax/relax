@@ -123,6 +123,18 @@ uf.menu_text = "&exp_type"
 uf.wizard_size = (800, 500)
 
 
+# The relax_disp.r2eff_read user function.
+uf = uf_info.add_uf('relax_disp.r2eff_read')
+uf.title = "Read R2eff values directly, instead of calculating them within relax starting from the intensities.Select the type of relaxation dispersion experiments to analyse."
+uf.title_short = "R2eff value reading."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("THIS FUNCTION IS NOT WRITTEN YET.")
+uf.backend = relax_disp_obj._r2eff_read
+uf.menu_text = "&r2eff_read"
+uf.wizard_size = (800, 500)
+
+
 # The relax_disp.select_model user function.
 uf = uf_info.add_uf('relax_disp.select_model')
 uf.title = "Select the relaxation dispersion curve type."
