@@ -952,11 +952,11 @@ def peak_intensity_type(ri_id=None, type=None):
 
 
 def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
-    """Read R1, R2, or NOE relaxation data from a file.
+    """Read R1, R2, or NOE, or R2eff relaxation data from a file.
 
     @param ri_id:           The relaxation data ID string.
     @type ri_id:            str
-    @param ri_type:         The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @param ri_type:         The relaxation data type, ie 'R1', 'R2', 'NOE', or 'R2eff'.
     @type ri_type:          str
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float

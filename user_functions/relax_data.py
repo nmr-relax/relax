@@ -41,7 +41,7 @@ from user_functions.objects import Desc_container
 
 # The user function class.
 uf_class = uf_info.add_class('relax_data')
-uf_class.title = "Class for manipulating R1, R2, and NOE relaxation data."
+uf_class.title = "Class for manipulating R1, R2, NOE, or R2eff relaxation data."
 uf_class.menu_text = "&relax_data"
 uf_class.gui_icon = "relax.fid"
 
@@ -259,7 +259,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
 # The relax_data.read user function.
 uf = uf_info.add_uf('relax_data.read')
-uf.title = "Read R1, R2, or NOE relaxation data from a file."
+uf.title = "Read R1, R2, NOE, or R2eff relaxation data from a file."
 uf.title_short = "Reading relaxation data from file."
 uf.add_keyarg(
     name = "ri_id",
@@ -271,9 +271,9 @@ uf.add_keyarg(
     name = "ri_type",
     py_type = "str",
     desc_short = "relaxation type",
-    desc = "The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.",
+    desc = "The relaxation data type, i.e. 'R1', 'R2', 'NOE', or 'R2eff'.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["R1", "R2", "NOE"],
+    wiz_combo_choices = ["R1", "R2", "NOE", "R2eff"],
     wiz_read_only = True
 )
 uf.add_keyarg(

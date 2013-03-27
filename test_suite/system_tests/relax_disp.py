@@ -90,6 +90,6 @@ class Relax_disp(TestCase):
         self.relax.interpreter._Relax_data.read('R2eff', '600', 600 * 1e6, 'r2eff.out', dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting_disp/r2eff")
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff[0], 15.000)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r2eff[0], 4.2003)
-        self.assertEqual(cdp.mol[0].res[2].spin[0].r2eff[0], 7.2385)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].R2eff_val[0], 15.000)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].R2eff_val[0], 4.2003)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].R2eff_val[0], 7.2385)
