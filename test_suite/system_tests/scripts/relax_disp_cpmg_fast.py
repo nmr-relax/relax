@@ -83,8 +83,8 @@ cpmg_frq = [
 # Loop over the spectra.
 for i in xrange(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i], dir=data_path_1, spectrum_id=names[i], int_method='height')
-    spectrum.read_intensities(file=names[i], dir=data_path_2, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i], dir=data_path1, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i], dir=data_path2, spectrum_id=names[i], int_method='height')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(cpmg_frq=cpmg_frq[i], spectrum_id=names[i])
@@ -98,8 +98,8 @@ spectrum.replicated(spectrum_ids=['933.33.in_sparky', '933.33.in.bis_sparky'])
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path_1, res_num_col=1)
-deselect.read(file='unresolved', dir=data_path_2, res_num_col=1)
+deselect.read(file='unresolved', dir=data_path1, res_num_col=1)
+deselect.read(file='unresolved', dir=data_path2, res_num_col=1)
 
 # Grid search.
 grid_search(inc=11)
