@@ -20,25 +20,25 @@ frq.set(id='500', frq=500.0 * 1e6)
 
 # Spectrum names.
 names = [
-    'reference.in',
-    '66.667.in',
-    '1000.in',
-    '133.33.in',
-    '933.33.in',
-    '200.in',
-    '866.67.in',
-    '266.67.in',
-    '800.in',
-    '333.33.in',
-    '733.33.in',
-    '400.in',
-    '666.67.in',
-    '466.67.in',
-    '600.in',
-    '533.33.in',
-    '133.33.in.bis',
-    '933.33.in.bis',
-    '533.33.in.bis'
+    'reference.in_sparky',
+    '66.667.in_sparky',
+    '1000.in_sparky',
+    '133.33.in_sparky',
+    '933.33.in_sparky',
+    '200.in_sparky',
+    '866.67.in_sparky',
+    '266.67.in_sparky',
+    '800.in_sparky',
+    '333.33.in_sparky',
+    '733.33.in_sparky',
+    '400.in_sparky',
+    '666.67.in_sparky',
+    '466.67.in_sparky',
+    '600.in_sparky',
+    '533.33.in_sparky',
+    '133.33.in.bis_sparky',
+    '933.33.in.bis_sparky',
+    '533.33.in.bis_sparky'
 ]
 
 # Relaxation dispersion CPMG constant time delay T (in s).

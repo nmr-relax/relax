@@ -7,3 +7,6 @@ It was was friendly provided by Dr Flemming Hansen.
 
 The original format was different and was modified to better suit the way relax handles datasets.
 
+The files ending in '_sparky' include both the intensities and chemical shifts for each residue and
+are formatted similarly to 'Sparky' peak lists.
+
