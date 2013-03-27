@@ -59,7 +59,6 @@ def read(ri_id=None, file=None, dir=None):
     values, errors, res_nums, int_type, frq, ri_type, spin_name, isotope, version = parse_file(file=file, dir=dir)
 
     # Name the spins if needed.
-    print "name spin " + `spin_name`
     name_spin(name=spin_name, force=False)
 
     # Modify the residue numbers by adding the heteronucleus name.
