@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -36,10 +36,7 @@ from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoMo
 from minfx.generic import generic_minimise
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
-
-# C modules.
-if C_module_exp_fn:
-    from maths_fns.relax_disp import setup, func, dfunc, d2func, back_calc_I
+from target_functions.relax_disp import Dispersion
 
 
 class Relax_disp(API_base, API_common):
@@ -915,7 +912,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Loop over the sequence.
-        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -942,9 +939,6 @@ class Relax_disp(API_base, API_common):
 
             # Print out.
             if verbosity >= 1:
-                # Get the spin id string.
-                spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
-
                 # Individual spin print out.
                 if verbosity >= 2:
                     print "\n\n"
@@ -966,7 +960,7 @@ class Relax_disp(API_base, API_common):
             else:
                 values = spin.sim_intensities[sim_index]
 
-            setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=values, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
+            model = Dispersion(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=values, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -996,9 +990,9 @@ class Relax_disp(API_base, API_common):
             ###############
 
             if constraints:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
             else:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
             if results == None:
                 return
             param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
