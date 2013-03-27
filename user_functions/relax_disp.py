@@ -85,12 +85,12 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the CPMG pulse train frequency of a given spectrum to be set.  If a value of 0 is set for frequency, then the spectrum will be treated as a reference spectrum.")
+uf.desc[-1].add_paragraph("This allows the CPMG pulse train frequency of a given spectrum to be set.  If None is given for frequency, then the spectrum will be treated as a reference spectrum.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To identify the reference spectrum called 'reference_spectrum', type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(0, 'reference_spectrum')")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=0, spectrum_id='reference_spectrum')")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(None, 'reference_spectrum')")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=None, spectrum_id='reference_spectrum')")
 uf.desc[-1].add_paragraph("To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')")
 uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=200, spectrum_id='200_Hz_spectrum')")
