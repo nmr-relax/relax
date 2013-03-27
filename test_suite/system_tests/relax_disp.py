@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -26,9 +26,9 @@ from shutil import rmtree
 from tempfile import mkdtemp
 
 # relax module imports.
-from base_classes import SystemTestCase
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
+from test_suite.system_tests.base_classes import SystemTestCase
 
 
 class Relax_disp(SystemTestCase):
