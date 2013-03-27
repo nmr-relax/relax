@@ -241,7 +241,7 @@ class Relax_disp(API_base, API_common):
         return results[result_index]
 
 
-    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
+    def _calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
         """Calculate the effective transversal relaxation rate from the peak intensities. The
         equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
 
@@ -274,7 +274,7 @@ class Relax_disp(API_base, API_common):
             return r2eff
 
 
-    def cpmg_delayT(self, id=None, delayT=None):
+    def _cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
         @keyword id:       The experimental identification string (allowing for multiple experiments
@@ -316,7 +316,7 @@ class Relax_disp(API_base, API_common):
         print "The CPMG delay T for experiment " + `id` + " has been set to " + `cdp.delayT[id]`  + " s."
 
 
-    def cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
+    def _cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
         """Set the CPMG frequency associated with a given spectrum.
 
         @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
@@ -610,7 +610,7 @@ class Relax_disp(API_base, API_common):
             spin.dw = param_vector[5]
 
 
-    def exp_type(self, exp_type='cpmg'):
+    def _exp_type(self, exp_type='cpmg'):
         """Function for selecting the relaxation dispersion experiment type performed.
         @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
         @type exp:    str
@@ -1251,7 +1251,7 @@ class Relax_disp(API_base, API_common):
         return None
 
 
-    def select_model(self, model='fast'):
+    def _select_model(self, model='fast'):
         """Function for selecting the model of the relaxation dispersion curve.
 
         @keyword model: The relaxation dispersion time scale for curve fitting.  Can be one of
