@@ -22,7 +22,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -30,6 +29,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 class Relax_disp(SystemTestCase):
@@ -61,7 +61,7 @@ class Relax_disp(SystemTestCase):
         fast-exchange limit."""
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_fast.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_fast.py')
 
 
     def test_curve_fitting_cpmg_slow(self):
@@ -69,7 +69,7 @@ class Relax_disp(SystemTestCase):
         slow-exchange limit."""
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_slow.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_slow.py')
 
 
     def test_read_r2eff(self):
@@ -81,7 +81,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.residue.create(3, 'Gly')
 
         # Read the file.
-        self.interpreter.relax_data.read('R2eff', '600', 600 * 1e6, 'r2eff.out', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'r2eff')
+        self.interpreter.relax_data.read('R2eff', '600', 600 * 1e6, 'r2eff.out', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'r2eff')
 
         # Test the data.
 
