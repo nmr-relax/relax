@@ -46,7 +46,7 @@ import specific_analyses
 
 
 # The relaxation data types supported.
-VALID_TYPES = ['R1', 'R2', 'NOE']
+VALID_TYPES = ['R1', 'R2', 'NOE', 'R2eff']
 
 
 

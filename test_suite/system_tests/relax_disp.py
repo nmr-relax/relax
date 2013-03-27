@@ -80,10 +80,9 @@ class Relax_disp(SystemTestCase):
         self.interpreter.residue.create(3, 'Gly')
 
         # Read the file.
-        self.interpreter.relax_data.read('R2eff', '600', 600 * 1e6, 'r2eff.out', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'r2eff', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read(ri_id='R2eff.600', ri_type='R2eff', frq=600*1e6, file='r2eff.out', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'r2eff', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the data.
-
-        self.assertEqual(cdp.mol[0].res[0].spin[0].relax_data[0], 15.000)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 4.2003)
-        self.assertEqual(cdp.mol[0].res[2].spin[0].relax_data[0], 7.2385)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].ri_data['R2eff.600'], 15.000)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data['R2eff.600'], 4.2003)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
