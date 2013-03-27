@@ -24,18 +24,29 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.relax_disp import Relax_disp
-from relax_errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
+from prompt.interpreter import Interpreter
+from lib.errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
 
 # Unit test imports.
-from data_types import DATA_TYPES
+from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
 class Test_relax_disp(TestCase):
     """Unit tests for the functions of the 'prompt.relax_disp' module."""
 
-    # Instantiate the user function class.
-    relax_disp_fns = Relax_disp()
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Test_relax_disp, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Alias the user function class.
+        self.relax_fit_fns = self.interpreter.relax_fit
 
 
     def test_relax_calc_r2eff_argfail_exp_type(self):
@@ -49,6 +60,7 @@ class Test_relax_disp(TestCase):
 
             # The argument test.
             self.assertRaises(RelaxStrError, self.relax_disp_fns.calc_r2eff, exp_type=data[1])
+
 
     def test_relax_calc_r2eff_argfail_id(self):
         """The id arg test of the relax_disp.relax_calc_r2eff() user function."""
