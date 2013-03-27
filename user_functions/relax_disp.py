@@ -141,7 +141,8 @@ uf.add_keyarg(
     name = "cpmg_frq",
     py_type = "float",
     desc_short = "CPMG frequency (Hz)",
-    desc = "The frequency, in Hz, of the CPMG pulse train."
+    desc = "The frequency, in Hz, of the CPMG pulse train.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "spectrum_id",
