@@ -241,7 +241,7 @@ class Relax_disp(Common_functions):
         return results[result_index]
 
 
-    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0.0, int_ref=0.0):
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0.0, int_ref=1.0):
         """Calculate the effective transversal relaxation rate from the peak intensities. The
         equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
 
@@ -258,10 +258,20 @@ class Relax_disp(Common_functions):
         @type int_ref:       float
         """
 
-        if exp_type == 'cpmg':
-            r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+        # Avoid division by zero.
+        if int_ref == 0:
+            raise RelaxError, "The reference peak intensity should not have a value of 0 (zero)"
 
-        return r2eff
+        # Avoid other inmpossible mathematical situation.
+        if int_cpmg == 0:
+            raise RelaxError, "The CPMG peak intensity should not have a value of 0 (zero)"
+
+        if delayT == 0:
+            raise RelaxError, "The CPMG constant time delay (T) should not have a value of 0 (zero)"
+
+        if exp_type == 'cpmg' and delayT != None:
+            r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+            return r2eff
 
 
     def cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
