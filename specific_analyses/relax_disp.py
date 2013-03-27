@@ -197,7 +197,7 @@ class Relax_disp(Common_functions):
         return results[result_index]
 
 
-    def cpmg_frq(self, cpmg_frq=0, spectrum_id=None):
+    def cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
         """Set the CPMG frequency associated with a given spectrum.
 
         @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
