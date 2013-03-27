@@ -135,14 +135,16 @@ class Relax_disp(Common_functions):
         return scaling_matrix
 
 
-    def back_calc(self, spin=None, cpmg_frq_index=None):
+    def back_calc(self, spin=None, result_index=None):
         """Back-calculation of peak intensity for the given CPMG pulse train frequency.
 
         @keyword spin:            The spin container.
         @type spin:               SpinContainer instance
-        @keyword cpmg_frq_index:  The index for the desired CPMG pulse train frequency.
-        @type cpmg_frq_index:     int
-        @return:                  The peak intensity for the desired CPMG pulse train frequency.
+        @keyword result_index:    The index for the back-calculated data associated to every CPMG or
+                                  R1rho frequency, as well as every magnetic field frequency.
+        @type result_index:       int
+        @return:                  The R2eff value associated to every CPMG or R1rho frequency, as
+                                  well as every magnetic field frequency.
         @rtype:                   float
         """
 
@@ -165,7 +167,7 @@ class Relax_disp(Common_functions):
         results = back_calc_I()
 
         # Return the correct peak height.
-        return results[cpmg_frq_index]
+        return results[result_index]
 
 
     def cpmg_frq(self, frq=0, spectrum_id=None):
@@ -239,7 +241,7 @@ class Relax_disp(Common_functions):
         # Loop over the spectral time points.
         for j in xrange(len(cdp.cpmg_frqs)):
             # Back calculate the value.
-            value = self.back_calc(spin=spin, cpmg_frq_index=j)
+            value = self.back_calc(spin=spin, result_index=j)
 
             # Append the value.
             mc_data.append(value)
