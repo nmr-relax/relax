@@ -160,9 +160,29 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The supported equations will include the default fast-exchange limit as well as the slow-exchange limit.")
+uf.desc.append(Desc_container("The preset experiments"))
 uf.desc[-1].add_paragraph("The parameters of these two models are")
 uf.desc[-1].add_item_list_element("'fast'", "[R2, Rex, kex],")
 uf.desc[-1].add_item_list_element("'slow'", "[R2A, kA, dw].")
+uf.desc[-1].add_paragraph("The equation for fast exchange is:")
+uf.desc[-1].add_verbatim("""
+                       /              /        kex       \   4 * cpmg_frq \ 
+    R2eff = R2 + Rex * | 1 - 2 * tanh | ---------------- | * ------------ |
+                       \              \ 2 * 4 * cpmg_frq /        kex     /
+""")
+uf.desc[-1].add_paragraph("and the equation for slow exchange is:")
+uf.desc[-1].add_verbatim("""
+                       /     /      dw      \   4 * cpmg_frq \ 
+    R2eff = R2A + kA - | sin | ------------ | * ------------ |
+                       \     \ 4 * cpmg_frq /        dw      /
+""")
+uf.desc[-1].add_paragraph("where:")
+uf.desc[-1].add_verbatim("""
+    cpmg_frq = 1 / ( 4 * cpmg_tau )
+""")
+uf.desc[-1].add_paragraph("The references for these equations are:")
+uf.desc[-1].add_item_list_element("'fast'", "Millet et al., JACS, 2000, 122, 2867-2877 (equation 19), and Kovrigin et al., J. Mag. Res., 2006, 180, 93-104 (equation 1).")
+uf.desc[-1].add_item_list_element("'slow'", "Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2).")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the model 'fast' for all selected spins, type one of:")
