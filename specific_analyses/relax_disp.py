@@ -43,10 +43,10 @@ if C_module_exp_fn:
 
 
 class Relax_disp(Common_functions):
-    """Class containing functions for relaxation curve fitting."""
+    """Class containing functions for relaxation dispersion curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):
-        """Assemble the dispersion relaxation curve-fitting parameter vector (as a numpy array).
+        """Assemble the dispersion relaxation dispersion curve-fitting parameter vector (as a numpy array).
 
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
@@ -410,8 +410,8 @@ class Relax_disp(Common_functions):
 
     def default_value(self, param):
         """
-        Relaxation curve fitting default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Relaxation dispersion curve fitting default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         These values are arbitrary and will depend on the system studied.
         ________________________________________________________________________________
@@ -550,7 +550,7 @@ class Relax_disp(Common_functions):
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
-        """The exponential curve fitting grid search function.
+        """The relaxation dispersion curve fitting grid search function.
 
         @keyword lower:         The lower bounds of the grid search which must be equal to the
                                 number of parameters in the model.
@@ -684,7 +684,7 @@ class Relax_disp(Common_functions):
 
 
     def linear_constraints(self, spin=None, scaling_matrix=None):
-        """Set up the relaxation curve fitting linear constraint matrices A and b.
+        """Set up the relaxation dispersion curve fitting linear constraint matrices A and b.
 
         Standard notation
         =================
@@ -755,7 +755,7 @@ class Relax_disp(Common_functions):
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
-        """Relaxation curve fitting function.
+        """Relaxation dispersion curve fitting function.
 
         @keyword min_algor:         The minimisation algorithm to use.
         @type min_algor:            str
@@ -943,7 +943,7 @@ class Relax_disp(Common_functions):
     def model_setup(self, model, params):
         """Update various model specific data structures.
 
-        @param model:   The exponential curve type.
+        @param model:   The relaxation dispersion curve type.
         @type model:    str
         @param params:  A list consisting of the model parameters.
         @type params:   list of str
@@ -1023,8 +1023,8 @@ class Relax_disp(Common_functions):
 
     def return_data_name(self, name):
         """
-        Relaxation curve fitting data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Relaxation dispersion curve fitting data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         _________________________________________________________________________________________________
         |                                                   |                |                          |
@@ -1132,7 +1132,7 @@ class Relax_disp(Common_functions):
 
 
     def select_model(self, model='fast'):
-        """Function for selecting the model of the exponential curve.
+        """Function for selecting the model of the relaxation dispersion curve.
 
         @keyword model: The relaxation dispersion time scale for curve fitting.  Can be one of
                         'fast' or 'slow'.
