@@ -83,6 +83,12 @@ uf.desc[-1].add_verbatim("""
     r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
 """)
 uf.desc[-1].add_paragraph("If 'r1rho' is chosen, nothing happens yet, as the code is not implemented.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To calculate r2eff from a CPMG experiment, for experiment named '600', a constant time delay T of 20 ms (0.020 s) and intensities of CPMG and reference peak of, respectively, 0.742 and 0.9641, type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.calc_r2eff('cpmg', '600', 0.020, 0.742, 0.9641)")
+uf.desc[-1].add_prompt("relax> relax_disp.calc_r2eff(exp_type='cpmg', id='600', delayT=0.020, int_cpmg=0.742, int_ref=0.9641)")
+uf.desc[-1].add_paragraph("ANOTHER EXAMPLE FOR BATCH USE (FROM PEAK INTENSITY LISTS) WILL SOON BE ADDED.")
 uf.backend = relax_disp_obj._calc_r2eff
 uf.menu_text = "&calc_r2eff"
 uf.wizard_size = (800, 500)
