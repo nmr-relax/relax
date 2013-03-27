@@ -63,7 +63,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "int_cpmg",
-    default = "0.0",
+    default = "1.0",
     py_type = "float",
     desc_short = "CPMG peak intensity",
     desc = "Intensity of the peak in the CPMG spectrum.."

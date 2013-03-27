@@ -241,7 +241,7 @@ class Relax_disp(Common_functions):
         return results[result_index]
 
 
-    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0.0, int_ref=1.0):
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
         """Calculate the effective transversal relaxation rate from the peak intensities. The
         equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
 
