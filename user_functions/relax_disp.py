@@ -57,8 +57,45 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the CPMG constant time delay (T) of a given experiment to be set.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set a CPMG constant time delay T of 20 ms (0.020 s) for experiments '600', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_delayT('600', 0.020)")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_delayT(id='600', delayT=0.020)")
 uf.backend = relax_disp_obj._cpmg_delayT
 uf.menu_text = "&cpmg_delayT"
+uf.wizard_size = (800, 500)
+
+
+# The relax_disp.cpmg_frq user function.
+uf = uf_info.add_uf('relax_disp.cpmg_frq')
+uf.title = "Set the CPMG frequency associated with a given spectrum."
+uf.title_short = "CPMG frequency setting."
+uf.add_keyarg(
+    name = "frq",
+    py_type = "float",
+    desc_short = "frequency (Hz)",
+    desc = "The frequency, in Hz, of the CPMG pulse train."
+)
+uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str",
+    desc_short = "spectrum ID string",
+    desc = "The spectrum ID string."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the CPMG pulse train frequency of a given spectrum to be set.  If a value of 0 is set for frequency, then the spectrum will be treated as a reference spectrum.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To identify the reference spectrum called 'reference_spectrum', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(0, 'reference_spectrum')")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(frq=0, spectrum_id='reference_spectrum')")
+uf.desc[-1].add_paragraph("To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(frq=200, spectrum_id='200_Hz_spectrum')")
+uf.backend = relax_disp_obj._cpmg_frq
+uf.menu_text = "&cpmg_frq"
 uf.wizard_size = (800, 500)
 
 
