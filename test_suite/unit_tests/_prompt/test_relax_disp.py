@@ -71,7 +71,7 @@ class Test_relax_disp(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the float, int and None arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'int' or data[0] == 'None':
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'None':
                 continue
 
             # The argument test.
@@ -84,7 +84,7 @@ class Test_relax_disp(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the float, int and None arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'int':
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
@@ -97,7 +97,7 @@ class Test_relax_disp(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the float, int and None arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'int':
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
