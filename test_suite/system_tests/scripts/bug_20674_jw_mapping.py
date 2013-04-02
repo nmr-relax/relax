@@ -49,9 +49,9 @@ self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Create grace files.
 self._execute_uf(uf_name='grace.write', y_data_type='j0', file='devnull', force=True)
-self._execute_uf(uf_name='grace.write', y_data_type='f_eta', file='devnull', force=True)
-self._execute_uf(uf_name='grace.write', y_data_type='f_r2', file='devnull', force=True)
+self._execute_uf(uf_name='grace.write', y_data_type='jwx', file='devnull', force=True)
+self._execute_uf(uf_name='grace.write', y_data_type='jwh', file='devnull', force=True)
 
 # Finish.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)
-self._execute_uf(uf_name='state.save', file='devnull')
+self._execute_uf(uf_name='state.save', state='devnull')
