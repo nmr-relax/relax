@@ -34,7 +34,7 @@ model_selection(method='AIC', modsel_pipe='final', pipes=['local_tm', 'sphere'])
 results.write(file='devnull', dir=None, compress_type=1, force=True)
 
 # Monte Carlo simulation setup.
-monte_carlo.setup(number=200)
+monte_carlo.setup(number=5)
 monte_carlo.create_data(method='back_calc')
 monte_carlo.initial_values()
 

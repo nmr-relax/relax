@@ -40,7 +40,7 @@ self._execute_uf(uf_name='jw_mapping.set_frq', frq=600.0 * 1e6)
 self._execute_uf(uf_name='calc')
 
 # Monte Carlo simulations.
-self._execute_uf(uf_name='monte_carlo.setup', number=500)
+self._execute_uf(uf_name='monte_carlo.setup', number=5)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='calc')
 self._execute_uf(uf_name='monte_carlo.error_analysis')
