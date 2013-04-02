@@ -29,6 +29,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
+from lib.float import isInf
 from lib.physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from lib.warnings import RelaxDeselectWarning
 import specific_analyses
