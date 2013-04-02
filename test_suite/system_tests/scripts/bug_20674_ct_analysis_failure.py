@@ -49,7 +49,7 @@ consistency_tests.set_frq(frq=700.17 * 1e6)
 calc()
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=500)
+monte_carlo.setup(number=10)
 monte_carlo.create_data()
 calc()
 monte_carlo.error_analysis()
