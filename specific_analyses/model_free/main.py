@@ -32,11 +32,12 @@ from warnings import warn
 
 # relax module imports.
 import lib.arg_check
+from lib.float import isInf
+from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
+from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from pipe_control import diffusion_tensor, interatomic, pipes, sequence
 from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 import specific_analyses
-from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
-from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -2030,12 +2031,24 @@ class Model_free_main:
 
             # Data checks.
             if data_check:
-                # The number of relaxation data points.
+                # The number of relaxation data points (and for infinite data).
                 data_points = 0
+                inf_data = False
                 if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
                     for id in cdp.ri_ids:
                         if id in spin.ri_data and spin.ri_data[id] != None:
                             data_points += 1
+
+                            # Infinite data!
+                            if isInf(spin.ri_data[id]):
+                                inf_data = True
+
+                # Infinite data.
+                if inf_data:
+                    warn(RelaxDeselectWarning(spin_id, 'infinite relaxation data'))
+                    spin.select = False
+                    deselect_flag = True
+                    continue
 
                 # Relaxation data must exist!
                 if not hasattr(spin, 'ri_data'):
