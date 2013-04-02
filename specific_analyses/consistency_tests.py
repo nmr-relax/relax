@@ -308,32 +308,68 @@ class Consistency_tests(API_base, API_common):
 
         # Loop over spin data.
         deselect_flag = False
+        spin_count = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Check if data exists.
-            if not hasattr(spin, 'ri_data'):
-                warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
+            # The interatomic data.
+            interatoms = return_interatom_list(spin_id)
+
+            # Loop over the interatomic data.
+            dipole_relax = False
+            for i in range(len(interatoms)):
+                # No dipolar relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Dipolar relaxation flag.
+                dipole_relax = True
+
+            # No relaxation mechanism.
+            if not dipole_relax or not hasattr(spin, 'csa') or spin.csa == None:
+                warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
-            # Require 3 or more data points.
-            else:
-                # Count the points.
+            # Data checks.
+            if data_check:
+                # The number of relaxation data points.
                 data_points = 0
-                for id in cdp.ri_ids:
-                    if id in spin.ri_data and spin.ri_data[id] != None:
-                        data_points += 1
+                if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
+                    for id in cdp.ri_ids:
+                        if id in spin.ri_data and spin.ri_data[id] != None:
+                            data_points += 1
 
-                # Not enough.
+                # Relaxation data must exist!
+                if not hasattr(spin, 'ri_data'):
+                    warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
+                    spin.select = False
+                    deselect_flag = True
+                    continue
+
+                # Require 3 or more data points.
                 if data_points < 3:
                     warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                     spin.select = False
                     deselect_flag = True
                     continue
+
+            # Increment the spin number.
+            spin_count += 1
+
+        # No spins selected, so fail hard to prevent the user from going any further.
+        if spin_count == 0:
+            warn(RelaxWarning("No spins are selected therefore the optimisation or calculation cannot proceed."))
 
         # Final printout.
         if verbose and not deselect_flag:
