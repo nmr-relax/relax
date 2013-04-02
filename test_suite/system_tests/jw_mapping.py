@@ -42,6 +42,13 @@ class Jw(SystemTestCase):
         self.interpreter.pipe.create('jw', 'jw')
 
 
+    def test_bug_20674_jw_mapping(self):
+        """Catch U{bug #20674<https://gna.org/bugs/?20674>}, but for the J(w) mapping analysis."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_20674_jw_mapping.py')
+
+
     def test_calc(self):
         """The spectral density calculation test."""
 
