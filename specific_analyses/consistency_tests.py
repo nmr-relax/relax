@@ -28,16 +28,16 @@ from re import search
 from warnings import warn
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
+from lib.physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
+from lib.warnings import RelaxDeselectWarning
+import specific_analyses
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control import pipes
-from target_functions.consistency_tests import Consistency
-from lib.physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
-from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
-from lib.warnings import RelaxDeselectWarning
-import specific_analyses
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from target_functions.consistency_tests import Consistency
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
