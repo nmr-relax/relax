@@ -2019,10 +2019,10 @@ class Model_free_main:
                 spin2 = return_spin(spin_id2)
 
                 # Dipolar relaxation flag.
-                dipole_relax = False
+                dipole_relax = True
 
             # No relaxation mechanism.
-            if not dipole_relax and not hasattr(spin, 'csa') or spin.csa == None:
+            if not dipole_relax or not hasattr(spin, 'csa') or spin.csa == None:
                 warn(RelaxDeselectWarning(spin_id, 'an absence of relaxation mechanisms'))
                 spin.select = False
                 deselect_flag = True
