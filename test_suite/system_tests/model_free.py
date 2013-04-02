@@ -461,6 +461,16 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20613_auto_mf_diff_tensor_pdb.py')
 
 
+    def test_bug_20683_bdc_inf_values(self):
+        """Catch U{bug #20683<https://gna.org/bugs/?20683>}, the model-free analysis failure due to infinite values in the Bruker Dynamics Centre files."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20683_bdc_inf_values.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
