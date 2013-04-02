@@ -343,12 +343,24 @@ class Consistency_tests(API_base, API_common):
 
             # Data checks.
             if data_check:
-                # The number of relaxation data points.
+                # The number of relaxation data points (and for infinite data).
                 data_points = 0
+                inf_data = False
                 if hasattr(cdp, 'ri_ids') and hasattr(spin, 'ri_data'):
                     for id in cdp.ri_ids:
                         if id in spin.ri_data and spin.ri_data[id] != None:
                             data_points += 1
+
+                            # Infinite data!
+                            if isInf(spin.ri_data[id]):
+                                inf_data = True
+
+                # Infinite data.
+                if inf_data:
+                    warn(RelaxDeselectWarning(spin_id, 'infinite relaxation data'))
+                    spin.select = False
+                    deselect_flag = True
+                    continue
 
                 # Relaxation data must exist!
                 if not hasattr(spin, 'ri_data'):
@@ -357,7 +369,7 @@ class Consistency_tests(API_base, API_common):
                     deselect_flag = True
                     continue
 
-                # Require 3 or more data points.
+                # Require 3 or more relaxation data points.
                 if data_points < 3:
                     warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                     spin.select = False
