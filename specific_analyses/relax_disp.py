@@ -240,7 +240,7 @@ class Relax_disp(API_base, API_common):
         cdp.relax_times[spectrum_id] = float(time)
 
         # Printout.
-        print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]/1000.0))
+        print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
 
 
     def _select_model(self, model='fast 2-site'):
