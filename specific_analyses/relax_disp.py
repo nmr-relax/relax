@@ -67,6 +67,192 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
+    def _cpmg_delayT(self, id=None, delayT=None):
+        """Set the CPMG constant time delay (T) of the experiment.
+
+        @keyword id:       The experimental identification string (allowing for multiple experiments
+                           per data pipe).
+        @type id:          str
+        @keyword delayT:   The CPMG constant time delay (T) in s.
+        @type delayT:      float
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Set up the dictionnary data structure if it doesn't exist yet.
+        if not hasattr(cdp, 'delayT'):
+            cdp.delayT = {}
+
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Make sure the experiment type is set to 'cpmg'.
+        if not cdp.exp_type == 'cpmg':
+            raise RelaxError("To use this user function, the experiment type must be set to 'cpmg'.")
+
+        # Test the CPMG constant time delay (T) has not already been set.
+        if cdp.delayT.has_key(id):
+           raise RelaxError("The CPMG constant time delay (T) for the experiment '%s' has already been set." % id)
+
+        # Set the CPMG constant time delay (T).
+        cdp.delayT[id] = delayT
+        print("The CPMG delay T for experiment '%s' has been set to %s s." % (id, cdp.delayT[id]))
+
+
+    def _cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
+        """Set the CPMG frequency associated with a given spectrum.
+
+        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
+        @type cpmg_frq:         float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
+
+        # Store the CPMG frequency in the class instance.
+        if cpmg_frq != None:
+            self.__cpmg_frq = float(cpmg_frq)
+
+        # The index.
+        index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise the global CPMG frequency data structure if needed.
+        if not hasattr(cdp, 'cpmg_frqs'):
+            cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
+
+        # Index not present in the global CPMG frequency data structure.
+        while 1:
+            if index > len(cdp.cpmg_frqs) - 1:
+                cdp.cpmg_frqs.append(None)
+            else:
+                break
+
+        # Add the frequency at the correct position.
+        cdp.cpmg_frqs[index] = cpmg_frq
+
+
+    def _calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
+        """Calculate the effective transversal relaxation rate from the peak intensities. The
+        equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
+
+        @keyword exp_type:   The experiment type, either 'cpmg' or 'r1rho'.
+        @type exp_type:      str
+        @keyword id:         The experimental identification string (allowing for multiple experiments
+                             per data pipe).
+        @type id:            str
+        @keyword delayT:     The CPMG constant time delay (T) in s.
+        @type delayT:        float
+        @keyword int_cpmg:   The intensity of the peak in the CPMG spectrum.
+        @type int_cpmg:      float
+        @keyword int_ref:    The intensity of the peak in the reference spectrum.
+        @type int_ref:       float
+        """
+
+        # Avoid division by zero.
+        if int_ref == 0:
+            raise RelaxError("The reference peak intensity should not have a value of 0 (zero).")
+
+        # Avoid other inmpossible mathematical situation.
+        if int_cpmg == 0:
+            raise RelaxError("The CPMG peak intensity should not have a value of 0 (zero).")
+
+        if delayT == 0:
+            raise RelaxError("The CPMG constant time delay (T) should not have a value of 0 (zero).")
+
+        if exp_type == 'cpmg' and delayT != None:
+            r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+            return r2eff
+
+
+    def _exp_type(self, exp_type='cpmg'):
+        """Function for selecting the relaxation dispersion experiment type performed.
+        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
+        @type exp:    str
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # CPMG relaxation dispersion experiments.
+        if exp_type == 'cpmg':
+            print("CPMG relaxation dispersion experiments.")
+            cdp.exp_type = 'cpmg'
+
+        # R1rho relaxation dispersion experiments.
+        elif exp_type == 'r1rho':
+            print("R1rho relaxation dispersion experiments.")
+            cdp.exp_type = 'r1rho'
+
+        # Invalid relaxation dispersion experiment.
+        else:
+            raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
+
+
+    def _select_model(self, model='fast 2-site'):
+        """Set up the model for the relaxation dispersion analysis.
+
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'exp_fit', 'fast 2-site', 'slow 2-site'.
+        @type model:    str
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Test if the experiment type is set.
+        if not hasattr(cdp, 'exp_type'):
+            raise RelaxError("The relaxation dispersion experiment type has not been set.")
+
+        # Fast-exchange regime.
+        if model == 'exp_fit':
+            print("Basic exponential curve-fitting.")
+            params = ['R2']
+
+        # Fast-exchange regime.
+        elif model == 'fast 2-site':
+            print("2-site fast-exchange.")
+            params = ['R2', 'Rex', 'kex']
+
+        # Slow-exchange regime.
+        elif model == 'slow 2-site':
+            print("2-site slow-exchange.")
+            params = ['R2A', 'kA', 'dw']
+
+        # Invalid model.
+        else:
+            raise RelaxError("The model '%s' is invalid." % model)
+
+        # Set up the model.
+        self.model_setup(model, params)
+
+
     def assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector (as a numpy array).
 
@@ -257,113 +443,6 @@ class Relax_disp(API_base, API_common):
         return results[result_index]
 
 
-    def _calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
-        """Calculate the effective transversal relaxation rate from the peak intensities. The
-        equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
-
-        @keyword exp_type:   The experiment type, either 'cpmg' or 'r1rho'.
-        @type exp_type:      str
-        @keyword id:         The experimental identification string (allowing for multiple experiments
-                             per data pipe).
-        @type id:            str
-        @keyword delayT:     The CPMG constant time delay (T) in s.
-        @type delayT:        float
-        @keyword int_cpmg:   The intensity of the peak in the CPMG spectrum.
-        @type int_cpmg:      float
-        @keyword int_ref:    The intensity of the peak in the reference spectrum.
-        @type int_ref:       float
-        """
-
-        # Avoid division by zero.
-        if int_ref == 0:
-            raise RelaxError("The reference peak intensity should not have a value of 0 (zero).")
-
-        # Avoid other inmpossible mathematical situation.
-        if int_cpmg == 0:
-            raise RelaxError("The CPMG peak intensity should not have a value of 0 (zero).")
-
-        if delayT == 0:
-            raise RelaxError("The CPMG constant time delay (T) should not have a value of 0 (zero).")
-
-        if exp_type == 'cpmg' and delayT != None:
-            r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
-            return r2eff
-
-
-    def _cpmg_delayT(self, id=None, delayT=None):
-        """Set the CPMG constant time delay (T) of the experiment.
-
-        @keyword id:       The experimental identification string (allowing for multiple experiments
-                           per data pipe).
-        @type id:          str
-        @keyword delayT:   The CPMG constant time delay (T) in s.
-        @type delayT:      float
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Set up the dictionnary data structure if it doesn't exist yet.
-        if not hasattr(cdp, 'delayT'):
-            cdp.delayT = {}
-
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Make sure the experiment type is set to 'cpmg'.
-        if not cdp.exp_type == 'cpmg':
-            raise RelaxError("To use this user function, the experiment type must be set to 'cpmg'.")
-
-        # Test the CPMG constant time delay (T) has not already been set.
-        if cdp.delayT.has_key(id):
-           raise RelaxError("The CPMG constant time delay (T) for the experiment '%s' has already been set." % id)
-
-        # Set the CPMG constant time delay (T).
-        cdp.delayT[id] = delayT
-        print("The CPMG delay T for experiment '%s' has been set to %s s." % (id, cdp.delayT[id]))
-
-
-    def _cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
-        """Set the CPMG frequency associated with a given spectrum.
-
-        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
-        @type cpmg_frq:         float
-        @keyword spectrum_id:   The spectrum identification string.
-        @type spectrum_id:      str
-        """
-
-        # Test if the spectrum id exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
-
-        # Store the CPMG frequency in the class instance.
-        if cpmg_frq != None:
-            self.__cpmg_frq = float(cpmg_frq)
-
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
-
-        # Initialise the global CPMG frequency data structure if needed.
-        if not hasattr(cdp, 'cpmg_frqs'):
-            cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
-
-        # Index not present in the global CPMG frequency data structure.
-        while 1:
-            if index > len(cdp.cpmg_frqs) - 1:
-                cdp.cpmg_frqs.append(None)
-            else:
-                break
-
-        # Add the frequency at the correct position.
-        cdp.cpmg_frqs[index] = cpmg_frq
-
-
     def create_mc_data(self, spin_id):
         """Create the Monte Carlo peak intensity data.
 
@@ -477,39 +556,6 @@ class Relax_disp(API_base, API_common):
 
             # Chemical shift difference between states A and B.
             spin.dw = param_vector[5]
-
-
-    def _exp_type(self, exp_type='cpmg'):
-        """Function for selecting the relaxation dispersion experiment type performed.
-        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
-        @type exp:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # CPMG relaxation dispersion experiments.
-        if exp_type == 'cpmg':
-            print("CPMG relaxation dispersion experiments.")
-            cdp.exp_type = 'cpmg'
-
-        # R1rho relaxation dispersion experiments.
-        elif exp_type == 'r1rho':
-            print("R1rho relaxation dispersion experiments.")
-            cdp.exp_type = 'r1rho'
-
-        # Invalid relaxation dispersion experiment.
-        else:
-            raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -1002,52 +1048,6 @@ class Relax_disp(API_base, API_common):
         """Dummy function which returns None as the stats have no units."""
 
         return None
-
-
-    def _select_model(self, model='fast 2-site'):
-        """Set up the model for the relaxation dispersion analysis.
-
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'exp_fit', 'fast 2-site', 'slow 2-site'.
-        @type model:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Test if the experiment type is set.
-        if not hasattr(cdp, 'exp_type'):
-            raise RelaxError("The relaxation dispersion experiment type has not been set.")
-
-        # Fast-exchange regime.
-        if model == 'exp_fit':
-            print("Basic exponential curve-fitting.")
-            params = ['R2']
-
-        # Fast-exchange regime.
-        elif model == 'fast 2-site':
-            print("2-site fast-exchange.")
-            params = ['R2', 'Rex', 'kex']
-
-        # Slow-exchange regime.
-        elif model == 'slow 2-site':
-            print("2-site slow-exchange.")
-            params = ['R2A', 'kA', 'dw']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '%s' is invalid." % model)
-
-        # Set up the model.
-        self.model_setup(model, params)
 
 
     set_doc = Desc_container("Relaxation dispersion curve fitting set details")
