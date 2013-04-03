@@ -29,7 +29,7 @@ from numpy.linalg import inv
 from re import match, search
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
 from minfx.generic import generic_minimise
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
@@ -263,6 +263,30 @@ class Relax_disp(API_base, API_common):
 
         # Set up the model.
         self.model_setup(model, params)
+
+
+    def _spin_lock_field(self, spectrum_id=None, field=None):
+        """Set the spin-lock field strength (nu1) for the given spectrum.
+
+        @keyword spectrum_id:   The spectrum ID string.
+        @type spectrum_id:      str
+        @keyword field:         The spin-lock field strength (nu1) in Hz.
+        @type field:            int or float
+        """
+
+        # Test if the spectrum ID exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxNoSpectraError(spectrum_id)
+
+        # Initialise the global nu1 data structure if needed.
+        if not hasattr(cdp, 'spin_lock_nu1'):
+            cdp.spin_lock_nu1 = {}
+
+        # Add the frequency, converting to a float if needed.
+        cdp.spin_lock_nu1[spectrum_id] = float(field)
+
+        # Printout.
+        print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
 
 
     def assemble_param_vector(self, spin=None, sim_index=None):

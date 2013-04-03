@@ -271,3 +271,35 @@ uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
+
+
+# The relax_disp.spin_lock_field user function.
+uf = uf_info.add_uf('relax_disp.spin_lock_field')
+uf.title = "Set the relaxation dispersion spin-lock field strength (nu1)."
+uf.title_short = "Spin-lock field strength."
+uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str",
+    desc_short = "spectrum ID string",
+    desc = "The spectrum ID string to associate the spin-lock field strength to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "field",
+    py_type = "num",
+    desc_short = "field strength nu1 (Hz)",
+    desc = "The spin-lock field strength, nu1, in Hz."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This sets the spin-lock field strength, nu1, for the specified R1rho spectrum in Hertz.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set a spin-lock field strength of 2.1 kHz for the spectrum 'nu1_2.1kHz_relaxT_0.010', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(2100, 'nu1_2.1kHz_relaxT_0.010')")
+uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(field=2100, spectrum_id='nu1_2.1kHz_relaxT_0.010')")
+uf.backend = relax_disp_obj._spin_lock_field
+uf.menu_text = "spin_lock_&field"
+uf.wizard_size = (800, 500)
