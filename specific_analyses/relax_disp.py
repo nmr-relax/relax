@@ -70,8 +70,7 @@ class Relax_disp(API_base, API_common):
     def _cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
-        @keyword id:       The experimental identification string (allowing for multiple experiments
-                           per data pipe).
+        @keyword id:       The experimental identification string (allowing for multiple experiments per data pipe).
         @type id:          str
         @keyword delayT:   The CPMG constant time delay (T) in s.
         @type delayT:      float
@@ -142,13 +141,13 @@ class Relax_disp(API_base, API_common):
 
 
     def _calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
-        """Calculate the effective transversal relaxation rate from the peak intensities. The
-        equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
+        """Calculate the effective transversal relaxation rate from the peak intensities.
+        
+        The equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
 
         @keyword exp_type:   The experiment type, either 'cpmg' or 'r1rho'.
         @type exp_type:      str
-        @keyword id:         The experimental identification string (allowing for multiple experiments
-                             per data pipe).
+        @keyword id:         The experimental identification string (allowing for multiple experiments per data pipe).
         @type id:            str
         @keyword delayT:     The CPMG constant time delay (T) in s.
         @type delayT:        float
@@ -175,7 +174,8 @@ class Relax_disp(API_base, API_common):
 
 
     def _exp_type(self, exp_type='cpmg'):
-        """Function for selecting the relaxation dispersion experiment type performed.
+        """Select the relaxation dispersion experiment type performed.
+
         @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
         @type exp:    str
         """
@@ -254,14 +254,14 @@ class Relax_disp(API_base, API_common):
 
 
     def assemble_param_vector(self, spin=None, sim_index=None):
-        """Assemble the dispersion relaxation dispersion curve fitting parameter vector (as a numpy array).
+        """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         @return:                An array of the parameter values of the dispersion relaxation model.
-        @rtype:                 numpy array
+        @rtype:                 numpy float array
         """
 
         # Initialise.
@@ -416,11 +416,9 @@ class Relax_disp(API_base, API_common):
 
         @keyword spin:            The spin container.
         @type spin:               SpinContainer instance
-        @keyword result_index:    The index for the back-calculated data associated to every CPMG or
-                                  R1rho frequency, as well as every magnetic field frequency.
+        @keyword result_index:    The index for the back-calculated data associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
         @type result_index:       int
-        @return:                  The R2eff value associated to every CPMG or R1rho frequency, as
-                                  well as every magnetic field frequency.
+        @return:                  The R2eff value associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
         @rtype:                   float
         """
 
@@ -446,8 +444,7 @@ class Relax_disp(API_base, API_common):
     def create_mc_data(self, spin_id):
         """Create the Monte Carlo peak intensity data.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:  str
         @return:        The Monte Carlo simulation data.
         @rtype:         list of floats
@@ -561,24 +558,17 @@ class Relax_disp(API_base, API_common):
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The relaxation dispersion curve fitting grid search function.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
         @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
         @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.
-                                The number of elements in the array must equal to the number of
-                                parameters in the model.
+        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
         @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
-                                parts of the grid).  If False, no constraints are used.
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
         @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
-                                the normal model is optimised.
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
         @type sim_index:        int
         """
 
@@ -593,25 +583,15 @@ class Relax_disp(API_base, API_common):
         @type spin:                 SpinContainer instance
         @keyword param_vector:      The parameter vector.
         @type param_vector:         numpy array
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is
-                                    only used when doing a grid search.
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is
-                                    only used when doing a grid search.
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid
-                                    search.  The number of elements in the array must equal to the
-                                    number of parameters in the model.  This argument is only used
-                                    when doing a grid search.
+        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
         @keyword scaling_matrix:    The scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
-        @return:                    A tuple of the grid size and the minimisation options.  For the
-                                    minimisation options, the first dimension corresponds to the
-                                    model parameter.  The second dimension is a list of the number
-                                    of increments, the lower bound, and upper bound.
+        @return:                    A tuple of the grid size and the minimisation options.  For the minimisation options, the first dimension corresponds to the model parameter.  The second dimension is a list of the number of increments, the lower bound, and upper bound.
         @rtype:                     (int, list of lists [int, float, float])
         """
 
@@ -709,8 +689,7 @@ class Relax_disp(API_base, API_common):
         Matrix notation
         ===============
 
-        In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are::
+        In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
             | 1  0  0 |     |  R2  |      |    0    |
             |         |     |      |      |         |
@@ -782,37 +761,25 @@ class Relax_disp(API_base, API_common):
         @type min_algor:            str
         @keyword min_options:       An array of options to be used by the minimisation algorithm.
         @type min_options:          array of str
-        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type grad_tol:             None or float
         @keyword max_iterations:    The maximum number of iterations for the algorithm.
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
-                                    the problem to be better conditioned.
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
         @type scaling:              bool
-        @keyword verbosity:         The amount of information to print.  The higher the value, the
-                                    greater the verbosity.
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
-                                    normal optimisation is desired.
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.
-                                    The number of elements in the array must equal to the number of
-                                    parameters in the model.  This argument is only used when doing a
-                                    grid search.
+        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
         """
 
@@ -1002,7 +969,7 @@ class Relax_disp(API_base, API_common):
 
 
     def return_data(self, spin):
-        """Function for returning the peak intensity data structure.
+        """Return the peak intensity data structure.
 
         @param spin:    The spin container.
         @type spin:     SpinContainer instance
@@ -1030,8 +997,7 @@ class Relax_disp(API_base, API_common):
     def return_error(self, spin_id):
         """Return the standard deviation data structure.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:  str
         @return:        The standard deviation data structure.
         @rtype:         list of float
@@ -1057,8 +1023,7 @@ class Relax_disp(API_base, API_common):
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
