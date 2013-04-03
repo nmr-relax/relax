@@ -269,17 +269,17 @@ class Relax_disp(API_base, API_common):
         # Fast-exchange regime.
         if model == 'exp_fit':
             print("Basic exponential curve-fitting.")
-            params = ['R2']
+            params = ['R2', 'I0']
 
         # Fast-exchange regime.
         elif model == 'fast 2-site':
             print("2-site fast-exchange.")
-            params = ['R2', 'Rex', 'kex']
+            params = ['R2', 'I0', 'Rex', 'kex']
 
         # Slow-exchange regime.
         elif model == 'slow 2-site':
             print("2-site slow-exchange.")
-            params = ['R2A', 'kA', 'dw']
+            params = ['R2', 'I0', 'R2A', 'kA', 'dw']
 
         # Invalid model.
         else:
