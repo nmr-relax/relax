@@ -205,6 +205,35 @@ uf.menu_text = "&exp_type"
 uf.wizard_size = (800, 400)
 
 
+# The relax_disp.relax_time user function.
+uf = uf_info.add_uf('relax_disp.relax_time')
+uf.title = "Set the relaxation delay time associated with each spectrum."
+uf.title_short = "Relaxation delay time setting."
+uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str",
+    desc_short = "spectrum ID string",
+    desc = "The spectrum ID string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "time",
+    default = 0.0,
+    py_type = "num",
+    desc_short = "relaxation time",
+    desc = "The time, in seconds, of the relaxation period."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.")
+uf.backend = relax_disp_obj._relax_time
+uf.menu_text = "&relax_time"
+uf.gui_icon = "oxygen.actions.chronometer"
+uf.wizard_size = (800, 500)
+
+
 # The relax_disp.select_model user function.
 uf = uf_info.add_uf('relax_disp.select_model')
 uf.title = "Select the relaxation dispersion model."

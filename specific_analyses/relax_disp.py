@@ -219,6 +219,30 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
 
+    def _relax_time(self, time=0.0, spectrum_id=None):
+        """Set the relaxation time period associated with a given spectrum.
+
+        @keyword time:          The time, in seconds, of the relaxation period.
+        @type time:             float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxNoSpectraError(spectrum_id)
+
+        # Initialise the global relaxation time data structure if needed.
+        if not hasattr(cdp, 'relax_times'):
+            cdp.relax_times = {}
+
+        # Add the time, converting to a float if needed.
+        cdp.relax_times[spectrum_id] = float(time)
+
+        # Printout.
+        print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]/1000.0))
+
+
     def _select_model(self, model='fast 2-site'):
         """Set up the model for the relaxation dispersion analysis.
 
