@@ -51,6 +51,7 @@ class Relax_disp(API_base, API_common):
 
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
+        self.data_init = self._data_init_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
@@ -489,29 +490,6 @@ class Relax_disp(API_base, API_common):
 
         # Return the MC data.
         return mc_data
-
-
-    def data_init(self, spin):
-        """Initialise the spin specific data structures.
-
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        """
-
-        # Loop over the data structure names.
-        for name in self.data_names():
-            # Data structures which are initially empty arrays.
-            list_data = [ 'params' ]
-            if name in list_data:
-                init_data = []
-
-            # Otherwise initialise the data structure to None.
-            else:
-                init_data = None
-
-            # If the name is not in 'spin', add it.
-            if not hasattr(spin, name):
-                setattr(spin, name, init_data)
 
 
     def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
