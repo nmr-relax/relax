@@ -137,9 +137,6 @@ class Relax_disp(API_base, API_common):
         if not scaling:
             return scaling_matrix
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
             # Effective transversal relaxation rate scaling.
@@ -218,9 +215,6 @@ class Relax_disp(API_base, API_common):
         @rtype:                   float
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
 
@@ -286,9 +280,6 @@ class Relax_disp(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set up the dictionnary data structure if it doesn't exist yet.
         if not hasattr(cdp, 'delayT'):
             cdp.delayT = {}
@@ -323,9 +314,6 @@ class Relax_disp(API_base, API_common):
         @keyword spectrum_id:   The spectrum identification string.
         @type spectrum_id:      str
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
@@ -380,9 +368,6 @@ class Relax_disp(API_base, API_common):
         # Test if the model is set.
         if not hasattr(spin, 'model') or not spin.model:
             raise RelaxNoModelError
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.cpmg_frqs)):
@@ -565,9 +550,6 @@ class Relax_disp(API_base, API_common):
         @type sim_index:        int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Monte Carlo simulations.
         if sim_index != None:
             # Transversal relaxation rate.
@@ -617,9 +599,6 @@ class Relax_disp(API_base, API_common):
 
         # Test if the current pipe exists.
         pipes.test()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the pipe type is set to 'relax_disp'.
         function_type = cdp.pipe_type
@@ -729,9 +708,6 @@ class Relax_disp(API_base, API_common):
             for j in xrange(n):
                 temp.append(inc)
             inc = temp
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Minimisation options initialisation.
         min_options = []
@@ -905,9 +881,6 @@ class Relax_disp(API_base, API_common):
                                     grid search.
         @type inc:                  array of int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1170,9 +1143,6 @@ class Relax_disp(API_base, API_common):
         @return:        The standard deviation data structure.
         @rtype:         list of float
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Get the spin container.
         spin = return_spin(spin_id)
