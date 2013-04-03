@@ -72,21 +72,21 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "delayT",
-    py_type = "float",
+    py_type = "num",
     desc_short = "CPMG time delay",
     desc = "The CPMG constant time delay (T) in s."
 )
 uf.add_keyarg(
     name = "int_cpmg",
     default = "1.0",
-    py_type = "float",
+    py_type = "num",
     desc_short = "CPMG peak intensity",
     desc = "Intensity of the peak in the CPMG spectrum.."
 )
 uf.add_keyarg(
     name = "int_ref",
     default = "1.0",
-    py_type = "float",
+    py_type = "num",
     desc_short = "reference peak intensity",
     desc = "Intensity of the peak in the reference spectrum.."
 )
@@ -121,7 +121,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "delayT",
-    py_type = "float",
+    py_type = "num",
     desc_short = "CPMG time delay",
     desc = "The CPMG constant time delay (T) in s."
 )
