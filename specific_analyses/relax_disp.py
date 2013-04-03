@@ -79,6 +79,194 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
+    def _assemble_param_vector(self, spin=None, sim_index=None):
+        """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
+
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        @return:                An array of the parameter values of the dispersion relaxation model.
+        @rtype:                 numpy float array
+        """
+
+        # Initialise.
+        param_vector = []
+
+        # Loop over the model parameters.
+        for i in xrange(len(spin.params)):
+            # Transversal relaxation rate.
+            if spin.params[i] == 'R2':
+                if sim_index != None:
+                    param_vector.append(spin.r2_sim[sim_index])
+                elif spin.r2 == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.r2)
+
+            # Chemical exchange contribution to 'R2'.
+            elif spin.params[i] == 'Rex':
+                if sim_index != None:
+                    param_vector.append(spin.rex_sim[sim_index])
+                elif spin.rex == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.rex)
+
+            # Exchange rate.
+            elif spin.params[i] == 'kex':
+                if sim_index != None:
+                    param_vector.append(spin.kex_sim[sim_index])
+                elif spin.kex == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.kex)
+
+            # Transversal relaxation rate for state A.
+            if spin.params[i] == 'R2A':
+                if sim_index != None:
+                    param_vector.append(spin.r2a_sim[sim_index])
+                elif spin.r2a == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.r2a)
+
+            # Exchange rate from state A to state B.
+            if spin.params[i] == 'kA':
+                if sim_index != None:
+                    param_vector.append(spin.ka_sim[sim_index])
+                elif spin.ka == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.ka)
+
+            # Chemical shift difference between states A and B.
+            if spin.params[i] == 'dw':
+                if sim_index != None:
+                    param_vector.append(spin.dw_sim[sim_index])
+                elif spin.dw == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.dw)
+
+        # Return a numpy array.
+        return array(param_vector, float64)
+
+
+    def _assemble_scaling_matrix(self, spin=None, scaling=True):
+        """Create and return the scaling matrix.
+
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword scaling:       A flag which if false will cause the identity matrix to be returned.
+        @type scaling:          bool
+        @return:                The diagonal and square scaling matrix.
+        @rtype:                 numpy diagonal matrix
+        """
+
+        # Initialise.
+        scaling_matrix = identity(len(spin.params), float64)
+        i = 0
+
+        # No diagonal scaling.
+        if not scaling:
+            return scaling_matrix
+
+        # Loop over the parameters.
+        for i in xrange(len(spin.params)):
+            # Effective transversal relaxation rate scaling.
+            if spin.params[i] == 'R2eff':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.r2eff[pos])
+
+            # Transversal relaxation rate scaling.
+            elif spin.params[i] == 'R2':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1e-1
+
+            # Chemical exchange contribution to 'R2' scaling.
+            elif spin.params[i] == 'Rex':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1e-1
+
+            # Exchange rate scaling.
+            elif spin.params[i] == 'kex':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1e-4
+
+            # Transversal relaxation rate for state A scaling
+            elif spin.params[i] == 'R2A':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1e-1
+
+            # Exchange rate from state A to state B scaling.
+            elif spin.params[i] == 'kA':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1e-4
+
+            # Chemical shift difference between states A and B scaling.
+            elif spin.params[i] == 'dw':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1e-3
+
+            # Increment i.
+            i = i + 1
+
+        # Return the scaling matrix.
+        return scaling_matrix
+
+
+    def _back_calc(self, spin=None, result_index=None):
+        """Back-calculation of peak intensity for the given CPMG pulse train frequency.
+
+        @keyword spin:            The spin container.
+        @type spin:               SpinContainer instance
+        @keyword result_index:    The index for the back-calculated data associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
+        @type result_index:       int
+        @return:                  The R2eff value associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
+        @rtype:                   float
+        """
+
+        # Create the initial parameter vector.
+        param_vector = self._assemble_param_vector(spin=spin)
+
+        # Create a scaling matrix.
+        scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
+
+        # Initialise the relaxation dispersion fit functions.
+        setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=spin.intensities, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
+
+        # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
+        func(param_vector)
+
+        # Get the data back.
+        results = back_calc_I()
+
+        # Return the correct peak height.
+        return results[result_index]
+
+
     def _cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
@@ -185,362 +373,7 @@ class Relax_disp(API_base, API_common):
             return r2eff
 
 
-    def _exp_type(self, exp_type='cpmg'):
-        """Select the relaxation dispersion experiment type performed.
-
-        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
-        @type exp:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # CPMG relaxation dispersion experiments.
-        if exp_type == 'cpmg':
-            print("CPMG relaxation dispersion experiments.")
-            cdp.exp_type = 'cpmg'
-
-        # R1rho relaxation dispersion experiments.
-        elif exp_type == 'r1rho':
-            print("R1rho relaxation dispersion experiments.")
-            cdp.exp_type = 'r1rho'
-
-        # Invalid relaxation dispersion experiment.
-        else:
-            raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
-
-
-    def _relax_time(self, time=0.0, spectrum_id=None):
-        """Set the relaxation time period associated with a given spectrum.
-
-        @keyword time:          The time, in seconds, of the relaxation period.
-        @type time:             float
-        @keyword spectrum_id:   The spectrum identification string.
-        @type spectrum_id:      str
-        """
-
-        # Test if the spectrum id exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxNoSpectraError(spectrum_id)
-
-        # Initialise the global relaxation time data structure if needed.
-        if not hasattr(cdp, 'relax_times'):
-            cdp.relax_times = {}
-
-        # Add the time, converting to a float if needed.
-        cdp.relax_times[spectrum_id] = float(time)
-
-        # Printout.
-        print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
-
-
-    def _select_model(self, model='fast 2-site'):
-        """Set up the model for the relaxation dispersion analysis.
-
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'exp_fit', 'fast 2-site', 'slow 2-site'.
-        @type model:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Test if the experiment type is set.
-        if not hasattr(cdp, 'exp_type'):
-            raise RelaxError("The relaxation dispersion experiment type has not been set.")
-
-        # Fast-exchange regime.
-        if model == 'exp_fit':
-            print("Basic exponential curve-fitting.")
-            params = ['R2', 'I0']
-
-        # Fast-exchange regime.
-        elif model == 'fast 2-site':
-            print("2-site fast-exchange.")
-            params = ['R2', 'I0', 'Rex', 'kex']
-
-        # Slow-exchange regime.
-        elif model == 'slow 2-site':
-            print("2-site slow-exchange.")
-            params = ['R2', 'I0', 'R2A', 'kA', 'dw']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '%s' is invalid." % model)
-
-        # Set up the model.
-        self.model_setup(model, params)
-
-
-    def _spin_lock_field(self, spectrum_id=None, field=None):
-        """Set the spin-lock field strength (nu1) for the given spectrum.
-
-        @keyword spectrum_id:   The spectrum ID string.
-        @type spectrum_id:      str
-        @keyword field:         The spin-lock field strength (nu1) in Hz.
-        @type field:            int or float
-        """
-
-        # Test if the spectrum ID exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxNoSpectraError(spectrum_id)
-
-        # Initialise the global nu1 data structure if needed.
-        if not hasattr(cdp, 'spin_lock_nu1'):
-            cdp.spin_lock_nu1 = {}
-
-        # Add the frequency, converting to a float if needed.
-        cdp.spin_lock_nu1[spectrum_id] = float(field)
-
-        # Printout.
-        print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
-
-
-    def assemble_param_vector(self, spin=None, sim_index=None):
-        """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
-
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
-        @keyword sim_index:     The optional MC simulation index.
-        @type sim_index:        int
-        @return:                An array of the parameter values of the dispersion relaxation model.
-        @rtype:                 numpy float array
-        """
-
-        # Initialise.
-        param_vector = []
-
-        # Loop over the model parameters.
-        for i in xrange(len(spin.params)):
-            # Transversal relaxation rate.
-            if spin.params[i] == 'R2':
-                if sim_index != None:
-                    param_vector.append(spin.r2_sim[sim_index])
-                elif spin.r2 == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.r2)
-
-            # Chemical exchange contribution to 'R2'.
-            elif spin.params[i] == 'Rex':
-                if sim_index != None:
-                    param_vector.append(spin.rex_sim[sim_index])
-                elif spin.rex == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.rex)
-
-            # Exchange rate.
-            elif spin.params[i] == 'kex':
-                if sim_index != None:
-                    param_vector.append(spin.kex_sim[sim_index])
-                elif spin.kex == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.kex)
-
-            # Transversal relaxation rate for state A.
-            if spin.params[i] == 'R2A':
-                if sim_index != None:
-                    param_vector.append(spin.r2a_sim[sim_index])
-                elif spin.r2a == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.r2a)
-
-            # Exchange rate from state A to state B.
-            if spin.params[i] == 'kA':
-                if sim_index != None:
-                    param_vector.append(spin.ka_sim[sim_index])
-                elif spin.ka == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.ka)
-
-            # Chemical shift difference between states A and B.
-            if spin.params[i] == 'dw':
-                if sim_index != None:
-                    param_vector.append(spin.dw_sim[sim_index])
-                elif spin.dw == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.dw)
-
-        # Return a numpy array.
-        return array(param_vector, float64)
-
-
-    def assemble_scaling_matrix(self, spin=None, scaling=True):
-        """Create and return the scaling matrix.
-
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
-        @keyword scaling:       A flag which if false will cause the identity matrix to be returned.
-        @type scaling:          bool
-        @return:                The diagonal and square scaling matrix.
-        @rtype:                 numpy diagonal matrix
-        """
-
-        # Initialise.
-        scaling_matrix = identity(len(spin.params), float64)
-        i = 0
-
-        # No diagonal scaling.
-        if not scaling:
-            return scaling_matrix
-
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Effective transversal relaxation rate scaling.
-            if spin.params[i] == 'R2eff':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.r2eff[pos])
-
-            # Transversal relaxation rate scaling.
-            elif spin.params[i] == 'R2':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-1
-
-            # Chemical exchange contribution to 'R2' scaling.
-            elif spin.params[i] == 'Rex':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-1
-
-            # Exchange rate scaling.
-            elif spin.params[i] == 'kex':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-4
-
-            # Transversal relaxation rate for state A scaling
-            elif spin.params[i] == 'R2A':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-1
-
-            # Exchange rate from state A to state B scaling.
-            elif spin.params[i] == 'kA':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-4
-
-            # Chemical shift difference between states A and B scaling.
-            elif spin.params[i] == 'dw':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-3
-
-            # Increment i.
-            i = i + 1
-
-        # Return the scaling matrix.
-        return scaling_matrix
-
-
-    def back_calc(self, spin=None, result_index=None):
-        """Back-calculation of peak intensity for the given CPMG pulse train frequency.
-
-        @keyword spin:            The spin container.
-        @type spin:               SpinContainer instance
-        @keyword result_index:    The index for the back-calculated data associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
-        @type result_index:       int
-        @return:                  The R2eff value associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
-        @rtype:                   float
-        """
-
-        # Create the initial parameter vector.
-        param_vector = self.assemble_param_vector(spin=spin)
-
-        # Create a scaling matrix.
-        scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
-
-        # Initialise the relaxation dispersion fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=spin.intensities, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
-        func(param_vector)
-
-        # Get the data back.
-        results = back_calc_I()
-
-        # Return the correct peak height.
-        return results[result_index]
-
-
-    def create_mc_data(self, spin_id):
-        """Create the Monte Carlo peak intensity data.
-
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:  str
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
-        """
-
-        # Initialise the MC data data structure.
-        mc_data = []
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
-
-        # Skip deselected spins.
-        if not spin.select:
-            return
-
-        # Skip spins which have no data.
-        if not hasattr(spin, 'intensities'):
-            return
-
-        # Test if the model is set.
-        if not hasattr(spin, 'model') or not spin.model:
-            raise RelaxNoModelError
-
-        # Loop over the spectral time points.
-        for j in xrange(len(cdp.cpmg_frqs)):
-            # Back calculate the value.
-            value = self.back_calc(spin=spin, result_index=j)
-
-            # Append the value.
-            mc_data.append(value)
-
-        # Return the MC data.
-        return mc_data
-
-
-    def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
+    def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
         """Disassemble the parameter vector.
 
         @keyword param_vector:  The parameter vector.
@@ -592,28 +425,41 @@ class Relax_disp(API_base, API_common):
             spin.dw = param_vector[5]
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
-        """The relaxation dispersion curve fitting grid search function.
+    def _exp_type(self, exp_type='cpmg'):
+        """Select the relaxation dispersion experiment type performed.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
-        @type sim_index:        int
+        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
+        @type exp:    str
         """
 
-        # Minimisation.
-        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # CPMG relaxation dispersion experiments.
+        if exp_type == 'cpmg':
+            print("CPMG relaxation dispersion experiments.")
+            cdp.exp_type = 'cpmg'
+
+        # R1rho relaxation dispersion experiments.
+        elif exp_type == 'r1rho':
+            print("R1rho relaxation dispersion experiments.")
+            cdp.exp_type = 'r1rho'
+
+        # Invalid relaxation dispersion experiment.
+        else:
+            raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
 
-    def grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+    def _grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
         """The grid search setup function.
 
         @keyword spin:              The spin data container.
@@ -706,7 +552,7 @@ class Relax_disp(API_base, API_common):
         return grid_size, min_options
 
 
-    def linear_constraints(self, spin=None, scaling_matrix=None):
+    def _linear_constraints(self, spin=None, scaling_matrix=None):
         """Set up the relaxation dispersion curve fitting linear constraint matrices A and b.
 
         Standard notation
@@ -791,6 +637,186 @@ class Relax_disp(API_base, API_common):
         return A, b
 
 
+    def _model_setup(self, model, params):
+        """Update various model specific data structures.
+
+        @param model:   The relaxation dispersion curve type.
+        @type model:    str
+        @param params:  A list consisting of the model parameters.
+        @type params:   list of str
+        """
+
+        # Set the model.
+        cdp.curve_type = model
+
+        # Loop over the sequence.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
+
+            # The model and parameter names.
+            spin.model = model
+            spin.params = params
+
+
+    def _relax_time(self, time=0.0, spectrum_id=None):
+        """Set the relaxation time period associated with a given spectrum.
+
+        @keyword time:          The time, in seconds, of the relaxation period.
+        @type time:             float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxNoSpectraError(spectrum_id)
+
+        # Initialise the global relaxation time data structure if needed.
+        if not hasattr(cdp, 'relax_times'):
+            cdp.relax_times = {}
+
+        # Add the time, converting to a float if needed.
+        cdp.relax_times[spectrum_id] = float(time)
+
+        # Printout.
+        print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
+
+
+    def _select_model(self, model='fast 2-site'):
+        """Set up the model for the relaxation dispersion analysis.
+
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'exp_fit', 'fast 2-site', 'slow 2-site'.
+        @type model:    str
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Test if the experiment type is set.
+        if not hasattr(cdp, 'exp_type'):
+            raise RelaxError("The relaxation dispersion experiment type has not been set.")
+
+        # Fast-exchange regime.
+        if model == 'exp_fit':
+            print("Basic exponential curve-fitting.")
+            params = ['R2', 'I0']
+
+        # Fast-exchange regime.
+        elif model == 'fast 2-site':
+            print("2-site fast-exchange.")
+            params = ['R2', 'I0', 'Rex', 'kex']
+
+        # Slow-exchange regime.
+        elif model == 'slow 2-site':
+            print("2-site slow-exchange.")
+            params = ['R2', 'I0', 'R2A', 'kA', 'dw']
+
+        # Invalid model.
+        else:
+            raise RelaxError("The model '%s' is invalid." % model)
+
+        # Set up the model.
+        self._model_setup(model, params)
+
+
+    def _spin_lock_field(self, spectrum_id=None, field=None):
+        """Set the spin-lock field strength (nu1) for the given spectrum.
+
+        @keyword spectrum_id:   The spectrum ID string.
+        @type spectrum_id:      str
+        @keyword field:         The spin-lock field strength (nu1) in Hz.
+        @type field:            int or float
+        """
+
+        # Test if the spectrum ID exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxNoSpectraError(spectrum_id)
+
+        # Initialise the global nu1 data structure if needed.
+        if not hasattr(cdp, 'spin_lock_nu1'):
+            cdp.spin_lock_nu1 = {}
+
+        # Add the frequency, converting to a float if needed.
+        cdp.spin_lock_nu1[spectrum_id] = float(field)
+
+        # Printout.
+        print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
+
+
+    def create_mc_data(self, data_id):
+        """Create the Monte Carlo peak intensity data.
+
+        @param data_id: The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:  str
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
+
+        # Initialise the MC data data structure.
+        mc_data = []
+
+        # Get the spin container.
+        spin = return_spin(data_id)
+
+        # Skip deselected spins.
+        if not spin.select:
+            return
+
+        # Skip spins which have no data.
+        if not hasattr(spin, 'intensities'):
+            return
+
+        # Test if the model is set.
+        if not hasattr(spin, 'model') or not spin.model:
+            raise RelaxNoModelError
+
+        # Loop over the spectral time points.
+        for j in xrange(len(cdp.cpmg_frqs)):
+            # Back calculate the value.
+            value = self._back_calc(spin=spin, result_index=j)
+
+            # Append the value.
+            mc_data.append(value)
+
+        # Return the MC data.
+        return mc_data
+
+
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+        """The relaxation dispersion curve fitting grid search function.
+
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:              array of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:        int
+        """
+
+        # Minimisation.
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Relaxation dispersion curve fitting function.
 
@@ -835,20 +861,20 @@ class Relax_disp(API_base, API_common):
                 continue
 
             # Create the initial parameter vector.
-            param_vector = self.assemble_param_vector(spin=spin)
+            param_vector = self._assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
-            scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=scaling)
+            scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=scaling)
             if len(scaling_matrix):
                 param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                grid_size, min_options = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+                A, b = self._linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
 
             # Print out.
             if verbosity >= 1:
@@ -915,7 +941,7 @@ class Relax_disp(API_base, API_common):
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
+            self._disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
@@ -959,34 +985,14 @@ class Relax_disp(API_base, API_common):
                 spin.warning = warning
 
 
-    def model_setup(self, model, params):
-        """Update various model specific data structures.
+    def overfit_deselect(self, data_check=True, verbose=True):
+        """Deselect spins which have insufficient data to support minimisation.
 
-        @param model:   The relaxation dispersion curve type.
-        @type model:    str
-        @param params:  A list consisting of the model parameters.
-        @type params:   list of str
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
         """
-
-        # Set the model.
-        cdp.curve_type = model
-
-        # Loop over the sequence.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-            # The model and parameter names.
-            spin.model = model
-            spin.params = params
-
-
-    def overfit_deselect(self):
-        """Deselect spins which have insufficient data to support minimisation."""
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
@@ -1005,15 +1011,19 @@ class Relax_disp(API_base, API_common):
                 continue
 
 
-    def return_data(self, spin):
+    def return_data(self, data_id=None):
         """Return the peak intensity data structure.
 
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
+        @param data_id: The spin ID string, as yielded by the base_data_loop() generator method.
+        @type data_id:  str
         @return:        The peak intensity data structure.
         @rtype:         list of float
         """
 
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the data.
         return spin.intensities
 
 
@@ -1031,43 +1041,37 @@ class Relax_disp(API_base, API_common):
     return_data_name_doc.add_table(_table.label)
 
 
-    def return_error(self, spin_id):
+    def return_error(self, data_id=None):
         """Return the standard deviation data structure.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:  str
+        @param data_id: The spin ID string, as yielded by the base_data_loop() generator method.
+        @type data_id:  str
         @return:        The standard deviation data structure.
         @rtype:         list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Return the error list.
         return spin.intensity_err
-
-
-    def return_units(self, stat_type):
-        """Dummy function which returns None as the stats have no units."""
-
-        return None
 
 
     set_doc = Desc_container("Relaxation dispersion curve fitting set details")
     set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (kA) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
 
 
-    def sim_pack_data(self, spin_id, sim_data):
+    def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @param data_id:     The spin ID string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'sim_intensities'):
