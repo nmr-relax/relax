@@ -88,6 +88,30 @@ class API_common:
         """
 
 
+    def _data_init_spin(self, data_cont, sim=False):
+        """Initialise data structures (spin system specific).
+
+        @param data_cont:   The spin container.
+        @type data_cont:    SpinContainer instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
+        """
+
+        # Loop over the parameters.
+        for name in self.PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
+            # The default value.
+            param_type = self.PARAMS.get_type(name)
+            if param_type == 'dict':
+                value = {}
+            elif param_type == 'list':
+                value = []
+            else:
+                value = None
+
+            # Set the value.
+            setattr(data_cont, name, value)
+
+
     def _eliminate_false(self, name, value, model_info, args, sim=None):
         """Dummy method for model elimination.
 
