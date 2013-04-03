@@ -27,9 +27,11 @@
 from numpy import array, average, dot, float64, identity, log, zeros
 from numpy.linalg import inv
 from re import match, search
+import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
+from lib.text.sectioning import subsection
 from minfx.generic import generic_minimise
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
@@ -79,11 +81,11 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
-    def _assemble_param_vector(self, spin=None, sim_index=None):
+    def _assemble_param_vector(self, spins=None, sim_index=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
+        @keyword spins:         The list of spin data containers for the block.
+        @type spins:            list of SpinContainer instances
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         @return:                An array of the parameter values of the dispersion relaxation model.
@@ -93,19 +95,36 @@ class Relax_disp(API_base, API_common):
         # Initialise.
         param_vector = []
 
-        # Loop over the model parameters.
-        for i in xrange(len(spin.params)):
-            # Transversal relaxation rate.
-            if spin.params[i] == 'R2':
-                if sim_index != None:
-                    param_vector.append(spin.r2_sim[sim_index])
-                elif spin.r2 == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.r2)
+        # First add the spin specific parameters.
+        for spin_index in range(len(spins)):
+            # Alias the spin.
+            spin = spins[spin_index]
 
+            # Loop over the model parameters.
+            for i in range(len(spin.params)):
+                # Transversal relaxation rate.
+                if spin.params[i] == 'R2':
+                    if sim_index != None:
+                        param_vector.append(spin.r2_sim[sim_index])
+                    elif spin.r2 == None:
+                        param_vector.append(0.0)
+                    else:
+                        param_vector.append(spin.r2)
+
+                # Initial intensity.
+                elif spin.params[i] == 'I0':
+                    if sim_index != None:
+                        param_vector.append(spin.i0_sim[sim_index])
+                    elif spin.i0 == None:
+                        param_vector.append(0.0)
+                    else:
+                        param_vector.append(spin.i0)
+
+        # Then the spin block specific parameters, taking the values from the first spin.
+        spin = spins[0]
+        for i in range(len(spin.params)):
             # Chemical exchange contribution to 'R2'.
-            elif spin.params[i] == 'Rex':
+            if spin.params[i] == 'Rex':
                 if sim_index != None:
                     param_vector.append(spin.rex_sim[sim_index])
                 elif spin.rex == None:
@@ -153,85 +172,64 @@ class Relax_disp(API_base, API_common):
         return array(param_vector, float64)
 
 
-    def _assemble_scaling_matrix(self, spin=None, scaling=True):
+    def _assemble_scaling_matrix(self, spins=None, scaling=True):
         """Create and return the scaling matrix.
 
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
-        @keyword scaling:       A flag which if false will cause the identity matrix to be returned.
+        @keyword spins:         The list of spin data containers for the block.
+        @type spins:            list of SpinContainer instances
+        @keyword scaling:       A flag which if False will cause the identity matrix to be returned.
         @type scaling:          bool
         @return:                The diagonal and square scaling matrix.
         @rtype:                 numpy diagonal matrix
         """
 
         # Initialise.
-        scaling_matrix = identity(len(spin.params), float64)
+        scaling_matrix = identity(self._param_num(spins=spins), float64)
         i = 0
 
         # No diagonal scaling.
         if not scaling:
             return scaling_matrix
 
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Effective transversal relaxation rate scaling.
-            if spin.params[i] == 'R2eff':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.r2eff[pos])
+        # First scale the spin specific parameters.
+        param_index = 0
+        for spin_index in range(len(spins)):
+            # Alias the spin.
+            spin = spins[spin_index]
 
             # Transversal relaxation rate scaling.
-            elif spin.params[i] == 'R2':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+            scaling_matrix[param_index, param_index] = 1e-1
+            param_index += 1
 
-                # Scaling.
-                scaling_matrix[i, i] = 1e-1
+            # Initial intensity scaling.
+            scaling_matrix[param_index, param_index] = 1.0 / max(spin.intensities.values())
+            param_index += 1
 
+        # Then the spin block specific parameters.
+        spin = spins[0]
+        for i in range(len(spin.params)):
             # Chemical exchange contribution to 'R2' scaling.
-            elif spin.params[i] == 'Rex':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-1
+            if spin.params[i] == 'Rex':
+                scaling_matrix[param_index, param_index] = 1e-1
 
             # Exchange rate scaling.
             elif spin.params[i] == 'kex':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-4
+                scaling_matrix[param_index, param_index] = 1e-4
 
             # Transversal relaxation rate for state A scaling
             elif spin.params[i] == 'R2A':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-1
+                scaling_matrix[param_index, param_index] = 1e-1
 
             # Exchange rate from state A to state B scaling.
             elif spin.params[i] == 'kA':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1e-4
+                scaling_matrix[param_index, param_index] = 1e-4
 
             # Chemical shift difference between states A and B scaling.
             elif spin.params[i] == 'dw':
-                # Find the position of the first CPMG pulse train frequency point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+                scaling_matrix[param_index, param_index] = 1e-3
 
-                # Scaling.
-                scaling_matrix[i, i] = 1e-3
-
-            # Increment i.
-            i = i + 1
+            # Increment the parameter index.
+            param_index += 1
 
         # Return the scaling matrix.
         return scaling_matrix
@@ -265,6 +263,23 @@ class Relax_disp(API_base, API_common):
 
         # Return the correct peak height.
         return results[result_index]
+
+
+    def _block_loop(self):
+        """Loop over the spin groupings for one model applied to multiple spins.
+
+        @return:    The list of spins per block will be yielded, as well as the list of spin IDs.
+        @rtype:     list of SpinContainer instances
+        """
+
+        # Loop over the sequence.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Return the spin container as a stop-gap measure.
+            yield [spin], [spin_id]
 
 
     def _cpmg_delayT(self, id=None, delayT=None):
@@ -373,13 +388,13 @@ class Relax_disp(API_base, API_common):
             return r2eff
 
 
-    def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
+    def _disassemble_param_vector(self, param_vector=None, spins=None, sim_index=None):
         """Disassemble the parameter vector.
 
         @keyword param_vector:  The parameter vector.
         @type param_vector:     numpy array
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
+        @keyword spins:         The list of spin data containers for the block.
+        @type spins:            list of SpinContainer instances
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         """
@@ -459,11 +474,11 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
 
-    def _grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+    def _grid_search_setup(self, spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
         """The grid search setup function.
 
-        @keyword spin:              The spin data container.
-        @type spin:                 SpinContainer instance
+        @keyword spins:             The list of spin data containers for the block.
+        @type spins:                list of SpinContainer instances
         @keyword param_vector:      The parameter vector.
         @type param_vector:         numpy array
         @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
@@ -510,22 +525,49 @@ class Relax_disp(API_base, API_common):
         min_options = []
         j = 0
 
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Relaxation rate (from 0 to 20 s^-1).
-            if spin.params[i] == 'Rx':
+        # First add the spin specific parameters.
+        for spin_index in range(len(spins)):
+            # Alias the spin.
+            spin = spins[spin_index]
+
+            # Loop over the parameters.
+            for i in range(len(spin.params)):
+                # Relaxation rate (from 0 to 40 s^-1).
+                if spin.params[i] == 'R2':
+                    min_options.append([inc[j], 0.0, 40.0])
+
+                # Intensity.
+                elif spin.params[i] == 'I0':
+                    min_options.append([inc[j], 0.0, max(spin.intensities.values())])
+
+                # Increment j.
+                j += 1
+
+        # Then the spin block specific parameters.
+        spin = spins[0]
+        for i in range(len(spin.params)):
+            # Chemical exchange contribution to 'R2'.
+            if spin.params[i] == 'Rex':
                 min_options.append([inc[j], 0.0, 20.0])
 
-            # Intensity
-            elif search('^I', spin.params[i]):
-                # Find the position of the first time point.
-                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+            # Exchange rate.
+            elif spin.params[i] == 'kex':
+                min_options.append([inc[j], 0.0, 100000.0])
 
-                # Scaling.
-                min_options.append([inc[j], 0.0, average(spin.intensities[pos])])
+            # Transversal relaxation rate for state A.
+            elif spin.params[i] == 'R2A':
+                min_options.append([inc[j], 0.0, 20.0])
+
+            # Exchange rate from state A to state B.
+            elif spin.params[i] == 'kA':
+                min_options.append([inc[j], 0.0, 100000.0])
+
+            # Chemical shift difference between states A and B.
+            elif spin.params[i] == 'dw':
+                min_options.append([inc[j], 0.0, 10000.0])
 
             # Increment j.
-            j = j + 1
+            j += 1
 
         # Set the lower and upper bounds if these are supplied.
         if lower != None:
@@ -545,14 +587,14 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("A grid search of size %s is too large." % grid_size)
 
         # Diagonal scaling of minimisation options.
-        for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
+        for j in range(len(min_options)):
+            min_options[j][1] = min_options[j][1] * scaling_matrix[j, j]
+            min_options[j][2] = min_options[j][2] * scaling_matrix[j, j]
 
         return grid_size, min_options
 
 
-    def _linear_constraints(self, spin=None, scaling_matrix=None):
+    def _linear_constraints(self, spins=None, scaling_matrix=None):
         """Set up the relaxation dispersion curve fitting linear constraint matrices A and b.
 
         Standard notation
@@ -587,8 +629,8 @@ class Relax_disp(API_base, API_common):
             | 1  0  0 |     |  dw  |      |    0    |
 
 
-        @keyword spin:              The spin data container.
-        @type spin:                 SpinContainer instance
+        @keyword spins:             The list of spin data containers for the block.
+        @type spins:                list of SpinContainer instances
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
         """
@@ -596,20 +638,35 @@ class Relax_disp(API_base, API_common):
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(spin.params)
+        n = self._param_num(spins=spins)
         zero_array = zeros(n, float64)
         i = 0
         j = 0
 
-        # Loop over the parameters.
-        for k in xrange(len(spin.params)):
+        # First the spin specific parameters.
+        for spin_index in range(len(spins)):
+            # Alias the spin.
+            spin = spins[spin_index]
+
+            # Loop over the parameters.
+            for k in range(len(spin.params)):
+                # The transversal relaxation rate >= 0.
+                if spin.params[k] == 'R2':
+                    A.append(zero_array * 0.0)
+                    A[j][i] = 1.0
+                    b.append(0.0)
+                    j += 1
+
+        # Then the spin block specific parameters.
+        spin = spins[0]
+        for k in range(len(spin.params)):
             # Relaxation rates and Rex.
             if search('^R', spin.params[k]):
-                # R2, Rex, R2A >= 0.
+                # Rex, R2A >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
-                j = j + 1
+                j += 1
 
             # Exchange rates.
             elif search('^k', spin.params[k]):
@@ -617,7 +674,7 @@ class Relax_disp(API_base, API_common):
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
-                j = j + 1
+                j += 1
 
             # Chemical exchange difference.
             elif spin.params[k] == 'dw':
@@ -625,15 +682,16 @@ class Relax_disp(API_base, API_common):
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
-                j = j + 1
+                j += 1
 
             # Increment i.
-            i = i + 1
+            i += 1
 
         # Convert to numpy data structures.
         A = array(A, float64)
         b = array(b, float64)
 
+        # Return the matrices.
         return A, b
 
 
@@ -661,6 +719,25 @@ class Relax_disp(API_base, API_common):
             # The model and parameter names.
             spin.model = model
             spin.params = params
+
+
+    def _param_num(self, spins=None):
+        """Determine the number of parameters in the model.
+
+        @keyword spins:         The list of spin data containers for the block.
+        @type spins:            list of SpinContainer instances
+        @return:                The number of model parameters.
+        @rtype:                 int
+        """
+
+        # The number of spin specific parameters (R2 and I0 per spin).
+        num = len(spins) * 2
+
+        # The block specific parameters.
+        num += len(spins[0].params) - 2
+
+        # Return the number.
+        return num
 
 
     def _relax_time(self, time=0.0, spectrum_id=None):
@@ -850,88 +927,108 @@ class Relax_disp(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over the sequence.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+        # The unique curves for the R2eff fitting (CPMG).
+        cpmg_frqs = []
+        if cdp.exp_type == 'cpmg':
+            for frq in cdp.cpmg_frqs.values():
+                if frq not in cpmg_frqs:
+                    cpmg_frqs.append(frq)
+            cpmg_frqs.sort()
+            curve_num = len(cpmg_frqs)
 
-            # Skip spins which have no data.
-            if not hasattr(spin, 'intensities'):
-                continue
+        # The unique curves for the R2eff fitting (R1rho).
+        spin_lock_nu1 = []
+        if cdp.exp_type == 'r1rho':
+            for field in cdp.spin_lock_nu1.values():
+                if field not in spin_lock_nu1:
+                    spin_lock_nu1.append(field)
+            spin_lock_nu1.sort()
+            curve_num = len(spin_lock_nu1)
+
+        # The relaxation time points (sorted).
+        relax_times = []
+        for time in cdp.relax_times.values():
+            if time not in relax_times:
+                relax_times.append(time)
+        relax_times.sort()
+        num_time_pts = len(relax_times)
+
+        # Loop over the spin blocks.
+        for spins, spin_ids in self._block_loop():
+            # The spin count.
+            spin_num = len(spins)
+
+            # Initialise the data structures for the target function.
+            values = zeros((spin_num, curve_num, num_time_pts), float64)
+            errors = zeros((spin_num, curve_num, num_time_pts), float64)
+
+            # Pack the peak intensity data.
+            for spin_index in range(spin_num):
+                # Alias the spin.
+                spin = spins[spin_index]
+
+                # The keys.
+                keys = list(spin.intensities.keys())
+
+                # Loop over the spectral data.
+                for key in keys:
+                    # The indices.
+                    if cdp.exp_type == 'cpmg':
+                        curve_index = cpmg_frqs.index(cdp.cpmg_frqs[key])
+                    elif cdp.exp_type == 'r1rho':
+                        curve_index = spin_lock_nu1.index(cdp.spin_lock_nu1[key])
+                    time_index = relax_times.index(cdp.relax_times[key])
+
+                    # The values.
+                    if sim_index == None:
+                        values[spin_index, curve_index, time_index] = spin.intensities[key]
+                    else:
+                        values[spin_index, curve_index, time_index] = spin.sim_intensities[sim_index][key]
+
+                    # The errors.
+                    errors[spin_index, curve_index, time_index] = spin.intensity_err[key]
+
 
             # Create the initial parameter vector.
-            param_vector = self._assemble_param_vector(spin=spin)
+            param_vector = self._assemble_param_vector(spins=spins)
 
             # Diagonal scaling.
-            scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=scaling)
+            scaling_matrix = self._assemble_scaling_matrix(spins=spins, scaling=scaling)
             if len(scaling_matrix):
                 param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, min_options = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                grid_size, min_options = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
+            A, b = None, None
             if constraints:
-                A, b = self._linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+                A, b = self._linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
 
             # Print out.
             if verbosity >= 1:
-                # Individual spin printout.
+                # Individual spin block section.
+                top = 2
                 if verbosity >= 2:
-                    print("\n\n")
-
-                string = "Fitting to spin '%s'" % spin_id
-                print("\n\n%s" % string)
-                print(len(string) * '~')
+                    top += 2
+                subsection(file=sys.stdout, text="Fitting to the spin block %s"%spin_ids, prespace=top)
 
                 # Grid search printout.
                 if match('^[Gg]rid', min_algor):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
-
             # Initialise the function to minimise.
-            ######################################
-
-            if sim_index == None:
-                values = spin.intensities
-            else:
-                values = spin.sim_intensities[sim_index]
-
-            model = Dispersion(model=cdp.curve_type, num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=values, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
-
+            model = Dispersion(model=cdp.curve_type, num_params=self._param_num(spins=spins), num_times=num_time_pts, curve_num=curve_num, values=values, errors=errors, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, scaling_matrix=scaling_matrix)
 
             # Setup the minimisation algorithm when constraints are present.
-            ################################################################
-
             if constraints and not match('^[Gg]rid', min_algor):
                 algor = min_options[0]
             else:
                 algor = min_algor
 
-
-            # Levenberg-Marquardt minimisation.
-            ###################################
-
-            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-                # Reconstruct the error data structure.
-                lm_error = zeros(len(spin.cpmg_frqs), float64)
-                index = 0
-                for k in xrange(len(spin.cpmg_frqs)):
-                    lm_error[index:index+len(relax_error[k])] = relax_error[k]
-                    index = index + len(relax_error[k])
-
-                min_options = min_options + (self.relax_disp.lm_dri, lm_error)
-
-
             # Minimisation.
-            ###############
-
-            if constraints:
-                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
-            else:
-                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
             if results == None:
                 return
             param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
@@ -941,48 +1038,49 @@ class Relax_disp(API_base, API_common):
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self._disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
+            self._disassemble_param_vector(param_vector=param_vector, spins=spins, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
-                # Chi-squared statistic.
-                spin.chi2_sim[sim_index] = chi2
+                for spin in spins:
+                    # Chi-squared statistic.
+                    spin.chi2_sim[sim_index] = chi2
 
-                # Iterations.
-                spin.iter_sim[sim_index] = iter_count
+                    # Iterations.
+                    spin.iter_sim[sim_index] = iter_count
 
-                # Function evaluations.
-                spin.f_count_sim[sim_index] = f_count
+                    # Function evaluations.
+                    spin.f_count_sim[sim_index] = f_count
 
-                # Gradient evaluations.
-                spin.g_count_sim[sim_index] = g_count
+                    # Gradient evaluations.
+                    spin.g_count_sim[sim_index] = g_count
 
-                # Hessian evaluations.
-                spin.h_count_sim[sim_index] = h_count
+                    # Hessian evaluations.
+                    spin.h_count_sim[sim_index] = h_count
 
-                # Warning.
-                spin.warning_sim[sim_index] = warning
-
+                    # Warning.
+                    spin.warning_sim[sim_index] = warning
 
             # Normal statistics.
             else:
-                # Chi-squared statistic.
-                spin.chi2 = chi2
+                for spin in spins:
+                    # Chi-squared statistic.
+                    spin.chi2 = chi2
 
-                # Iterations.
-                spin.iter = iter_count
+                    # Iterations.
+                    spin.iter = iter_count
 
-                # Function evaluations.
-                spin.f_count = f_count
+                    # Function evaluations.
+                    spin.f_count = f_count
 
-                # Gradient evaluations.
-                spin.g_count = g_count
+                    # Gradient evaluations.
+                    spin.g_count = g_count
 
-                # Hessian evaluations.
-                spin.h_count = h_count
+                    # Hessian evaluations.
+                    spin.h_count = h_count
 
-                # Warning.
-                spin.warning = warning
+                    # Warning.
+                    spin.warning = warning
 
 
     def overfit_deselect(self, data_check=True, verbose=True):
