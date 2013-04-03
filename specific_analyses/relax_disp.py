@@ -698,7 +698,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # Set the model.
-        cdp.curve_type = model
+        cdp.model = model
 
         # Loop over the sequence.
         for spin in spin_loop():
@@ -928,7 +928,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
         # Test if the model has been set.
-        if not hasattr(cdp, 'curve_type'):
+        if not hasattr(cdp, 'model'):
             raise RelaxError("The relaxation dispersion model has not been specified.")
 
         # Test if the curve count exists.
@@ -1028,7 +1028,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.curve_type, num_params=self._param_num(spins=spins), num_times=num_time_pts, curve_num=cdp.curve_count, values=values, errors=errors, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_times=num_time_pts, curve_num=cdp.curve_count, values=values, errors=errors, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, scaling_matrix=scaling_matrix)
 
             # Setup the minimisation algorithm when constraints are present.
             if constraints and not match('^[Gg]rid', min_algor):
