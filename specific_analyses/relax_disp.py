@@ -50,6 +50,18 @@ class Relax_disp(API_base, API_common):
         # Execute the base class __init__ method.
         super(Relax_disp, self).__init__()
 
+        # Place methods into the API.
+        self.base_data_loop = self._base_data_loop_spin
+        self.model_loop = self._model_loop_spin
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_value = self._return_value_general
+        self.set_error = self._set_error_spin
+        self.set_param_values = self._set_param_values_spin
+        self.set_selected_sim = self._set_selected_sim_spin
+        self.sim_init_values = self._sim_init_values_spin
+        self.sim_return_param = self._sim_return_param_spin
+        self.sim_return_selected = self._sim_return_selected_spin
+
         # Set up the spin parameters.
         self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
         self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
