@@ -30,6 +30,11 @@ from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
+# The model names.
+EXP_FIT = 'exp_fit'
+FAST_2SITE = 'fast 2-site'
+SLOW_2SITE = 'slow 2-site'
+
 
 # The user function class.
 uf_class = uf_info.add_class('relax_disp')
@@ -202,40 +207,48 @@ uf.wizard_size = (800, 400)
 
 # The relax_disp.select_model user function.
 uf = uf_info.add_uf('relax_disp.select_model')
-uf.title = "Select the relaxation dispersion curve type."
-uf.title_short = "Relaxation dispersion curve type selection."
+uf.title = "Select the relaxation dispersion model."
+uf.title_short = "Relaxation dispersion model setup."
 uf.display = True
 uf.add_keyarg(
     name = "model",
-    default = "fast",
+    default = FAST_2SITE,
     py_type = "str",
-    desc_short = "model",
-    desc = "The type of relaxation dispersion curve to fit (relating to the NMR time scale).",
+    desc_short = "dispersion model",
+    desc = "The type of relaxation dispersion model to fit.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "fast: [R2, Rex, kex]",
-        "slow: [R2A, kA, dw]"
+        "%s: {R2}" % EXP_FIT,
+        "%s: {R2, Rex, kex}" % FAST_2SITE,
+        "%s: {R2A, kA, dw}" % SLOW_2SITE
     ],
     wiz_combo_data = [
-        "fast",
-        "slow"
+        EXP_FIT,
+        FAST_2SITE,
+        SLOW_2SITE
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The supported equations will include the default fast-exchange limit as well as the slow-exchange limit.")
-uf.desc.append(Desc_container("The preset experiments"))
-uf.desc[-1].add_paragraph("The parameters of these two models are:")
-uf.desc[-1].add_item_list_element("'fast'", "[R2, Rex, kex],")
-uf.desc[-1].add_item_list_element("'slow'", "[R2A, kA, dw].")
-uf.desc[-1].add_paragraph("The equation for fast exchange is:")
+uf.desc[-1].add_paragraph("A number of different dispersion models will be supported, from the numerical integration of the Bloch-McConnell equations, the 2-site fast, intermediate and slow exchange, 3-site exchange, to the most basic model of simply fitting the exponential curves.  The currently supported models include:")
+uf.desc[-1].add_item_list_element("'%s'" % EXP_FIT, "The simple exponential curve-fitting with parameters {R2},")
+uf.desc[-1].add_item_list_element("'%s'" % FAST_2SITE, "The 2-site fast exchange equation with parameters {R2, Rex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % SLOW_2SITE, "The 2-site slow exchange equation with parameters {R2A, kA, dw}.")
+uf.desc.append(Desc_container("Simple exponential curve-fitting"))
+uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion part is not modelled.  It can be selected by setting the model to '%s'.  Each relaxation curve will be fit to the simple two parameter exponential as in a R1 or R2 analysis, and the R2eff rates will be calculated.  Monte Carlo simulations can be used to obtain the R2eff errors independent from the dispersion model." % EXP_FIT)
+uf.desc.append(Desc_container("2-site fast exchange equation"))
+uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for fast exchange is:" % FAST_2SITE)
 uf.desc[-1].add_verbatim("""
                        /              /        kex       \   4 * cpmg_frq \ 
     R2eff = R2 + Rex * | 1 - 2 * tanh | ---------------- | * ------------ |
                        \              \ 2 * 4 * cpmg_frq /        kex     /
 """)
-uf.desc[-1].add_paragraph("and the equation for slow exchange is:")
+uf.desc[-1].add_paragraph("The references for this equation are:")
+uf.desc[-1].add_list_element("Millet et al., JACS, 2000, 122, 2867-2877 (equation 19),")
+uf.desc[-1].add_list_element("Kovrigin et al., J. Mag. Res., 2006, 180, 93-104 (equation 1).")
+uf.desc.append(Desc_container("2-site slow exchange equation"))
+uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for slow exchange is:" % SLOW_2SITE)
 uf.desc[-1].add_verbatim("""
                        /     /      dw      \   4 * cpmg_frq \ 
     R2eff = R2A + kA - | sin | ------------ | * ------------ |
@@ -245,14 +258,13 @@ uf.desc[-1].add_paragraph("where:")
 uf.desc[-1].add_verbatim("""
     cpmg_frq = 1 / ( 4 * cpmg_tau )
 """)
-uf.desc[-1].add_paragraph("The references for these equations are:")
-uf.desc[-1].add_item_list_element("'fast'", "Millet et al., JACS, 2000, 122, 2867-2877 (equation 19), and Kovrigin et al., J. Mag. Res., 2006, 180, 93-104 (equation 1).")
-uf.desc[-1].add_item_list_element("'slow'", "Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2).")
+uf.desc[-1].add_paragraph("The reference for this equation is:")
+uf.desc[-1].add_list_element("Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2).")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To pick the model 'fast' for all selected spins, type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.select_model('fast')")
-uf.desc[-1].add_prompt("relax> relax_disp.select_model(model='fast')")
+uf.desc[-1].add_paragraph("To pick the 2-site fast exchange model for all selected spins, type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.select_model('%s')" % FAST_2SITE)
+uf.desc[-1].add_prompt("relax> relax_disp.select_model(model='%s')" % FAST_2SITE)
 uf.backend = relax_disp_obj._select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
