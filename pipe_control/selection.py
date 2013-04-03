@@ -233,6 +233,7 @@ def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_c
             spin.select = True
 
     # Then deselect the spins in the file.
+    ids = []
     for mol_name, res_num, res_name, spin_num, spin_name in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
@@ -250,6 +251,18 @@ def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_c
         # Boolean selections.
         else:
             spin.select = boolean_deselect(current=spin.select, boolean=boolean)
+
+        # Store the spin ID for printouts.
+        if not spin.select:
+            ids.append(id)
+
+    # Printout.
+    if not len(ids):
+        print("No spins deselected.")
+    else:
+        print("The following spins were deselected:")
+        for id in ids:
+            print(id)
 
 
 def desel_spin(spin_id=None, boolean='AND', change_all=False):
@@ -533,6 +546,7 @@ def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col
             spin.select = False
 
     # Then deselect the spins in the file.
+    ids = []
     for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         spin = return_spin(id)
@@ -549,6 +563,18 @@ def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col
         # Boolean selections.
         else:
             spin.select = boolean_select(current=spin.select, boolean=boolean)
+
+        # Store the spin ID for printouts.
+        if spin.select:
+            ids.append(id)
+
+    # Printout.
+    if not len(ids):
+        print("No spins selected.")
+    else:
+        print("The following spins were selected:")
+        for id in ids:
+            print(id)
 
 
 def sel_spin(spin_id=None, boolean='OR', change_all=False):
