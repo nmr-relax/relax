@@ -37,6 +37,8 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from target_functions.relax_disp import Dispersion
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 
 class Relax_disp(API_base, API_common):
@@ -1107,33 +1109,18 @@ class Relax_disp(API_base, API_common):
         return spin.intensities
 
 
-    return_data_name_doc =  """
-        Relaxation dispersion curve fitting data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        _________________________________________________________________________________________________
-        |                                                   |                |                          |
-        | Data type                                         | Object name    | Patterns                 |
-        |___________________________________________________|________________|__________________________|
-        |                                                   |                |                          |
-        | Transversal relaxation rate                       | 'r2'           | '^[Rr]2$'                |
-        |                                                   |                |                          |
-        | Chemical exchange contribution to 'R2'            | 'rex'          | '^[Rr]ex$'               |
-        |                                                   |                |                          |
-        | Exchange rate                                     | 'kex'          | '^[Kk]ex$'               |
-        |                                                   |                |                          |
-        | Transversal relaxation rate for state A           | 'r2a'          | '^[Rr]2A$'               |
-        |                                                   |                |                          |
-        | Exchange rate from state A to state B             | 'ka'           | '^[Kk]A$'                |
-        |                                                   |                |                          |
-        | Chemical shift difference between states A and B  | 'dw'           | '^[Dd]w$'                |
-        |                                                   |                |                          |
-        | Peak intensities (series)                         | 'intensities'  | '^[Ii]nt$'               |
-        |                                                   |                |                          |
-        | CPMG pulse train frequency (series)               | 'cpmg_frqs'    | '^[Cc]pmg[ -_][Ff]rqs$'  |
-        |___________________________________________________|________________|__________________________|
-
-        """
+    return_data_name_doc =  Desc_container("Relaxation dispersion curve fitting data type string matching patterns")
+    _table = uf_tables.add_table(label="table: dispersion curve-fit data type patterns", caption="Relaxation dispersion curve fitting data type string matching patterns.")
+    _table.add_headings(["Data type", "Object name"])
+    _table.add_row(["Transversal relaxation rate", "'r2'"])
+    _table.add_row(["Chemical exchange contribution to 'R2'", "'rex'"])
+    _table.add_row(["Exchange rate", "'kex'"])
+    _table.add_row(["Transversal relaxation rate for state A", "'r2a'"])
+    _table.add_row(["Exchange rate from state A to state B", "'ka'"])
+    _table.add_row(["Chemical shift difference between states A and B", "'dw'"])
+    _table.add_row(["Peak intensities (series)", "'intensities'"])
+    _table.add_row(["CPMG pulse train frequency (series)", "'cpmg_frqs'"])
+    return_data_name_doc.add_table(_table.label)
 
     def return_data_name(self, name):
         """Return a unique identifying string for the relaxation dispersion curve-fitting parameter.
@@ -1290,18 +1277,8 @@ class Relax_disp(API_base, API_common):
         self.model_setup(model, params)
 
 
-    def set_doc(self):
-        """
-        Relaxation dispersion curve fitting set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        Only three parameters can be set for either the slow- or the fast-exchange regime. For the
-        slow-exchange regime, these parameters include the transversal relaxation rate for state A
-        (R2A), the exchange rate from state A to state (kA) and the chemical shift difference
-        between states A and B (dw). For the fast-exchange regime, these include the transversal
-        relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate
-        (kex). Setting parameters for a non selected model has no effect.
-        """
+    set_doc = Desc_container("Relaxation dispersion curve fitting set details")
+    set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (kA) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
 
 
     def sim_pack_data(self, spin_id, sim_data):
