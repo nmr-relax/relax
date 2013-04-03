@@ -49,8 +49,8 @@ class Test_relax_disp(TestCase):
         self.relax_disp_fns = self.interpreter.relax_disp
 
 
-    def test_relax_calc_r2eff_argfail_exp_type(self):
-        """The exp_type arg test of the relax_disp.relax_calc_r2eff() user function."""
+    def test_calc_r2eff_argfail_exp_type(self):
+        """The exp_type arg test of the relax_disp.calc_r2eff() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -62,8 +62,8 @@ class Test_relax_disp(TestCase):
             self.assertRaises(RelaxStrError, self.relax_disp_fns.calc_r2eff, exp_type=data[1])
 
 
-    def test_relax_calc_r2eff_argfail_id(self):
-        """The id arg test of the relax_disp.relax_calc_r2eff() user function."""
+    def test_calc_r2eff_argfail_id(self):
+        """The id arg test of the relax_disp.calc_r2eff() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -75,25 +75,25 @@ class Test_relax_disp(TestCase):
             self.assertRaises(RelaxStrError, self.relax_disp_fns.calc_r2eff, id=data[1])
 
 
-    def test_relax_calc_r2eff_argfail_delayT(self):
-        """The delayT arg test of the relax_disp.relax_calc_r2eff() user function."""
+    def test_calc_r2eff_argfail_delayT(self):
+        """The delayT arg test of the relax_disp.calc_r2eff() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float, int and None arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'None':
+            # Catch the float, int and bin arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.calc_r2eff, id='test', delayT=data[1])
+            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', delayT=data[1])
 
 
-    def test_relax_calc_r2eff_argfail_int_cpmg(self):
-        """The int_cpmg arg test of the relax_disp.relax_calc_r2eff() user function."""
+    def test_calc_r2eff_argfail_int_cpmg(self):
+        """The int_cpmg arg test of the relax_disp.calc_r2eff() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float, int and None arguments, and skip them.
+            # Catch the float, int and bin arguments, and skip them.
             if data[0] == 'float' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
@@ -101,8 +101,8 @@ class Test_relax_disp(TestCase):
             self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', int_cpmg=data[1])
 
 
-    def test_relax_calc_r2eff_argfail_int_ref(self):
-        """The int_ref arg test of the relax_disp.relax_calc_r2eff() user function."""
+    def test_calc_r2eff_argfail_int_ref(self):
+        """The int_ref arg test of the relax_disp.calc_r2eff() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -111,7 +111,7 @@ class Test_relax_disp(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', int_ref=data[1])
+            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', int_cpmg=10, int_ref=data[1])
 
 
     def test_relax_cpmg_delayT_argfail_id(self):
@@ -137,7 +137,7 @@ class Test_relax_disp(TestCase):
                 continue
 
         # The argument test.
-        self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_delayT, delayT=data[1])
+        self.assertRaises(RelaxNumError, self.relax_disp_fns.cpmg_delayT, id='test', delayT=data[1])
 
 
     def test_relax_cpmg_frq_argfail_cpmg_frq(self):
@@ -150,7 +150,7 @@ class Test_relax_disp(TestCase):
                 continue
 
         # The argument test.
-        self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_frq, cpmg_frq=data[1])
+        self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_frq, spectrum_id='test', cpmg_frq=data[1])
 
 
     def test_relax_cpmg_frq_argfail_spectrum_id(self):
