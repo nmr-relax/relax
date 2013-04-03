@@ -723,8 +723,8 @@ class Relax_disp(API_base, API_common):
         @rtype:                 int
         """
 
-        # The number of spin specific parameters (R2 and I0 per spin).
-        num = len(spins) * 2
+        # The number of spin specific parameters (R2 and I0 per spin), times the total number of exponential curves.
+        num = len(spins) * 2 * cdp.curve_count
 
         # The block specific parameters.
         num += len(spins[0].params) - 2
