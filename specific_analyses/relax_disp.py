@@ -31,6 +31,7 @@ import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
+from lib.list import count_unique_elements
 from lib.text.sectioning import subsection
 from minfx.generic import generic_minimise
 from pipe_control import pipes
@@ -339,6 +340,9 @@ class Relax_disp(API_base, API_common):
 
         # Add the frequency at the correct position, converting to a float if needed.
         cdp.cpmg_frqs[spectrum_id] = float(cpmg_frq)
+
+        # Update the exponential curve count.
+        cdp.curve_count = count_unique_elements(cdp.cpmg_frqs.values())
 
         # Printout.
         print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
@@ -819,6 +823,9 @@ class Relax_disp(API_base, API_common):
         # Add the frequency, converting to a float if needed.
         cdp.spin_lock_nu1[spectrum_id] = float(field)
 
+        # Update the exponential curve count.
+        cdp.curve_count = count_unique_elements(cdp.spin_lock_nu1.values())
+
         # Printout.
         print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
 
@@ -923,7 +930,6 @@ class Relax_disp(API_base, API_common):
                 if frq not in cpmg_frqs:
                     cpmg_frqs.append(frq)
             cpmg_frqs.sort()
-            curve_num = len(cpmg_frqs)
 
         # The unique curves for the R2eff fitting (R1rho).
         spin_lock_nu1 = []
@@ -932,7 +938,6 @@ class Relax_disp(API_base, API_common):
                 if field not in spin_lock_nu1:
                     spin_lock_nu1.append(field)
             spin_lock_nu1.sort()
-            curve_num = len(spin_lock_nu1)
 
         # The relaxation time points (sorted).
         relax_times = []
@@ -948,8 +953,8 @@ class Relax_disp(API_base, API_common):
             spin_num = len(spins)
 
             # Initialise the data structures for the target function.
-            values = zeros((spin_num, curve_num, num_time_pts), float64)
-            errors = zeros((spin_num, curve_num, num_time_pts), float64)
+            values = zeros((spin_num, cdp.curve_count, num_time_pts), float64)
+            errors = zeros((spin_num, cdp.curve_count, num_time_pts), float64)
 
             # Pack the peak intensity data.
             for spin_index in range(spin_num):
@@ -1008,7 +1013,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.curve_type, num_params=self._param_num(spins=spins), num_times=num_time_pts, curve_num=curve_num, values=values, errors=errors, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.curve_type, num_params=self._param_num(spins=spins), num_times=num_time_pts, curve_num=cdp.curve_count, values=values, errors=errors, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, scaling_matrix=scaling_matrix)
 
             # Setup the minimisation algorithm when constraints are present.
             if constraints and not match('^[Gg]rid', min_algor):
