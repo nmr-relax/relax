@@ -29,11 +29,10 @@ from numpy.linalg import inv
 from re import match, search
 
 # relax module imports.
-from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 from minfx.generic import generic_minimise
 from pipe_control import pipes
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from target_functions.relax_disp import Dispersion
