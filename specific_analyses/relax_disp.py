@@ -44,6 +44,29 @@ from user_functions.objects import Desc_container
 class Relax_disp(API_base, API_common):
     """Class containing functions for relaxation dispersion curve fitting."""
 
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Execute the base class __init__ method.
+        super(Relax_disp, self).__init__()
+
+        # Set up the spin parameters.
+        self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
+        self.PARAMS.add('cpmg_frqs', scope='spin', py_type=dict, grace_string='\\qCPMG pulse train frequency (Hz)\\Q')
+        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self.PARAMS.add('rex', scope='spin', default=5.0, desc='The chemical exchange contribution to R2', set='params', py_type=float, grace_string='\\qR\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('ka', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('dw', scope='spin', default=1000.0, desc='The chemical shift difference between states A and B', set='params', py_type=float, grace_string='\\q\\xDw\\f{}\\Q (Hz)', err=True, sim=True)
+        self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
+
+        # Add the minimisation data.
+        self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
+
+
     def assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector (as a numpy array).
 
@@ -402,141 +425,6 @@ class Relax_disp(API_base, API_common):
             # If the name is not in 'spin', add it.
             if not hasattr(spin, name):
                 setattr(spin, name, init_data)
-
-
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Function for returning a list of names of data structures.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'params', an array of the parameter names associated with the model.
-            - 'r2', the transversal relaxation rate.
-            - 'rex', the chemical exchange contribution to 'R2'.
-            - 'kex', the exchange rate.
-            - 'r2a', the transversal relaxation rate for state A.
-            - 'ka', the exchange rate from state A to state B.
-            - 'dw', the chemical shift difference between states A and B.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for parameter
-                                names,or to 'min' for minimisation specific object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('params')
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('r2')
-            names.append('rex')
-            names.append('kex')
-            names.append('r2a')
-            names.append('ka')
-            names.append('dw')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            names.append('r2_err')
-            names.append('rex_err')
-            names.append('kex_err')
-            names.append('r2a_err')
-            names.append('ka_err')
-            names.append('dw_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            names.append('r2_sim')
-            names.append('rex_sim')
-            names.append('kex_sim')
-            names.append('r2a_sim')
-            names.append('ka_sim')
-            names.append('dw_sim')
-
-        # Return the names.
-        return names
-
-
-    def default_value(self, param):
-        """
-        Relaxation dispersion curve fitting default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        These values are arbitrary and will depend on the system studied.
-        ________________________________________________________________________________
-        |                                                   |               |          |
-        | Data type                                         | Object name   | Value    |
-        |___________________________________________________|_______________|__________|
-        |                                                   |               |          |
-        | Transversal relaxation rate                       | 'R2'          | 15.0     |
-        |                                                   |               |          |
-        | Chemical exchange contribution to 'R2'            | 'Rex'         | 5.0      |
-        |                                                   |               |          |
-        | Exchange rate                                     | 'kex'         | 10000.0  |
-        |                                                   |               |          |
-        | Transversal relaxation rate for state A           | 'R2A'         | 15.0     |
-        |                                                   |               |          |
-        | Exchange rate from state A to state B             | 'kA'          | 10000.0  |
-        |                                                   |               |          |
-        | Chemical shift difference between states A and B  | 'dw'          | 1000.0   |
-        |                                                   |               |          |
-        |___________________________________________________|_______________|__________|
-
-        """
-
-        # Transversal relaxation rate.
-        if param == 'R2':
-            return 15.0
-
-        # Chemical exchange contribution to 'R2'.
-        if param == 'Rex':
-            return 5.0
-
-        # Exchange rate.
-        if param == 'kex':
-            return 10000.0
-
-        # Transversal relaxation rate for state A.
-        if param == 'R2A' :
-            return 15.0
-
-        # Exchange rate from state A to state B.
-        if param == 'kA' :
-            return 10000
-
-        # Chemical shift difference between states A and B.
-        if param == 'dw' :
-            return 1000.0
 
 
     def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
@@ -1092,47 +980,6 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["CPMG pulse train frequency (series)", "'cpmg_frqs'"])
     return_data_name_doc.add_table(_table.label)
 
-    def return_data_name(self, name):
-        """Return a unique identifying string for the relaxation dispersion curve-fitting parameter.
-
-        @param name:    The relaxation dispersion curve-fitting parameter.
-        @type name:     str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Transversal relaxation rate.
-        if match('^[Rr]2$', name):
-            return 'r2'
-
-        # Chemical exchange contribution to 'R2'.
-        if match('^[Rr]ex$', name):
-            return 'rex'
-
-        # Exchange rate.
-        if match('^[Kk]ex$', name):
-            return 'kex'
-
-        # Transversal relaxation rate for state A.
-        if match('^[Rr]2A$', name):
-            return 'r2a'
-
-        # Exchange rate from state A to state B.
-        if match('^[Kk]A$', name):
-            return 'ka'
-
-        # Chemical shift difference between states A and B.
-        if match ('^[Dd]w$', name):
-            return 'dw'
-
-        # Peak intensities (series)
-        if match('^[Ii]nt$', name):
-            return 'intensities'
-
-        # CPMG pulse train frequency (series).
-        if match('^[Cc]pmg[ -_][Ff]rqs$', name):
-            return 'cpmg_frqs'
-
 
     def return_error(self, spin_id):
         """Return the standard deviation data structure.
@@ -1149,48 +996,6 @@ class Relax_disp(API_base, API_common):
 
         # Return the error list.
         return spin.intensity_err
-
-
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
-
-        # Get the object name.
-        object_name = self.return_data_name(data_type)
-
-        # Peak intensities.
-        if object_name == 'intensities':
-            grace_string = '\\qPeak intensities\\Q'
-
-        # Transversal relaxation rate.
-        elif object_name == 'r2':
-            grace_string = '\\qR\\s2\\N (s\\S-1\\N)\\Q'
-
-        # Chemical exchange contribution to 'R2'.
-        elif object_name == 'rex':
-            grace_string = '\\qR\\sex\\N (s\\S-1\\N)\\Q'
-
-        # Exchange rate.
-        elif object_name == 'kex':
-            grace_string = '\\qk\\sex\\N (s\\S-1\\N)\\Q'
-
-        # Transversal relaxation rate for state A.
-        elif object_name == 'r2a':
-            grace_string = '\\qR\\s2,A\\N (s\\S-1\\N)\\Q'
-
-        # Exchange rate from state A to state B.
-        elif object_name == 'ka':
-            grace_string = '\\qk\\sA\\N (s\\S-1\\N)\\Q'
-
-        # Chemical shift difference between states A and B.
-        elif object_name == 'dw':
-            grace_string = '\\q\\xDw\\f{} (Hz)\\Q'
-
-        # CPMG pulse train frequency
-        elif object_name == 'cpmg_frqs':
-            grace_string = '\\qCPMG pulse train frequency (Hz)\\Q'
-
-        # Return the Grace string.
-        return grace_string
 
 
     def return_units(self, stat_type):
