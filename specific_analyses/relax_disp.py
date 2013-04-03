@@ -1057,9 +1057,6 @@ class Relax_disp(API_base, API_common):
         @type params:   list of str
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the model.
         cdp.curve_type = model
 
@@ -1232,19 +1229,15 @@ class Relax_disp(API_base, API_common):
         return None
 
 
-    def _select_model(self, model='fast'):
-        """Function for selecting the model of the relaxation dispersion curve.
+    def _select_model(self, model='fast 2-site'):
+        """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion time scale for curve fitting.  Can be one of
-                        'fast' or 'slow'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'exp_fit', 'fast 2-site', 'slow 2-site'.
         @type model:    str
         """
 
         # Test if the current pipe exists.
         pipes.test()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the pipe type is set to 'relax_disp'.
         function_type = cdp.pipe_type
@@ -1260,18 +1253,23 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been set.")
 
         # Fast-exchange regime.
-        if model == 'fast':
-            print("Fast-exchange regime.")
+        if model == 'exp_fit':
+            print("Basic exponential curve-fitting.")
+            params = ['R2']
+
+        # Fast-exchange regime.
+        elif model == 'fast 2-site':
+            print("2-site fast-exchange.")
             params = ['R2', 'Rex', 'kex']
 
         # Slow-exchange regime.
-        elif model == 'slow':
-            print("Slow-exchange regime.")
+        elif model == 'slow 2-site':
+            print("2-site slow-exchange.")
             params = ['R2A', 'kA', 'dw']
 
         # Invalid model.
         else:
-            raise RelaxError("The model '" + model + "' is invalid.")
+            raise RelaxError("The model '%s' is invalid." % model)
 
         # Set up the model.
         self.model_setup(model, params)
