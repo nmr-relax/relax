@@ -923,6 +923,21 @@ class Relax_disp(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
+        # Test if the model has been set.
+        if not hasattr(cdp, 'exp_type'):
+            raise RelaxError("The relaxation dispersion experiment type has not been specified.")
+
+        # Test if the model has been set.
+        if not hasattr(cdp, 'curve_type'):
+            raise RelaxError("The relaxation dispersion model has not been specified.")
+
+        # Test if the curve count exists.
+        if not hasattr(cdp, 'curve_count'):
+            if cdp.exp_type == 'cpmg':
+                raise RelaxError("The CPMG frequencies have not been set up.")
+            elif cdp.exp_type == 'r1rho':
+                raise RelaxError("The spin-lock field strengths have not been set up.")
+
         # The unique curves for the R2eff fitting (CPMG).
         cpmg_frqs = []
         if cdp.exp_type == 'cpmg':
