@@ -143,17 +143,20 @@ uf = uf_info.add_uf('relax_disp.cpmg_frq')
 uf.title = "Set the CPMG frequency associated with a given spectrum."
 uf.title_short = "CPMG frequency setting."
 uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str",
+    desc_short = "spectrum ID string",
+    desc = "The spectrum ID string to associate the CPMG frequency to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
     name = "cpmg_frq",
     py_type = "num",
     desc_short = "CPMG frequency (Hz)",
     desc = "The frequency, in Hz, of the CPMG pulse train.",
     can_be_none = True
-)
-uf.add_keyarg(
-    name = "spectrum_id",
-    py_type = "str",
-    desc_short = "spectrum ID string",
-    desc = "The spectrum ID string."
 )
 # Description.
 uf.desc.append(Desc_container())

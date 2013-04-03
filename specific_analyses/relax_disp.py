@@ -320,39 +320,28 @@ class Relax_disp(API_base, API_common):
         print("The CPMG delay T for experiment '%s' has been set to %s s." % (id, cdp.delayT[id]))
 
 
-    def _cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
+    def _cpmg_frq(self, spectrum_id=None, cpmg_frq=None):
         """Set the CPMG frequency associated with a given spectrum.
 
-        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
-        @type cpmg_frq:         float
         @keyword spectrum_id:   The spectrum identification string.
         @type spectrum_id:      str
+        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
+        @type cpmg_frq:         float
         """
 
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
-
-        # Store the CPMG frequency in the class instance.
-        if cpmg_frq != None:
-            self.__cpmg_frq = float(cpmg_frq)
-
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
+            raise RelaxNoSpectraError(spectrum_id)
 
         # Initialise the global CPMG frequency data structure if needed.
         if not hasattr(cdp, 'cpmg_frqs'):
-            cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
+            cdp.cpmg_frqs = {}
 
-        # Index not present in the global CPMG frequency data structure.
-        while 1:
-            if index > len(cdp.cpmg_frqs) - 1:
-                cdp.cpmg_frqs.append(None)
-            else:
-                break
+        # Add the frequency at the correct position, converting to a float if needed.
+        cdp.cpmg_frqs[spectrum_id] = float(cpmg_frq)
 
-        # Add the frequency at the correct position.
-        cdp.cpmg_frqs[index] = cpmg_frq
+        # Printout.
+        print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
     def _calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
