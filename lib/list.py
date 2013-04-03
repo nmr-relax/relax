@@ -19,32 +19,24 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+# Module docstring.
+"""Module for handling Python lists."""
 
-__all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'chemical_shift',
-    'diffusion',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'linear_algebra',
-    'list',
-    'model_selection',
-    'order',
-    'physical_constants',
-    'regex',
-    'selection',
-    'spectral_densities',
-    'structure',
-    'text',
-    'warnings'
-]
+
+def count_unique_elements(values=None):
+    """Count the number of unique instances in the given list.
+
+    @keyword values:    The list of values to count.
+    @type values:       list
+    @return:            The number of unique instances.
+    @rtype:             int
+    """
+
+    # Create a new list.
+    new_list = []
+    for i in values:
+        if i not in new_list:
+            new_list.append(i)
+
+    # The number.
+    return len(new_list)
