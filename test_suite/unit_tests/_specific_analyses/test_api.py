@@ -34,6 +34,7 @@ from specific_analyses.jw_mapping import Jw_mapping
 from specific_analyses.model_free import Model_free
 from specific_analyses.n_state_model import N_state_model
 from specific_analyses.noe import Noe
+from specific_analyses.relax_disp import Relax_disp
 from specific_analyses.relax_fit import Relax_fit
 
 
@@ -253,3 +254,17 @@ class Test_api(TestCase):
 
         # Check.
         self.__check_objects(Relax_fit())
+
+
+    def test_relax_disp_method_args(self):
+        """The relaxation dispersion curve fitting object public method args check."""
+
+        # Check.
+        self.__check_method_args(Relax_disp())
+
+
+    def test_relax_disp_objects(self):
+        """The relaxation dispersion curve fitting object public objects check."""
+
+        # Check.
+        self.__check_objects(Relax_disp())
