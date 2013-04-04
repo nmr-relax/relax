@@ -22,5 +22,6 @@
 
 __all__ = [
     '_opendx',
-    'test___init__'
+    'test___init__',
+    'test_sparky'
 ]
