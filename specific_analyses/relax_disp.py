@@ -103,25 +103,31 @@ class Relax_disp(API_base, API_common):
 
             # Loop over each exponential curve.
             for exp_i in range(cdp.curve_count):
+                # The key.
+                if cdp.exp_type == 'cpmg':
+                    key = cdp.cpmg_frqs_list[exp_i]
+                else:
+                    key = cdp.spin_lock_nu1_list[exp_i]
+
                 # Loop over the model parameters.
                 for i in range(len(spin.params)):
                     # Effective transversal relaxation rate.
                     if spin.params[i] == 'R2eff':
                         if sim_index != None:
-                            param_vector.append(spin.r2eff_sim[sim_index])
+                            param_vector.append(spin.r2eff_sim[key][sim_index])
                         elif spin.r2eff == None:
                             param_vector.append(0.0)
                         else:
-                            param_vector.append(spin.r2eff)
+                            param_vector.append(spin.r2eff[key])
 
                     # Initial intensity.
                     elif spin.params[i] == 'I0':
                         if sim_index != None:
-                            param_vector.append(spin.i0_sim[sim_index])
+                            param_vector.append(spin.i0_sim[key][sim_index])
                         elif spin.i0 == None:
                             param_vector.append(0.0)
                         else:
-                            param_vector.append(spin.i0)
+                            param_vector.append(spin.i0[key])
 
         # Then the spin block specific parameters, taking the values from the first spin.
         spin = spins[0]
