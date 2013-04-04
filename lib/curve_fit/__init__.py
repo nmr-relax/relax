@@ -20,32 +20,8 @@
 ###############################################################################
 
 # Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+"""The relax-lib NMR package - a library of functions for various types of curve-fitting."""
 
 __all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'chemical_shift',
-    'curve_fit',
-    'diffusion',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'linear_algebra',
-    'list',
-    'model_selection',
-    'order',
-    'physical_constants',
-    'regex',
-    'selection',
-    'spectral_densities',
-    'structure',
-    'text',
-    'warnings'
+    ''
 ]
