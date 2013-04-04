@@ -121,7 +121,7 @@ class Dispersion:
             # Loop over the exponential curves.
             for exp_index in range(self.num_exp_curves):
                 # Unpack the exponential curve parameters.
-                index = spin_index * 2 * self.num_exp_curves
+                index = spin_index * 2 * self.num_exp_curves + exp_index * self.num_exp_curves
                 r2eff = params[index]
                 i0 = params[index + 1]
 
