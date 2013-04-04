@@ -24,7 +24,7 @@
 """Target functions for relaxation dispersion."""
 
 # Python module imports.
-from numpy import float64, zeros
+from numpy import dot, float64, zeros
 
 # relax module imports.
 from lib.dispersion.equations import fast_2site
