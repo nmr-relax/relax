@@ -417,45 +417,82 @@ class Relax_disp(API_base, API_common):
         @type sim_index:        int
         """
 
-        # Monte Carlo simulations.
-        if sim_index != None:
+        # Initialise.
+        param_index = 0
+
+        # First add the spin specific parameters.
+        for spin_index in range(len(spins)):
+            # Alias the spin.
+            spin = spins[spin_index]
+
+            # Loop over each exponential curve.
+            for exp_index, key in self._exp_curve_loop():
+                index = spin_index * 2 * cdp.curve_count + exp_index * cdp.curve_count
+                param_index += 2
+
+                # Loop over the model parameters.
+                for i in range(len(spin.params)):
+                    # Effective transversal relaxation rate.
+                    if spin.params[i] == 'R2eff':
+                        if sim_index != None:
+                            spin.r2eff_sim[key][sim_index] = param_vector[index]
+                        else:
+                            spin.r2eff[key] = param_vector[index]
+
+                    # Initial intensity.
+                    elif spin.params[i] == 'I0':
+                        if sim_index != None:
+                            spin.i0_sim[key][sim_index] = param_vector[index+1]
+                        else:
+                            spin.i0[key] = param_vector[index+1]
+
+        # Then the spin block specific parameters, taking the values from the first spin.
+        spin = spins[0]
+        for i in range(len(spin.params)):
             # Transversal relaxation rate.
-            spin.r2_sim[sim_index] = param_vector[0]
+            if spin.params[i] == 'R2':
+                if sim_index != None:
+                    spin.r2_sim[sim_index] = param_vector[param_index]
+                else:
+                    spin.r2 = param_vector[param_index]
 
             # Chemical exchange contribution to 'R2'.
-            spin.rex_sim[sim_index] = param_vector[1]
+            if spin.params[i] == 'Rex':
+                if sim_index != None:
+                    spin.rex_sim[sim_index] = param_vector[param_index]
+                else:
+                    spin.rex = param_vector[param_index]
 
             # Exchange rate.
-            spin.kex_sim[sim_index] = param_vector[2]
+            elif spin.params[i] == 'kex':
+                if sim_index != None:
+                    spin.kex_sim[sim_index] = param_vector[param_index]
+                else:
+                    spin.kex = param_vector[param_index]
 
             # Transversal relaxation rate for state A.
-            spin.r2a_sim[sim_index] = param_vector[3]
+            if spin.params[i] == 'R2A':
+                if sim_index != None:
+                    spin.r2a_sim[sim_index] = param_vector[param_index]
+                else:
+                    spin.r2a = param_vector[param_index]
 
             # Exchange rate from state A to state B.
-            spin.ka_sim[sim_index] = param_vector[4]
+            if spin.params[i] == 'kA':
+                if sim_index != None:
+                    spin.ka_sim[sim_index] = param_vector[param_index]
+                else:
+                    spin.ka = param_vector[param_index]
 
             # Chemical shift difference between states A and B.
-            spin.dw_sim[sim_index] = param_vector[5]
+            if spin.params[i] == 'dw':
+                if sim_index != None:
+                    spin.dw_sim[sim_index] = param_vector[param_index]
+                else:
+                    spin.dw = param_vector[param_index]
 
-        # Parameter values.
-        else:
-            # Transversal relaxation rate.
-            spin.r2 = param_vector[0]
-
-            # Chemical exchange contribution to 'R2'.
-            spin.rex = param_vector[1]
-
-            # Exchange rate.
-            spin.kex = param_vector[2]
-
-            # Transversal relaxation rate for state A.
-            spin.r2a = param_vector[3]
-
-            # Exchange rate from state A to state B.
-            spin.ka = param_vector[4]
-
-            # Chemical shift difference between states A and B.
-            spin.dw = param_vector[5]
+            # Increment the parameter index.
+            param_index = param_index + 1
 
 
     def _exp_curve_loop(self):
