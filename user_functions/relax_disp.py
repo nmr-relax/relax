@@ -264,9 +264,10 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("A number of different dispersion models will be supported, from the numerical integration of the Bloch-McConnell equations, the 2-site fast, intermediate and slow exchange, 3-site exchange, to the most basic model of simply fitting the exponential curves.  The currently supported models include:")
-uf.desc[-1].add_item_list_element("'%s'" % EXP_FIT, "The simple exponential curve-fitting with parameters {R2},")
-uf.desc[-1].add_item_list_element("'%s'" % FAST_2SITE, "The 2-site fast exchange equation with parameters {R2, Rex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % SLOW_2SITE, "The 2-site slow exchange equation with parameters {R2A, kA, dw}.")
+uf.desc[-1].add_item_list_element("'%s'" % EXP_FIT, "The simple exponential curve-fitting with parameters {R2eff, I0},")
+uf.desc[-1].add_item_list_element("'%s'" % FAST_2SITE, "The 2-site fast exchange equation with parameters {R2eff, I0, R2, Rex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % SLOW_2SITE, "The 2-site slow exchange equation with parameters {R2eff, I0, R2A, kA, dw}.")
+uf.desc[-1].add_paragraph("These models are fit to clusterings of spins, or spin blocks.  For each spin, the parameters R2eff and I0 have multiple values as each of the multiple exponential curves has a different R2eff and I0 value.  If the number of exponential curves is N and the number of spins in a clustering is M, the total number of R2eff or I0 values fit is N*M.")
 uf.desc.append(Desc_container("Simple exponential curve-fitting"))
 uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion part is not modelled.  It can be selected by setting the model to '%s'.  Each relaxation curve will be fit to the simple two parameter exponential as in a R1 or R2 analysis, and the R2eff rates will be calculated.  Monte Carlo simulations can be used to obtain the R2eff errors independent from the dispersion model." % EXP_FIT)
 uf.desc.append(Desc_container("2-site fast exchange equation"))
