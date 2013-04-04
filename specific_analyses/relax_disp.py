@@ -24,6 +24,8 @@
 """The relaxation dispersion curve fitting specific code."""
 
 # Python module imports.
+from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, log, zeros
 from numpy.linalg import inv
 from re import match, search
@@ -32,7 +34,6 @@ import sys
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.text.sectioning import subsection
-from minfx.generic import generic_minimise
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
@@ -1087,17 +1088,24 @@ class Relax_disp(API_base, API_common):
             # Initialise the function to minimise.
             model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.curve_count, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
 
-            # Setup the minimisation algorithm when constraints are present.
-            if constraints and not match('^[Gg]rid', min_algor):
-                algor = min_options[0]
-            else:
-                algor = min_algor
+            # Grid search.
+            if search('^[Gg]rid', min_algor):
+                results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+
+                # Unpack the results.
+                param_vector, chi2, iter_count, warning = results
+                f_count = iter_count
+                g_count = 0.0
+                h_count = 0.0
 
             # Minimisation.
-            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
-            if results == None:
-                return
-            param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+            else:
+                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+
+                # Unpack the results.
+                if results == None:
+                    return
+                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
             if scaling:
