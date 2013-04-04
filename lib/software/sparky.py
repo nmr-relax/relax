@@ -29,7 +29,7 @@ from re import split
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.io import strip
+from lib.io import open_write_file, strip
 
 
 def read_list_intensity(file_data=None, int_col=None):
