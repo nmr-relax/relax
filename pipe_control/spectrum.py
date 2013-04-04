@@ -35,6 +35,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id
 from pipe_control import pipes
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import extract_data, read_spin_data, strip, write_data
+from lib.software.sparky import read_list_intensity
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -588,86 +589,6 @@ def intensity_nmrview(file_data=None, int_col=None):
     return data
 
 
-def intensity_sparky(file_data=None, int_col=None):
-    """Return the process data from the Sparky peak intensity file.
-
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
-    @keyword file_data: The data extracted from the file converted into a list of lists.
-    @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
-    @type int_col:      int
-    @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text.
-    @rtype:             list of lists of str, str, str, float, str
-    """
-
-    # The number of header lines.
-    num = 0
-    if file_data[0][0] == 'Assignment':
-        num = num + 1
-    if file_data[1] == '':
-        num = num + 1
-    print("Number of header lines found: %s" % num)
-
-    # Remove the header.
-    file_data = file_data[num:]
-
-    # Strip the data.
-    file_data = strip(file_data)
-
-    # Loop over the file data.
-    data = []
-    for line in file_data:
-        # The Sparky assignment.
-        assignment = ''
-        res_num = ''
-        h_name = ''
-        x_name = ''
-        intensity = ''
-
-        # Skip non-assigned peaks.
-        if line[0] == '?-?':
-            continue
-
-        # First split by the 2D separator.
-        x_assign, h_assign = split('-', line[0])
-
-        # The proton info.
-        h_row = split('([A-Z]+)', h_assign)
-        h_name = h_row[-2] + h_row[-1]
-
-        # The heteronucleus info.
-        x_row = split('([A-Z]+)', x_assign)
-        x_name = x_row[-2] + x_row[-1]
-
-        # The residue number.
-        try:
-            res_num = int(x_row[-3])
-        except:
-            raise RelaxError("Improperly formatted Sparky file.")
-
-        # The peak intensity column.
-        if int_col == None:
-            int_col = 3
-
-        # Intensity.
-        try:
-            intensity = float(line[int_col])
-        except ValueError:
-            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
-
-        # Generate the spin_id.
-        spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
-
-        # Append the data.
-        data.append([h_name, x_name, spin_id, intensity, line])
-
-    # Return the data.
-    return data
-
-
 def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
     """Return the process data from the XEasy peak intensity file.
 
@@ -866,7 +787,15 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         print("Sparky formatted data file.\n")
 
         # Extract the data.
-        intensity_data = intensity_sparky(file_data=file_data, int_col=int_col)
+        intensity_data = read_list_intensity(file_data=file_data, int_col=int_col)
+
+        # Convert the residue number to a spin ID.
+        for i in range(len(intensity_data)):
+            # Generate the spin_id.
+            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
+
+            # Replace the data.
+            intensity_data[i][2] = spin_id
 
     # XEasy.
     elif format == 'xeasy':

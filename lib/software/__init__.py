@@ -26,5 +26,6 @@ __all__ = [
     'bruker_dc',
     'grace',
     'opendx',
+    'sparky',
     'xplor'
 ]
