@@ -44,8 +44,8 @@ def read_list_intensity(file_data=None, heteronuc=None, proton=None, int_col=Non
     @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text.
-    @rtype:             list of lists of str, str, str, float, str
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, residue number, the intensity value, and the original line of text.
+    @rtype:             list of lists of str, str, int, float, str
     """
 
     # The columns.
