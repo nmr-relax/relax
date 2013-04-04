@@ -23,6 +23,9 @@
 # Module docstring.
 """Target functions for relaxation dispersion."""
 
+# Python module imports.
+from numpy import float64, zeros
+
 # relax module imports.
 from lib.dispersion.equations import fast_2site
 from lib.errors import RelaxError
@@ -30,35 +33,64 @@ from target_functions.chi2 import chi2
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_times=None, values=None, sd=None, cpmg_frqs=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_exp_curves=None, num_times=None, values=None, errors=None, cpmg_frqs=None, spin_lock_nu1=None, relax_times=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
+
+        Models
+        ======
+
+        The following models are currently supported:
+
+            - 'exp_fit':  Simple fitting of the exponential curves with parameters {R2eff, I0},
+            - 'fast 2-site':  The 2-site fast exchange equation with parameters {R2eff, I0, R2, Rex, kex},
+            - 'slow 2-site':  The 2-site slow exchange equation with parameters {R2eff, I0, R2A, kA, dw}.
+
 
         @keyword model:             The relaxation dispersion model to fit.
         @type model:                str
         @keyword num_param:         The number of parameters in the model.
         @type num_param:            int
+        @keyword num_spins:         The number of spins in the cluster.
+        @type num_spins:            int
+        @keyword num_exp_curves:    The number of exponential curves.
+        @type num_exp_curves:       int
         @keyword num_times:         The number of relaxation times.
         @type num_times:            int
-        @keyword values:            The peak intensities.
-        @type values:               numpy rank-2 float array
-        @keyword sd:                The peak intensity errors.
-        @type sd:                   numpy rank-2 float array
-        @keyword cpmg_frqs:         The CPMG frequencies in Hertz.
+        @keyword values:            The peak intensities.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the exponential curves, and the third are the relaxation times along the exponential curve.
+        @type values:               numpy rank-3 float array
+        @keyword errors:            The peak intensity errors.  The three dimensions must correspond to those of the values argument.
+        @type errors:               numpy rank-3 float array
+        @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate exponential curve.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            numpy rank-1 float array
+        @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate exponential curve.  This will be ignored for CPMG experiments.
+        @type spin_lock_nu1:        numpy rank-1 float array
+        @keyword relax_times:       The relaxation time points in seconds for the exponential curve.
+        @type relax_times:          numpy rank-1 float array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
-        @type scaling_matrix:       numpy rank-2 array
+        @type scaling_matrix:       numpy rank-2 float array
         """
+
+        # Check the args.
+        if model not in ['exp_fit', 'fast 2-site', 'slow 2-site']:
+            raise RelaxError("The model '%s' is unknown." % model)
 
         # Store the arguments.
         self.num_params = num_params
+        self.num_spins = num_spins
+        self.num_exp_curves = num_exp_curves
         self.num_times = num_times
         self.values = values
-        self.sd = sd
+        self.errors = errors
         self.cpmg_frqs = cpmg_frqs
+        self.spin_lock_nu1 = spin_lock_nu1
+        self.relax_times = relax_times
         self.scaling_matrix = scaling_matrix
 
+        # Set up a structure for holding the R2eff and I0 parameters.
+        self.exp_params = zeros((num_exp_curves, 2), float64)
+
         # Set up the model.
-        if model == 'fast':
+        if model == 'fast 2-site':
             self.func = self.func_fast_2site
         else:
             raise RelaxError("The relaxation dispersion model '%s' is not supported yet." % model)

@@ -1085,7 +1085,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_times=cdp.num_time_pts, curve_num=cdp.curve_count, values=values, errors=errors, relax_times=cdp.relax_time_list, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.curve_count, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
 
             # Setup the minimisation algorithm when constraints are present.
             if constraints and not match('^[Gg]rid', min_algor):
