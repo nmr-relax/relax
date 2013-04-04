@@ -86,14 +86,47 @@ class Dispersion:
         self.relax_times = relax_times
         self.scaling_matrix = scaling_matrix
 
-        # Set up a structure for holding the R2eff and I0 parameters.
-        self.exp_params = zeros((num_exp_curves, 2), float64)
+        # Create the structure for holding the back-calculated peak intensities.
+        self.back_calc = zeros(num_times, float64)
 
         # Set up the model.
-        if model == 'fast 2-site':
+        if model == 'exp_fit':
+            self.func = self.func_exp_fit
+        elif model == 'fast 2-site':
             self.func = self.func_fast_2site
-        else:
-            raise RelaxError("The relaxation dispersion model '%s' is not supported yet." % model)
+
+
+    def func_exp_fit(self, params):
+        """Target function for the simple exponential curve-fitting.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Loop over the spins.
+        chi2_sum = 0.0
+        for spin_index in range(self.num_spins):
+            # Loop over the exponential curves.
+            for exp_index in range(self.num_exp_curves):
+                # Unpack the exponential curve parameters.
+                index = spin_index * 2 * self.num_exp_curves
+                r2eff = params[index]
+                i0 = params[index + 1]
+
+                # Back-calculate the points on the exponential curve.
+                exponential(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc)
+
+                # Calculate the chi-squared value for this curve.
+                chi2_sum += chi2(self.values[spin_index, exp_index], self.back_calc, self.errors[spin_index, exp_index])
+
+        # Return the chi-squared value.
+        return chi2_sum
 
 
     def func_fast_2site(self, params):
