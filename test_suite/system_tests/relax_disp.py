@@ -71,6 +71,13 @@ class Relax_disp(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_slow.py')
 
 
+    def test_exp_fit(self):
+        """Test the relaxation dispersion 'exp_fit' model curve fitting."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'exp_fit.py')
+
+
     def test_read_r2eff(self):
         """Test the reading of a file containing r2eff values."""
 
