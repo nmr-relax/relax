@@ -557,7 +557,7 @@ class Relax_disp(API_base, API_common):
             lower = []
             upper = []
 
-            # First add the spin specific parameters.
+            # First the spin specific parameters.
             for spin_index in range(len(spins)):
                 # Alias the spin.
                 spin = spins[spin_index]
@@ -609,10 +609,42 @@ class Relax_disp(API_base, API_common):
                     lower.append(0.0)
                     upper.append(10000.0)
 
+        # Define sparse regions to skip.
+        sparseness = []
+        if cdp.model == 'exp_fit':
+            for spin_index1 in range(len(spins)):
+                for spin_index2 in range(len(spins)):
+                    for exp_index1, key in self._exp_curve_loop():
+                        for exp_index2, key in self._exp_curve_loop():
+                            # The same spin and curve, so no sparseness.
+                            if spin_index1 == spin_index2 and exp_index1 == exp_index2:
+                                continue
+    
+                            # The parameter index.
+                            index1 = spin_index1 * 2 * cdp.curve_count + exp_index1 * cdp.curve_count
+                            index2 = spin_index2 * 2 * cdp.curve_count + exp_index2 * cdp.curve_count
+
+                            # Add the parameter combinations.
+                            sparseness.append([index1, index2])
+                            sparseness.append([index1, index2+1])
+                            sparseness.append([index1+1, index2])
+                            sparseness.append([index1+1, index2+1])
+
+        # The sparse grid size.
+        if cdp.model == 'exp_fit':
+            grid_size = 0
+            for spin_index in range(len(spins)):
+                for exp_index, key in self._exp_curve_loop():
+                    index = spin_index * 2 * cdp.curve_count + exp_index * cdp.curve_count
+                    grid_size += inc[index] * inc[index+1]
+
+        # The full grid size.
+        else:
+            grid_size = 1
+            for i in range(n):
+                grid_size *= inc[i]
+
         # Test if the grid is too large.
-        grid_size = 1
-        for i in range(n):
-            grid_size = grid_size * inc[0]
         if isinstance(grid_size, long):
             raise RelaxError("A grid search of size %s is too large." % grid_size)
 
@@ -622,7 +654,7 @@ class Relax_disp(API_base, API_common):
             upper[i] = upper[i] / scaling_matrix[i, i]
 
         # Return the data structures.
-        return grid_size, inc, lower, upper
+        return grid_size, inc, lower, upper, sparseness
 
 
     def _linear_constraints(self, spins=None, scaling_matrix=None):
@@ -1054,7 +1086,7 @@ class Relax_disp(API_base, API_common):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, inc, lower, upper = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                grid_size, inc, lower, upper, sparseness = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             A, b = None, None
@@ -1078,7 +1110,7 @@ class Relax_disp(API_base, API_common):
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+                results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, sparseness=sparseness, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, chi2, iter_count, warning = results
