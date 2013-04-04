@@ -31,7 +31,6 @@ import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
-from lib.list import count_unique_elements
 from lib.text.sectioning import subsection
 from minfx.generic import generic_minimise
 from pipe_control import pipes
@@ -352,15 +351,22 @@ class Relax_disp(API_base, API_common):
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxNoSpectraError(spectrum_id)
 
-        # Initialise the global CPMG frequency data structure if needed.
+        # Initialise the global CPMG frequency data structures if needed.
         if not hasattr(cdp, 'cpmg_frqs'):
             cdp.cpmg_frqs = {}
+        if not hasattr(cdp, 'cpmg_frqs_list'):
+            cdp.cpmg_frqs_list = []
 
         # Add the frequency at the correct position, converting to a float if needed.
         cdp.cpmg_frqs[spectrum_id] = float(cpmg_frq)
 
+        # The unique curves for the R2eff fitting (CPMG).
+        if cdp.cpmg_frqs[spectrum_id] not in cdp.cpmg_frqs_list:
+            cdp.cpmg_frqs_list.append(cdp.cpmg_frqs[spectrum_id])
+        cdp.cpmg_frqs_list.sort()
+
         # Update the exponential curve count.
-        cdp.curve_count = count_unique_elements(cdp.cpmg_frqs.values())
+        cdp.curve_count = len(cdp.cpmg_frqs_list)
 
         # Printout.
         print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
@@ -779,12 +785,22 @@ class Relax_disp(API_base, API_common):
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxNoSpectraError(spectrum_id)
 
-        # Initialise the global relaxation time data structure if needed.
+        # Initialise the global relaxation time data structures if needed.
         if not hasattr(cdp, 'relax_times'):
             cdp.relax_times = {}
+        if not hasattr(cdp, 'relax_time_list'):
+            cdp.relax_time_list = []
 
         # Add the time, converting to a float if needed.
         cdp.relax_times[spectrum_id] = float(time)
+
+        # The unique time points.
+        if cdp.relax_times[spectrum_id] not in cdp.relax_time_list:
+            cdp.relax_time_list.append(cdp.relax_times[spectrum_id])
+        cdp.relax_time_list.sort()
+
+        # Update the exponential curve count.
+        cdp.num_time_pts = len(cdp.relax_time_list)
 
         # Printout.
         print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
@@ -849,15 +865,22 @@ class Relax_disp(API_base, API_common):
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxNoSpectraError(spectrum_id)
 
-        # Initialise the global nu1 data structure if needed.
+        # Initialise the global nu1 data structures if needed.
         if not hasattr(cdp, 'spin_lock_nu1'):
             cdp.spin_lock_nu1 = {}
+        if not hasattr(cdp, 'spin_lock_nu1_list'):
+            cdp.spin_lock_nu1_list = []
 
         # Add the frequency, converting to a float if needed.
         cdp.spin_lock_nu1[spectrum_id] = float(field)
 
+        # The unique curves for the R2eff fitting (R1rho).
+        if cdp.spin_lock_nu1[spectrum_id] not in cdp.spin_lock_nu1_list:
+            cdp.spin_lock_nu1_list.append(cdp.spin_lock_nu1[spectrum_id])
+        cdp.spin_lock_nu1_list.sort()
+
         # Update the exponential curve count.
-        cdp.curve_count = count_unique_elements(cdp.spin_lock_nu1.values())
+        cdp.curve_count = len(cdp.spin_lock_nu1_list)
 
         # Printout.
         print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
@@ -971,29 +994,11 @@ class Relax_disp(API_base, API_common):
             elif cdp.exp_type == 'r1rho':
                 raise RelaxError("The spin-lock field strengths have not been set up.")
 
-        # The unique curves for the R2eff fitting (CPMG).
-        cpmg_frqs = []
-        if cdp.exp_type == 'cpmg':
-            for frq in cdp.cpmg_frqs.values():
-                if frq not in cpmg_frqs:
-                    cpmg_frqs.append(frq)
-            cpmg_frqs.sort()
-
-        # The unique curves for the R2eff fitting (R1rho).
-        spin_lock_nu1 = []
-        if cdp.exp_type == 'r1rho':
-            for field in cdp.spin_lock_nu1.values():
-                if field not in spin_lock_nu1:
-                    spin_lock_nu1.append(field)
-            spin_lock_nu1.sort()
-
-        # The relaxation time points (sorted).
-        relax_times = []
-        for time in cdp.relax_times.values():
-            if time not in relax_times:
-                relax_times.append(time)
-        relax_times.sort()
-        num_time_pts = len(relax_times)
+        # Initialise some empty data pipe structures so that the target function set up does not fail.
+        if not hasattr(cdp, 'cpmg_frqs_list'):
+            cdp.cpmg_frqs_list = []
+        if not hasattr(cdp, 'spin_lock_nu1_list'):
+            cdp.spin_lock_nu1_list = []
 
         # Loop over the spin blocks.
         for spins, spin_ids in self._block_loop():
@@ -1001,8 +1006,8 @@ class Relax_disp(API_base, API_common):
             spin_num = len(spins)
 
             # Initialise the data structures for the target function.
-            values = zeros((spin_num, cdp.curve_count, num_time_pts), float64)
-            errors = zeros((spin_num, cdp.curve_count, num_time_pts), float64)
+            values = zeros((spin_num, cdp.curve_count, cdp.num_time_pts), float64)
+            errors = zeros((spin_num, cdp.curve_count, cdp.num_time_pts), float64)
 
             # Pack the peak intensity data.
             for spin_index in range(spin_num):
@@ -1016,10 +1021,10 @@ class Relax_disp(API_base, API_common):
                 for key in keys:
                     # The indices.
                     if cdp.exp_type == 'cpmg':
-                        curve_index = cpmg_frqs.index(cdp.cpmg_frqs[key])
+                        curve_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
                     elif cdp.exp_type == 'r1rho':
-                        curve_index = spin_lock_nu1.index(cdp.spin_lock_nu1[key])
-                    time_index = relax_times.index(cdp.relax_times[key])
+                        curve_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
+                    time_index = cdp.relax_time_list.index(cdp.relax_times[key])
 
                     # The values.
                     if sim_index == None:
@@ -1061,7 +1066,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_times=num_time_pts, curve_num=cdp.curve_count, values=values, errors=errors, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_times=cdp.num_time_pts, curve_num=cdp.curve_count, values=values, errors=errors, relax_times=cdp.relax_time_list, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, scaling_matrix=scaling_matrix)
 
             # Setup the minimisation algorithm when constraints are present.
             if constraints and not match('^[Gg]rid', min_algor):
