@@ -44,4 +44,4 @@ def exponential_2param_neg(rate=None, i0=None, x=None, y=None):
 
     # Loop over the x-values.
     for i in range(len(x)):
-        y[i] = i0 * exp(-rate*y)
+        y[i] = i0 * exp(-rate*x[i])
