@@ -107,3 +107,72 @@ def read_list_intensity(file_data=None, int_col=None):
 
     # Return the data.
     return data
+
+
+def write_list(file_prefix=None, dir=None, res_names=None, res_nums=None, atom1_names=None, atom2_names=None, w1=None, w2=None, data_height=None, force=True):
+    """Create a Sparky .list file.
+
+    @keyword file_prefix:   The base part of the file name without the .list extension.
+    @type file_prefix:      str
+    @keyword dir:           The directory to place the file in.
+    @type dir:              str or None
+    @keyword res_names:     The residue name list for each peak entry.
+    @type res_names:        list of str
+    @keyword res_nums:      The residue number list for each peak entry.
+    @type res_nums:         list of int
+    @keyword atom1_names:   The atom name list for w1 for each peak entry.
+    @type atom1_names:      list of str
+    @keyword atom2_names:   The atom name list for w2 for each peak entry.
+    @type atom2_names:      list of str
+    @keyword w1:            The w1 chemical shift list in ppm for each peak entry.
+    @type w1:               list of float
+    @keyword w2:            The w2 chemical shift list in ppm for each peak entry.
+    @type w2:               list of float
+    @keyword data_height:   The optional data height list for each peak entry.
+    @type data_height:      None or list of float
+    @keyword force:         A flag which if True will cause any pre-existing files to be overwritten.
+    @type force:            bool
+    """
+
+    # Checks.
+    N = len(w1)
+    if len(res_names) != N:
+        raise RelaxError("The %s residue names does not match the %s number of entries." % (len(res_names), N))
+    if len(res_nums) != N:
+        raise RelaxError("The %s residue numbers does not match the %s number of entries." % (len(res_nums), N))
+    if len(atom1_names) != N:
+        raise RelaxError("The %s w1 atom names does not match the %s number of entries." % (len(atom1_names), N))
+    if len(atom2_names) != N:
+        raise RelaxError("The %s w2 atom names does not match the %s number of entries." % (len(atom2_names), N))
+    if len(w1) != N:
+        raise RelaxError("The %s w1 chemical shifts does not match the %s number of entries." % (len(w1), N))
+    if len(w2) != N:
+        raise RelaxError("The %s w2 chemical shifts does not match the %s number of entries." % (len(w2), N))
+    if data_height and len(data_height) != N:
+        raise RelaxError("The %s data heights does not match the %s number of entries." % (len(data_height), N))
+
+    # Printout.
+    print("Creating the Sparky list file.")
+
+    # Open the file.
+    if isinstance(file_prefix, str):
+        file = open_write_file(file_name=file_prefix+".list", dir=dir, force=force)
+    else:
+        file = file_prefix
+
+    # The header.
+    file.write("%17s %10s %10s" % ("Assignment ", "w1 ", "w2 "))
+    if data_height != None:
+        file.write(" %12s" % "Data Height")
+    file.write("\n\n")
+
+    # The data.
+    for i in range(N):
+        # Generate the assignment.
+        assign = "%s%i%s-%s" % (res_names[i], res_nums[i], atom1_names[i], atom2_names[i])
+
+        # Write out the line.
+        file.write("%17s %10.3f %10.3f" % (assign, w1[i], w2[i]))
+        if data_height != None:
+            file.write(" %12i" % data_height[i])
+        file.write("\n")
