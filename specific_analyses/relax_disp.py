@@ -538,103 +538,91 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
         # Lower bounds.
-        if lower != None:
-            if len(lower) != n:
-                raise RelaxLenError('lower bounds', n)
+        if lower != None and len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
-        if upper != None:
-            if len(upper) != n:
-                raise RelaxLenError('upper bounds', n)
+        if upper != None and len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
 
         # Increment.
-        if type(inc) == list:
-            if len(inc) != n:
-                raise RelaxLenError('increment', n)
-            inc = inc
-        elif type(inc) == int:
-            temp = []
-            for j in xrange(n):
-                temp.append(inc)
-            inc = temp
+        if isinstance(inc, list) and len(inc) != n:
+            raise RelaxLenError('increment', n)
+        elif isinstance(inc, int):
+            inc = [inc]*n
 
-        # Minimisation options initialisation.
-        min_options = []
-        j = 0
+        # Set up the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
 
-        # First add the spin specific parameters.
-        for spin_index in range(len(spins)):
-            # Alias the spin.
-            spin = spins[spin_index]
+            # First add the spin specific parameters.
+            for spin_index in range(len(spins)):
+                # Alias the spin.
+                spin = spins[spin_index]
 
-            # Loop over each exponential curve.
-            for exp_i, key in self._exp_curve_loop():
-                # Loop over the parameters.
-                for i in range(len(spin.params)):
-                    # R2eff relaxation rate (from 0 to 40 s^-1).
-                    if spin.params[i] == 'R2eff':
-                        min_options.append([inc[j], 0.0, 40.0])
+                # Loop over each exponential curve.
+                for exp_i, key in self._exp_curve_loop():
+                    # Loop over the parameters.
+                    for i in range(len(spin.params)):
+                        # R2eff relaxation rate (from 0 to 40 s^-1).
+                        if spin.params[i] == 'R2eff':
+                            lower.append(0.0)
+                            upper.append(40.0)
 
-                    # Intensity.
-                    elif spin.params[i] == 'I0':
-                        min_options.append([inc[j], 0.0, max(spin.intensities.values())])
+                        # Intensity.
+                        elif spin.params[i] == 'I0':
+                            lower.append(0.0)
+                            upper.append(max(spin.intensities.values()))
 
-                    # Increment j.
-                    j += 1
+            # Then the spin block specific parameters.
+            spin = spins[0]
+            for i in range(len(spin.params)):
+                # R2 relaxation rate (from 0 to 40 s^-1).
+                if spin.params[i] == 'R2':
+                    lower.append(0.0)
+                    upper.append(40.0)
 
-        # Then the spin block specific parameters.
-        spin = spins[0]
-        for i in range(len(spin.params)):
-            # R2 relaxation rate (from 0 to 40 s^-1).
-            if spin.params[i] == 'R2':
-                min_options.append([inc[j], 0.0, 40.0])
+                # Chemical exchange contribution to 'R2'.
+                elif spin.params[i] == 'Rex':
+                    lower.append(0.0)
+                    upper.append(20.0)
 
-            # Chemical exchange contribution to 'R2'.
-            elif spin.params[i] == 'Rex':
-                min_options.append([inc[j], 0.0, 20.0])
+                # Exchange rate.
+                elif spin.params[i] == 'kex':
+                    lower.append(0.0)
+                    upper.append(100000.0)
 
-            # Exchange rate.
-            elif spin.params[i] == 'kex':
-                min_options.append([inc[j], 0.0, 100000.0])
+                # Transversal relaxation rate for state A.
+                elif spin.params[i] == 'R2A':
+                    lower.append(0.0)
+                    upper.append(20.0)
 
-            # Transversal relaxation rate for state A.
-            elif spin.params[i] == 'R2A':
-                min_options.append([inc[j], 0.0, 20.0])
+                # Exchange rate from state A to state B.
+                elif spin.params[i] == 'kA':
+                    lower.append(0.0)
+                    upper.append(100000.0)
 
-            # Exchange rate from state A to state B.
-            elif spin.params[i] == 'kA':
-                min_options.append([inc[j], 0.0, 100000.0])
-
-            # Chemical shift difference between states A and B.
-            elif spin.params[i] == 'dw':
-                min_options.append([inc[j], 0.0, 10000.0])
-
-            # Increment j.
-            j += 1
-
-        # Set the lower and upper bounds if these are supplied.
-        if lower != None:
-            for j in xrange(n):
-                if lower[j] != None:
-                    min_options[j][1] = lower[j]
-        if upper != None:
-            for j in xrange(n):
-                if upper[j] != None:
-                    min_options[j][2] = upper[j]
+                # Chemical shift difference between states A and B.
+                elif spin.params[i] == 'dw':
+                    lower.append(0.0)
+                    upper.append(10000.0)
 
         # Test if the grid is too large.
         grid_size = 1
-        for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-        if type(grid_size) == long:
+        for i in range(n):
+            grid_size = grid_size * inc[0]
+        if isinstance(grid_size, long):
             raise RelaxError("A grid search of size %s is too large." % grid_size)
 
         # Diagonal scaling of minimisation options.
-        for j in range(len(min_options)):
-            min_options[j][1] = min_options[j][1] * scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] * scaling_matrix[j, j]
+        for i in range(n):
+            lower[i] = lower[i] / scaling_matrix[i, i]
+            upper[i] = upper[i] / scaling_matrix[i, i]
 
-        return grid_size, min_options
+        # Return the data structures.
+        return grid_size, inc, lower, upper
 
 
     def _linear_constraints(self, spins=None, scaling_matrix=None):
@@ -1066,7 +1054,7 @@ class Relax_disp(API_base, API_common):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, min_options = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                grid_size, inc, lower, upper = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             A, b = None, None
