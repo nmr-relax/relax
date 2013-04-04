@@ -101,9 +101,9 @@ class API_common:
         for name in self.PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
             # The default value.
             param_type = self.PARAMS.get_type(name)
-            if param_type == 'dict':
+            if param_type == dict:
                 value = {}
-            elif param_type == 'list':
+            elif param_type == list:
                 value = []
             else:
                 value = None
