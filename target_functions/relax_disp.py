@@ -27,6 +27,7 @@
 from numpy import dot, float64, zeros
 
 # relax module imports.
+from lib.curve_fit.exponential import exponential_2param_neg
 from lib.dispersion.equations import fast_2site
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
@@ -125,7 +126,7 @@ class Dispersion:
                 i0 = params[index + 1]
 
                 # Back-calculate the points on the exponential curve.
-                exponential(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc)
+                exponential_2param_neg(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc)
 
                 # Calculate the chi-squared value for this curve.
                 chi2_sum += chi2(self.values[spin_index, exp_index], self.back_calc, self.errors[spin_index, exp_index])
