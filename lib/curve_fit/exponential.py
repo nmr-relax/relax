@@ -19,9 +19,29 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib NMR package - a library of functions for various types of curve-fitting."""
+# Module docstring.
+"""Module for exponential curve-fitting."""
 
-__all__ = [
-    'exponential'
-]
+# Python module imports.
+from math import exp
+
+
+def exponential_2param_neg(rate=None, i0=None, x=None, y=None):
+    """Calculate the data for a standard two parameter decreasing exponential.
+
+    The y-values will be calculated based on the x-values.
+
+
+    @keyword rate:  The exponential rate.
+    @type rate:     float
+    @keyword i0:    The initial intensity.
+    @type i0:       float
+    @keyword x:     The x-values at which to calculate the y-values.
+    @type x:        numpy rank-1 float array
+    @keyword y:     The data structure to store the y-values in.
+    @type y:        numpy rank-1 float array
+    """
+
+    # Loop over the x-values.
+    for i in range(len(x)):
+        y[i] = i0 * exp(-rate*y)
