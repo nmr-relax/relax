@@ -110,7 +110,7 @@ class Relax_disp(API_base, API_common):
                     if spin.params[i] == 'R2eff':
                         if sim_index != None:
                             param_vector.append(spin.r2eff_sim[key][sim_index])
-                        elif spin.r2eff == None:
+                        elif spin.r2eff == None or key not in spin.r2eff:
                             param_vector.append(0.0)
                         else:
                             param_vector.append(spin.r2eff[key])
@@ -119,7 +119,7 @@ class Relax_disp(API_base, API_common):
                     elif spin.params[i] == 'I0':
                         if sim_index != None:
                             param_vector.append(spin.i0_sim[key][sim_index])
-                        elif spin.i0 == None:
+                        elif spin.i0 == None or key not in spin.i0:
                             param_vector.append(0.0)
                         else:
                             param_vector.append(spin.i0[key])
