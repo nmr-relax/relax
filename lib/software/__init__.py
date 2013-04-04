@@ -27,5 +27,6 @@ __all__ = [
     'grace',
     'opendx',
     'sparky',
+    'xeasy',
     'xplor'
 ]
