@@ -58,7 +58,7 @@ for i in range(len(data)):
 spectrum.error_analysis()
 
 # Grid search.
-grid_search(inc=11)
+grid_search(inc=5)
 
 # Minimise.
 minimise('simplex', constraints=False)
