@@ -35,7 +35,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id
 from pipe_control import pipes
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import extract_data, read_spin_data, strip, write_data
-from lib.software import sparky, xeasy
+from lib.software import nmrview, sparky, xeasy
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -508,87 +508,6 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     return data
 
 
-def intensity_nmrview(file_data=None, int_col=None):
-    """Return the process data from the NMRView peak intensity file.
-
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
-    @keyword file_data: The data extracted from the file converted into a list of lists.
-    @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data. The default is 16 for intensities. Setting the int_col argument to 15 will use the volumes (or evolumes). For a non-standard formatted file, use a different value.
-    @type int_col:      int
-    @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text
-    @rtype:             list of lists of str, str, str, float, str
-    """
-
-    # Assume the NMRView file has six header lines!
-    num = 6
-    print("Number of header lines: " + repr(num))
-
-    # Remove the header.
-    file_data = file_data[num:]
-
-    # Strip the data.
-    file_data = strip(file_data)
-
-    # The peak intensity column.
-    if int_col == None:
-        int_col = 16
-    if int_col == 16:
-        print('Using peak heights.')
-    if int_col == 15:
-        print('Using peak volumes (or evolumes).')
-
-    # Loop over the file data.
-    data = []
-    for line in file_data:
-        # Unknown assignment.
-        if line[1] == '{}':
-            warn(RelaxWarning("The assignment '%s' is unknown, skipping this peak." % line[1]))
-            continue
-
-        # The residue number
-        res_num = ''
-        try:
-            res_num = line[1].strip('{')
-            res_num = res_num.strip('}')
-            res_num = res_num.split('.')
-            res_num = res_num[0]
-        except ValueError:
-            raise RelaxError("The peak list is invalid.")
-
-        # Nuclei names.
-        x_name = ''
-        if line[8]!='{}':
-            x_name = line[8].strip('{')
-            x_name = x_name.strip('}')
-            x_name = x_name.split('.')
-            x_name = x_name[1]
-        h_name = ''
-        if line[1]!='{}':
-            h_name = line[1].strip('{')
-            h_name = h_name.strip('}')
-            h_name = h_name.split('.')
-            h_name = h_name[1]
-
-        # Intensity.
-        try:
-            intensity = float(line[int_col])
-        except ValueError:
-            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
-
-        # Generate the spin_id.
-        spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
-
-        # Append the data.
-        data.append([h_name, x_name, spin_id, intensity, line])
-
-    # Return the data.
-    return data
-
-
 def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
     """Read the peak intensity data.
 
@@ -670,7 +589,15 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         print("NMRView formatted data file.\n")
 
         # Extract the data.
-        intensity_data = intensity_nmrview(file_data=file_data)
+        intensity_data = nmrview.read_list_intensity(file_data=file_data)
+
+        # Convert the residue number to a spin ID.
+        for i in range(len(intensity_data)):
+            # Generate the spin_id.
+            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
+
+            # Replace the data.
+            intensity_data[i][2] = spin_id
 
     # Sparky.
     elif format == 'sparky':
