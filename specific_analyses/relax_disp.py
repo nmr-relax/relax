@@ -686,12 +686,14 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("A grid search of size %s is too large." % grid_size)
 
         # Diagonal scaling of minimisation options.
+        lower_new = []
+        upper_new = []
         for i in range(n):
-            lower[i] = lower[i] / scaling_matrix[i, i]
-            upper[i] = upper[i] / scaling_matrix[i, i]
+            lower_new.append(lower[i] / scaling_matrix[i, i])
+            upper_new.append(upper[i] / scaling_matrix[i, i])
 
         # Return the data structures.
-        return grid_size, inc, lower, upper, sparseness
+        return grid_size, inc, lower_new, upper_new, sparseness
 
 
     def _linear_constraints(self, spins=None, scaling_matrix=None):
@@ -1122,8 +1124,9 @@ class Relax_disp(API_base, API_common):
                 param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Get the grid search minimisation options.
+            lower_new, upper_new = None, None
             if match('^[Gg]rid', min_algor):
-                grid_size, inc, lower, upper, sparseness = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                grid_size, inc, lower_new, upper_new, sparseness = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             A, b = None, None
@@ -1147,7 +1150,7 @@ class Relax_disp(API_base, API_common):
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, sparseness=sparseness, verbosity=verbosity)
+                results = grid(func=model.func, args=(), num_incs=inc, lower=lower_new, upper=upper_new, A=A, b=b, sparseness=sparseness, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, chi2, iter_count, warning = results
