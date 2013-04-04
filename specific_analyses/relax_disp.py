@@ -102,13 +102,7 @@ class Relax_disp(API_base, API_common):
             spin = spins[spin_index]
 
             # Loop over each exponential curve.
-            for exp_i in range(cdp.curve_count):
-                # The key.
-                if cdp.exp_type == 'cpmg':
-                    key = cdp.cpmg_frqs_list[exp_i]
-                else:
-                    key = cdp.spin_lock_nu1_list[exp_i]
-
+            for exp_i, key in self._exp_curve_loop():
                 # Loop over the model parameters.
                 for i in range(len(spin.params)):
                     # Effective transversal relaxation rate.
@@ -216,7 +210,7 @@ class Relax_disp(API_base, API_common):
             spin = spins[spin_index]
 
             # Loop over each exponential curve.
-            for exp_i in range(cdp.curve_count):
+            for exp_i, key in self._exp_curve_loop():
                 # Effective transversal relaxation rate scaling.
                 scaling_matrix[param_index, param_index] = 1e-1
                 param_index += 1
@@ -463,6 +457,25 @@ class Relax_disp(API_base, API_common):
             spin.dw = param_vector[5]
 
 
+    def _exp_curve_loop(self):
+        """Generator method looping over the exponential curves, yielding the index and key pair.
+
+        @return:    The index of the exponential curve and the floating point number key used in the R2eff and I0 spin data structures.
+        @rtype:     int and float
+        """
+
+        # Loop over each exponential curve.
+        for i in range(cdp.curve_count):
+            # The experiment specific key.
+            if cdp.exp_type == 'cpmg':
+                key = cdp.cpmg_frqs_list[i]
+            else:
+                key = cdp.spin_lock_nu1_list[i]
+
+            # Yield the data.
+            yield i, key
+
+
     def _exp_type(self, exp_type='cpmg'):
         """Select the relaxation dispersion experiment type performed.
 
@@ -554,7 +567,7 @@ class Relax_disp(API_base, API_common):
             spin = spins[spin_index]
 
             # Loop over each exponential curve.
-            for exp_i in range(cdp.curve_count):
+            for exp_i, key in self._exp_curve_loop():
                 # Loop over the parameters.
                 for i in range(len(spin.params)):
                     # R2eff relaxation rate (from 0 to 40 s^-1).
@@ -678,7 +691,7 @@ class Relax_disp(API_base, API_common):
             spin = spins[spin_index]
 
             # Loop over each exponential curve.
-            for exp_i in range(cdp.curve_count):
+            for exp_i, key in self._exp_curve_loop():
                 # Loop over the parameters.
                 for k in range(len(spin.params)):
                     # The transversal relaxation rate >= 0.
