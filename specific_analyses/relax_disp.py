@@ -69,8 +69,9 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
         self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
         self.PARAMS.add('cpmg_frqs', scope='spin', py_type=dict, grace_string='\\qCPMG pulse train frequency (Hz)\\Q')
-        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self.PARAMS.add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=dict, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=float, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('rex', scope='spin', default=5.0, desc='The chemical exchange contribution to R2', set='params', py_type=float, grace_string='\\qR\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
@@ -103,14 +104,14 @@ class Relax_disp(API_base, API_common):
 
             # Loop over the model parameters.
             for i in range(len(spin.params)):
-                # Transversal relaxation rate.
-                if spin.params[i] == 'R2':
+                # Effective transversal relaxation rate.
+                if spin.params[i] == 'R2eff':
                     if sim_index != None:
-                        param_vector.append(spin.r2_sim[sim_index])
-                    elif spin.r2 == None:
+                        param_vector.append(spin.r2eff_sim[sim_index])
+                    elif spin.r2eff == None:
                         param_vector.append(0.0)
                     else:
-                        param_vector.append(spin.r2)
+                        param_vector.append(spin.r2eff)
 
                 # Initial intensity.
                 elif spin.params[i] == 'I0':
@@ -124,6 +125,15 @@ class Relax_disp(API_base, API_common):
         # Then the spin block specific parameters, taking the values from the first spin.
         spin = spins[0]
         for i in range(len(spin.params)):
+            # Transversal relaxation rate.
+            if spin.params[i] == 'R2':
+                if sim_index != None:
+                    param_vector.append(spin.r2_sim[sim_index])
+                elif spin.r2 == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.r2)
+
             # Chemical exchange contribution to 'R2'.
             if spin.params[i] == 'Rex':
                 if sim_index != None:
@@ -198,7 +208,7 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Transversal relaxation rate scaling.
+            # Effective transversal relaxation rate scaling.
             scaling_matrix[param_index, param_index] = 1e-1
             param_index += 1
 
@@ -209,8 +219,12 @@ class Relax_disp(API_base, API_common):
         # Then the spin block specific parameters.
         spin = spins[0]
         for i in range(len(spin.params)):
+            # Transversal relaxation rate scaling.
+            if spin.params[i] == 'R2':
+                scaling_matrix[param_index, param_index] = 1e-1
+
             # Chemical exchange contribution to 'R2' scaling.
-            if spin.params[i] == 'Rex':
+            elif spin.params[i] == 'Rex':
                 scaling_matrix[param_index, param_index] = 1e-1
 
             # Exchange rate scaling.
@@ -525,8 +539,8 @@ class Relax_disp(API_base, API_common):
 
             # Loop over the parameters.
             for i in range(len(spin.params)):
-                # Relaxation rate (from 0 to 40 s^-1).
-                if spin.params[i] == 'R2':
+                # R2eff relaxation rate (from 0 to 40 s^-1).
+                if spin.params[i] == 'R2eff':
                     min_options.append([inc[j], 0.0, 40.0])
 
                 # Intensity.
@@ -539,8 +553,12 @@ class Relax_disp(API_base, API_common):
         # Then the spin block specific parameters.
         spin = spins[0]
         for i in range(len(spin.params)):
+            # R2 relaxation rate (from 0 to 40 s^-1).
+            if spin.params[i] == 'R2':
+                min_options.append([inc[j], 0.0, 40.0])
+
             # Chemical exchange contribution to 'R2'.
-            if spin.params[i] == 'Rex':
+            elif spin.params[i] == 'Rex':
                 min_options.append([inc[j], 0.0, 20.0])
 
             # Exchange rate.
@@ -653,8 +671,15 @@ class Relax_disp(API_base, API_common):
         # Then the spin block specific parameters.
         spin = spins[0]
         for k in range(len(spin.params)):
+            # The transversal relaxation rate >= 0.
+            if spin.params[k] == 'R2':
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j += 1
+
             # Relaxation rates and Rex.
-            if search('^R', spin.params[k]):
+            elif search('^R', spin.params[k]):
                 # Rex, R2A >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -723,7 +748,7 @@ class Relax_disp(API_base, API_common):
         @rtype:                 int
         """
 
-        # The number of spin specific parameters (R2 and I0 per spin), times the total number of exponential curves.
+        # The number of spin specific parameters (R2eff and I0 per spin), times the total number of exponential curves.
         num = len(spins) * 2 * cdp.curve_count
 
         # The block specific parameters.
@@ -783,17 +808,17 @@ class Relax_disp(API_base, API_common):
         # Fast-exchange regime.
         if model == 'exp_fit':
             print("Basic exponential curve-fitting.")
-            params = ['R2', 'I0']
+            params = ['R2eff', 'I0']
 
         # Fast-exchange regime.
         elif model == 'fast 2-site':
             print("2-site fast-exchange.")
-            params = ['R2', 'I0', 'Rex', 'kex']
+            params = ['R2eff', 'I0', 'R2', 'Rex', 'kex']
 
         # Slow-exchange regime.
         elif model == 'slow 2-site':
             print("2-site slow-exchange.")
-            params = ['R2', 'I0', 'R2A', 'kA', 'dw']
+            params = ['R2eff', 'I0', 'R2', 'R2A', 'kA', 'dw']
 
         # Invalid model.
         else:
