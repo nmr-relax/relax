@@ -79,11 +79,11 @@ def read_list_intensity(file_data=None, int_col=None):
         x_assign, h_assign = split('-', line[0])
 
         # The proton info.
-        h_row = split('([A-Z]+)', h_assign)
+        h_row = split('([a-zA-Z]+)', h_assign)
         h_name = h_row[-2] + h_row[-1]
 
         # The heteronucleus info.
-        x_row = split('([A-Z]+)', x_assign)
+        x_row = split('([a-zA-Z]+)', x_assign)
         x_name = x_row[-2] + x_row[-1]
 
         # The residue number.
