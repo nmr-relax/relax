@@ -102,25 +102,27 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Loop over the model parameters.
-            for i in range(len(spin.params)):
-                # Effective transversal relaxation rate.
-                if spin.params[i] == 'R2eff':
-                    if sim_index != None:
-                        param_vector.append(spin.r2eff_sim[sim_index])
-                    elif spin.r2eff == None:
-                        param_vector.append(0.0)
-                    else:
-                        param_vector.append(spin.r2eff)
+            # Loop over each exponential curve.
+            for exp_i in range(cdp.curve_count):
+                # Loop over the model parameters.
+                for i in range(len(spin.params)):
+                    # Effective transversal relaxation rate.
+                    if spin.params[i] == 'R2eff':
+                        if sim_index != None:
+                            param_vector.append(spin.r2eff_sim[sim_index])
+                        elif spin.r2eff == None:
+                            param_vector.append(0.0)
+                        else:
+                            param_vector.append(spin.r2eff)
 
-                # Initial intensity.
-                elif spin.params[i] == 'I0':
-                    if sim_index != None:
-                        param_vector.append(spin.i0_sim[sim_index])
-                    elif spin.i0 == None:
-                        param_vector.append(0.0)
-                    else:
-                        param_vector.append(spin.i0)
+                    # Initial intensity.
+                    elif spin.params[i] == 'I0':
+                        if sim_index != None:
+                            param_vector.append(spin.i0_sim[sim_index])
+                        elif spin.i0 == None:
+                            param_vector.append(0.0)
+                        else:
+                            param_vector.append(spin.i0)
 
         # Then the spin block specific parameters, taking the values from the first spin.
         spin = spins[0]
@@ -208,13 +210,15 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Effective transversal relaxation rate scaling.
-            scaling_matrix[param_index, param_index] = 1e-1
-            param_index += 1
+            # Loop over each exponential curve.
+            for exp_i in range(cdp.curve_count):
+                # Effective transversal relaxation rate scaling.
+                scaling_matrix[param_index, param_index] = 1e-1
+                param_index += 1
 
-            # Initial intensity scaling.
-            scaling_matrix[param_index, param_index] = 1.0 / max(spin.intensities.values())
-            param_index += 1
+                # Initial intensity scaling.
+                scaling_matrix[param_index, param_index] = 1.0 / max(spin.intensities.values())
+                param_index += 1
 
         # Then the spin block specific parameters.
         spin = spins[0]
@@ -537,18 +541,20 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Loop over the parameters.
-            for i in range(len(spin.params)):
-                # R2eff relaxation rate (from 0 to 40 s^-1).
-                if spin.params[i] == 'R2eff':
-                    min_options.append([inc[j], 0.0, 40.0])
+            # Loop over each exponential curve.
+            for exp_i in range(cdp.curve_count):
+                # Loop over the parameters.
+                for i in range(len(spin.params)):
+                    # R2eff relaxation rate (from 0 to 40 s^-1).
+                    if spin.params[i] == 'R2eff':
+                        min_options.append([inc[j], 0.0, 40.0])
 
-                # Intensity.
-                elif spin.params[i] == 'I0':
-                    min_options.append([inc[j], 0.0, max(spin.intensities.values())])
+                    # Intensity.
+                    elif spin.params[i] == 'I0':
+                        min_options.append([inc[j], 0.0, max(spin.intensities.values())])
 
-                # Increment j.
-                j += 1
+                    # Increment j.
+                    j += 1
 
         # Then the spin block specific parameters.
         spin = spins[0]
@@ -659,14 +665,16 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Loop over the parameters.
-            for k in range(len(spin.params)):
-                # The transversal relaxation rate >= 0.
-                if spin.params[k] == 'R2':
-                    A.append(zero_array * 0.0)
-                    A[j][i] = 1.0
-                    b.append(0.0)
-                    j += 1
+            # Loop over each exponential curve.
+            for exp_i in range(cdp.curve_count):
+                # Loop over the parameters.
+                for k in range(len(spin.params)):
+                    # The transversal relaxation rate >= 0.
+                    if spin.params[k] == 'R2':
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        b.append(0.0)
+                        j += 1
 
         # Then the spin block specific parameters.
         spin = spins[0]
