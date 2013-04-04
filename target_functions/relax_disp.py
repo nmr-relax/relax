@@ -86,6 +86,11 @@ class Dispersion:
         self.relax_times = relax_times
         self.scaling_matrix = scaling_matrix
 
+        # Scaling initialisation.
+        self.scaling_flag = False
+        if self.scaling_matrix != None:
+            self.scaling_flag = True
+
         # Create the structure for holding the back-calculated peak intensities.
         self.back_calc = zeros(num_times, float64)
 
