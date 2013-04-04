@@ -213,11 +213,11 @@ class Relax_disp(API_base, API_common):
             # Loop over each exponential curve.
             for exp_i, key in self._exp_curve_loop():
                 # Effective transversal relaxation rate scaling.
-                scaling_matrix[param_index, param_index] = 1e-1
+                scaling_matrix[param_index, param_index] = 10
                 param_index += 1
 
                 # Initial intensity scaling.
-                scaling_matrix[param_index, param_index] = 1.0 / max(spin.intensities.values())
+                scaling_matrix[param_index, param_index] = max(spin.intensities.values())
                 param_index += 1
 
         # Then the spin block specific parameters.
@@ -225,27 +225,27 @@ class Relax_disp(API_base, API_common):
         for i in range(len(spin.params)):
             # Transversal relaxation rate scaling.
             if spin.params[i] == 'R2':
-                scaling_matrix[param_index, param_index] = 1e-1
+                scaling_matrix[param_index, param_index] = 10
 
             # Chemical exchange contribution to 'R2' scaling.
             elif spin.params[i] == 'Rex':
-                scaling_matrix[param_index, param_index] = 1e-1
+                scaling_matrix[param_index, param_index] = 10
 
             # Exchange rate scaling.
             elif spin.params[i] == 'kex':
-                scaling_matrix[param_index, param_index] = 1e-4
+                scaling_matrix[param_index, param_index] = 10000
 
             # Transversal relaxation rate for state A scaling
             elif spin.params[i] == 'R2A':
-                scaling_matrix[param_index, param_index] = 1e-1
+                scaling_matrix[param_index, param_index] = 10
 
             # Exchange rate from state A to state B scaling.
             elif spin.params[i] == 'kA':
-                scaling_matrix[param_index, param_index] = 1e-4
+                scaling_matrix[param_index, param_index] = 10000
 
             # Chemical shift difference between states A and B scaling.
             elif spin.params[i] == 'dw':
-                scaling_matrix[param_index, param_index] = 1e-3
+                scaling_matrix[param_index, param_index] = 1000
 
             # Increment the parameter index.
             param_index += 1
