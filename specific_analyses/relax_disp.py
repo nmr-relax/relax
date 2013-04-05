@@ -57,7 +57,6 @@ class Relax_disp(API_base, API_common):
         self.data_init = self._data_init_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
-        self.set_error = self._set_error_spin
         self.set_param_values = self._set_param_values_spin
         self.sim_init_values = self._sim_init_values_spin
 
@@ -496,6 +495,24 @@ class Relax_disp(API_base, API_common):
             return cdp.spin_lock_nu1_list.index(key)
 
 
+    def _exp_curve_key_from_index(self, index):
+        """Convert the exponential curve key into the corresponding index.
+
+        @param index:   The exponential curve index.
+        @type index:    int
+        @return:        The exponential curve key - either the CPMG frequency or R1rho spin-lock field strength.
+        @rtype:         float
+        """
+
+        # CPMG data.
+        if cdp.exp_type == 'cpmg':
+            return cdp.cpmg_frqs_list[index]
+
+        # R1rho data.
+        else:
+            return cdp.spin_lock_nu1_list[index]
+
+
     def _exp_curve_loop(self):
         """Generator method looping over the exponential curves, yielding the index and key pair.
 
@@ -872,6 +889,51 @@ class Relax_disp(API_base, API_common):
             # The model and parameter names.
             spin.model = model
             spin.params = params
+
+
+    def _param_index_to_param_info(self, index=None, spins=None):
+        """Convert the given parameter array index to parameter identifying information.
+        
+        The parameter index will be converted to the parameter name, the relevant spin index in the cluster, and relevant exponential curve key.
+
+        @keyword index: The index of the parameter array.
+        @type index:    int
+        @keyword spins: The list of spin data containers for the block.
+        @type spins:    list of SpinContainer instances
+        @return:        The parameter name, spin cluster index, and exponential curve key.
+        @rtype:         str, int, float
+        """
+
+        # Initialise.
+        param_name = None
+        spin_index = 0
+        curve_key = None
+
+        # The number of spin specific parameters (R2eff and I0 per spin), times the total number of exponential curves.
+        num = len(spins) * 2 * cdp.curve_count
+
+        # The exponential curve parameters.
+        if index < num:
+            # Even indices are R2eff, odd are I0.
+            if index % 2:
+                param_name = 'i0'
+            else:
+                param_name = 'r2eff'
+
+            # The spin index.
+            spin_index = int(index / 2 / cdp.curve_count)
+
+            # The curve index and key.
+            exp_index = int((index - spin_index * 2) / 2)
+            curve_key = self._exp_curve_key_from_index(exp_index)
+
+        # All other parameters.
+        else:
+            names = self.data_names(set='params')
+            param_name = names[index-num+2]
+
+        # Return the data.
+        return param_name, spin_index, curve_key
 
 
     def _param_num(self, spins=None):
@@ -1369,6 +1431,42 @@ class Relax_disp(API_base, API_common):
     set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (kA) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
 
 
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   unknown
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
+
+        # Unpack the data.
+        spins, spin_ids = model_info
+
+        # Convert the parameter index.
+        param_name, spin_index, curve_key = self._param_index_to_param_info(index=index, spins=spins)
+
+        # The parameter error name.
+        err_name = param_name + "_err"
+
+        # The exponential curve parameters.
+        if param_name in ['r2eff', 'i0']:
+            # Initialise if needed.
+            if not hasattr(spins[spin_index], err_name):
+                setattr(spins[spin_index], err_name, {})
+
+            # Set the value.
+            obj = getattr(spins[spin_index], err_name)
+            obj[curve_key] = error
+
+        # All other parameters.
+        else:
+            for spin in spins:
+                setattr(spin, err_name, error)
+
+
     def set_selected_sim(self, model_info, select_sim):
         """Set the simulation selection flag.
 
@@ -1429,6 +1527,38 @@ class Relax_disp(API_base, API_common):
         @return:            The array of simulation parameter values.
         @rtype:             list of float
         """
+
+        # Unpack the data.
+        spins, spin_ids = model_info
+
+        # No more parameters.
+        total_param_num = self._param_num(spins=spins)
+        if index >= total_param_num:
+            return
+
+        # Convert the parameter index.
+        param_name, spin_index, curve_key = self._param_index_to_param_info(index=index, spins=spins)
+
+        # The exponential curve parameters.
+        sim_data = []
+        if param_name == 'r2eff':
+            for i in range(cdp.sim_number):
+                sim_data.append(spins[spin_index].r2eff_sim[i][curve_key])
+        elif param_name == 'i0':
+            for i in range(cdp.sim_number):
+                sim_data.append(spins[spin_index].i0_sim[i][curve_key])
+
+        # All other parameters.
+        else:
+            sim_data = getattr(spins[0], param_name + "_sim")
+
+        # Set the sim data to None if empty.
+        if sim_data == []:
+            sim_data = None
+
+        # Return the object.
+        return sim_data
+
 
     def sim_return_selected(self, model_info):
         """Return the array of selected simulation flags.
