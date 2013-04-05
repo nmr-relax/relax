@@ -883,12 +883,12 @@ class Relax_disp(API_base, API_common):
             if not spin.select:
                 continue
 
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
             # The model and parameter names.
             spin.model = model
             spin.params = params
+
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
 
 
     def _param_index_to_param_info(self, index=None, spins=None):
