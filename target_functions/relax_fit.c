@@ -83,7 +83,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Place the scaling matrix elements into the C array */
     for (i = 0; i < num_params; i++) {
         /* Get the element */
-        element = PySequence_GetItem(values_arg, i);
+        element = PySequence_GetItem(scaling_matrix_arg, i);
 
         /* Convert to a C double */
         scaling_matrix[i] = PyFloat_AsDouble(element);
@@ -119,6 +119,9 @@ func(PyObject *self, PyObject *args) {
 
         /* Convert to a C double */
         params[i] = PyFloat_AsDouble(element);
+
+        /* Scale the parameter */
+        params[i] = params[i] * scaling_matrix[i, i];
     }
 
     /* Back calculated the peak intensities */
