@@ -64,7 +64,7 @@ grid_search(inc=5)
 minimise('simplex', constraints=False)
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=10)
+monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', constraints=False)
@@ -78,11 +78,6 @@ results.write(file='devnull', force=True)
 
 # Create Grace plots of the data.
 grace.write(y_data_type='chi2', file='devnull', force=True)    # Minimised chi-squared value.
-grace.write(y_data_type='R2', file='devnull', force=True)    # R2 parameter without Rex contribution.
-grace.write(y_data_type='Rex', file='devnull', force=True)    # Chemical exchange contribution to observed R2.
-grace.write(y_data_type='kex', file='devnull', force=True)    # Exchange rate.
-grace.write(x_data_type='frq', y_data_type='int', file='devnull', force=True)    # Average peak intensities.
-grace.write(x_data_type='frq', y_data_type='int', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
 state.save('devnull', force=True)
