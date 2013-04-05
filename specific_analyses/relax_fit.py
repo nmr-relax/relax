@@ -346,12 +346,15 @@ class Relax_fit(API_base, API_common):
                     lower.append(0.0)
                     upper.append(average(spin.intensities[id]))
 
-        # Parameter scaling.
+        # Diagonal scaling of minimisation options.
+        lower_new = []
+        upper_new = []
         for i in range(n):
-            lower[i] = lower[i] / scaling_matrix[i, i]
-            upper[i] = upper[i] / scaling_matrix[i, i]
+            lower_new.append(lower[i] / scaling_matrix[i, i])
+            upper_new.append(upper[i] / scaling_matrix[i, i])
 
-        return inc, lower, upper
+        # Return the minimisation options.
+        return inc, lower_new, upper_new
 
 
     def _linear_constraints(self, spin=None, scaling_matrix=None):
@@ -657,7 +660,7 @@ class Relax_fit(API_base, API_common):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                inc, lower, upper = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower_new, upper_new = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
@@ -733,7 +736,7 @@ class Relax_fit(API_base, API_common):
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=self._func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+                results = grid(func=self._func, args=(), num_incs=inc, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, chi2, iter_count, warning = results
