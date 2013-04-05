@@ -188,8 +188,13 @@ class Relax_fit(API_base, API_common):
             errors.append(spin.intensity_err[key])
             times.append(cdp.relax_times[key])
 
+        # The scaling matrix in a diagonalised list form.
+        scaling_list = []
+        for i in range(len(scaling_matrix)):
+            scaling_list.append(scaling_matrix[i, i])
+
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         self._func(param_vector)
