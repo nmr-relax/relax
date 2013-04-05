@@ -77,24 +77,37 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'exp_fit.py')
 
-        # Check the fitted parameters.
+        # The original exponential curve parameters.
         res_data = [
             [15., 10., 20000., 25000.],
             [12., 11., 50000., 51000.],
             [17., 9., 100000., 96000.]
         ]
+
+        # List of parameters which do not belong to the model.
+        blacklist = ['cpmg_frqs', 'r2', 'rex', 'kex', 'r2a', 'ka', 'dw']
+
+        # Checks for each residue.
         for i in range(len(res_data)):
+            # Printout.
+            print("\nResidue number %s." % (i+1))
+
+            # Check the fitted parameters.
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff[1000.0], res_data[i][0], places=2)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff[2000.0], res_data[i][1], places=2)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0[1000.0]/10000, res_data[i][2]/10000, places=3)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0[2000.0]/10000, res_data[i][3]/10000, places=3)
 
-        # Check the simulation errors.
-        for i in range(len(res_data)):
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff_err[1000.0], 1.0, places=1)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff_err[2000.0], 1.0, places=1)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0_err[1000.0]/10000, 1.0, places=1)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0_err[2000.0]/10000, 1.0, places=1)
+            # Check the simulation errors.
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err[1000.0] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err[2000.0] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err[1000.0]/10000 < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err[2000.0]/10000 < 5.0)
+
+            # Check that certain parameters are not present.
+            for param in blacklist:
+                print("\tChecking for the absence of the '%s' parameter." % param)
+                self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], param))
 
 
     def test_read_r2eff(self):
