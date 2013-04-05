@@ -153,11 +153,7 @@ class Relax_fit(API_base, API_common):
 
             # Intensity scaling.
             elif search('^i', spin.params[i]):
-                # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.intensities[pos])
+                scaling_matrix[i, i] = max(spin.intensities.values())
 
             # Increment i.
             i = i + 1
