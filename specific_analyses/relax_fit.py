@@ -96,7 +96,7 @@ class Relax_fit(API_base, API_common):
         # Loop over the model parameters.
         for i in range(len(spin.params)):
             # Relaxation rate.
-            if spin.params[i] == 'Rx':
+            if spin.params[i] == 'rx':
                 if sim_index != None:
                     param_vector.append(spin.rx_sim[sim_index])
                 elif spin.rx == None:
@@ -105,7 +105,7 @@ class Relax_fit(API_base, API_common):
                     param_vector.append(spin.rx)
 
             # Initial intensity.
-            elif spin.params[i] == 'I0':
+            elif spin.params[i] == 'i0':
                 if sim_index != None:
                     param_vector.append(spin.i0_sim[sim_index])
                 elif spin.i0 == None:
@@ -114,7 +114,7 @@ class Relax_fit(API_base, API_common):
                     param_vector.append(spin.i0)
 
             # Intensity at infinity.
-            elif spin.params[i] == 'Iinf':
+            elif spin.params[i] == 'iinf':
                 if sim_index != None:
                     param_vector.append(spin.iinf_sim[sim_index])
                 elif spin.iinf == None:
@@ -148,7 +148,7 @@ class Relax_fit(API_base, API_common):
         # Loop over the parameters.
         for i in range(len(spin.params)):
             # Relaxation rate.
-            if spin.params[i] == 'Rx':
+            if spin.params[i] == 'rx':
                 pass
 
             # Intensity scaling.
@@ -333,12 +333,12 @@ class Relax_fit(API_base, API_common):
             # Loop over the parameters.
             for i in range(n):
                 # Relaxation rate (from 0 to 20 s^-1).
-                if spin.params[i] == 'Rx':
+                if spin.params[i] == 'rx':
                     lower.append(0.0)
                     upper.append(20.0)
 
                 # Intensity
-                elif search('^I', spin.params[i]):
+                elif search('^i', spin.params[i]):
                     # Find the ID of the first time point.
                     min_time = min(cdp.relax_times.values())
                     for key in list(cdp.relax_times.keys()):
@@ -404,7 +404,7 @@ class Relax_fit(API_base, API_common):
         # Loop over the parameters.
         for k in range(len(spin.params)):
             # Relaxation rate.
-            if spin.params[k] == 'Rx':
+            if spin.params[k] == 'rx':
                 # Rx >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -412,7 +412,7 @@ class Relax_fit(API_base, API_common):
                 j = j + 1
 
             # Intensity parameter.
-            elif search('^I', spin.params[k]):
+            elif search('^i', spin.params[k]):
                 # I0, Iinf >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -498,12 +498,12 @@ class Relax_fit(API_base, API_common):
         # Two parameter exponential fit.
         if model == 'exp':
             print("Two parameter exponential fit.")
-            params = ['Rx', 'I0']
+            params = ['rx', 'i0']
 
         # Three parameter inversion recovery fit.
         elif model == 'inv':
             print("Three parameter inversion recovery fit.")
-            params = ['Rx', 'I0', 'Iinf']
+            params = ['rx', 'i0', 'iinf']
 
         # Invalid model.
         else:
