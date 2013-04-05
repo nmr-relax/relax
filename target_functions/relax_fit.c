@@ -121,7 +121,7 @@ func(PyObject *self, PyObject *args) {
         params[i] = PyFloat_AsDouble(element);
 
         /* Scale the parameter */
-        params[i] = params[i] * scaling_matrix[i, i];
+        params[i] = params[i] * scaling_matrix[i];
     }
 
     /* Back calculated the peak intensities */
