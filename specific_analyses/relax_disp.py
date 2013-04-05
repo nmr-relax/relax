@@ -254,34 +254,41 @@ class Relax_disp(API_base, API_common):
         return scaling_matrix
 
 
-    def _back_calc(self, spin=None, result_index=None):
+    def _back_calc(self, spins=None, result_index=None):
         """Back-calculation of peak intensity for the given CPMG pulse train frequency.
 
-        @keyword spin:            The spin container.
-        @type spin:               SpinContainer instance
-        @keyword result_index:    The index for the back-calculated data associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
-        @type result_index:       int
-        @return:                  The R2eff value associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
-        @rtype:                   float
+        @keyword spins:         The list of spin data containers for the block.
+        @type spins:            list of SpinContainer instances
+        @keyword result_index:  The index for the back-calculated data associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
+        @type result_index:     int
+        @return:                The R2eff value associated to every CPMG or R1rho frequency, as well as every magnetic field frequency.
+        @rtype:                 float
         """
 
         # Create the initial parameter vector.
-        param_vector = self._assemble_param_vector(spin=spin)
+        param_vector = self._assemble_param_vector(spins=spins)
 
         # Create a scaling matrix.
-        scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
+        scaling_matrix = self._assemble_scaling_matrix(spins=spins, scaling=False)
+
+        # The spin count.
+        spin_num = len(spins)
+
+        # Initialise the data structures for the target function.
+        values = zeros((spin_num, cdp.curve_count, cdp.num_time_pts), float64)
+        errors = zeros((spin_num, cdp.curve_count, cdp.num_time_pts), float64)
 
         # Initialise the relaxation dispersion fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=spin.intensities, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
+        model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.curve_count, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
 
-        # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
-        func(param_vector)
+        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
+        model.func(param_vector)
 
         # Get the data back.
-        results = back_calc_I()
+        results = model.back_calc
 
         # Return the correct peak height.
-        return results[result_index]
+        return results
 
 
     def _block_loop(self):
