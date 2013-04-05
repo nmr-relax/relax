@@ -92,8 +92,8 @@ class Dispersion:
         if self.scaling_matrix != None:
             self.scaling_flag = True
 
-        # Create the structure for holding the back-calculated peak intensities.
-        self.back_calc = zeros(num_times, float64)
+        # Create the structure for holding the back-calculated peak intensities (matching the dimensions of the values structure so that external code can access this data).
+        self.back_calc = zeros((num_times, num_exp_curves, num_times), float64)
 
         # Set up the model.
         if model == 'exp_fit':
@@ -126,10 +126,10 @@ class Dispersion:
                 i0 = params[index + 1]
 
                 # Back-calculate the points on the exponential curve.
-                exponential_2param_neg(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc)
+                exponential_2param_neg(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc[spin_index, exp_index])
 
                 # Calculate the chi-squared value for this curve.
-                chi2_sum += chi2(self.values[spin_index, exp_index], self.back_calc, self.errors[spin_index, exp_index])
+                chi2_sum += chi2(self.values[spin_index, exp_index], self.back_calc[spin_index, exp_index], self.errors[spin_index, exp_index])
 
         # Return the chi-squared value.
         return chi2_sum
