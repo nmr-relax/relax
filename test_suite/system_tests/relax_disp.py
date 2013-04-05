@@ -77,6 +77,25 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'exp_fit.py')
 
+        # Check the fitted parameters.
+        res_data = [
+            [15., 10., 20000., 25000.],
+            [12., 11., 50000., 51000.],
+            [17., 9., 100000., 96000.]
+        ]
+        for i in range(len(res_data)):
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff[1000.0], res_data[i][0], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff[2000.0], res_data[i][1], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0[1000.0]/10000, res_data[i][2]/10000, places=3)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0[2000.0]/10000, res_data[i][3]/10000, places=3)
+
+        # Check the simulation errors.
+        for i in range(len(res_data)):
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff_err[1000.0], 1.0, places=1)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff_err[2000.0], 1.0, places=1)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0_err[1000.0]/10000, 1.0, places=1)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0_err[2000.0]/10000, 1.0, places=1)
+
 
     def test_read_r2eff(self):
         """Test the reading of a file containing r2eff values."""
