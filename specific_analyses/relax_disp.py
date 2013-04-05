@@ -102,7 +102,7 @@ class Relax_disp(API_base, API_common):
                 # Loop over the model parameters.
                 for i in range(len(spin.params)):
                     # Effective transversal relaxation rate.
-                    if spin.params[i] == 'R2eff':
+                    if spin.params[i] == 'r2eff':
                         if sim_index != None:
                             param_vector.append(spin.r2eff_sim[key][sim_index])
                         elif spin.r2eff == None or key not in spin.r2eff:
@@ -111,7 +111,7 @@ class Relax_disp(API_base, API_common):
                             param_vector.append(spin.r2eff[key])
 
                     # Initial intensity.
-                    elif spin.params[i] == 'I0':
+                    elif spin.params[i] == 'i0':
                         if sim_index != None:
                             param_vector.append(spin.i0_sim[key][sim_index])
                         elif spin.i0 == None or key not in spin.i0:
@@ -123,7 +123,7 @@ class Relax_disp(API_base, API_common):
         spin = spins[0]
         for i in range(len(spin.params)):
             # Transversal relaxation rate.
-            if spin.params[i] == 'R2':
+            if spin.params[i] == 'r2':
                 if sim_index != None:
                     param_vector.append(spin.r2_sim[sim_index])
                 elif spin.r2 == None:
@@ -132,7 +132,7 @@ class Relax_disp(API_base, API_common):
                     param_vector.append(spin.r2)
 
             # Chemical exchange contribution to 'R2'.
-            if spin.params[i] == 'Rex':
+            if spin.params[i] == 'rex':
                 if sim_index != None:
                     param_vector.append(spin.rex_sim[sim_index])
                 elif spin.rex == None:
@@ -150,7 +150,7 @@ class Relax_disp(API_base, API_common):
                     param_vector.append(spin.kex)
 
             # Transversal relaxation rate for state A.
-            if spin.params[i] == 'R2A':
+            if spin.params[i] == 'r2a':
                 if sim_index != None:
                     param_vector.append(spin.r2a_sim[sim_index])
                 elif spin.r2a == None:
@@ -159,7 +159,7 @@ class Relax_disp(API_base, API_common):
                     param_vector.append(spin.r2a)
 
             # Exchange rate from state A to state B.
-            if spin.params[i] == 'kA':
+            if spin.params[i] == 'ka':
                 if sim_index != None:
                     param_vector.append(spin.ka_sim[sim_index])
                 elif spin.ka == None:
@@ -219,11 +219,11 @@ class Relax_disp(API_base, API_common):
         spin = spins[0]
         for i in range(len(spin.params)):
             # Transversal relaxation rate scaling.
-            if spin.params[i] == 'R2':
+            if spin.params[i] == 'r2':
                 scaling_matrix[param_index, param_index] = 10
 
             # Chemical exchange contribution to 'R2' scaling.
-            elif spin.params[i] == 'Rex':
+            elif spin.params[i] == 'rex':
                 scaling_matrix[param_index, param_index] = 10
 
             # Exchange rate scaling.
@@ -231,11 +231,11 @@ class Relax_disp(API_base, API_common):
                 scaling_matrix[param_index, param_index] = 10000
 
             # Transversal relaxation rate for state A scaling
-            elif spin.params[i] == 'R2A':
+            elif spin.params[i] == 'r2a':
                 scaling_matrix[param_index, param_index] = 10
 
             # Exchange rate from state A to state B scaling.
-            elif spin.params[i] == 'kA':
+            elif spin.params[i] == 'ka':
                 scaling_matrix[param_index, param_index] = 10000
 
             # Chemical shift difference between states A and B scaling.
@@ -415,14 +415,14 @@ class Relax_disp(API_base, API_common):
                 # Loop over the model parameters.
                 for i in range(len(spin.params)):
                     # Effective transversal relaxation rate.
-                    if spin.params[i] == 'R2eff':
+                    if spin.params[i] == 'r2eff':
                         if sim_index != None:
                             spin.r2eff_sim[sim_index][key] = param_vector[index]
                         else:
                             spin.r2eff[key] = param_vector[index]
 
                     # Initial intensity.
-                    elif spin.params[i] == 'I0':
+                    elif spin.params[i] == 'i0':
                         if sim_index != None:
                             spin.i0_sim[sim_index][key] = param_vector[index+1]
                         else:
@@ -432,14 +432,14 @@ class Relax_disp(API_base, API_common):
         spin = spins[0]
         for i in range(len(spin.params)):
             # Transversal relaxation rate.
-            if spin.params[i] == 'R2':
+            if spin.params[i] == 'r2':
                 if sim_index != None:
                     spin.r2_sim[sim_index] = param_vector[param_index]
                 else:
                     spin.r2 = param_vector[param_index]
 
             # Chemical exchange contribution to 'R2'.
-            if spin.params[i] == 'Rex':
+            if spin.params[i] == 'rex':
                 if sim_index != None:
                     spin.rex_sim[sim_index] = param_vector[param_index]
                 else:
@@ -453,14 +453,14 @@ class Relax_disp(API_base, API_common):
                     spin.kex = param_vector[param_index]
 
             # Transversal relaxation rate for state A.
-            if spin.params[i] == 'R2A':
+            if spin.params[i] == 'r2a':
                 if sim_index != None:
                     spin.r2a_sim[sim_index] = param_vector[param_index]
                 else:
                     spin.r2a = param_vector[param_index]
 
             # Exchange rate from state A to state B.
-            if spin.params[i] == 'kA':
+            if spin.params[i] == 'ka':
                 if sim_index != None:
                     spin.ka_sim[sim_index] = param_vector[param_index]
                 else:
@@ -622,12 +622,12 @@ class Relax_disp(API_base, API_common):
                     # Loop over the parameters.
                     for i in range(len(spin.params)):
                         # R2eff relaxation rate (from 0 to 40 s^-1).
-                        if spin.params[i] == 'R2eff':
+                        if spin.params[i] == 'r2eff':
                             lower.append(0.0)
                             upper.append(40.0)
 
                         # Intensity.
-                        elif spin.params[i] == 'I0':
+                        elif spin.params[i] == 'i0':
                             lower.append(0.0)
                             upper.append(max(spin.intensities.values()))
 
@@ -635,12 +635,12 @@ class Relax_disp(API_base, API_common):
             spin = spins[0]
             for i in range(len(spin.params)):
                 # R2 relaxation rate (from 0 to 40 s^-1).
-                if spin.params[i] == 'R2':
+                if spin.params[i] == 'r2':
                     lower.append(0.0)
                     upper.append(40.0)
 
                 # Chemical exchange contribution to 'R2'.
-                elif spin.params[i] == 'Rex':
+                elif spin.params[i] == 'rex':
                     lower.append(0.0)
                     upper.append(20.0)
 
@@ -650,12 +650,12 @@ class Relax_disp(API_base, API_common):
                     upper.append(100000.0)
 
                 # Transversal relaxation rate for state A.
-                elif spin.params[i] == 'R2A':
+                elif spin.params[i] == 'r2a':
                     lower.append(0.0)
                     upper.append(20.0)
 
                 # Exchange rate from state A to state B.
-                elif spin.params[i] == 'kA':
+                elif spin.params[i] == 'ka':
                     lower.append(0.0)
                     upper.append(100000.0)
 
@@ -814,7 +814,7 @@ class Relax_disp(API_base, API_common):
                 # Loop over the parameters.
                 for k in range(len(spin.params)):
                     # The transversal relaxation rate >= 0.
-                    if spin.params[k] == 'R2':
+                    if spin.params[k] == 'r2':
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         b.append(0.0)
@@ -824,14 +824,14 @@ class Relax_disp(API_base, API_common):
         spin = spins[0]
         for k in range(len(spin.params)):
             # The transversal relaxation rate >= 0.
-            if spin.params[k] == 'R2':
+            if spin.params[k] == 'r2':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j += 1
 
             # Relaxation rates and Rex.
-            elif search('^R', spin.params[k]):
+            elif search('^r', spin.params[k]):
                 # Rex, R2A >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -1015,17 +1015,17 @@ class Relax_disp(API_base, API_common):
         # Fast-exchange regime.
         if model == 'exp_fit':
             print("Basic exponential curve-fitting.")
-            params = ['R2eff', 'I0']
+            params = ['r2eff', 'i0']
 
         # Fast-exchange regime.
         elif model == 'fast 2-site':
             print("2-site fast-exchange.")
-            params = ['R2eff', 'I0', 'R2', 'Rex', 'kex']
+            params = ['r2eff', 'i0', 'r2', 'rex', 'kex']
 
         # Slow-exchange regime.
         elif model == 'slow 2-site':
             print("2-site slow-exchange.")
-            params = ['R2eff', 'I0', 'R2', 'R2A', 'kA', 'dw']
+            params = ['r2eff', 'i0', 'r2', 'r2a', 'ka', 'dw']
 
         # Invalid model.
         else:
