@@ -155,9 +155,6 @@ class Relax_fit(API_base, API_common):
             elif search('^i', spin.params[i]):
                 scaling_matrix[i, i] = max(spin.intensities.values())
 
-            # Increment i.
-            i = i + 1
-
         # Return the scaling matrix.
         return scaling_matrix
 
