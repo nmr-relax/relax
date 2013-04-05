@@ -53,7 +53,6 @@ class Relax_disp(API_base, API_common):
         super(Relax_disp, self).__init__()
 
         # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
         self.data_init = self._data_init_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
@@ -970,6 +969,31 @@ class Relax_disp(API_base, API_common):
 
         # Printout.
         print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
+
+
+    def base_data_loop(self):
+        """Custom generator method for looping over spins and exponential curves.
+
+        The base data is hereby identified as the peak intensity data defining a single exponential curve.
+
+
+        @return:    The tuple of the spin container and the exponential curve identifying key (the CPMG frequency or R1rho spin-lock field strength).
+        @rtype:     tuple of SpinContainer instance and float
+        """
+
+        # Loop over the sequence.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins with no peak intensity data.
+            if not hasattr(spin, 'intensities'):
+                continue
+
+            # Loop over each exponential curve.
+            for exp_index, key in self._exp_curve_loop():
+                yield spin, key
 
 
     def create_mc_data(self, data_id):
