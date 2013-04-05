@@ -53,40 +53,26 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     relax_times = (double *) malloc(sizeof(double)*num_times);
     scaling_matrix = (double *) malloc(sizeof(double)*num_params);
 
-    /* Place the value elements into the C array */
-    for (i = 0; i < num_times; i++) {
-        /* Get the element */
-        element = PySequence_GetItem(values_arg, i);
-
-        /* Convert to a C double */
-        values[i] = PyFloat_AsDouble(element);
-    }
-
-    /* Place the sd elements into the C array */
-    for (i = 0; i < num_times; i++) {
-        /* Get the element */
-        element = PySequence_GetItem(sd_arg, i);
-
-        /* Convert to a C double */
-        sd[i] = PyFloat_AsDouble(element);
-    }
-
-    /* Place the relax_times elements into the C array */
-    for (i = 0; i < num_times; i++) {
-        /* Get the element */
-        element = PySequence_GetItem(relax_times_arg, i);
-
-        /* Convert to a C double */
-        relax_times[i] = PyFloat_AsDouble(element);
-    }
-
-    /* Place the scaling matrix elements into the C array */
+    /* Place the parameter related arguments into C arrays */
     for (i = 0; i < num_params; i++) {
-        /* Get the element */
-        element = PySequence_GetItem(values_arg, i);
-
-        /* Convert to a C double */
+        /* The diagonalised scaling matrix list argument element */
+        element = PySequence_GetItem(scaling_matrix_arg, i);
         scaling_matrix[i] = PyFloat_AsDouble(element);
+    }
+
+    /* Place the time related arguments into C arrays */
+    for (i = 0; i < num_times; i++) {
+        /* The value argument element */
+        element = PySequence_GetItem(values_arg, i);
+        values[i] = PyFloat_AsDouble(element);
+
+        /* The sd argument element */
+        element = PySequence_GetItem(sd_arg, i);
+        sd[i] = PyFloat_AsDouble(element);
+
+        /* The relax_times argument element */
+        element = PySequence_GetItem(relax_times_arg, i);
+        relax_times[i] = PyFloat_AsDouble(element);
     }
 
     /* Return nothing */
@@ -119,6 +105,9 @@ func(PyObject *self, PyObject *args) {
 
         /* Convert to a C double */
         params[i] = PyFloat_AsDouble(element);
+
+        /* Scale the parameter */
+        params[i] = params[i] * scaling_matrix[i];
     }
 
     /* Back calculated the peak intensities */

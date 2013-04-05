@@ -96,7 +96,7 @@ class Relax_fit(API_base, API_common):
         # Loop over the model parameters.
         for i in range(len(spin.params)):
             # Relaxation rate.
-            if spin.params[i] == 'Rx':
+            if spin.params[i] == 'rx':
                 if sim_index != None:
                     param_vector.append(spin.rx_sim[sim_index])
                 elif spin.rx == None:
@@ -105,7 +105,7 @@ class Relax_fit(API_base, API_common):
                     param_vector.append(spin.rx)
 
             # Initial intensity.
-            elif spin.params[i] == 'I0':
+            elif spin.params[i] == 'i0':
                 if sim_index != None:
                     param_vector.append(spin.i0_sim[sim_index])
                 elif spin.i0 == None:
@@ -114,7 +114,7 @@ class Relax_fit(API_base, API_common):
                     param_vector.append(spin.i0)
 
             # Intensity at infinity.
-            elif spin.params[i] == 'Iinf':
+            elif spin.params[i] == 'iinf':
                 if sim_index != None:
                     param_vector.append(spin.iinf_sim[sim_index])
                 elif spin.iinf == None:
@@ -148,19 +148,12 @@ class Relax_fit(API_base, API_common):
         # Loop over the parameters.
         for i in range(len(spin.params)):
             # Relaxation rate.
-            if spin.params[i] == 'Rx':
+            if spin.params[i] == 'rx':
                 pass
 
             # Intensity scaling.
             elif search('^i', spin.params[i]):
-                # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
-
-                # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.intensities[pos])
-
-            # Increment i.
-            i = i + 1
+                scaling_matrix[i, i] = max(spin.intensities.values())
 
         # Return the scaling matrix.
         return scaling_matrix
@@ -195,8 +188,13 @@ class Relax_fit(API_base, API_common):
             errors.append(spin.intensity_err[key])
             times.append(cdp.relax_times[key])
 
+        # The scaling matrix in a diagonalised list form.
+        scaling_list = []
+        for i in range(len(scaling_matrix)):
+            scaling_list.append(scaling_matrix[i, i])
+
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         self._func(param_vector)
@@ -333,12 +331,12 @@ class Relax_fit(API_base, API_common):
             # Loop over the parameters.
             for i in range(n):
                 # Relaxation rate (from 0 to 20 s^-1).
-                if spin.params[i] == 'Rx':
+                if spin.params[i] == 'rx':
                     lower.append(0.0)
                     upper.append(20.0)
 
                 # Intensity
-                elif search('^I', spin.params[i]):
+                elif search('^i', spin.params[i]):
                     # Find the ID of the first time point.
                     min_time = min(cdp.relax_times.values())
                     for key in list(cdp.relax_times.keys()):
@@ -350,12 +348,15 @@ class Relax_fit(API_base, API_common):
                     lower.append(0.0)
                     upper.append(average(spin.intensities[id]))
 
-        # Parameter scaling.
+        # Diagonal scaling of minimisation options.
+        lower_new = []
+        upper_new = []
         for i in range(n):
-            lower[i] = lower[i] / scaling_matrix[i, i]
-            upper[i] = upper[i] / scaling_matrix[i, i]
+            lower_new.append(lower[i] / scaling_matrix[i, i])
+            upper_new.append(upper[i] / scaling_matrix[i, i])
 
-        return inc, lower, upper
+        # Return the minimisation options.
+        return inc, lower_new, upper_new
 
 
     def _linear_constraints(self, spin=None, scaling_matrix=None):
@@ -404,7 +405,7 @@ class Relax_fit(API_base, API_common):
         # Loop over the parameters.
         for k in range(len(spin.params)):
             # Relaxation rate.
-            if spin.params[k] == 'Rx':
+            if spin.params[k] == 'rx':
                 # Rx >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -412,7 +413,7 @@ class Relax_fit(API_base, API_common):
                 j = j + 1
 
             # Intensity parameter.
-            elif search('^I', spin.params[k]):
+            elif search('^i', spin.params[k]):
                 # I0, Iinf >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -498,12 +499,12 @@ class Relax_fit(API_base, API_common):
         # Two parameter exponential fit.
         if model == 'exp':
             print("Two parameter exponential fit.")
-            params = ['Rx', 'I0']
+            params = ['rx', 'i0']
 
         # Three parameter inversion recovery fit.
         elif model == 'inv':
             print("Three parameter inversion recovery fit.")
-            params = ['Rx', 'I0', 'Iinf']
+            params = ['rx', 'i0', 'iinf']
 
         # Invalid model.
         else:
@@ -661,7 +662,7 @@ class Relax_fit(API_base, API_common):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                inc, lower, upper = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower_new, upper_new = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
@@ -706,7 +707,12 @@ class Relax_fit(API_base, API_common):
                 # The relaxation times.
                 times.append(cdp.relax_times[key])
 
-            setup(num_params=len(spin.params), num_times=len(values), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix.tolist())
+            # The scaling matrix in a diagonalised list form.
+            scaling_list = []
+            for i in range(len(scaling_matrix)):
+                scaling_list.append(scaling_matrix[i, i])
+
+            setup(num_params=len(spin.params), num_times=len(values), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -737,7 +743,7 @@ class Relax_fit(API_base, API_common):
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=self._func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+                results = grid(func=self._func, args=(), num_incs=inc, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, chi2, iter_count, warning = results
