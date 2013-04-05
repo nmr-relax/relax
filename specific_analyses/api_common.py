@@ -99,6 +99,10 @@ class API_common:
 
         # Loop over the parameters.
         for name in self.PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
+            # Not a parameter of the model.
+            if name not in data_cont.params:
+                continue
+
             # The default value.
             param_type = self.PARAMS.get_type(name)
             if param_type == dict:
@@ -573,6 +577,10 @@ class API_common:
 
             # Loop over all the data names.
             for object_name in param_names:
+                # Not a parameter of the model.
+                if object_name not in spin.params:
+                    continue
+
                 # Name for the simulation object.
                 sim_object_name = object_name + '_sim'
 
@@ -678,6 +686,10 @@ class API_common:
 
         # Loop over the residue specific parameters.
         for param in self.data_names(set='params'):
+            # Not a parameter of the model.
+            if param not in spin.params:
+                continue
+
             # Return the parameter array.
             if index == inc:
                 return getattr(spin, param + "_sim")
