@@ -343,16 +343,16 @@ class Mf(SystemTestCase):
         self.interpreter.pymol.macro_write(data_type='rex',       dir=ds.tmpdir, force=True)
 
         # Attempt to create the Grace plots.
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2',  file='s2.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr',       dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr',       dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='te',  file='te.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf',  file='tf.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts',  file='ts.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr',       dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='s2',   y_data_type='te',  file='s2_vs_te.agr',  dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='s2',   y_data_type='rex', file='s2_vs_rex.agr', dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='te',   y_data_type='rex', file='te_vs_rex.agr', dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='s2',  file='s2.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='s2f', file='s2f.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='s2s', file='s2s.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='te',  file='te.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='tf',  file='tf.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='ts',  file='ts.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='rex.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',      y_data_type='te',  file='s2_vs_te.agr',  dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',      y_data_type='rex', file='s2_vs_rex.agr', dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='te',      y_data_type='rex', file='te_vs_rex.agr', dir=ds.tmpdir, force=True)
 
         # Attempt to create the text files of the values.
         self.interpreter.value.write(param='s2',       file='s2.txt',       dir=ds.tmpdir, force=True)
@@ -429,16 +429,16 @@ class Mf(SystemTestCase):
         self.interpreter.pymol.macro_write(data_type='rex',       dir=ds.tmpdir, force=True)
 
         # Attempt to create the Grace plots.
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2',  file='s2.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr',       dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr',       dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='te',  file='te.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf',  file='tf.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts',  file='ts.agr',        dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr',       dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='s2',   y_data_type='te',  file='s2_vs_te.agr',  dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='s2',   y_data_type='rex', file='s2_vs_rex.agr', dir=ds.tmpdir, force=True)
-        self.interpreter.grace.write(x_data_type='te',   y_data_type='rex', file='te_vs_rex.agr', dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='s2',  file='s2.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='s2f', file='s2f.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='s2s', file='s2s.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='te',  file='te.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='tf',  file='tf.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='ts',  file='ts.agr',        dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='rex.agr',       dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',      y_data_type='te',  file='s2_vs_te.agr',  dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',      y_data_type='rex', file='s2_vs_rex.agr', dir=ds.tmpdir, force=True)
+        self.interpreter.grace.write(x_data_type='te',      y_data_type='rex', file='te_vs_rex.agr', dir=ds.tmpdir, force=True)
 
         # Attempt to create the text files of the values.
         self.interpreter.value.write(param='s2',       file='s2.txt',       dir=ds.tmpdir, force=True)
