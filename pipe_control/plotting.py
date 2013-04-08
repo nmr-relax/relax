@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,49 +19,35 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package of analysis independent code."""
+# Module docstring.
+"""Module for the plotting of data."""
 
-# The available modules.
-__all__ = [ 'align_tensor',
-            'angles',
-            'bmrb',
-            'bruker',
-            'dasha',
-            'diffusion_tensor',
-            'dipole_pair',
-            'domain',
-            'eliminate',
-            'exp_info',
-            'fix',
-            'frq',
-            'grace',
-            'interatomic',
-            'minimise',
-            'model_selection',
-            'mol_res_spin',
-            'molmol',
-            'monte_carlo',
-            'noesy',
-            'opendx',
-            'palmer',
-            'paramag',
-            'pcs',
-            'pipes',
-            'plotting',
-            'pymol_control',
-            'rdc',
-            'relax_data',
-            'reset',
-            'result_files',
-            'results',
-            'script',
-            'selection',
-            'sequence',
-            'spectrum',
-            'state',
-            'structure',
-            'temperature',
-            'value',
-            'vmd'
-]
+
+# relax module imports.
+from pipe_control import minimise
+import specific_analyses
+
+
+def determine_functions(category):
+    """Determine the specific functions for the given data type.
+
+    @param category:    The data category.
+    @type category:     str
+    @return:            The analysis specific return_value, return_conversion_factor, and get_type methods.
+    @rtype:             tuple of methods or None
+    """
+
+    # Spin category.
+    if category == 'spin':
+        return None, None, None
+
+    # A minimisation statistic.
+    if minimise.return_data_name(category):
+        return minimise.return_value, minimise.return_conversion_factor, None
+
+    # Analysis specific value returning functions.
+    else:
+        return_value = specific_analyses.setup.get_specific_fn('return_value')
+        return_conversion_factor = specific_analyses.setup.get_specific_fn('return_conversion_factor')
+        data_type = specific_analyses.setup.get_specific_fn('data_type')
+        return return_value, return_conversion_factor, data_type

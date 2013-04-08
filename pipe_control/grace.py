@@ -32,6 +32,7 @@ import pipe_control
 from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
 from pipe_control import pipes
 from pipe_control.result_files import add_result_file
+from pipe_control.plotting import determine_functions
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from lib.io import get_file_path, open_write_file, test_binary
 from lib.software.grace import write_xy_data, write_xy_header
@@ -183,18 +184,8 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     data_dict = False
 
     # Specific x and y value returning functions.
-    x_return_value = y_return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type())
-    x_return_conversion_factor = y_return_conversion_factor = specific_analyses.setup.get_specific_fn('return_conversion_factor', pipes.get_type())
-
-    # Test if the X-axis data type is a minimisation statistic.
-    if x_data_type != 'spin' and pipe_control.minimise.return_data_name(x_data_type):
-        x_return_value = pipe_control.minimise.return_value
-        x_return_conversion_factor = pipe_control.minimise.return_conversion_factor
-
-    # Test if the Y-axis data type is a minimisation statistic.
-    if y_data_type != 'spin' and pipe_control.minimise.return_data_name(y_data_type):
-        y_return_value = pipe_control.minimise.return_value
-        y_return_conversion_factor = pipe_control.minimise.return_conversion_factor
+    x_return_value, x_return_conversion_factor, x_get_type = determine_functions(category=x_data_type)
+    y_return_value, y_return_conversion_factor, y_get_type = determine_functions(category=y_data_type)
 
     # Number of graph sets.
     if plot_data == 'sim':
