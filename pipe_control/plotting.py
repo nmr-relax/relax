@@ -28,21 +28,21 @@ from pipe_control import minimise
 import specific_analyses
 
 
-def determine_functions(category):
+def determine_functions(data_name=None):
     """Determine the specific functions for the given data type.
 
-    @param category:    The data category.
-    @type category:     str
-    @return:            The analysis specific return_value, return_conversion_factor, and get_type methods.
+    @keyword data_name: The name of the data or variable to plot.
+    @type data_name:    str
+    @return:            The analysis specific return_value, return_conversion_factor, and data_type methods.
     @rtype:             tuple of methods or None
     """
 
-    # Spin category.
-    if category == 'spin':
+    # Spin data.
+    if data_name in ['res_num', 'spin_num']:
         return None, None, None
 
     # A minimisation statistic.
-    if minimise.return_data_name(category):
+    if minimise.return_data_name(data_name):
         return minimise.return_value, minimise.return_conversion_factor, None
 
     # Analysis specific value returning functions.
