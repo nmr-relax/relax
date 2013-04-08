@@ -60,7 +60,7 @@ def axis_setup(data_type=None, norm=True):
     axis_labels = [None, None]
     for i in range(2):
         # Determine the sequence data type.
-        if data_type[i] == 'spin':
+        if data_type[i] == 'res_num':
             seq_type[i] = 'res'
 
         # Analysis specific methods for making labels.
@@ -74,12 +74,12 @@ def axis_setup(data_type=None, norm=True):
             return_grace_string = specific_analyses.setup.get_specific_fn('return_grace_string', pipes.get_type())
 
             # Test if the axis data type is a minimisation statistic.
-            if data_type[i] and data_type[i] != 'spin' and pipe_control.minimise.return_data_name(data_type[i]):
+            if data_type[i] and data_type[i] != 'res_num' and pipe_control.minimise.return_data_name(data_type[i]):
                 return_units = pipe_control.minimise.return_units
                 return_grace_string = pipe_control.minimise.return_grace_string
 
         # Some axis default values for spin data.
-        if data_type[i] == 'spin':
+        if data_type[i] == 'res_num':
             # Residue only data.
             if seq_type[i] == 'res':
                 # Axis limits.
@@ -184,8 +184,8 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     data_dict = False
 
     # Specific x and y value returning functions.
-    x_return_value, x_return_conversion_factor, x_get_type = determine_functions(category=x_data_type)
-    y_return_value, y_return_conversion_factor, y_get_type = determine_functions(category=y_data_type)
+    x_return_value, x_return_conversion_factor, x_get_type = determine_functions(data_name=x_data_type)
+    y_return_value, y_return_conversion_factor, y_get_type = determine_functions(data_name=y_data_type)
 
     # Number of graph sets.
     if plot_data == 'sim':
@@ -215,7 +215,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 continue
 
             # The X data (plotted as residue numbers).
-            if x_data_type == 'spin':
+            if x_data_type == 'res_num':
                 x_val = res_num
                 x_err = None
 
@@ -225,7 +225,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 x_val, x_err = x_return_value(spin, x_data_type, sim=sim)
 
             # The Y data (plotted as residue numbers).
-            if y_data_type == 'spin':
+            if y_data_type == 'res_num':
                 y_val = res_num
                 y_err = None
 
@@ -320,12 +320,12 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 point = data[0][index][-1]
 
                 # Conversion factors.
-                if x_data_type != 'spin':
+                if x_data_type != 'res_num':
                     x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type)
-                if x_err[j] and x_data_type != 'spin':
+                if x_err[j] and x_data_type != 'res_num':
                     x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type)
                 y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type)
-                if y_err[j] and y_data_type != 'spin':
+                if y_err[j] and y_data_type != 'res_num':
                     y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type)
 
                 # Append the data.
@@ -437,7 +437,7 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     system(grace_exe + " " + file_path + " &")
 
 
-def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
+def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
     """Writing data to a file.
 
     @keyword x_data_type:   The category of the X-axis data.
