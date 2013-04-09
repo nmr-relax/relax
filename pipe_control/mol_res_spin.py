@@ -3637,7 +3637,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False, skip_
                     continue
 
                 # Skip deselected spins.
-                if not spin.select:
+                if skip_desel and not spin.select:
                     continue
 
                 # Generate the spin id.
