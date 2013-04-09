@@ -400,6 +400,8 @@ class API_common:
         # Return the data.
         if sim == None:
             return value, error
+        elif value == None:
+            return value, error
         else:
             return value[sim], error
 
