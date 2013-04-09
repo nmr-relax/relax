@@ -442,6 +442,9 @@ def count_max_spins_per_residue(pipe=None, skip_desel=True):
     # Init.
     max_num = 0
 
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # Loop over the molecules.
     for mol in dp.mol:
         # Loop over the residues.
