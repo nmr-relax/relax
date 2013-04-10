@@ -417,6 +417,57 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
+def count_max_spins_per_residue(pipe=None, skip_desel=True):
+    """Determine the maximum number of spins present per residue.
+
+    @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:             str
+    @keyword skip_desel:    A flag which if true will cause deselected spins to be skipped in the count.
+    @type skip_desel:       bool
+    @return:                The number of non-empty spins.
+    @rtype:                 int
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # No data, hence no spins.
+    if not exists_mol_res_spin_data(pipe=pipe):
+        return 0
+
+    # Init.
+    max_num = 0
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Loop over the molecules.
+    for mol in dp.mol:
+        # Loop over the residues.
+        for res in mol.res:
+            # Initialise the counter.
+            spin_num = 0
+
+            # Loop over the spins.
+            for spin in res.spin:
+                # Skip deselected spins.
+                if skip_desel and not spin.select:
+                    continue
+
+                # Increment the spin number.
+                spin_num = spin_num + 1
+
+            # The maximum number.
+            max_num = max(max_num, spin_num)
+
+    # Return the maximum number of spins.
+    return spin_num
+
+
 def count_molecules(selection=None, pipe=None):
     """Count the number of molecules for which there is data.
 
@@ -3541,19 +3592,21 @@ def spin_index_loop(selection=None, pipe=None):
                 yield mol_index, res_index, spin_index
 
 
-def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
+def spin_loop(selection=None, pipe=None, full_info=False, return_id=False, skip_desel=False):
     """Generator function for looping over all the spin systems of the given selection.
 
-    @keyword selection: The spin system selection identifier.
-    @type selection:    str
-    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
-    @type pipe:         str
-    @keyword full_info: A flag which if True will cause the the molecule name, residue number, and residue name to be returned in addition to the spin container.
-    @type full_info:    bool
-    @keyword return_id: A flag which if True will cause the spin identification string of the current spin to be returned in addition to the spin container.
-    @type return_id:    bool
-    @return:            The spin system specific data container.  If full_info is True, a tuple of the spin container, the molecule name, residue number, and residue name.  If return_id is True, a tuple of the spin container and spin id.  If both flags are True, then a tuple of the spin container, the molecule name, residue number, residue name, and spin id.
-    @rtype:             If full_info and return_id are False, SpinContainer instance.  If full_info is True and return_id is false, a tuple of (SpinContainer instance, str, int, str).  If full_info is False and return_id is True, a tuple of (SpinContainer instance, str).  If full_info and return_id are False, a tuple of (SpinContainer instance, str, int, str, str)
+    @keyword selection:     The spin system selection identifier.
+    @type selection:        str
+    @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:             str
+    @keyword full_info:     A flag which if True will cause the the molecule name, residue number, and residue name to be returned in addition to the spin container.
+    @type full_info:        bool
+    @keyword return_id:     A flag which if True will cause the spin identification string of the current spin to be returned in addition to the spin container.
+    @type return_id:        bool
+    @keyword skip_desel:    A flag which if True will cause deselected spins to be skipped.
+    @type skip_desel:       bool
+    @return:                The spin system specific data container.  If full_info is True, a tuple of the spin container, the molecule name, residue number, and residue name.  If return_id is True, a tuple of the spin container and spin id.  If both flags are True, then a tuple of the spin container, the molecule name, residue number, residue name, and spin id.
+    @rtype:                 If full_info and return_id are False, SpinContainer instance.  If full_info is True and return_id is false, a tuple of (SpinContainer instance, str, int, str).  If full_info is False and return_id is True, a tuple of (SpinContainer instance, str).  If full_info and return_id are False, a tuple of (SpinContainer instance, str, int, str, str)
     """
 
     # The data pipe.
@@ -3581,6 +3634,10 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
                 if not select_obj.contains_spin(spin_num=spin.num, spin_name=spin.name, res_num=res.num, res_name=res.name, mol=mol.name):
+                    continue
+
+                # Skip deselected spins.
+                if skip_desel and not spin.select:
                     continue
 
                 # Generate the spin id.

@@ -101,7 +101,7 @@ uf.title = "Create a grace '.agr' file to visualise the 2D data."
 uf.title_short = "Grace file creation."
 uf.add_keyarg(
     name = "x_data_type",
-    default = "spin",
+    default = "res_num",
     py_type = "str",
     desc_short = "x data type",
     desc = "The data type for the X-axis (no regular expression is allowed).",
@@ -120,7 +120,7 @@ uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
-    desc = "The spin identification string.",
+    desc = "The spin ID string.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -176,9 +176,12 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is designed to be as flexible as possible so that any combination of data can be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.  Three types of information can be used to create various types of plot.  These include the x-axis and y-axis data types, the spin identification string, and the type of data plot.")
-uf.desc[-1].add_paragraph("The x-axis and y-axis data types should be plain strings, regular expression is not allowed.  If the x-axis data type is not given, the plot will default to having the spin sequence along the x-axis.  The two axes of the Grace plot can be absolutely any of the data types listed in the tables below.  The only limitation, currently anyway, is that the data must belong to the same data pipe.")
-uf.desc[-1].add_paragraph("The spin identification string can be used to limit which spins are used in the plot.  The default is that all spins will be used, however, the ID string can be used to select a subset of all spins, or a single spin for plots of Monte Carlo simulations, etc.")
+uf.desc[-1].add_paragraph("This is designed to be as flexible as possible so that any combination of data can be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.  Three types of information can be used to create various types of plot.  These include the x-axis and y-axis data types, the spin ID string, and the type of data plot.")
+uf.desc[-1].add_paragraph("The x-axis and y-axis data types should be plain strings, regular expression is not allowed.  The two axes of the Grace plot can be any of the data types listed in the tables below.  The only limitation is that the data must belong to the same data pipe.")
+uf.desc[-1].add_paragraph("If the x-axis data type is not given, the plot will default to having the residue numbering along the x-axis.Two special data types for the axes are:")
+uf.desc[-1].add_item_list_element("'res_num'", "The axis will consist of the residue numbering.")
+uf.desc[-1].add_item_list_element("'spin_num'", "The axis will consist of the spin numbering.")
+uf.desc[-1].add_paragraph("The spin ID string can be used to limit which spins are used in the plot.  The default is that all spins will be used, however, the ID string can be used to select a subset of all spins, or a single spin for plots of Monte Carlo simulations, etc.")
 uf.desc[-1].add_paragraph("The property which is actually plotted can be controlled by the plot data setting.  This can be one of the following:")
 uf.desc[-1].add_item_list_element("'value'", "Plot values (with errors if they exist).")
 uf.desc[-1].add_item_list_element("'error'", "Plot errors.")
@@ -195,9 +198,9 @@ uf.desc.append(Model_free.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To write the NOE values for all spins to the Grace file 'noe.agr', type one of:")
-uf.desc[-1].add_prompt("relax> grace.write('spin', 'noe', file='noe.agr')")
+uf.desc[-1].add_prompt("relax> grace.write('res_num', 'noe', file='noe.agr')")
 uf.desc[-1].add_prompt("relax> grace.write(y_data_type='noe', file='noe.agr')")
-uf.desc[-1].add_prompt("relax> grace.write(x_data_type='spin', y_data_type='noe', file='noe.agr')")
+uf.desc[-1].add_prompt("relax> grace.write(x_data_type='res_num', y_data_type='noe', file='noe.agr')")
 uf.desc[-1].add_prompt("relax> grace.write(y_data_type='noe', file='noe.agr', force=True)")
 uf.desc[-1].add_paragraph("To create a Grace file of 's2' vs. 'te' for all spins, type one of:")
 uf.desc[-1].add_prompt("relax> grace.write('s2', 'te', file='s2_te.agr')")

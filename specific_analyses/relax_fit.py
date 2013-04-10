@@ -68,8 +68,8 @@ class Relax_fit(API_base, API_common):
         self.sim_return_selected = self._sim_return_selected_spin
 
         # Set up the spin parameters.
-        self.PARAMS.add('intensities', scope='spin', py_type=list, grace_string='\\qPeak intensities\\Q')
-        self.PARAMS.add('relax_times', scope='spin', py_type=list, grace_string='\\qRelaxation time period (s)\\Q')
+        self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
         self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
         self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
         self.PARAMS.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)

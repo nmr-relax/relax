@@ -46,7 +46,7 @@ class Grace(SystemTestCase):
         self.interpreter.state.load('state_cam_kkalpha', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Create the plot.
-        self.interpreter.grace.write('spin', 's2', file=self.tmpfile, spin_id='@N', dir=None)
+        self.interpreter.grace.write('res_num', 's2', file=self.tmpfile, spin_id='@N', dir=None)
 
         # Read the file data.
         file = open(self.tmpfile)

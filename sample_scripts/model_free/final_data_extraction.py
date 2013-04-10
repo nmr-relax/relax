@@ -118,13 +118,13 @@ value.write(param='local_tm', file='local_tm.txt', dir='final_results', force=Tr
 
 #Create Grace Plots
 
-grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', force=True)
-grace.write(x_data_type='spin', y_data_type='te', file='te.agr', force=True)
-grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', force=True)
-grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', force=True)
-grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', force=True)
-grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', force=True)
-grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='s2', file='s2.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='te', file='te.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='s2f', file='s2f.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='s2s', file='s2s.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='ts', file='ts.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='tf', file='tf.agr', force=True)
+grace.write(x_data_type='res_num', y_data_type='csa', file='csa.agr', force=True)
 grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', force=True)
 
 
