@@ -117,6 +117,7 @@ grace.write(x_data_type='i0', y_data_type='rx', file='i0_vs_rx_err.agr', plot_da
 grace.write(x_data_type='i0', y_data_type='rx', file='i0_vs_rx_sim.agr', plot_data='sim', dir=ds.tmpdir, force=True)    # Relaxation rate.
 grace.write(x_data_type='relax_times', y_data_type='intensities', file='curves.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
 grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='curves_norm.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='res_num', y_data_type='intensities', file='intensities.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
 
 # Create Grace plots with the axes reversed.
 grace.write(x_data_type='chi2', y_data_type='res_num', file='chi2_rev.agr', dir=ds.tmpdir, force=True)    # Minimised chi-squared value.
@@ -126,6 +127,7 @@ grace.write(x_data_type='rx', y_data_type='res_num', file='rx_err_rev.agr', dir=
 grace.write(x_data_type='rx', y_data_type='res_num', file='rx_sim_rev.agr', dir=ds.tmpdir, plot_data='sim', force=True)    # Relaxation rate.
 grace.write(x_data_type='intensities', y_data_type='relax_times', file='curves_rev.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
 grace.write(x_data_type='intensities', y_data_type='relax_times', norm=True, file='curves_norm_rev.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='intensities', y_data_type='res_num', file='intensities_rev.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
 
 # Save the program state.
 state.save('devnull', force=True)
