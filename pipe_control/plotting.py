@@ -64,6 +64,8 @@ def assemble_data(spin_id=None, x_data_name=None, y_data_name=None, plot_data=No
         data, set_labels, x_err_flag, y_err_flag = assemble_data_seq_value(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
     elif graph_type == 'value-value':
         data, set_labels, x_err_flag, y_err_flag = assemble_data_scatter(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
+    elif graph_type == 'seq-series':
+        data, set_labels, x_err_flag, y_err_flag = assemble_data_seq_series(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data, x_type=x_type, y_type=y_type)
     elif graph_type == 'series-series':
         data, set_labels, x_err_flag, y_err_flag = assemble_data_series_series(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data, x_type=x_type, y_type=y_type)
     else:
@@ -100,6 +102,132 @@ def assemble_data_scatter(spin_id=None, x_data_name=None, y_data_name=None, plot
 
     # Default to the assemble_data_seq_value() function, as the graphs are currently not constructed differently.
     return assemble_data_seq_value(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
+
+
+def assemble_data_seq_series(spin_id=None, x_data_name=None, y_data_name=None, plot_data='value', x_type=None, y_type=None):
+    """Assemble the graph data for residue or spin sequence verses verses list or dictionary data.
+
+    For such data, one graph will be produced.  There will be one data set in this graph per series.
+
+
+    @keyword spin_id:       The spin ID string for restricting the graph to.
+    @type spin_id:          str
+    @keyword x_data_name:   The name of the X-data or variable to plot.
+    @type x_data_name:      str
+    @keyword y_data_name:   The name of the Y-data or variable to plot.
+    @type y_data_name:      str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @keyword x_type:        The type of X-data to plot.
+    @type x_type:           type object
+    @keyword y_type:        The type of Y-data to plot.
+    @type y_type:           type object
+    @return:                The graph data, set labels, and flags for errors in the X and Y dimensions.
+    @rtype:                 list of lists of lists of numbers, list of str, bool, bool
+    """
+
+    # Initialise some data structures.
+    data = [[]]
+    set_labels = []
+    x_err_flag = False
+    y_err_flag = False
+
+    # The sequence and series axes.
+    if x_data_name in ['res_num', 'spin_num']:
+        seq_axis = 'x'
+        series_type = y_type
+    else:
+        seq_axis = 'y'
+        series_type = x_type
+
+    # Determine the number of sets.
+    for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
+        # Fetch the series data (ignore simulations).
+        if seq_axis == 'x':
+            val, err = fetch_1D_data(plot_data=plot_data, data_name=y_data_name, spin=spin, res_num=res_num)
+        else:
+            val, err = fetch_1D_data(plot_data=plot_data, data_name=x_data_name, spin=spin, res_num=res_num)
+
+        # The keys.
+        if series_type == dict:
+            keys = list(val.keys())
+
+        # Loop over the series data.
+        for j in range(len(val)):
+            # The index or key for the data.
+            if series_type == list:
+                elem = j
+            else:
+                elem = keys[j]
+
+            # Add the set info if new.
+            if elem not in set_labels:
+                data[0].append([])
+                set_labels.append(elem)
+
+    # Sort the set labels.
+    set_labels.sort()
+
+    # Number of data points per spin.
+    if plot_data == 'sim':
+        points = cdp.sim_number
+    else:
+        points = 1
+
+    # Loop over the spins.
+    spin_index = 0
+    for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
+        # Loop over the data points (for simulations).
+        for i in range(points):
+            # The X and Y data.
+            x_val, x_err = fetch_1D_data(plot_data=plot_data, data_name=x_data_name, spin=spin, res_num=res_num, sim_num=i)
+            y_val, y_err = fetch_1D_data(plot_data=plot_data, data_name=y_data_name, spin=spin, res_num=res_num, sim_num=i)
+
+            # Alias the data.
+            if seq_axis == 'x':
+                series_val = y_val
+            else:
+                series_val = x_val
+
+            # Go to the next spin if there is missing xy data.
+            if x_val == None or y_val == None:
+                continue
+
+            # The error flags.
+            if x_err != None:
+                x_err_flag = True
+            if y_err != None:
+                y_err_flag = True
+
+            # The keys.
+            if series_type == dict:
+                keys = list(series_val.keys())
+
+            # Loop over the series data.
+            for j in range(len(series_val)):
+                # The index or key for the data.
+                if series_type == list:
+                    index = set_labels.index(j)
+                    elem = index
+                else:
+                    index = set_labels.index(keys[j])
+                    elem = set_labels[set_labels.index(keys[j])]
+
+                # Append the data.
+                if seq_axis == 'x':
+                    data[0][index].append([x_val, y_val[elem]])
+                else:
+                    data[0][index].append([x_val[elem], y_val])
+                if x_err_flag:
+                    data[0][index][-1].append(x_err[elem])
+                if y_err_flag:
+                    data[0][index][-1].append(y_err[elem])
+
+        # Increment the spin index.
+        spin_index += 1
+
+    # Return the data.
+    return data, set_labels, x_err_flag, y_err_flag
 
 
 def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, plot_data='value'):
