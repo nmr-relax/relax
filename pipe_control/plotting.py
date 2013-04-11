@@ -342,6 +342,45 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
     x_err_flag = False
     y_err_flag = False
 
+    # Sanity check.
+    if x_type != y_type:
+        raise RelaxError("The X data type '%s' and Y data type '%s' do not match." % (x_type, y_type))
+
+    # Check if the dictionary keys are the values to plot.
+    keys_for_values = None
+    base_values = []
+    if x_type == dict:
+        for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
+            # Fetch the series data (ignore simulations).
+            x_val, x_err = fetch_1D_data(plot_data=plot_data, data_name=x_data_name, spin=spin, res_num=res_num)
+            y_val, y_err = fetch_1D_data(plot_data=plot_data, data_name=y_data_name, spin=spin, res_num=res_num)
+
+            # Go to the next spin if there is missing xy data.
+            if x_val == None or y_val == None:
+                continue
+
+            # The keys.
+            x_keys = list(x_val.keys())
+            y_keys = list(y_val.keys())
+
+            # The keys do not match.
+            if x_keys[0] in y_keys:
+                continue
+
+            # Are the X keys in the Y values?
+            if x_keys[0] in y_val.values():
+                keys_for_values = 'x'
+                for key in x_keys:
+                    if key not in base_values:
+                        base_values.append(key)
+
+            # Are the Y keys in the X values?
+            elif y_keys[0] in x_val.values():
+                keys_for_values = 'y'
+                for key in y_keys:
+                    if key not in base_values:
+                        base_values.append(key)
+
     # Number of data points per spin.
     if plot_data == 'sim':
         points = cdp.sim_number
@@ -361,6 +400,10 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
             x_val, x_err = fetch_1D_data(plot_data=plot_data, data_name=x_data_name, spin=spin, res_num=res_num, sim_num=i)
             y_val, y_err = fetch_1D_data(plot_data=plot_data, data_name=y_data_name, spin=spin, res_num=res_num, sim_num=i)
 
+            # The base values to create the curve from.
+            if keys_for_values == None:
+                base_values = x_val
+
             # Go to the next spin if there is missing xy data.
             if x_val == None or y_val == None:
                 continue
@@ -372,17 +415,15 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
                 y_err_flag = True
 
             # Series sanity checks.
-            if len(x_val) != len(y_val):
+            if keys_for_values == None and len(x_val) != len(y_val):
                 raise RelaxError("The series data %s does not have the same number of elements as %s." % (x_val, y_val))
-            if x_type != y_type:
-                raise RelaxError("The X data type '%s' and Y data type '%s' do not match." % (x_type, y_type))
 
             # The keys.
             if x_type == dict:
                 keys = list(x_val.keys())
 
             # Loop over the list data.
-            for j in range(len(x_val)):
+            for j in range(len(base_values)):
                 # The index or key for the data.
                 if x_type == list:
                     elem = j
@@ -390,11 +431,28 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
                     elem = keys[j]
 
                 # Append the data.
-                data[0][spin_index].append([x_val[elem], y_val[elem]])
-                if x_err_flag:
-                    data[0][spin_index][-1].append(x_err[elem])
-                if y_err_flag:
-                    data[0][spin_index][-1].append(y_err[elem])
+                if keys_for_values == None:
+                    data[0][spin_index].append([x_val[elem], y_val[elem]])
+                    if x_err_flag:
+                        data[0][spin_index][-1].append(x_err[elem])
+                    if y_err_flag:
+                        data[0][spin_index][-1].append(y_err[elem])
+
+                # Append the data (X keys in the Y values).
+                elif keys_for_values == 'x':
+                    data[0][spin_index].append([x_val[base_values[j]], base_values[j]])
+                    if x_err_flag:
+                        data[0][spin_index][-1].append(x_err[base_values[j]])
+                    if y_err_flag:
+                        raise RelaxError("Y errors are not possible when the Y values are keys.")
+
+                # Append the data (Y keys in the X values).
+                elif keys_for_values == 'y':
+                    data[0][spin_index].append([base_values[j], y_val[base_values[j]]])
+                    if x_err_flag:
+                        raise RelaxError("X errors are not possible when the X values are keys.")
+                    if y_err_flag:
+                        data[0][spin_index][-1].append(y_err[base_values[j]])
 
             # Sort the data for better looking curves.
             data[0][spin_index].sort()
