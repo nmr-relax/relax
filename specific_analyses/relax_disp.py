@@ -1396,14 +1396,41 @@ class Relax_disp(API_base, API_common):
         @rtype:     tuple of list of SpinContainer instances and list of spin IDs
         """
 
-        # Loop over the sequence.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+        # No clustering, so loop over the sequence.
+        if not hasattr(cdp, 'clustering'):
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
 
-            # Return the spin container as a stop-gap measure.
-            yield [spin], [spin_id]
+                # Return the spin container as a stop-gap measure.
+                yield [spin], [spin_id]
+
+        # Loop over the clustering.
+        else:
+            # The clusters.
+            for key in cdp.clustering.keys():
+                # Skip the free spins.
+                if key == 'free spins':
+                    continue
+
+                # Create the spin container and ID lists.
+                spin_list = []
+                spin_id_list = []
+                for spin_id in cdp.clustering[key]:
+                    spin_list.append(return_spin(spin_id))
+                    spin_id_list.append(spin_id)
+
+                # Yield the cluster.
+                yield spin_list, spin_id_list
+
+            # The free spins.
+            for spin_id in cdp.clustering['free spins']:
+                # Get the spin container.
+                spin = return_spin(spin_id)
+
+                # Yield each spin individually.
+                yield [spin], [spin_id]
 
 
     def overfit_deselect(self, data_check=True, verbose=True):
