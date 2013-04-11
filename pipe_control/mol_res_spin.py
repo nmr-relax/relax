@@ -465,7 +465,7 @@ def count_max_spins_per_residue(pipe=None, skip_desel=True):
             max_num = max(max_num, spin_num)
 
     # Return the maximum number of spins.
-    return spin_num
+    return max_num
 
 
 def count_molecules(selection=None, pipe=None):
