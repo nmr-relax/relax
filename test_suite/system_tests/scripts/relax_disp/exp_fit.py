@@ -4,11 +4,36 @@
 from os import sep
 
 # relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 
+# Analysis variables.
+#####################
+
+# The dispersion models.
+MODELS = ['exp_fit']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 5
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 3
+
+
+
+# Set up the data pipe.
+#######################
+
+# The results directory.
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = None
+
 # Create the data pipe.
-pipe.create('exp_fit', 'relax_disp')
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
 # The path to the data files.
 data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'exp_fit_data'
@@ -57,27 +82,11 @@ for i in range(len(data)):
 # Peak intensity error analysis.
 spectrum.error_analysis()
 
-# Grid search.
-grid_search(inc=5)
+# Auto-analysis execution.
+##########################
 
-# Minimise.
-minimise('simplex', constraints=False)
-
-# Monte Carlo simulations.
-monte_carlo.setup(number=3)
-monte_carlo.create_data()
-monte_carlo.initial_values()
-minimise('simplex', constraints=False)
-monte_carlo.error_analysis()
-
-# Save the relaxation dispersion parameters.
-value.write(param='rex', file='devnull', force=True)
-
-# Save the results.
-results.write(file='devnull', force=True)
-
-# Create Grace plots of the data.
-grace.write(y_data_type='chi2', file='devnull', force=True)    # Minimised chi-squared value.
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
 # Save the program state.
 state.save('devnull', force=True)
