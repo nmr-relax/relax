@@ -22,13 +22,6 @@
 # Package docstring.
 """Package for all of the automatic analyses, hard coded protocols to be used as a black box."""
 
-# Module imports.
-from auto_analyses import dauvergne_protocol
-from auto_analyses import noe
-from auto_analyses import relax_fit
-from auto_analyses import stereochem_analysis
-
-
 __all__ = [
     'dauvergne_protocol',
     'frame_order',
