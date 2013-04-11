@@ -311,7 +311,6 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
                 data[0][set_index][-1].append(y_err)
 
     # Return the data.
-    print data, set_labels, x_err_flag, y_err_flag
     return data, set_labels, x_err_flag, y_err_flag
 
 
