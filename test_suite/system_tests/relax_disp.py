@@ -108,6 +108,15 @@ class Relax_disp(SystemTestCase):
                 print("\tChecking for the absence of the '%s' parameter." % param)
                 self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], param))
 
+        # Check the clustering information.
+        self.assert_(hasattr(cdp, 'clustering'))
+        keys = ['free spins', 'cluster']
+        for key in keys:
+            self.assert_(key in cdp.clustering)
+        self.assert_('test' not in cdp.clustering)
+        self.assertEqual(cdp.clustering['free spins'], [':2@N'])
+        self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
+
 
     def test_read_r2eff(self):
         """Test the reading of a file containing r2eff values."""
