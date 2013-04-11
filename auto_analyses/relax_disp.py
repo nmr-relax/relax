@@ -104,8 +104,11 @@ class Relax_disp:
         # Printout.
         subtitle(file=sys.stdout, text="Simple exponential curve-fitting")
 
-        # Create the data pipe by copying the base pipe.o
+        # Create the data pipe by copying the base pipe.
         self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to='exp_fit', bundle_to=self.pipe_bundle)
+
+        # Set the relaxation dispersion curve type.
+        self.interpreter.relax_disp.select_model('exp_fit')
 
         # Grid search.
         self.interpreter.grid_search(inc=self.grid_inc)
