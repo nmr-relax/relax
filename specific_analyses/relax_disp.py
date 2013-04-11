@@ -284,6 +284,65 @@ class Relax_disp(API_base, API_common):
         return results[0, index]
 
 
+    def _cluster(self, cluster_id=None, spin_id=None):
+        """Define spin clustering.
+
+        @keyword cluster_id:    The cluster ID string.
+        @type cluster_id:       str
+        @keyword spin_id:       The spin ID string for the spin or group of spins to add to the cluster.
+        @type spin_id:          str
+        """
+
+        # Initialise.
+        if not hasattr(cdp, 'clustering'):
+            # Create the dictionary.
+            cdp.clustering = {}
+            cdp.clustering['free spins'] = []
+
+            # Add all spin IDs to the cluster.
+            for spin, id in spin_loop(return_id=True):
+                cdp.clustering['free spins'].append(id)
+
+        # Add the key.
+        if cluster_id not in cdp.clustering:
+            cdp.clustering[cluster_id] = []
+
+        # Loop over the spins to add to the cluster.
+        for spin, id in spin_loop(selection=spin_id, return_id=True):
+            # First remove the ID from all clusters.
+            for key in cdp.clustering.keys():
+                if id in cdp.clustering[key]:
+                    cdp.clustering[key].pop(cdp.clustering[key].index(id))
+
+            # Then add the ID to the cluster.
+            cdp.clustering[cluster_id].append(id)
+
+        # Clean up - delete any empty clusters.
+        for key in cdp.clustering.keys():
+            if cdp.clustering[key] == []:
+                cdp.clustering.pop(key)
+
+
+    def _cluster_ids(self):
+        """Return the current list of cluster ID strings.
+
+        @return:    The list of cluster IDs.
+        @rtype:     list of str
+        """
+
+        # Initialise.
+        ids = ['free spins']
+
+        # Add the defined IDs.
+        if hasattr(cdp, 'cluster'):
+            for key in list(cdp.cluster.keys()):
+                if key not in ids:
+                    ids.append(key)
+
+        # Return the IDs.
+        return ids
+
+
     def _cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 

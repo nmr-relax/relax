@@ -25,6 +25,7 @@
 
 # relax module imports.
 from pipe_control import spectrum
+from pipe_control.mol_res_spin import get_spin_ids
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -107,6 +108,43 @@ uf.desc[-1].add_paragraph("ANOTHER EXAMPLE FOR BATCH USE (FROM PEAK INTENSITY LI
 uf.backend = relax_disp_obj._calc_r2eff
 uf.menu_text = "&calc_r2eff"
 uf.wizard_size = (900, 600)
+
+
+# The relax_disp.cluster user function.
+uf = uf_info.add_uf('relax_disp.cluster')
+uf.title = "Define clusters of spins for joint optimisation."
+uf.title_short = "Spin clustering."
+uf.add_keyarg(
+    name = "cluster_id",
+    py_type = "str",
+    desc_short = "cluster ID",
+    desc = "The cluster identification string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = relax_disp_obj._cluster_ids
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    desc_short = "spin ID string",
+    desc = "The spin identifier string for the spin or group of spins to add to the cluster.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = get_spin_ids,
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("In a relaxation dispersion analysis, the parameters of the model of dispersion can either be optimised for each spin system separately or a number of spins can be grouped or clustered and the dispersion model parameters optimised for all spins in the cluster together.  Clusters are identified by unique ID strings.  Any spins not within a cluster will be optimised separately and individually.")
+uf.desc[-1].add_paragraph("If the cluster ID string already exists, the spins will be added to that pre-existing cluster.  If no spin ID is given, then all spins will be added to the cluster.")
+uf.desc[-1].add_paragraph("The special cluster ID string 'free spins' is reserved for the pool of non-clustered spins.  This can be used to remove a spin system from an already existing cluster by specifying this cluster ID and the desired spin ID.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To add the spins ':1@N' and ':3@N' to a new cluster called 'cluster', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.cluster('cluster', ':1,3@N)")
+uf.desc[-1].add_prompt("relax> relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N)")
+uf.backend = relax_disp_obj._cluster
+uf.menu_text = "c&luster"
+uf.wizard_height_desc = 500
+uf.wizard_size = (800, 600)
 
 
 # The relax_disp.cpmg_delayT user function.
