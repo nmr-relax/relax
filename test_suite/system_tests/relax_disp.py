@@ -26,6 +26,7 @@ from shutil import rmtree
 from tempfile import mkdtemp
 
 # relax module imports.
+from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
