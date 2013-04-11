@@ -26,6 +26,7 @@
 from auto_analyses import dauvergne_protocol
 from auto_analyses import noe
 from auto_analyses import relax_fit
+from auto_analyses import relax_disp
 from auto_analyses import stereochem_analysis
 
 
@@ -33,6 +34,7 @@ __all__ = [
     'dauvergne_protocol',
     'frame_order',
     'noe',
+    'relax_disp',
     'relax_fit',
     'stereochem_analysis'
 ]
