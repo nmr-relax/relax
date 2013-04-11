@@ -278,7 +278,15 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
         points = 1
 
     # Loop over the spins.
+    spin_names = []
     for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
+        # A new spin name.
+        if spin.name not in spin_names:
+            spin_names.append(spin.name)
+
+        # The set index.
+        set_index = spin_names.index(spin.name)
+
         # Loop over the data points (for simulations).
         for i in range(points):
             # The X and Y data.
@@ -296,13 +304,14 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
                 y_err_flag = True
 
             # Append the data.
-            data[0][0].append([x_val, y_val])
+            data[0][set_index].append([x_val, y_val])
             if x_err_flag:
-                data[0][0][-1].append(x_err)
+                data[0][set_index][-1].append(x_err)
             if y_err_flag:
-                data[0][0][-1].append(y_err)
+                data[0][set_index][-1].append(y_err)
 
     # Return the data.
+    print data, set_labels, x_err_flag, y_err_flag
     return data, set_labels, x_err_flag, y_err_flag
 
 
