@@ -417,11 +417,13 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
-def count_max_spins_per_residue(pipe=None, skip_desel=True):
+def count_max_spins_per_residue(pipe=None, spin_id=None, skip_desel=True):
     """Determine the maximum number of spins present per residue.
 
     @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:             str
+    @param spin_id:         The molecule, residue, and spin identifier string.
+    @type spin_id:          str
     @keyword skip_desel:    A flag which if true will cause deselected spins to be skipped in the count.
     @type skip_desel:       bool
     @return:                The number of non-empty spins.
@@ -445,6 +447,9 @@ def count_max_spins_per_residue(pipe=None, skip_desel=True):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
+    # Parse the selection string.
+    select_obj = Selection(spin_id)
+
     # Loop over the molecules.
     for mol in dp.mol:
         # Loop over the residues.
@@ -454,6 +459,10 @@ def count_max_spins_per_residue(pipe=None, skip_desel=True):
 
             # Loop over the spins.
             for spin in res.spin:
+                # Skip the spin if there is no match to the selection.
+                if not select_obj.contains_spin(spin_num=spin.num, spin_name=spin.name, res_num=res.num, res_name=res.name, mol=mol.name):
+                    continue
+
                 # Skip deselected spins.
                 if skip_desel and not spin.select:
                     continue
