@@ -61,13 +61,13 @@ def assemble_data(spin_id=None, x_data_name=None, y_data_name=None, plot_data=No
 
     # Assemble the different graph data structures.
     if graph_type == 'seq-value':
-        data, set_labels, x_err_flag, y_err_flag = assemble_data_seq_value(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
+        data, set_labels, x_err_flag, y_err_flag = assemble_data_seq_value(spin_id=spin_id, x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
     elif graph_type == 'value-value':
-        data, set_labels, x_err_flag, y_err_flag = assemble_data_scatter(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
+        data, set_labels, x_err_flag, y_err_flag = assemble_data_scatter(spin_id=spin_id, x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data)
     elif graph_type == 'seq-series':
-        data, set_labels, x_err_flag, y_err_flag = assemble_data_seq_series(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data, x_type=x_type, y_type=y_type)
+        data, set_labels, x_err_flag, y_err_flag = assemble_data_seq_series(spin_id=spin_id, x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data, x_type=x_type, y_type=y_type)
     elif graph_type == 'series-series':
-        data, set_labels, x_err_flag, y_err_flag = assemble_data_series_series(x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data, x_type=x_type, y_type=y_type)
+        data, set_labels, x_err_flag, y_err_flag = assemble_data_series_series(spin_id=spin_id, x_data_name=x_data_name, y_data_name=y_data_name, plot_data=plot_data, x_type=x_type, y_type=y_type)
     else:
         raise RelaxError("Unknown graph type '%s'." % graph_type)
 
@@ -257,7 +257,7 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
     # The number of data sets.
     set_count = 1
     if x_data_name == 'res_num' or y_data_name == 'res_num':
-        set_count = count_max_spins_per_residue()
+        set_count = count_max_spins_per_residue(spin_id=spin_id)
 
     # Expand the data structures for the number of sets.
     if set_count > 1:
@@ -278,7 +278,15 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
         points = 1
 
     # Loop over the spins.
+    spin_names = []
     for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
+        # A new spin name.
+        if spin.name not in spin_names:
+            spin_names.append(spin.name)
+
+        # The set index.
+        set_index = spin_names.index(spin.name)
+
         # Loop over the data points (for simulations).
         for i in range(points):
             # The X and Y data.
@@ -296,11 +304,11 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
                 y_err_flag = True
 
             # Append the data.
-            data[0][0].append([x_val, y_val])
+            data[0][set_index].append([x_val, y_val])
             if x_err_flag:
-                data[0][0][-1].append(x_err)
+                data[0][set_index][-1].append(x_err)
             if y_err_flag:
-                data[0][0][-1].append(y_err)
+                data[0][set_index][-1].append(y_err)
 
     # Return the data.
     return data, set_labels, x_err_flag, y_err_flag
