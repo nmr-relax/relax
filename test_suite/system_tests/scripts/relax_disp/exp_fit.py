@@ -81,7 +81,7 @@ spectrum.error_analysis()
 
 # Clustering.
 relax_disp.cluster(cluster_id='test', spin_id=':1')
-relax_disp.cluster(cluster_id='cluster', spin_id=':1,:3')
+relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N')
 
 
 
