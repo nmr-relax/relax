@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,8 +29,10 @@ from auto_analyses import relax_fit
 from auto_analyses import stereochem_analysis
 
 
-__all__ = [ 'dauvergne_protocol',
-            'frame_order',
-            'noe',
-            'relax_fit',
-            'stereochem_analysis' ]
+__all__ = [
+    'dauvergne_protocol',
+    'frame_order',
+    'noe',
+    'relax_fit',
+    'stereochem_analysis'
+]
