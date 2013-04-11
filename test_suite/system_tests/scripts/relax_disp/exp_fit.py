@@ -46,9 +46,6 @@ spin.create(res_name='Lys', res_num=3, spin_name='N')
 # Set the relaxation dispersion experiment type.
 relax_disp.exp_type('r1rho')
 
-# Set the relaxation dispersion curve type.
-relax_disp.select_model('exp_fit')
-
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = [
     ["nu_1kHz_relaxT_0.01", "nu_1kHz_relaxT_0.01.list", 1000.0, 0.01,   1000],
