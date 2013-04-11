@@ -55,20 +55,18 @@ class Relax_disp(SystemTestCase):
         ds.__reset__()
 
 
-    def test_curve_fitting_cpmg_fast(self):
-        """Test the relaxation dispersion curve fitting C modules for CPMG data in the
-        fast-exchange limit."""
+    def test_hansen_cpmg_data_fast_2site(self):
+        """Optimisation of Fleming Hansen's CPMG data to the fast 2-site dispersion model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_fast.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data_fast_2site.py')
 
 
-    def test_curve_fitting_cpmg_slow(self):
-        """Test the relaxation dispersion curve fitting C modules for CPMG data in the
-        slow-exchange limit."""
+    def test_hansen_cpmg_data_slow_2site(self):
+        """Optimisation of Fleming Hansen's CPMG data to the slow 2-site dispersion model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp_cpmg_slow.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data_slow_2site.py')
 
 
     def test_exp_fit(self):
