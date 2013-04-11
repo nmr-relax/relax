@@ -29,7 +29,7 @@ The numerical graph data handled in these functions consists of a 4 dimensional 
 # relax module imports.
 from lib.errors import RelaxError
 from pipe_control import minimise
-from pipe_control.mol_res_spin import count_max_spins_per_residue, spin_loop
+from pipe_control.mol_res_spin import spin_loop
 import specific_analyses
 
 
@@ -254,10 +254,15 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
     x_err_flag = False
     y_err_flag = False
 
+    # Count the different spin types.
+    spin_names = []
+    for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
+        # A new spin name.
+        if spin.name not in spin_names:
+            spin_names.append(spin.name)
+
     # The number of data sets.
-    set_count = 1
-    if x_data_name == 'res_num' or y_data_name == 'res_num':
-        set_count = count_max_spins_per_residue(spin_id=spin_id)
+    set_count = len(spin_names)
 
     # Expand the data structures for the number of sets.
     if set_count > 1:
@@ -278,12 +283,7 @@ def assemble_data_seq_value(spin_id=None, x_data_name=None, y_data_name=None, pl
         points = 1
 
     # Loop over the spins.
-    spin_names = []
     for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
-        # A new spin name.
-        if spin.name not in spin_names:
-            spin_names.append(spin.name)
-
         # The set index.
         set_index = spin_names.index(spin.name)
 
