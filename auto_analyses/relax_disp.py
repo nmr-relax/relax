@@ -144,9 +144,16 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Save the relaxation dispersion parameters.
-        self.interpreter.value.write(param='rex', file='rex.out', dir=path, force=True)
+        if cdp.model not in ['exp_fit']:
+            self.interpreter.value.write(param='rex', file='Rex.out', dir=path, force=True)
 
         # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
-        self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
-        self.interpreter.grace.write(x_data_type='spin_lock_nu1', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='R2eff.agr', dir=path, force=True)
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='I0.agr', dir=path, force=True)
+        if hasattr(cdp, 'spin_lock_nu1'):
+            self.interpreter.grace.write(x_data_type='spin_lock_nu1', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
+        elif hasattr(cdp, 'cpmg_frq'):
+            self.interpreter.grace.write(x_data_type='cpmg_frq', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
+        if cdp.model not in ['exp_fit']:
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='Rex.agr', dir=path, force=True)
