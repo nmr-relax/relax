@@ -648,6 +648,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         H_name, X_name, spin_id, intensity, line = intensity_data[i]
 
+        # Sanity check.
+        if intensity == 0.0:
+            warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
+
         # Skip data.
         if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
             warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
