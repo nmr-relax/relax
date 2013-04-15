@@ -370,8 +370,8 @@ class Relax_disp(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Make sure the experiment type is set to 'cpmg'.
-        if not cdp.exp_type == 'cpmg':
+        # Make sure the experiment type is set to 'cpmg' or 'cpmg fixed'.
+        if not cdp.exp_type[:4] == 'cpmg':
             raise RelaxError("To use this user function, the experiment type must be set to 'cpmg'.")
 
         # Test the CPMG constant time delay (T) has not already been set.
