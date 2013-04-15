@@ -152,10 +152,10 @@ uf = uf_info.add_uf('relax_disp.cpmg_delayT')
 uf.title = "Set the CPMG constant time delay (T) of the experiment."
 uf.title_short = "CPMG time delay."
 uf.add_keyarg(
-    name = "id",
+    name = "spectrum_id",
     py_type = "str",
-    desc_short = "experiment ID",
-    desc = "The experiment identification string."
+    desc_short = "spectrum ID",
+    desc = "The spectrum identification string."
 )
 uf.add_keyarg(
     name = "delayT",
@@ -165,7 +165,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the CPMG constant time delay (T) of a given experiment to be set.")
+uf.desc[-1].add_paragraph("This allows the CPMG constant time delay (T) of a given experiment or spectrum to be set.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set a CPMG constant time delay T of 20 ms (0.020 s) for experiments '600', type one of:")
