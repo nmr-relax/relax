@@ -345,13 +345,13 @@ class Relax_disp(API_base, API_common):
         return ids
 
 
-    def _cpmg_delayT(self, id=None, delayT=None):
+    def _cpmg_delayT(self, spectrum_id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
-        @keyword id:       The experimental identification string (allowing for multiple experiments per data pipe).
-        @type id:          str
-        @keyword delayT:   The CPMG constant time delay (T) in s.
-        @type delayT:      float
+        @keyword spectrum_id:   The spectrum ID string.
+        @type spectrum_id:      str
+        @keyword delayT:        The CPMG constant time delay (T) in s.
+        @type delayT:           float
         """
 
         # Test if the current data pipe exists.
@@ -375,12 +375,12 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("To use this user function, the experiment type must be set to 'cpmg'.")
 
         # Test the CPMG constant time delay (T) has not already been set.
-        if cdp.delayT.has_key(id):
-           raise RelaxError("The CPMG constant time delay (T) for the experiment '%s' has already been set." % id)
+        if cdp.delayT.has_key(spectrum_id):
+           raise RelaxError("The CPMG constant time delay (T) for the spectrum '%s' has already been set." % spectrum_id)
 
         # Set the CPMG constant time delay (T).
-        cdp.delayT[id] = delayT
-        print("The CPMG delay T for experiment '%s' has been set to %s s." % (id, cdp.delayT[id]))
+        cdp.delayT[spectrum_id] = delayT
+        print("The CPMG delay T for the spectrum '%s' has been set to %s s." % (spectrum_id, cdp.delayT[spectrum_id]))
 
 
     def _cpmg_frq(self, spectrum_id=None, cpmg_frq=None):
