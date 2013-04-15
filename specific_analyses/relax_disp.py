@@ -403,7 +403,10 @@ class Relax_disp(API_base, API_common):
             cdp.cpmg_frqs_list = []
 
         # Add the frequency at the correct position, converting to a float if needed.
-        cdp.cpmg_frqs[spectrum_id] = float(cpmg_frq)
+        if cpmg_frq == None:
+            cdp.cpmg_frqs[spectrum_id] = cpmg_frq
+        else:
+            cdp.cpmg_frqs[spectrum_id] = float(cpmg_frq)
 
         # The unique curves for the R2eff fitting (CPMG).
         if cdp.cpmg_frqs[spectrum_id] not in cdp.cpmg_frqs_list:
