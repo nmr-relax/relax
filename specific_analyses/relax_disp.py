@@ -613,14 +613,19 @@ class Relax_disp(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # CPMG relaxation dispersion experiments.
+        # CPMG relaxation dispersion experiments (exponential curves with varying relax_T).
         if exp_type == 'cpmg':
-            print("CPMG relaxation dispersion experiments.")
+            print("CPMG experiments with exponential curves from varying the relaxation period.")
             cdp.exp_type = 'cpmg'
+
+        # CPMG relaxation dispersion experiments (fixed relax_T).
+        elif exp_type == 'cpmg fixed':
+            print("CPMG experiments with a fixed relaxation period.")
+            cdp.exp_type = 'cpmg fixed'
 
         # R1rho relaxation dispersion experiments.
         elif exp_type == 'r1rho':
-            print("R1rho relaxation dispersion experiments.")
+            print("R1rho experiments with exponential curves from varying the time of application of the spin-lock field.")
             cdp.exp_type = 'r1rho'
 
         # Invalid relaxation dispersion experiment.

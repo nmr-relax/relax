@@ -214,8 +214,8 @@ uf.wizard_size = (800, 500)
 
 # The relax_disp.exp_type user function.
 uf = uf_info.add_uf('relax_disp.exp_type')
-uf.title = "Select the type of relaxation dispersion experiments to analyse."
-uf.title_short = "Relaxation dispersion type selection."
+uf.title = "Select the type of relaxation dispersion experiments to be analysed."
+uf.title_short = "Relaxation dispersion experiment type selection."
 uf.add_keyarg(
     name = "exp_type",
     default = "cpmg",
@@ -225,17 +225,30 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = [
         "CPMG",
+        "CPMG, fixed time",
         "R1rho"
     ],
     wiz_combo_data = [
         "cpmg",
+        "cpmg fixed",
         "r1rho"
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The supported experiments will include CPMG ('cpmg') and R1rho ('r1rho').")
+uf.desc[-1].add_paragraph("The currently supported experiments include:")
+uf.desc[-1].add_item_list_element("'cpmg'", "The CPMG family of experiments whereby spectra consist of exponential curves by varying the total time of the CPMG block of pulses,")
+uf.desc[-1].add_item_list_element("'cpmg fixed'", "The CPMG family of experiments whereby the time period for the block of CPMG pulses is fixed and a reference spectrum is present,")
+uf.desc[-1].add_item_list_element("'r1rho'", "The R1rho family of experiments whereby spectra consist of exponential curves by varying the total time in which the spin-lock field is applied.")
+uf.desc[-1].add_paragraph("For the 'cpmg' and 'r1rho' experiment types, 2-parameter exponentials will be fit to obtain R2,eff for each spin system as part of the optimisation of the dispersion model.")
+uf.desc[-1].add_paragraph("For the 'cpmg fixed' experiment type, the R2,eff values are directly calculated prior to optimisation using the formula:")
+uf.desc[-1].add_verbatim("""
+                        -1         / I1(nu_CPMG) \ 
+    R2,eff(nu_CPMG) = ------- * ln | ----------- |,
+                      relax_T      \     I0      /
+""")
+uf.desc[-1].add_paragraph("where nu_CPMG is the CPMG frequency in Hz, relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg' for all selected spins, type one of:")
@@ -243,7 +256,9 @@ uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg')")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg')")
 uf.backend = relax_disp_obj._exp_type
 uf.menu_text = "&exp_type"
-uf.wizard_size = (800, 400)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 700)
+uf.wizard_apply_button = False
 
 
 # The relax_disp.relax_time user function.
