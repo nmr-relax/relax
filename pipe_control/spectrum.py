@@ -60,9 +60,11 @@ def __errors_height_no_repl():
         spin.intensity_err = spin.baseplane_rmsd
 
 
-def __errors_repl(verbosity=0):
+def __errors_repl(subset=None, verbosity=0):
     """Calculate the errors for peak intensities from replicated spectra.
 
+    @keyword subset:    The list of spectrum ID strings to restrict the analysis to.
+    @type subset:       list of str
     @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
@@ -82,8 +84,14 @@ def __errors_repl(verbosity=0):
     cdp.sigma_I = {}
     cdp.var_I = {}
 
+    # The subset.
+    subset_flag = False
+    if not subset:
+        subset_flag = True
+        subset = cdp.spectrum_ids
+
     # Loop over the spectra.
-    for id in cdp.spectrum_ids:
+    for id in subset:
         # Skip non-replicated spectra.
         if not repl[id]:
             continue
@@ -172,7 +180,10 @@ def __errors_repl(verbosity=0):
     # Average across all spectra if there are time points with a single spectrum.
     if not all_repl:
         # Print out.
-        print("\nVariance averaging over all spectra.")
+        if subset_flag:
+            print("\nVariance averaging over the spectra subset.")
+        else:
+            print("\nVariance averaging over all spectra.")
 
         # Initialise.
         var_I = 0.0
@@ -192,7 +203,7 @@ def __errors_repl(verbosity=0):
         var_I = var_I / float(num_dups)
 
         # Assign the average value to all time points.
-        for id in cdp.spectrum_ids:
+        for id in subset:
             cdp.var_I[id] = var_I
 
         # Print out.
@@ -213,7 +224,7 @@ def __errors_repl(verbosity=0):
         spin.intensity_err = cdp.sigma_I
 
 
-def __errors_volume_no_repl():
+def __errors_volume_no_repl(subset=None):
     """Calculate the errors for peak volumes when no spectra are replicated."""
 
     # Loop over the spins and set the error to the RMSD of the base plane noise.
@@ -365,8 +376,12 @@ def delete(spectrum_id=None):
             del spin.intensities[spectrum_id]
 
 
-def error_analysis():
-    """Determine the peak intensity standard deviation."""
+def error_analysis(subset=None):
+    """Determine the peak intensity standard deviation.
+
+    @keyword subset:    The list of spectrum ID strings to restrict the analysis to.
+    @type subset:       list of str
+    """
 
     # Test if the current pipe exists
     pipes.test()
@@ -379,6 +394,12 @@ def error_analysis():
     if not hasattr(cdp, 'spectrum_ids'):
         raise RelaxError("Error analysis is not possible, no spectra have been loaded.")
 
+    # Check the IDs.
+    if subset:
+        for id in subset:
+            if id not in cdp.spectrum_ids:
+                raise RelaxError("The spectrum ID '%s' has not been loaded into relax." % id)
+
     # Peak height category.
     if cdp.int_method == 'height':
         # Print out.
@@ -390,12 +411,14 @@ def error_analysis():
             print("Replicated spectra:  Yes.")
 
             # Set the errors.
-            __errors_repl()
+            __errors_repl(subset=subset)
 
         # No replicated spectra.
         else:
             # Print out.
             print("Replicated spectra:  No.")
+            if subset:
+                print("Spectra ID subset ignored.")
 
             # Set the errors.
             __errors_height_no_repl()
@@ -411,7 +434,7 @@ def error_analysis():
             print("Replicated spectra:  Yes.")
 
             # Set the errors.
-            __errors_repl()
+            __errors_repl(subset=subset)
 
         # No replicated spectra.
         else:

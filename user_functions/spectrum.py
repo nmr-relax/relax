@@ -113,9 +113,19 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 uf = uf_info.add_uf('spectrum.error_analysis')
 uf.title = "Perform an error analysis for peak intensities."
 uf.title_short = "Peak intensity error analysis."
+uf.add_keyarg(
+    name = "subset",
+    py_type = "str_list",
+    desc_short = "subset spectrum IDs",
+    desc = "The list of spectrum ID strings to restrict the error analysis to.",
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True,
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function must only be called after all peak intensities have been loaded and all other necessary spectral information set.  This includes the baseplane RMSD and the number of points used in volume integration, both of which are only used if spectra have not been replicated.")
+uf.desc[-1].add_paragraph("The error analysis can be restricted to a subset of the loaded spectral data.  This is useful, for example, if half the spectra have been collected on one spectrometer and the other half on a different spectrometer.")
 uf.desc[-1].add_paragraph("Six different types of error analysis are supported depending on whether peak heights or volumes are supplied, whether noise is determined from replicated spectra or the RMSD of the baseplane noise, and whether all spectra or only a subset have been duplicated.  These are:")
 table = uf_tables.add_table(label="table: peak intensity error analysis", caption="The six peak intensity error analysis types.")
 table.add_headings(["Int type", "Noise source", "Error scope"])
@@ -156,7 +166,7 @@ uf.desc[-1].add_paragraph("With all spectra replicated and again using any integ
 uf.backend = spectrum.error_analysis
 uf.menu_text = "&error_analysis"
 uf.gui_icon = "oxygen.categories.applications-education"
-uf.wizard_height_desc = 550
+uf.wizard_height_desc = 530
 uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 uf.wizard_apply_button = False
