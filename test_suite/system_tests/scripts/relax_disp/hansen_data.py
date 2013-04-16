@@ -14,6 +14,8 @@ from status import Status; status = Status()
 
 # The dispersion models.
 MODELS = ['exp_fit', 'fast 2-site']
+if hasattr(ds, 'models'):
+    MODELS = ds.models
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 5
