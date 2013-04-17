@@ -32,7 +32,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
 # The model names.
-EXP_FIT = 'exp_fit'
+R2EFF = 'R2eff'
 FAST_2SITE = 'fast 2-site'
 SLOW_2SITE = 'slow 2-site'
 
@@ -297,18 +297,18 @@ uf.title_short = "Relaxation dispersion model setup."
 uf.display = True
 uf.add_keyarg(
     name = "model",
-    default = FAST_2SITE,
+    default = R2EFF,
     py_type = "str",
     desc_short = "dispersion model",
     desc = "The type of relaxation dispersion model to fit.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "%s: {R2}" % EXP_FIT,
+        "%s: {R2eff, I0}" % R2EFF,
         "%s: {R2, Rex, kex}" % FAST_2SITE,
         "%s: {R2A, kA, dw}" % SLOW_2SITE
     ],
     wiz_combo_data = [
-        EXP_FIT,
+        R2EFF,
         FAST_2SITE,
         SLOW_2SITE
     ],
@@ -317,13 +317,23 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("A number of different dispersion models will be supported, from the numerical integration of the Bloch-McConnell equations, the 2-site fast, intermediate and slow exchange, 3-site exchange, to the most basic model of simply fitting the exponential curves.  The currently supported models include:")
-uf.desc[-1].add_item_list_element("'%s'" % EXP_FIT, "The simple exponential curve-fitting with parameters {R2eff, I0},")
-uf.desc[-1].add_item_list_element("'%s'" % FAST_2SITE, "The 2-site fast exchange equation with parameters {R2eff, I0, R2, Rex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % SLOW_2SITE, "The 2-site slow exchange equation with parameters {R2eff, I0, R2A, kA, dw}.")
-uf.desc[-1].add_paragraph("These models are fit to clusterings of spins, or spin blocks.  For each spin, the parameters R2eff and I0 have multiple values as each of the multiple exponential curves has a different R2eff and I0 value.  If the number of exponential curves is N and the number of spins in a clustering is M, the total number of R2eff or I0 values fit is N*M.")
-uf.desc.append(Desc_container("Simple exponential curve-fitting"))
-uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion part is not modelled.  It can be selected by setting the model to '%s'.  Each relaxation curve will be fit to the simple two parameter exponential as in a R1 or R2 analysis, and the R2eff rates will be calculated.  Monte Carlo simulations can be used to obtain the R2eff errors independent from the dispersion model." % EXP_FIT)
-uf.desc.append(Desc_container("2-site fast exchange equation"))
+uf.desc[-1].add_item_list_element("'%s'" % R2EFF, "This is the model used to determine the R2eff values and errors required as the base data for all other models,")
+uf.desc[-1].add_item_list_element("'%s'" % FAST_2SITE, "The 2-site fast exchange equation with parameters {R2, Rex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % SLOW_2SITE, "The 2-site slow exchange equation with parameters {R2A, kA, dw}.")
+uf.desc[-1].add_paragraph("Except for '%s', these models are fit to clusterings of spins, or spin blocks." % R2EFF)
+# R2eff model.
+uf.desc.append(Desc_container("The R2eff model"))
+uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion part is not modelled.  It is used to determine the R2eff values and errors which are required as the base data for all other models.  It can be selected by setting the model to '%s'.  Depending on the experiment type, this model will be handled differently.  The R2eff values determined can be later copied to the data pipes of the other dispersion models using the appropriate value user function." % R2EFF)
+uf.desc[-1].add_paragraph("For the fixed relaxation time period type experiments, the R2eff values are determined by direct calculation using the formula:")
+uf.desc[-1].add_verbatim("""
+                        -1         / I1(nu_CPMG) \ 
+    R2,eff(nu_CPMG) = ------- * ln | ----------- |,
+                      relax_T      \     I0      /
+""")
+uf.desc[-1].add_paragraph("where nu_CPMG is the CPMG frequency in Hz, relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.  Errors are determined via bootstrapping.  The values and errors are determined with a single call of the calc user function.")
+uf.desc[-1].add_paragraph("For the variable relaxation time period type experiments, the R2eff values are determined by fitting to the simple two parameter exponential as in a R1 or R2 analysis.  Both R2eff and the initial peak intensity I0 are optimised using the minimise user function for each exponential curve separately.  Monte Carlo simulations are used to obtain the R2eff errors.")
+# 2-site fast exchange model.
+uf.desc.append(Desc_container("The 2-site fast exchange model"))
 uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for fast exchange is:" % FAST_2SITE)
 uf.desc[-1].add_verbatim("""
                        /              /        kex       \   4 * cpmg_frq \ 
@@ -333,7 +343,8 @@ uf.desc[-1].add_verbatim("""
 uf.desc[-1].add_paragraph("The references for this equation are:")
 uf.desc[-1].add_list_element("Millet et al., JACS, 2000, 122, 2867-2877 (equation 19),")
 uf.desc[-1].add_list_element("Kovrigin et al., J. Mag. Res., 2006, 180, 93-104 (equation 1).")
-uf.desc.append(Desc_container("2-site slow exchange equation"))
+# 2-site slow exchange model.
+uf.desc.append(Desc_container("The 2-site slow exchange model"))
 uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for slow exchange is:" % SLOW_2SITE)
 uf.desc[-1].add_verbatim("""
                        /     /      dw      \   4 * cpmg_frq \ 

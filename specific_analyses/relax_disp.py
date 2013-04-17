@@ -33,8 +33,10 @@ from re import match, search
 import sys
 
 # relax module imports.
+from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.text.sectioning import subsection
+from lib.list import count_unique_elements, unique_elements
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
@@ -42,6 +44,11 @@ from specific_analyses.api_common import API_common
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
+
+# C modules.
+if C_module_exp_fn:
+    from target_functions.relax_fit import setup, func, dfunc, d2func
+
 
 
 class Relax_disp(API_base, API_common):
@@ -268,11 +275,11 @@ class Relax_disp(API_base, API_common):
         scaling_matrix = self._assemble_scaling_matrix(spins=[spin], scaling=False)
 
         # Initialise the data structures for the target function.
-        values = zeros((1, cdp.curve_count, cdp.num_time_pts), float64)
-        errors = zeros((1, cdp.curve_count, cdp.num_time_pts), float64)
+        values = zeros((1, cdp.dispersion_points, cdp.num_time_pts), float64)
+        errors = zeros((1, cdp.dispersion_points, cdp.num_time_pts), float64)
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=cdp.model, num_params=self._param_num(spins=[spin]), num_spins=1, num_exp_curves=cdp.curve_count, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
+        model = Dispersion(model=cdp.model, num_params=self._param_num(spins=[spin]), num_spins=1, num_exp_curves=cdp.dispersion_points, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
@@ -414,7 +421,7 @@ class Relax_disp(API_base, API_common):
         cdp.cpmg_frqs_list.sort()
 
         # Update the exponential curve count.
-        cdp.curve_count = len(cdp.cpmg_frqs_list)
+        cdp.dispersion_points = len(cdp.cpmg_frqs_list)
 
         # Printout.
         print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
@@ -474,7 +481,7 @@ class Relax_disp(API_base, API_common):
 
             # Loop over each exponential curve.
             for exp_index, key in self._exp_curve_loop():
-                index = spin_index * 2 * cdp.curve_count + exp_index * cdp.curve_count
+                index = spin_index * 2 * cdp.dispersion_points + exp_index * cdp.dispersion_points
                 param_index += 2
 
                 # Loop over the model parameters.
@@ -586,9 +593,9 @@ class Relax_disp(API_base, API_common):
         """
 
         # Loop over each exponential curve.
-        for i in range(cdp.curve_count):
+        for i in range(cdp.dispersion_points):
             # The experiment specific key.
-            if cdp.exp_type == 'cpmg':
+            if cdp.exp_type in ['cpmg', 'cpmg fixed']:
                 key = cdp.cpmg_frqs_list[i]
             else:
                 key = cdp.spin_lock_nu1_list[i]
@@ -736,7 +743,7 @@ class Relax_disp(API_base, API_common):
 
         # Define sparse regions to skip.
         sparseness = []
-        if cdp.model == 'exp_fit':
+        if cdp.model == 'R2eff':
             for spin_index1 in range(len(spins)):
                 for spin_index2 in range(len(spins)):
                     for exp_index1, key in self._exp_curve_loop():
@@ -746,8 +753,8 @@ class Relax_disp(API_base, API_common):
                                 continue
     
                             # The parameter index.
-                            index1 = spin_index1 * 2 * cdp.curve_count + exp_index1 * cdp.curve_count
-                            index2 = spin_index2 * 2 * cdp.curve_count + exp_index2 * cdp.curve_count
+                            index1 = spin_index1 * 2 * cdp.dispersion_points + exp_index1 * cdp.dispersion_points
+                            index2 = spin_index2 * 2 * cdp.dispersion_points + exp_index2 * cdp.dispersion_points
 
                             # Add the parameter combinations.
                             sparseness.append([index1, index2])
@@ -756,11 +763,11 @@ class Relax_disp(API_base, API_common):
                             sparseness.append([index1+1, index2+1])
 
         # The sparse grid size.
-        if cdp.model == 'exp_fit':
+        if cdp.model == 'R2eff':
             grid_size = 0
             for spin_index in range(len(spins)):
                 for exp_index, key in self._exp_curve_loop():
-                    index = spin_index * 2 * cdp.curve_count + exp_index * cdp.curve_count
+                    index = spin_index * 2 * cdp.dispersion_points + exp_index * cdp.dispersion_points
                     grid_size += inc[index] * inc[index+1]
 
         # The full grid size.
@@ -935,6 +942,181 @@ class Relax_disp(API_base, API_common):
         return A, b
 
 
+    def _minimise_r2eff(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+        """Optimise the R2eff model by fitting the 2-parameter exponential curves.
+
+        This mimics the R1 and R2 relax_fit analysis.
+
+
+        @keyword min_algor:         The minimisation algorithm to use.
+        @type min_algor:            str
+        @keyword min_options:       An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword constraints:       If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  array of int
+         """
+
+        # The number of spectrometer field strengths.
+        field_count = 1
+        fields = []
+        if hasattr(cdp, 'frq'):
+            field_count = count_unique_elements(cdp.frq.values())
+            fields = unique_elements(cdp.frq.values())
+            fields.sort()
+
+        # The number of time points for the exponential curves (if present).
+        num_time_pts = 1
+        if hasattr(cdp, 'num_time_pts'):
+            num_time_pts = cdp.num_time_pts
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # The keys.
+            keys = list(spin.intensities.keys())
+
+            # Loop over the spectral data.
+            for key in keys:
+                # The indices.
+                disp_pt_index = 0
+                if cdp.exp_type == 'cpmg':
+                    disp_pt_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
+                elif cdp.exp_type == 'r1rho':
+                    disp_pt_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
+                time_index = 0
+                if hasattr(cdp, 'relax_time_list'):
+                    time_index = cdp.relax_time_list.index(cdp.relax_times[key])
+                field_index = 0
+                if hasattr(cdp, 'frqs'):
+                    field_index = fields.index(cdp.frqs[keys])
+
+                # The values.
+                if sim_index == None:
+                    values[spin_index, field_index, disp_pt_index, time_index] = spin.intensities[key]
+                else:
+                    values[spin_index, field_index, disp_pt_index, time_index] = spin.intensity_sim[key][sim_index]
+
+                # The errors.
+                errors[spin_index, field_index, disp_pt_index, time_index] = spin.intensity_err[key]
+
+
+            # Create the initial parameter vector.
+            param_vector = self._assemble_param_vector(spins=spins)
+
+            # Diagonal scaling.
+            scaling_matrix = self._assemble_scaling_matrix(spins=spins, scaling=scaling)
+            if len(scaling_matrix):
+                param_vector = dot(inv(scaling_matrix), param_vector)
+
+            # Get the grid search minimisation options.
+            lower_new, upper_new = None, None
+            if match('^[Gg]rid', min_algor):
+                grid_size, inc_new, lower_new, upper_new, sparseness = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+
+            # Linear constraints.
+            A, b = None, None
+            if constraints:
+                A, b = self._linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
+
+            # Print out.
+            if verbosity >= 1:
+                # Individual spin block section.
+                top = 2
+                if verbosity >= 2:
+                    top += 2
+                subsection(file=sys.stdout, text="Fitting to the spin block %s"%spin_ids, prespace=top)
+
+                # Grid search printout.
+                if match('^[Gg]rid', min_algor):
+                    print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
+
+            # Initialise the function to minimise.
+            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.dispersion_points, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
+
+            # Grid search.
+            if search('^[Gg]rid', min_algor):
+                results = grid(func=model.func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, sparseness=sparseness, verbosity=verbosity)
+
+                # Unpack the results.
+                param_vector, chi2, iter_count, warning = results
+                f_count = iter_count
+                g_count = 0.0
+                h_count = 0.0
+
+            # Minimisation.
+            else:
+                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+
+                # Unpack the results.
+                if results == None:
+                    return
+                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+
+            # Scaling.
+            if scaling:
+                param_vector = dot(scaling_matrix, param_vector)
+
+            # Disassemble the parameter vector.
+            self._disassemble_param_vector(param_vector=param_vector, spins=spins, sim_index=sim_index)
+
+            # Monte Carlo minimisation statistics.
+            if sim_index != None:
+                # Chi-squared statistic.
+                spin.chi2_sim[sim_index] = chi2
+
+                # Iterations.
+                spin.iter_sim[sim_index] = iter_count
+
+                # Function evaluations.
+                spin.f_count_sim[sim_index] = f_count
+
+                # Gradient evaluations.
+                spin.g_count_sim[sim_index] = g_count
+
+                # Hessian evaluations.
+                spin.h_count_sim[sim_index] = h_count
+
+                # Warning.
+                spin.warning_sim[sim_index] = warning
+
+            # Normal statistics.
+            else:
+                # Chi-squared statistic.
+                spin.chi2 = chi2
+
+                # Iterations.
+                spin.iter = iter_count
+
+                # Function evaluations.
+                spin.f_count = f_count
+
+                # Gradient evaluations.
+                spin.g_count = g_count
+
+                # Hessian evaluations.
+                spin.h_count = h_count
+
+                # Warning.
+                spin.warning = warning
+
+
     def _model_setup(self, model, params):
         """Update various model specific data structures.
 
@@ -980,7 +1162,7 @@ class Relax_disp(API_base, API_common):
         curve_key = None
 
         # The number of spin specific parameters (R2eff and I0 per spin), times the total number of exponential curves.
-        num = len(spins) * 2 * cdp.curve_count
+        num = len(spins) * 2 * cdp.dispersion_points
 
         # The exponential curve parameters.
         if index < num:
@@ -991,10 +1173,10 @@ class Relax_disp(API_base, API_common):
                 param_name = 'r2eff'
 
             # The spin index.
-            spin_index = int(index / 2 / cdp.curve_count)
+            spin_index = int(index / 2 / cdp.dispersion_points)
 
             # The curve index and key.
-            exp_index = int((index - spin_index * cdp.curve_count * 2) / 2)
+            exp_index = int((index - spin_index * cdp.dispersion_points * 2) / 2)
             curve_key = self._exp_curve_key_from_index(exp_index)
 
         # All other parameters.
@@ -1016,7 +1198,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The number of spin specific parameters (R2eff and I0 per spin), times the total number of exponential curves.
-        num = len(spins) * 2 * cdp.curve_count
+        num = len(spins) * 2 * cdp.dispersion_points
 
         # The block specific parameters.
         num += len(spins[0].params) - 2
@@ -1052,17 +1234,17 @@ class Relax_disp(API_base, API_common):
             cdp.relax_time_list.append(cdp.relax_times[spectrum_id])
         cdp.relax_time_list.sort()
 
-        # Update the exponential curve count.
+        # Update the exponential time point count.
         cdp.num_time_pts = len(cdp.relax_time_list)
 
         # Printout.
         print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
 
 
-    def _select_model(self, model='fast 2-site'):
+    def _select_model(self, model='R2eff'):
         """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'exp_fit', 'fast 2-site', 'slow 2-site'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'fast 2-site', 'slow 2-site'.
         @type model:    str
         """
 
@@ -1083,19 +1265,19 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been set.")
 
         # Fast-exchange regime.
-        if model == 'exp_fit':
-            print("Basic exponential curve-fitting.")
+        if model == 'R2eff':
+            print("R2eff value and error determination.")
             params = ['r2eff', 'i0']
 
         # Fast-exchange regime.
         elif model == 'fast 2-site':
             print("2-site fast-exchange.")
-            params = ['r2eff', 'i0', 'r2', 'rex', 'kex']
+            params = ['r2', 'rex', 'kex']
 
         # Slow-exchange regime.
         elif model == 'slow 2-site':
             print("2-site slow-exchange.")
-            params = ['r2eff', 'i0', 'r2', 'r2a', 'ka', 'dw']
+            params = ['r2', 'r2a', 'ka', 'dw']
 
         # Invalid model.
         else:
@@ -1133,7 +1315,7 @@ class Relax_disp(API_base, API_common):
         cdp.spin_lock_nu1_list.sort()
 
         # Update the exponential curve count.
-        cdp.curve_count = len(cdp.spin_lock_nu1_list)
+        cdp.dispersion_points = len(cdp.spin_lock_nu1_list)
 
         # Printout.
         print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
@@ -1249,7 +1431,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion model has not been specified.")
 
         # Test if the curve count exists.
-        if not hasattr(cdp, 'curve_count'):
+        if not hasattr(cdp, 'dispersion_points'):
             if cdp.exp_type == 'cpmg':
                 raise RelaxError("The CPMG frequencies have not been set up.")
             elif cdp.exp_type == 'r1rho':
@@ -1261,14 +1443,39 @@ class Relax_disp(API_base, API_common):
         if not hasattr(cdp, 'spin_lock_nu1_list'):
             cdp.spin_lock_nu1_list = []
 
+        # Special curve-fitting for the 'R2eff' model.
+        if cdp.model == 'R2eff':
+            # Sanity checks.
+            if cdp.exp_type in ['cpmg fixed']:
+                raise RelaxError("The R2eff model with the fixed time period CPMG experiment cannot be optimised.")
+
+            # Optimisation.
+            self._minimise_r2eff(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index, lower=lower, upper=upper, inc=inc)
+
+            # Exit the method.
+            return
+
+        # The number of spectrometer field strengths.
+        field_count = 1
+        fields = []
+        if hasattr(cdp, 'frq'):
+            field_count = count_unique_elements(cdp.frq.values())
+            fields = unique_elements(cdp.frq.values())
+            fields.sort()
+
+        # The number of time points for the exponential curves (if present).
+        num_time_pts = 1
+        if hasattr(cdp, 'num_time_pts'):
+            num_time_pts = cdp.num_time_pts
+
         # Loop over the spin blocks.
         for spins, spin_ids in self.model_loop():
             # The spin count.
             spin_num = len(spins)
 
             # Initialise the data structures for the target function.
-            values = zeros((spin_num, cdp.curve_count, cdp.num_time_pts), float64)
-            errors = zeros((spin_num, cdp.curve_count, cdp.num_time_pts), float64)
+            values = zeros((spin_num, field_count, cdp.dispersion_points, num_time_pts), float64)
+            errors = zeros((spin_num, field_count, cdp.dispersion_points, num_time_pts), float64)
 
             # Pack the peak intensity data.
             for spin_index in range(spin_num):
@@ -1281,20 +1488,26 @@ class Relax_disp(API_base, API_common):
                 # Loop over the spectral data.
                 for key in keys:
                     # The indices.
+                    disp_pt_index = 0
                     if cdp.exp_type == 'cpmg':
-                        curve_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
+                        disp_pt_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
                     elif cdp.exp_type == 'r1rho':
-                        curve_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
-                    time_index = cdp.relax_time_list.index(cdp.relax_times[key])
+                        disp_pt_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
+                    time_index = 0
+                    if hasattr(cdp, 'relax_time_list'):
+                        time_index = cdp.relax_time_list.index(cdp.relax_times[key])
+                    field_index = 0
+                    if hasattr(cdp, 'frqs'):
+                        field_index = fields.index(cdp.frqs[keys])
 
                     # The values.
                     if sim_index == None:
-                        values[spin_index, curve_index, time_index] = spin.intensities[key]
+                        values[spin_index, field_index, disp_pt_index, time_index] = spin.intensities[key]
                     else:
-                        values[spin_index, curve_index, time_index] = spin.intensity_sim[key][sim_index]
+                        values[spin_index, field_index, disp_pt_index, time_index] = spin.intensity_sim[key][sim_index]
 
                     # The errors.
-                    errors[spin_index, curve_index, time_index] = spin.intensity_err[key]
+                    errors[spin_index, field_index, disp_pt_index, time_index] = spin.intensity_err[key]
 
 
             # Create the initial parameter vector.
@@ -1328,7 +1541,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.curve_count, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.dispersion_points, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):

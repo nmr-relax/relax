@@ -98,17 +98,8 @@ class Relax_disp:
             raise RelaxNoPipeError(self.pipe_name)
 
 
-    def exponential_fit(self):
-        """Optimise the simple exponential fit relaxation dispersion model."""
-
-        # Printout.
-        subtitle(file=sys.stdout, text="Simple exponential curve-fitting")
-
-        # Create the data pipe by copying the base pipe.
-        self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to='exp_fit', bundle_to=self.pipe_bundle)
-
-        # Set the relaxation dispersion curve type.
-        self.interpreter.relax_disp.select_model('exp_fit')
+    def optimise(self):
+        """Optimise the model."""
 
         # Grid search.
         self.interpreter.grid_search(inc=self.grid_inc)
@@ -123,22 +114,37 @@ class Relax_disp:
         self.interpreter.minimise('simplex', constraints=False)
         self.interpreter.monte_carlo.error_analysis()
 
-        # Write out the results.
-        self.write_results()
-
 
     def run(self):
         """Execute the auto-analysis."""
 
-        # First optimise the exponential curves to obtain the initial R2eff values for all other models.
-        self.exponential_fit()
+        # Loop over the models.
+        for model in self.models:
+            # Printout.
+            subtitle(file=sys.stdout, text="The '%s' model" % model)
+
+            # Create the data pipe by copying the base pipe.
+            self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to=model, bundle_to=self.pipe_bundle)
+
+            # Select the model.
+            self.interpreter.relax_disp.select_model(model)
+
+            # Optimise the model.
+            if model == 'R2eff' and cdp.exp_type in ['cpmg fixed']:
+                self.calc()
+            else:
+                self.optimise()
+
+            # Write out the results.
+            self.write_results(path=self.results_dir+sep+model)
 
 
-    def write_results(self):
-        """Create a set of results, text and Grace files for the current data pipe."""
+    def write_results(self, path=None):
+        """Create a set of results, text and Grace files for the current data pipe.
 
-        # The directory name.
-        path = self.results_dir + sep + cdp.model
+        @keyword path:  The directory to place the files into.
+        @type path:     str
+        """
 
         # Save the results.
         self.interpreter.results.write(file='results', dir=path, force=True)

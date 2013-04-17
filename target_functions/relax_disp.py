@@ -57,10 +57,10 @@ class Dispersion:
         @type num_exp_curves:       int
         @keyword num_times:         The number of relaxation times.
         @type num_times:            int
-        @keyword values:            The peak intensities.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the exponential curves, and the third are the relaxation times along the exponential curve.
-        @type values:               numpy rank-3 float array
-        @keyword errors:            The peak intensity errors.  The three dimensions must correspond to those of the values argument.
-        @type errors:               numpy rank-3 float array
+        @keyword values:            The peak intensities.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, the third is the exponential curves, and the fourth are the relaxation times along the exponential curve.
+        @type values:               numpy rank-4 float array
+        @keyword errors:            The peak intensity errors.  The four dimensions must correspond to those of the values argument.
+        @type errors:               numpy rank-4 float array
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate exponential curve.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            numpy rank-1 float array
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate exponential curve.  This will be ignored for CPMG experiments.
@@ -126,10 +126,10 @@ class Dispersion:
                 i0 = params[index + 1]
 
                 # Back-calculate the points on the exponential curve.
-                exponential_2param_neg(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc[spin_index, exp_index])
+                exponential_2param_neg(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc[spin_index, field_index, exp_index])
 
                 # Calculate the chi-squared value for this curve.
-                chi2_sum += chi2(self.values[spin_index, exp_index], self.back_calc[spin_index, exp_index], self.errors[spin_index, exp_index])
+                chi2_sum += chi2(self.values[spin_index, field_index, exp_index], self.back_calc[spin_index, field_index, exp_index], self.errors[spin_index, field_index, exp_index])
 
         # Return the chi-squared value.
         return chi2_sum

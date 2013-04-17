@@ -1,4 +1,4 @@
-# Script for fitting the 'exp_fit' relaxation dispersion model to synthetic R1rho data.
+# Script for exponential curve-fitting to synthetic R1rho dispersion data.
 
 # Python module imports.
 from os import sep
@@ -13,7 +13,7 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['exp_fit']
+MODELS = ['R2eff']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 3
