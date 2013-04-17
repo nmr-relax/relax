@@ -81,8 +81,10 @@ def __errors_repl(subset=None, verbosity=0):
         print("All spectra replicated:  Yes.")
 
     # Initialise.
-    cdp.sigma_I = {}
-    cdp.var_I = {}
+    if not hasattr(cdp, 'sigma_I'):
+        cdp.sigma_I = {}
+    if not hasattr(cdp, 'var_I'):
+        cdp.var_I = {}
 
     # The subset.
     subset_flag = False
