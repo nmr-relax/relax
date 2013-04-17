@@ -26,10 +26,26 @@
 def count_unique_elements(values=None):
     """Count the number of unique instances in the given list.
 
-    @keyword values:    The list of values to count.
+    @keyword values:    The original list.
     @type values:       list
     @return:            The number of unique instances.
     @rtype:             int
+    """
+
+    # Create a new list.
+    new_list = unique_elements(values=values)
+
+    # The number.
+    return len(new_list)
+
+
+def unique_elements(values=None):
+    """Return a new list with duplicates removed.
+
+    @keyword values:    The original list.
+    @type values:       list
+    @return:            The new list with duplicates removed.
+    @rtype:             list
     """
 
     # Create a new list.
@@ -38,5 +54,5 @@ def count_unique_elements(values=None):
         if i not in new_list:
             new_list.append(i)
 
-    # The number.
-    return len(new_list)
+    # Return the new list.
+    return new_list
