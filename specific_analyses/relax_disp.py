@@ -35,10 +35,14 @@ import sys
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
+from lib.io import get_file_path, open_write_file
+from lib.list import count_unique_elements, unique_elements
+from lib.software.grace import write_xy_data, write_xy_header
 from lib.text.sectioning import subsection
 from lib.list import count_unique_elements, unique_elements
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from target_functions.relax_disp import Dispersion
@@ -547,6 +551,27 @@ class Relax_disp(API_base, API_common):
 
             # Increment the parameter index.
             param_index = param_index + 1
+
+
+    def _dispersion_point_loop(self):
+        """Generator method for looping over all dispersion points (either spin-lock field or nu_CPMG points).
+
+        @return:    Either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz.
+        @rtype:     float
+        """
+
+        # CPMG type data.
+        if cdp.exp_type in ['cpmg']:
+            fields = unique_elements(cdp.cpmg_frqs_list.values())
+        elif cdp.exp_type in ['r1rho']:
+            fields = unique_elements(cdp.spin_lock_nu1.values())
+        else:
+            raise RelaxError("The experiment type '%s' is unknown.")
+        fields.sort()
+
+        # Yield each unique field strength or frequency.
+        for field in fields:
+            yield field
 
 
     def _exp_curve_index_from_key(self, key):
@@ -1207,6 +1232,86 @@ class Relax_disp(API_base, API_common):
         return num
 
 
+    def _plot_exp_curves(self, file=None, dir=None, force=None, norm=None):
+        """Custom 2D Grace plotting function for the exponential curves.
+
+        @keyword file:          The name of the Grace file to create.
+        @type file:             str
+        @keyword dir:           The optional directory to place the file into.
+        @type dir:              str
+        @param force:           Boolean argument which if True causes the file to be overwritten if it already exists.
+        @type force:            bool
+        @keyword norm:          The normalisation flag which if set to True will cause all graphs to be normalised to a starting value of 1.
+        @type norm:             bool
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Open the file for writing.
+        file_path = get_file_path(file, dir)
+        file = open_write_file(file, dir, force)
+
+        # Initialise some data structures.
+        data = []
+        set_labels = []
+        x_err_flag = False
+        y_err_flag = False
+
+        # Loop over the spectrometer frequencies.
+        graph_index = 0
+        err = False
+        for field in self._spectrometer_loop():
+            # Loop over the dispersion points.
+            for disp_point in self._dispersion_point_loop():
+                # Create a new graph.
+                data.append([])
+
+                # Loop over each spin.
+                for spin, id in spin_loop(return_id=True, skip_desel=True):
+                    # Append a new set structure and set the name to the spin ID.
+                    data[graph_index].append([])
+                    if graph_index == 0:
+                        set_labels.append("Spin %s" % id)
+
+                    # Loop over the relaxation time periods.
+                    for time in cdp.relax_time_list:
+                        # The key.
+                        key = self._intensity_key(exp_key=disp_point, relax_time=time)
+
+                        # Add the data.
+                        if hasattr(spin, 'intensity_err'):
+                            data[graph_index][-1].append([time, spin.intensities[key], spin.intensity_err[key]])
+                            err = True
+                        else:
+                            data[graph_index][-1].append([time, spin.intensities[key]])
+
+                # Increment the field index.
+                graph_index += 1
+
+        # The axis labels.
+        axis_labels = ['Relaxation time period (s)', 'Peak intensities']
+
+        # Write the header.
+        write_xy_header(sets=len(data[0]), file=file, set_names=set_labels, axis_labels=axis_labels, norm=norm)
+
+        # Write the data.
+        graph_type = 'xy'
+        if err:
+            graph_type = 'xydy'
+        write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
+
+        # Close the file.
+        file.close()
+
+        # Add the file to the results file list.
+        add_result_file(type='grace', label='Grace', file=file_path)
+
+
     def _relax_time(self, time=0.0, spectrum_id=None):
         """Set the relaxation time period associated with a given spectrum.
 
@@ -1285,6 +1390,26 @@ class Relax_disp(API_base, API_common):
 
         # Set up the model.
         self._model_setup(model, params)
+
+
+    def _spectrometer_loop(self):
+        """Generator method for looping over all spectrometer field data.
+
+        @return:    The field strength in Hz.
+        @rtype:     float
+        """
+
+        # The number of spectrometer field strengths.
+        field_count = 1
+        fields = [None]
+        if hasattr(cdp, 'frq'):
+            field_count = count_unique_elements(cdp.frq.values())
+            fields = unique_elements(cdp.frq.values())
+            fields.sort()
+
+        # Yield each unique spectrometer field strength.
+        for field in fields:
+            yield field
 
 
     def _spin_lock_field(self, spectrum_id=None, field=None):

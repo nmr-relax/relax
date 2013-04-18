@@ -23,6 +23,14 @@
 # Module docstring.
 """The relax_disp user function definitions."""
 
+# Python module imports.
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_OPEN, FD_SAVE
+else:
+    FD_OPEN = -1
+    FD_SAVE = -1
+
 # relax module imports.
 from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
@@ -259,6 +267,52 @@ uf.menu_text = "&exp_type"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
+
+
+# The relax_disp.plot_exp_curves user function.
+uf = uf_info.add_uf('relax_disp.plot_exp_curves')
+uf.title = "Create 2D Grace plots of the exponential curves."
+uf.title_short = "Exponential curve plotting."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the file.",
+    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    default = "grace",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory name.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will cause the file to be overwritten."
+)
+uf.add_keyarg(
+    name = "norm",
+    default = False,
+    py_type = "bool",
+    desc_short = "normalisation flag",
+    desc = "A flag which, if set to True, will cause all graphs to be normalised to a starting value of 1.  This is for the normalisation of series type data."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to created 2D Grace plots of the individual exponential curves used to find the R2eff values.  This supplements the grace.write user function which is not capable of generating these curves in a reasonable format.")
+uf.backend = relax_disp_obj._plot_exp_curves
+uf.menu_text = "&plot_exp_curves"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_size = (800, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
 
 
 # The relax_disp.relax_time user function.
