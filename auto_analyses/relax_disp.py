@@ -163,3 +163,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='cpmg_frq', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
         if cdp.model not in ['exp_fit']:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='Rex.agr', dir=path, force=True)
+
+        # Special Grace plots.
+        self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
+        self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
