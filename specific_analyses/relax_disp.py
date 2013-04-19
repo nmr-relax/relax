@@ -51,8 +51,12 @@ from user_functions.objects import Desc_container
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func, dfunc, d2func
+    from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
+
+# Some module variables.
+FIXED_TIME_EXP = ['cpmg fixed']
+VAR_TIME_EXP = ['cpmg', 'r1rho']
 
 
 class Relax_disp(API_base, API_common):
@@ -90,11 +94,13 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
-    def _assemble_param_vector(self, spins=None, sim_index=None):
+    def _assemble_param_vector(self, spins=None, key=None, sim_index=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword spins:         The list of spin data containers for the block.
         @type spins:            list of SpinContainer instances
+        @keyword key:           The key for the R2eff and I0 parameters.
+        @type key:              str or None
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         @return:                An array of the parameter values of the dispersion relaxation model.
@@ -109,14 +115,14 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Loop over each exponential curve.
-            for exp_i, key in self._exp_curve_loop():
+            # A specific exponential curve.
+            if key:
                 # Loop over the model parameters.
                 for i in range(len(spin.params)):
                     # Effective transversal relaxation rate.
                     if spin.params[i] == 'r2eff':
                         if sim_index != None:
-                            param_vector.append(spin.r2eff_sim[key][sim_index])
+                            param_vector.append(spin.r2eff_sim[sim_index][key])
                         elif spin.r2eff == None or key not in spin.r2eff:
                             param_vector.append(0.0)
                         else:
@@ -125,11 +131,35 @@ class Relax_disp(API_base, API_common):
                     # Initial intensity.
                     elif spin.params[i] == 'i0':
                         if sim_index != None:
-                            param_vector.append(spin.i0_sim[key][sim_index])
+                            param_vector.append(spin.i0_sim[sim_index][key])
                         elif spin.i0 == None or key not in spin.i0:
                             param_vector.append(0.0)
                         else:
                             param_vector.append(spin.i0[key])
+
+
+            # Loop over each exponential curve.
+            else:
+                for exp_i, key in self._exp_curve_loop():
+                    # Loop over the model parameters.
+                    for i in range(len(spin.params)):
+                        # Effective transversal relaxation rate.
+                        if spin.params[i] == 'r2eff':
+                            if sim_index != None:
+                                param_vector.append(spin.r2eff_sim[sim_index][key])
+                            elif spin.r2eff == None or key not in spin.r2eff:
+                                param_vector.append(0.0)
+                            else:
+                                param_vector.append(spin.r2eff[key])
+
+                        # Initial intensity.
+                        elif spin.params[i] == 'i0':
+                            if sim_index != None:
+                                param_vector.append(spin.i0_sim[sim_index][key])
+                            elif spin.i0 == None or key not in spin.i0:
+                                param_vector.append(0.0)
+                            else:
+                                param_vector.append(spin.i0[key])
 
         # Then the spin block specific parameters, taking the values from the first spin.
         spin = spins[0]
@@ -192,11 +222,13 @@ class Relax_disp(API_base, API_common):
         return array(param_vector, float64)
 
 
-    def _assemble_scaling_matrix(self, spins=None, scaling=True):
+    def _assemble_scaling_matrix(self, spins=None, key=None, scaling=True):
         """Create and return the scaling matrix.
 
         @keyword spins:         The list of spin data containers for the block.
         @type spins:            list of SpinContainer instances
+        @keyword key:           The key for the R2eff and I0 parameters.
+        @type key:              str or None
         @keyword scaling:       A flag which if False will cause the identity matrix to be returned.
         @type scaling:          bool
         @return:                The diagonal and square scaling matrix.
@@ -217,8 +249,8 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Loop over each exponential curve.
-            for exp_i, key in self._exp_curve_loop():
+            # A specific exponential curve.
+            if key:
                 # Effective transversal relaxation rate scaling.
                 scaling_matrix[param_index, param_index] = 10
                 param_index += 1
@@ -226,6 +258,17 @@ class Relax_disp(API_base, API_common):
                 # Initial intensity scaling.
                 scaling_matrix[param_index, param_index] = max(spin.intensities.values())
                 param_index += 1
+
+            # Loop over each exponential curve.
+            else:
+                for exp_i, key in self._exp_curve_loop():
+                    # Effective transversal relaxation rate scaling.
+                    scaling_matrix[param_index, param_index] = 10
+                    param_index += 1
+
+                    # Initial intensity scaling.
+                    scaling_matrix[param_index, param_index] = max(spin.intensities.values())
+                    param_index += 1
 
         # Then the spin block specific parameters.
         spin = spins[0]
@@ -272,6 +315,15 @@ class Relax_disp(API_base, API_common):
         @rtype:         numpy rank-1 float array
         """
 
+        # The R2eff model.
+        if cdp.model == 'R2eff':
+            # Check.
+            if cdp.exp_type in FIXED_TIME_EXP:
+                raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
+
+            # Return the results from special back-calculation method.
+            return self._back_calc_r2eff(spin=spin, index=index)
+
         # Create the initial parameter vector.
         param_vector = self._assemble_param_vector(spins=[spin])
 
@@ -293,6 +345,57 @@ class Relax_disp(API_base, API_common):
 
         # Return the correct peak intensity series.
         return results[0, index]
+
+
+    def _back_calc_r2eff(self, spin=None, index=None):
+        """Back-calculation of peak intensity for the given relaxation time.
+
+        @keyword spin:  The specific spin data container.
+        @type spin:     SpinContainer instance
+        @keyword index: The index for the specific exponential curve.
+        @type index:    int
+        @return:        The back-calculated peak intensities for the given exponential curve
+        @rtype:         numpy rank-1 float array
+        """
+
+        # The key.
+        key = self._exp_curve_key_from_index(index)
+
+        # Create the initial parameter vector.
+        param_vector = self._assemble_param_vector(spins=[spin], key=key)
+
+        # Create a scaling matrix.
+        scaling_matrix = self._assemble_scaling_matrix(spins=[spin], key=key, scaling=False)
+
+        # The peak intensities and times.
+        values = []
+        errors = []
+        times = []
+        for time in cdp.relax_time_list:
+            # The key.
+            spectra_key = self._intensity_key(exp_key=key, relax_time=time)
+
+            # The data.
+            values.append(spin.intensities[spectra_key])
+            errors.append(spin.intensity_err[spectra_key])
+            times.append(cdp.relax_times[spectra_key])
+
+        # The scaling matrix in a diagonalised list form.
+        scaling_list = []
+        for i in range(len(scaling_matrix)):
+            scaling_list.append(scaling_matrix[i, i])
+
+        # Initialise the relaxation fit functions.
+        setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+        # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
+        func(param_vector)
+
+        # Get the data back.
+        results = back_calc_I()
+
+        # Return the correct peak height.
+        return results
 
 
     def _cluster(self, cluster_id=None, spin_id=None):
@@ -464,11 +567,13 @@ class Relax_disp(API_base, API_common):
             return r2eff
 
 
-    def _disassemble_param_vector(self, param_vector=None, spins=None, sim_index=None):
+    def _disassemble_param_vector(self, param_vector=None, key=None, spins=None, sim_index=None):
         """Disassemble the parameter vector.
 
         @keyword param_vector:  The parameter vector.
         @type param_vector:     numpy array
+        @keyword key:           The key for the R2eff and I0 parameters.
+        @type key:              str or None
         @keyword spins:         The list of spin data containers for the block.
         @type spins:            list of SpinContainer instances
         @keyword sim_index:     The optional MC simulation index.
@@ -483,9 +588,8 @@ class Relax_disp(API_base, API_common):
             # Alias the spin.
             spin = spins[spin_index]
 
-            # Loop over each exponential curve.
-            for exp_index, key in self._exp_curve_loop():
-                index = spin_index * 2 * cdp.dispersion_points + exp_index * cdp.dispersion_points
+            # A specific exponential curve.
+            if key:
                 param_index += 2
 
                 # Loop over the model parameters.
@@ -493,16 +597,38 @@ class Relax_disp(API_base, API_common):
                     # Effective transversal relaxation rate.
                     if spin.params[i] == 'r2eff':
                         if sim_index != None:
-                            spin.r2eff_sim[sim_index][key] = param_vector[index]
+                            spin.r2eff_sim[sim_index][key] = param_vector[0]
                         else:
-                            spin.r2eff[key] = param_vector[index]
+                            spin.r2eff[key] = param_vector[0]
 
                     # Initial intensity.
                     elif spin.params[i] == 'i0':
                         if sim_index != None:
-                            spin.i0_sim[sim_index][key] = param_vector[index+1]
+                            spin.i0_sim[sim_index][key] = param_vector[1]
                         else:
-                            spin.i0[key] = param_vector[index+1]
+                            spin.i0[key] = param_vector[1]
+
+            # Loop over each exponential curve.
+            else:
+                for exp_index, key in self._exp_curve_loop():
+                    index = spin_index * 2 * cdp.dispersion_points + exp_index * cdp.dispersion_points
+                    param_index += 2
+
+                    # Loop over the model parameters.
+                    for i in range(len(spin.params)):
+                        # Effective transversal relaxation rate.
+                        if spin.params[i] == 'r2eff':
+                            if sim_index != None:
+                                spin.r2eff_sim[sim_index][key] = param_vector[index]
+                            else:
+                                spin.r2eff[key] = param_vector[index]
+
+                        # Initial intensity.
+                        elif spin.params[i] == 'i0':
+                            if sim_index != None:
+                                spin.i0_sim[sim_index][key] = param_vector[index+1]
+                            else:
+                                spin.i0[key] = param_vector[index+1]
 
         # Then the spin block specific parameters, taking the values from the first spin.
         spin = spins[0]
@@ -667,6 +793,10 @@ class Relax_disp(API_base, API_common):
         else:
             raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
+        # Sanity check.
+        if exp_type not in FIXED_TIME_EXP and exp_type not in VAR_TIME_EXP:
+            raise RelaxError("The experiment type '%s' is neither a fixed relaxation time period or variable relaxation time period experiment.")
+
 
     def _grid_search_setup(self, spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
         """The grid search setup function.
@@ -766,40 +896,10 @@ class Relax_disp(API_base, API_common):
                     lower.append(0.0)
                     upper.append(10000.0)
 
-        # Define sparse regions to skip.
-        sparseness = []
-        if cdp.model == 'R2eff':
-            for spin_index1 in range(len(spins)):
-                for spin_index2 in range(len(spins)):
-                    for exp_index1, key in self._exp_curve_loop():
-                        for exp_index2, key in self._exp_curve_loop():
-                            # The same spin and curve, so no sparseness.
-                            if spin_index1 == spin_index2 and exp_index1 == exp_index2:
-                                continue
-    
-                            # The parameter index.
-                            index1 = spin_index1 * 2 * cdp.dispersion_points + exp_index1 * cdp.dispersion_points
-                            index2 = spin_index2 * 2 * cdp.dispersion_points + exp_index2 * cdp.dispersion_points
-
-                            # Add the parameter combinations.
-                            sparseness.append([index1, index2])
-                            sparseness.append([index1, index2+1])
-                            sparseness.append([index1+1, index2])
-                            sparseness.append([index1+1, index2+1])
-
-        # The sparse grid size.
-        if cdp.model == 'R2eff':
-            grid_size = 0
-            for spin_index in range(len(spins)):
-                for exp_index, key in self._exp_curve_loop():
-                    index = spin_index * 2 * cdp.dispersion_points + exp_index * cdp.dispersion_points
-                    grid_size += inc[index] * inc[index+1]
-
         # The full grid size.
-        else:
-            grid_size = 1
-            for i in range(n):
-                grid_size *= inc[i]
+        grid_size = 1
+        for i in range(n):
+            grid_size *= inc[i]
 
         # Test if the grid is too large.
         if isinstance(grid_size, long):
@@ -813,7 +913,7 @@ class Relax_disp(API_base, API_common):
             upper_new.append(upper[i] / scaling_matrix[i, i])
 
         # Return the data structures.
-        return grid_size, inc, lower_new, upper_new, sparseness
+        return grid_size, inc, lower_new, upper_new
 
 
     def _intensity_key(self, exp_key=None, relax_time=None):
@@ -997,149 +1097,140 @@ class Relax_disp(API_base, API_common):
         @type upper:                array of numbers
         @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
-         """
-
-        # The number of spectrometer field strengths.
-        field_count = 1
-        fields = []
-        if hasattr(cdp, 'frq'):
-            field_count = count_unique_elements(cdp.frq.values())
-            fields = unique_elements(cdp.frq.values())
-            fields.sort()
-
-        # The number of time points for the exponential curves (if present).
-        num_time_pts = 1
-        if hasattr(cdp, 'num_time_pts'):
-            num_time_pts = cdp.num_time_pts
+        """
 
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # The keys.
-            keys = list(spin.intensities.keys())
+            # Skip spins which have no data.
+            if not hasattr(spin, 'intensities'):
+                continue
 
-            # Loop over the spectral data.
-            for key in keys:
-                # The indices.
-                disp_pt_index = 0
-                if cdp.exp_type == 'cpmg':
-                    disp_pt_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
-                elif cdp.exp_type == 'r1rho':
-                    disp_pt_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
-                time_index = 0
-                if hasattr(cdp, 'relax_time_list'):
-                    time_index = cdp.relax_time_list.index(cdp.relax_times[key])
-                field_index = 0
-                if hasattr(cdp, 'frqs'):
-                    field_index = fields.index(cdp.frqs[keys])
+            # Loop over each exponential curve.
+            for exp_i, key in self._exp_curve_loop():
+                # The initial parameter vector.
+                param_vector = self._assemble_param_vector(spins=[spin], key=key, sim_index=sim_index)
 
-                # The values.
-                if sim_index == None:
-                    values[spin_index, field_index, disp_pt_index, time_index] = spin.intensities[key]
-                else:
-                    values[spin_index, field_index, disp_pt_index, time_index] = spin.intensity_sim[key][sim_index]
+                # Diagonal scaling.
+                scaling_matrix = self._assemble_scaling_matrix(spins=[spin], key=key, scaling=scaling)
+                if len(scaling_matrix):
+                    param_vector = dot(inv(scaling_matrix), param_vector)
 
-                # The errors.
-                errors[spin_index, field_index, disp_pt_index, time_index] = spin.intensity_err[key]
-
-
-            # Create the initial parameter vector.
-            param_vector = self._assemble_param_vector(spins=spins)
-
-            # Diagonal scaling.
-            scaling_matrix = self._assemble_scaling_matrix(spins=spins, scaling=scaling)
-            if len(scaling_matrix):
-                param_vector = dot(inv(scaling_matrix), param_vector)
-
-            # Get the grid search minimisation options.
-            lower_new, upper_new = None, None
-            if match('^[Gg]rid', min_algor):
-                grid_size, inc_new, lower_new, upper_new, sparseness = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
-
-            # Linear constraints.
-            A, b = None, None
-            if constraints:
-                A, b = self._linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
-
-            # Print out.
-            if verbosity >= 1:
-                # Individual spin block section.
-                top = 2
-                if verbosity >= 2:
-                    top += 2
-                subsection(file=sys.stdout, text="Fitting to the spin block %s"%spin_ids, prespace=top)
-
-                # Grid search printout.
+                # Get the grid search minimisation options.
+                lower_new, upper_new = None, None
                 if match('^[Gg]rid', min_algor):
-                    print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
+                    grid_size, inc_new, lower_new, upper_new, = self._grid_search_setup(spins=[spin], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
-            # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=self._param_num(spins=spins), num_spins=spin_num, num_exp_curves=cdp.dispersion_points, num_times=cdp.num_time_pts, values=values, errors=errors, cpmg_frqs=cdp.cpmg_frqs_list, spin_lock_nu1=cdp.spin_lock_nu1_list, relax_times=cdp.relax_time_list, scaling_matrix=scaling_matrix)
+                # Linear constraints.
+                A, b = None, None
+                if constraints:
+                    A, b = self._linear_constraints(spins=[spin], scaling_matrix=scaling_matrix)
 
-            # Grid search.
-            if search('^[Gg]rid', min_algor):
-                results = grid(func=model.func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, sparseness=sparseness, verbosity=verbosity)
+                # Print out.
+                if verbosity >= 1:
+                    # Individual spin section.
+                    top = 2
+                    if verbosity >= 2:
+                        top += 2
+                    text = "Fitting to spin %s, dispersion point %s" % (spin_id, key)
+                    subsection(file=sys.stdout, text=text, prespace=top)
 
-                # Unpack the results.
-                param_vector, chi2, iter_count, warning = results
-                f_count = iter_count
-                g_count = 0.0
-                h_count = 0.0
+                    # Grid search printout.
+                    if match('^[Gg]rid', min_algor):
+                        print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
-            # Minimisation.
-            else:
-                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+                # The peak intensities, errors and times.
+                values = []
+                errors = []
+                times = []
+                for time in cdp.relax_time_list:
+                    # The key.
+                    spectra_key = self._intensity_key(exp_key=key, relax_time=time)
 
-                # Unpack the results.
-                if results == None:
-                    return
-                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+                    # The values.
+                    if sim_index == None:
+                        values.append(spin.intensities[spectra_key])
+                    else:
+                        values.append(spin.intensity_sim[spectra_key][sim_index])
 
-            # Scaling.
-            if scaling:
-                param_vector = dot(scaling_matrix, param_vector)
+                    # The errors.
+                    errors.append(spin.intensity_err[spectra_key])
 
-            # Disassemble the parameter vector.
-            self._disassemble_param_vector(param_vector=param_vector, spins=spins, sim_index=sim_index)
+                    # The relaxation times.
+                    times.append(cdp.relax_times[spectra_key])
 
-            # Monte Carlo minimisation statistics.
-            if sim_index != None:
-                # Chi-squared statistic.
-                spin.chi2_sim[sim_index] = chi2
+                # The scaling matrix in a diagonalised list form.
+                scaling_list = []
+                for i in range(len(scaling_matrix)):
+                    scaling_list.append(scaling_matrix[i, i])
 
-                # Iterations.
-                spin.iter_sim[sim_index] = iter_count
+                # Initialise the function to minimise.
+                setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
-                # Function evaluations.
-                spin.f_count_sim[sim_index] = f_count
+                # Grid search.
+                if search('^[Gg]rid', min_algor):
+                    results = grid(func=func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
 
-                # Gradient evaluations.
-                spin.g_count_sim[sim_index] = g_count
+                    # Unpack the results.
+                    param_vector, chi2, iter_count, warning = results
+                    f_count = iter_count
+                    g_count = 0.0
+                    h_count = 0.0
 
-                # Hessian evaluations.
-                spin.h_count_sim[sim_index] = h_count
+                # Minimisation.
+                else:
+                    results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
 
-                # Warning.
-                spin.warning_sim[sim_index] = warning
+                    # Unpack the results.
+                    if results == None:
+                        return
+                    param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
-            # Normal statistics.
-            else:
-                # Chi-squared statistic.
-                spin.chi2 = chi2
+                # Scaling.
+                if scaling:
+                    param_vector = dot(scaling_matrix, param_vector)
 
-                # Iterations.
-                spin.iter = iter_count
+                # Disassemble the parameter vector.
+                self._disassemble_param_vector(param_vector=param_vector, spins=[spin], key=key, sim_index=sim_index)
 
-                # Function evaluations.
-                spin.f_count = f_count
+                # Monte Carlo minimisation statistics.
+                if sim_index != None:
+                    # Chi-squared statistic.
+                    spin.chi2_sim[sim_index] = chi2
 
-                # Gradient evaluations.
-                spin.g_count = g_count
+                    # Iterations.
+                    spin.iter_sim[sim_index] = iter_count
 
-                # Hessian evaluations.
-                spin.h_count = h_count
+                    # Function evaluations.
+                    spin.f_count_sim[sim_index] = f_count
 
-                # Warning.
-                spin.warning = warning
+                    # Gradient evaluations.
+                    spin.g_count_sim[sim_index] = g_count
+
+                    # Hessian evaluations.
+                    spin.h_count_sim[sim_index] = h_count
+
+                    # Warning.
+                    spin.warning_sim[sim_index] = warning
+
+                # Normal statistics.
+                else:
+                    # Chi-squared statistic.
+                    spin.chi2 = chi2
+
+                    # Iterations.
+                    spin.iter = iter_count
+
+                    # Function evaluations.
+                    spin.f_count = f_count
+
+                    # Gradient evaluations.
+                    spin.g_count = g_count
+
+                    # Hessian evaluations.
+                    spin.h_count = h_count
+
+                    # Warning.
+                    spin.warning = warning
 
 
     def _model_setup(self, model, params):
@@ -1177,17 +1268,16 @@ class Relax_disp(API_base, API_common):
         @type index:    int
         @keyword spins: The list of spin data containers for the block.
         @type spins:    list of SpinContainer instances
-        @return:        The parameter name, spin cluster index, and exponential curve key.
-        @rtype:         str, int, float
+        @return:        The parameter name and spin cluster index
+        @rtype:         str, int
         """
 
         # Initialise.
         param_name = None
         spin_index = 0
-        curve_key = None
 
-        # The number of spin specific parameters (R2eff and I0 per spin), times the total number of exponential curves.
-        num = len(spins) * 2 * cdp.dispersion_points
+        # The number of spin specific parameters (R2eff and I0 per spin).
+        num = len(spins) * 2
 
         # The exponential curve parameters.
         if index < num:
@@ -1198,11 +1288,7 @@ class Relax_disp(API_base, API_common):
                 param_name = 'r2eff'
 
             # The spin index.
-            spin_index = int(index / 2 / cdp.dispersion_points)
-
-            # The curve index and key.
-            exp_index = int((index - spin_index * cdp.dispersion_points * 2) / 2)
-            curve_key = self._exp_curve_key_from_index(exp_index)
+            spin_index = int(index / 2)
 
         # All other parameters.
         else:
@@ -1210,7 +1296,7 @@ class Relax_disp(API_base, API_common):
             param_name = names[index-num+2]
 
         # Return the data.
-        return param_name, spin_index, curve_key
+        return param_name, spin_index
 
 
     def _param_num(self, spins=None):
@@ -1221,6 +1307,16 @@ class Relax_disp(API_base, API_common):
         @return:                The number of model parameters.
         @rtype:                 int
         """
+
+        # The R2eff model.
+        if cdp.model == 'R2eff':
+            # Exponential curves (with clustering).
+            if cdp.exp_type in VAR_TIME_EXP:
+                return 2 * len(spins)
+
+            # Fixed time period experiments (with clustering).
+            else:
+                return 1 * len(spins)
 
         # The number of spin specific parameters (R2eff and I0 per spin), times the total number of exponential curves.
         num = len(spins) * 2 * cdp.dispersion_points
@@ -1253,6 +1349,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Open the file for writing.
+
         file_path = get_file_path(file, dir)
         file = open_write_file(file, dir, force)
 
@@ -1568,7 +1665,7 @@ class Relax_disp(API_base, API_common):
         if not hasattr(cdp, 'spin_lock_nu1_list'):
             cdp.spin_lock_nu1_list = []
 
-        # Special curve-fitting for the 'R2eff' model.
+        # Special exponential curve-fitting for the 'R2eff' model.
         if cdp.model == 'R2eff':
             # Sanity checks.
             if cdp.exp_type in ['cpmg fixed']:
@@ -1881,7 +1978,7 @@ class Relax_disp(API_base, API_common):
         spins, spin_ids = model_info
 
         # Convert the parameter index.
-        param_name, spin_index, curve_key = self._param_index_to_param_info(index=index, spins=spins)
+        param_name, spin_index = self._param_index_to_param_info(index=index, spins=spins)
 
         # The parameter error name.
         err_name = param_name + "_err"
@@ -1893,8 +1990,7 @@ class Relax_disp(API_base, API_common):
                 setattr(spins[spin_index], err_name, {})
 
             # Set the value.
-            obj = getattr(spins[spin_index], err_name)
-            obj[curve_key] = error
+            setattr(spins[spin_index], err_name, error)
 
         # All other parameters.
         else:
@@ -1966,22 +2062,24 @@ class Relax_disp(API_base, API_common):
         # Unpack the data.
         spins, spin_ids = model_info
 
-        # No more parameters.
+        # The number of parameters.
         total_param_num = self._param_num(spins=spins)
+
+        # No more parameters.
         if index >= total_param_num:
             return
 
         # Convert the parameter index.
-        param_name, spin_index, curve_key = self._param_index_to_param_info(index=index, spins=spins)
+        param_name, spin_index = self._param_index_to_param_info(index=index, spins=spins)
 
         # The exponential curve parameters.
         sim_data = []
         if param_name == 'r2eff':
             for i in range(cdp.sim_number):
-                sim_data.append(spins[spin_index].r2eff_sim[i][curve_key])
+                sim_data.append(spins[spin_index].r2eff_sim[i])
         elif param_name == 'i0':
             for i in range(cdp.sim_number):
-                sim_data.append(spins[spin_index].i0_sim[i][curve_key])
+                sim_data.append(spins[spin_index].i0_sim[i])
 
         # All other parameters.
         else:
