@@ -24,14 +24,14 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import sqrt
 from numpy import ndarray
 from random import gauss
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoSequenceError
+from lib import stats
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control import pipes
-from lib.errors import RelaxError, RelaxNoSequenceError
 from specific_analyses.setup import get_specific_fn
 
 
@@ -156,49 +156,9 @@ def error_analysis():
             if param_array == None:
                 break
 
-            # Simulation parameters with values (ie not None).
+            # SD of simulation parameters with values (ie not None).
             if param_array[0] != None:
-                # The total number of simulations.
-                n = 0
-                for i in range(len(param_array)):
-                    # Skip deselected simulations.
-                    if not select_sim[i]:
-                        continue
-
-                    # Increment n.
-                    n = n + 1
-
-                # Calculate the sum of the parameter value for all simulations.
-                Xsum = 0.0
-                for i in range(len(param_array)):
-                    # Skip deselected simulations.
-                    if not select_sim[i]:
-                        continue
-
-                    # Sum.
-                    Xsum = Xsum + param_array[i]
-
-                # Calculate the mean parameter value for all simulations.
-                if n == 0:
-                    Xav = 0.0
-                else:
-                    Xav = Xsum / float(n)
-
-                # Calculate the sum part of the standard deviation.
-                sd = 0.0
-                for i in range(len(param_array)):
-                    # Skip deselected simulations.
-                    if not select_sim[i]:
-                        continue
-
-                    # Sum.
-                    sd = sd + (param_array[i] - Xav)**2
-
-                # Calculate the standard deviation.
-                if n <= 1:
-                    sd = 0.0
-                else:
-                    sd = sqrt(sd / (float(n) - 1.0))
+                sd = stats.std(values=param_array, skip=select_sim)
 
             # Simulation parameters with the value None.
             else:
