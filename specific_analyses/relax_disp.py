@@ -1466,6 +1466,10 @@ class Relax_disp(API_base, API_common):
         if not hasattr(cdp, 'exp_type'):
             raise RelaxError("The relaxation dispersion experiment type has not been set.")
 
+        # Test for the C-modules.
+        if model == 'R2eff' and cdp.exp_type in VAR_TIME_EXP and not C_module_exp_fn:
+            raise RelaxError("The exponential curve-fitting C module cannot be found.")
+
         # Fast-exchange regime.
         if model == 'R2eff':
             print("R2eff value and error determination.")
