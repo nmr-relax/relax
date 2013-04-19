@@ -223,10 +223,10 @@ class New_analysis_page(Wiz_page):
                            'r1': wx.NewId(),
                            'r2': wx.NewId(),
                            'mf': wx.NewId(),
-                           'reserved1': wx.NewId(),
+                           'relax_disp': wx.NewId(),
                            'consist_test': wx.NewId(),
                            'custom': wx.NewId(),
-                           'reserved2': wx.NewId()}
+                           'reserved': wx.NewId()}
 
         # The NOE button.
         self.button_noe = self.create_button(id=self.button_ids['noe'], box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"noe_150x150.png", tooltip="Steady-state NOE analysis", fn=self.select_noe)
@@ -240,8 +240,8 @@ class New_analysis_page(Wiz_page):
         # The model-free button.
         self.button_mf = self.create_button(id=self.button_ids['mf'], box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
 
-        # The blank reserved button.
-        self.button_custom = self.create_button(id=self.button_ids['reserved1'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
+        # The relaxation dispersion button.
+        self.button_disp = self.create_button(id=self.button_ids['relax_disp'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"relax_disp_150x150.png", tooltip="Relaxation dispersion analysis", fn=self.select_disp)
 
         # Consistency testing.
         self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing (disabled)", fn=self.select_consist_test, disabled=True)
@@ -250,7 +250,7 @@ class New_analysis_page(Wiz_page):
         self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
 
         # The blank reserved button.
-        self.button_custom = self.create_button(id=self.button_ids['reserved2'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
+        self.button_reserved = self.create_button(id=self.button_ids['reserved'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -358,6 +358,23 @@ class New_analysis_page(Wiz_page):
         self.parent.analysis_type = 'custom'
 
 
+    def select_disp(self, event):
+        """Relaxation dispersion analysis selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Toggle all buttons off.
+        self.toggle(self.button_disp)
+
+        # Update the analysis name.
+        self.analysis_name.SetValue(str_to_gui('Relaxation dispersion'))
+
+        # Set the analysis type.
+        self.parent.analysis_type = 'relax_disp'
+
+
     def select_mf(self, event):
         """NOE analysis selection.
 
@@ -443,9 +460,11 @@ class New_analysis_page(Wiz_page):
         self.button_noe.SetValue(False)
         self.button_r1.SetValue(False)
         self.button_r2.SetValue(False)
-        self.button_consist_test.SetValue(False)
         self.button_mf.SetValue(False)
+        self.button_disp.SetValue(False)
+        self.button_consist_test.SetValue(False)
         self.button_custom.SetValue(False)
+        self.button_reserved.SetValue(False)
 
         # Turn on the selected button.
         button.SetValue(True)
