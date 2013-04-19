@@ -45,7 +45,7 @@ __all__ = [
     'regex',
     'selection',
     'spectral_densities',
-    'stats',
+    'statistics',
     'structure',
     'text',
     'warnings'

@@ -29,7 +29,7 @@ from random import gauss
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
-from lib import stats
+from lib import statistics
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control import pipes
 from specific_analyses.setup import get_specific_fn
@@ -169,11 +169,11 @@ def error_analysis():
                         data.append(param_array[i][key])
 
                     # Calculate and store the SD.
-                    sd[key] = stats.std(values=data, skip=select_sim)
+                    sd[key] = statistics.std(values=data, skip=select_sim)
 
              # SD of simulation parameters with values (ie not None).
             elif param_array[0] != None:
-                sd = stats.std(values=param_array, skip=select_sim)
+                sd = statistics.std(values=param_array, skip=select_sim)
 
             # Simulation parameters with the value None.
             else:
