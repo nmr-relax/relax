@@ -156,8 +156,23 @@ def error_analysis():
             if param_array == None:
                 break
 
-            # SD of simulation parameters with values (ie not None).
-            if param_array[0] != None:
+            # Handle dictionary type parameters.
+            if isinstance(param_array[0], dict):
+                # Initialise the standard deviation structure as a dictionary.
+                sd = {}
+
+                # Loop over each key.
+                for key in param_array[0].keys():
+                    # Create a list of the values for the current key.
+                    data = []
+                    for i in range(len(param_array)):
+                        data.append(param_array[i][key])
+
+                    # Calculate and store the SD.
+                    sd[key] = stats.std(values=data, skip=select_sim)
+
+             # SD of simulation parameters with values (ie not None).
+            elif param_array[0] != None:
                 sd = stats.std(values=param_array, skip=select_sim)
 
             # Simulation parameters with the value None.
