@@ -52,7 +52,7 @@ class Analysis_wizard:
         wx.BeginBusyCursor()
 
         # Set up the wizard.
-        self.wizard = Wiz_window(size_x=850, size_y=700, title='Analysis selection wizard')
+        self.wizard = Wiz_window(size_x=1000, size_y=700, title='Analysis selection wizard')
 
         # Change the finish button.
         self.wizard.TEXT_FINISH = " Start"
@@ -222,9 +222,11 @@ class New_analysis_page(Wiz_page):
         self.button_ids = {'noe': wx.NewId(),
                            'r1': wx.NewId(),
                            'r2': wx.NewId(),
-                           'consist_test': wx.NewId(),
                            'mf': wx.NewId(),
-                           'custom': wx.NewId()}
+                           'reserved1': wx.NewId(),
+                           'consist_test': wx.NewId(),
+                           'custom': wx.NewId(),
+                           'reserved2': wx.NewId()}
 
         # The NOE button.
         self.button_noe = self.create_button(id=self.button_ids['noe'], box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"noe_150x150.png", tooltip="Steady-state NOE analysis", fn=self.select_noe)
@@ -235,14 +237,20 @@ class New_analysis_page(Wiz_page):
         # The R2 button.
         self.button_r2 = self.create_button(id=self.button_ids['r2'], box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"r2_150x150.png", tooltip="R2 relaxation curve-fitting analysis", fn=self.select_r2)
 
-        # Consistency testing.
-        self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing", fn=self.select_consist_test, disabled=True)
-
         # The model-free button.
-        self.button_mf = self.create_button(id=self.button_ids['mf'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
+        self.button_mf = self.create_button(id=self.button_ids['mf'], box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
+
+        # The blank reserved button.
+        self.button_custom = self.create_button(id=self.button_ids['reserved1'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
+
+        # Consistency testing.
+        self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing (disabled)", fn=self.select_consist_test, disabled=True)
 
         # The custom analysis button.
-        self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis", fn=self.select_custom, disabled=True)
+        self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
+
+        # The blank reserved button.
+        self.button_custom = self.create_button(id=self.button_ids['reserved2'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -280,7 +288,7 @@ class New_analysis_page(Wiz_page):
         @keyword text:      The text for the button.
         @type text:         str
         @keyword tooltip:   The button tooltip text.
-        @type tooltip:      str
+        @type tooltip:      str or None
         @keyword fn:        The function to bind the button click to.
         @type fn:           method
         @return:            The button.
@@ -295,7 +303,8 @@ class New_analysis_page(Wiz_page):
             button = New_analysis_button(self, id)
 
         # Set the tool tip.
-        button.SetToolTipString(tooltip)
+        if tooltip != None:
+            button.SetToolTipString(tooltip)
 
         # Button properties.
         button.SetMinSize(size)
