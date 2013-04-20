@@ -765,15 +765,6 @@ class Relax_disp(API_base, API_common):
         # Test if the current pipe exists.
         pipes.test()
 
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
         # CPMG relaxation dispersion experiments (exponential curves with varying relax_T).
         if exp_type == 'cpmg':
             print("CPMG experiments with exponential curves from varying the relaxation period.")
