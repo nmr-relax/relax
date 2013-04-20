@@ -37,7 +37,7 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 # relax GUI module imports.
 from gui import paths
-from gui.analyses.elements import Text_ctrl
+from gui.analyses.elements.text_element import Text_ctrl
 from gui.fonts import font
 from gui.misc import add_border, bitmap_setup, format_table
 from gui.string_conv import int_to_gui, str_to_gui
