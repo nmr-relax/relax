@@ -31,6 +31,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements import Spin_ctrl, Text_ctrl
 from gui.analyses.execute import Execute
+from gui.analyses.model_list import Model_list
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
@@ -107,6 +108,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].disp_models = ['R2eff', 'fast 2-site', 'slow 2-site']
 
         # Error checking.
         if ds.relax_gui.analyses[data_index].pipe_bundle == None:
@@ -135,6 +137,7 @@ class Auto_relax_disp(Base_analysis):
         wx.CallAfter(self.field_results_dir.Enable, enable)
         wx.CallAfter(self.spin_systems.Enable, enable)
         wx.CallAfter(self.peak_intensity.Enable, enable)
+        wx.CallAfter(self.model_field.Enable, enable)
         wx.CallAfter(self.button_exec_relax.Enable, enable)
 
 
@@ -163,6 +166,9 @@ class Auto_relax_disp(Base_analysis):
         # Spectral data.
         if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 2:
             missing.append("Spectral data")
+
+        # The dispersion models.
+        data.models = self.model_field.GetValue()
 
         # Return the container and list of missing data.
         return data, missing
@@ -194,6 +200,10 @@ class Auto_relax_disp(Base_analysis):
         box.AddSpacer(20)
         self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
         box.AddSpacer(10)
+
+        # Add the dispersion models GUI element, with spacing.
+        self.model_field = Disp_model_list(self, box)
+        self.model_field.set_value(self.data.disp_models)
 
         # The optimisation settings.
         self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -276,7 +286,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Unregister.
         else:
-            # The model-free methods.
+            # The methods.
             status.observers.gui_uf.unregister(self.data.pipe_bundle)
             status.observers.exec_lock.unregister(self.data.pipe_bundle)
 
@@ -402,6 +412,12 @@ class Auto_relax_disp(Base_analysis):
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
+        # The models to use.
+        if upload:
+            self.data.disp_models = self.model_field.GetValue()
+        else:
+            self.model_field.set_value(self.data.disp_models)
+
 
 
 class Execute_relax_disp(Execute):
@@ -411,7 +427,26 @@ class Execute_relax_disp(Execute):
         """Execute the calculation."""
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, models=data.models, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
+
+
+
+class Disp_model_list(Model_list):
+    """The diffusion model list GUI element."""
+
+    # Class variables.
+    desc = "Diffusion models:"
+    models = [
+        "R2eff",
+        "fast 2-site",
+        "slow 2-site"
+    ]
+    params = [
+        "{r2eff, i0}",
+        "{r2, rex, kex}",
+        "{r2, r2a, ka, dw}"
+    ]
+    tooltip = "The list of all diffusion models to be optimised."
