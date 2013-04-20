@@ -37,7 +37,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.analyses.base import Base_analysis, Spectral_error_type_page
-from gui.analyses.elements import Text_ctrl
+from gui.analyses.elements.text_element import Text_ctrl
 from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
