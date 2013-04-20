@@ -54,6 +54,10 @@ class Model_list:
     red_flag = False
     """A flag which if True will cause the flag icon to turn red if the model list has been modified."""
 
+    tooltip = None
+    """The tooltip string to add to all wx GUI elements."""
+
+
     def __init__(self, parent, box):
         """Build the combo box list widget for a list of list selections.
 
@@ -91,6 +95,12 @@ class Model_list:
 
         # Add the button.
         self.button = self.parent.add_button_open(sizer, self.parent, icon=paths.icon_16x16.flag_blue, text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
+
+        # Tooltip.
+        if self.tooltip:
+            label.SetToolTipString(self.tooltip)
+            self.field.SetToolTipString(self.tooltip)
+            self.button.SetToolTipString(self.tooltip)
 
         # Add the contents to the main box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
