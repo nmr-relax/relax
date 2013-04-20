@@ -28,10 +28,12 @@ import wx
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
+from graphics import fetch_icon
 from gui.analyses.base import Base_analysis
-from gui.analyses.elements import Spin_ctrl, Text_ctrl
+from gui.analyses.elements.spin_element import Spin_ctrl
+from gui.analyses.elements.text_element import Text_ctrl
+from gui.analyses.elements.model_list import Model_list
 from gui.analyses.execute import Execute
-from gui.analyses.model_list import Model_list
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
@@ -191,10 +193,13 @@ class Auto_relax_disp(Base_analysis):
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
+
+        # Add the relax_disp.exp_type user function GUI element.
+        self.field_exp_type = Text_ctrl(box, self, text="Experiment type:", icon=fetch_icon("oxygen.actions.edit-rename", "16x16"), tooltip="Select the type of relaxation dispersion experiment run.", fn=self.relax_disp_exp_type, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
@@ -356,6 +361,21 @@ class Auto_relax_disp(Base_analysis):
 
         # Run the wizard.
         self.wizard.run()
+
+
+    def relax_disp_exp_type(self, event):
+        """Set the experiment type via the relax_disp.exp_type user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['relax_disp.exp_type'](wx_wizard_modal=True)
+
+        # Place the experiment type in the text box.
+        if hasattr(cdp, 'exp_type'):
+            self.field_exp_type.SetValue(str_to_gui(cdp.exp_type))
 
 
     def results_directory(self, event):
