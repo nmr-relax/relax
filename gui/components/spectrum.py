@@ -321,27 +321,27 @@ class Spectra_list(Base_list):
                 'id': wx.NewId(),
                 'text': "Set the &baseplane RMSD",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
-                'method': self.action_relax_fit_relax_time
+                'method': self.action_spectrum_baseplane_rmsd
             }, {
                 'id': wx.NewId(),
                 'text': "&Delete the peak intensities",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
-                'method': self.action_spectrum_baseplane_rmsd
+                'method': self.action_spectrum_delete
             }, {
                 'id': wx.NewId(),
                 'text': "Set the number of integration &points",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
-                'method': self.action_spectrum_delete
+                'method': self.action_spectrum_integration_points
             }, {
                 'id': wx.NewId(),
                 'text': "Specify which spectra are &replicated",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
-                'method': self.action_spectrum_integration_points
+                'method': self.action_spectrum_replicated
             }, {
                 'id': wx.NewId(),
                 'text': "Set the relaxation &time",
                 'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
-                'method': self.action_spectrum_replicated
+                'method': self.action_relax_fit_relax_time
             }
         ]
 
