@@ -26,7 +26,6 @@
 # Python module imports.
 from math import ceil
 from os import sep
-import sys
 import wx
 import wx.lib.buttons
 import wx.lib.mixins.listctrl
@@ -49,14 +48,15 @@ from gui.about import About_base
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements import Spin_ctrl, Text_ctrl
 from gui.analyses.execute import Execute
+from gui.analyses.model_list import Model_list
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
 from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
-from gui.message import error_message, Question, Missing_data
-from gui.misc import add_border, bitmap_setup, protected_exec
+from gui.message import error_message, Missing_data
+from gui.misc import add_border, bitmap_setup
 from gui import paths
-from gui.string_conv import gui_to_int, gui_to_str, list_to_gui, str_to_gui
+from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_window
 
@@ -809,8 +809,8 @@ class Execute_mf(Execute):
 
 
 
-class Local_tm_list:
-    """The model-free model list GUI element."""
+class Local_tm_list(Model_list):
+    """The local model-free model list GUI element."""
 
     # Some class variables.
     desc = u'Local \u03C4m models:'
@@ -838,150 +838,12 @@ class Local_tm_list:
         "{local_tm, S2, tf, S2f, ts, Rex}",
         "{local_tm, Rex}"
     ]
-
-    def __init__(self, parent, box):
-        """Build the combo box list widget for a list of list selections.
-
-        @param parent:      The parent GUI element.
-        @type parent:       wx object instance
-        @param box:         The sizer to put the combo box widget into.
-        @type box:          wx.Sizer instance
-        """
-
-        # Store some args.
-        self.parent = parent
-
-        # Initialise all models as being selected.
-        self.select = []
-        for i in range(len(self.models)):
-            self.select.append(True)
-
-        # Initialise the model selection window.
-        self.model_win = Model_sel_window(self.models, self.params)
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add a label.
-        label = self.parent.add_static_text(sizer, self.parent, text=self.desc, width=self.parent.width_text)
-
-        # Spacer.
-        sizer.AddSpacer((self.parent.spacer_horizontal, -1))
-
-        # The text input field.
-        self.field = self.parent.add_text_control(sizer, self.parent, text=list_to_gui(self.GetValue()), editable=False)
-
-        # Spacer.
-        sizer.AddSpacer((self.parent.spacer_horizontal, -1))
-
-        # Add the button.
-        self.button = self.parent.add_button_open(sizer, self.parent, icon=paths.icon_16x16.flag_blue, text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
-
-        # Add the contents to the main box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-
-    def Enable(self, enable=True):
-        """Enable or disable the element.
-
-        @keyword enable:    The flag specifying if the element should be enabled or disabled.
-        @type enable:       bool
-        """
-
-        # Call the control and button's method.
-        self.field.Enable(enable)
-        self.button.Enable(enable)
-
-
-    def GetValue(self):
-        """Return the list of model-free models.
-
-        @return:    The list of model-free models.
-        @rtype:     list of str
-        """
-
-        # Initialise.
-        model_list = []
-
-        # Add the models if they are selected.
-        for i in range(len(self.models)):
-            if self.select[i]:
-                model_list.append(self.models[i])
-
-        # Return the list.
-        return model_list
-
-
-    def set_value(self, value):
-        """Store the list of model-free models.
-
-        @param value:   The list of model-free models.
-        @type value:    list of str
-        """
-
-        # First set all models as being deselected.
-        for i in range(len(self.models)):
-            self.select[i] = False
-
-        # Select all models in the list.
-        for model in value:
-            # The model index.
-            index = self.models.index(model)
-
-            # Set the selected flag.
-            self.select[index] = True
-
-        # Update the button.
-        self.update_button()
-
-        # Update the GUI element.
-        self.field.SetValue(list_to_gui(self.GetValue()))
-
-
-    def modify(self, event=None):
-        """Modify the model-free model selection.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
-
-        # First state that this should not be done.
-        msg = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
-        if status.show_gui and not Question(msg, title="Warning - do not change!", size=(420, 210), default=False).ShowModal() == wx.ID_YES:
-            return
-
-        # Set the model selector window selections.
-        self.model_win.set_selection(self.select)
-
-        # Show the model selector window.
-        if status.show_gui:
-            self.model_win.ShowModal()
-            self.model_win.Close()
-
-        # Set the values.
-        self.select = self.model_win.get_selection()
-
-        # Update the button.
-        self.update_button()
-
-        # Update the GUI element.
-        self.field.SetValue(list_to_gui(self.GetValue()))
-
-
-    def update_button(self):
-        """Update the button bitmap as needed."""
-
-        # Change the flag to red to indicate to the user that changing the models is a bad thing!
-        if False in self.select:
-            self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_red, wx.BITMAP_TYPE_ANY))
-
-        # Otherwise set it to blue (in case all models are selected again).
-        else:
-            self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_blue, wx.BITMAP_TYPE_ANY))
+    warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
+    red_flag = True
 
 
 
-class Mf_list(Local_tm_list):
+class Mf_list(Model_list):
     """The model-free model list GUI element."""
 
     # Some class variables.
@@ -1010,113 +872,8 @@ class Mf_list(Local_tm_list):
         "{S2, tf, S2f, ts, Rex}",
         "{Rex}"
     ]
-
-
-
-class Model_sel_window(wx.Dialog):
-    """The model-free model selector window object."""
-
-    def __init__(self, models, params):
-        """Set up the model-free model selector window.
-
-        @param models:  The list of model-free models.
-        @type models:   list of str
-        @param params:  The list of parameters corresponding to the models.
-        @type params:   list of str
-        """
-
-        # Set up the dialog.
-        wx.Dialog.__init__(self, None, id=-1, title="Model-free model selector")
-
-        # Initialise some values
-        size_x = 500
-        size_y = 300
-        border = 10
-        width = size_x - 2*border
-
-        # Set the frame properties.
-        self.SetSize((size_x, size_y))
-        self.Centre()
-        self.SetFont(font.normal)
-
-        # The main box sizer.
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Pack the sizer into the frame.
-        self.SetSizer(main_sizer)
-
-        # Build the central sizer, with borders.
-        sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
-
-        # Add a list control.
-        self.model_list = ModelSelListCtrl(self)
-
-        # The headers.
-        self.model_list.InsertColumn(0, "Model-free model")
-        self.model_list.InsertColumn(1, "Parameters")
-
-        # The widths.
-        self.model_list.SetColumnWidth(0, int(0.4*width))
-        self.model_list.SetColumnWidth(1, int(0.5*width))
-
-        # Add the models and parameters.
-        for i in range(len(models)):
-            # Set the text.
-            self.model_list.Append((str_to_gui(models[i]), str_to_gui(params[i])))
-
-            # Set all selections to True.
-            self.model_list.CheckItem(i)
-
-        # Add the table to the sizer.
-        sizer.Add(self.model_list, 1, wx.ALL|wx.EXPAND, 0)
-
-
-    def get_selection(self):
-        """Return the selection as a list of booleans.
-
-        @return:    The list of models selected.
-        @rtype:     list of bool
-        """
-
-        # Init.
-        select = []
-
-        # Loop over the entries.
-        for i in range(self.model_list.GetItemCount()):
-            select.append(self.model_list.IsChecked(i))
-
-        # Return the list.
-        return select
-
-
-    def set_selection(self, select):
-        """Set the selection.
-
-        @param select:  The list of selections.
-        @type select:   list of bool
-        """
-
-        # Loop over the entries.
-        for i in range(self.model_list.GetItemCount()):
-            self.model_list.CheckItem(i, check=select[i])
-
-
-
-class ModelSelListCtrl(wx.ListCtrl, wx.lib.mixins.listctrl.CheckListCtrlMixin):
-    """A special list control with checkboxes."""
-
-    def __init__(self, parent):
-        """Initialise the control.
-
-        @param parent:  The parent window.
-        @type parent:   wx.Frame instance
-        """
-
-        # Execute the list control __init__() method.
-        wx.ListCtrl.__init__(self, parent, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
-
-        # Execute the CheckListCtrlMixin __init__() method.
-        wx.lib.mixins.listctrl.CheckListCtrlMixin.__init__(self)
+    warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
+    red_flag = True
 
 
 
