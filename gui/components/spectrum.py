@@ -45,7 +45,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default'):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', relax_times=False):
         """Build the spectral list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -64,10 +64,13 @@ class Spectra_list(Base_list):
         @type proportion:           bool
         @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
         @type button_placement:     str or None
+        @keyword relax_times:       A flag which if True will activate the relaxation time parts of the GUI element.
+        @type relax_times:          bool
         """
 
         # Store the arguments.
         self.fn_add = fn_add
+        self.relax_times_flag = relax_times
 
         # Initialise the base class.
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
@@ -337,13 +340,15 @@ class Spectra_list(Base_list):
                 'text': "Specify which spectra are &replicated",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
                 'method': self.action_spectrum_replicated
-            }, {
+            }
+        ]
+        if self.relax_times_flag:
+            self.popup_menus.append({
                 'id': wx.NewId(),
                 'text': "Set the relaxation &time",
                 'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
                 'method': self.action_relax_fit_relax_time
-            }
-        ]
+            })
 
 
     def update_data(self):
@@ -374,7 +379,7 @@ class Spectra_list(Base_list):
             index += 1
 
         # The relaxation times.
-        if self.relax_times(index):
+        if self.relax_times_flag and self.relax_times(index):
             index += 1
 
         # The replicated spectra.
