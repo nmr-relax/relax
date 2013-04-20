@@ -25,5 +25,6 @@
 # The package contents.
 __all__ = [
     'model_list',
+    'spin_element',
     'text_element'
 ] 
