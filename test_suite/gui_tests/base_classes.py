@@ -37,17 +37,14 @@ import dep_check
 from compat import queue
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
+from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.reset import reset
 from prompt.interpreter import exec_script
 from lib.errors import RelaxError
 from lib.io import delete
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# relax GUI module imports.
-from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.wizard import Wiz_window
-from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
 
 class GuiTestCase(TestCase):
