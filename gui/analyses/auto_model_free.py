@@ -59,7 +59,7 @@ from gui.misc import add_border, bitmap_setup
 from gui import paths
 from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
-from gui.wizard import Wiz_window
+from gui.wizards.wiz_objects import Wiz_window
 
 
 class About_window(About_base):

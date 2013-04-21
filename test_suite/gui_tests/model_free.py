@@ -38,7 +38,7 @@ from gui.analyses import auto_model_free
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import float_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
-from gui.wizard import Wiz_window
+from gui.wizards.wiz_objects import Wiz_window
 
 
 class Mf(GuiTestCase):

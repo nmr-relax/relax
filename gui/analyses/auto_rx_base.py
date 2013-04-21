@@ -24,32 +24,26 @@
 """Module containing the base class for the automatic R1 and R2 analysis frames."""
 
 # Python module imports.
-from os import sep
-import sys
 import wx
 
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.mol_res_spin import are_spins_named, exists_mol_res_spin_data
-from pipe_control.pipes import has_bundle, has_pipe
-from status import Status; status = Status()
-
-# relax GUI module imports.
-from gui.analyses.base import Base_analysis, Spectral_error_type_page
+from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
-from gui.message import error_message, Missing_data, Question
-from gui.misc import protected_exec
+from gui.message import error_message, Missing_data
 from gui import paths
-from gui.string_conv import gui_to_int, gui_to_str, int_to_gui, str_to_gui
+from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
-from gui.wizard import Wiz_window
-
+from gui.wizards.peak_intensity import Peak_intensity_wizard
+from pipe_control.mol_res_spin import exists_mol_res_spin_data
+from pipe_control.pipes import has_bundle, has_pipe
+from status import Status; status = Status()
 
 
 class Auto_rx(Base_analysis):
@@ -219,9 +213,9 @@ class Auto_rx(Base_analysis):
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
 
-        # Add the peak list selection GUI element, with spacing.
+        # Add the peak list wizard and selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard, relax_times=True)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_times=True)
         box.AddSpacer(10)
 
         # The optimisation settings.
@@ -313,68 +307,15 @@ class Auto_rx(Base_analysis):
             self.peak_intensity.observer_register(remove=True)
 
 
-    def peak_wizard(self, event):
-        """Launch the Rx peak loading wizard.
+    def peak_wizard_launch(self, event):
+        """Launch the peak loading wizard.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Change the cursor to busy.
-        wx.BeginBusyCursor()
-
-        # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Set up the %s peak intensities" % self.label)
-        self.page_indices = {}
-
-        # First check that at least a single spin is named!
-        if not are_spins_named():
-            # The message.
-            msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
-
-            # Ask about naming spins, and add the spin.name user function page.
-            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
-                page = uf_store['spin.name'].create_page(self.wizard, sync=True)
-                self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
-
-
-        # The spectrum.read_intensities page.
-        self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self.wizard, sync=True)
-        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
-
-        # Error type selection page.
-        self.page_error_type = Spectral_error_type_page(parent=self.wizard, height_desc=520)
-        self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
-        self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
-
-        # The spectrum.replicated page.
-        page = uf_store['spectrum.replicated'].create_page(self.wizard, sync=True)
-        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
-        page.on_init = self.wizard_update_repl
-
-        # The spectrum.baseplane_rmsd page.
-        page = uf_store['spectrum.baseplane_rmsd'].create_page(self.wizard, sync=True)
-        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
-        page.on_init = self.wizard_update_rmsd
-
-        # The spectrum.integration_points page.
-        page = uf_store['spectrum.integration_points'].create_page(self.wizard, sync=True)
-        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        page.on_init = self.wizard_update_pts
-
-        # The relax_fit.relax_time page.
-        page = uf_store['relax_fit.relax_time'].create_page(self.wizard, sync=True)
-        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
-        page.on_init = self.wizard_update_relax_time
-
-        # Reset the cursor.
-        if wx.IsBusy():
-            wx.EndBusyCursor()
-
-        # Run the wizard.
-        self.wizard.run()
+        # A new wizard instance.
+        self.peak_wizard = Peak_intensity_wizard(relax_fit=True)
 
 
     def results_directory(self, event):
@@ -436,112 +377,6 @@ class Auto_rx(Base_analysis):
             self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
-
-
-    def wizard_page_after_error_type(self):
-        """Set the page after the error type choice.
-
-        @return:    The index of the next page, which is the current page index plus one.
-        @rtype:     int
-        """
-
-        # Go to the spectrum.baseplane_rmsd page.
-        if self.page_error_type.selection == 'rmsd':
-            return self.page_indices['rmsd']
-
-        # Go to the spectrum.replicated page.
-        elif self.page_error_type.selection == 'repl':
-            return self.page_indices['repl']
-
-
-    def wizard_page_after_repl(self):
-        """Set the page that comes after the spectrum.replicated page.
-
-        @return:    The index of the next page.
-        @rtype:     int
-        """
-
-        # Go to the spectrum.integration_points page.
-        int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
-        if int_method != 'height':
-            return self.page_indices['pts']
-
-        # Skip to the relax_fit.relax_time page.
-        else:
-            return self.page_indices['relax_time']
-
-
-    def wizard_page_after_rmsd(self):
-        """Set the page that comes after the spectrum.baseplane_rmsd page.
-
-        @return:    The index of the next page.
-        @rtype:     int
-        """
-
-        # Go to the spectrum.integration_points page.
-        int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
-        if int_method != 'height':
-            return self.page_indices['pts']
-
-        # Skip to the relax_fit.relax_time page.
-        else:
-            return self.page_indices['relax_time']
-
-
-    def wizard_update_pts(self):
-        """Update the spectrum.replicated page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the spectrum.replicated page.
-        page = self.wizard.get_page(self.page_indices['pts'])
-        page.uf_args['spectrum_id'].SetValue(id)
-
-
-    def wizard_update_repl(self):
-        """Update the spectrum.replicated page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the spectrum.replicated page.
-        page = self.wizard.get_page(self.page_indices['repl'])
-        page.uf_args['spectrum_ids'].SetValue(value=id, index=0)
-
-
-    def wizard_update_rmsd(self):
-        """Update the spectrum.baseplane_rmsd page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the spectrum.baseplane_rmsd page.
-        page = self.wizard.get_page(self.page_indices['rmsd'])
-        page.uf_args['spectrum_id'].SetValue(id)
-
-
-    def wizard_update_relax_time(self):
-        """Update the relax_fit.relax_time page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the relax_fit.relax_time page.
-        page = self.wizard.get_page(self.page_indices['relax_time'])
-        page.uf_args['spectrum_id'].SetValue(id)
 
 
 

@@ -36,7 +36,7 @@ from gui.icons import relax_icons
 from gui.misc import gui_raise
 from gui.spin_viewer.splitter import Tree_splitter
 from gui.string_conv import gui_to_str, str_to_gui
-from gui.wizard import Wiz_page, Wiz_window
+from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
 
 
