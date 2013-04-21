@@ -39,42 +39,46 @@ class Text_ctrl:
     This consists of three elements:  wx.StaticText, wx.TextCtrl, and wx.Button.
     """
 
-    def __init__(self, box, parent, text="", default="", tooltip=None, button_text=" Change", control=wx.TextCtrl, icon=icon_16x16.open, fn=None, editable=True, button=False, width_text=200, width_button=80, spacer=0):
+    def __init__(self, box, parent, text="", default="", tooltip=None, tooltip_button=None, button_text=" Change", control=wx.TextCtrl, icon=icon_16x16.open, fn=None, editable=True, button=False, width_text=200, width_button=80, spacer=0):
         """Create a text selection element for the frame.
 
         This consists of a horizontal layout with a static text element, a text control, and an optional button.
 
-        @param box:             The box element to pack the structure file selection GUI element into.
-        @type box:              wx.BoxSizer instance
-        @param parent:          The parent GUI element.
-        @type parent:           wx object
-        @keyword text:          The static text.
-        @type text:             str
-        @keyword default:       The default text of the control.
-        @type default:          str
-        @keyword tooltip:       The tooltip which appears on hovering over the text or input field.
-        @type tooltip:          str
-        @keyword button_text:   The text to display on the button.
-        @type button_text:      str
-        @keyword control:       The control class to use.
-        @type control:          wx.TextCtrl derived class
-        @keyword icon:          The path of the icon to use for the button.
-        @type icon:             str
-        @keyword fn:            The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
-        @type fn:               func or str
-        @keyword editable:      A flag specifying if the control is editable or not.
-        @type editable:         bool
-        @keyword button:        A flag which if True will cause a button to appear.
-        @type button:           bool
-        @keyword width_text:    The width of the text element.
-        @type width_text:       int
-        @keyword width_button:  The width of the button.
-        @type width_button:     int
-        @keyword spacer:        The horizontal spacing between the elements.
-        @type spacer:           int
+        @param box:                 The box element to pack the structure file selection GUI element into.
+        @type box:                  wx.BoxSizer instance
+        @param parent:              The parent GUI element.
+        @type parent:               wx object
+        @keyword text:              The static text.
+        @type text:                 str
+        @keyword default:           The default text of the control.
+        @type default:              str
+        @keyword tooltip:           The tooltip which appears on hovering over the text or input field.
+        @type tooltip:              str
+        @keyword tooltip_button:    The separate tooltip for the button.
+        @type tooltip_button:       str
+        @keyword button_text:       The text to display on the button.
+        @type button_text:          str
+        @keyword control:           The control class to use.
+        @type control:              wx.TextCtrl derived class
+        @keyword icon:              The path of the icon to use for the button.
+        @type icon:                 str
+        @keyword fn:                The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
+        @type fn:                   func or str
+        @keyword editable:          A flag specifying if the control is editable or not.
+        @type editable:             bool
+        @keyword button:            A flag which if True will cause a button to appear.
+        @type button:               bool
+        @keyword width_text:        The width of the text element.
+        @type width_text:           int
+        @keyword width_button:      The width of the button.
+        @type width_button:         int
+        @keyword spacer:            The horizontal spacing between the elements.
+        @type spacer:               int
         """
 
         # Horizontal packing for this element.
+        print
+        print text
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
@@ -129,8 +133,14 @@ class Text_ctrl:
         if tooltip:
             self.label.SetToolTipString(tooltip)
             self.field.SetToolTipString(tooltip)
-            if button:
-                self.button.SetToolTipString(tooltip)
+        if button and tooltip_button:
+            print "hello"
+            self.button.SetToolTipString(tooltip_button)
+        else:
+            print "no?"
+            print button
+            print tooltip
+            print tooltip_button
 
 
     def Enable(self, enable=True):
