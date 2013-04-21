@@ -213,7 +213,7 @@ class Auto_relax_disp(Base_analysis):
         table = {
             "cpmg": "CPMG",
             "cpmg fixed": "CPMG, fixed relaxation time period",
-            "r1rho": "R1rho"
+            "r1rho": u"R1\u03C1"
         }
         Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.  This was selected in the new analysis wizard and can no longer be changed.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
@@ -437,9 +437,9 @@ class Disp_model_list(Model_list):
         "slow 2-site"
     ]
     params = [
-        "{r2eff, i0}",
-        "{r2, rex, kex}",
-        "{r2, r2a, ka, dw}"
+        u"{R2eff, I0}",
+        u"{R2, Rex, kex}",
+        u"{R2, R2a, kA, d\u03C9}"
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
