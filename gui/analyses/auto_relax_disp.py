@@ -214,7 +214,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch)
         box.AddSpacer(10)
 
         # Add the dispersion models GUI element, with spacing.
@@ -310,68 +310,15 @@ class Auto_relax_disp(Base_analysis):
             self.peak_intensity.observer_register(remove=True)
 
 
-    def peak_wizard(self, event):
-        """Launch the Rx peak loading wizard.
+    def peak_wizard_launch(self, event):
+        """Launch the peak loading wizard.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Change the cursor to busy.
-        wx.BeginBusyCursor()
-
-        # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Set up the %s peak intensities" % self.label)
-        self.page_indices = {}
-
-        # First check that at least a single spin is named!
-        if not are_spins_named():
-            # The message.
-            msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
-
-            # Ask about naming spins, and add the spin.name user function page.
-            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
-                page = uf_store['spin.name'].create_page(self.wizard, sync=True)
-                self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
-
-
-        # The spectrum.read_intensities page.
-        self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self.wizard, sync=True)
-        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
-
-        # Error type selection page.
-        self.page_error_type = Spectral_error_type_page(parent=self.wizard, height_desc=520)
-        self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
-        self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
-
-        # The spectrum.replicated page.
-        page = uf_store['spectrum.replicated'].create_page(self.wizard, sync=True)
-        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
-        page.on_init = self.wizard_update_repl
-
-        # The spectrum.baseplane_rmsd page.
-        page = uf_store['spectrum.baseplane_rmsd'].create_page(self.wizard, sync=True)
-        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
-        page.on_init = self.wizard_update_rmsd
-
-        # The spectrum.integration_points page.
-        page = uf_store['spectrum.integration_points'].create_page(self.wizard, sync=True)
-        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        page.on_init = self.wizard_update_pts
-
-        # The relax_fit.relax_time page.
-        page = uf_store['relax_fit.relax_time'].create_page(self.wizard, sync=True)
-        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
-        page.on_init = self.wizard_update_relax_time
-
-        # Reset the cursor.
-        if wx.IsBusy():
-            wx.EndBusyCursor()
-
-        # Run the wizard.
-        self.wizard.run()
+        # A new wizard instance.
+        self.peak_wizard = Peak_intensity_wizard(relax_disp=True)
 
 
     def relax_disp_exp_type(self, event):
