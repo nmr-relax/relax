@@ -47,26 +47,35 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 class Peak_intensity_wizard(Wiz_window):
     """The wizard for loading peak intensity data."""
 
-    def __init__(self, parent=None, size_x=1000, size_y=750, title="Peak intensity loading wizard", noe=False, relax_fit=False):
+    def __init__(self, parent=None, size_x=1000, size_y=750, title="Peak intensity loading wizard", noe=False, relax_fit=False, relax_disp=False, relax_disp_cpmg=False, relax_disp_times=False):
         """Set up the peak intensity loading wizard.
 
-        @keyword parent:        The parent window.
-        @type parent:           wx.Window instance
-        @keyword size_x:        The width of the wizard.
-        @type size_x:           int
-        @keyword size_y:        The height of the wizard.
-        @type size_y:           int
-        @keyword title:         The title of the wizard dialog.
-        @type title:            str
-        @keyword noe:           A flag which when True will enable the steady-state NOE portions of the wizard.
-        @type noe:              bool
-        @keyword relax_fit:     A flag which when True will enable the relaxation curve-fitting portions of the wizard.
-        @type relax_fit:        bool
+        @keyword parent:            The parent window.
+        @type parent:               wx.Window instance
+        @keyword size_x:            The width of the wizard.
+        @type size_x:               int
+        @keyword size_y:            The height of the wizard.
+        @type size_y:               int
+        @keyword title:             The title of the wizard dialog.
+        @type title:                str
+        @keyword noe:               A flag which when True will enable the steady-state NOE portions of the wizard.
+        @type noe:                  bool
+        @keyword relax_fit:         A flag which when True will enable the relaxation curve-fitting portions of the wizard.
+        @type relax_fit:            bool
+        @keyword relax_disp:        A flag which when True will enable the relaxation dispersion portions of the wizard.
+        @type relax_disp:           bool
+        @keyword relax_disp_cpmg:   A flag which if True enables the relax_disp.cpmg_delayT and relax_disp.cpmg_frq user functions and if False enables the relax_disp.spin_lock_field user function.
+        @type relax_disp_cpmg:      bool
+        @keyword relax_disp_times:  A flag which if True will enable the relax_disp.relax_time page.
+        @type relax_disp_times:     bool
         """
 
         # Store the args.
         self.noe_flag = noe
         self.relax_fit_flag = relax_fit
+        self.relax_disp_flag = relax_disp
+        self.relax_disp_cpmg = relax_disp_cpmg
+        self.relax_disp_times = relax_disp_times
 
         # Get the app and store the GUI instance.
         app = wx.GetApp()
@@ -131,6 +140,39 @@ class Peak_intensity_wizard(Wiz_window):
             self.page_indices['relax_time'] = self.add_page(page, skip_button=False, proceed_on_error=False)
             page.on_init = self.wizard_update_relax_fit_relax_time
 
+        # Relaxation dispersion pages.
+        if self.relax_disp_flag:
+            # The frq.set page.
+            page = uf_store['frq.set'].create_page(self, sync=True)
+            self.page_indices['frq_set'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_frq_set
+
+            # The relax_disp.relax_time page.
+            if self.relax_disp_times:
+                page = uf_store['relax_disp.relax_time'].create_page(self, sync=True)
+                self.page_indices['relax_time'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+                page.on_init = self.wizard_update_relax_disp_relax_time
+
+            # CPMG pages.
+            if self.relax_disp_cpmg:
+                # The relax_disp.cpmg_delayT page.
+                if not self.relax_disp_times:
+                    page = uf_store['relax_disp.cpmg_delayT'].create_page(self, sync=True)
+                    self.page_indices['cpmg_delayT'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+                    page.on_init = self.wizard_update_relax_disp_cpmg_delayT
+
+                # The relax_disp.cpmg_frq page.
+                page = uf_store['relax_disp.cpmg_frq'].create_page(self, sync=True)
+                self.page_indices['cpmg_frq'] = self.add_page(page, skip_button=False, proceed_on_error=False)
+                page.on_init = self.wizard_update_relax_disp_cpmg_frq
+
+            # R1rho pages.
+            else:
+                # The relax_disp.spin_lock_field page.
+                page = uf_store['relax_disp.spin_lock_field'].create_page(self, sync=True)
+                self.page_indices['spin_lock_field'] = self.add_page(page, skip_button=False, proceed_on_error=False)
+                page.on_init = self.wizard_update_relax_disp_spin_lock_field
+
         # Reset the cursor.
         if wx.IsBusy():
             wx.EndBusyCursor()
@@ -175,6 +217,10 @@ class Peak_intensity_wizard(Wiz_window):
         elif self.relax_fit_flag:
             return self.page_indices['relax_time']
 
+        # Skip to the first dispersion page.
+        elif self.relax_disp_flag:
+            return self.page_indices['frq_set']
+
         # Nothing left, so run off the end.
         else:
             return self._num_pages + 1
@@ -200,9 +246,20 @@ class Peak_intensity_wizard(Wiz_window):
         elif self.relax_fit_flag:
             return self.page_indices['relax_time']
 
+        # Skip to the first dispersion page.
+        elif self.relax_disp_flag:
+            return self.page_indices['frq_set']
+
         # Nothing left, so run off the end.
         else:
             return self._num_pages + 1
+
+
+    def wizard_update_frq_set(self):
+        """Update the frq.set page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='frq_set', arg_key='id')
 
 
     def wizard_update_ids(self, page_key=None, arg_key='spectrum_id', index=None):
@@ -242,6 +299,34 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Update the spectrum ID.
         self.wizard_update_ids(page_key='pts')
+
+
+    def wizard_update_relax_disp_cpmg_delayT(self):
+        """Update the relax_disp.cpmg_delayT page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='cpmg_delayT')
+
+
+    def wizard_update_relax_disp_cpmg_frq(self):
+        """Update the relax_disp.cpmg_frq page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='cpmg_frq')
+
+
+    def wizard_update_relax_disp_relax_time(self):
+        """Update the relax_disp.relax_time page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='relax_time')
+
+
+    def wizard_update_relax_disp_spin_lock_field(self):
+        """Update the relax_disp.spin_lock_field page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='spin_lock_field')
 
 
     def wizard_update_relax_fit_relax_time(self):
