@@ -107,7 +107,7 @@ class Relax_disp:
         """
 
         # The number of spectrometer field strengths.
-        frqs = []
+        frqs = [None]
         if hasattr(cdp, 'frq'):
             frqs = unique_elements(cdp.frq.values())
             frqs.sort()
@@ -126,7 +126,10 @@ class Relax_disp:
                 # Generate a list of spectrum IDs matching the frequency and field.
                 ids = []
                 for id in cdp.spectrum_ids:
-                    if cdp.frq[id] == frq and disp_points[id] == field:
+                    match_frq = True
+                    if frq != None and cdp.frq[id] != frq:
+                        match_frq = False
+                    if match_frq and disp_points[id] == field:
                         ids.append(id)
 
                 # Run the error analysis on the subset.
