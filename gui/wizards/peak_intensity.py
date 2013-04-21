@@ -219,8 +219,16 @@ class Peak_intensity_wizard(Wiz_window):
         page.uf_args['spectrum_id'].SetValue(id)
 
 
-    def wizard_update_pts(self):
-        """Update the spectrum.replicated page based on previous data."""
+    def wizard_update_ids(self, page_key=None, arg_key='spectrum_id', index=None):
+        """Update the spectrum ID on the page specified by the key based on previous data.
+
+        @keyword page_key:  The key of the page to update.
+        @type page_key:     str
+        @keyword arg_key:   The key of the page argument to change to the spectrum ID.
+        @type arg_key:      str
+        @keyword index:     The index for list type structures.
+        @type index:        None or int
+        """
 
         # The spectrum.read_intensities page.
         page = self.get_page(self.page_indices['read'])
@@ -228,51 +236,40 @@ class Peak_intensity_wizard(Wiz_window):
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
-        # Set the ID in the spectrum.replicated page.
-        page = self.get_page(self.page_indices['pts'])
-        page.uf_args['spectrum_id'].SetValue(id)
+        # Set the ID in the page.
+        page = self.get_page(self.page_indices[page_key])
+        if index == None:
+            page.uf_args[arg_key].SetValue(id)
+        else:
+            page.uf_args[arg_key].SetValue(value=id, index=index)
+
+
+    def wizard_update_pts(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='pts')
 
 
     def wizard_update_relax_fit_relax_time(self):
         """Update the relax_fit.relax_time page based on previous data."""
 
-        # The spectrum.read_intensities page.
-        page = self.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the relax_fit.relax_time page.
-        page = self.get_page(self.page_indices['relax_time'])
-        page.uf_args['spectrum_id'].SetValue(id)
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='relax_time')
 
 
     def wizard_update_repl(self):
         """Update the spectrum.replicated page based on previous data."""
 
-        # The spectrum.read_intensities page.
-        page = self.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the spectrum.replicated page.
-        page = self.get_page(self.page_indices['repl'])
-        page.uf_args['spectrum_ids'].SetValue(value=id, index=0)
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='repl', arg_key='spectrum_ids', index=0)
 
 
     def wizard_update_rmsd(self):
         """Update the spectrum.baseplane_rmsd page based on previous data."""
 
-        # The spectrum.read_intensities page.
-        page = self.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the spectrum.baseplane_rmsd page.
-        page = self.get_page(self.page_indices['rmsd'])
-        page.uf_args['spectrum_id'].SetValue(id)
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='rmsd')
 
 
 
