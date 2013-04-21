@@ -205,6 +205,20 @@ class Peak_intensity_wizard(Wiz_window):
             return self._num_pages + 1
 
 
+    def wizard_update_noe_spectrum_type(self):
+        """Update the noe.spectrum_type page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.uf_args['spectrum_id'].GetValue()
+
+        # Set the ID in the noe.spectrum_type page.
+        page = self.get_page(self.page_indices['spectrum_type'])
+        page.uf_args['spectrum_id'].SetValue(id)
+
+
     def wizard_update_pts(self):
         """Update the spectrum.replicated page based on previous data."""
 
@@ -216,6 +230,20 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Set the ID in the spectrum.replicated page.
         page = self.get_page(self.page_indices['pts'])
+        page.uf_args['spectrum_id'].SetValue(id)
+
+
+    def wizard_update_relax_fit_relax_time(self):
+        """Update the relax_fit.relax_time page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.uf_args['spectrum_id'].GetValue()
+
+        # Set the ID in the relax_fit.relax_time page.
+        page = self.get_page(self.page_indices['relax_time'])
         page.uf_args['spectrum_id'].SetValue(id)
 
 
@@ -244,34 +272,6 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Set the ID in the spectrum.baseplane_rmsd page.
         page = self.get_page(self.page_indices['rmsd'])
-        page.uf_args['spectrum_id'].SetValue(id)
-
-
-    def wizard_update_relax_fit_relax_time(self):
-        """Update the relax_fit.relax_time page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the relax_fit.relax_time page.
-        page = self.get_page(self.page_indices['relax_time'])
-        page.uf_args['spectrum_id'].SetValue(id)
-
-
-    def wizard_update_noe_spectrum_type(self):
-        """Update the noe.spectrum_type page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the noe.spectrum_type page.
-        page = self.get_page(self.page_indices['spectrum_type'])
         page.uf_args['spectrum_id'].SetValue(id)
 
 
