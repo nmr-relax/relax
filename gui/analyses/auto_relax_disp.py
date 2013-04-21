@@ -186,6 +186,12 @@ class Auto_relax_disp(Base_analysis):
         # The dispersion models.
         data.models = self.model_field.GetValue()
 
+        # Increment size.
+        data.inc = gui_to_int(self.grid_inc.GetValue())
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
+
         # Return the container and list of missing data.
         return data, missing
 
@@ -413,7 +419,7 @@ class Execute_relax_disp(Execute):
         """Execute the calculation."""
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, models=data.models, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
