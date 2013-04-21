@@ -39,7 +39,6 @@ from lib.io import get_file_path, open_write_file
 from lib.list import count_unique_elements, unique_elements
 from lib.software.grace import write_xy_data, write_xy_header
 from lib.text.sectioning import subsection
-from lib.list import count_unique_elements, unique_elements
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
@@ -57,6 +56,8 @@ if C_module_exp_fn:
 # Some module variables.
 FIXED_TIME_EXP = ['cpmg fixed']
 VAR_TIME_EXP = ['cpmg', 'r1rho']
+CPMG_EXP = ['cpmg', 'cpmg fixed']
+R1RHO_EXP = ['r1rho']
 
 
 class Relax_disp(API_base, API_common):
