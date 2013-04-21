@@ -27,9 +27,11 @@ from os import getcwd, sep
 import sys
 
 # relax module imports.
+from lib.list import unique_elements
 from lib.text.sectioning import title, subtitle
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
+from specific_analyses.relax_disp import CPMG_EXP
 from status import Status; status = Status()
 
 
@@ -98,6 +100,39 @@ class Relax_disp:
             raise RelaxNoPipeError(self.pipe_name)
 
 
+    def error_analysis(self):
+        """Perform an error analysis of the peak intensities.
+
+        The error analysis is separated into subsets for each spectrometer frequency and dispersion point.
+        """
+
+        # The number of spectrometer field strengths.
+        frqs = []
+        if hasattr(cdp, 'frq'):
+            frqs = unique_elements(cdp.frq.values())
+            frqs.sort()
+
+        # Dispersion points.
+        if cdp.exp_type in CPMG_EXP:
+            disp_points = cdp.cpmg_frqs_list
+        else:
+            disp_points = cdp.spin_lock_nu1
+        fields = unique_elements(disp_points.values())
+        fields.sort()
+
+        # Loop over the spectrometer frequencies, then the dispersion points.
+        for frq in frqs:
+            for field in fields:
+                # Generate a list of spectrum IDs matching the frequency and field.
+                ids = []
+                for id in cdp.spectrum_ids:
+                    if cdp.frq[id] == frq and disp_points[id] == field:
+                        ids.append(id)
+
+                # Run the error analysis on the subset.
+                self.interpreter.spectrum.error_analysis(subset=ids)
+
+
     def optimise(self):
         """Optimise the model."""
 
@@ -117,6 +152,9 @@ class Relax_disp:
 
     def run(self):
         """Execute the auto-analysis."""
+
+        # Peak intensity error analysis.
+        self.error_analysis()
 
         # Loop over the models.
         for model in self.models:
