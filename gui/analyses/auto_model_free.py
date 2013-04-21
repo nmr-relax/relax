@@ -830,16 +830,16 @@ class Local_tm_list(Model_list):
         "tm9"
     ]
     params = [
-        "{local_tm}",
-        "{local_tm, S2}",
-        "{local_tm, S2, te}",
-        "{local_tm, S2, Rex}",
-        "{local_tm, S2, te, Rex}",
-        "{local_tm, S2, S2f, ts}",
-        "{local_tm, S2, tf, S2f, ts}",
-        "{local_tm, S2, S2f, ts, Rex}",
-        "{local_tm, S2, tf, S2f, ts, Rex}",
-        "{local_tm, Rex}"
+        u"{local \u03C4m}",
+        u"{local \u03C4m, S2}",
+        u"{local \u03C4m, S2, \u03C4e}",
+        u"{local \u03C4m, S2, Rex}",
+        u"{local \u03C4m, S2, \u03C4e, Rex}",
+        u"{local \u03C4m, S2, S2f, \u03C4s}",
+        u"{local \u03C4m, S2, \u03C4f, S2f, \u03C4s}",
+        u"{local \u03C4m, S2, S2f, \u03C4s, Rex}",
+        u"{local \u03C4m, S2, \u03C4f, S2f, \u03C4s, Rex}",
+        u"{local \u03C4m, Rex}"
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
@@ -866,16 +866,16 @@ class Mf_list(Model_list):
         "m9"
     ]
     params = [
-        "{}",
-        "{S2}",
-        "{S2, te}",
-        "{S2, Rex}",
-        "{S2, te, Rex}",
-        "{S2, S2f, ts}",
-        "{S2, tf, S2f, ts}",
-        "{S2, S2f, ts, Rex}",
-        "{S2, tf, S2f, ts, Rex}",
-        "{Rex}"
+        u"{}",
+        u"{S2}",
+        u"{S2, \u03C4e}",
+        u"{S2, Rex}",
+        u"{S2, \u03C4e, Rex}",
+        u"{S2, S2f, \u03C4s}",
+        u"{S2, \u03C4f, S2f, \u03C4s}",
+        u"{S2, S2f, \u03C4s, Rex}",
+        u"{S2, \u03C4f, S2f, \u03C4s, Rex}",
+        u"{Rex}"
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
