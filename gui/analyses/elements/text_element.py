@@ -77,8 +77,6 @@ class Text_ctrl:
         """
 
         # Horizontal packing for this element.
-        print
-        print text
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
@@ -134,13 +132,7 @@ class Text_ctrl:
             self.label.SetToolTipString(tooltip)
             self.field.SetToolTipString(tooltip)
         if button and tooltip_button:
-            print "hello"
             self.button.SetToolTipString(tooltip_button)
-        else:
-            print "no?"
-            print button
-            print tooltip
-            print tooltip_button
 
 
     def Enable(self, enable=True):
