@@ -362,7 +362,7 @@ class Spectra_list(Base_list):
         self.element.DeleteAllColumns()
 
         # Initialise to a single column.
-        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
+        self.element.InsertColumn(0, str_to_gui("Spectrum ID"))
 
         # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
         n = 0
