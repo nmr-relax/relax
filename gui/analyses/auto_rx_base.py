@@ -60,7 +60,7 @@ class Auto_rx(Base_analysis):
     bitmap = None
     label = None
 
-    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], data_index=None):
         """Build the automatic R1 and R2 analysis GUI frame elements.
 
         @param parent:          The parent wx element.
@@ -83,6 +83,8 @@ class Auto_rx(Base_analysis):
         @type pipe_name:        str
         @keyword pipe_bundle:   The name of the data pipe bundle associated with this analysis.
         @type pipe_bundle:      str
+        @keyword uf_exec:       The list of user function on_execute methods returned from the new analysis wizard.
+        @type uf_exec:          list of methods
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """

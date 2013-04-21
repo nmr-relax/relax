@@ -426,16 +426,16 @@ class Analysis_controller:
             return
 
         # Unpack the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle = data
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = data
 
         # Initialise the new analysis.
-        self.new_analysis(analysis_type, analysis_name, pipe_name, pipe_bundle)
+        self.new_analysis(analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec)
 
         # Delete the wizard data.
         del self.new_wizard
 
 
-    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None, index=None):
+    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], index=None):
         """Initialise a new analysis.
 
         @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', 'mf' or 'relax_disp'.
@@ -446,6 +446,8 @@ class Analysis_controller:
         @type pipe_name:        str
         @keyword pipe_bundle:   The name of the data pipe bundle to associate with this analysis.
         @type pipe_bundle:      str
+        @keyword uf_exec:       The list of user function on_execute methods returned from the new analysis wizard.
+        @type uf_exec:          list of methods
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
         """
@@ -495,7 +497,7 @@ class Analysis_controller:
             raise RelaxError("The analysis '%s' is unknown." % analysis_type)
 
         # Initialise the class.
-        analysis = classes[analysis_type](parent=self.notebook, id=-1, gui=self.gui, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, data_index=index)
+        analysis = classes[analysis_type](parent=self.notebook, id=-1, gui=self.gui, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec, data_index=index)
 
         # Failure.
         if not analysis.init_flag:

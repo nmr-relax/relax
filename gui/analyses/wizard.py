@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -43,7 +43,7 @@ class Analysis_wizard:
     def run(self):
         """Run through the analysis selection wizard, returning the results.
 
-        @return:    The analysis type, analysis name, and data pipe name.
+        @return:    The analysis type, analysis name, data pipe name, data pipe bundle name, and user function on_execute method list.
         @rtype:     tuple of str
         """
 
@@ -74,15 +74,15 @@ class Analysis_wizard:
         if setup != wx.ID_OK:
             return
 
-        # Return the analysis type, analysis name, and pipe name.
+        # Return the analysis type, analysis name, data pipe name, data pipe bundle name, and user function on_execute method list.
         return self.get_data()
 
 
     def get_data(self):
         """Assemble and return the analysis type, analysis name, and pipe name.
 
-        @return:    The analysis type, analysis name, and data pipe name.
-        @rtype:     tuple of str
+        @return:    The analysis type, analysis name, data pipe name, data pipe bundle name, and list of user function on_execute methods.
+        @rtype:     str, str, str, str, list of methods
         """
 
         # Get the data.
@@ -91,8 +91,11 @@ class Analysis_wizard:
         pipe_name = gui_to_str(self.pipe_page.pipe_name.GetValue())
         pipe_bundle = gui_to_str(self.pipe_page.pipe_bundle.GetValue())
 
+        # The user function on_execute methods.
+        uf_exec = []
+
         # Return it.
-        return analysis_type, analysis_name, pipe_name, pipe_bundle
+        return analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec
 
 
 
