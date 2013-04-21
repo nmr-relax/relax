@@ -975,7 +975,7 @@ class Protocol_mode_sel_window(wx.Dialog):
 
         # The local_tm button.
         button = wx.Button(self, -1, u"Local \u03C4m")
-        button.SetToolTipString("Optimise global model I, the local tm models.  Please click on the 'About' button for more information.")
+        button.SetToolTipString(u"Optimise global model I, the local \u03C4m models.  Please click on the 'About' button for more information.")
         button.SetFont(font.normal)
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_local_tm, button)
