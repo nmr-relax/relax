@@ -205,20 +205,6 @@ class Peak_intensity_wizard(Wiz_window):
             return self._num_pages + 1
 
 
-    def wizard_update_noe_spectrum_type(self):
-        """Update the noe.spectrum_type page based on previous data."""
-
-        # The spectrum.read_intensities page.
-        page = self.get_page(self.page_indices['read'])
-
-        # Set the spectrum ID.
-        id = page.uf_args['spectrum_id'].GetValue()
-
-        # Set the ID in the noe.spectrum_type page.
-        page = self.get_page(self.page_indices['spectrum_type'])
-        page.uf_args['spectrum_id'].SetValue(id)
-
-
     def wizard_update_ids(self, page_key=None, arg_key='spectrum_id', index=None):
         """Update the spectrum ID on the page specified by the key based on previous data.
 
@@ -242,6 +228,13 @@ class Peak_intensity_wizard(Wiz_window):
             page.uf_args[arg_key].SetValue(id)
         else:
             page.uf_args[arg_key].SetValue(value=id, index=index)
+
+
+    def wizard_update_noe_spectrum_type(self):
+        """Update the noe.spectrum_type page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='spectrum_type')
 
 
     def wizard_update_pts(self):
