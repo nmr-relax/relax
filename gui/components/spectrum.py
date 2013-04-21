@@ -45,7 +45,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', relax_times=False):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', relax_times=False, frq_flag=False, spin_lock_flag=False, cpmg_frq_flag=False):
         """Build the spectral list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -66,14 +66,98 @@ class Spectra_list(Base_list):
         @type button_placement:     str or None
         @keyword relax_times:       A flag which if True will activate the relaxation time parts of the GUI element.
         @type relax_times:          bool
+        @keyword frq_flag:          A flag which if True will activate the spectrometer frequency parts of the GUI element.
+        @type frq_flag:             bool
+        @keyword spin_lock_flag:    A flag which if True will activate the spin-lock field strength parts of the GUI element.
+        @type spin_lock_flag:       bool
+        @keyword cpmg_frq_flag:     A flag which if True will activate the spin-lock field strength parts of the GUI element.
+        @type cpmg_frq_flag:        bool
         """
 
         # Store the arguments.
         self.fn_add = fn_add
         self.relax_times_flag = relax_times
+        self.frq_flag = frq_flag
+        self.spin_lock_flag = spin_lock_flag
+        self.cpmg_frq_flag = cpmg_frq_flag
 
         # Initialise the base class.
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
+
+
+    def action_frq_set(self, event):
+        """Launch the frq.set user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current time.
+        frq = None
+        if hasattr(cdp, 'frq') and id in cdp.frq.keys():
+            frq = cdp.frq[id]
+
+        # Launch the dialog.
+        if frq == None:
+            uf_store['frq.set'](id=id)
+        else:
+            uf_store['frq.set'](frq=frq, id=id)
+
+
+    def action_relax_disp_cpmg_frq(self, event):
+        """Launch the relax_disp.cpmg_frq user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        if hasattr(cdp, 'cpmg_frqs') and id in cdp.cpmg_frqs.keys():
+            frq = cdp.cpmg_frqs[id]
+
+        # Launch the dialog.
+        if time == None:
+            uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
+        else:
+            uf_store['relax_disp.cpmg_frq'](frq=frq, spectrum_id=id)
+
+
+    def action_relax_disp_spin_lock_field(self, event):
+        """Launch the relax_disp.spin_lock_field user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The spin-lock.
+        nu1 = None
+        if hasattr(cdp, 'spin_lock_nu1') and id in cdp.spin_lock_nu1.keys():
+            nu1 = cdp.spin_lock_nu1[id]
+
+        # Launch the dialog.
+        if time == None:
+            uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
+        else:
+            uf_store['relax_disp.spin_lock_field'](frq=nu1, spectrum_id=id)
 
 
     def action_relax_fit_relax_time(self, event):
@@ -179,6 +263,93 @@ class Spectra_list(Base_list):
             uf_store['spectrum.replicated'](spectrum_ids=id)
         else:
             uf_store['spectrum.replicated'](spectrum_ids=replicates)
+
+
+    def add_cpmg_frqs(self, index):
+        """Add the CPMG pulse frequency info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # No type info.
+        if not hasattr(cdp, 'cpmg_frqs') or not len(cdp.cpmg_frqs):
+            return False
+
+        # Append a column.
+        self.element.InsertColumn(index, u"\u03BDCPMG (Hz)")
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.cpmg_frqs.keys():
+                continue
+
+            # Set the value.
+            self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
+
+
+    def add_frqs(self, index):
+        """Add the spectrometer frequency info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the frequency data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # No type info.
+        if not hasattr(cdp, 'frq') or not len(cdp.frq):
+            return False
+
+        # Append a column.
+        self.element.InsertColumn(index, u"\u03C9H (MHz)")
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.frq.keys():
+                continue
+
+            # Set the value (in MHz).
+            self.element.SetStringItem(i, index, float_to_gui(cdp.frq[cdp.spectrum_ids[i]]/1e6))
+
+        # Successful.
+        return True
+
+
+    def add_spin_lock(self, index):
+        """Add the spin-lock field strength info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # No type info.
+        if not hasattr(cdp, 'spin_lock_nu1') or not len(cdp.spin_lock_nu1):
+            return False
+
+        # Append a column.
+        self.element.InsertColumn(index, u"Spin-lock \u03BD1 (Hz)")
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.spin_lock_nu1.keys():
+                continue
+
+            # Set the value.
+            self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
 
 
     def noe_spectrum_type(self, index):
@@ -349,6 +520,27 @@ class Spectra_list(Base_list):
                 'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
                 'method': self.action_relax_fit_relax_time
             })
+        if self.frq_flag:
+            self.popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the spectrometer &frequency",
+                'icon': fetch_icon("relax.frq"),
+                'method': self.action_frq_set
+            })
+        if self.spin_lock_flag:
+            self.popup_menus.append({
+                'id': wx.NewId(),
+                'text': u"Set the spin-&lock field strength \u03BD1",
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_spin_lock_field
+            })
+        if self.cpmg_frq_flag:
+            self.popup_menus.append({
+                'id': wx.NewId(),
+                'text': u"Set the &CPMG pulse frequency \u03BDCPMG",
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_cpmg_frq
+            })
 
 
     def update_data(self):
@@ -376,6 +568,18 @@ class Spectra_list(Base_list):
 
         # The NOE spectrum type.
         if self.noe_spectrum_type(index):
+            index += 1
+
+        # The spectrometer frequency.
+        if self.frq_flag and self.add_frqs(index):
+            index += 1
+
+        # The spin-lock field strength.
+        if self.spin_lock_flag and self.add_spin_lock(index):
+            index += 1
+
+        # The CPMG pulse frequency.
+        if self.cpmg_frq_flag and self.add_cpmg_frqs(index):
             index += 1
 
         # The relaxation times.
