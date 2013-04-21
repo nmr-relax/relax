@@ -34,4 +34,5 @@ class Auto_r1(Auto_rx):
     analysis_type = 'r1'
     bitmap = [ANALYSIS_IMAGE_PATH+"r1_200x200.png",
               IMAGE_PATH+'r1.png']
-    label = 'R1'
+    label = "R1"
+    gui_label = u"R\u2081"

@@ -401,7 +401,7 @@ class Spectra_list(Base_list):
             return False
 
         # Append a column.
-        self.element.InsertColumn(index, str_to_gui("Delay times"))
+        self.element.InsertColumn(index, str_to_gui("Delay times (s)"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -554,7 +554,7 @@ class Spectra_list(Base_list):
         self.element.DeleteAllColumns()
 
         # Initialise to a single column.
-        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
+        self.element.InsertColumn(0, str_to_gui("Spectrum ID"))
 
         # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
         n = 0
