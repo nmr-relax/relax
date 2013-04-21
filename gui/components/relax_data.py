@@ -301,6 +301,13 @@ class Relax_data_list(Base_list):
     def update_data(self):
         """Method called from self.build_element_safe() to update the list data."""
 
+        # Translation table for the Rx data types.
+        table = {
+            "NOE": "Steady-state NOE",
+            "R1": u"R\u2081 longitudinal relaxation",
+            "R2": u"R\u2082 transverse relaxation"
+        }
+
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
         n = 0
         if hasattr(cdp, 'ri_ids'):
@@ -314,7 +321,7 @@ class Relax_data_list(Base_list):
                 self.element.InsertStringItem(i, str_to_gui(id))
 
                 # Set the data types.
-                self.element.SetStringItem(i, 1, str_to_gui(cdp.ri_type[id]))
+                self.element.SetStringItem(i, 1, str_to_gui(table[cdp.ri_type[id]]))
 
                 # Set the frequencies.
                 self.element.SetStringItem(i, 2, float_to_gui(cdp.frq[id]))
