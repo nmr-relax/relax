@@ -28,12 +28,13 @@ from time import asctime, localtime
 import wx
 from wx.lib import buttons
 
-# relax GUI module imports.
+# relax module imports.
 from gui import paths
 from gui.fonts import font
 from gui.input_elements.value import Value
 from gui.misc import bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizard import Wiz_page, Wiz_window
 
 
@@ -60,6 +61,11 @@ class Analysis_wizard:
         # Add the new analysis panel.
         self.new_page = New_analysis_page(self.wizard)
         self.wizard.add_page(self.new_page, apply_button=False)
+        self.wizard.set_seq_next_fn(0, self.wizard_page_after_analysis)
+
+        # The relax_disp.exp_type page.
+        self.relax_disp_page = uf_store['relax_disp.exp_type'].create_page(self.wizard, sync=True, execute=False)
+        self.wizard.add_page(self.relax_disp_page, apply_button=False)
 
         # Add the data pipe name panel.
         self.pipe_page = Data_pipe_page(self.wizard, height_desc=400)
@@ -93,9 +99,30 @@ class Analysis_wizard:
 
         # The user function on_execute methods.
         uf_exec = []
+        if analysis_name == 'Relaxation dispersion':
+            uf_exec.append(self.relax_disp_page.on_execute)
 
         # Return it.
         return analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec
+
+
+    def wizard_page_after_analysis(self):
+        """Set the page after the data pipe setup.
+
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
+
+        # The selected analysis.
+        analysis_name = gui_to_str(self.new_page.analysis_name.GetValue())
+
+        # Go to the relax_disp.exp_type page.
+        if analysis_name == 'Relaxation dispersion':
+            return 1
+
+        # Otherwise go to the pipe setup.
+        else:
+            return 2
 
 
 

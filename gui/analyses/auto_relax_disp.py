@@ -55,7 +55,7 @@ class Auto_relax_disp(Base_analysis):
     bitmap = paths.ANALYSIS_IMAGE_PATH+"relax_disp_200x200.png"
     label = 'Relax-disp'
 
-    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], data_index=None):
         """Build the automatic R1 and R2 analysis GUI frame elements.
 
         @param parent:          The parent wx element.
@@ -78,6 +78,8 @@ class Auto_relax_disp(Base_analysis):
         @type pipe_name:        str
         @keyword pipe_bundle:   The name of the data pipe bundle associated with this analysis.
         @type pipe_bundle:      str
+        @keyword uf_exec:       The list of user function on_execute methods returned from the new analysis wizard.
+        @type uf_exec:          list of methods
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """
@@ -97,6 +99,10 @@ class Auto_relax_disp(Base_analysis):
             # Create the data pipe bundle if needed.
             if not has_bundle(pipe_bundle):
                 self.gui.interpreter.apply('pipe.bundle', bundle=pipe_bundle, pipe=pipe_name)
+
+            # Set up the experiment.
+            if not hasattr(cdp, 'exp_type'):
+                uf_exec[0](force_exec=True)
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add(self.label)
@@ -189,6 +195,14 @@ class Auto_relax_disp(Base_analysis):
         # Add the frame title.
         self.add_title(box, "Setup for the relaxation dispersion analysis")
 
+        # Display the experiment type.
+        table = {
+            "cpmg": "CPMG",
+            "cpmg fixed": "CPMG, fixed relaxation time period",
+            "r1rho": "R1rho"
+        }
+        Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
         # Display the data pipe.
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
@@ -197,9 +211,6 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
-
-        # Add the relax_disp.exp_type user function GUI element.
-        self.field_exp_type = Text_ctrl(box, self, text="Experiment type:", icon=fetch_icon("oxygen.actions.edit-rename", "16x16"), tooltip="Select the type of relaxation dispersion experiment run.", fn=self.relax_disp_exp_type, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
