@@ -34,7 +34,7 @@ from gui.fonts import font
 from gui.input_elements.value import Value
 from gui.misc import bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
-from gui.wizard import Wiz_page, Wiz_window
+from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 
 
 class Analysis_wizard:

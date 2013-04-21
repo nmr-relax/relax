@@ -41,7 +41,7 @@ from gui.analyses.elements.text_element import Text_ctrl
 from gui.fonts import font
 from gui.misc import add_border, bitmap_setup, format_table
 from gui.string_conv import int_to_gui, str_to_gui
-from gui.wizard import Wiz_page
+from gui.wizards.wiz_objects import Wiz_page
 
 
 class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):

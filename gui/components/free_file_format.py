@@ -36,7 +36,7 @@ from gui.message import Question
 from gui.misc import bitmap_setup
 from gui import paths
 from gui.string_conv import gui_to_int, int_to_gui, str_to_gui
-from gui.wizard import Wiz_page
+from gui.wizards.wiz_objects import Wiz_page
 
 
 class Free_file_format:

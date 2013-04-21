@@ -51,7 +51,7 @@ from gui.input_elements.spin_id import Spin_id
 from gui.input_elements.value import Value
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import format_table
-from gui.wizard import Wiz_page, Wiz_window
+from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 
 
 def build_uf_menus(parent=None, menubar=None):

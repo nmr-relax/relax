@@ -48,7 +48,7 @@ from gui.misc import protected_exec
 from gui import paths
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
-from gui.wizard import Wiz_window
+from gui.wizards.wiz_objects import Wiz_window
 
 
 
