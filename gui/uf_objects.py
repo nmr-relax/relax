@@ -253,13 +253,15 @@ class Uf_object(object):
         self._uf_id = wx.NewId()
 
 
-    def create_page(self, wizard=None, sync=None):
+    def create_page(self, wizard=None, sync=None, execute=True):
         """Create the user function wizard page GUI object.
 
         @keyword wizard:    The parent wizard.
         @type wizard:       Wiz_window instance
         @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
         @type sync:         None or bool
+        @keyword execute:   A flag which if True will prevent the user function from being executed when clicking on 'Next', 'Ok', or 'Apply'.  This can be useful for delaying the execution of the user function.
+        @type execute:      bool
         @return:            The user function page object.
         @rtype:             Uf_page instance
         """
@@ -269,7 +271,7 @@ class Uf_object(object):
             self._sync = sync
 
         # Initialise and return the page.
-        return Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync)
+        return Uf_page(self._name, parent=wizard, height_desc=self._height_desc, sync=self._sync, execute=execute)
 
 
     def create_wizard(self, parent=None):
@@ -307,7 +309,7 @@ class Uf_object(object):
 class Uf_page(Wiz_page):
     """User function specific pages for the wizards."""
 
-    def __init__(self, name, parent=None, height_desc=220, sync=False):
+    def __init__(self, name, parent=None, height_desc=220, sync=False, execute=True):
         """Set up the window.
 
         @param name:            The name of the user function.
@@ -318,11 +320,14 @@ class Uf_page(Wiz_page):
         @type height_desc:      int or None
         @keyword sync:          A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
         @type sync:             bool
+        @keyword execute:       A flag which if True will prevent the user function from being executed when clicking on 'Next', 'Ok', or 'Apply'.  This can be useful for delaying the execution of the user function.
+        @type execute:          bool
         """
 
         # Store the args.
         self.name = name
         self.sync = sync
+        self.execute_flag = execute
 
         # Storage of the user function argument elements.
         self.uf_args = {}
@@ -820,8 +825,16 @@ class Uf_page(Wiz_page):
         return self.update_args()
 
 
-    def on_execute(self):
-        """Execute the user function."""
+    def on_execute(self, force_exec=False):
+        """Execute the user function.
+
+        @keyword force_exec:    A flag which if True will cause the execution flag to be ignored and the user function to be executed.
+        @type force_exec:       bool
+        """
+
+        # Don't execute.
+        if not force_exec and not self.execute_flag:
+            return
 
         # Get the argument values.
         kargs = {}
