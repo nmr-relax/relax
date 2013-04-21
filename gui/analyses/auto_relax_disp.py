@@ -28,7 +28,6 @@ import wx
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from graphics import fetch_icon
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
@@ -37,12 +36,11 @@ from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
-from gui.message import error_message, Missing_data, Question
+from gui.message import error_message, Missing_data
 from gui import paths
 from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
-from gui.wizard import Wiz_window
-from pipe_control.mol_res_spin import are_spins_named, exists_mol_res_spin_data
+from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.pipes import has_bundle, has_pipe
 from status import Status; status = Status()
 
