@@ -511,7 +511,7 @@ class Auto_model_free(Base_analysis):
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
@@ -541,7 +541,7 @@ class Auto_model_free(Base_analysis):
         self.max_iter = Spin_ctrl(box, self, text="Maximum interations:", default=self.data.max_iter, tooltip="The maximum number of iterations for the protocol.  This is the limit for the global looping over the optimisation of the model-free models, model elimination, model selection and then optimisation of the diffusion tensor.", min=25, max=100, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The calculation mode.
-        self.mode = Text_ctrl(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised separately.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.mode = Text_ctrl(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised separately.", tooltip_button="Open the protocol mode selection window.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)
@@ -843,6 +843,8 @@ class Local_tm_list(Model_list):
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
+    tooltip = u"The list model-free models with the local \u03C4m parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed."
+    tooltip_button = "Open the model list selector window."
 
 
 
@@ -877,6 +879,8 @@ class Mf_list(Model_list):
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
+    tooltip = "The list model-free models to optimise as the iterative part of the protocol (see the about window for details).  This really should not be changed."
+    tooltip_button = "Open the model list selector window."
 
 
 

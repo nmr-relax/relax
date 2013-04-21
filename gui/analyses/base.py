@@ -215,7 +215,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         """
 
         # Add the element.
-        self.spin_systems = Text_ctrl(box, self, text="Spin systems:", button_text=" Spin editor", default=self.spin_count(), tooltip="The currently loaded molecule, residue, and spin sequence.", icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.spin_systems = Text_ctrl(box, self, text="Spin systems:", button_text=" Spin editor", default=self.spin_count(), tooltip="The currently loaded molecule, residue and spin sequence.", tooltip_button="Launch the spin editor window for modifying the molecule, residue and spin sequence.", icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):

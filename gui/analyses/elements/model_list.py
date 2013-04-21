@@ -55,7 +55,10 @@ class Model_list:
     """A flag which if True will cause the flag icon to turn red if the model list has been modified."""
 
     tooltip = None
-    """The tooltip string to add to all wx GUI elements."""
+    """The tooltip string to add to the text and field wx GUI elements."""
+
+    tooltip_button = None
+    """The separate tooltip string to add to the button wx GUI element."""
 
 
     def __init__(self, parent, box):
@@ -100,7 +103,8 @@ class Model_list:
         if self.tooltip:
             label.SetToolTipString(self.tooltip)
             self.field.SetToolTipString(self.tooltip)
-            self.button.SetToolTipString(self.tooltip)
+        if self.tooltip_button:
+            self.button.SetToolTipString(self.tooltip_button)
 
         # Add the contents to the main box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
