@@ -117,17 +117,19 @@ class Peak_intensity_wizard(Wiz_window):
         self.page_indices['pts'] = self.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_init = self.wizard_update_pts
 
-        # The relax_fit.relax_time page.
-        if self.relax_fit_flag:
-            page = uf_store['relax_fit.relax_time'].create_page(self, sync=True)
-            self.page_indices['relax_time'] = self.add_page(page, skip_button=False, proceed_on_error=False)
-            page.on_init = self.wizard_update_relax_fit_relax_time
-
-        # The noe.spectrum_type page.
+        # NOE pages.
         if self.noe_flag:
+            # The noe.spectrum_type page.
             page = uf_store['noe.spectrum_type'].create_page(self, sync=True)
             self.page_indices['spectrum_type'] = self.add_page(page, skip_button=False, proceed_on_error=False)
             page.on_display_post = self.wizard_update_noe_spectrum_type
+
+        # Relaxation curve-fitting pages.
+        if self.relax_fit_flag:
+            # The relax_fit.relax_time page.
+            page = uf_store['relax_fit.relax_time'].create_page(self, sync=True)
+            self.page_indices['relax_time'] = self.add_page(page, skip_button=False, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_fit_relax_time
 
         # Reset the cursor.
         if wx.IsBusy():
@@ -165,13 +167,13 @@ class Peak_intensity_wizard(Wiz_window):
         if int_method != 'height':
             return self.page_indices['pts']
 
-        # Skip to the relax_fit.relax_time page.
-        elif self.relax_fit_flag:
-            return self.page_indices['relax_time']
-
         # Skip to the noe.spectrum_type page.
         elif self.noe_flag:
             return self.page_indices['spectrum_type']
+
+        # Skip to the relax_fit.relax_time page.
+        elif self.relax_fit_flag:
+            return self.page_indices['relax_time']
 
         # Nothing left, so run off the end.
         else:
@@ -190,13 +192,13 @@ class Peak_intensity_wizard(Wiz_window):
         if int_method != 'height':
             return self.page_indices['pts']
 
-        # Skip to the relax_fit.relax_time page.
-        elif self.relax_fit_flag:
-            return self.page_indices['relax_time']
-
         # Skip to the noe.spectrum_type page.
         elif self.noe_flag:
             return self.page_indices['spectrum_type']
+
+        # Skip to the relax_fit.relax_time page.
+        elif self.relax_fit_flag:
+            return self.page_indices['relax_time']
 
         # Nothing left, so run off the end.
         else:
