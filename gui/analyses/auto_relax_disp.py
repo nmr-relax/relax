@@ -201,13 +201,13 @@ class Auto_relax_disp(Base_analysis):
             "cpmg fixed": "CPMG, fixed relaxation time period",
             "r1rho": "R1rho"
         }
-        Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.  This is has been selected in the new analysis wizard and cannot be changed.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.  This was selected in the new analysis wizard and can no longer be changed.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Display the data pipe.
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
@@ -469,7 +469,7 @@ class Disp_model_list(Model_list):
     """The diffusion model list GUI element."""
 
     # Class variables.
-    desc = "Diffusion models:"
+    desc = "Relaxation dispersion models:"
     models = [
         "R2eff",
         "fast 2-site",
@@ -480,4 +480,5 @@ class Disp_model_list(Model_list):
         "{r2, rex, kex}",
         "{r2, r2a, ka, dw}"
     ]
-    tooltip = "The list of all diffusion models to be optimised."
+    tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
+    tooltip_button = "Open the model list selector window."
