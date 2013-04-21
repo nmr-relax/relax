@@ -96,14 +96,14 @@ for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
 
-    # Relaxation dispersion CPMG constant time delay T (in s).
-    relax_disp.cpmg_delayT(spectrum_id=id, delayT=0.030)
-
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
 
     # Set the NMR field strength of the spectrum.
     frq.set(id=id, frq=H_frq)
+
+    # Relaxation dispersion CPMG constant time delay T (in s).
+    relax_disp.relax_time(spectrum_id=id, time=0.030)
 
 # Specify the duplicated spectra.
 spectrum.replicated(spectrum_ids=['500_133.33.in', '500_133.33.in.bis'])
