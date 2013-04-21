@@ -50,14 +50,14 @@ class Peak_intensity_wizard(Wiz_window):
     def __init__(self, parent=None, size_x=1000, size_y=750, title="Peak intensity loading wizard", noe=False, relax_fit=False):
         """Set up the peak intensity loading wizard.
 
-        @keyword parent:    The parent window.
-        @type parent:       wx.Window instance
-        @keyword size_x:    The width of the wizard.
-        @type size_x:       int
-        @keyword size_y:    The height of the wizard.
-        @type size_y:       int
-        @keyword title:     The title of the wizard dialog.
-        @type title:        str
+        @keyword parent:        The parent window.
+        @type parent:           wx.Window instance
+        @keyword size_x:        The width of the wizard.
+        @type size_x:           int
+        @keyword size_y:        The height of the wizard.
+        @type size_y:           int
+        @keyword title:         The title of the wizard dialog.
+        @type title:            str
         @keyword noe:           A flag which when True will enable the steady-state NOE portions of the wizard.
         @type noe:              bool
         @keyword relax_fit:     A flag which when True will enable the relaxation curve-fitting portions of the wizard.
