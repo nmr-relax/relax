@@ -43,6 +43,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.pipes import has_bundle, has_pipe
+from specific_analyses.relax_disp import VAR_TIME_EXP
 from status import Status; status = Status()
 
 
@@ -127,6 +128,14 @@ class Auto_relax_disp(Base_analysis):
 
         # Register the method for updating the spin count for the completion of user functions.
         self.observer_register()
+
+        # Set up some flags based on the experiment type.
+        self.relax_times_flag = False
+        if cdp.exp_type in VAR_TIME_EXP:
+            self.relax_times_flag = True
+        self.relax_disp_cpmg = False
+        if cdp.exp_type in ['cpmg', 'cpmg fixed']:
+            self.relax_disp_cpmg = True
 
         # Execute the base class method to build the panel.
         super(Auto_relax_disp, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -213,7 +222,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_times=self.relax_times_flag, frq_flag=True, spin_lock_flag=(not self.relax_disp_cpmg), cpmg_frq_flag=self.relax_disp_cpmg)
         box.AddSpacer(10)
 
         # Add the dispersion models GUI element, with spacing.
@@ -317,7 +326,7 @@ class Auto_relax_disp(Base_analysis):
         """
 
         # A new wizard instance.
-        self.peak_wizard = Peak_intensity_wizard(relax_disp=True)
+        self.peak_wizard = Peak_intensity_wizard(relax_disp=True, relax_disp_cpmg=self.relax_disp_cpmg, relax_disp_times=self.relax_times_flag)
 
 
     def relax_disp_exp_type(self, event):
