@@ -24,6 +24,7 @@
 
 # relax module imports.
 import pipe_control.frq
+from pipe_control import spectrum
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -43,7 +44,10 @@ uf.add_keyarg(
     name = "id",
     py_type = "str",
     desc_short = "experiment ID",
-    desc = "The experiment identification string."
+    desc = "The experiment identification string.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
 )
 uf.add_keyarg(
     name = "frq",
@@ -60,8 +64,8 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = [
         "Hz",
-        "kHz"
-        "MHz"
+        "kHz",
+        "MHz",
         "GHz"
     ],
     wiz_read_only = False
