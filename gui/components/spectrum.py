@@ -230,7 +230,7 @@ class Spectra_list(Base_list):
             return False
 
         # Append a column.
-        self.element.InsertColumn(index, str_to_gui("Delay times"))
+        self.element.InsertColumn(index, str_to_gui("Delay times (s)"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
