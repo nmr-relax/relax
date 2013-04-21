@@ -814,6 +814,7 @@ class Wiz_window(wx.Dialog):
         # Store the page.
         index = self._num_pages
         self._num_pages += 1
+        print self._pages
         self._pages[index] = panel
 
         # Store a new sizer for the page and its buttons.

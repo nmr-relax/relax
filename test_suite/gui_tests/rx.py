@@ -26,15 +26,14 @@ import wx
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui.string_conv import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
+from gui.wizards.peak_intensity import Peak_intensity_wizard
+from gui.wizards.wiz_objects import Wiz_window
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
-
-# relax GUI imports.
-from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.string_conv import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
-from gui.wizards.wiz_objects import Wiz_window
 
 
 class Rx(GuiTestCase):
@@ -180,38 +179,39 @@ class Rx(GuiTestCase):
         # Add the spectra and number of cycles.
         for i in range(len(names)):
             # Set up the peak intensity wizard.
-            analysis.peak_wizard(None)
+            analysis.peak_wizard_launch(None)
+            wizard = analysis.peak_wizard
 
             # The spectrum.
-            page = analysis.wizard.get_page(analysis.page_indices['read'])
+            page = wizard.get_page(wizard.page_indices['read'])
             page.uf_args['file'].SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
             page.uf_args['spectrum_id'].SetValue(str_to_gui(names[i]))
             page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Go to the next page.
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
 
             # The error type.
-            page = analysis.wizard.get_page(analysis.page_indices['err_type'])
+            page = wizard.get_page(wizard.page_indices['err_type'])
             page.selection = 'repl'
 
             # Go to the next page.
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
 
             # Replicated spectra:
             if names[i] in replicated.keys():
-                page = analysis.wizard.get_page(analysis.page_indices['repl'])
+                page = wizard.get_page(wizard.page_indices['repl'])
                 page.uf_args['spectrum_ids'].SetValue(value=replicated[names[i]], index=1)
 
             # Go to the next page.
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
 
             # Set the delay ime.
-            page = analysis.wizard.get_page(analysis.page_indices['relax_time'])
+            page = wizard.get_page(wizard.page_indices['relax_time'])
             page.uf_args['time'].SetValue(float_to_gui(ncyc[i]*time))
 
             # Go to the next page (i.e. finish).
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
 
         # Set the number of MC sims.
         analysis.mc_sim_num.SetValue(3)

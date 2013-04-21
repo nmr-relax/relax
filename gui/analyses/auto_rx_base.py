@@ -215,8 +215,7 @@ class Auto_rx(Base_analysis):
 
         # Add the peak list wizard and selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_wizard = Peak_intensity_wizard(relax_fit=True)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard.run, relax_times=True)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_times=True)
         box.AddSpacer(10)
 
         # The optimisation settings.
@@ -306,6 +305,17 @@ class Auto_rx(Base_analysis):
 
             # The embedded objects methods.
             self.peak_intensity.observer_register(remove=True)
+
+
+    def peak_wizard_launch(self, event):
+        """Launch the peak loading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # A new wizard instance.
+        self.peak_wizard = Peak_intensity_wizard(relax_fit=True)
 
 
     def results_directory(self, event):

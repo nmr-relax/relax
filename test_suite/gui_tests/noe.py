@@ -25,15 +25,14 @@ import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui.string_conv import int_to_gui, str_to_gui
+from gui.wizards.peak_intensity import Peak_intensity_wizard
+from gui.wizards.wiz_objects import Wiz_window
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
-
-# relax GUI imports.
-from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.string_conv import int_to_gui, str_to_gui
-from gui.wizards.wiz_objects import Wiz_window
 
 
 class Noe(GuiTestCase):
@@ -99,43 +98,44 @@ class Noe(GuiTestCase):
         # Loop over the 2 spectra.
         for i in range(2):
             # Set up the peak intensity wizard.
-            analysis.peak_wizard(None)
+            analysis.peak_wizard_launch(None)
+            wizard = analysis.peak_wizard
 
             # The spectrum.
-            page = analysis.wizard.get_page(analysis.page_indices['read'])
+            page = wizard.get_page(wizard.page_indices['read'])
             page.uf_args['file'].SetValue(str_to_gui(files[i]))
             page.uf_args['spectrum_id'].SetValue(str_to_gui(ids[i]))
             page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Apply to load the backbone NH, then set up for the Trp indoles.
-            analysis.wizard._apply(None)
+            wizard._apply(None)
             interpreter.flush()
             page.uf_args['heteronuc'].SetValue(str_to_gui('NE1'))
             page.uf_args['proton'].SetValue(str_to_gui('HE1'))
 
             # Move down 2 pages.
-            analysis.wizard._go_next(None)
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
+            wizard._go_next(None)
 
             # Set the errors.
-            page = analysis.wizard.get_page(analysis.page_indices['rmsd'])
+            page = wizard.get_page(wizard.page_indices['rmsd'])
             page.uf_args['error'].SetValue(int_to_gui(errors[i]))
 
             # Apply, then set the individual spin errors.
-            analysis.wizard._apply(None)
+            wizard._apply(None)
             interpreter.flush()
             page.uf_args['error'].SetValue(int_to_gui(errors_5[i]))
             page.uf_args['spin_id'].SetValue(str_to_gui(':5'))
 
             # Go to the next page.
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
 
             # Set the type.
-            page = analysis.wizard.get_page(analysis.page_indices['spectrum_type'])
+            page = wizard.get_page(wizard.page_indices['spectrum_type'])
             page.uf_args['spectrum_type'].SetValue(types[i])
 
             # Go to the next page (i.e. finish).
-            analysis.wizard._go_next(None)
+            wizard._go_next(None)
 
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))

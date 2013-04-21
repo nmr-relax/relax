@@ -44,12 +44,20 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 
-class Peak_intensity_wizard:
+class Peak_intensity_wizard(Wiz_window):
     """The wizard for loading peak intensity data."""
 
-    def __init__(self, noe=False, relax_fit=False):
+    def __init__(self, parent=None, size_x=1000, size_y=750, title="Peak intensity loading wizard", noe=False, relax_fit=False):
         """Set up the peak intensity loading wizard.
 
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        @keyword size_x:    The width of the wizard.
+        @type size_x:       int
+        @keyword size_y:    The height of the wizard.
+        @type size_y:       int
+        @keyword title:     The title of the wizard dialog.
+        @type title:        str
         @keyword noe:           A flag which when True will enable the steady-state NOE portions of the wizard.
         @type noe:              bool
         @keyword relax_fit:     A flag which when True will enable the relaxation curve-fitting portions of the wizard.
@@ -64,19 +72,13 @@ class Peak_intensity_wizard:
         app = wx.GetApp()
         self.gui = app.gui
 
-
-    def run(self, event=None):
-        """Launch the peak loading wizard.
-
-        @keyword event: The wx event.
-        @type event:    wx event
-        """
+        # Execute the base class method.
+        Wiz_window.__init__(self, parent=self.gui, size_x=size_x, size_y=size_y, title=title, style=wx.DEFAULT_DIALOG_STYLE)
 
         # Change the cursor to busy.
         wx.BeginBusyCursor()
 
-        # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Peak intensity loading wizard")
+        # Initialise the page_indices structure.
         self.page_indices = {}
 
         # First check that at least a single spin is named!
@@ -86,45 +88,45 @@ class Peak_intensity_wizard:
 
             # Ask about naming spins, and add the spin.name user function page.
             if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
-                page = uf_store['spin.name'].create_page(self.wizard, sync=True)
-                self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
+                page = uf_store['spin.name'].create_page(self, sync=True)
+                self.page_indices['read'] = self.add_page(page, proceed_on_error=False)
 
         # The spectrum.read_intensities page.
-        self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self.wizard, sync=True)
-        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
+        self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self, sync=True)
+        self.page_indices['read'] = self.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
 
         # Error type selection page.
-        self.page_error_type = Spectral_error_type_page(parent=self.wizard, height_desc=520)
-        self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
-        self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
+        self.page_error_type = Spectral_error_type_page(parent=self, height_desc=520)
+        self.page_indices['err_type'] = self.add_page(self.page_error_type, apply_button=False)
+        self.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
-        page = uf_store['spectrum.replicated'].create_page(self.wizard, sync=True)
-        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
+        page = uf_store['spectrum.replicated'].create_page(self, sync=True)
+        self.page_indices['repl'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+        self.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
         page.on_init = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
-        page = uf_store['spectrum.baseplane_rmsd'].create_page(self.wizard, sync=True)
-        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
-        self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
+        page = uf_store['spectrum.baseplane_rmsd'].create_page(self, sync=True)
+        self.page_indices['rmsd'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+        self.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
         page.on_init = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
-        page = uf_store['spectrum.integration_points'].create_page(self.wizard, sync=True)
-        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
+        page = uf_store['spectrum.integration_points'].create_page(self, sync=True)
+        self.page_indices['pts'] = self.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_init = self.wizard_update_pts
 
         # The relax_fit.relax_time page.
         if self.relax_fit_flag:
-            page = uf_store['relax_fit.relax_time'].create_page(self.wizard, sync=True)
-            self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
+            page = uf_store['relax_fit.relax_time'].create_page(self, sync=True)
+            self.page_indices['relax_time'] = self.add_page(page, skip_button=False, proceed_on_error=False)
             page.on_init = self.wizard_update_relax_fit_relax_time
 
         # The noe.spectrum_type page.
         if self.noe_flag:
-            page = uf_store['noe.spectrum_type'].create_page(self.wizard, sync=True)
-            self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
+            page = uf_store['noe.spectrum_type'].create_page(self, sync=True)
+            self.page_indices['spectrum_type'] = self.add_page(page, skip_button=False, proceed_on_error=False)
             page.on_display_post = self.wizard_update_noe_spectrum_type
 
         # Reset the cursor.
@@ -132,7 +134,7 @@ class Peak_intensity_wizard:
             wx.EndBusyCursor()
 
         # Run the wizard.
-        self.wizard.run()
+        self.run()
 
 
     def wizard_page_after_error_type(self):
@@ -173,7 +175,7 @@ class Peak_intensity_wizard:
 
         # Nothing left, so run off the end.
         else:
-            return self.wizard._num_pages + 1
+            return self._num_pages + 1
 
 
     def wizard_page_after_rmsd(self):
@@ -198,20 +200,20 @@ class Peak_intensity_wizard:
 
         # Nothing left, so run off the end.
         else:
-            return self.wizard._num_pages + 1
+            return self._num_pages + 1
 
 
     def wizard_update_pts(self):
         """Update the spectrum.replicated page based on previous data."""
 
         # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
+        page = self.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.replicated page.
-        page = self.wizard.get_page(self.page_indices['pts'])
+        page = self.get_page(self.page_indices['pts'])
         page.uf_args['spectrum_id'].SetValue(id)
 
 
@@ -219,13 +221,13 @@ class Peak_intensity_wizard:
         """Update the spectrum.replicated page based on previous data."""
 
         # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
+        page = self.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.replicated page.
-        page = self.wizard.get_page(self.page_indices['repl'])
+        page = self.get_page(self.page_indices['repl'])
         page.uf_args['spectrum_ids'].SetValue(value=id, index=0)
 
 
@@ -233,13 +235,13 @@ class Peak_intensity_wizard:
         """Update the spectrum.baseplane_rmsd page based on previous data."""
 
         # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
+        page = self.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the spectrum.baseplane_rmsd page.
-        page = self.wizard.get_page(self.page_indices['rmsd'])
+        page = self.get_page(self.page_indices['rmsd'])
         page.uf_args['spectrum_id'].SetValue(id)
 
 
@@ -247,13 +249,13 @@ class Peak_intensity_wizard:
         """Update the relax_fit.relax_time page based on previous data."""
 
         # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
+        page = self.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the relax_fit.relax_time page.
-        page = self.wizard.get_page(self.page_indices['relax_time'])
+        page = self.get_page(self.page_indices['relax_time'])
         page.uf_args['spectrum_id'].SetValue(id)
 
 
@@ -261,13 +263,13 @@ class Peak_intensity_wizard:
         """Update the noe.spectrum_type page based on previous data."""
 
         # The spectrum.read_intensities page.
-        page = self.wizard.get_page(self.page_indices['read'])
+        page = self.get_page(self.page_indices['read'])
 
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
         # Set the ID in the noe.spectrum_type page.
-        page = self.wizard.get_page(self.page_indices['spectrum_type'])
+        page = self.get_page(self.page_indices['spectrum_type'])
         page.uf_args['spectrum_id'].SetValue(id)
 
 
