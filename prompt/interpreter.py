@@ -353,8 +353,8 @@ def exec_script(name, globals):
         sys.path.reverse()
         sys.path.pop(sys.path.index(script_path))
 
-    # Unlock execution if needed.
-    status.exec_lock.release()
+        # Unlock execution if needed.
+        status.exec_lock.release()
 
 
 def interact_prompt(self, intro=None, local={}):
