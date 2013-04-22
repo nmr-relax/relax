@@ -64,7 +64,7 @@ class Peak_intensity_wizard(Wiz_window):
         @type relax_fit:            bool
         @keyword relax_disp:        A flag which when True will enable the relaxation dispersion portions of the wizard.
         @type relax_disp:           bool
-        @keyword relax_disp_cpmg:   A flag which if True enables the relax_disp.cpmg_delayT and relax_disp.cpmg_frq user functions and if False enables the relax_disp.spin_lock_field user function.
+        @keyword relax_disp_cpmg:   A flag which if True enables the relax_disp.cpmg_frq user function and if False enables the relax_disp.spin_lock_field user function.
         @type relax_disp_cpmg:      bool
         @keyword relax_disp_times:  A flag which if True will enable the relax_disp.relax_time page.
         @type relax_disp_times:     bool
@@ -155,12 +155,6 @@ class Peak_intensity_wizard(Wiz_window):
 
             # CPMG pages.
             if self.relax_disp_cpmg:
-                # The relax_disp.cpmg_delayT page.
-                if not self.relax_disp_times:
-                    page = uf_store['relax_disp.cpmg_delayT'].create_page(self, sync=True)
-                    self.page_indices['cpmg_delayT'] = self.add_page(page, skip_button=True, proceed_on_error=False)
-                    page.on_init = self.wizard_update_relax_disp_cpmg_delayT
-
                 # The relax_disp.cpmg_frq page.
                 page = uf_store['relax_disp.cpmg_frq'].create_page(self, sync=True)
                 self.page_indices['cpmg_frq'] = self.add_page(page, skip_button=False, proceed_on_error=False)
@@ -299,13 +293,6 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Update the spectrum ID.
         self.wizard_update_ids(page_key='pts')
-
-
-    def wizard_update_relax_disp_cpmg_delayT(self):
-        """Update the relax_disp.cpmg_delayT page based on previous data."""
-
-        # Update the spectrum ID.
-        self.wizard_update_ids(page_key='cpmg_delayT')
 
 
     def wizard_update_relax_disp_cpmg_frq(self):

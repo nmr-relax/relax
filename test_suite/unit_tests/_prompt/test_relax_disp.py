@@ -114,32 +114,6 @@ class Test_relax_disp(TestCase):
             self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, id='test', int_cpmg=10, int_ref=data[1])
 
 
-    def test_relax_cpmg_delayT_argfail_id(self):
-        """The id arg test of the relax_disp.relax_cpmg_delayT() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_disp_fns.cpmg_delayT, id=data[1])
-
-
-    def test_relax_cpmg_delayT_argfail_delayT(self):
-        """The delayT arg test of the relax_disp.cpmg_delayT() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the float, int and None arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'int' or data[0] == 'None':
-                continue
-
-        # The argument test.
-        self.assertRaises(RelaxNumError, self.relax_disp_fns.cpmg_delayT, id='test', delayT=data[1])
-
-
     def test_relax_cpmg_frq_argfail_cpmg_frq(self):
         """The cpmg_frq arg test of the relax_disp.cpmg_frq() user function."""
 

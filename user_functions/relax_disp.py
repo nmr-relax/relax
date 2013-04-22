@@ -155,35 +155,6 @@ uf.wizard_height_desc = 500
 uf.wizard_size = (800, 600)
 
 
-# The relax_disp.cpmg_delayT user function.
-uf = uf_info.add_uf('relax_disp.cpmg_delayT')
-uf.title = "Set the CPMG constant time delay (T) of the experiment."
-uf.title_short = "CPMG time delay."
-uf.add_keyarg(
-    name = "spectrum_id",
-    py_type = "str",
-    desc_short = "spectrum ID",
-    desc = "The spectrum identification string."
-)
-uf.add_keyarg(
-    name = "delayT",
-    py_type = "num",
-    desc_short = "CPMG time delay",
-    desc = "The CPMG constant time delay (T) in s."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the CPMG constant time delay (T) of a given experiment or spectrum to be set.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To set a CPMG constant time delay T of 20 ms (0.020 s) for experiments '600', type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_delayT('600', 0.020)")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_delayT(id='600', delayT=0.020)")
-uf.backend = relax_disp_obj._cpmg_delayT
-uf.menu_text = "&cpmg_delayT"
-uf.wizard_size = (800, 500)
-
-
 # The relax_disp.cpmg_frq user function.
 uf = uf_info.add_uf('relax_disp.cpmg_frq')
 uf.title = "Set the CPMG frequency associated with a given spectrum."

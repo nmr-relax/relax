@@ -460,44 +460,6 @@ class Relax_disp(API_base, API_common):
         return ids
 
 
-    def _cpmg_delayT(self, spectrum_id=None, delayT=None):
-        """Set the CPMG constant time delay (T) of the experiment.
-
-        @keyword spectrum_id:   The spectrum ID string.
-        @type spectrum_id:      str
-        @keyword delayT:        The CPMG constant time delay (T) in s.
-        @type delayT:           float
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Set up the dictionnary data structure if it doesn't exist yet.
-        if not hasattr(cdp, 'delayT'):
-            cdp.delayT = {}
-
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Make sure the experiment type is set to 'cpmg' or 'cpmg fixed'.
-        if not cdp.exp_type[:4] == 'cpmg':
-            raise RelaxError("To use this user function, the experiment type must be set to 'cpmg'.")
-
-        # Test the CPMG constant time delay (T) has not already been set.
-        if cdp.delayT.has_key(spectrum_id):
-           raise RelaxError("The CPMG constant time delay (T) for the spectrum '%s' has already been set." % spectrum_id)
-
-        # Set the CPMG constant time delay (T).
-        cdp.delayT[spectrum_id] = delayT
-        print("The CPMG delay T for the spectrum '%s' has been set to %s s." % (spectrum_id, cdp.delayT[spectrum_id]))
-
-
     def _cpmg_frq(self, spectrum_id=None, cpmg_frq=None):
         """Set the CPMG frequency associated with a given spectrum.
 
