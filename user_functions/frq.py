@@ -46,8 +46,7 @@ uf.add_keyarg(
     desc_short = "experiment ID",
     desc = "The experiment identification string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = spectrum.get_ids,
-    wiz_read_only = True
+    wiz_combo_iter = spectrum.get_ids
 )
 uf.add_keyarg(
     name = "frq",
