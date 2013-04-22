@@ -497,39 +497,6 @@ class Relax_disp(API_base, API_common):
         print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
-    def _calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
-        """Calculate the effective transversal relaxation rate from the peak intensities.
-        
-        The equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
-
-        @keyword exp_type:   The experiment type, either 'cpmg' or 'r1rho'.
-        @type exp_type:      str
-        @keyword id:         The experimental identification string (allowing for multiple experiments per data pipe).
-        @type id:            str
-        @keyword delayT:     The CPMG constant time delay (T) in s.
-        @type delayT:        float
-        @keyword int_cpmg:   The intensity of the peak in the CPMG spectrum.
-        @type int_cpmg:      float
-        @keyword int_ref:    The intensity of the peak in the reference spectrum.
-        @type int_ref:       float
-        """
-
-        # Avoid division by zero.
-        if int_ref == 0:
-            raise RelaxError("The reference peak intensity should not have a value of 0 (zero).")
-
-        # Avoid other inmpossible mathematical situation.
-        if int_cpmg == 0:
-            raise RelaxError("The CPMG peak intensity should not have a value of 0 (zero).")
-
-        if delayT == 0:
-            raise RelaxError("The CPMG constant time delay (T) should not have a value of 0 (zero).")
-
-        if exp_type == 'cpmg' and delayT != None:
-            r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
-            return r2eff
-
-
     def _disassemble_param_vector(self, param_vector=None, key=None, spins=None, sim_index=None):
         """Disassemble the parameter vector.
 
