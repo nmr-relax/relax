@@ -34,7 +34,7 @@ else:
 # relax module imports.
 from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
-from graphics import WIZARD_IMAGE_PATH
+from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -87,6 +87,7 @@ uf.backend = relax_disp_obj._cluster
 uf.menu_text = "c&luster"
 uf.wizard_height_desc = 500
 uf.wizard_size = (800, 600)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.cpmg_frq user function.
@@ -123,6 +124,7 @@ uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=200, spectrum_id='20
 uf.backend = relax_disp_obj._cpmg_frq
 uf.menu_text = "&cpmg_frq"
 uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.exp_type user function.
@@ -172,6 +174,7 @@ uf.menu_text = "&exp_type"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.plot_exp_curves user function.
@@ -247,6 +250,7 @@ uf.backend = relax_disp_obj._relax_time
 uf.menu_text = "&relax_time"
 uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.select_model user function.
@@ -327,6 +331,7 @@ uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.spin_lock_field user function.
@@ -359,3 +364,4 @@ uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(field=2100, spectrum_i
 uf.backend = relax_disp_obj._spin_lock_field
 uf.menu_text = "spin_lock_&field"
 uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
