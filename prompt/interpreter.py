@@ -487,9 +487,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     except AllRelaxErrors:
         instance = sys.exc_info()[1]
 
-        # Unlock execution.
-        status.exec_lock.release()
-
         # Throw the error.
         if raise_relax_error:
             raise
