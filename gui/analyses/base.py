@@ -129,10 +129,10 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         return button
 
 
-    def add_execute_relax(self, box, method):
-        """Create and add the relax execution GUI element to the given box.
+    def add_execute_analysis(self, box, method):
+        """Create and add the analysis execution GUI element to the given box.
 
-        @param box:     The box element to pack the relax execution GUI element into.
+        @param box:     The box element to pack the analysis execution GUI element into.
         @type box:      wx.BoxSizer instance
         @param method:  The method to execute when the button is clicked.
         @type method:   method
@@ -147,7 +147,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         id = wx.NewId()
 
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute relax")
+        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute analysis")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         self.gui.Bind(wx.EVT_BUTTON, method, button)
