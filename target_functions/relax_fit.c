@@ -105,7 +105,7 @@ func(PyObject *self, PyObject *args) {
     exponential(params, relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
-    return PyFloat_FromDouble(chi2(values,sd,back_calc,num_times));
+    return PyFloat_FromDouble(chi2(values, sd, back_calc, num_times));
 }
 
 
