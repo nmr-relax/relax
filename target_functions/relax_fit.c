@@ -50,6 +50,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         /* The diagonalised scaling matrix list argument element */
         element = PySequence_GetItem(scaling_matrix_arg, i);
         scaling_matrix[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
     }
 
     /* Place the time related arguments into C arrays */
@@ -57,14 +58,17 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         /* The value argument element */
         element = PySequence_GetItem(values_arg, i);
         values[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
 
         /* The sd argument element */
         element = PySequence_GetItem(sd_arg, i);
         sd[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
 
         /* The relax_times argument element */
         element = PySequence_GetItem(relax_times_arg, i);
         relax_times[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
     }
 
     /* The macro for returning the Python None object */
@@ -94,8 +98,9 @@ func(PyObject *self, PyObject *args) {
         /* Get the element */
         element = PySequence_GetItem(params_arg, i);
 
-        /* Convert to a C double */
+        /* Convert to a C double, then free the memory. */
         params[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
 
         /* Scale the parameter */
         params[i] = params[i] * scaling_matrix[i];
