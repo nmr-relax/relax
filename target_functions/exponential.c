@@ -18,12 +18,8 @@
  */
 
 
-/* This include must come first */
-#include <Python.h>
-
-/* The header for all functions which will be called */
-#include "relax_fit.h"
-
+/* The exponential function is needed. */
+#include <math.h>
 
 
 void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
@@ -31,7 +27,6 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
     */
 
     /* Declarations */
-    double Rx, I0;
     int i;
 
 

@@ -25,7 +25,6 @@
 
 
 # Import statements.
-from numpy import get_include
 from os import getcwd, path, remove, rmdir, sep, walk
 import platform
 from re import search
@@ -540,9 +539,6 @@ class Main:
         py_bin_minpath = sys.prefix + path.sep + 'bin'
         py_bin_fullpath = py_bin_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
-        # Get the numpy include path (for numpy/arrayobject.h).
-        numpy_path = get_include()
-
         # Relaxation curve fitting build environment.
         env = Environment()
 
@@ -551,9 +547,9 @@ class Main:
 
         # C flags.
         if SYSTEM == 'Windows':
-            cflags = '/nologo /I\"' + py_include_minpath + '\" /I\"' + numpy_path + '\"'
+            cflags = '/nologo /I\"' + py_include_minpath + '\"'
         else:
-            cflags = '-I' + py_include_fullpath + ' -I' + numpy_path
+            cflags = '-I' + py_include_fullpath
         if env['PLATFORM'] == 'darwin':
             for arch in archs:
                 cflags += ' -arch %s' % arch

@@ -29,14 +29,13 @@
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
+    /* Set up the module in preparation for calls to the target function. */
+
     /* Python object declarations */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
     PyObject *element;
 
     /* Normal declarations */
-    extern double *params, *values, *sd, *relax_times, *scaling_matrix;
-    extern double relax_time_array;
-    extern int num_params, num_times;
     int i;
 
     /* The keyword list */
@@ -46,18 +45,12 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
-    /* Dynamic C arrays */
-    params = (double *) malloc(sizeof(double)*num_params);
-    values = (double *) malloc(sizeof(double)*num_times);
-    sd = (double *) malloc(sizeof(double)*num_times);
-    relax_times = (double *) malloc(sizeof(double)*num_times);
-    scaling_matrix = (double *) malloc(sizeof(double)*num_params);
-
     /* Place the parameter related arguments into C arrays */
     for (i = 0; i < num_params; i++) {
         /* The diagonalised scaling matrix list argument element */
         element = PySequence_GetItem(scaling_matrix_arg, i);
         scaling_matrix[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
     }
 
     /* Place the time related arguments into C arrays */
@@ -65,34 +58,35 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         /* The value argument element */
         element = PySequence_GetItem(values_arg, i);
         values[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
 
         /* The sd argument element */
         element = PySequence_GetItem(sd_arg, i);
         sd[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
 
         /* The relax_times argument element */
         element = PySequence_GetItem(relax_times_arg, i);
         relax_times[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
     }
 
-    /* Return nothing */
-    Py_INCREF(Py_None);
-    return Py_None;
+    /* The macro for returning the Python None object */
+    Py_RETURN_NONE;
 }
 
 
 static PyObject *
 func(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared value.
+    /* Target function for calculating and returning the chi-squared value.
      *
      * Firstly the back calculated intensities are generated, then the chi-squared statistic is
-     * calculated
+     * calculated.
      */
 
     /* Declarations */
     PyObject *params_arg;
     PyObject *element;
-    extern double *params;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array */
@@ -104,8 +98,9 @@ func(PyObject *self, PyObject *args) {
         /* Get the element */
         element = PySequence_GetItem(params_arg, i);
 
-        /* Convert to a C double */
+        /* Convert to a C double, then free the memory. */
         params[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
 
         /* Scale the parameter */
         params[i] = params[i] * scaling_matrix[i];
@@ -115,13 +110,16 @@ func(PyObject *self, PyObject *args) {
     exponential(params, relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
-    return Py_BuildValue("f", chi2(values,sd,back_calc,num_times));
+    return PyFloat_FromDouble(chi2(values, sd, back_calc, num_times));
 }
 
 
 static PyObject *
 dfunc(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared gradient. */
+    /* Target function for calculating and returning the chi-squared gradient.
+     * 
+     * This is currently unimplemented.
+     */
 
     /* Declarations */
     PyObject *params_arg;
@@ -143,24 +141,26 @@ dfunc(PyObject *self, PyObject *args) {
 
 static PyObject *
 d2func(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared Hessian. */
-    return Py_BuildValue("f", 0.0);
+    /* Target function for calculating and returning the chi-squared Hessian.
+     * 
+     * This is currently unimplemented.
+     */
+
+    return PyFloat_FromDouble(0.0);
 }
 
 
 static PyObject *
 back_calc_I(PyObject *self, PyObject *args) {
-    /* Function for returning as a numpy array the back calculated peak intensities */
+    /* Return the back calculated peak intensities as a Python list. */
 
     /* Declarations */
     PyObject *back_calc_py = PyList_New(num_times);
-    extern double back_calc[];
-    extern int num_times;
     int i;
 
     /* Copy the values out of the C array into the Python array */
     for (i = 0; i < num_times; i++)
-        PyList_SetItem(back_calc_py, i, Py_BuildValue("f", back_calc[i]));
+        PyList_SetItem(back_calc_py, i, PyFloat_FromDouble(back_calc[i]));
 
     /* Return the numpy array */
     return back_calc_py;
@@ -169,12 +169,33 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 /* The method table for the functions called by Python */
 static PyMethodDef relax_fit_methods[] = {
-    {"setup", (PyCFunction)setup, METH_VARARGS | METH_KEYWORDS, "The main relaxation curve fitting setup function."},
-    {"func", func, METH_VARARGS},
-    {"dfunc", dfunc, METH_VARARGS},
-    {"d2func", d2func, METH_VARARGS},
-    {"back_calc_I", back_calc_I, METH_VARARGS},
-    {NULL, NULL, 0, NULL}        /* Sentinel */
+    {
+        "setup",
+        (PyCFunction)setup,
+        METH_VARARGS | METH_KEYWORDS,
+        "Set up the module in preparation for calls to the target function."
+    }, {
+        "func",
+        func,
+        METH_VARARGS,
+        "Target function for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
+    }, {
+        "dfunc",
+        dfunc,
+        METH_VARARGS,
+        "Target function for calculating and returning the chi-squared gradient.\n\nThis is currently unimplemented."
+    }, {
+        "d2func",
+        d2func,
+        METH_VARARGS,
+        "Target function for calculating and returning the chi-squared Hessian.\n\nThis is currently unimplemented."
+    }, {
+        "back_calc_I",
+        back_calc_I,
+        METH_VARARGS,
+        "Return the back calculated peak intensities as a Python list."
+    },
+        {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 

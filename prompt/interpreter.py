@@ -469,9 +469,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
-        # Unlock execution.
-        status.exec_lock.release()
-
         # Throw the error.
         if status.debug:
             raise
@@ -506,9 +503,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Throw all other errors.
     except:
-        # Unlock execution.
-        status.exec_lock.release()
-
         # Raise the error.
         raise
 

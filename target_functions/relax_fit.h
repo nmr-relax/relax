@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2012 Edward d'Auvergne
+ * Copyright (C) 2006-2013 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -22,7 +22,7 @@
 #define MAXPARAMS 3
 
 /* The maximum number of spectral time points */
-#define MAXTIMES 30
+#define MAXTIMES 50
 
 /* Python 2.2 and earlier support for Python C modules */
 #ifndef PyMODINIT_FUNC
@@ -37,8 +37,10 @@
 /* Variables sent to the setup function to be stored for later use */
 int num_params, num_times;
 
-/* Pointers to PyObjects */
-double *params, *values, *sd, *relax_times, *scaling_matrix;
-
 /* Variables used for storage during the function calls of optimisation */
 double back_calc[MAXTIMES];
+double params[MAXPARAMS];
+double values[MAXTIMES];
+double sd[MAXTIMES];
+double relax_times[MAXTIMES];
+double scaling_matrix[MAXPARAMS];
