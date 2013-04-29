@@ -75,9 +75,8 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         relax_times[i] = PyFloat_AsDouble(element);
     }
 
-    /* Return nothing */
-    Py_INCREF(Py_None);
-    return Py_None;
+    /* The macro for returning the Python None object */
+    Py_RETURN_NONE;
 }
 
 
