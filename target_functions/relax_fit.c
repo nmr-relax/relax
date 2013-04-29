@@ -35,7 +35,6 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
 
     /* Normal declarations */
     extern double *params, *values, *sd, *relax_times, *scaling_matrix;
-    extern double relax_time_array;
     extern int num_params, num_times;
     int i;
 
