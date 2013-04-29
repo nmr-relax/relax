@@ -29,6 +29,8 @@
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
+    /* Set up the module in preparation for calls to the target function. */
+
     /* Python object declarations */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
     PyObject *element;
@@ -72,10 +74,10 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
 
 static PyObject *
 func(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared value.
+    /* Target function for calculating and returning the chi-squared value.
      *
      * Firstly the back calculated intensities are generated, then the chi-squared statistic is
-     * calculated
+     * calculated.
      */
 
     /* Declarations */
@@ -109,7 +111,10 @@ func(PyObject *self, PyObject *args) {
 
 static PyObject *
 dfunc(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared gradient. */
+    /* Target function for calculating and returning the chi-squared gradient.
+     * 
+     * This is currently unimplemented.
+     */
 
     /* Declarations */
     PyObject *params_arg;
@@ -131,14 +136,18 @@ dfunc(PyObject *self, PyObject *args) {
 
 static PyObject *
 d2func(PyObject *self, PyObject *args) {
-    /* Function for calculating and returning the chi-squared Hessian. */
+    /* Target function for calculating and returning the chi-squared Hessian.
+     * 
+     * This is currently unimplemented.
+     */
+
     return Py_BuildValue("f", 0.0);
 }
 
 
 static PyObject *
 back_calc_I(PyObject *self, PyObject *args) {
-    /* Function for returning as a numpy array the back calculated peak intensities */
+    /* Function for returning as a numpy array the back calculated peak intensities. */
 
     /* Declarations */
     PyObject *back_calc_py = PyList_New(num_times);
@@ -155,12 +164,33 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 /* The method table for the functions called by Python */
 static PyMethodDef relax_fit_methods[] = {
-    {"setup", (PyCFunction)setup, METH_VARARGS | METH_KEYWORDS, "The main relaxation curve fitting setup function."},
-    {"func", func, METH_VARARGS},
-    {"dfunc", dfunc, METH_VARARGS},
-    {"d2func", d2func, METH_VARARGS},
-    {"back_calc_I", back_calc_I, METH_VARARGS},
-    {NULL, NULL, 0, NULL}        /* Sentinel */
+    {
+        "setup",
+        (PyCFunction)setup,
+        METH_VARARGS | METH_KEYWORDS,
+        "Set up the module in preparation for calls to the target function."
+    }, {
+        "func",
+        func,
+        METH_VARARGS,
+        "Target function for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
+    }, {
+        "dfunc",
+        dfunc,
+        METH_VARARGS,
+        "Target function for calculating and returning the chi-squared gradient.\n\nThis is currently unimplemented."
+    }, {
+        "d2func",
+        d2func,
+        METH_VARARGS,
+        "Target function for calculating and returning the chi-squared Hessian.\n\nThis is currently unimplemented."
+    }, {
+        "back_calc_I",
+        back_calc_I,
+        METH_VARARGS,
+        "Function for returning as a numpy array the back calculated peak intensities."
+    },
+        {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 
