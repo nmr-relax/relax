@@ -18,8 +18,8 @@
  */
 
 
-/* This include must come first */
-#include <Python.h>
+/* The exponential function is needed. */
+#include <math.h>
 
 
 void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
