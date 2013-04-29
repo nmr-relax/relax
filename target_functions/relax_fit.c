@@ -34,8 +34,6 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     PyObject *element;
 
     /* Normal declarations */
-    extern double *params, *values, *sd, *relax_times, *scaling_matrix;
-    extern int num_params, num_times;
     int i;
 
     /* The keyword list */
@@ -44,13 +42,6 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Parse the function arguments */
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
-
-    /* Dynamic C arrays */
-    params = (double *) malloc(sizeof(double)*num_params);
-    values = (double *) malloc(sizeof(double)*num_times);
-    sd = (double *) malloc(sizeof(double)*num_times);
-    relax_times = (double *) malloc(sizeof(double)*num_times);
-    scaling_matrix = (double *) malloc(sizeof(double)*num_params);
 
     /* Place the parameter related arguments into C arrays */
     for (i = 0; i < num_params; i++) {
@@ -90,7 +81,6 @@ func(PyObject *self, PyObject *args) {
     /* Declarations */
     PyObject *params_arg;
     PyObject *element;
-    extern double *params;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array */
@@ -152,8 +142,6 @@ back_calc_I(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *back_calc_py = PyList_New(num_times);
-    extern double back_calc[];
-    extern int num_times;
     int i;
 
     /* Copy the values out of the C array into the Python array */

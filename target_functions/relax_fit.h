@@ -37,8 +37,10 @@
 /* Variables sent to the setup function to be stored for later use */
 int num_params, num_times;
 
-/* Pointers to PyObjects */
-double *params, *values, *sd, *relax_times, *scaling_matrix;
-
 /* Variables used for storage during the function calls of optimisation */
 double back_calc[MAXTIMES];
+double params[MAXPARAMS];
+double values[MAXTIMES];
+double sd[MAXTIMES];
+double relax_times[MAXTIMES];
+double scaling_matrix[MAXPARAMS];
