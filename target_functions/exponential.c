@@ -21,17 +21,12 @@
 /* This include must come first */
 #include <Python.h>
 
-/* The header for all functions which will be called */
-#include "relax_fit.h"
-
-
 
 void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
     /* Function to back calculate the peak intensities.
     */
 
     /* Declarations */
-    double Rx, I0;
     int i;
 
 
