@@ -105,7 +105,7 @@ func(PyObject *self, PyObject *args) {
     exponential(params, relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
-    return Py_BuildValue("f", chi2(values,sd,back_calc,num_times));
+    return PyFloat_FromDouble(chi2(values,sd,back_calc,num_times));
 }
 
 
@@ -141,7 +141,7 @@ d2func(PyObject *self, PyObject *args) {
      * This is currently unimplemented.
      */
 
-    return Py_BuildValue("f", 0.0);
+    return PyFloat_FromDouble(0.0);
 }
 
 
@@ -155,7 +155,7 @@ back_calc_I(PyObject *self, PyObject *args) {
 
     /* Copy the values out of the C array into the Python array */
     for (i = 0; i < num_times; i++)
-        PyList_SetItem(back_calc_py, i, Py_BuildValue("f", back_calc[i]));
+        PyList_SetItem(back_calc_py, i, PyFloat_FromDouble(back_calc[i]));
 
     /* Return the numpy array */
     return back_calc_py;
