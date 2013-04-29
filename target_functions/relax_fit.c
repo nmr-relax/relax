@@ -147,7 +147,7 @@ d2func(PyObject *self, PyObject *args) {
 
 static PyObject *
 back_calc_I(PyObject *self, PyObject *args) {
-    /* Function for returning as a numpy array the back calculated peak intensities. */
+    /* Return the back calculated peak intensities as a Python list. */
 
     /* Declarations */
     PyObject *back_calc_py = PyList_New(num_times);
@@ -188,7 +188,7 @@ static PyMethodDef relax_fit_methods[] = {
         "back_calc_I",
         back_calc_I,
         METH_VARARGS,
-        "Function for returning as a numpy array the back calculated peak intensities."
+        "Return the back calculated peak intensities as a Python list."
     },
         {NULL, NULL, 0, NULL}        /* Sentinel */
 };
