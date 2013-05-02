@@ -19,34 +19,37 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+# Module docstring.
+"""Module for basic mathematical operations."""
 
-__all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'chemical_shift',
-    'diffusion',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'linear_algebra',
-    'list',
-    'mathematics',
-    'model_selection',
-    'order',
-    'physical_constants',
-    'regex',
-    'selection',
-    'spectral_densities',
-    'statistics',
-    'structure',
-    'text',
-    'warnings'
-]
+# Python module imports.
+from math import floor, log10
+
+
+def order_of_magnitude(value):
+    """Determine the order of magnitude of the given number.
+
+    @param value:   The value to determine the order of magnitude of.
+    @type value:    float or int
+    @return:        The order of magnitude.
+    @rtype:         int
+    """
+
+    # Calculate and return the value.
+    return floor(log10(x))
+
+
+def round_to_next_order(value):
+    """Round the given value up to the next order of magnitude.
+
+    For example, the number 1,234 will be rounded up to 10,000.
+
+    
+    @param value:   The value to determine the order of magnitude of.
+    @type value:    float or int
+    @return:        The new value rounded up to the next order of magnitude.
+    @rtype:         float
+    """
+    
+    # Calculate and return the value.
+    return 10**(order_of_magnitude(value) + 1)
