@@ -23,20 +23,23 @@
 """Module for basic mathematical operations."""
 
 # Python module imports.
-from math import floor, log10
+from math import ceil, log10
 
 
 def order_of_magnitude(value):
     """Determine the order of magnitude of the given number.
 
+    For example, the number 1,234 will be give a value of 4.0.
+
+
     @param value:   The value to determine the order of magnitude of.
     @type value:    float or int
     @return:        The order of magnitude.
-    @rtype:         int
+    @rtype:         float
     """
 
     # Calculate and return the value.
-    return floor(log10(x))
+    return ceil(log10(value))
 
 
 def round_to_next_order(value):
@@ -52,4 +55,4 @@ def round_to_next_order(value):
     """
     
     # Calculate and return the value.
-    return 10**(order_of_magnitude(value) + 1)
+    return 10**(order_of_magnitude(value))
