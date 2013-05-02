@@ -32,10 +32,11 @@ from warnings import warn
 
 # relax module imports.
 from dep_check import C_module_exp_fn
+from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
+from lib.mathematics import round_to_next_order
+from lib.warnings import RelaxDeselectWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
-from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
-from lib.warnings import RelaxDeselectWarning
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -153,7 +154,7 @@ class Relax_fit(API_base, API_common):
 
             # Intensity scaling.
             elif search('^i', spin.params[i]):
-                scaling_matrix[i, i] = max(spin.intensities.values())
+                scaling_matrix[i, i] = round_to_next_order(max(spin.intensities.values()))
 
         # Return the scaling matrix.
         return scaling_matrix
