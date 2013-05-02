@@ -13,7 +13,7 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['exp_fit', 'fast 2-site']
+MODELS = ['R2eff', 'fast 2-site']
 if hasattr(ds, 'models'):
     MODELS = ds.models
 
