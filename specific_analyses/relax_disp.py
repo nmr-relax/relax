@@ -37,6 +37,7 @@ from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import get_file_path, open_write_file
 from lib.list import count_unique_elements, unique_elements
+from lib.mathematics import round_to_next_order
 from lib.software.grace import write_xy_data, write_xy_header
 from lib.text.sectioning import subsection
 from pipe_control import pipes
@@ -257,7 +258,7 @@ class Relax_disp(API_base, API_common):
                 param_index += 1
 
                 # Initial intensity scaling.
-                scaling_matrix[param_index, param_index] = max(spin.intensities.values())
+                scaling_matrix[param_index, param_index] = round_to_next_order(max(spin.intensities.values()))
                 param_index += 1
 
             # Loop over each exponential curve.
@@ -268,7 +269,7 @@ class Relax_disp(API_base, API_common):
                     param_index += 1
 
                     # Initial intensity scaling.
-                    scaling_matrix[param_index, param_index] = max(spin.intensities.values())
+                    scaling_matrix[param_index, param_index] = round_to_next_order(max(spin.intensities.values()))
                     param_index += 1
 
         # Then the spin block specific parameters.
