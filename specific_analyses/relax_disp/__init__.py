@@ -34,23 +34,26 @@ from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, log, zeros
 from numpy.linalg import inv
+from random import gauss
 from re import match, search
 import sys
 
 # relax module imports.
 from dep_check import C_module_exp_fn
+from lib.dispersion.equations import calc_two_point_r2eff
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import get_file_path, open_write_file
 from lib.list import count_unique_elements, unique_elements
 from lib.mathematics import round_to_next_order
 from lib.software.grace import write_xy_data, write_xy_header
+from lib.statistics import std
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time
+from specific_analyses.relax_disp.disp_data import exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_key
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -1296,21 +1299,58 @@ class Relax_disp(API_base, API_common):
         if cdp.exp_type not in FIXED_TIME_EXP:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
 
+        # Simulation number.
+        sim_num = 500
+
+        # Printouts.
+        print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
+        print("Error propagation using Bootstrapping with %i simulations." % sim_num)
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Spin ID printout.
+            print("Spin '%s'." % spin_id)
+
             # Skip spins which have no data.
             if not hasattr(spin, 'intensities'):
                 continue
 
-            # Loop over each exponential curve.
-            print spin
-            for field in loop_spectrometer():
-                for disp_point in loop_dispersion_point():
-                    print field, disp_point
+            # Initialise the data structures.
+            if not hasattr(spin, 'r2eff'):
+                spin.r2eff = {}
+            if not hasattr(spin, 'r2eff_sim'):
+                spin.r2eff_sim = []
+                for i in range(sim_num):
+                    spin.r2eff_sim.append({})
+            if not hasattr(spin, 'r2eff_err'):
+                spin.r2eff_err = {}
 
+            # Loop over all the data.
+            for frq, point, time in loop_all_data():
+                # The two keys.
+                ref_key = return_key(frq=frq, point=None, time=time)
+                key = return_key(frq=frq, point=point, time=time)
 
+                # Missing data.
+                if ref_key not in spin.intensities or key not in spin.intensities:
+                    continue
 
+                # Calculate the R2eff value.
+                spin.r2eff[key] = calc_two_point_r2eff(relax_time=time, I_ref=spin.intensities[ref_key], I=spin.intensities[key])
 
+                # Bootstrapping error propagation.
+                values = []
+                for i in range(sim_num):
+                    # Randomise the data.
+                    I_ref = gauss(spin.intensities[ref_key], spin.intensity_err[ref_key])
+                    I = gauss(spin.intensities[key], spin.intensity_err[key])
+
+                    # Calculate the simulation R2eff value.
+                    spin.r2eff_sim[i][key] = calc_two_point_r2eff(relax_time=time, I_ref=I_ref, I=I)
+                    values.append(spin.r2eff_sim[i][key])
+
+                # The standard deviation.
+                spin.r2eff_err[key] = std(values)
 
 
     def create_mc_data(self, data_id):
