@@ -255,6 +255,30 @@ def relax_time(time=0.0, spectrum_id=None):
     print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
 
 
+def return_cpmg_frqs(ref_flag=True):
+    """Return the list of nu_CPMG frequencies.
+
+    @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
+    @type ref_flag:     bool
+    @return:            The list of nu_CPMG frequencies in Hz.
+    @rtype:             list of float
+    """
+
+    # Initialise.
+    cpmg_frqs = []
+
+    # Loop over the frequencies.
+    for frq in cdp.cpmg_frqs_list:
+        if frq == None and not ref_flag:
+            continue
+
+        # Add the frequency.
+        cpmg_frqs.append(frq)
+
+    # Return the new list.
+    return cpmg_frqs
+
+
 def return_intensity(spin=None, frq=None, point=None, time=None, ref=False):
     """Return the peak intensity corresponding to the given field strength and dispersion point.
 
@@ -313,6 +337,30 @@ def return_key(frq=None, point=None, time=None):
 
     # Should not be here.
     raise RelaxError("No key could be found corresponding to the spectrometer frequency %s, dispersion point %s and relaxation time %s." % (frq, point, time))
+
+
+def return_spin_lock_nu1(ref_flag=True):
+    """Return the list of spin-lock field strengths.
+
+    @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
+    @type ref_flag:     bool
+    @return:            The list of spin-lock field strengths in Hz.
+    @rtype:             list of float
+    """
+
+    # Initialise.
+    nu1 = []
+
+    # Loop over the frequencies.
+    for frq in cdp.spin_lock_nu1_list:
+        if frq == None and not ref_flag:
+            continue
+
+        # Add the frequency.
+        nu1.append(frq)
+
+    # Return the new list.
+    return nu1
 
 
 def spin_lock_field(spectrum_id=None, field=None):
