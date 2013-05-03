@@ -1214,19 +1214,19 @@ class Relax_disp(API_base, API_common):
         if model == 'R2eff' and cdp.exp_type in VAR_TIME_EXP and not C_module_exp_fn:
             raise RelaxError("The exponential curve-fitting C module cannot be found.")
 
-        # Fast-exchange regime.
+        # R2eff/R1rho model.
         if model == 'R2eff':
-            print("R2eff value and error determination.")
+            print("R2eff/R1rho value and error determination.")
             params = ['r2eff', 'i0']
 
-        # Fast-exchange regime.
-        elif model == 'fast 2-site':
-            print("2-site fast-exchange.")
-            params = ['r2', 'rex', 'kex']
+        # LM63 model.
+        elif model == 'LM63':
+            print("The Luz and Meiboom (1963) 2-site fast exchange.")
+            params = ['r2', 'phi_ex', 'kex']
 
-        # Slow-exchange regime.
-        elif model == 'slow 2-site':
-            print("2-site slow-exchange.")
+        # CR72 model.
+        elif model == 'CR72':
+            print("The Carver and Richards (1972) 2-site equation for all time scales.")
             params = ['r2', 'r2a', 'ka', 'dw']
 
         # Invalid model.
