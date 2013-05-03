@@ -67,27 +67,6 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
-def loop_dispersion_point():
-    """Generator method for looping over all dispersion points (either spin-lock field or nu_CPMG points).
-
-    @return:    Either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz.
-    @rtype:     float
-    """
-
-    # CPMG type data.
-    if cdp.exp_type in CPMG_EXP:
-        fields = unique_elements(cdp.cpmg_frqs_list)
-    elif cdp.exp_type in R1RHO_EXP:
-        fields = unique_elements(cdp.spin_lock_nu1.values())
-    else:
-        raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type)
-    fields.sort()
-
-    # Yield each unique field strength or frequency.
-    for field in fields:
-        yield field
-
-
 def exp_curve_index_from_key(key):
     """Convert the exponential curve key into the corresponding index.
 
@@ -122,25 +101,6 @@ def exp_curve_key_from_index(index):
     # R1rho data.
     else:
         return cdp.spin_lock_nu1_list[index]
-
-
-def loop_exp_curve():
-    """Generator method looping over the exponential curves, yielding the index and key pair.
-
-    @return:    The index of the exponential curve and the floating point number key used in the R2eff and I0 spin data structures.
-    @rtype:     int and float
-    """
-
-    # Loop over each exponential curve.
-    for i in range(cdp.dispersion_points):
-        # The experiment specific key.
-        if cdp.exp_type in CPMG_EXP:
-            key = cdp.cpmg_frqs_list[i]
-        else:
-            key = cdp.spin_lock_nu1_list[i]
-
-        # Yield the data.
-        yield i, key
 
 
 def intensity_key(exp_key=None, relax_time=None):
@@ -184,6 +144,66 @@ def intensity_key(exp_key=None, relax_time=None):
     return common_key[0]
 
 
+def loop_dispersion_point():
+    """Generator method for looping over all dispersion points (either spin-lock field or nu_CPMG points).
+
+    @return:    Either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz.
+    @rtype:     float
+    """
+
+    # CPMG type data.
+    if cdp.exp_type in CPMG_EXP:
+        fields = unique_elements(cdp.cpmg_frqs_list)
+    elif cdp.exp_type in R1RHO_EXP:
+        fields = unique_elements(cdp.spin_lock_nu1.values())
+    else:
+        raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type)
+    fields.sort()
+
+    # Yield each unique field strength or frequency.
+    for field in fields:
+        yield field
+
+
+def loop_exp_curve():
+    """Generator method looping over the exponential curves, yielding the index and key pair.
+
+    @return:    The index of the exponential curve and the floating point number key used in the R2eff and I0 spin data structures.
+    @rtype:     int and float
+    """
+
+    # Loop over each exponential curve.
+    for i in range(cdp.dispersion_points):
+        # The experiment specific key.
+        if cdp.exp_type in CPMG_EXP:
+            key = cdp.cpmg_frqs_list[i]
+        else:
+            key = cdp.spin_lock_nu1_list[i]
+
+        # Yield the data.
+        yield i, key
+
+
+def loop_spectrometer():
+    """Generator method for looping over all spectrometer field data.
+
+    @return:    The field strength in Hz.
+    @rtype:     float
+    """
+
+    # The number of spectrometer field strengths.
+    field_count = 1
+    fields = [None]
+    if hasattr(cdp, 'frq'):
+        field_count = count_unique_elements(cdp.frq.values())
+        fields = unique_elements(cdp.frq.values())
+        fields.sort()
+
+    # Yield each unique spectrometer field strength.
+    for field in fields:
+        yield field
+
+
 def relax_time(time=0.0, spectrum_id=None):
     """Set the relaxation time period associated with a given spectrum.
 
@@ -216,26 +236,6 @@ def relax_time(time=0.0, spectrum_id=None):
 
     # Printout.
     print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
-
-
-def loop_spectrometer():
-    """Generator method for looping over all spectrometer field data.
-
-    @return:    The field strength in Hz.
-    @rtype:     float
-    """
-
-    # The number of spectrometer field strengths.
-    field_count = 1
-    fields = [None]
-    if hasattr(cdp, 'frq'):
-        field_count = count_unique_elements(cdp.frq.values())
-        fields = unique_elements(cdp.frq.values())
-        fields.sort()
-
-    # Yield each unique spectrometer field strength.
-    for field in fields:
-        yield field
 
 
 def spin_lock_field(spectrum_id=None, field=None):
