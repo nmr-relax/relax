@@ -21,7 +21,11 @@
 ###############################################################################
 
 # Module docstring.
-"""The relaxation dispersion curve fitting specific code."""
+"""The relaxation dispersion specific analysis."""
+
+# The available modules.
+__all__ = [
+]
 
 # Python module imports.
 from copy import deepcopy
