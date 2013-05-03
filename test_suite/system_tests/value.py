@@ -45,8 +45,11 @@ class Value(SystemTestCase):
         self.interpreter.spin.create(mol_name='test mol', res_name='Gly', res_num=2, spin_name='N')
         self.interpreter.spin.create(mol_name='test mol', res_name='Gly', res_num=3, spin_name='N')
 
-        # Add some values.
+        # Add some values and errors.
         self.interpreter.value.set(val=0.8, param='s2', spin_id=':1,2')
+        self.interpreter.value.set(val=0.1, param='s2', spin_id=':1', error=True)
+        self.interpreter.value.set(val=0.2, param='s2', spin_id=':2', error=True)
+        self.interpreter.value.set(val=0.3, param='s2', spin_id=':3', error=True)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('new', 'mf')
