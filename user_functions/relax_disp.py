@@ -35,6 +35,7 @@ else:
 from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
+from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -121,7 +122,7 @@ uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=None, spectrum_id='r
 uf.desc[-1].add_paragraph("To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')")
 uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=200, spectrum_id='200_Hz_spectrum')")
-uf.backend = relax_disp_obj._cpmg_frq
+uf.backend = cpmg_frq
 uf.menu_text = "&cpmg_frq"
 uf.wizard_size = (800, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
@@ -246,7 +247,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.")
-uf.backend = relax_disp_obj._relax_time
+uf.backend = relax_time
 uf.menu_text = "&relax_time"
 uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (800, 500)
@@ -401,7 +402,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set a spin-lock field strength of 2.1 kHz for the spectrum 'nu1_2.1kHz_relaxT_0.010', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(2100, 'nu1_2.1kHz_relaxT_0.010')")
 uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(field=2100, spectrum_id='nu1_2.1kHz_relaxT_0.010')")
-uf.backend = relax_disp_obj._spin_lock_field
+uf.backend = spin_lock_field
 uf.menu_text = "spin_lock_&field"
 uf.wizard_size = (800, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
