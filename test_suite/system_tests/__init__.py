@@ -65,6 +65,7 @@ from test_suite.system_tests.sequence import Sequence
 from test_suite.system_tests.state import State
 from test_suite.system_tests.structure import Structure
 from test_suite.system_tests.unit_vectors import Unit_vectors
+from test_suite.system_tests.value import Value
 
 
 __all__ = ['align_tensor',
@@ -100,7 +101,8 @@ __all__ = ['align_tensor',
            'sequence',
            'state',
            'structure',
-           'unit_vectors']
+           'unit_vectors',
+           'value']
 
 
 class System_test_runner:
@@ -189,6 +191,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
             suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
             suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Value))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
