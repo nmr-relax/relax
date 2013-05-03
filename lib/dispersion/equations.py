@@ -51,8 +51,8 @@ def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
     return -1.0 / relax_time * log(float(I) / I_ref)
 
 
-def fast_2site(params=None, cpmg_frqs=None, back_calc=None, num_times=None):
-    """Back calculate the effective transversal relaxation rate (R2eff).
+def r2eff_LM63(params=None, cpmg_frqs=None, back_calc=None, num_disp_points=None):
+    """Back calculate R2eff.
 
     The currently supported equation is that for CPMG relaxation dispersion in the fast exchange limit:
 
@@ -63,7 +63,6 @@ def fast_2site(params=None, cpmg_frqs=None, back_calc=None, num_times=None):
             - Tollinger et al., JACS, 2001, 123, 11341-11352 (equation 2)
     """
 
-    # Loop over the time points.
-    for i in range(num_times):
-        # Back calculate.
+    # Loop over the time points, back calculating the R2eff value.
+    for i in range(num_disp_points):
         back_calc[i] = params[0] + params[1] * (1 - 2 * tanh(params[2] / (2 * 4 * cpmg_frqs[i])) * ((4 * cpmg_frqs[i] ) / params[2]))
