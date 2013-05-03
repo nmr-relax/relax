@@ -53,6 +53,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         pipe_from = pipes.cdp_name()
     if pipe_to == None:
         pipe_to = pipes.cdp_name()
+    pipe_orig = pipes.cdp_name()
 
     # The second pipe does not exist.
     pipes.test(pipe_to)
@@ -77,16 +78,25 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         if value != None or error != None:
             raise RelaxValueError(param, pipe_to)
 
+    # Switch to the data pipe to copy values to.
+    pipes.switch(pipe_to)
+
     # Copy the values.
     for spin, spin_id in spin_loop(pipe=pipe_from, return_id=True):
         # Get the value and error from pipe_from.
         value, error = return_value(spin, param)
 
         # Set the values of pipe_to.
-        set(spin_id=spin_id, val=value, error=error, param=param)
+        if value != None:
+            set(spin_id=spin_id, val=value, param=param, pipe=pipe_to)
+        if error != None:
+            set(spin_id=spin_id, val=error, param=param, pipe=pipe_to, error=True)
 
     # Reset all minimisation statistics.
     minimise.reset_min_stats(pipe_to)
+
+    # Switch back to the original current data pipe.
+    pipes.switch(pipe_orig)
 
 
 def display(param=None, scaling=1.0):
@@ -343,19 +353,19 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         minimise.reset_min_stats()
 
 
-def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, reset=True):
+def set(val=None, param=None, pipe=None, spin_id=None, error=False, force=True, reset=True):
     """Set global or spin specific data values.
 
     @keyword val:       The parameter values.
     @type val:          None or list
     @keyword param:     The parameter names.
     @type param:        None, str, or list of str
-    @keyword error:     The parameter errors.
-    @type error:        None, number, or list of numbers
     @keyword pipe:      The data pipe the values should be placed in.
     @type pipe:         None or str
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
+    @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+    @type error:        bool
     @keyword force:     A flag forcing the overwriting of current values.
     @type force:        bool
     @keyword reset:     A flag which if True will cause all minimisation statistics to be reset.
@@ -414,7 +424,7 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
                 raise RelaxParamSetError(param[i])
 
     # Set the parameter values.
-    set_param_values(param=param, value=val, spin_id=spin_id, force=force)
+    set_param_values(param=param, value=val, spin_id=spin_id, error=error, force=force)
 
     # Reset all minimisation statistics.
     if reset:
