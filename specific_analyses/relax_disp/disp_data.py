@@ -77,7 +77,7 @@ def exp_curve_index_from_key(key):
     """
 
     # CPMG data.
-    if cdp.exp_type == 'cpmg':
+    if cdp.exp_type in CPMG_EXP:
         return cdp.cpmg_frqs_list.index(key)
 
     # R1rho data.
@@ -95,7 +95,7 @@ def exp_curve_key_from_index(index):
     """
 
     # CPMG data.
-    if cdp.exp_type == 'cpmg':
+    if cdp.exp_type in CPMG_EXP:
         return cdp.cpmg_frqs_list[index]
 
     # R1rho data.
@@ -120,7 +120,7 @@ def intensity_key(exp_key=None, relax_time=None):
 
     # Find all keys corresponding to the given exponential key.
     exp_keys = []
-    if cdp.exp_type == 'cpmg':
+    if cdp.exp_type in CPMG_EXP:
         data = cdp.cpmg_frqs
     else:
         data = cdp.spin_lock_nu1
