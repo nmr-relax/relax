@@ -364,9 +364,9 @@ class API_common:
         if hasattr(spin, object_name):
             value = getattr(spin, object_name)
 
-            # The error.
-            if hasattr(spin, object_error):
-                error = getattr(spin, object_error)
+        # The spin error.
+        if hasattr(spin, object_error):
+            error = getattr(spin, object_error)
 
         # The global value.
         elif hasattr(cdp, object_name):
