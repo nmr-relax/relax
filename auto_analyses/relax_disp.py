@@ -182,9 +182,11 @@ class Relax_disp:
             # Select the model.
             self.interpreter.relax_disp.select_model(model)
 
-            # Optimise the model.
+            # Calculate the R2eff values for the fixed relaxation time period data types.
             if model == 'R2eff' and cdp.exp_type in ['cpmg fixed']:
-                self.calc()
+                self.interpreter.calc()
+
+            # Optimise the model.
             else:
                 self.optimise()
 
