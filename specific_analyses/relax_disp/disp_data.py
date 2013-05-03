@@ -144,6 +144,21 @@ def intensity_key(exp_key=None, relax_time=None):
     return common_key[0]
 
 
+def loop_all_data():
+    """Generator method for looping over the spectrometer frequency and dispersion points.
+
+    @return:    The spectrometer frequency and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @rtype:     float, float
+    """
+
+    # First loop over the spectrometer frequencies.
+    for frq in loop_spectometer():
+        # Then the dispersion points.
+        for point in loop_dispersion_point():
+            # Return both.
+            yield frq, point
+
+
 def loop_dispersion_point():
     """Generator method for looping over all dispersion points (either spin-lock field or nu_CPMG points).
 
