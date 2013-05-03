@@ -623,7 +623,7 @@ class Relax_disp(API_base, API_common):
         elif cdp.exp_type in ['r1rho']:
             fields = unique_elements(cdp.spin_lock_nu1.values())
         else:
-            raise RelaxError("The experiment type '%s' is unknown.")
+            raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type)
         fields.sort()
 
         # Yield each unique field strength or frequency.
@@ -717,7 +717,7 @@ class Relax_disp(API_base, API_common):
 
         # Sanity check.
         if exp_type not in FIXED_TIME_EXP and exp_type not in VAR_TIME_EXP:
-            raise RelaxError("The experiment type '%s' is neither a fixed relaxation time period or variable relaxation time period experiment.")
+            raise RelaxError("The experiment type '%s' is neither a fixed relaxation time period or variable relaxation time period experiment." % exp_type)
 
 
     def _grid_search_setup(self, spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
