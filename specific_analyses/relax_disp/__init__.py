@@ -98,7 +98,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=dict, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
         self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=float, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('rex', scope='spin', default=5.0, desc='The chemical exchange contribution to R2', set='params', py_type=float, grace_string='\\qR\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('rex', scope='spin', default=5.0, desc='The chemical exchange contribution to R2 (sigma_ex = Rex / omega**2)', set='params', py_type=float, grace_string='\\qR\\sex\\N\\Q (s.rad\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('ka', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
@@ -724,7 +724,7 @@ class Relax_disp(API_base, API_common):
         # LM63 model.
         elif model == 'LM63':
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
-            params = ['r2', 'phi_ex', 'kex']
+            params = ['r2', 'rex', 'kex']
 
         # CR72 model.
         elif model == 'CR72':
