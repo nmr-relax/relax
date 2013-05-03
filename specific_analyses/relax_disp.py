@@ -619,7 +619,7 @@ class Relax_disp(API_base, API_common):
 
         # CPMG type data.
         if cdp.exp_type in CPMG_EXP:
-            fields = unique_elements(cdp.cpmg_frqs_list.values())
+            fields = unique_elements(cdp.cpmg_frqs_list)
         elif cdp.exp_type in R1RHO_EXP:
             fields = unique_elements(cdp.spin_lock_nu1.values())
         else:
@@ -1492,6 +1492,60 @@ class Relax_disp(API_base, API_common):
             # Loop over each exponential curve.
             for exp_index, key in self._exp_curve_loop():
                 yield spin, key
+
+
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculate the R2eff values for fixed relaxation time period data.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The MC simulation index (unused).
+        @type sim_index:    None
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Test if the model has been set.
+        if not hasattr(cdp, 'exp_type'):
+            raise RelaxError("The relaxation dispersion experiment type has not been specified.")
+
+        # Test if the model has been set.
+        if not hasattr(cdp, 'model'):
+            raise RelaxError("The relaxation dispersion model has not been specified.")
+
+        # Test if the curve count exists.
+        if not hasattr(cdp, 'dispersion_points'):
+            if cdp.exp_type == 'cpmg':
+                raise RelaxError("The CPMG frequencies have not been set up.")
+            elif cdp.exp_type == 'r1rho':
+                raise RelaxError("The spin-lock field strengths have not been set up.")
+
+        # Only allow the fixed relaxation time period data types.
+        if cdp.exp_type not in FIXED_TIME_EXP:
+            raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Skip spins which have no data.
+            if not hasattr(spin, 'intensities'):
+                continue
+
+            # Loop over each exponential curve.
+            print spin
+            for field in self._spectrometer_loop():
+                for disp_point in self._dispersion_point_loop():
+                    print field, disp_point
+
+
+
+
 
 
     def create_mc_data(self, data_id):
