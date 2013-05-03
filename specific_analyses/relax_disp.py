@@ -618,9 +618,9 @@ class Relax_disp(API_base, API_common):
         """
 
         # CPMG type data.
-        if cdp.exp_type in ['cpmg']:
+        if cdp.exp_type in CPMG_EXP:
             fields = unique_elements(cdp.cpmg_frqs_list.values())
-        elif cdp.exp_type in ['r1rho']:
+        elif cdp.exp_type in R1RHO_EXP:
             fields = unique_elements(cdp.spin_lock_nu1.values())
         else:
             raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type)
@@ -677,7 +677,7 @@ class Relax_disp(API_base, API_common):
         # Loop over each exponential curve.
         for i in range(cdp.dispersion_points):
             # The experiment specific key.
-            if cdp.exp_type in ['cpmg', 'cpmg fixed']:
+            if cdp.exp_type in CPMG_EXP:
                 key = cdp.cpmg_frqs_list[i]
             else:
                 key = cdp.spin_lock_nu1_list[i]
@@ -1594,7 +1594,7 @@ class Relax_disp(API_base, API_common):
         # Special exponential curve-fitting for the 'R2eff' model.
         if cdp.model == 'R2eff':
             # Sanity checks.
-            if cdp.exp_type in ['cpmg fixed']:
+            if cdp.exp_type in FIXED_TIME_EXP:
                 raise RelaxError("The R2eff model with the fixed time period CPMG experiment cannot be optimised.")
 
             # Optimisation.
