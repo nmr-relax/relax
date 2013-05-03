@@ -24,7 +24,31 @@
 """The relaxation dispersion equations."""
 
 # Python module imports.
-from math import tanh
+from math import log, tanh
+
+
+def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
+    """Calculate the R2eff/R1rho value for the fixed relaxation time data.
+
+    The formula is:
+
+                  -1         / I1 \ 
+        R2eff = ------- * ln | -- | ,
+                relax_T      \ I0 /
+
+    where relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum of interest.
+
+
+    @keyword relax_time:    The fixed relaxation delay time in seconds.
+    @type relax_time:       float
+    @keyword I_ref:         The peak intensity in the reference spectrum.
+    @type I_ref:            float
+    @keyword I:             The peak intensity of interest.
+    @type I:                float
+    """
+
+    # Calculate and return the value (avoiding integer division problems).
+    return -1.0 / relax_time * log(float(I) / I_ref)
 
 
 def fast_2site(params=None, cpmg_frqs=None, back_calc=None, num_times=None):
