@@ -69,7 +69,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type(pipe_from))
 
     # Test if the data exists for pipe_to.
-    for spin in spin_loop(pipe_to):
+    for spin in spin_loop(pipe=pipe_to):
         # Get the value and error for pipe_to.
         value, error = return_value(spin, param)
 
@@ -78,15 +78,12 @@ def copy(pipe_from=None, pipe_to=None, param=None):
             raise RelaxValueError(param, pipe_to)
 
     # Copy the values.
-    for spin, spin_id in spin_loop(pipe_from, return_id=True):
+    for spin, spin_id in spin_loop(pipe=pipe_from, return_id=True):
         # Get the value and error from pipe_from.
         value, error = return_value(spin, param)
 
-        # Get the equivalent spin in pipe_to.
-        spin_to = return_spin(spin_id, pipe_to)
-
         # Set the values of pipe_to.
-        set(spin_id=spin_to, value=value, error=error, param=param)
+        set(spin_id=spin_id, val=value, error=error, param=param)
 
     # Reset all minimisation statistics.
     minimise.reset_min_stats(pipe_to)
