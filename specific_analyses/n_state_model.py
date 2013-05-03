@@ -2596,7 +2596,7 @@ class N_state_model(API_base, API_common):
             return getattr(tensor, names[param_index]+'_err')
 
 
-    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+    def set_param_values(self, param=None, value=None, spin_id=None, error=False, force=True):
         """Set the N-state model parameter values.
 
         @keyword param:     The parameter name list.
@@ -2605,6 +2605,8 @@ class N_state_model(API_base, API_common):
         @type value:        list
         @keyword spin_id:   The spin identification string (unused).
         @type spin_id:      None
+        @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+        @type error:        bool
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
         @type force:        bool
         """
@@ -2621,6 +2623,10 @@ class N_state_model(API_base, API_common):
             # Is the parameter is valid?
             if not obj_name:
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
+
+            # Error object.
+            if error:
+                obj_name += '_err'
 
             # Set the indexed parameter.
             if obj_name in ['probs', 'alpha', 'beta', 'gamma']:
