@@ -152,7 +152,7 @@ def loop_all_data():
     """
 
     # First loop over the spectrometer frequencies.
-    for frq in loop_spectometer():
+    for frq in loop_spectrometer():
         # Then the dispersion points.
         for point in loop_dispersion_point():
             # Return both.
