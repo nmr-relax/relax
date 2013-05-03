@@ -27,14 +27,14 @@
 from numpy import dot, float64, zeros
 
 # relax module imports.
-from lib.curve_fit.exponential import exponential_2param_neg
-from lib.dispersion.equations import fast_2site
+from lib.dispersion.equations import r2eff_LM63
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_exp_curves=None, num_times=None, values=None, errors=None, cpmg_frqs=None, spin_lock_nu1=None, relax_times=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, cpmg_frqs=None, spin_lock_nu1=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -42,9 +42,8 @@ class Dispersion:
 
         The following models are currently supported:
 
-            - 'exp_fit':  Simple fitting of the exponential curves with parameters {R2eff, I0},
-            - 'fast 2-site':  The 2-site fast exchange equation with parameters {R2eff, I0, R2, Rex, kex},
-            - 'slow 2-site':  The 2-site slow exchange equation with parameters {R2eff, I0, R2A, kA, dw}.
+            - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
+            - 'CR72':  The Carver and Richards (1972) 2-site model for all time scales.
 
 
         @keyword model:             The relaxation dispersion model to fit.
@@ -53,38 +52,35 @@ class Dispersion:
         @type num_param:            int
         @keyword num_spins:         The number of spins in the cluster.
         @type num_spins:            int
-        @keyword num_exp_curves:    The number of exponential curves.
-        @type num_exp_curves:       int
-        @keyword num_times:         The number of relaxation times.
-        @type num_times:            int
-        @keyword values:            The peak intensities.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, the third is the exponential curves, and the fourth are the relaxation times along the exponential curve.
-        @type values:               numpy rank-4 float array
-        @keyword errors:            The peak intensity errors.  The four dimensions must correspond to those of the values argument.
-        @type errors:               numpy rank-4 float array
-        @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate exponential curve.  This will be ignored for R1rho experiments.
+        @keyword num_frq:           The number of spectrometer field strengths.
+        @type num_frq:              int
+        @keyword num_disp_points:   The number of points on the dispersion curve.
+        @type num_disp_points:      int
+        @keyword values:            The R2eff/R1rho values.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the dispersion points.
+        @type values:               numpy rank-3 float array
+        @keyword errors:            The R2eff/R1rho errors.  The three dimensions must correspond to those of the values argument.
+        @type errors:               numpy rank-3 float array
+        @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            numpy rank-1 float array
-        @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate exponential curve.  This will be ignored for CPMG experiments.
+        @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
         @type spin_lock_nu1:        numpy rank-1 float array
-        @keyword relax_times:       The relaxation time points in seconds for the exponential curve.
-        @type relax_times:          numpy rank-1 float array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
         """
 
         # Check the args.
-        if model not in ['exp_fit', 'fast 2-site', 'slow 2-site']:
+        if model not in [MODEL_R2EFF, MODEL_LM63, MODEL_CR72]:
             raise RelaxError("The model '%s' is unknown." % model)
 
         # Store the arguments.
         self.num_params = num_params
         self.num_spins = num_spins
-        self.num_exp_curves = num_exp_curves
-        self.num_times = num_times
+        self.num_frq = num_frq
+        self.num_disp_points = num_disp_points
         self.values = values
         self.errors = errors
         self.cpmg_frqs = cpmg_frqs
         self.spin_lock_nu1 = spin_lock_nu1
-        self.relax_times = relax_times
         self.scaling_matrix = scaling_matrix
 
         # Scaling initialisation.
@@ -92,18 +88,16 @@ class Dispersion:
         if self.scaling_matrix != None:
             self.scaling_flag = True
 
-        # Create the structure for holding the back-calculated peak intensities (matching the dimensions of the values structure so that external code can access this data).
-        self.back_calc = zeros((num_times, num_exp_curves, num_times), float64)
+        # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
+        self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
 
         # Set up the model.
-        if model == 'exp_fit':
-            self.func = self.func_exp_fit
-        elif model == 'fast 2-site':
-            self.func = self.func_fast_2site
+        if model == MODEL_LM63:
+            self.func = self.func_LM63
 
 
-    def func_exp_fit(self, params):
-        """Target function for the simple exponential curve-fitting.
+    def func_LM63(self, params):
+        """Target function for the Luz and Meiboom (1963) fast 2-site exchange model.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -114,42 +108,19 @@ class Dispersion:
         # Scaling.
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
+
+        # Initialise.
+        chi2_sum = 0.0
 
         # Loop over the spins.
-        chi2_sum = 0.0
         for spin_index in range(self.num_spins):
-            # Loop over the exponential curves.
-            for exp_index in range(self.num_exp_curves):
-                # Unpack the exponential curve parameters.
-                index = spin_index * 2 * self.num_exp_curves + exp_index * self.num_exp_curves
-                r2eff = params[index]
-                i0 = params[index + 1]
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # Back calculate the R2eff values.
+                r2eff_LM63(params=params, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_disp_points=self.num_disp_points)
 
-                # Back-calculate the points on the exponential curve.
-                exponential_2param_neg(rate=r2eff, i0=i0, x=self.relax_times, y=self.back_calc[spin_index, field_index, exp_index])
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(values[spin_index, frq_index], back_calc[spin_index, frq_index], sd[spin_index, frq_index])
 
-                # Calculate the chi-squared value for this curve.
-                chi2_sum += chi2(self.values[spin_index, field_index, exp_index], self.back_calc[spin_index, field_index, exp_index], self.errors[spin_index, field_index, exp_index])
-
-        # Return the chi-squared value.
+        # Return the total chi-squared value.
         return chi2_sum
-
-
-    def func_fast_2site(self, params):
-        """Target function for the fast 2-site exchange model.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Back calculated the effective transversal relaxation rates.
-        fast_2site(params=params, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc, num_times=self.num_times)
-
-        # Calculate and return the chi-squared value.
-        return chi2(values, back_calc, sd)
