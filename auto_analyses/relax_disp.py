@@ -176,8 +176,9 @@ class Relax_disp:
             # Printout.
             subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
 
-            # Create the data pipe by copying the base pipe.
+            # Create the data pipe by copying the base pipe, then switching to it.
             self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to=model, bundle_to=self.pipe_bundle)
+            self.interpreter.pipe.switch(model)
 
             # Select the model.
             self.interpreter.relax_disp.select_model(model)
