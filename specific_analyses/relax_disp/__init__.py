@@ -723,12 +723,12 @@ class Relax_disp(API_base, API_common):
 
         # LM63 model.
         elif model == 'LM63':
-            print("The Luz and Meiboom (1963) 2-site fast exchange.")
+            print("The Luz and Meiboom (1963) 2-site fast exchange model.")
             params = ['r2', 'phi_ex', 'kex']
 
         # CR72 model.
         elif model == 'CR72':
-            print("The Carver and Richards (1972) 2-site equation for all time scales.")
+            print("The Carver and Richards (1972) 2-site model for all time scales.")
             params = ['r2', 'r2a', 'ka', 'dw']
 
         # Invalid model.
