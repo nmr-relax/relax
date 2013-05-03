@@ -2207,7 +2207,7 @@ class Model_free_main:
                 inc = inc + 1
 
 
-    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+    def set_param_values(self, param=None, value=None, spin_id=None, error=False, force=True):
         """Set the model-free parameter values.
 
         @keyword param:     The parameter name list.
@@ -2216,6 +2216,8 @@ class Model_free_main:
         @type value:        list
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
+        @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+        @type error:        bool
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
         @type force:        bool
         """
@@ -2232,7 +2234,10 @@ class Model_free_main:
             # Diffusion tensor parameter.
             diff_obj = diffusion_tensor.return_data_name(param[i])
             if diff_obj:
-                diff_params.append(param[i])
+                if error:
+                    diff_params.append(param[i] + '_err')
+                else:
+                    diff_params.append(param[i])
                 diff_vals.append(value[i])
 
             # Model-free parameter.
@@ -2252,6 +2257,10 @@ class Model_free_main:
             # Check if it is a model-free parameter.
             if obj_name not in self.data_names(set='params', scope='spin') and obj_name not in self.data_names(set='generic', scope='spin'):
                 raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params', scope='spin'), self.data_names(set='generic', scope='spin')))
+
+            # The error object name.
+            if error:
+                obj_name += '_err'
 
             # Set the parameter.
             for spin in spin_loop(spin_id):

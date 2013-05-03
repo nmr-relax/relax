@@ -655,7 +655,7 @@ class API_base(object):
         raise RelaxImplementError('set_error')
 
 
-    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+    def set_param_values(self, param=None, value=None, spin_id=None, error=False, force=True):
         """Set the model parameter values.
 
         @keyword param:     The parameter name list.
@@ -664,6 +664,8 @@ class API_base(object):
         @type value:        list
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
+        @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+        @type error:        bool
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
         @type force:        bool
         """

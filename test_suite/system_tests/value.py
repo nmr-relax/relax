@@ -45,8 +45,11 @@ class Value(SystemTestCase):
         self.interpreter.spin.create(mol_name='test mol', res_name='Gly', res_num=2, spin_name='N')
         self.interpreter.spin.create(mol_name='test mol', res_name='Gly', res_num=3, spin_name='N')
 
-        # Add some values.
+        # Add some values and errors.
         self.interpreter.value.set(val=0.8, param='s2', spin_id=':1,2')
+        self.interpreter.value.set(val=0.1, param='s2', spin_id=':1', error=True)
+        self.interpreter.value.set(val=0.2, param='s2', spin_id=':2', error=True)
+        self.interpreter.value.set(val=0.3, param='s2', spin_id=':3', error=True)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('new', 'mf')
@@ -54,3 +57,18 @@ class Value(SystemTestCase):
         # Copy the sequence data and value.
         self.interpreter.sequence.copy(pipe_from='orig', pipe_to='new')
         self.interpreter.value.copy(pipe_from='orig', pipe_to='new', param='s2')
+
+        # Loop over both the new and old pipes to check the data.
+        for pipe in ['orig', 'new']:
+            # Printout.
+            print("Checking the values of the '%s' data pipe." % pipe)
+
+            # Check the values.
+            self.assertEqual(ds[pipe].mol[0].res[0].spin[0].s2, 0.8)
+            self.assertEqual(ds[pipe].mol[0].res[1].spin[0].s2, 0.8)
+            self.assert_(not hasattr(ds[pipe].mol[0].res[2].spin[0], 's2'))
+
+            # Check the errors.
+            self.assertEqual(ds[pipe].mol[0].res[0].spin[0].s2_err, 0.1)
+            self.assertEqual(ds[pipe].mol[0].res[1].spin[0].s2_err, 0.2)
+            self.assertEqual(ds[pipe].mol[0].res[2].spin[0].s2_err, 0.3)

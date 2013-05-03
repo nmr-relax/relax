@@ -364,9 +364,9 @@ class API_common:
         if hasattr(spin, object_name):
             value = getattr(spin, object_name)
 
-            # The error.
-            if hasattr(spin, object_error):
-                error = getattr(spin, object_error)
+        # The spin error.
+        if hasattr(spin, object_error):
+            error = getattr(spin, object_error)
 
         # The global value.
         elif hasattr(cdp, object_name):
@@ -435,7 +435,7 @@ class API_common:
             inc = inc + 1
 
 
-    def _set_param_values_global(self, param=None, value=None, spin_id=None, force=True):
+    def _set_param_values_global(self, param=None, value=None, spin_id=None, error=False, force=True):
         """Set the global parameter values in the top layer of the data pipe.
 
         @keyword param:     The parameter name list.
@@ -444,6 +444,8 @@ class API_common:
         @type value:        list
         @keyword spin_id:   The spin identification string (unused).
         @type spin_id:      None
+        @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+        @type error:        bool
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
         @type force:        bool
         """
@@ -461,6 +463,10 @@ class API_common:
             if not obj_name:
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
+            # Error object.
+            if error:
+                obj_name += '_err'
+
             # Is the parameter already set.
             if not force and hasattr(cdp, obj_name) and getattr(cdp, obj_name) != None:
                 raise RelaxError("The parameter '%s' already exists, set the force flag to True to overwrite." % param[i])
@@ -469,7 +475,7 @@ class API_common:
             setattr(cdp, obj_name, value[i])
 
 
-    def _set_param_values_spin(self, param=None, value=None, spin_id=None, force=True):
+    def _set_param_values_spin(self, param=None, value=None, spin_id=None, error=False, force=True):
         """Set the spin specific parameter values.
 
         @keyword param:     The parameter name list.
@@ -478,6 +484,8 @@ class API_common:
         @type value:        list
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
+        @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+        @type error:        bool
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
         @type force:        bool
         """
@@ -498,8 +506,13 @@ class API_common:
                 if not spin.select:
                     continue
 
+                # The object name.
+                obj_name = param[i]
+                if error:
+                    obj_name += '_err'
+
                 # Set the parameter.
-                setattr(spin, param[i], value[i])
+                setattr(spin, obj_name, value[i])
 
 
     def _set_selected_sim_global(self, model_info, select_sim):
