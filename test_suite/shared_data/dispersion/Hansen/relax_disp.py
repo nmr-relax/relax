@@ -13,7 +13,7 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'fast 2-site']
+MODELS = ['R2eff', 'LM63', 'CR72']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 5
