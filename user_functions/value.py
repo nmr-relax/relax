@@ -331,6 +331,13 @@ uf.add_keyarg(
     desc = "The spin ID string to restrict value setting to.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "error",
+    default = False,
+    py_type = "bool",
+    desc_short = "error flag",
+    desc = "A flag which if True will cause the error rather than parameter to be set."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.")
