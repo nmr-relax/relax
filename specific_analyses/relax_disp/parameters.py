@@ -31,7 +31,7 @@ from re import search
 from lib.errors import RelaxError
 from lib.mathematics import round_to_next_order
 from specific_analyses.relax_disp.disp_data import loop_exp_curve
-from specific_analyses.relax_disp.variables import VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import MODEL_R2EFF, VAR_TIME_EXP
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -51,7 +51,7 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
     param_vector = []
 
     # The R2eff model parameters.
-    if cdp.model == 'R2eff':
+    if cdp.model == MODEL_R2EFF:
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -188,7 +188,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         return scaling_matrix
 
     # The R2eff model.
-    if cdp.model == 'R2eff':
+    if cdp.model == MODEL_R2EFF:
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -267,7 +267,7 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
     param_index = 0
 
     # The R2eff model.
-    if cdp.model == 'R2eff':
+    if cdp.model == MODEL_R2EFF:
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -422,7 +422,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
     j = 0
 
     # The R2eff model.
-    if cdp.model == 'R2eff':
+    if cdp.model == MODEL_R2EFF:
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -505,7 +505,7 @@ def param_index_to_param_info(index=None, spins=None, names=None):
     spin_index = 0
 
     # The R2eff model.
-    if cdp.model == 'R2eff':
+    if cdp.model == MODEL_R2EFF:
         # The number of spin specific parameters (R2eff and I0 per spin).
         num = len(spins) * 2
 
@@ -538,7 +538,7 @@ def param_num(spins=None):
     """
 
     # The R2eff model.
-    if cdp.model == 'R2eff':
+    if cdp.model == MODEL_R2EFF:
         # Exponential curves (with clustering).
         if cdp.exp_type in VAR_TIME_EXP:
             return 2 * len(spins)

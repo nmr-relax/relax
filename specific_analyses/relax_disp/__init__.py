@@ -57,7 +57,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_key
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_R2EFF, MODEL_LM63, MODEL_CR72, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -65,13 +65,6 @@ from user_functions.objects import Desc_container
 # C modules.
 if C_module_exp_fn:
     from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
-
-
-# Some module variables.
-FIXED_TIME_EXP = ['cpmg fixed']
-VAR_TIME_EXP = ['cpmg', 'r1rho']
-CPMG_EXP = ['cpmg', 'cpmg fixed']
-R1RHO_EXP = ['r1rho']
 
 
 class Relax_disp(API_base, API_common):
@@ -121,7 +114,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model.
-        if cdp.model == 'R2eff':
+        if cdp.model == MODEL_R2EFF:
             # Check.
             if cdp.exp_type in FIXED_TIME_EXP:
                 raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
@@ -689,10 +682,10 @@ class Relax_disp(API_base, API_common):
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-    def _select_model(self, model='R2eff'):
+    def _select_model(self, model=MODEL_R2EFF):
         """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'fast 2-site', 'slow 2-site'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'LM63', 'CR72'.
         @type model:    str
         """
 
@@ -713,21 +706,21 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been set.")
 
         # Test for the C-modules.
-        if model == 'R2eff' and cdp.exp_type in VAR_TIME_EXP and not C_module_exp_fn:
+        if model == MODEL_R2EFF and cdp.exp_type in VAR_TIME_EXP and not C_module_exp_fn:
             raise RelaxError("The exponential curve-fitting C module cannot be found.")
 
         # R2eff/R1rho model.
-        if model == 'R2eff':
+        if model == MODEL_R2EFF:
             print("R2eff/R1rho value and error determination.")
             params = ['r2eff', 'i0']
 
         # LM63 model.
-        elif model == 'LM63':
+        elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
             params = ['r2', 'rex', 'kex']
 
         # CR72 model.
-        elif model == 'CR72':
+        elif model == MODEL_CR72:
             print("The Carver and Richards (1972) 2-site model for all time scales.")
             params = ['r2', 'r2a', 'ka', 'dw']
 
@@ -953,7 +946,7 @@ class Relax_disp(API_base, API_common):
             cdp.spin_lock_nu1_list = []
 
         # Special exponential curve-fitting for the 'R2eff' model.
-        if cdp.model == 'R2eff':
+        if cdp.model == MODEL_R2EFF:
             # Sanity checks.
             if cdp.exp_type in FIXED_TIME_EXP:
                 raise RelaxError("The R2eff model with the fixed time period CPMG experiment cannot be optimised.")

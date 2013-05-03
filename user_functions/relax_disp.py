@@ -36,14 +36,10 @@ from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
-
-# The model names.
-MODEL_R2EFF = 'R2eff'
-MODEL_LM63 = 'LM63'
-MODEL_CR72 = 'CR72'
 
 
 # The user function class.
