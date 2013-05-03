@@ -26,7 +26,7 @@
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError
 from lib.list import count_unique_elements, unique_elements
-from specific_analyses.relax_disp.variables import CPMG_EXP, R1RHO_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP
 
 
 
@@ -145,18 +145,20 @@ def intensity_key(exp_key=None, relax_time=None):
 
 
 def loop_all_data():
-    """Generator method for looping over the spectrometer frequency and dispersion points.
+    """Generator method for looping over the spectrometer frequency, dispersion points, and relaxation times.
 
-    @return:    The spectrometer frequency and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @rtype:     float, float
+    @return:    The spectrometer frequency, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the relaxation times.
+    @rtype:     float, float, float
     """
 
     # First loop over the spectrometer frequencies.
     for frq in loop_spectrometer():
         # Then the dispersion points.
         for point in loop_dispersion_point():
-            # Return both.
-            yield frq, point
+            # Finally the relaxation times.
+            for time in cdp.relax_time_list:
+                # Return all data.
+                yield frq, point, time
 
 
 def loop_dispersion_point():
@@ -251,6 +253,66 @@ def relax_time(time=0.0, spectrum_id=None):
 
     # Printout.
     print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
+
+
+def return_intensity(spin=None, frq=None, point=None, time=None, ref=False):
+    """Return the peak intensity corresponding to the given field strength and dispersion point.
+
+    The corresponding reference intensity can be returned if the ref flag is set.  This assumes that the data is of the fixed relaxation time period type.
+
+
+    @keyword spin:  The spin container object.
+    @type spin:     SpinContainer instance
+    @keyword frq:   The spectrometer frequency.
+    @type frq:      float
+    @keyword point: The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:    float
+    @keyword time:  The relaxation time period.
+    @type time:     float
+    @keyword ref:   A flag which if True will cause the corresponding reference intensity to be returned instead.
+    @type ref:      bool
+    """
+
+    # Checks.
+    if ref and cdp.exp_type not in FIXED_TIME_EXP:
+        raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
+
+    # The key.
+    if ref:
+        key = return_key(frq=frq, point=None, time=time)
+    else:
+        key = return_key(frq=frq, point=point, time=time)
+
+    # Return the intensity.
+    return spin.intensities[key]
+
+
+def return_key(frq=None, point=None, time=None):
+    """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
+
+    @keyword frq:   The spectrometer frequency.
+    @type frq:      float
+    @keyword point: The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:    float
+    @keyword time:  The relaxation time period.
+    @type time:     float
+    @return:        The key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
+    @rtype:         str
+    """
+
+    # The dispersion data.
+    if cdp.exp_type in CPMG_EXP:
+        disp_data = cdp.cpmg_frqs
+    else:
+        disp_data = cdp.spin_lock_nu1
+
+    # Loop over all spectrum IDs, returning the matching ID.
+    for id in cdp.spectrum_ids:
+        if cdp.frq[id] == frq and disp_data[id] == point and cdp.relax_times[id] == time:
+            return id
+
+    # Should not be here.
+    raise RelaxError("No key could be found corresponding to the spectrometer frequency %s, dispersion point %s and relaxation time %s." % (frq, point, time))
 
 
 def spin_lock_field(spectrum_id=None, field=None):
