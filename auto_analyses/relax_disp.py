@@ -54,7 +54,7 @@ class Relax_disp:
         """
 
         # Printout.
-        title(file=sys.stdout, text="Relaxation dispersion auto-analysis")
+        title(file=sys.stdout, text="Relaxation dispersion auto-analysis", prespace=4)
 
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
@@ -174,7 +174,7 @@ class Relax_disp:
         # Loop over the models.
         for model in self.models:
             # Printout.
-            subtitle(file=sys.stdout, text="The '%s' model" % model)
+            subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
 
             # Create the data pipe by copying the base pipe.
             self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to=model, bundle_to=self.pipe_bundle)
