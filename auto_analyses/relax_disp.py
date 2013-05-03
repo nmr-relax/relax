@@ -31,12 +31,12 @@ from lib.list import unique_elements
 from lib.text.sectioning import title, subtitle
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp import CPMG_EXP, FIXED_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 from status import Status; status = Status()
 
 
 class Relax_disp:
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=['exp_fit'], grid_inc=11, mc_sim_num=500):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:     The name of the data pipe containing all of the data for the analysis.
@@ -183,8 +183,12 @@ class Relax_disp:
             # Select the model.
             self.interpreter.relax_disp.select_model(model)
 
+            # Copy the R2eff values from R2eff model data pipe.
+            if model != MODEL_R2EFF:
+                self.interpreter.value.copy(pipe_from=MODEL_R2EFF, pipe_to=model, param='r2eff')
+
             # Calculate the R2eff values for the fixed relaxation time period data types.
-            if model == 'R2eff' and cdp.exp_type in ['cpmg fixed']:
+            if model == MODEL_R2EFF and cdp.exp_type in FIXED_TIME_EXP:
                 self.interpreter.calc()
 
             # Optimise the model.
@@ -206,21 +210,33 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Save the relaxation dispersion parameters.
-        if cdp.model not in ['exp_fit']:
+        if cdp.model not in [MODEL_R2EFF]:
             self.interpreter.value.write(param='rex', file='Rex.out', dir=path, force=True)
 
-        # Create Grace plots of the data.
-        self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
-        self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='R2eff.agr', dir=path, force=True)
-        self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='I0.agr', dir=path, force=True)
-        if hasattr(cdp, 'spin_lock_nu1'):
-            self.interpreter.grace.write(x_data_type='spin_lock_nu1', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
-        elif hasattr(cdp, 'cpmg_frq'):
-            self.interpreter.grace.write(x_data_type='cpmg_frq', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
-        if cdp.model not in ['exp_fit']:
+        # Create Grace plots of the data for the R2eff model.
+        if cdp.model == MODEL_R2EFF:
+            # Residue number verses R2eff/R1rho.
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='R2eff.agr', dir=path, force=True)
+
+            # Residue number verses the initial peak intensity.
+            if cdp.exp_type not in FIXED_TIME_EXP:
+                self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='I0.agr', dir=path, force=True)
+
+            # Dispersion curves.
+            if hasattr(cdp, 'spin_lock_nu1'):
+                self.interpreter.grace.write(x_data_type='spin_lock_nu1', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
+            elif hasattr(cdp, 'cpmg_frq'):
+                self.interpreter.grace.write(x_data_type='cpmg_frq', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
+
+            # Exponential curves.
+            if cdp.exp_type not in FIXED_TIME_EXP:
+                self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
+                self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+
+        # Grace plots of dispersion parameters.
+        if cdp.model in [MODEL_LM63]:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='Rex.agr', dir=path, force=True)
 
-        # Special Grace plots.
-        if cdp.exp_type not in FIXED_TIME_EXP:
-            self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
-            self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+        # Plots of the minimisation statistics.
+        if not (cdp.model == MODEL_R2EFF and cdp.exp_type in FIXED_TIME_EXP):
+            self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
