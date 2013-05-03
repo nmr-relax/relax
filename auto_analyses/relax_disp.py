@@ -220,5 +220,6 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='Rex.agr', dir=path, force=True)
 
         # Special Grace plots.
-        self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
-        self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+        if cdp.exp_type not in FIXED_TIME_EXP:
+            self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
+            self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
