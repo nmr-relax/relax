@@ -27,7 +27,7 @@
 from numpy import dot, float64, zeros
 
 # relax module imports.
-from lib.dispersion.equations import r2eff_LM63
+from lib.dispersion.lm63 import r2eff_LM63
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
@@ -117,7 +117,7 @@ class Dispersion:
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
                 # Back calculate the R2eff values.
-                r2eff_LM63(params=params, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_disp_points=self.num_disp_points)
+                r2eff_LM63(r20=params[0], phi_ex=params[1], kex=params[2], cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # Calculate and return the chi-squared value.
                 chi2_sum += chi2(values[spin_index, frq_index], back_calc[spin_index, frq_index], sd[spin_index, frq_index])

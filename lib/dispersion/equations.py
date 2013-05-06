@@ -24,7 +24,7 @@
 """The relaxation dispersion equations."""
 
 # Python module imports.
-from math import log, tanh
+from math import log
 
 
 def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
@@ -49,20 +49,3 @@ def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
 
     # Calculate and return the value (avoiding integer division problems).
     return -1.0 / relax_time * log(float(I) / I_ref)
-
-
-def r2eff_LM63(params=None, cpmg_frqs=None, back_calc=None, num_disp_points=None):
-    """Back calculate R2eff.
-
-    The currently supported equation is that for CPMG relaxation dispersion in the fast exchange limit:
-
-        - Millet et al., JACS, 2000, 122, 2867-2877 (equation 19)
-        - Kovrigin et al., J. Mag. Res., 2006, 180, 93-104 (equation 1)
-
-    In the future, back-calculation should be available for CPMG relaxation dispersion in the slow exchange limit:
-            - Tollinger et al., JACS, 2001, 123, 11341-11352 (equation 2)
-    """
-
-    # Loop over the time points, back calculating the R2eff value.
-    for i in range(num_disp_points):
-        back_calc[i] = params[0] + params[1] * (1 - 2 * tanh(params[2] / (2 * 4 * cpmg_frqs[i])) * ((4 * cpmg_frqs[i] ) / params[2]))
