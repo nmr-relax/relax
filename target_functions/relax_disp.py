@@ -120,7 +120,7 @@ class Dispersion:
                 r2eff_LM63(r20=params[0], phi_ex=params[1], kex=params[2], cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # Calculate and return the chi-squared value.
-                chi2_sum += chi2(values[spin_index, frq_index], back_calc[spin_index, frq_index], sd[spin_index, frq_index])
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
 
         # Return the total chi-squared value.
         return chi2_sum
