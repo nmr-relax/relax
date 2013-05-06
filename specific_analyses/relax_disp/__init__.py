@@ -55,7 +55,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_cpmg_frqs, return_key, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_cpmg_frqs, return_key, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_R2EFF, MODEL_LM63, MODEL_CR72, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -964,9 +964,9 @@ class Relax_disp(API_base, API_common):
         field_count = 1
         fields = []
         if hasattr(cdp, 'frq'):
-            field_count = count_unique_elements(cdp.frq.values())
             fields = unique_elements(cdp.frq.values())
             fields.sort()
+            field_count = len(fields)
 
         # The number of time points for the exponential curves (if present).
         num_time_pts = 1
@@ -975,51 +975,8 @@ class Relax_disp(API_base, API_common):
 
         # Loop over the spin blocks.
         for spins, spin_ids in self.model_loop():
-            # The spin count.
-            spin_num = len(spins)
-
-            # Initialise the data structures for the target function.
-            values = zeros((spin_num, field_count, cdp.dispersion_points), float64)
-            errors = zeros((spin_num, field_count, cdp.dispersion_points), float64)
-
-            # Pack the R2eff/R1rho data.
-            data_flag = False
-            for spin_index in range(spin_num):
-                # Alias the spin.
-                spin = spins[spin_index]
-
-                # No data.
-                if not hasattr(spin, 'r2eff'):
-                    continue
-                data_flag = True
-
-                # The keys.
-                keys = list(spin.r2eff.keys())
-
-                # Loop over the R2eff data.
-                for key in keys:
-                    # The indices.
-                    disp_pt_index = 0
-                    if cdp.exp_type == 'cpmg':
-                        disp_pt_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
-                    elif cdp.exp_type == 'r1rho':
-                        disp_pt_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
-                    field_index = 0
-                    if hasattr(cdp, 'frqs'):
-                        field_index = fields.index(cdp.frqs[keys])
-
-                    # The values.
-                    if sim_index == None:
-                        values[spin_index, field_index, disp_pt_index] = spin.r2eff[key]
-                    else:
-                        values[spin_index, field_index, disp_pt_index] = spin.r2eff_sim[key][sim_index]
-
-                    # The errors.
-                    errors[spin_index, field_index, disp_pt_index] = spin.r2eff_err[key]
-
-            # No R2eff/R1rho data for the spin cluster.
-            if not data_flag:
-                raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
+            # The R2eff/R1rho data.
+            values, errors = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
 
             # Create the initial parameter vector.
             param_vector = assemble_param_vector(spins=spins)
@@ -1052,7 +1009,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=spin_num, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):

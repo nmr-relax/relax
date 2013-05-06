@@ -23,6 +23,9 @@
 # Module docstring.
 """Functions for handling relaxation dispersion data within the relax data store."""
 
+# Python module imports.
+from numpy import float64, zeros
+
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError
 from lib.list import count_unique_elements, unique_elements
@@ -311,6 +314,82 @@ def return_intensity(spin=None, frq=None, point=None, time=None, ref=False):
 
     # Return the intensity.
     return spin.intensities[key]
+
+
+def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None, sim_index=None):
+    """Return numpy arrays of the R2eff/R1rho values and errors.
+
+    @keyword spins:         The list of spin containers in the cluster.
+    @type spins:            list of SpinContainer instances
+    @keyword spin_ids:      The list of spin IDs for the cluster.
+    @type spin_ids:         list of str
+    @keyword fields:        The list of spectrometer field strengths.
+    @type fields:           list of float
+    @keyword field_count:   The number of spectrometer field strengths.  This may not be equal to the length of the fields list as the user may not have set the field strength.
+    @type field_count:      int
+    @keyword sim_index:     The index of the simulation to return the data of.  This should be None if the normal data is required.
+    @type sim_index:        None or int
+    @return:                The numpy array structure of the R2eff/R1rho values and the structure for the errors.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.
+    @rtype:                 numpy rank-3 float array, numpy rank-3 float array
+    """
+
+    # The spin count.
+    spin_num = len(spins)
+
+    # Initialise the data structures for the target function.
+    values = zeros((spin_num, field_count, cdp.dispersion_points), float64)
+    errors = zeros((spin_num, field_count, cdp.dispersion_points), float64)
+
+    # Pack the R2eff/R1rho data.
+    data_flag = False
+    for spin_index in range(spin_num):
+        # Alias the spin.
+        spin = spins[spin_index]
+
+        # No data.
+        if not hasattr(spin, 'r2eff'):
+            continue
+        data_flag = True
+
+        # The keys.
+        keys = list(spin.r2eff.keys())
+
+        # Loop over the R2eff data.
+        for key in keys:
+            # Reference in the fixed time experiments.
+            if cdp.exp_type in FIXED_TIME_EXP:
+                if cdp.exp_type in CPMG_EXP and cdp.cpmg_frqs[key] == None:
+                    continue
+                if cdp.exp_type in R1RHO_EXP and cdp.spin_lock_nu1[key] == None:
+                    continue
+
+            # The indices.
+            disp_pt_index = 0
+            if cdp.exp_type in CPMG_EXP:
+                disp_pt_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
+            elif cdp.exp_type in R1RHO_EXP:
+                disp_pt_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
+            if cdp.exp_type in FIXED_TIME_EXP:
+                disp_pt_index -= 1
+            field_index = 0
+            if hasattr(cdp, 'frq'):
+                field_index = fields.index(cdp.frq[key])
+
+            # The values.
+            if sim_index == None:
+                values[spin_index, field_index, disp_pt_index] = spin.r2eff[key]
+            else:
+                values[spin_index, field_index, disp_pt_index] = spin.r2eff_sim[key][sim_index]
+
+            # The errors.
+            errors[spin_index, field_index, disp_pt_index] = spin.r2eff_err[key]
+
+    # No R2eff/R1rho data for the spin cluster.
+    if not data_flag:
+        raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
+
+    # Return the structures.
+    return values, errors
 
 
 def return_key(frq=None, point=None, time=None):
