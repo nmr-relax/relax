@@ -60,8 +60,10 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
         cdp.cpmg_frqs_list.append(cdp.cpmg_frqs[spectrum_id])
     cdp.cpmg_frqs_list.sort()
 
-    # Update the exponential curve count.
+    # Update the exponential curve count (skipping the reference if present).
     cdp.dispersion_points = len(cdp.cpmg_frqs_list)
+    if None in cdp.cpmg_frqs_list:
+        cdp.dispersion_points -= 1
 
     # Printout.
     print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
@@ -390,8 +392,10 @@ def spin_lock_field(spectrum_id=None, field=None):
         cdp.spin_lock_nu1_list.append(cdp.spin_lock_nu1[spectrum_id])
     cdp.spin_lock_nu1_list.sort()
 
-    # Update the exponential curve count.
+    # Update the exponential curve count (skipping the reference if present).
     cdp.dispersion_points = len(cdp.spin_lock_nu1_list)
+    if None in cdp.spin_lock_nu1_list:
+        cdp.dispersion_points -= 1
 
     # Printout.
     print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
