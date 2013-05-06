@@ -512,7 +512,8 @@ def extract(dir):
 
         # Set the values.
         for i in range(len(data)):
-            value.set(val=data[i][1], error=data[i][0], param=param, spin_id=data[i][0])
+            value.set(val=data[i][1], param=param, spin_id=data[i][0])
+            value.set(val=data[i][0], param=param, spin_id=data[i][0], error=True)
 
         # Clean up of non-existent parameters (set the parameter to None!).
         for spin in spin_loop():
