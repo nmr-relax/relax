@@ -2255,7 +2255,7 @@ class Internal:
         # Write some initial remarks.
         print("REMARK")
         pdb_write.remark(file, num=4, remark="This file complies with format v. 3.30, Jul-2011.")
-        pdb_write.remark(file, num=40, remark="Created by relax (http://nmr-relax.com).")
+        pdb_write.remark(file, num=40, remark="Created by relax (http://www.nmr-relax.com).")
         num_remark = 2
 
         # Determine if model records will be created.

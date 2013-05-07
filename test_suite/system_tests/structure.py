@@ -649,7 +649,7 @@ class Structure(SystemTestCase):
         # What the contents should be.
         real_data = [
             "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
-            "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             \n",
+            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         \n",
             "HELIX    1  H1 ILE A   23  GLU A   34  1                                  12    \n",
             "SHEET    1 BET 5 GLY A  10  VAL A  17  0                                        \n",
             "SHEET    2 BET 5 MET A   1  THR A   7 -1                                        \n",
@@ -1166,7 +1166,7 @@ class Structure(SystemTestCase):
         # The result.
         result = [
             "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
-            "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             ",
+            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         ",
             "ATOM      1  N   LEU     4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU     4       9.211  -9.425  26.970  1.00  0.00           N  ",
             "ATOM      3  H   LEU     4       8.575  -8.953  27.963  1.00  0.00           H  ",
@@ -1224,7 +1224,7 @@ class Structure(SystemTestCase):
         # The result.
         result = [
             "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
-            "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             ",
+            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         ",
             "ATOM      1  N   LEU     4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU     4       7.761  -6.392  27.161  1.00  0.00           N  ",
             "ATOM      3  H   LEU     4       8.575  -8.953  27.963  1.00  0.00           H  ",
@@ -1282,7 +1282,7 @@ class Structure(SystemTestCase):
         # The result.
         result = [
             "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
-            "REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM).                             ",
+            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         ",
             "ATOM      1  N   LEU     4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU     4       9.211  -9.425  26.970  1.00  0.00           N  ",
             "ATOM      3  N   LEU     4       7.761  -6.392  27.161  1.00  0.00           N  ",
