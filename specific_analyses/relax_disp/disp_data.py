@@ -24,7 +24,7 @@
 """Functions for handling relaxation dispersion data within the relax data store."""
 
 # Python module imports.
-from numpy import float64, zeros
+from numpy import float64, int32, ones, zeros
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError
@@ -329,16 +329,17 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     @type field_count:      int
     @keyword sim_index:     The index of the simulation to return the data of.  This should be None if the normal data is required.
     @type sim_index:        None or int
-    @return:                The numpy array structure of the R2eff/R1rho values and the structure for the errors.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.
-    @rtype:                 numpy rank-3 float array, numpy rank-3 float array
+    @return:                The numpy array structures of the R2eff/R1rho values, errors and missing data.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.
+    @rtype:                 numpy rank-3 float array, numpy rank-3 float array, numpy rank-3 int array
     """
 
     # The spin count.
     spin_num = len(spins)
 
-    # Initialise the data structures for the target function.
+    # Initialise the data structures for the target function (errors are set to one to avoid divide by zero for missing data in the chi-squared function).
     values = zeros((spin_num, field_count, cdp.dispersion_points), float64)
-    errors = zeros((spin_num, field_count, cdp.dispersion_points), float64)
+    errors = ones((spin_num, field_count, cdp.dispersion_points), float64)
+    missing = ones((spin_num, field_count, cdp.dispersion_points), int32)
 
     # Pack the R2eff/R1rho data.
     data_flag = False
@@ -384,12 +385,15 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             # The errors.
             errors[spin_index, field_index, disp_pt_index] = spin.r2eff_err[key]
 
+            # Flip the missing flag to off.
+            missing[spin_index, field_index, disp_pt_index] = 0
+
     # No R2eff/R1rho data for the spin cluster.
     if not data_flag:
         raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
 
     # Return the structures.
-    return values, errors
+    return values, errors, missing
 
 
 def return_key(frq=None, point=None, time=None):
