@@ -798,7 +798,7 @@ class Relax_disp(API_base, API_common):
         if cdp.exp_type not in FIXED_TIME_EXP:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
 
-        # Simulation number.
+        # FIXME: Simulation number hardcoded variable.
         sim_num = 500
 
         # Printouts.
