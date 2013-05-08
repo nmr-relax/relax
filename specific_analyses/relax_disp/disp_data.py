@@ -72,6 +72,61 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
+def disp_point_key_from_index(frq_index=None, disp_point_index=None):
+    """Convert the dispersion point index into the corresponding key.
+
+    @param frq_index:           The spectrometer frequency index.
+    @type frq_index:            int
+    @param disp_point_index:    The dispersion point or R2eff/R1rho index.
+    @type disp_point_index:     int
+    @return:                    The corresponding key.
+    @rtype:                     str
+    """
+
+    # Insert the reference point (always at index 0).
+    if cdp.exp_type in FIXED_TIME_EXP:
+        index += 1
+
+    # CPMG data.
+    if cdp.exp_type in CPMG_EXP:
+        key = cdp.cpmg_frqs_list[index]
+
+    # R1rho data.
+    else:
+        key = cdp.spin_lock_nu1_list[index]
+
+    # Return the key.
+    return key
+
+
+def disp_point_index_from_key(key):
+    """Convert the dispersion point key into the corresponding index.
+
+    @param key: The dispersion point or R2eff/R1rho key.
+    @type key:  str
+    @return:    The corresponding index.
+    @rtype:     int
+    """
+
+    # Initialise.
+    index = 0
+
+    # CPMG-type experiments.
+    if cdp.exp_type in CPMG_EXP:
+        index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
+
+    # R1rho-type experiments.
+    elif cdp.exp_type in R1RHO_EXP:
+        index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
+
+    # Remove the reference point (always at index 0).
+    if cdp.exp_type in FIXED_TIME_EXP:
+        index -= 1
+
+    # Return the index.
+    return index
+
+
 def exp_curve_index_from_key(key):
     """Convert the exponential curve key into the corresponding index.
 
@@ -108,20 +163,26 @@ def exp_curve_key_from_index(index):
         return cdp.spin_lock_nu1_list[index]
 
 
-def intensity_key(exp_key=None, relax_time=None):
-    """Return the intensity key corresponding to the given exponential curve key and relaxation time.
+def intensity_key(frq=None, exp_key=None, relax_time=None):
+    """Return the intensity key corresponding to the given data.
+    
+    This includes the spectrometer field strength, the exponential curve key and the relaxation time.
 
+
+    @keyword frq:           The spectrometer frequency in Hertz to match to.
+    @type frq:              float
     @keyword exp_key:       The CPMG frequency or R1rho spin-lock field strength used as a key to identify each exponential curve.
     @type exp_key:          float
     @keyword relax_time:    The time, in seconds, of the relaxation period.
     @type relax_time:       float
     """
 
-    # Find all keys corresponding to the given relaxation time.
-    time_keys = []
-    for key in cdp.relax_times:
-        if cdp.relax_times[key] == relax_time:
-            time_keys.append(key)
+    # Find all keys corresponding to the given spectrometer frequency.
+    frq_keys = []
+    if frq != None:
+        for key in cdp.frq.keys():
+            if cdp.frq[key] == frq:
+                frq_keys.append(key)
 
     # Find all keys corresponding to the given exponential key.
     exp_keys = []
@@ -132,6 +193,12 @@ def intensity_key(exp_key=None, relax_time=None):
     for key in data:
         if data[key] == exp_key:
             exp_keys.append(key)
+
+    # Find all keys corresponding to the given relaxation time.
+    time_keys = []
+    for key in cdp.relax_times:
+        if cdp.relax_times[key] == relax_time:
+            time_keys.append(key)
 
     # The common key.
     common_key = []
@@ -194,16 +261,18 @@ def loop_exp_curve():
     @rtype:     int and float
     """
 
-    # Loop over each exponential curve.
-    for i in range(cdp.dispersion_points):
-        # The experiment specific key.
-        if cdp.exp_type in CPMG_EXP:
-            key = cdp.cpmg_frqs_list[i]
-        else:
-            key = cdp.spin_lock_nu1_list[i]
+    # Loop over each spectrometer frequency.
+    for frq in loop_spectrometer():
+        # Loop over each exponential curve.
+        for i in range(cdp.dispersion_points):
+            # The experiment specific key.
+            if cdp.exp_type in CPMG_EXP:
+                key = cdp.cpmg_frqs_list[i]
+            else:
+                key = cdp.spin_lock_nu1_list[i]
 
-        # Yield the data.
-        yield i, key
+            # Yield the data.
+            yield i, key
 
 
 def loop_spectrometer():
@@ -365,13 +434,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                     continue
 
             # The indices.
-            disp_pt_index = 0
-            if cdp.exp_type in CPMG_EXP:
-                disp_pt_index = cdp.cpmg_frqs_list.index(cdp.cpmg_frqs[key])
-            elif cdp.exp_type in R1RHO_EXP:
-                disp_pt_index = cdp.spin_lock_nu1_list.index(cdp.spin_lock_nu1[key])
-            if cdp.exp_type in FIXED_TIME_EXP:
-                disp_pt_index -= 1
+            disp_pt_index = disp_point_index_from_key(key)
             field_index = 0
             if hasattr(cdp, 'frq'):
                 field_index = fields.index(cdp.frq[key])

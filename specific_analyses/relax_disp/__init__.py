@@ -34,7 +34,7 @@ __all__ = [
 from copy import deepcopy
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import array, average, dot, float64, identity, log, zeros
+from numpy import array, average, dot, float64, identity, log, ones, zeros
 from numpy.linalg import inv
 from random import gauss
 from re import match, search
@@ -55,7 +55,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_cpmg_frqs, return_key, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import disp_point_key_from_index, disp_point_index_from_key, exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_cpmg_frqs, return_key, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_R2EFF, MODEL_LM63, MODEL_CR72, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -102,25 +102,14 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
-    def _back_calc(self, spin=None, index=None):
-        """Back-calculation of peak intensity for the given spin and exponential curve index.
+    def _back_calc_r2eff(self, spin=None):
+        """Back-calculation of R2eff/R1rho values for the given spin.
 
         @keyword spin:  The specific spin data container.
         @type spin:     SpinContainer instance
-        @keyword index: The index for the specific exponential curve.
-        @type index:    int
-        @return:        The back-calculated peak intensities for the given exponential curve
+        @return:        The back-calculated R2eff/R1rho value for the given spin.
         @rtype:         numpy rank-1 float array
         """
-
-        # The R2eff model.
-        if cdp.model == MODEL_R2EFF:
-            # Check.
-            if cdp.exp_type in FIXED_TIME_EXP:
-                raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
-
-            # Return the results from special back-calculation method.
-            return self._back_calc_r2eff(spin=spin, index=index)
 
         # Create the initial parameter vector.
         param_vector = assemble_param_vector(spins=[spin])
@@ -128,34 +117,50 @@ class Relax_disp(API_base, API_common):
         # Create a scaling matrix.
         scaling_matrix = assemble_scaling_matrix(spins=[spin], scaling=False)
 
+        # The number of spectrometer field strengths.
+        field_count = 1
+        fields = []
+        if hasattr(cdp, 'frq'):
+            fields = unique_elements(cdp.frq.values())
+            fields.sort()
+            field_count = len(fields)
+
         # Initialise the data structures for the target function.
-        values = zeros((1, 1, cdp.dispersion_points), float64)
-        errors = zeros((1, 1, cdp.dispersion_points), float64)
-        missing = zeros((1, 1, cdp.dispersion_points), float64)
+        values = zeros((1, field_count, cdp.dispersion_points), float64)
+        errors = ones((1, field_count, cdp.dispersion_points), float64)
+        missing = zeros((1, field_count, cdp.dispersion_points), float64)
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=1, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
 
-        # Get the data back.
-        results = model.back_calc
+        # Convert to a dictionary matching the R2eff data structure.
+        results = {}
+        for frq_index in range(field_count):
+            for point_index in range(cdp.dispersion_points):
+                key = disp_point_key_from_index(i)
+                results[key] = model.back_calc[0, 0, point_index]
 
-        # Return the correct peak intensity series.
-        return results[0, index]
+        # Return the back calculated R2eff values.
+        return results
 
 
-    def _back_calc_r2eff(self, spin=None, index=None):
+    def _back_calc_peak_intensities(self, spin=None, index=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
         @keyword spin:  The specific spin data container.
         @type spin:     SpinContainer instance
         @keyword index: The index for the specific exponential curve.
         @type index:    int
-        @return:        The back-calculated peak intensities for the given exponential curve
+        @return:        The back-calculated peak intensities for the given exponential curve.
         @rtype:         numpy rank-1 float array
         """
+
+        # Check.
+        if cdp.exp_type in FIXED_TIME_EXP:
+            raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
 
         # The key.
         key = exp_curve_key_from_index(index)
@@ -737,28 +742,45 @@ class Relax_disp(API_base, API_common):
 
 
     def base_data_loop(self):
-        """Custom generator method for looping over spins and exponential curves.
+        """Custom generator method for looping over the base data.
 
-        The base data is hereby identified as the peak intensity data defining a single exponential curve.
+        For the R2eff model, the base data is the peak intensity data defining a single exponential curve.  For all other models, the base data is the R2eff/R1rho values for individual spins.
 
 
-        @return:    The tuple of the spin container and the exponential curve identifying key (the CPMG frequency or R1rho spin-lock field strength).
-        @rtype:     tuple of SpinContainer instance and float
+        @return:    For the R2eff model, a tuple of the spin container and the exponential curve identifying key (the CPMG frequency or R1rho spin-lock field strength).  For all other models, just the spin containers from the spin loop.
+        @rtype:     tuple of SpinContainer instance and float or SpinContainer instance
         """
 
-        # Loop over the sequence.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+        # The R2eff model data (the base data is peak intensities).
+        if cdp.model == MODEL_R2EFF:
+            # Loop over the sequence.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
 
-            # Skip spins with no peak intensity data.
-            if not hasattr(spin, 'intensities'):
-                continue
+                # Skip spins with no peak intensity data.
+                if not hasattr(spin, 'intensities'):
+                    continue
 
-            # Loop over each exponential curve.
-            for exp_index, key in loop_exp_curve():
-                yield spin, key
+                # Loop over each exponential curve.
+                for exp_index, key in loop_exp_curve():
+                    yield spin, key
+
+        # All other models (the base data is the R2eff/R1rho values).
+        else:
+            # Loop over the sequence.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins with no R2eff/R1rho values.
+                if not hasattr(spin, 'r2eff'):
+                    continue
+
+                # Yield the spin container.
+                yield spin
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -861,14 +883,24 @@ class Relax_disp(API_base, API_common):
         @rtype:         list of floats
         """
 
-        # Unpack the data.
-        spin, key = data_id
+        # The R2eff model (with peak intensity base data).
+        if cdp.model == MODEL_R2EFF:
+            # Unpack the data.
+            spin, key = data_id
 
-        # The exponential curve index.
-        index = exp_curve_index_from_key(key)
+            # The exponential curve index.
+            index = exp_curve_index_from_key(key)
 
-        # Back calculate the peak intensities.
-        values = self._back_calc(spin=spin, index=index)
+            # Back calculate the peak intensities.
+            values = self._back_calc_peak_intensities(spin=spin, index=index)
+
+        # All other models (with R2eff/R1rho base data).
+        else:
+            # Unpack the data.
+            spin = data_id
+
+            # Back calculate the R2eff/R1rho data.
+            values = self._back_calc_r2eff(spin=spin)
 
         # Return the MC data.
         return values
@@ -1190,17 +1222,27 @@ class Relax_disp(API_base, API_common):
         @rtype:         list of float
         """
 
-        # Unpack the data.
-        spin, key = data_id
+        # The R2eff model.
+        if cdp.model == MODEL_R2EFF:
+            # Unpack the data.
+            spin, key = data_id
 
-        # Generate the data structure to return.
-        errors = []
-        for time in cdp.relax_time_list:
-            # Get the intensity key.
-            int_key = intensity_key(exp_key=key, relax_time=time)
+            # Generate the data structure to return.
+            errors = []
+            for time in cdp.relax_time_list:
+                # Get the intensity key.
+                int_key = intensity_key(exp_key=key, relax_time=time)
 
-            # Add the data.
-            errors.append(spin.intensity_err[int_key])
+                # Add the data.
+                errors.append(spin.intensity_err[int_key])
+
+        # All other models.
+        else:
+            # Unpack the data.
+            spin = data_id
+
+            # The errors.
+            return spin.r2eff_err
 
         # Return the error list.
         return errors
@@ -1271,28 +1313,38 @@ class Relax_disp(API_base, API_common):
         @type sim_data:     list of float
         """
 
-        # Unpack the data.
-        spin, key = data_id
+        # The R2eff model (with peak intensity base data).
+        if cdp.model == MODEL_R2EFF:
+            # Unpack the data.
+            spin, key = data_id
 
-        # Initialise the data structure if needed.
-        if not hasattr(spin, 'intensity_sim'):
-            spin.intensity_sim = {}
+            # Initialise the data structure if needed.
+            if not hasattr(spin, 'intensity_sim'):
+                spin.intensity_sim = {}
 
-        # Loop over each time point.
-        for time_index in range(cdp.num_time_pts):
-            # Get the intensity key.
-            int_key = intensity_key(exp_key=key, relax_time=cdp.relax_time_list[time_index])
+            # Loop over each time point.
+            for time_index in range(cdp.num_time_pts):
+                # Get the intensity key.
+                int_key = intensity_key(exp_key=key, relax_time=cdp.relax_time_list[time_index])
 
-            # Test if the simulation data point already exists.
-            if int_key in spin.intensity_sim:
-                raise RelaxError("Monte Carlo simulation data for the key '%s' already exists." % int_key)
+                # Test if the simulation data point already exists.
+                if int_key in spin.intensity_sim:
+                    raise RelaxError("Monte Carlo simulation data for the key '%s' already exists." % int_key)
 
-            # Initialise the list.
-            spin.intensity_sim[int_key] = []
+                # Initialise the list.
+                spin.intensity_sim[int_key] = []
 
-            # Loop over the simulations, appending the corresponding data.
-            for i in range(cdp.sim_number):
-                spin.intensity_sim[int_key].append(sim_data[i][time_index])
+                # Loop over the simulations, appending the corresponding data.
+                for i in range(cdp.sim_number):
+                    spin.intensity_sim[int_key].append(sim_data[i][time_index])
+
+        # All other models (with R2eff/R1rho base data).
+        else:
+            # Unpack the data.
+            spin = data_id
+
+            # Pack the data.
+            spin.r2eff_sim = sim_data
 
 
     def sim_return_param(self, model_info, index):
