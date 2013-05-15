@@ -20,8 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""The relaxation dispersion specific analysis."""
+# Package docstring.
+"""The relaxation dispersion analysis."""
 
 # The available modules.
 __all__ = [
