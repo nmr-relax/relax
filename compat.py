@@ -107,7 +107,7 @@ def bz2_open(file, mode='r'):
     @param file:    The file path to open.
     @type file:     str
     @keyword mode:  The mode to open the file with.  Only the values of 'r' and 'w' for reading and writing respectively are supported.
-    @type model:    str
+    @type mode:     str
     @return:        The bzip2 file object.
     @rtype:         file object
     """
@@ -161,7 +161,7 @@ def gz_open(file, mode='r'):
     @param file:    The file path to open.
     @type file:     str
     @keyword mode:  The mode to open the file with.  Only the values of 'r' and 'w' for reading and writing respectively are supported.
-    @type model:    str
+    @type mode:     str
     @return:        The gzipped file object.
     @rtype:         file object
     """
