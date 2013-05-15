@@ -118,7 +118,7 @@ self._execute_uf(uf_name='results.write', file='devnull', force=True)
 #self._execute_uf(uf_name='align_tensor.display')
 #
 # Print out
-print("A:\n" % cdp.align_tensors[0])
+print("A:\n%s" % cdp.align_tensors[0].A)
 print("centre: %s" % cdp.paramagnetic_centre)
 print("centre diff: %s" % (cdp.paramagnetic_centre - real_pos))
 print("chi2: %s" % cdp.chi2)
