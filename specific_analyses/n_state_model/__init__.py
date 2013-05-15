@@ -19,8 +19,12 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Analysis specific code for the N-state model or structure ensemble analysis."""
+# Package docstring.
+"""The N-state model or structural ensemble analysis."""
+
+# The available modules.
+__all__ = [
+]
 
 # Python module imports.
 from copy import deepcopy
