@@ -421,22 +421,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
     i = 0
     j = 0
 
-    # The R2eff model.
+    # The R2eff model (no need for constraints).
     if cdp.model == MODEL_R2EFF:
-        for spin_index in range(len(spins)):
-            # Alias the spin.
-            spin = spins[spin_index]
-
-            # Loop over each exponential curve.
-            for exp_i, key in loop_exp_curve():
-                # Loop over the parameters.
-                for k in range(len(spin.params)):
-                    # The transversal relaxation rate >= 0.
-                    if spin.params[k] == 'r2':
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        b.append(0.0)
-                        j += 1
+        return None, None
 
     # All other models.
     else:
