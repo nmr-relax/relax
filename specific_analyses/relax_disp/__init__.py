@@ -140,7 +140,7 @@ class Relax_disp(API_base, API_common):
         results = {}
         for frq_index in range(field_count):
             for point_index in range(cdp.dispersion_points):
-                key = disp_point_key_from_index(i)
+                key = disp_point_key_from_index(point_index)
                 results[key] = model.back_calc[0, 0, point_index]
 
         # Return the back calculated R2eff values.
