@@ -56,27 +56,27 @@ class Relax_disp(SystemTestCase):
         ds.__reset__()
 
 
-    def test_hansen_cpmg_data_fast_2site(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the fast 2-site dispersion model.
+    def test_hansen_cpmg_data_LM63(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the LM63 dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Set the model.
-        ds.models = ['R2eff', 'fast 2-site']
+        ds.models = ['R2eff', 'LM63']
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
 
 
-    def test_hansen_cpmg_data_slow_2site(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the slow 2-site dispersion model.
+    def test_hansen_cpmg_data_CR72(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Set the model.
-        ds.models = ['R2eff', 'slow 2-site']
+        ds.models = ['R2eff', 'CR72']
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
