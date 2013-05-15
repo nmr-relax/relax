@@ -19,13 +19,14 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Analysis specific code for the steady-state heteronuclear NOE calculation."""
-
+# Package docstring.
+"""The steady-state heteronuclear NOE analysis."""
 
 # The available modules.
-__all__ = [ 'main',
-            'pymol']
+__all__ = [
+    'main',
+    'pymol'
+]
 
 # relax module imports.
 from specific_analyses.api_base import API_base

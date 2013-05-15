@@ -19,8 +19,12 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Analysis specific code for the reduced spectral density mapping of relaxation data."""
+# Package docstring.
+"""The reduced spectral density mapping analysis."""
+
+# The available modules.
+__all__ = [
+]
 
 # Python module imports.
 from re import search

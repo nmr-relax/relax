@@ -20,8 +20,12 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Analysis specific code for the consistency testing of multi-field relaxation data."""
+# Package docstring.
+"""The consistency testing analysis of multi-field relaxation data."""
+
+# The available modules.
+__all__ = [
+]
 
 # Python module imports.
 from re import search

@@ -19,8 +19,12 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Analysis specific code for the R1 and R2 exponential relaxation curve fitting."""
+# Package docstring.
+"""The R1 and R2 exponential relaxation curve fitting analysis."""
+
+# The available modules.
+__all__ = [
+]
 
 # Python module imports.
 from minfx.generic import generic_minimise
