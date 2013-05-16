@@ -55,7 +55,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import disp_point_key_from_index, disp_point_index_from_key, exp_curve_index_from_key, exp_curve_key_from_index, intensity_key, loop_all_data, loop_dispersion_point, loop_exp_curve, loop_spectrometer, relax_time, return_cpmg_frqs, return_key, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_R2EFF, MODEL_LM63, MODEL_CR72, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -140,20 +140,22 @@ class Relax_disp(API_base, API_common):
         results = {}
         for frq_index in range(field_count):
             for point_index in range(cdp.dispersion_points):
-                key = disp_point_key_from_index(point_index)
-                results[key] = model.back_calc[0, 0, point_index]
+                key = return_key_from_disp_point_index(frq_index=frq_index, disp_point_index=point_index)
+                results[key] = model.back_calc[0, frq_index, point_index]
 
         # Return the back calculated R2eff values.
         return results
 
 
-    def _back_calc_peak_intensities(self, spin=None, index=None):
+    def _back_calc_peak_intensities(self, spin=None, frq=None, point=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
         @keyword spin:  The specific spin data container.
         @type spin:     SpinContainer instance
-        @keyword index: The index for the specific exponential curve.
-        @type index:    int
+        @keyword frq:   The spectrometer frequency.
+        @type frq:      float
+        @keyword point: The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+        @type point:    float
         @return:        The back-calculated peak intensities for the given exponential curve.
         @rtype:         numpy rank-1 float array
         """
@@ -163,26 +165,23 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
 
         # The key.
-        key = exp_curve_key_from_index(index)
+        param_key = return_param_key_from_data(frq=frq, point=point)
 
         # Create the initial parameter vector.
-        param_vector = assemble_param_vector(spins=[spin], key=key)
+        param_vector = assemble_param_vector(spins=[spin], key=param_key)
 
         # Create a scaling matrix.
-        scaling_matrix = assemble_scaling_matrix(spins=[spin], key=key, scaling=False)
+        scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_key, scaling=False)
 
         # The peak intensities and times.
         values = []
         errors = []
         times = []
         for time in cdp.relax_time_list:
-            # The key.
-            spectra_key = intensity_key(exp_key=key, relax_time=time)
-
             # The data.
-            values.append(spin.intensities[spectra_key])
-            errors.append(spin.intensity_err[spectra_key])
-            times.append(cdp.relax_times[spectra_key])
+            values.append(average_intensity(spin=spin, frq=frq, point=point, time=time))
+            errors.append(average_intensity(spin=spin, frq=frq, point=point, time=time, error=True))
+            times.append(time)
 
         # The scaling matrix in a diagonalised list form.
         scaling_list = []
@@ -349,8 +348,8 @@ class Relax_disp(API_base, API_common):
                     # Alias the spin.
                     spin = spins[spin_index]
 
-                    # Loop over each exponential curve.
-                    for exp_i, key in loop_exp_curve():
+                    # Loop over each spectrometer frequency and dispersion point.
+                    for frq, point in loop_frq_point():
                         # Loop over the parameters.
                         for i in range(len(spin.params)):
                             # R2eff relaxation rate (from 0 to 40 s^-1).
@@ -456,13 +455,16 @@ class Relax_disp(API_base, API_common):
             if not hasattr(spin, 'intensities'):
                 continue
 
-            # Loop over each exponential curve.
-            for exp_i, key in loop_exp_curve():
+            # Loop over each spectrometer frequency and dispersion point.
+            for frq, point in loop_frq_point():
+                # The parameter key.
+                param_key = return_param_key_from_data(frq=frq, point=point)
+
                 # The initial parameter vector.
-                param_vector = assemble_param_vector(spins=[spin], key=key, sim_index=sim_index)
+                param_vector = assemble_param_vector(spins=[spin], key=param_key, sim_index=sim_index)
 
                 # Diagonal scaling.
-                scaling_matrix = assemble_scaling_matrix(spins=[spin], key=key, scaling=scaling)
+                scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_key, scaling=scaling)
                 if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
@@ -482,7 +484,7 @@ class Relax_disp(API_base, API_common):
                     top = 2
                     if verbosity >= 2:
                         top += 2
-                    text = "Fitting to spin %s, dispersion point %s" % (spin_id, key)
+                    text = "Fitting to spin %s, frequency %s and dispersion point %s" % (spin_id, frq, point)
                     subsection(file=sys.stdout, text=text, prespace=top)
 
                     # Grid search printout.
@@ -494,20 +496,9 @@ class Relax_disp(API_base, API_common):
                 errors = []
                 times = []
                 for time in cdp.relax_time_list:
-                    # The key.
-                    spectra_key = intensity_key(exp_key=key, relax_time=time)
-
-                    # The values.
-                    if sim_index == None:
-                        values.append(spin.intensities[spectra_key])
-                    else:
-                        values.append(spin.intensity_sim[spectra_key][sim_index])
-
-                    # The errors.
-                    errors.append(spin.intensity_err[spectra_key])
-
-                    # The relaxation times.
-                    times.append(cdp.relax_times[spectra_key])
+                    values.append(average_intensity(spin=spin, frq=frq, point=point, time=time, sim_index=sim_index))
+                    errors.append(average_intensity(spin=spin, frq=frq, point=point, time=time, error=True))
+                    times.append(time)
 
                 # The scaling matrix in a diagonalised list form.
                 scaling_list = []
@@ -541,7 +532,7 @@ class Relax_disp(API_base, API_common):
                     param_vector = dot(scaling_matrix, param_vector)
 
                 # Disassemble the parameter vector.
-                disassemble_param_vector(param_vector=param_vector, spins=[spin], key=key, sim_index=sim_index)
+                disassemble_param_vector(param_vector=param_vector, spins=[spin], key=param_key, sim_index=sim_index)
 
                 # Monte Carlo minimisation statistics.
                 if sim_index != None:
@@ -644,9 +635,9 @@ class Relax_disp(API_base, API_common):
         # Loop over the spectrometer frequencies.
         graph_index = 0
         err = False
-        for field in loop_spectrometer():
+        for frq in loop_frq():
             # Loop over the dispersion points.
-            for disp_point in loop_dispersion_point():
+            for disp_point in loop_point():
                 # Create a new graph.
                 data.append([])
 
@@ -669,7 +660,7 @@ class Relax_disp(API_base, API_common):
                         else:
                             data[graph_index][-1].append([time, spin.intensities[key]])
 
-                # Increment the field index.
+                # Increment the frq index.
                 graph_index += 1
 
         # The axis labels.
@@ -763,9 +754,9 @@ class Relax_disp(API_base, API_common):
                 if not hasattr(spin, 'intensities'):
                     continue
 
-                # Loop over each exponential curve.
-                for exp_index, key in loop_exp_curve():
-                    yield spin, key
+                # Loop over each spectrometer frequency and dispersion point.
+                for frq, point in loop_frq_point():
+                    yield spin, frq, point
 
         # All other models (the base data is the R2eff/R1rho values).
         else:
@@ -847,31 +838,47 @@ class Relax_disp(API_base, API_common):
                 spin.r2eff_err = {}
 
             # Loop over all the data.
-            for frq, point, time in loop_all_data():
-                # The two keys.
-                ref_key = return_key(frq=frq, point=None, time=time)
-                key = return_key(frq=frq, point=point, time=time)
+            for frq, point, time in loop_frq_point_time():
+                # The three keys.
+                ref_keys = find_intensity_keys(frq=frq, point=None, time=time)
+                int_keys = find_intensity_keys(frq=frq, point=point, time=time)
+                param_key = return_param_key_from_data(frq=frq, point=point)
 
-                # Missing data.
-                if ref_key not in spin.intensities or key not in spin.intensities:
+                # Check for missing data.
+                missing = False
+                for i in range(len(ref_keys)):
+                    if ref_keys[i] not in spin.intensities:
+                        missing = True
+                for i in range(len(int_keys)):
+                    if int_keys[i] not in spin.intensities:
+                        missing = True
+                if missing:
                     continue
 
+                # Average the reference intensity data and errors.
+                ref_intensity = average_intensity(spin=spin, frq=frq, point=None, time=time)
+                ref_intensity_err = average_intensity(spin=spin, frq=frq, point=None, time=time, error=True)
+
+                # Average the intensity data and errors.
+                intensity = average_intensity(spin=spin, frq=frq, point=point, time=time)
+                intensity_err = average_intensity(spin=spin, frq=frq, point=point, time=time, error=True)
+
                 # Calculate the R2eff value.
-                spin.r2eff[key] = calc_two_point_r2eff(relax_time=time, I_ref=spin.intensities[ref_key], I=spin.intensities[key])
+                spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
 
                 # Bootstrapping error propagation.
                 values = []
                 for i in range(sim_num):
                     # Randomise the data.
-                    I_ref = gauss(spin.intensities[ref_key], spin.intensity_err[ref_key])
-                    I = gauss(spin.intensities[key], spin.intensity_err[key])
+                    I_ref = gauss(ref_intensity, ref_intensity_err)
+                    I = gauss(intensity, intensity_err)
 
                     # Calculate the simulation R2eff value.
-                    spin.r2eff_sim[i][key] = calc_two_point_r2eff(relax_time=time, I_ref=I_ref, I=I)
-                    values.append(spin.r2eff_sim[i][key])
+                    spin.r2eff_sim[i][param_key] = calc_two_point_r2eff(relax_time=time, I_ref=I_ref, I=I)
+                    values.append(spin.r2eff_sim[i][param_key])
 
                 # The standard deviation.
-                spin.r2eff_err[key] = std(values)
+                spin.r2eff_err[param_key] = std(values)
 
 
     def create_mc_data(self, data_id):
@@ -886,13 +893,10 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model == MODEL_R2EFF:
             # Unpack the data.
-            spin, key = data_id
-
-            # The exponential curve index.
-            index = exp_curve_index_from_key(key)
+            spin, frq, point = data_id
 
             # Back calculate the peak intensities.
-            values = self._back_calc_peak_intensities(spin=spin, index=index)
+            values = self._back_calc_peak_intensities(spin=spin, frq=frq, point=point)
 
         # All other models (with R2eff/R1rho base data).
         else:
@@ -1225,16 +1229,12 @@ class Relax_disp(API_base, API_common):
         # The R2eff model.
         if cdp.model == MODEL_R2EFF:
             # Unpack the data.
-            spin, key = data_id
+            spin, frq, point = data_id
 
             # Generate the data structure to return.
             errors = []
             for time in cdp.relax_time_list:
-                # Get the intensity key.
-                int_key = intensity_key(exp_key=key, relax_time=time)
-
-                # Add the data.
-                errors.append(spin.intensity_err[int_key])
+                errors.append(average_intensity(spin=spin, frq=frq, point=point, time=time, error=True))
 
         # All other models.
         else:
@@ -1316,27 +1316,33 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model == MODEL_R2EFF:
             # Unpack the data.
-            spin, key = data_id
+            spin, frq, point = data_id
 
             # Initialise the data structure if needed.
             if not hasattr(spin, 'intensity_sim'):
                 spin.intensity_sim = {}
 
             # Loop over each time point.
-            for time_index in range(cdp.num_time_pts):
-                # Get the intensity key.
-                int_key = intensity_key(exp_key=key, relax_time=cdp.relax_time_list[time_index])
+            time_index = 0
+            for time in loop_time():
+                # Get the intensity keys.
+                int_keys = find_intensity_keys(frq=frq, point=point, time=time)
 
-                # Test if the simulation data point already exists.
-                if int_key in spin.intensity_sim:
-                    raise RelaxError("Monte Carlo simulation data for the key '%s' already exists." % int_key)
+                # Loop over the intensity keys.
+                for int_key in int_keys:
+                    # Test if the simulation data point already exists.
+                    if int_key in spin.intensity_sim:
+                        raise RelaxError("Monte Carlo simulation data for the key '%s' already exists." % int_key)
 
-                # Initialise the list.
-                spin.intensity_sim[int_key] = []
+                    # Initialise the list.
+                    spin.intensity_sim[int_key] = []
 
-                # Loop over the simulations, appending the corresponding data.
-                for i in range(cdp.sim_number):
-                    spin.intensity_sim[int_key].append(sim_data[i][time_index])
+                    # Loop over the simulations, appending the corresponding data.
+                    for i in range(cdp.sim_number):
+                        spin.intensity_sim[int_key].append(sim_data[i][time_index])
+
+                # Increment the time index.
+                time_index += 1
 
         # All other models (with R2eff/R1rho base data).
         else:

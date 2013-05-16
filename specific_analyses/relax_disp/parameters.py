@@ -30,7 +30,7 @@ from re import search
 # relax module imports.
 from lib.errors import RelaxError
 from lib.mathematics import round_to_next_order
-from specific_analyses.relax_disp.disp_data import loop_exp_curve
+from specific_analyses.relax_disp.disp_data import loop_frq_point
 from specific_analyses.relax_disp.variables import MODEL_R2EFF, VAR_TIME_EXP
 
 
@@ -79,9 +79,9 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
                             param_vector.append(spin.i0[key])
 
 
-            # Loop over each exponential curve.
+            # Loop over each spectrometer frequency and dispersion point.
             else:
-                for exp_i, key in loop_exp_curve():
+                for key in loop_frq_point_key():
                     # Loop over the model parameters.
                     for i in range(len(spin.params)):
                         # Effective transversal relaxation rate.
@@ -203,9 +203,9 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
                 scaling_matrix[param_index, param_index] = round_to_next_order(max(spin.intensities.values()))
                 param_index += 1
 
-            # Loop over each exponential curve.
+            # Loop over each spectrometer frequency and dispersion point.
             else:
-                for exp_i, key in loop_exp_curve():
+                for frq, point in loop_frq_point():
                     # Effective transversal relaxation rate scaling.
                     scaling_matrix[param_index, param_index] = 10
                     param_index += 1
@@ -292,10 +292,12 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                         else:
                             spin.i0[key] = param_vector[1]
 
-            # Loop over each exponential curve.
+            # Loop over each spectrometer frequency and dispersion point.
             else:
-                for exp_index, key in loop_exp_curve():
-                    index = spin_index * 2 * cdp.dispersion_points + exp_index * cdp.dispersion_points
+                data_index = 0
+                for key in loop_frq_point_key():
+                    index = spin_index * 2 * cdp.dispersion_points + data_index * cdp.dispersion_points
+                    data_index += 1
                     param_index += 2
 
                     # Loop over the model parameters.
