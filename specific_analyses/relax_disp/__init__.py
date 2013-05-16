@@ -55,7 +55,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_R2EFF, MODEL_LM63, MODEL_CR72, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -102,13 +102,15 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
-    def _back_calc_r2eff(self, spin=None):
+    def _back_calc_r2eff(self, spin=None, spin_id=None):
         """Back-calculation of R2eff/R1rho values for the given spin.
 
-        @keyword spin:  The specific spin data container.
-        @type spin:     SpinContainer instance
-        @return:        The back-calculated R2eff/R1rho value for the given spin.
-        @rtype:         numpy rank-1 float array
+        @keyword spin:      The specific spin data container.
+        @type spin:         SpinContainer instance
+        @keyword spin_id:   The spin ID string for the spin container.
+        @type spin_id:      str
+        @return:            The back-calculated R2eff/R1rho value for the given spin.
+        @rtype:             numpy rank-1 float array
         """
 
         # Create the initial parameter vector.
@@ -126,9 +128,7 @@ class Relax_disp(API_base, API_common):
             field_count = len(fields)
 
         # Initialise the data structures for the target function.
-        values = zeros((1, field_count, cdp.dispersion_points), float64)
-        errors = ones((1, field_count, cdp.dispersion_points), float64)
-        missing = zeros((1, field_count, cdp.dispersion_points), float64)
+        values, errors, missing = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # Initialise the relaxation dispersion fit functions.
         model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
@@ -138,10 +138,20 @@ class Relax_disp(API_base, API_common):
 
         # Convert to a dictionary matching the R2eff data structure.
         results = {}
-        for frq_index in range(field_count):
-            for point_index in range(cdp.dispersion_points):
-                key = return_key_from_disp_point_index(frq_index=frq_index, disp_point_index=point_index)
-                results[key] = model.back_calc[0, frq_index, point_index]
+        for frq, point in loop_frq_point():
+            # The indices.
+            frq_index = return_index_from_frq(frq)
+            point_index = return_index_from_disp_point(point)
+
+            # The parameter key.
+            param_key = return_param_key_from_data(frq=frq, point=point)
+
+            # Skip missing data.
+            if missing[0, frq_index, point_index]:
+                continue
+
+            # Store the result.
+            results[param_key] = model.back_calc[0, frq_index, point_index]
 
         # Return the back calculated R2eff values.
         return results
@@ -738,8 +748,8 @@ class Relax_disp(API_base, API_common):
         For the R2eff model, the base data is the peak intensity data defining a single exponential curve.  For all other models, the base data is the R2eff/R1rho values for individual spins.
 
 
-        @return:    For the R2eff model, a tuple of the spin container and the exponential curve identifying key (the CPMG frequency or R1rho spin-lock field strength).  For all other models, just the spin containers from the spin loop.
-        @rtype:     tuple of SpinContainer instance and float or SpinContainer instance
+        @return:    For the R2eff model, a tuple of the spin container and the exponential curve identifying key (the CPMG frequency or R1rho spin-lock field strength).  For all other models, the spin container and ID from the spin loop.
+        @rtype:     (tuple of SpinContainer instance and float) or (SpinContainer instance and str)
         """
 
         # The R2eff model data (the base data is peak intensities).
@@ -761,7 +771,7 @@ class Relax_disp(API_base, API_common):
         # All other models (the base data is the R2eff/R1rho values).
         else:
             # Loop over the sequence.
-            for spin in spin_loop():
+            for spin, spin_id in spin_loop(return_id=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -770,8 +780,8 @@ class Relax_disp(API_base, API_common):
                 if not hasattr(spin, 'r2eff'):
                     continue
 
-                # Yield the spin container.
-                yield spin
+                # Yield the spin container and ID.
+                yield spin, spin_id
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -901,10 +911,10 @@ class Relax_disp(API_base, API_common):
         # All other models (with R2eff/R1rho base data).
         else:
             # Unpack the data.
-            spin = data_id
+            spin, spin_id = data_id
 
             # Back calculate the R2eff/R1rho data.
-            values = self._back_calc_r2eff(spin=spin)
+            values = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
 
         # Return the MC data.
         return values
@@ -1239,7 +1249,7 @@ class Relax_disp(API_base, API_common):
         # All other models.
         else:
             # Unpack the data.
-            spin = data_id
+            spin, spin_id = data_id
 
             # The errors.
             return spin.r2eff_err
@@ -1347,7 +1357,7 @@ class Relax_disp(API_base, API_common):
         # All other models (with R2eff/R1rho base data).
         else:
             # Unpack the data.
-            spin = data_id
+            spin, spin_id = data_id
 
             # Pack the data.
             spin.r2eff_sim = sim_data
