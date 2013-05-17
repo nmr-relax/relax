@@ -9,7 +9,7 @@ for dir in ['500_MHz', '800_MHz']:
     # Loop over the files in the directory.
     for file in listdir(dir):
         # Skip all files not ending in '.in'.
-        if not search('.in_sparky$', file):
+        if not search('.in_sparky$', file) and not search('.in.bis_sparky$', file):
             continue
 
         # Read the file data.
