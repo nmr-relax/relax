@@ -25,6 +25,7 @@ from os.path import isdir
 from re import search
 
 # relax module imports.
+from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -42,6 +43,9 @@ class PackageTestCase(UnitTestCase):
         files = listdir(self.package_path)
         skip = ['__init__.py']
         for file in files:
+            # The full path.
+            path = status.install_path + sep + self.package_name + sep + file
+
             # Files and directories to skip.
             if file in skip:
                 continue
@@ -51,7 +55,7 @@ class PackageTestCase(UnitTestCase):
                 continue
 
             # Only check Python files and directories.
-            if not search("\.py$", file) and not isdir(file):
+            if not search("\.py$", file) and not isdir(path):
                 continue
 
             # Skip blacklisted files.
