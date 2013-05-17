@@ -511,7 +511,7 @@ def param_index_to_param_info(index=None, spins=None, names=None):
 
     # All other parameters.
     else:
-        param_name = names[index-2]
+        param_name = spins[0].params[index]
 
     # Return the data.
     return param_name, spin_index
