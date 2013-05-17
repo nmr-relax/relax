@@ -9,7 +9,7 @@ for dir in ['500_MHz', '800_MHz']:
     # Loop over the files in the directory.
     for file in listdir(dir):
         # Skip all files not ending in '.in'.
-        if file[-3:] != '.in':
+        if not search('.in_sparky$', file):
             continue
 
         # Read the file data.
@@ -18,12 +18,17 @@ for dir in ['500_MHz', '800_MHz']:
         file_data.close()
 
         # The output file.
-        out = open(dir + sep + file + '_trunc', 'w')
+        out = open(dir + sep + file[:-7] + '_trunc', 'w')
 
         # Loop over the lines.
         for line in lines:
+            # Preserve the header lines.
+            if line[0] == '\n' or line[:3] == 'Ass':
+                out.write(line)
+                continue
+
             # Skip almost all residues (except 70 and 71).
-            if not search('^7[01]', line):
+            if not search('^GLY7[01]', line):
                 continue
 
             # Write out the data.
