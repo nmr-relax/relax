@@ -20,14 +20,86 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for setting the experimental temperature."""
+"""Module for manipulating the spectrometer experimental information."""
+
+# Python module imports.
+from warnings import warn
 
 # relax module imports.
 from pipe_control import pipes
 from lib.errors import RelaxError
+from lib.warnings import RelaxWarning
 
 
-def set(id=None, temp=None):
+def frequency(id=None, frq=None, units='Hz'):
+    """Set the spectrometer frequency of the experiment.
+
+    @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
+    @type id:       str
+    @keyword frq:   The spectrometer frequency in Hertz.
+    @type frq:      float
+    @keyword units: The units of frequency.  This can be one of "Hz", "kHz", "MHz", or "GHz".
+    @type units:    str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Set up the dictionary data structure if it doesn't exist yet.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        cdp.spectrometer_frq = {}
+
+    # Test the frequency has not already been set.
+    if id in cdp.spectrometer_frq and cdp.spectrometer_frq[id] != frq:
+        raise RelaxError("The frequency for the experiment '%s' has already been set to %s Hz." % (id, cdp.spectrometer_frq[id]))
+
+    # Unit conversion.
+    if units == 'Hz':
+        conv = 1.0
+    elif units == 'kHz':
+        conv = 1e3
+    elif units == 'MHz':
+        conv = 1e6
+    elif units == 'GHz':
+        conv = 1e9
+    else:
+        raise RelaxError("The frequency units of '%s' are unknown." % units)
+
+    # Set the frequency.
+    cdp.spectrometer_frq[id] = frq * conv
+
+    # Warnings.
+    if cdp.spectrometer_frq[id] < 1e8:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.spectrometer_frq[id]))
+    if cdp.spectrometer_frq[id] > 2e9:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.spectrometer_frq[id]))
+
+
+def get_frequencies():
+    """Return a list of all the current spectrometer frequencies.
+
+    @return:    The frequency list for the current data pipe.
+    @rtype:     list of float
+    """
+
+    # No frequency data.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        return []
+
+    # The frequency values.
+    values = cdp.spectrometer_frq.values()
+
+    # Build a list of the unique frequencies.
+    frq = []
+    for value in values:
+        if value not in frq:
+            frq.append(value)
+
+    # Return the frqs.
+    return frq
+
+
+def temperature(id=None, temp=None):
     """Set the experimental temperature.
 
     @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).

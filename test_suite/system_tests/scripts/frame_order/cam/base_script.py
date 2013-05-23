@@ -200,8 +200,8 @@ class Base_script:
                 self._execute_uf(uf_name='pcs.read', align_id=ln[i], file='pcs_%s_subset.txt'%ln[i], dir=self.data_path, mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
-            self._execute_uf(uf_name='temperature', id=ln[i], temp=303)
-            self._execute_uf(uf_name='frq.set', id=ln[i], frq=900e6)
+            self._execute_uf(uf_name='spectrometer.temperature', id=ln[i], temp=303)
+            self._execute_uf(uf_name='spectrometer.frequency', id=ln[i], frq=900e6)
 
         # Load the N-domain tensors (the full tensors).
         self._execute_uf(uf_name='script', file=BASE_PATH + 'tensors.py')

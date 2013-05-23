@@ -131,7 +131,7 @@ class PipeContainer(Prototype):
         # Initialise the new structures.
         cdp.ri_ids = []
         cdp.ri_type = {}
-        frq = {}    # This will be placed into cdp later as cdp.frq still exists.
+        frq = {}    # This will be placed into cdp later as cdp.spectrometer_frq still exists.
 
         # Generate the new structures.
         for i in range(cdp.num_ri):
@@ -169,7 +169,7 @@ class PipeContainer(Prototype):
         del cdp.ri_labels
 
         # Set the frequencies.
-        cdp.frq = frq
+        cdp.spectrometer_frq = frq
 
 
     def from_xml(self, pipe_node, file_version=None, dir=None):

@@ -105,7 +105,7 @@ def back_calc(align_id=None):
                     vect[c] = vect[c] / r[c]
 
                 # Calculate the PCS constant.
-                dj[c] = pcs_constant(cdp.temperature[id], cdp.frq[id] * 2.0 * pi / g1H, r[c]/1e10)
+                dj[c] = pcs_constant(cdp.temperature[id], cdp.spectrometer_frq[id] * 2.0 * pi / g1H, r[c]/1e10)
 
             # Initialise if necessary.
             if not hasattr(spin, 'pcs_bc'):
@@ -855,7 +855,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
                     continue
 
                 # Calculate the PCS constant.
-                dj = pcs_constant(cdp.temperature[id], cdp.frq[id] * 2.0 * pi / g1H, r/1e10)
+                dj = pcs_constant(cdp.temperature[id], cdp.spectrometer_frq[id] * 2.0 * pi / g1H, r/1e10)
 
                 # Calculate the PCS value (in ppm).
                 pcs[id][i] = pcs_tensor(dj, vect, cdp.align_tensors[get_tensor_index(id)].A) * 1e6

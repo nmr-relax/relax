@@ -20,10 +20,10 @@
 ###############################################################################
 
 # Module docstring.
-"""The frq user function definitions for manipulating spectrometer frequencies."""
+"""The spectrometer user function definitions for loading spectrometer information."""
 
 # relax module imports.
-import pipe_control.frq
+import pipe_control.spectrometer
 from pipe_control import spectrum
 from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -31,13 +31,13 @@ from user_functions.objects import Desc_container
 
 
 # The user function class.
-uf_class = uf_info.add_class('frq')
+uf_class = uf_info.add_class('spectrometer')
 uf_class.title = "Class for manipulating spectrometer frequencies."
-uf_class.menu_text = "&frq"
-uf_class.gui_icon = "relax.frq"
+uf_class.menu_text = "&spectrometer"
+uf_class.gui_icon = "relax.spectrometer"
 
-# The frq.set user function.
-uf = uf_info.add_uf('frq.set')
+# The spectrometer.frequency user function.
+uf = uf_info.add_uf('spectrometer.frequency')
 uf.title = "Set the spectrometer frequency of the experiment."
 uf.title_short = "Spectrometer frequency setting."
 uf.add_keyarg(
@@ -72,7 +72,34 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the spectrometer frequency of a given experiment to be set.  The expected units are that of the proton resonance frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file for the exact value.")
-uf.backend = pipe_control.frq.set
-uf.menu_text = "&set"
-uf.gui_icon = "oxygen.actions.edit-rename"
+uf.backend = pipe_control.spectrometer.frequency
+uf.menu_text = "&frequency"
+uf.gui_icon = "relax.frq"
 uf.wizard_size = (750, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrometer.png'
+
+
+# The spectrometer.temperature user function.
+uf = uf_info.add_uf('spectrometer.temperature')
+uf.title = "Specify the temperature of an experiment."
+uf.title_short = "Experimental temperature."
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "experiment ID string",
+    desc = "The experiment identification string."
+)
+uf.add_keyarg(
+    name = "temp",
+    py_type = "num",
+    desc_short = "experimental temperature",
+    desc = "The temperature of the experiment in Kalvin."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the temperature of an experiment to be set.  This value should be in Kalvin.  In certain analyses, for example those which use pseudocontact shift data, knowledge of the temperature is essential.  For the pseudocontact shift, the experiment ID string should match one of the alignment IDs.")
+uf.backend = pipe_control.spectrometer.temperature
+uf.menu_text = "&temperature"
+uf.gui_icon = "oxygen.status.weather-clear"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-icon-weather-snow-scattered-night.png'

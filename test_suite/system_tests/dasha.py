@@ -80,7 +80,7 @@ class Dasha(SystemTestCase):
         # Check the global data.
         self.assertEqual(len(cdp.ri_ids), 3)
         for ri_id in cdp.ri_ids:
-            self.assertEqual(cdp.frq[ri_id], 600000000.0)
+            self.assertEqual(cdp.spectrometer_frq[ri_id], 600000000.0)
         self.assertEqual(cdp.ri_type['R1_600'], 'R1')
         self.assertEqual(cdp.ri_type['R2_600'], 'R2')
         self.assertEqual(cdp.ri_type['NOE_600'], 'NOE')
@@ -99,7 +99,7 @@ class Dasha(SystemTestCase):
         te = [None, None, None, None]
         tf = [None, None, None, None]
         ts = [None, None, None, None]
-        rex_scale = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
+        rex_scale = 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]]) ** 2
         rex = [4.32701*rex_scale, 4.29432*rex_scale, None, None]
         csa = [-172e-6, -172e-6, -172e-6, -172e-6]
         chi2 = [1.9657, 0.63673, None, None]

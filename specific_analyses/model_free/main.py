@@ -457,7 +457,7 @@ class Model_free_main:
 
                     # Rex.
                     elif spin.params[k] == 'rex':
-                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
+                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]]) ** 2
 
                     # Interatomic distances.
                     elif spin.params[k] == 'r':
@@ -564,16 +564,16 @@ class Model_free_main:
         """
 
         # No frequency info.
-        if not hasattr(cdp, 'frq'):
+        if not hasattr(cdp, 'spectrometer_frq'):
             raise RelaxError("No spectrometer frequency information is present in the current data pipe.")
 
         # The 1st spectrometer frequency.
         if hasattr(cdp, 'ri_ids'):
-            frq = cdp.frq[cdp.ri_ids[0]]
+            frq = cdp.spectrometer_frq[cdp.ri_ids[0]]
 
         # Take the highest frequency, if all else fails.
         else:
-            frqs = sorted(cdp.frq.values())
+            frqs = sorted(cdp.spectrometer_frq.values())
             frq = frqs[-1]
 
         # The factor.
@@ -1271,7 +1271,7 @@ class Model_free_main:
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:
             # Back calculate the value.
-            value = self.back_calc_ri(spin_index=global_index, ri_id=ri_id, ri_type=cdp.ri_type[ri_id], frq=cdp.frq[ri_id])
+            value = self.back_calc_ri(spin_index=global_index, ri_id=ri_id, ri_type=cdp.ri_type[ri_id], frq=cdp.spectrometer_frq[ri_id])
 
             # Append the value.
             mc_data.append(value)
@@ -1761,7 +1761,7 @@ class Model_free_main:
 
         # Rex.
         elif param == 'rex':
-            return [0.0, 30.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2]
+            return [0.0, 30.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2]
 
         # Interatomic distances.
         elif param == 'r':

@@ -549,14 +549,14 @@ class Results:
                 cdp.ri_ids = []
             if not hasattr(cdp, 'ri_type'):
                 cdp.ri_type = {}
-            if not hasattr(cdp, 'frq'):
-                cdp.frq = {}
+            if not hasattr(cdp, 'spectrometer_frq'):
+                cdp.spectrometer_frq = {}
 
             # Update the global structures if necessary.
             if ri_id not in cdp.ri_ids:
                 cdp.ri_ids.append(ri_id)
                 cdp.ri_type[ri_id] = ri_labels[i]
-                cdp.frq[ri_id] = frq[remap_table[i]]
+                cdp.spectrometer_frq[ri_id] = frq[remap_table[i]]
 
             # Simulation data.
             if sim:

@@ -83,8 +83,8 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     frq_checks(frq)
 
     # Initialise the global data for the current pipe if necessary.
-    if not hasattr(cdp, 'frq'):
-        cdp.frq = {}
+    if not hasattr(cdp, 'spectrometer_frq'):
+        cdp.spectrometer_frq = {}
     if not hasattr(cdp, 'ri_type'):
         cdp.ri_type = {}
     if not hasattr(cdp, 'ri_ids'):
@@ -94,7 +94,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     if ri_id and ri_id not in cdp.ri_ids:
         cdp.ri_ids.append(ri_id)
         cdp.ri_type[ri_id] = ri_type
-        cdp.frq[ri_id] = frq
+        cdp.spectrometer_frq[ri_id] = frq
 
     # Specific Ri back calculate function setup.
     back_calculate = specific_analyses.setup.get_specific_fn('back_calc_ri', pipes.get_type())
@@ -113,7 +113,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
 
     # The frequencies.
     if frq == None:
-        frqs = cdp.frq
+        frqs = cdp.spectrometer_frq
     else:
         frqs = {ri_id: frq}
 
@@ -360,7 +360,7 @@ def bmrb_write(star):
         ri_type = cdp.ri_type[ri_id]
 
         # Convert to MHz.
-        frq = cdp.frq[ri_id] * 1e-6
+        frq = cdp.spectrometer_frq[ri_id] * 1e-6
 
         # Get the temperature control methods.
         temp_calib = cdp.exp_info.temp_calibration[ri_id]
@@ -388,7 +388,7 @@ def bmrb_write(star):
         # Spectrometer info.
         frq_num = 1
         for frq in frq_loop():
-            if frq == cdp.frq[ri_id]:
+            if frq == cdp.spectrometer_frq[ri_id]:
                 break
             frq_num += 1
         spectro_ids.append(frq_num)
@@ -454,8 +454,8 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
         dp_to.ri_ids = []
     if not hasattr(dp_to, 'ri_type'):
         dp_to.ri_type = {}
-    if not hasattr(dp_to, 'frq'):
-        dp_to.frq = {}
+    if not hasattr(dp_to, 'spectrometer_frq'):
+        dp_to.spectrometer_frq = {}
 
     # Loop over the Rx IDs.
     for ri_id in ri_ids:
@@ -466,7 +466,7 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
         # Copy the global data.
         dp_to.ri_ids.append(ri_id)
         dp_to.ri_type[ri_id] = dp_from.ri_type[ri_id]
-        dp_to.frq[ri_id] = dp_from.frq[ri_id]
+        dp_to.spectrometer_frq[ri_id] = dp_from.spectrometer_frq[ri_id]
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -532,14 +532,14 @@ def delete(ri_id=None):
 
     # Pop the ID, and remove it from the frequency and type lists.
     cdp.ri_ids.pop(cdp.ri_ids.index(ri_id))
-    del cdp.frq[ri_id]
+    del cdp.spectrometer_frq[ri_id]
     del cdp.ri_type[ri_id]
 
     # Prune empty structures.
     if len(cdp.ri_ids) == 0:
         del cdp.ri_ids
-    if len(cdp.frq) == 0:
-        del cdp.frq
+    if len(cdp.spectrometer_frq) == 0:
+        del cdp.spectrometer_frq
     if len(cdp.ri_type) == 0:
         del cdp.ri_type
 
@@ -618,11 +618,11 @@ def frq(ri_id=None, frq=None):
     frq_checks(frq)
 
     # Initialise if needed.
-    if not hasattr(cdp, 'frq'):
-        cdp.frq = {}
+    if not hasattr(cdp, 'spectrometer_frq'):
+        cdp.spectrometer_frq = {}
 
     # Set the value.
-    cdp.frq[ri_id] = frq
+    cdp.spectrometer_frq[ri_id] = frq
 
 
 def frq_checks(frq):
@@ -659,12 +659,12 @@ def frq_loop():
     # Loop over the Rx data.
     for ri_id in cdp.ri_ids:
         # New frequency.
-        if cdp.frq[ri_id] not in frq:
+        if cdp.spectrometer_frq[ri_id] not in frq:
             # Add the frequency.
-            frq.append(cdp.frq[ri_id])
+            frq.append(cdp.spectrometer_frq[ri_id])
 
             # Yield the value.
-            yield cdp.frq[ri_id]
+            yield cdp.spectrometer_frq[ri_id]
 
 
 def get_data_names(global_flag=False, sim_names=False):
@@ -750,9 +750,9 @@ def num_frq():
     # Loop over the Rx data.
     for ri_id in cdp.ri_ids:
         # New frequency.
-        if cdp.frq[ri_id] not in frq:
+        if cdp.spectrometer_frq[ri_id] not in frq:
             # Add the frequency.
-            frq.append(cdp.frq[ri_id])
+            frq.append(cdp.spectrometer_frq[ri_id])
 
             # Increment the counter.
             count += 1
@@ -834,8 +834,8 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             spin_ids.append(generate_spin_id_unique(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
-    if not hasattr(cdp, 'frq'):
-        cdp.frq = {}
+    if not hasattr(cdp, 'spectrometer_frq'):
+        cdp.spectrometer_frq = {}
     if not hasattr(cdp, 'ri_type'):
         cdp.ri_type = {}
     if not hasattr(cdp, 'ri_ids'):
@@ -844,7 +844,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     # Update the global data.
     cdp.ri_ids.append(ri_id)
     cdp.ri_type[ri_id] = ri_type
-    cdp.frq[ri_id] = frq
+    cdp.spectrometer_frq[ri_id] = frq
 
     # The selection object.
     select_obj = None

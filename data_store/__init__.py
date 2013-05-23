@@ -289,6 +289,11 @@ class Relax_data_store(dict):
                     if not hasattr(dp.align_tensors[i], 'align_id'):
                         dp.align_tensors[i].set('align_id', dp.align_tensors[i].name)
 
+            # Convert spectrometer frequency information.
+            if hasattr(dp, 'frq'):
+                dp.spectrometer_frq = dp.frq
+                del dp.frq
+
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.

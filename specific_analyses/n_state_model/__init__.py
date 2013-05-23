@@ -934,7 +934,7 @@ class N_state_model(API_base, API_common):
             raise RelaxError("The paramagnetic centre has not yet been specified.")
         if not hasattr(cdp, 'temperature'):
             raise RelaxError("The experimental temperatures have not been set.")
-        if not hasattr(cdp, 'frq'):
+        if not hasattr(cdp, 'spectrometer_frq'):
             raise RelaxError("The spectrometer frequencies of the experiments have not been set.")
 
         # Initialise.
@@ -967,8 +967,8 @@ class N_state_model(API_base, API_common):
                 raise RelaxError("The experimental temperature for the alignment ID '%s' has not been set." % align_id)
 
             # Get the spectrometer frequency in Tesla units for the PCS constant.
-            if align_id in cdp.frq:
-                frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
+            if align_id in cdp.spectrometer_frq:
+                frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / g1H)
 
             # The frequency must be given!
             else:

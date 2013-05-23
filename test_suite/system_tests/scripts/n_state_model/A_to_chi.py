@@ -13,13 +13,13 @@ tensor = 'A'
 self._execute_uf(align_id=tensor, params=(5.090/const,  12.052/const, 0, 0, 0), param_types=2, uf_name='align_tensor.init')
 
 # The temperature.
-self._execute_uf(uf_name='temperature', id=tensor, temp=298)
+self._execute_uf(uf_name='spectrometer.temperature', id=tensor, temp=298)
 
 # The frequency.
-self._execute_uf(uf_name='frq.set', id=tensor, frq=900.0 * 1e6)
+self._execute_uf(uf_name='spectrometer.frequency', id=tensor, frq=900.0 * 1e6)
 
 # The magnetic susceptibility tensor.
-cdp.chi = calc_chi_tensor(cdp.align_tensors[0].A, cdp.frq[tensor], cdp.temperature[tensor])
+cdp.chi = calc_chi_tensor(cdp.align_tensors[0].A, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
 print(cdp.chi)
 
 cdp.chi_ref = [2.729e-32,   6.462e-32,  -9.191e-32]

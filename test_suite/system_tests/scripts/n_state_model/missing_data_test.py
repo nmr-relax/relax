@@ -46,10 +46,10 @@ for i in range(len(align_list)):
         self._execute_uf(uf_name='pcs.display', align_id=align_list[i])
 
     # The temperature.
-    self._execute_uf(uf_name='temperature', id=align_list[i], temp=298)
+    self._execute_uf(uf_name='spectrometer.temperature', id=align_list[i], temp=298)
 
     # The frequency.
-    self._execute_uf(uf_name='frq.set', id=align_list[i], frq=799.75376122 * 1e6)
+    self._execute_uf(uf_name='spectrometer.frequency', id=align_list[i], frq=799.75376122 * 1e6)
 
 # Set some errors.
 self._execute_uf(uf_name='rdc.set_errors', sd=1.0)

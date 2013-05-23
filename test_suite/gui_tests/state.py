@@ -67,10 +67,10 @@ class State(GuiTestCase):
 
         # Check that the data has been loaded.
         self.assertEqual(cdp_name(), "aic - mf (Mon Feb  4 13:30:01 2013)")
-        self.assertEqual(cdp.frq['NOE_800'], 800000031.0)
-        self.assertEqual(cdp.frq['R1_800'], 800000031.0)
-        self.assertEqual(cdp.frq['R2_800'], 800000031.0)
-        self.assertEqual(cdp.frq['R2_600'], 599999000.0)
+        self.assertEqual(cdp.spectrometer_frq['NOE_800'], 800000031.0)
+        self.assertEqual(cdp.spectrometer_frq['R1_800'], 800000031.0)
+        self.assertEqual(cdp.spectrometer_frq['R2_800'], 800000031.0)
+        self.assertEqual(cdp.spectrometer_frq['R2_600'], 599999000.0)
 
 
     def test_old_state_loading(self):

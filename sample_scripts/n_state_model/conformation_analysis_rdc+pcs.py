@@ -95,10 +95,10 @@ for i in range(len(align_list)):
     pcs.weight(align_id=align_list[i], spin_id='@H*')
 
     # The temperature.
-    temperature(id=align_list[i], temp=298)
+    spectrometer.temperature(id=align_list[i], temp=298)
 
     # The frequency.
-    frq.set(id=align_list[i], frq=900.015 * 1e6)
+    spectrometer.frequency(id=align_list[i], frq=900.015 * 1e6)
 
 # Tag.
 ######

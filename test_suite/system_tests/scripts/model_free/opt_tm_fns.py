@@ -109,7 +109,7 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
         rex = 0.0
     rex_scaled = 'skip'
     if rex:
-        rex_scaled = rex / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+        rex_scaled = rex / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
     # Select the spin.
     spin.select = True
@@ -136,7 +136,7 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
     if 'ts' in spin.params:
         spin.ts = ts
     if 'rex' in spin.params:
-        spin.rex = rex / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+        spin.rex = rex / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
     # Minimise.
     interpreter.minimise('newton', 'gmw', 'back', constraints=False)

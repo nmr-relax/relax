@@ -124,7 +124,7 @@ class Bruker(GuiTestCase, system_tests.bruker.Bruker):
 
         # Check that no data was loaded.
         self.assert_(not hasattr(cdp, 'ri_ids'))
-        self.assert_(not hasattr(cdp, 'frq'))
+        self.assert_(not hasattr(cdp, 'spectrometer_frq'))
         self.assert_(not hasattr(cdp, 'ri_type'))
         for spin in spin_loop():
             self.assert_(not hasattr(spin, 'ri_data'))

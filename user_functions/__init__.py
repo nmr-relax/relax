@@ -47,7 +47,6 @@ __all__ += [
     'eliminate',
     'fix',
     'frame_order',
-    'frq',
     'grace',
     'interatomic',
     'jw_mapping',
@@ -73,12 +72,12 @@ __all__ += [
     'script',
     'select',
     'sequence',
+    'spectrometer',
     'spectrum',
     'spin',
     'state',
     'structure',
     'sys_info',
-    'temperature',
     'value',
     'vmd'
 ]
@@ -98,7 +97,6 @@ import user_functions.dx
 import user_functions.eliminate
 import user_functions.fix
 import user_functions.frame_order
-import user_functions.frq
 import user_functions.grace
 import user_functions.interatomic
 import user_functions.jw_mapping
@@ -124,12 +122,12 @@ import user_functions.results
 import user_functions.script
 import user_functions.select
 import user_functions.sequence
+import user_functions.spectrometer
 import user_functions.spectrum
 import user_functions.spin
 import user_functions.state
 import user_functions.structure
 import user_functions.sys_info
-import user_functions.temperature
 import user_functions.value
 import user_functions.vmd
 

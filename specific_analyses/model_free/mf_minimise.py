@@ -632,7 +632,7 @@ class Mf_minimise:
             # Rex.
             elif spin.params[i] == 'rex':
                 lower.append(0.0)
-                upper.append(5.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2)
+                upper.append(5.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2)
 
             # Bond length.
             elif spin.params[i] == 'r':
@@ -1245,11 +1245,11 @@ class Mf_minimise:
             ri_labels.append(cdp.ri_type[ri_id])
 
             # The frequencies.
-            if cdp.frq[ri_id] not in frq:
-                frq.append(cdp.frq[ri_id])
+            if cdp.spectrometer_frq[ri_id] not in frq:
+                frq.append(cdp.spectrometer_frq[ri_id])
 
             # The remap table.
-            remap_table.append(frq.index(cdp.frq[ri_id]))
+            remap_table.append(frq.index(cdp.spectrometer_frq[ri_id]))
 
             # The NOE to R1 mapping table.
             noe_r1_table.append(None)
@@ -1262,7 +1262,7 @@ class Mf_minimise:
             # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
             if cdp.ri_type[cdp.ri_ids[i]] == 'NOE':
                 for j in range(num_ri):
-                    if cdp.ri_type[cdp.ri_ids[j]] == 'R1' and cdp.frq[cdp.ri_ids[i]] == cdp.frq[cdp.ri_ids[j]]:
+                    if cdp.ri_type[cdp.ri_ids[j]] == 'R1' and cdp.spectrometer_frq[cdp.ri_ids[i]] == cdp.spectrometer_frq[cdp.ri_ids[j]]:
                         noe_r1_table[i] = j
 
         # Return the structures.
