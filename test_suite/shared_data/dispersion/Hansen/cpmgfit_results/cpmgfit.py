@@ -78,7 +78,7 @@ for id, file, cpmg_frq, H_frq in data:
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
 
     # Set the NMR field strength of the spectrum.
-    frq.set(id=id, frq=H_frq)
+    spectrometer.frequency(id=id, frq=H_frq)
 
     # Relaxation dispersion CPMG constant time delay T (in s).
     relax_disp.relax_time(spectrum_id=id, time=0.030)

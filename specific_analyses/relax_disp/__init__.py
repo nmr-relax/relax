@@ -729,7 +729,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
             params = []
-            for i in range(cdp.spectro_frq_count):
+            for i in range(cdp.spectrometer_frq_count):
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -737,7 +737,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_CR72:
             print("The Carver and Richards (1972) 2-site model for all time scales.")
             params = []
-            for i in range(cdp.spectro_frq_count):
+            for i in range(cdp.spectrometer_frq_count):
                 params.append('r2')
             params += ['r2a', 'ka', 'dw']
 

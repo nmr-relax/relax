@@ -39,7 +39,7 @@ from lib.errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoSequenc
 from lib.io import mkdir_nofail, open_write_file, test_binary
 from lib.physical_constants import g1H
 from pipe_control import pipes
-from pipe_control.frq import get_values
+from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.disp_data import loop_frq_point, return_param_key_from_data
 
@@ -190,7 +190,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
     file.write("title %s\n" % spin_id)
 
     # The proton frequencies.
-    frq = get_values()
+    frq = get_frequencies()
 
     # Loop over each frequency.
     for i in range(len(frq)):
@@ -234,6 +234,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
             continue
 
         # Tesla units.
+        print frq
         B0 = frq * 2.0 * pi / g1H
 
         # Write out the data and error.
