@@ -165,7 +165,7 @@ class Pipe_editor(wx.Frame):
         items.append(build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch))
  
         # Menu entry:  new auto-analysis tab.
-        if pipe_bundle and self.gui.analysis.page_index_from_bundle(pipe_bundle) == None and pipe_type in ['noe', 'r1', 'r2', 'mf']:
+        if pipe_bundle and self.gui.analysis.page_index_from_bundle(pipe_bundle) == None and pipe_type in ['noe', 'r1', 'r2', 'mf', 'relax_disp']:
             items.append(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto))
  
         # Set up the entries.
@@ -339,7 +339,8 @@ class Pipe_editor(wx.Frame):
             'noe': 'Steady-state NOE',
             'r1': 'R1 relaxation',
             'r2': 'R2 relaxation',
-            'mf': 'Model-free'
+            'mf': 'Model-free',
+            'relax_disp': 'Relaxation dispersion'
         }
 
         # Create a new analysis with the selected data pipe.
