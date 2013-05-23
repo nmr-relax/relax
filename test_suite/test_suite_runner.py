@@ -234,6 +234,10 @@ class Test_suite_runner:
             # Alias.
             test = status.skipped_tests[i]
 
+            # Skip all skipped tests whereby the module is set to None to indicate that the test skipping should not be reported.
+            if test[1] == None:
+                continue
+
             # Initialise in needed.
             if not test[1] in system_count:
                 system_count[test[1]] = 0
