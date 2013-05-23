@@ -25,6 +25,7 @@
 
 # The available modules.
 __all__ = [
+    'cpmgfit',
     'disp_data',
     'parameters',
     'variables'

@@ -35,6 +35,7 @@ else:
 from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
+from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 from specific_analyses.setup import relax_disp_obj
@@ -121,6 +122,96 @@ uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=200, spectrum_id='20
 uf.backend = cpmg_frq
 uf.menu_text = "&cpmg_frq"
 uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.cpmgfit_execute user function.
+uf = uf_info.add_uf('relax_disp.cpmgfit_execute')
+uf.title = "Optimisation of the CPMG data using Art Palmer's CPMGFit program."
+uf.title_short = "CPMGFit execution."
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory containing all of the CPMGFit input files.  If not given, this defaults to the model name in lower case.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause the results files to be overwritten if they already exist."
+)
+uf.add_keyarg(
+    name = "binary",
+    default = "cpmgfit",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "CPMGFit executable file",
+    desc = "The name of the executable CPMGFit program file.",
+    wiz_filesel_style = FD_OPEN
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("CPMGFit will be executed once per spin as:")
+uf.desc[-1].add_prompt("$ cpmgfit -xmgr -f dir/spin_x.in")
+uf.desc[-1].add_paragraph("where x is replaced by each spin ID string.  If you would like to use a different CPMGFit executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, be sure to include the full path in front of the binary file name so it can be found.")
+uf.backend = cpmgfit_execute
+uf.menu_text = "&cpmgfit_execute"
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.cpmgfit_input user function.
+uf = uf_info.add_uf('relax_disp.cpmgfit_input')
+uf.title = "Create the input files for Art Palmer's CPMGFit program."
+uf.title_short = "CPMGFit input file creation."
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory to place the files.  If not given, this defaults to the model name in lower case.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
+)
+uf.add_keyarg(
+    name = "binary",
+    default = "cpmgfit",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "CPMGFit executable file",
+    desc = "The name of the executable CPMGFit program file.",
+    wiz_filesel_style = FD_OPEN
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    desc_short = "spin ID string",
+    desc = "The spin identification string.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The following files are created:")
+uf.desc[-1].add_list_element("'dir/spin_x.in',")
+uf.desc[-1].add_list_element("'dir/run.sh'.")
+uf.desc[-1].add_paragraph("One CPMGFit input file is created per spin and named 'dir/spin_x.in', where x is the spin ID string.  The file 'dir/run.sh' is a batch file for executing CPMGFit for all of the spin input files.  If you would like to use a different CPMGFit executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, be sure to include the full path in front of the binary name so it can be found.")
+uf.backend = cpmgfit_input
+uf.menu_text = "&cpmgfit_input"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
