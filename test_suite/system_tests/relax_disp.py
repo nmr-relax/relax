@@ -82,6 +82,128 @@ class Relax_disp(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
 
 
+    def test_hansen_cpmgfit_input(self):
+        """Conversion of Dr. Flemming Hansen's CPMG R2eff values into input files for CPMGFit.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Load the state, preserving the temp directory.
+        tmpdir = ds.tmpdir
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_values'
+        self.interpreter.state.load(state, force=True)
+        ds.tmpdir = tmpdir
+
+        # Set up the model.
+        self.interpreter.relax_disp.select_model('LM63')
+
+        # Generate the input files.
+        self.interpreter.relax_disp.cpmgfit_input(force=True, dir=ds.tmpdir)
+
+        # What the files should contain.
+        batch_file = ['#! /bin/sh\n', '\n', 'cpmgfit -xmgr -f spin_:70@N.in\n', 'cpmgfit -xmgr -f spin_:71@N.in\n']
+        spin1 = [
+            'title :70@N\n',
+            'fields 2 18.7892743865 11.7432964915\n',
+            'function CPMG\n',
+            'R2 1 10 20\n',
+            'Rex 0 100.0 100\n',
+            'tex 0 10.0 100\n',
+            'xmgr\n',
+            '@ xaxis label "1/tcp (1/ms)"\n',
+            '@ yaxis label "R2(tcp) (rad/s)"\n',
+            '@ xaxis ticklabel format decimal\n',
+            '@ yaxis ticklabel format decimal\n',
+            '@ xaxis ticklabel char size 0.8\n',
+            '@ yaxis ticklabel char size 0.8\n',
+            '@ world xmin 0.0\n',
+            'data\n',
+            '0.066667             16.045541            0.296491             11.743296           \n',
+            '0.133333             14.877925            0.234000             11.743296           \n',
+            '0.200000             14.357820            0.301228             11.743296           \n',
+            '0.266667             12.664495            0.299527             11.743296           \n',
+            '0.333333             12.363205            0.271194             11.743296           \n',
+            '0.400000             11.092532            0.285045             11.743296           \n',
+            '0.466667             10.566090            0.295090             11.743296           \n',
+            '0.533333             9.805807             0.235226             11.743296           \n',
+            '0.600000             9.564301             0.281865             11.743296           \n',
+            '0.666667             9.015634             0.275269             11.743296           \n',
+            '0.733333             8.607765             0.266371             11.743296           \n',
+            '0.800000             8.279997             0.274045             11.743296           \n',
+            '0.866667             8.474536             0.251836             11.743296           \n',
+            '0.933333             8.158973             0.220777             11.743296           \n',
+            '1.000000             7.988631             0.264123             11.743296           \n',
+            '0.066667             22.224914            0.157014             18.789274           \n',
+            '0.133333             21.230874            0.123960             18.789274           \n',
+            '0.200000             20.603704            0.162258             18.789274           \n',
+            '0.266667             20.327797            0.154694             18.789274           \n',
+            '0.333333             18.855377            0.159253             18.789274           \n',
+            '0.400000             18.537531            0.141982             18.789274           \n',
+            '0.466667             17.508069            0.139421             18.789274           \n',
+            '0.533333             16.035604            0.113450             18.789274           \n',
+            '0.600000             15.168192            0.145221             18.789274           \n',
+            '0.666667             14.431802            0.138125             18.789274           \n',
+            '0.733333             14.034137            0.131017             18.789274           \n',
+            '0.800000             12.920148            0.131678             18.789274           \n',
+            '0.866667             12.653673            0.139552             18.789274           \n',
+            '0.933333             12.610864            0.103480             18.789274           \n',
+            '1.000000             11.969303            0.135988             18.789274           \n'
+        ]
+        spin2 = [
+            'title :71@N\n',
+            'fields 2 18.7892743865 11.7432964915\n',
+            'function CPMG\n',
+            'R2 1 10 20\n',
+            'Rex 0 100.0 100\n',
+            'tex 0 10.0 100\n',
+            'xmgr\n',
+            '@ xaxis label "1/tcp (1/ms)"\n',
+            '@ yaxis label "R2(tcp) (rad/s)"\n',
+            '@ xaxis ticklabel format decimal\n',
+            '@ yaxis ticklabel format decimal\n',
+            '@ xaxis ticklabel char size 0.8\n',
+            '@ yaxis ticklabel char size 0.8\n',
+            '@ world xmin 0.0\n',
+            'data\n',
+            '0.066667             7.044342             0.174267             11.743296           \n',
+            '0.133333             6.781033             0.137976             11.743296           \n',
+            '0.200000             6.467623             0.171372             11.743296           \n',
+            '0.266667             6.333340             0.179931             11.743296           \n',
+            '0.333333             6.323238             0.162322             11.743296           \n',
+            '0.400000             6.005245             0.166673             11.743296           \n',
+            '0.466667             5.767052             0.168136             11.743296           \n',
+            '0.533333             5.476968             0.134411             11.743296           \n',
+            '0.600000             5.469949             0.157734             11.743296           \n',
+            '0.666667             5.295113             0.168230             11.743296           \n',
+            '0.733333             5.435648             0.163755             11.743296           \n',
+            '0.800000             5.410400             0.165309             11.743296           \n',
+            '0.866667             5.437554             0.158582             11.743296           \n',
+            '0.933333             5.176844             0.144974             11.743296           \n',
+            '1.000000             5.227232             0.162255             11.743296           \n'
+        ]
+
+        # Check the batch file.
+        file = open("%s%sbatch_run.sh" % (ds.tmpdir, sep))
+        lines = file.readlines()
+        file.close()
+        for i in range(len(lines)):
+            self.assertEqual(batch_file[i], lines[i])
+
+        # Check spin :70@N.
+        file = open("%s%sspin_%s.in" % (ds.tmpdir, sep, ':70@N'))
+        lines = file.readlines()
+        file.close()
+        for i in range(len(lines)):
+            self.assertEqual(spin1[i], lines[i])
+
+        # Check spin :71@N.
+        file = open("%s%sspin_%s.in" % (ds.tmpdir, sep, ':71@N'))
+        lines = file.readlines()
+        file.close()
+        for i in range(len(lines)):
+            self.assertEqual(spin2[i], lines[i])
+
+
     def test_exp_fit(self):
         """Test the relaxation dispersion 'exp_fit' model curve fitting."""
 
