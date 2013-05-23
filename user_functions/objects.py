@@ -391,7 +391,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, wiz_filesel_preview=True, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         @keyword name:                  The name of the argument.
@@ -435,6 +435,8 @@ class Uf_container(object):
         @type wiz_dirsel_style:         int
         @keyword wiz_read_only:         A flag which if True means that the text of the GUI wizard page element cannot be edited.  If the default of None is given, then each UI element will decide for itself what to do.
         @type wiz_read_only:            bool or None
+        @keyword wiz_filesel_preview:   A flag which if True will enable the preview button in the file selection GUI wizard page element.
+        @type wiz_filesel_preview:      bool
         @keyword can_be_none:           A flag which specifies if the argument is allowed to have the None value.
         @type can_be_none:              bool
         @keyword can_be_empty:          A flag which if True allows the sequence type object to be empty.
@@ -484,6 +486,7 @@ class Uf_container(object):
         arg['wiz_filesel_style'] = wiz_filesel_style
         arg['wiz_dirsel_style'] = wiz_dirsel_style
         arg['wiz_read_only'] = wiz_read_only
+        arg['wiz_filesel_preview'] = wiz_filesel_preview
         arg['can_be_none'] = can_be_none
         arg['can_be_empty'] = can_be_empty
         arg['none_elements'] = none_elements
