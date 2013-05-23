@@ -106,7 +106,7 @@ class Palmer(SystemTestCase):
                 if te[model_index][spin_index]:
                     te[model_index][spin_index] = te[model_index][spin_index] * 1e-12
                 if rex[model_index][spin_index]:
-                    rex[model_index][spin_index] = rex[model_index][spin_index] / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+                    rex[model_index][spin_index] = rex[model_index][spin_index] / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
                 # Checks.
                 self.assertEqual(spin.model, models[model_index])
@@ -142,7 +142,7 @@ class Palmer(SystemTestCase):
             if te[spin_index]:
                 te[spin_index] = te[spin_index] * 1e-12
             if rex[spin_index]:
-                rex[spin_index] = rex[spin_index] / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+                rex[spin_index] = rex[spin_index] / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
             # Checks.
             self.assertEqual(spin.model, models[spin_index])
@@ -210,7 +210,7 @@ class Palmer(SystemTestCase):
                 if te[model_index][spin_index]:
                     te[model_index][spin_index] = te[model_index][spin_index] * 1e-12
                 if rex[model_index][spin_index]:
-                    rex[model_index][spin_index] = rex[model_index][spin_index] / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+                    rex[model_index][spin_index] = rex[model_index][spin_index] / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
                 # Checks.
                 self.assertEqual(spin.model, models[model_index])

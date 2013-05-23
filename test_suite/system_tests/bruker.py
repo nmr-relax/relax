@@ -53,7 +53,7 @@ class Bruker(SystemTestCase):
 
         # Check the data pipe structures.
         self.assertEqual(cdp.ri_ids, [ri_id])
-        self.assertEqual(cdp.frq[ri_id], 600.13*1e6)
+        self.assertEqual(cdp.spectrometer_frq[ri_id], 600.13*1e6)
         self.assertEqual(cdp.ri_type[ri_id], 'NOE')
 
         # The NOE values and errors.
@@ -86,7 +86,7 @@ class Bruker(SystemTestCase):
 
         # Check the data pipe structures.
         self.assertEqual(cdp.ri_ids, [ri_id])
-        self.assertEqual(cdp.frq[ri_id], 600.13*1e6)
+        self.assertEqual(cdp.spectrometer_frq[ri_id], 600.13*1e6)
         self.assertEqual(cdp.ri_type[ri_id], 'R1')
 
         # The R1 values and errors.

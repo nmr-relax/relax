@@ -215,7 +215,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings)
             runner.run_all_tests()
 
         # Execute the relax system tests.
@@ -228,7 +228,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings)
             runner.run_system_tests()
 
         # Execute the relax unit tests.
@@ -237,7 +237,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings)
             runner.run_unit_tests()
 
         # Execute the relax GUI tests.
@@ -246,7 +246,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings)
             runner.run_gui_tests()
 
         # Test mode.
@@ -280,6 +280,7 @@ class Relax:
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
         parser.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the relax GUI tests (part of the test suite)')
+        parser.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
         parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
         parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
@@ -328,7 +329,13 @@ class Relax:
 
         # Test suite mode, therefore the args are the tests to run and not a script file.
         if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
+            # Store the arguments.
             self.tests = args
+
+            # Test timings.
+            self.test_timings = False
+            if options.tt:
+                self.test_timings = True
 
         # The argument is a script.
         else:

@@ -66,9 +66,9 @@ class Jw(SystemTestCase):
             # Residues -2 and -1 have data.
             if res.num == -2 or res.num == -1:
                 self.assert_(res.spin[0].select)
-                self.assertAlmostEqual(res.spin[0].j0, j0[index])
-                self.assertAlmostEqual(res.spin[0].jwh, jwh[index])
-                self.assertAlmostEqual(res.spin[0].jwx, jwx[index])
+                self.assertAlmostEqual(res.spin[0].j0 * 1e9, j0[index] * 1e9)
+                self.assertAlmostEqual(res.spin[0].jwh * 1e10, jwh[index] * 1e10)
+                self.assertAlmostEqual(res.spin[0].jwx * 1e12, jwx[index] * 1e12)
                 index = index + 1
 
             # Other residues have insufficient data.

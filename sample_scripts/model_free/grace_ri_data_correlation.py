@@ -53,7 +53,7 @@ def grace_header(file):
             g_index = 2
 
         # Frequency string.
-        string = '%i MHz' % (cdp.frq[ri_id]/1e6)
+        string = '%i MHz' % (cdp.spectrometer_frq[ri_id]/1e6)
 
         # The label.
         data_legend[g_index].append("%s Exp. data" % string)

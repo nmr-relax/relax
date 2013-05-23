@@ -37,8 +37,8 @@ self._execute_uf(uf_name='rdc.read', align_id='Dy', file='dy_700_rdc', dir=DATA_
 self._execute_uf(uf_name='rdc.read', align_id='Er', file='er_900_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=None)
 
 # The frequency.
-self._execute_uf(uf_name='frq.set', id='Dy', frq=700.0 * 1e6)
-self._execute_uf(uf_name='frq.set', id='Er', frq=900.0 * 1e6)
+self._execute_uf(uf_name='spectrometer.frequency', id='Dy', frq=700.0 * 1e6)
+self._execute_uf(uf_name='spectrometer.frequency', id='Er', frq=900.0 * 1e6)
 
 # PCSs.
 self._execute_uf(uf_name='pcs.read', align_id='Dy', file='dy_pcs', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
@@ -48,8 +48,8 @@ self._execute_uf(uf_name='pcs.read', align_id='Er', file='er_pcs', dir=DATA_PATH
 self._execute_uf(uf_name='paramag.centre', atom_id=':1000@CA')
 
 # The temperature.
-self._execute_uf(uf_name='temperature', id='Dy', temp=303)
-self._execute_uf(uf_name='temperature', id='Er', temp=303)
+self._execute_uf(uf_name='spectrometer.temperature', id='Dy', temp=303)
+self._execute_uf(uf_name='spectrometer.temperature', id='Er', temp=303)
 
 # Set up the model.
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')

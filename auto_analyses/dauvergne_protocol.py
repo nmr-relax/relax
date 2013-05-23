@@ -31,7 +31,7 @@ from info import Info_box; info = Info_box()
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
 from pipe_control.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
-from pipe_control import frq, selection
+from pipe_control import selection, spectrometer
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from lib.io import DummyFileObject
@@ -909,7 +909,7 @@ class dAuvergne_protocol:
         self.interpreter.value.write(param='ts',       file='ts.txt',       dir=dir, force=True)
         self.interpreter.value.write(param='rex',      file='rex.txt',      dir=dir, force=True)
         self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=dir, force=True)
-        frqs = frq.get_values()
+        frqs = spectrometer.get_frequencies()
         for i in range(len(frqs)):
             comment = "This is the Rex value with units rad.s^-1 scaled to a magnetic field strength of %s MHz." % (frqs[i]/1e6)
             self.interpreter.value.write(param='rex', file='rex_%s.txt'%int(frqs[i]/1e6), dir=dir, scaling=(2.0*pi*frqs[i])**2, comment=comment, force=True)

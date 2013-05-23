@@ -123,7 +123,7 @@ class Relax_data(SystemTestCase):
 
         # Checks.
         self.assertEqual(cdp.ri_ids, ['R1_900', 'NOE_900', 'R1_500', 'R2_500', 'NOE_500'])
-        self.assert_(not 'R2_900' in cdp.frq)
+        self.assert_(not 'R2_900' in cdp.spectrometer_frq)
         self.assert_(not 'R2_900' in cdp.ri_type)
         for spin in spin_loop():
             # Protons.
@@ -140,7 +140,7 @@ class Relax_data(SystemTestCase):
 
         # Checks.
         self.assert_(not hasattr(cdp, 'ri_ids'))
-        self.assert_(not hasattr(cdp, 'frq'))
+        self.assert_(not hasattr(cdp, 'spectrometer_frq'))
         self.assert_(not hasattr(cdp, 'ri_type'))
         for spin in spin_loop():
             self.assert_(not hasattr(spin, 'ri_data'))
@@ -161,5 +161,5 @@ class Relax_data(SystemTestCase):
         # Checks.
         for i in range(len(ids)):
             self.assertEqual(cdp.ri_ids[i], ids[i])
-            self.assertAlmostEqual(cdp.frq[ids[i]], frqs[i])
+            self.assertAlmostEqual(cdp.spectrometer_frq[ids[i]], frqs[i])
             self.assertEqual(cdp.ri_type[ids[i]], types[i])

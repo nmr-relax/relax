@@ -69,7 +69,7 @@ class Relax_data_base_class(UnitTestCase):
         self.relax_data_fns.read(ri_id=ri_id, ri_type='NOE', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the pipe data structures.
-        self.assertEqual(cdp.frq[ri_id], 600e6)
+        self.assertEqual(cdp.spectrometer_frq[ri_id], 600e6)
         self.assertEqual(cdp.ri_type[ri_id], 'NOE')
         self.assertEqual(cdp.ri_ids[0], ri_id)
 

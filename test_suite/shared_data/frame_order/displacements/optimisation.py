@@ -134,8 +134,8 @@ for i in range(len(ln)):
     pcs.read(align_id=ln[i], file=pcs_files_subset[i], dir='.', mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
     # The temperature and field strength.
-    temperature(id=ln[i], temp=303.0)
-    frq.set(id=ln[i], frq=800.0, units="MHz")
+    spectrometer.temperature(id=ln[i], temp=303.0)
+    spectrometer.frequency(id=ln[i], frq=800.0, units="MHz")
 
 # Load the tensors (the full tensors).
 align_tensor.init(tensor='Dy fixed', align_id='dy', params=(-0.000283041921495, 0.00017331020651, 0.000348144461756, 0.00109678563394, -0.000261126459214), param_types=2)

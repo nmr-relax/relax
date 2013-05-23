@@ -163,7 +163,7 @@ class Consistency_tests(API_base, API_common):
                     raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
 
         # Frequency index.
-        if cdp.ct_frq not in cdp.frq.values():
+        if cdp.ct_frq not in cdp.spectrometer_frq.values():
             raise RelaxError("No relaxation data corresponding to the frequency %s has been loaded." % cdp.ct_frq)
 
         # Consistency testing.
@@ -180,7 +180,7 @@ class Consistency_tests(API_base, API_common):
             # Get the R1, R2, and NOE values corresponding to the set frequency.
             for ri_id in cdp.ri_ids:
                 # The frequency does not match.
-                if cdp.frq[ri_id] != cdp.ct_frq:
+                if cdp.spectrometer_frq[ri_id] != cdp.ct_frq:
                     continue
 
                 # R1.

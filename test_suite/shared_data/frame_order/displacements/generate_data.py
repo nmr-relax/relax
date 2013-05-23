@@ -38,8 +38,8 @@ align_tensor.init(tensor='Ho', align_id='ho', params=(7.74711876341e-06, 9.55677
 # Set the temperature and frequency.
 ids = ['dy', 'tb', 'tm', 'er', 'yb', 'ho']
 for id in ids:
-    temperature(id, temp=303.0)
-    frq.set(id, frq=800.0, units="MHz")
+    spectrometer.temperature(id, temp=303.0)
+    spectrometer.frequency(id, frq=800.0, units="MHz")
 
 # Set the number of states.
 n_state_model.number_of_states(1)

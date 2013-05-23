@@ -89,8 +89,8 @@ class Main:
             tag = tensors[i]
 
             # The temperature and field strength.
-            self.interpreter.temperature(id=tag, temp=303)
-            self.interpreter.frq.set(id=tag, frq=900e6)
+            self.interpreter.spectrometer.temperature(id=tag, temp=303)
+            self.interpreter.spectrometer.frequency(id=tag, frq=900e6)
 
             # Back-calculate the data.
             self.interpreter.rdc.back_calc(tag)

@@ -23,7 +23,7 @@
 """The jw_mapping user function definitions for Reduced Spectral Density Mapping."""
 
 # relax module imports.
-from pipe_control import frq
+from pipe_control import spectrometer
 from graphics import ANALYSIS_IMAGE_PATH
 from specific_analyses.setup import jw_mapping_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -47,7 +47,7 @@ uf.add_keyarg(
     desc_short = "spectrometer frequency in Hz",
     desc = "The spectrometer frequency in Hz.  This must match the currently loaded data to the last decimal point.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = frq.get_values,
+    wiz_combo_iter = spectrometer.get_frequencies,
     wiz_read_only = True,
 )
 # Description.

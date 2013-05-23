@@ -525,7 +525,7 @@ class Uf_page(Wiz_page):
 
             # Special arg type:  file selection dialog.
             if arg['arg_type'] == 'file sel':
-                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'])
+                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  dir arg.
             elif arg['arg_type'] == 'dir':

@@ -68,10 +68,10 @@ if ds.mode == 'all':
 self._execute_uf(uf_name='pcs.read', align_id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
 
 # The temperature.
-self._execute_uf(uf_name='temperature', id='synth', temp=303)
+self._execute_uf(uf_name='spectrometer.temperature', id='synth', temp=303)
 
 # The frequency.
-self._execute_uf(uf_name='frq.set', id='synth', frq=600.0 * 1e6)
+self._execute_uf(uf_name='spectrometer.frequency', id='synth', frq=600.0 * 1e6)
 
 # Set up the model.
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')

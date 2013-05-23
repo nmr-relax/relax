@@ -56,10 +56,10 @@ if ds.mode in ['pcs', 'all']:
     self._execute_uf(uf_name='paramag.centre', atom_id=':1000@CA')
 
     # The temperature.
-    self._execute_uf(uf_name='temperature', id='synth', temp=303)
+    self._execute_uf(uf_name='spectrometer.temperature', id='synth', temp=303)
 
     # The frequency.
-    self._execute_uf(uf_name='frq.set', id='synth', frq=600.0 * 1e6)
+    self._execute_uf(uf_name='spectrometer.frequency', id='synth', frq=600.0 * 1e6)
 
 # Set up the model.
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')

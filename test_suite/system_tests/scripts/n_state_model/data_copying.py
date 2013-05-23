@@ -54,10 +54,10 @@ for i in range(len(align_list)):
     self._execute_uf(uf_name='pcs.read', align_id=align_list[i], file='missing_pcs_%i' % i, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=None, spin_name_col=5, data_col=6, error_col=None)
 
     # The temperature.
-    self._execute_uf(uf_name='temperature', id=align_list[i], temp=298)
+    self._execute_uf(uf_name='spectrometer.temperature', id=align_list[i], temp=298)
 
     # The frequency.
-    self._execute_uf(uf_name='frq.set', id=align_list[i], frq=799.75376122 * 1e6)
+    self._execute_uf(uf_name='spectrometer.frequency', id=align_list[i], frq=799.75376122 * 1e6)
 
 # Create a new data pipe.
 self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='N-state')

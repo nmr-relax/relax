@@ -72,7 +72,7 @@ class Bmrb(SystemTestCase):
         if version == '3.0':
             blacklist_spin = blacklist_spin + ['r', 'local_tm', 'local_tm_err']
         blacklist_diff = []
-        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'interatomic', 'sim_number', 'sim_state'] + ['ri_ids', 'frq', 'ri_type'] + ['result_files']
+        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'interatomic', 'sim_number', 'sim_state'] + ['ri_ids', 'spectrometer_frq', 'ri_type'] + ['result_files']
 
         # The data pipes.
         old_pipe = ds[old_pipe_name]
@@ -196,7 +196,7 @@ class Bmrb(SystemTestCase):
         """Compare the contents of the two pipe data containers."""
 
         # Check that the new container has relaxation data.
-        for name in ['frq', 'ri_ids', 'ri_type']:
+        for name in ['spectrometer_frq', 'ri_ids', 'ri_type']:
             self.assert_(hasattr(cont_new, name))
 
         # Check the IDs.
@@ -208,7 +208,7 @@ class Bmrb(SystemTestCase):
 
         # Check the frequencies and types.
         for ri_id in old_ids:
-            self.assertEqual(cont_old.frq[ri_id], cont_new.frq[ri_id])
+            self.assertEqual(cont_old.spectrometer_frq[ri_id], cont_new.spectrometer_frq[ri_id])
             self.assertEqual(cont_old.ri_type[ri_id], cont_new.ri_type[ri_id])
 
 

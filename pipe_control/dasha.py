@@ -503,7 +503,7 @@ def extract(dir):
         if param in ['te', 'tf', 'ts']:
             scaling = 1e-9
         elif param == 'rex':
-            scaling = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
+            scaling = 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]]) ** 2
         else:
             scaling = 1.0
 

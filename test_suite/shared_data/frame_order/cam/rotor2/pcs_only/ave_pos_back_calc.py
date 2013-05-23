@@ -41,8 +41,8 @@ for id in ids:
     pcs.read(align_id=id, file='pcs_%s.txt'%id, dir='..', res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
     # The temperature and field strength.
-    temperature(id=id, temp=303)
-    frq.set(id=id, frq=900e6)
+    spectrometer.temperature(id=id, temp=303)
+    spectrometer.frequency(id=id, frq=900e6)
 
     # Back-calculate the data.
     rdc.back_calc(id)

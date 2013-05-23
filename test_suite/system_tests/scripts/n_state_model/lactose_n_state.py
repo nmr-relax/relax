@@ -65,10 +65,10 @@ for i in range(len(align_list)):
     self._execute_uf(uf_name='pcs.display', align_id=align_list[i])
 
     # The temperature.
-    self._execute_uf(uf_name='temperature', id=align_list[i], temp=298)
+    self._execute_uf(uf_name='spectrometer.temperature', id=align_list[i], temp=298)
 
     # The frequency.
-    self._execute_uf(uf_name='frq.set', id=align_list[i], frq=900.015 * 1e6)
+    self._execute_uf(uf_name='spectrometer.frequency', id=align_list[i], frq=900.015 * 1e6)
 
 # Create a data pipe for the aligned tag structures.
 self._execute_uf(uf_name='pipe.create', pipe_name='tag', pipe_type='N-state')

@@ -439,12 +439,12 @@ class Macro:
         """Function for generating the bond width and colours for correlation times."""
 
         # The 1st spectrometer frequency.
-        if not hasattr(cdp, 'frq'):
+        if not hasattr(cdp, 'spectrometer_frq'):
             raise RelaxError("No spectrometer frequency information is present in the current data pipe.")
         if hasattr(cdp, 'ri_ids'):
-            frq = cdp.frq[cdp.ri_ids[0]]
+            frq = cdp.spectrometer_frq[cdp.ri_ids[0]]
         else:       # Take the highest frequency, if all else fails.
-            frqs = sorted(cdp.frq.values())
+            frqs = sorted(cdp.spectrometer_frq.values())
             frq = frqs[-1]
 
         # The Rex value.

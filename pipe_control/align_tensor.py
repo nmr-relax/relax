@@ -346,8 +346,8 @@ def display(tensor=None):
 
         # The field strength.
         print("# The magnetic field strength (MHz):")
-        if hasattr(cdp, 'frq') and tensor in cdp.frq:
-            print("%s\n" % (cdp.frq[tensor] / 1e6))
+        if hasattr(cdp, 'spectrometer_frq') and tensor in cdp.spectrometer_frq:
+            print("%s\n" % (cdp.spectrometer_frq[tensor] / 1e6))
         else:
             print("Not set.\n")
             chi_tensor = False
@@ -367,14 +367,14 @@ def display(tensor=None):
         # Calculate the chi tensor.
         else:
             # Conversions.
-            chi_xx =    calc_chi_tensor(data.Axx, cdp.frq[tensor], cdp.temperature[tensor])
-            chi_xy =    calc_chi_tensor(data.Axy, cdp.frq[tensor], cdp.temperature[tensor])
-            chi_xz =    calc_chi_tensor(data.Axz, cdp.frq[tensor], cdp.temperature[tensor])
-            chi_yy =    calc_chi_tensor(data.Ayy, cdp.frq[tensor], cdp.temperature[tensor])
-            chi_yz =    calc_chi_tensor(data.Ayz, cdp.frq[tensor], cdp.temperature[tensor])
-            chi_zz =    calc_chi_tensor(data.Azz, cdp.frq[tensor], cdp.temperature[tensor])
-            chi_xxyy =  calc_chi_tensor(data.Axxyy, cdp.frq[tensor], cdp.temperature[tensor])
-            chi =       calc_chi_tensor(data.A, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xx =    calc_chi_tensor(data.Axx, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi_xy =    calc_chi_tensor(data.Axy, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi_xz =    calc_chi_tensor(data.Axz, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi_yy =    calc_chi_tensor(data.Ayy, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi_yz =    calc_chi_tensor(data.Ayz, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi_zz =    calc_chi_tensor(data.Azz, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi_xxyy =  calc_chi_tensor(data.Axxyy, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
+            chi =       calc_chi_tensor(data.A, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
 
             # The parameter set {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}.
             print("# 5D, rank-1 notation {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}:")
@@ -403,7 +403,7 @@ def display(tensor=None):
         print("# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.")
         print("[%25.12e, %25.12e, %25.12e]\n" % (data.P_diag[0, 0], data.P_diag[1, 1], data.P_diag[2, 2]))
         if chi_tensor:
-            chi_diag =       calc_chi_tensor(data.A_diag, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_diag =       calc_chi_tensor(data.A_diag, cdp.spectrometer_frq[tensor], cdp.temperature[tensor])
             print("# Magnetic susceptibility eigenvalues {chi_xx, chi_yy, chi_zz}.")
             print("[%25.12e, %25.12e, %25.12e]\n" % (chi_diag[0, 0], chi_diag[1, 1], chi_diag[2, 2]))
 

@@ -63,15 +63,51 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 class Frame_order(SystemTestCase):
     """TestCase class for the functional tests of the frame order theories."""
 
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName='runTest', skip_tests=True):
         """Skip the tests if scipy is not installed.
 
         @keyword methodName:    The name of the test.
         @type methodName:       str
+        @keyword skip_tests:    A flag which if True will cause a large number of redundant tests to be skipped.
+        @type skip_tests:       bool
         """
 
         # Execute the base class method.
         super(Frame_order, self).__init__(methodName)
+
+        # Tests to skip.
+        blacklist = [
+            'test_cam_free_rotor_pcs',
+            'test_cam_free_rotor_rdc',
+            'test_cam_free_rotor2_pcs',
+            'test_cam_free_rotor2_rdc',
+            'test_cam_iso_cone_pcs',
+            'test_cam_iso_cone_rdc',
+            'test_cam_iso_cone_free_rotor_pcs',
+            'test_cam_iso_cone_free_rotor_rdc',
+            'test_cam_iso_cone_free_rotor2_pcs',
+            'test_cam_iso_cone_free_rotor2_rdc',
+            'test_cam_iso_cone_torsionless_pcs',
+            'test_cam_iso_cone_torsionless_rdc',
+            'test_cam_pseudo_ellipse2_pcs',
+            'test_cam_pseudo_ellipse2_rdc',
+            'test_cam_pseudo_ellipse_free_rotor_pcs',
+            'test_cam_pseudo_ellipse_free_rotor_rdc',
+            'test_cam_pseudo_ellipse_torsionless_pcs',
+            'test_cam_pseudo_ellipse_torsionless_rdc',
+            'test_cam_rigid_pcs',
+            'test_cam_rigid_rdc',
+            'test_cam_rotor_pcs',
+            'test_cam_rotor_rdc',
+            'test_cam_rotor_2_state_pcs',
+            'test_cam_rotor_2_state_rdc',
+            'test_cam_rotor2_pcs',
+            'test_cam_rotor2_rdc'
+        ]
+
+        # Skip the blacklisted tests.
+        if skip_tests and methodName in blacklist:
+            status.skipped_tests.append([methodName, None, self._skip_type])
 
         # Missing module.
         if not dep_check.scipy_module:

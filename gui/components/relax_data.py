@@ -102,8 +102,8 @@ class Relax_data_list(Base_list):
 
         # The current frequency.
         frq = None
-        if hasattr(cdp, 'frq') and id in cdp.frq.keys():
-            frq = cdp.frq[id]
+        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq.keys():
+            frq = cdp.spectrometer_frq[id]
 
         # Launch the dialog.
         if frq == None:
@@ -324,7 +324,7 @@ class Relax_data_list(Base_list):
                 self.element.SetStringItem(i, 1, str_to_gui(table[cdp.ri_type[id]]))
 
                 # Set the frequencies.
-                self.element.SetStringItem(i, 2, float_to_gui(cdp.frq[id]))
+                self.element.SetStringItem(i, 2, float_to_gui(cdp.spectrometer_frq[id]))
 
 
     def view_metadata(self, event=None):

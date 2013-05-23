@@ -26,10 +26,10 @@ self._execute_uf(uf_name='pcs.read', align_id='Dy', file='LE_dna', dir=data_path
 self._execute_uf(uf_name='pcs.display', align_id='Dy')
 
 # The temperature.
-self._execute_uf(uf_name='temperature', id='Dy', temp=298)
+self._execute_uf(uf_name='spectrometer.temperature', id='Dy', temp=298)
 
 # The frequency.
-self._execute_uf(uf_name='frq.set', id='Dy', frq=799.75376122 * 1e6)
+self._execute_uf(uf_name='spectrometer.frequency', id='Dy', frq=799.75376122 * 1e6)
 
 # The paramagnetic centre location.
 if ds.para_centre == 'true':

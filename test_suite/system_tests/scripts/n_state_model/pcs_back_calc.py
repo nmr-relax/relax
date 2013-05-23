@@ -27,10 +27,10 @@ align_id = tensor
 self._execute_uf(uf_name='align_tensor.init', tensor=tensor, params=(4.724/const,  11.856/const, 0, 0, 0), align_id=align_id, param_types=2)
 
 # The temperature.
-self._execute_uf(uf_name='temperature', id=align_id, temp=298)
+self._execute_uf(uf_name='spectrometer.temperature', id=align_id, temp=298)
 
 # The frequency.
-self._execute_uf(uf_name='frq.set', id=align_id, frq=900.0 * 1e6)
+self._execute_uf(uf_name='spectrometer.frequency', id=align_id, frq=900.0 * 1e6)
 
 # One state model.
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')

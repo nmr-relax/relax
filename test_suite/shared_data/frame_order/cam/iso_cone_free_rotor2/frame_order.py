@@ -60,8 +60,8 @@ class Analysis:
             pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
-            temperature(id=ln[i], temp=303)
-            frq.set(id=ln[i], frq=900e6)
+            spectrometer.temperature(id=ln[i], temp=303)
+            spectrometer.frequency(id=ln[i], frq=900e6)
 
         # Load the N-domain tensors (the full tensors).
         script('../tensors.py')

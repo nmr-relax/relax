@@ -134,8 +134,8 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     frq = []
     for ri_id in cdp.ri_ids:
         # New frequency.
-        if cdp.frq[ri_id] not in frq:
-            frq.append(cdp.frq[ri_id])
+        if cdp.spectrometer_frq[ri_id] not in frq:
+            frq.append(cdp.spectrometer_frq[ri_id])
 
     # The 'mfin' file.
     mfin = open_write_file('mfin', dir, force)
@@ -206,7 +206,7 @@ def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:
             # The frequency does not match.
-            if frq[j] != cdp.frq[ri_id]:
+            if frq[j] != cdp.spectrometer_frq[ri_id]:
                 continue
 
             # Find the corresponding R1.
@@ -751,8 +751,8 @@ def extract(dir, spin_id=None):
         # Get the Rex data.
         if 'rex' in spin.params:
             spin.rex, spin.rex_err = get_mf_data(mfout_lines, rex_pos + pos)
-            spin.rex = spin.rex / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
-            spin.rex_err = spin.rex_err / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+            spin.rex = spin.rex / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
+            spin.rex_err = spin.rex_err / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
         # Get the chi-squared data.
         if not sims:
