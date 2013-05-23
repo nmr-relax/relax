@@ -45,9 +45,11 @@ def frequency(id=None, frq=None, units='Hz'):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Set up the dictionary data structure if it doesn't exist yet.
+    # Set up the data structures if missing.
     if not hasattr(cdp, 'spectrometer_frq'):
         cdp.spectrometer_frq = {}
+        cdp.spectrometer_frq_list = []
+        cdp.spectrometer_frq_count = 0
 
     # Test the frequency has not already been set.
     if id in cdp.spectrometer_frq and cdp.spectrometer_frq[id] != frq:
@@ -73,6 +75,11 @@ def frequency(id=None, frq=None, units='Hz'):
         warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.spectrometer_frq[id]))
     if cdp.spectrometer_frq[id] > 2e9:
         warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.spectrometer_frq[id]))
+
+    # New frequency.
+    if cdp.spectrometer_frq[id] not in cdp.spectrometer_frq_list:
+        cdp.spectrometer_frq_list.append(cdp.spectrometer_frq[id])
+        cdp.spectrometer_frq_count += 1
 
 
 def get_frequencies():
