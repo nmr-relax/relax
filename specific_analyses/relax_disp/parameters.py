@@ -110,20 +110,20 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
             # Transversal relaxation rate.
             if spin.params[i] == 'r2':
                 if sim_index != None:
-                    param_vector.append(spin.r2_sim[sim_index])
-                elif spin.r2 == None:
+                    param_vector.append(spin.r2_sim[sim_index][i])
+                elif spin.r2 == [] or spin.r2[i] == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(spin.r2)
+                    param_vector.append(spin.r2[i])
 
-            # Chemical exchange contribution to 'R2'.
-            if spin.params[i] == 'rex':
+            # The pA.pB.dw**2/wH**2 parameter.
+            if spin.params[i] == 'phi_ex':
                 if sim_index != None:
-                    param_vector.append(spin.rex_sim[sim_index])
-                elif spin.rex == None:
+                    param_vector.append(spin.phi_ex_sim[sim_index])
+                elif spin.phi_ex == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(spin.rex)
+                    param_vector.append(spin.phi_ex)
 
             # Exchange rate.
             elif spin.params[i] == 'kex':
@@ -223,9 +223,9 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
             if spin.params[i] == 'r2':
                 scaling_matrix[param_index, param_index] = 10
 
-            # Chemical exchange contribution to 'R2' scaling.
-            elif spin.params[i] == 'rex':
-                scaling_matrix[param_index, param_index] = 10
+            # The pA.pB.dw**2/wH**2 parameter.
+            elif spin.params[i] == 'phi_ex':
+                scaling_matrix[param_index, param_index] = 1e18
 
             # Exchange rate scaling.
             elif spin.params[i] == 'kex':
@@ -326,21 +326,32 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
             # Reset the parameter index.
             param_index = 0
 
+            # Initialise the parameter if needed.
+            if 'r2' in spin.params:
+                if sim_index != None:
+                    spin.r2_sim[sim_index] = []
+                    for i in range(cdp.spectro_frq_count):
+                        spin.r2_sim[sim_index].append(None)
+                else:
+                    spin.r2 = []
+                    for i in range(cdp.spectro_frq_count):
+                        spin.r2.append(None)
+
             # Loop over each parameter.
             for i in range(len(spin.params)):
                 # Transversal relaxation rate.
                 if spin.params[i] == 'r2':
                     if sim_index != None:
-                        spin.r2_sim[sim_index] = param_vector[param_index]
+                        spin.r2_sim[sim_index][i] = param_vector[param_index]
                     else:
-                        spin.r2 = param_vector[param_index]
+                        spin.r2[i] = param_vector[param_index]
 
-                # Chemical exchange contribution to 'R2'.
-                if spin.params[i] == 'rex':
+                # The pA.pB.dw**2/wH**2 parameter.
+                if spin.params[i] == 'phi_ex':
                     if sim_index != None:
-                        spin.rex_sim[sim_index] = param_vector[param_index]
+                        spin.phi_ex_sim[sim_index] = param_vector[param_index]
                     else:
-                        spin.rex = param_vector[param_index]
+                        spin.phi_ex = param_vector[param_index]
 
                 # Exchange rate.
                 elif spin.params[i] == 'kex':
@@ -439,9 +450,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.0)
                 j += 1
 
-            # Relaxation rates and Rex.
-            elif search('^r', spin.params[k]):
-                # Rex, R2A >= 0.
+            # Relaxation rates and phi_ex.
+            elif spin.params[k] in ['r2a', 'phi_ex']:
+                # phi_ex, R2A >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)

@@ -90,8 +90,8 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('spin_lock_nu1', scope='spin', py_type=dict, grace_string='\\qSpin-lock field strength (Hz)\\Q')
         self.PARAMS.add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=dict, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
-        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=float, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('rex', scope='spin', default=5.0, desc='The chemical exchange contribution to R2 (sigma_ex = Rex / omega**2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N\\q (s.rad\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=list, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('phi_ex', scope='spin', default=5.0, desc='The pA.pB.dw**2 value scaled by wH (phi_ex = pA * pB * Delta_omega**2 / omega_H**2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N\\q (p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N / \\xw\\B\\sH\\N\\S2\\N)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('ka', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
@@ -131,7 +131,7 @@ class Relax_disp(API_base, API_common):
         values, errors, missing = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=fields, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
@@ -382,10 +382,10 @@ class Relax_disp(API_base, API_common):
                         lower.append(0.0)
                         upper.append(40.0)
 
-                    # Chemical exchange contribution to 'R2'.
-                    elif spin.params[i] == 'rex':
+                    # The pA.pB.dw**2/wH**2 parameter.
+                    elif spin.params[i] == 'phi_ex':
                         lower.append(0.0)
-                        upper.append(20.0)
+                        upper.append(1e-17)
 
                     # Exchange rate.
                     elif spin.params[i] == 'kex':
@@ -727,12 +727,18 @@ class Relax_disp(API_base, API_common):
         # LM63 model.
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
-            params = ['r2', 'rex', 'kex']
+            params = []
+            for i in range(cdp.spectro_frq_count):
+                params.append('r2')
+            params += ['phi_ex', 'kex']
 
         # CR72 model.
         elif model == MODEL_CR72:
             print("The Carver and Richards (1972) 2-site model for all time scales.")
-            params = ['r2', 'r2a', 'ka', 'dw']
+            params = []
+            for i in range(cdp.spectro_frq_count):
+                params.append('r2')
+            params += ['r2a', 'ka', 'dw']
 
         # Invalid model.
         else:
@@ -1056,7 +1062,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=fields, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
@@ -1217,7 +1223,7 @@ class Relax_disp(API_base, API_common):
     _table = uf_tables.add_table(label="table: dispersion curve-fit data type patterns", caption="Relaxation dispersion curve fitting data type string matching patterns.")
     _table.add_headings(["Data type", "Object name"])
     _table.add_row(["Transversal relaxation rate", "'r2'"])
-    _table.add_row(["Chemical exchange contribution to 'R2'", "'rex'"])
+    _table.add_row(["The pA.pB.dw**2/wH**2 parameter", "'phi_ex'"])
     _table.add_row(["Exchange rate", "'kex'"])
     _table.add_row(["Transversal relaxation rate for state A", "'r2a'"])
     _table.add_row(["Exchange rate from state A to state B", "'ka'"])

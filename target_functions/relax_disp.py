@@ -34,7 +34,7 @@ from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, cpmg_frqs=None, spin_lock_nu1=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -62,6 +62,8 @@ class Dispersion:
         @type errors:               numpy rank-3 float array
         @keyword missing:           The data structure indicating missing R2eff/R1rho data.  The three dimensions must correspond to those of the values argument.
         @type missing:              numpy rank-3 int array
+        @keyword frqs:              The spectrometer frequencies in Hz.
+        @type frqs:                 numpy rank-1 float array
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            numpy rank-1 float array
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
@@ -88,6 +90,7 @@ class Dispersion:
         self.values = values
         self.errors = errors
         self.missing = missing
+        self.frqs = frqs
         self.cpmg_frqs = cpmg_frqs
         self.spin_lock_nu1 = spin_lock_nu1
         self.scaling_matrix = scaling_matrix
@@ -118,6 +121,12 @@ class Dispersion:
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
 
+        # Unpack the parameter values.
+        index = self.num_frq - 1
+        R20 = params[:index+1]
+        phi_ex = params[index+1]
+        kex = params[index+2]
+
         # Initialise.
         chi2_sum = 0.0
 
@@ -125,8 +134,11 @@ class Dispersion:
         for spin_index in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
+                # Spectrometer field strength scaling.
+                phi_ex_scaled = phi_ex * self.frqs[frq_index]**2
+
                 # Back calculate the R2eff values.
-                r2eff_LM63(r20=params[0], phi_ex=params[1], kex=params[2], cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
