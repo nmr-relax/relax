@@ -87,9 +87,9 @@ class Peak_intensity_wizard(Wiz_window):
             msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
 
             # Ask about naming spins, and add the spin.name user function page.
-            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
+            if (status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES) or not status.show_gui:
                 page = uf_store['spin.name'].create_page(self, sync=True)
-                self.page_indices['read'] = self.add_page(page, proceed_on_error=False)
+                self.page_indices['name'] = self.add_page(page, proceed_on_error=False)
 
         # The spectrum.read_intensities page.
         self.page_intensity = uf_store['spectrum.read_intensities'].create_page(self, sync=True)
