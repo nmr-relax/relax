@@ -55,7 +55,7 @@ class Test_suite_runner:
         - GUI tests.
     """
 
-    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui']):
+    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui'], timing=False):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
@@ -67,6 +67,8 @@ class Test_suite_runner:
         @type from_gui:         bool
         @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
         @type categories:       list of str
+        @keyword timing:        A flag which if True will enable timing of individual tests.
+        @type timing:           bool
         """
 
         # Store the args.
@@ -79,9 +81,9 @@ class Test_suite_runner:
 
         # Set up the test runner.
         if from_gui:
-            self.runner = GuiTestRunner(stream=sys.stdout)
+            self.runner = GuiTestRunner(stream=sys.stdout, timing=timing)
         else:
-            self.runner = RelaxTestRunner(stream=sys.stdout)
+            self.runner = RelaxTestRunner(stream=sys.stdout, timing=timing)
 
 
     def run_all_tests(self):
