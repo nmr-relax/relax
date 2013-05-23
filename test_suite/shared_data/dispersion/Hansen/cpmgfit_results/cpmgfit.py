@@ -106,8 +106,6 @@ relax_disp.select_model('R2eff')
 # Calculate the R2eff values.
 calc()
 
-state.save('x')
-
 # Set up the model.
 relax_disp.select_model('LM63')
 
