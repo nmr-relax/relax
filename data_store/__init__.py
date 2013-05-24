@@ -291,8 +291,18 @@ class Relax_data_store(dict):
 
             # Convert spectrometer frequency information.
             if hasattr(dp, 'frq'):
+                # Convert to the new structure.
                 dp.spectrometer_frq = dp.frq
                 del dp.frq
+
+                # Build the new frequency list structure.
+                dp.spectrometer_frq_list = []
+                for frq in dp.spectrometer_frq.values():
+                    if frq not in dp.spectrometer_frq_list:
+                        dp.spectrometer_frq_list.append(frq)
+
+                # And finally count the elements.
+                dp.spectrometer_frq_count = len(dp.spectrometer_frq_list)
 
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
