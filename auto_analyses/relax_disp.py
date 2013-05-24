@@ -108,9 +108,8 @@ class Relax_disp:
 
         # The number of spectrometer field strengths.
         frqs = [None]
-        if hasattr(cdp, 'frq'):
-            frqs = unique_elements(cdp.frq.values())
-            frqs.sort()
+        if hasattr(cdp, 'spectrometer_frq_list'):
+            frqs = cdp.spectrometer_frq_list
 
         # Dispersion points.
         if cdp.exp_type in CPMG_EXP:
@@ -132,7 +131,7 @@ class Relax_disp:
                 for id in cdp.spectrum_ids:
                     # Check that the spectrometer frequency matches.
                     match_frq = True
-                    if frq != None and cdp.frq[id] != frq:
+                    if frq != None and cdp.spectrometer_frq[id] != frq:
                         match_frq = False
 
                     # Check that the dispersion point matches.

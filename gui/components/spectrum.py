@@ -100,8 +100,8 @@ class Spectra_list(Base_list):
 
         # The current time.
         frq = None
-        if hasattr(cdp, 'frq') and id in cdp.frq.keys():
-            frq = cdp.frq[id]
+        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq:
+            frq = cdp.spectrometer_frq[id]
 
         # Launch the dialog.
         if frq == None:
@@ -304,7 +304,7 @@ class Spectra_list(Base_list):
         """
 
         # No type info.
-        if not hasattr(cdp, 'frq') or not len(cdp.frq):
+        if not hasattr(cdp, 'spectrometer_frq') or not len(cdp.spectrometer_frq):
             return False
 
         # Append a column.
@@ -313,11 +313,11 @@ class Spectra_list(Base_list):
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # No value.
-            if cdp.spectrum_ids[i] not in cdp.frq.keys():
+            if cdp.spectrum_ids[i] not in cdp.spectrometer_frq:
                 continue
 
             # Set the value (in MHz).
-            self.element.SetStringItem(i, index, float_to_gui(cdp.frq[cdp.spectrum_ids[i]]/1e6))
+            self.element.SetStringItem(i, index, float_to_gui(cdp.spectrometer_frq[cdp.spectrum_ids[i]]/1e6))
 
         # Successful.
         return True
