@@ -71,7 +71,8 @@ uf.add_keyarg(
     desc_short = "file name",
     desc = "The name of the file to read results from.",
     wiz_filesel_wildcard = "relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
 )
 uf.add_keyarg(
     name = "dir",

@@ -76,8 +76,11 @@ uf.add_keyarg(
     name = "grace_exe",
     default = "xmgrace",
     py_type = "str",
+    arg_type = "file sel",
     desc_short = "Grace executable file",
-    desc = "The Grace executable file."
+    desc = "The Grace executable file.",
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
 )
 # Description.
 uf.desc.append(Desc_container())

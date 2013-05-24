@@ -56,7 +56,8 @@ uf.add_keyarg(
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, of a saved program state.",
     wiz_filesel_wildcard = "relax state files (*.bz2)|*.bz2|relax state files (*.gz)|*.gz|relax state files (*.*)|*.*",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
 )
 uf.add_keyarg(
     name = "dir",

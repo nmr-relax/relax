@@ -22,6 +22,13 @@
 # Module docstring.
 """The dasha user function definitions for controlling the Dasha model-free software."""
 
+# Python module imports.
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_OPEN
+else:
+    FD_OPEN = -1
+
 # relax module imports.
 from pipe_control import dasha
 from graphics import WIZARD_IMAGE_PATH
@@ -105,8 +112,11 @@ uf.add_keyarg(
     name = "binary",
     default = "dasha",
     py_type = "str",
+    arg_type = "file sel",
     desc_short = "Dasha executable file",
-    desc = "The name of the executable Dasha program file."
+    desc = "The name of the executable Dasha program file.",
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
 )
 # Description.
 uf.desc.append(Desc_container())
