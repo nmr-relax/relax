@@ -82,15 +82,19 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
         # The spin input file name.
-        file_name = dir + sep + spin_file_name(spin_id=spin_id)
-        if not access(file_name, F_OK):
-            raise RelaxFileError("spin input", file_name)
+        file_in = dir + sep + spin_file_name(spin_id=spin_id)
+        if not access(file_in, F_OK):
+            raise RelaxFileError("spin input", file_in)
+
+        # The spin output file name.
+        file_out = dir + sep + spin_file_name(spin_id=spin_id, output=True)
 
         # Test the binary file string corresponds to a valid executable.
         test_binary(binary)
 
         # Execute CPMGFit.
-        cmd = "%s -xmgr -f %s\n" % (binary, file_name)
+        cmd = "%s -grid -xmgr -f %s | tee %s\n" % (binary, file_in, file_out)
+        print("\n\n%s" % cmd)
         pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Close the pipe.
@@ -239,16 +243,25 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
     return file_name
 
 
-def spin_file_name(spin_id=None):
+def spin_file_name(spin_id=None, output=False):
     """Generate the unique file name for the given spin ID.
 
     @keyword spin_id:   The spin ID string.
     @type spin_id:      str
+    @keyword output:    A flag which if True will cause the CPMGFit output rather than input name to be returned.
     @return:            The file name.
     @rtype:             str
     """
 
-    return "spin_%s.in" % spin_id
+    # Construct the name.
+    name = "spin_%s." % spin_id
+    if output:
+        name += "out"
+    else:
+        name += "in"
+
+    # Return the file name.
+    return name
 
 
 def translate_model():

@@ -157,7 +157,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("CPMGFit will be executed once per spin as:")
-uf.desc[-1].add_prompt("$ cpmgfit -xmgr -f dir/spin_x.in")
+uf.desc[-1].add_prompt("$ cpmgfit -grid -xmgr -f dir/spin_x.in | tee dir/spin_x.out")
 uf.desc[-1].add_paragraph("where x is replaced by each spin ID string.  If you would like to use a different CPMGFit executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, be sure to include the full path in front of the binary file name so it can be found.")
 uf.backend = cpmgfit_execute
 uf.menu_text = "&cpmgfit_execute"
