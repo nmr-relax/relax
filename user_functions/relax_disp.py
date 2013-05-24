@@ -151,7 +151,8 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -192,7 +193,8 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
 )
 uf.add_keyarg(
     name = "spin_id",
