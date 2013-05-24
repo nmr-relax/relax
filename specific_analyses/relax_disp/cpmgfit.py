@@ -190,12 +190,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
     file.write("title %s\n" % spin_id)
 
     # The proton frequencies.
-    frq = get_frequencies()
-
-    # Loop over each frequency.
-    for i in range(len(frq)):
-        # Convert to Tesla.
-        frq[i] = frq[i] * 2.0 * pi / g1H
+    frq = get_frequencies(units='T')
 
     # The frequency info.
     file.write("fields %s" % len(frq))
@@ -234,7 +229,6 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
             continue
 
         # Tesla units.
-        print frq
         B0 = frq * 2.0 * pi / g1H
 
         # Write out the data and error.

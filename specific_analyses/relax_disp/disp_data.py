@@ -157,8 +157,8 @@ def find_intensity_keys(frq=None, point=None, time=None):
     for id in cdp.spectrum_ids:
         # The spectrometer frequency.
         frq2 = None
-        if hasattr(cdp, 'frq'):
-            frq2 = cdp.frq[id]
+        if hasattr(cdp, 'spectrometer_frq'):
+            frq2 = cdp.spectrometer_frq[id]
 
         if frq2 == frq and disp_data[id] == point and cdp.relax_times[id] == time:
             ids.append(id)
@@ -178,16 +178,8 @@ def loop_frq():
     @rtype:     float
     """
 
-    # The number of spectrometer field strengths.
-    field_count = 1
-    fields = [None]
-    if hasattr(cdp, 'frq'):
-        field_count = count_unique_elements(cdp.frq.values())
-        fields = unique_elements(cdp.frq.values())
-        fields.sort()
-
     # Yield each unique spectrometer field strength.
-    for field in fields:
+    for field in cdp.spectrometer_frq_list:
         yield field
 
 
@@ -370,17 +362,8 @@ def return_index_from_frq(value):
     @rtype:         int
     """
 
-    # Initialise.
-    index = 0
-
-    # Find the index if the frequency has been set.
-    if hasattr(cdp, 'frq'):
-        fields = unique_elements(cdp.frq.values())
-        fields.sort()
-        index = fields.index(value)
-
     # Return the index.
-    return index
+    return cdp.spectrometer_frq_list.index(value)
 
 
 def return_index_from_disp_point_key(key):
@@ -597,15 +580,11 @@ def return_value_from_frq_index(frq_index=None):
     """
 
     # No data.
-    if not hasattr(cdp, 'frq'):
+    if not hasattr(cdp, 'spectrometer_frq'):
         return None
 
-    # The number of spectrometer field strengths.
-    fields = unique_elements(cdp.frq.values())
-    fields.sort()
-
     # Return the field.
-    return fields[frq_index]
+    return cdp.spectrometer_frq[frq_index]
 
 
 def spin_lock_field(spectrum_id=None, field=None):

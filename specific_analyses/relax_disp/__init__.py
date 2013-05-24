@@ -120,19 +120,11 @@ class Relax_disp(API_base, API_common):
         # Create a scaling matrix.
         scaling_matrix = assemble_scaling_matrix(spins=[spin], scaling=False)
 
-        # The number of spectrometer field strengths.
-        field_count = 1
-        fields = []
-        if hasattr(cdp, 'frq'):
-            fields = unique_elements(cdp.frq.values())
-            fields.sort()
-            field_count = len(fields)
-
         # Initialise the data structures for the target function.
-        values, errors, missing = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+        values, errors, missing = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=fields, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=cdp.spectrometer_frq_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=cdp.spectrometer_frq_list, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
@@ -1014,14 +1006,6 @@ class Relax_disp(API_base, API_common):
             # Exit the method.
             return
 
-        # The number of spectrometer field strengths.
-        field_count = 1
-        fields = []
-        if hasattr(cdp, 'frq'):
-            fields = unique_elements(cdp.frq.values())
-            fields.sort()
-            field_count = len(fields)
-
         # The number of time points for the exponential curves (if present).
         num_time_pts = 1
         if hasattr(cdp, 'num_time_pts'):
@@ -1030,7 +1014,7 @@ class Relax_disp(API_base, API_common):
         # Loop over the spin blocks.
         for spins, spin_ids in self.model_loop():
             # The R2eff/R1rho data.
-            values, errors, missing = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
+            values, errors, missing = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
 
             # Create the initial parameter vector.
             param_vector = assemble_param_vector(spins=spins)
@@ -1063,7 +1047,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=fields, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=cdp.spectrometer_frq_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=cdp.spectrometer_frq_list, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
