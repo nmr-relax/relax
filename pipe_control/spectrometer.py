@@ -166,7 +166,7 @@ def get_frequencies(units='Hz'):
             frq.append(value * 1e-6)
 
         # Tesla.
-        elif unit == 'T':
+        elif units == 'T':
             frq.append(value * 2.0 * pi / g1H)
 
         # Unknown units.
