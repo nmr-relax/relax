@@ -33,7 +33,50 @@ from lib.warnings import RelaxWarning
 from pipe_control import pipes
 
 
-def frequency(id=None, frq=None, units='Hz'):
+def get_frequencies(units='Hz'):
+    """Return a list of all the current spectrometer frequencies.
+
+    The returned values can be changed with the units argument which can have the following values:
+
+        - 'Hz' will return the proton frequency (wH),
+        - 'MHz' will return the proton frequency in megahertz,
+        - 'T' will return the B0 field in Tesla.
+
+
+    @keyword units: The magnetic field units to return.  This can be one of 'Hz', 'MHz', or 'T'.
+    @type units:    str
+    @return:        The frequency list for the current data pipe.
+    @rtype:         list of float
+    """
+
+    # No frequency data.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        return []
+
+    # Convert the values.
+    frq = []
+    for value in cdp.spectrometer_frq_list:
+        # Hertz.
+        if units == 'Hz':
+            frq.append(value)
+
+        # MHz.
+        elif units == 'MHz':
+            frq.append(value * 1e-6)
+
+        # Tesla.
+        elif unit == 'T':
+            frq.append(value * 2.0 * pi / g1H)
+
+        # Unknown units.
+        else:
+            raise RelaxError("The units of '%s' should be one of 'Hz', 'MHz', or 'T'.")
+
+    # Return the frqs.
+    return frq
+
+
+def set_frequency(id=None, frq=None, units='Hz'):
     """Set the spectrometer frequency of the experiment.
 
     @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
@@ -84,50 +127,7 @@ def frequency(id=None, frq=None, units='Hz'):
         cdp.spectrometer_frq_count += 1
 
 
-def get_frequencies(units='Hz'):
-    """Return a list of all the current spectrometer frequencies.
-
-    The returned values can be changed with the units argument which can have the following values:
-
-        - 'Hz' will return the proton frequency (wH),
-        - 'MHz' will return the proton frequency in megahertz,
-        - 'T' will return the B0 field in Tesla.
-
-
-    @keyword units: The magnetic field units to return.  This can be one of 'Hz', 'MHz', or 'T'.
-    @type units:    str
-    @return:        The frequency list for the current data pipe.
-    @rtype:         list of float
-    """
-
-    # No frequency data.
-    if not hasattr(cdp, 'spectrometer_frq'):
-        return []
-
-    # Convert the values.
-    frq = []
-    for value in cdp.spectrometer_frq_list:
-        # Hertz.
-        if units == 'Hz':
-            frq.append(value)
-
-        # MHz.
-        elif units == 'MHz':
-            frq.append(value * 1e-6)
-
-        # Tesla.
-        elif unit == 'T':
-            frq.append(value * 2.0 * pi / g1H)
-
-        # Unknown units.
-        else:
-            raise RelaxError("The units of '%s' should be one of 'Hz', 'MHz', or 'T'.")
-
-    # Return the frqs.
-    return frq
-
-
-def temperature(id=None, temp=None):
+def set_temperature(id=None, temp=None):
     """Set the experimental temperature.
 
     @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
