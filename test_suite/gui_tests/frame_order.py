@@ -24,6 +24,7 @@
 
 # relax module imports.
 import dep_check
+from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 from test_suite import system_tests
 
@@ -36,6 +37,15 @@ class Frame_order(GuiTestCase, system_tests.frame_order.Frame_order):
 
         # Execute the base __init__ methods.
         super(Frame_order, self).__init__(methodName)
+
+        # Tests not to skip.
+        whitelist = [
+            'test_cam_iso_cone'
+        ]
+
+        # Skip the non-whitelisted tests.
+        if methodName not in whitelist:
+            status.skipped_tests.append([methodName, None, self._skip_type])
 
 
     def setUp(self):
