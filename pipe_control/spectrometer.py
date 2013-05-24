@@ -23,12 +23,14 @@
 """Module for manipulating the spectrometer experimental information."""
 
 # Python module imports.
+from math import pi
 from warnings import warn
 
 # relax module imports.
-from pipe_control import pipes
 from lib.errors import RelaxError
+from lib.physical_constants import g1H
 from lib.warnings import RelaxWarning
+from pipe_control import pipes
 
 
 def frequency(id=None, frq=None, units='Hz'):
@@ -82,25 +84,44 @@ def frequency(id=None, frq=None, units='Hz'):
         cdp.spectrometer_frq_count += 1
 
 
-def get_frequencies():
+def get_frequencies(units='Hz'):
     """Return a list of all the current spectrometer frequencies.
 
-    @return:    The frequency list for the current data pipe.
-    @rtype:     list of float
+    The returned values can be changed with the units argument which can have the following values:
+
+        - 'Hz' will return the proton frequency (wH),
+        - 'MHz' will return the proton frequency in megahertz,
+        - 'T' will return the B0 field in Tesla.
+
+
+    @keyword units: The magnetic field units to return.  This can be one of 'Hz', 'MHz', or 'T'.
+    @type units:    str
+    @return:        The frequency list for the current data pipe.
+    @rtype:         list of float
     """
 
     # No frequency data.
     if not hasattr(cdp, 'spectrometer_frq'):
         return []
 
-    # The frequency values.
-    values = cdp.spectrometer_frq.values()
-
-    # Build a list of the unique frequencies.
+    # Convert the values.
     frq = []
-    for value in values:
-        if value not in frq:
+    for value in cdp.spectrometer_frq_list:
+        # Hertz.
+        if units == 'Hz':
             frq.append(value)
+
+        # MHz.
+        elif units == 'MHz':
+            frq.append(value * 1e-6)
+
+        # Tesla.
+        elif unit == 'T':
+            frq.append(value * 2.0 * pi / g1H)
+
+        # Unknown units.
+        else:
+            raise RelaxError("The units of '%s' should be one of 'Hz', 'MHz', or 'T'.")
 
     # Return the frqs.
     return frq
