@@ -716,6 +716,11 @@ class Uf_page(Wiz_page):
                             else:
                                 text += "    %s:  %s\n" % (element[j][0], element[j][1])
 
+                    # Format prompt items.
+                    elif type == 'prompt':
+                        for j in range(len(element)):
+                            text += "%s\n" % element[j]
+
                     # The text object.
                     text_obj = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)
 
@@ -724,7 +729,7 @@ class Uf_page(Wiz_page):
                         text_obj.SetFont(font.subtitle)
                     elif type == 'paragraph':
                         text_obj.SetFont(font.normal)
-                    elif type in ['table', 'verbatim']:
+                    elif type in ['table', 'verbatim', 'prompt']:
                         text_obj.SetFont(font.modern_small)
                     else:
                         text_obj.SetFont(font.normal)
