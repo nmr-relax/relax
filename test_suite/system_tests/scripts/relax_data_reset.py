@@ -29,10 +29,10 @@ self._execute_uf(uf_name='relax_data.read', ri_id='R2_500',  ri_type='R2',  frq=
 self._execute_uf(uf_name='relax_data.read', ri_id='NOE_500', ri_type='NOE', frq=500*1e6, file='noe.500.out', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
 # Reset a few frequencies.
-self._execute_uf(uf_name='relax_data.frq', ri_id="R1_900", frq=900100000)
-self._execute_uf(uf_name='relax_data.frq', ri_id="R2_900", frq=900100000)
-self._execute_uf(uf_name='relax_data.frq', ri_id="NOE_900", frq=900100000)
-self._execute_uf(uf_name='relax_data.frq', ri_id="R1_500", frq=400100000)
+self._execute_uf(uf_name='spectrometer.frequency', id="R1_900", frq=900100000)
+self._execute_uf(uf_name='spectrometer.frequency', id="R2_900", frq=900100000)
+self._execute_uf(uf_name='spectrometer.frequency', id="NOE_900", frq=900100000)
+self._execute_uf(uf_name='spectrometer.frequency', id="R1_500", frq=400100000)
 
 # Reset a few types.
 self._execute_uf(uf_name='relax_data.type', ri_id="NOE_900", ri_type="R2")

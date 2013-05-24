@@ -33,6 +33,7 @@ import pipe_control
 from pipe_control import dipole_pair
 from pipe_control.interatomic import return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.spectrometer import set_frequency
 from pipe_control import pipes
 from lib.errors import RelaxError, RelaxInvalidDataError
 
@@ -549,14 +550,12 @@ class Results:
                 cdp.ri_ids = []
             if not hasattr(cdp, 'ri_type'):
                 cdp.ri_type = {}
-            if not hasattr(cdp, 'spectrometer_frq'):
-                cdp.spectrometer_frq = {}
 
             # Update the global structures if necessary.
             if ri_id not in cdp.ri_ids:
                 cdp.ri_ids.append(ri_id)
                 cdp.ri_type[ri_id] = ri_labels[i]
-                cdp.spectrometer_frq[ri_id] = frq[remap_table[i]]
+                set_frequency(id=ri_id, frq=frq[remap_table[i]])
 
             # Simulation data.
             if sim:

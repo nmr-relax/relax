@@ -38,13 +38,13 @@ uf_class.gui_icon = "relax.spectrometer"
 
 # The spectrometer.frequency user function.
 uf = uf_info.add_uf('spectrometer.frequency')
-uf.title = "Set the spectrometer frequency of the experiment."
-uf.title_short = "Spectrometer frequency setting."
+uf.title = "Set the spectrometer proton frequency of the experiment."
+uf.title_short = "Spectrometer frequency setup."
 uf.add_keyarg(
     name = "id",
     py_type = "str",
     desc_short = "experiment ID",
-    desc = "The experiment identification string.",
+    desc = "The experiment identification string to set the frequency of.",
     wiz_element_type = 'combo',
     wiz_combo_iter = spectrum.get_ids
 )
@@ -52,7 +52,7 @@ uf.add_keyarg(
     name = "frq",
     py_type = "num",
     desc_short = "spectrometer frequency",
-    desc = "The spectrometer frequency in Hertz."
+    desc = "The spectrometer frequency.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
 )
 uf.add_keyarg(
     name = "units",

@@ -23,14 +23,115 @@
 """Module for manipulating the spectrometer experimental information."""
 
 # Python module imports.
-from math import pi
+from math import modf, pi
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxNoFrqError
 from lib.physical_constants import g1H
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
+
+
+def copy_frequencies(pipe_from=None, pipe_to=None, id=None):
+    """Copy the frequency information from one data pipe to another.
+
+    @keyword pipe_from: The data pipe to copy the frequency information from.  This defaults to the current data pipe.
+    @type pipe_from:    str
+    @keyword pipe_to:   The data pipe to copy the frequency information to.  This defaults to the current data pipe.
+    @type pipe_to:      str
+    @param id:          The experiment ID string.
+    @type id:           str
+    """
+
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
+    elif pipe_from == None:
+        pipe_from = pipes.cdp_name()
+    elif pipe_to == None:
+        pipe_to = pipes.cdp_name()
+
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
+
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
+
+    # Test if the pipe_from pipe has frequency data.
+    if not hasattr(dp_from, 'spectrometer_frq'):
+        raise RelaxNoFrqError(pipe_from)
+    elif id not in dp_from.spectrometer_frq:
+        raise RelaxNoFrqError(pipe_from, id=id)
+
+    # Set up the data structures if missing.
+    if not hasattr(dp_to, 'spectrometer_frq'):
+        dp_to.spectrometer_frq = {}
+        dp_to.spectrometer_frq_list = []
+        dp_to.spectrometer_frq_count = 0
+
+    # Copy the frequency.
+    dp_to.spectrometer_frq[id] = dp_from.spectrometer_frq[id]
+
+    # New frequency.
+    if dp_to.spectrometer_frq[id] not in dp_to.spectrometer_frq_list:
+        dp_to.spectrometer_frq_list.append(dp_to.spectrometer_frq[id])
+        dp_to.spectrometer_frq_count += 1
+
+
+def delete_frequencies(id=None):
+    """Delete the spectrometer frequency corresponding to the experiment ID.
+
+    @keyword id:    The experiment ID string.
+    @type id:       str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if data exists.
+    if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq:
+        raise RelaxNoFrqError(id)
+
+    # Delete the frequency.
+    frq = cdp.spectrometer_frq[id]
+    del cdp.spectrometer_frq[id]
+
+    # Update the structures as needed.
+    if frq in cdp.spectrometer_frq_list and frq not in cdp.spectrometer_frq.values():
+        cdp.spectrometer_frq_list.pop(cdp.spectrometer_frq_list.index(frq))
+    cdp.spectrometer_frq_count = len(cdp.spectrometer_frq_list)
+
+    # Cleanup.
+    if len(cdp.spectrometer_frq) == 0:
+        del cdp.spectrometer_frq
+        del cdp.spectrometer_frq_list
+        del cdp.spectrometer_frq_count
+
+
+def frequency_checks(frq):
+    """Perform a number of checks on the given proton frequency.
+
+    @param frq:     The proton frequency value in Hertz.
+    @type frq:      float or None
+    """
+
+    # No frequency given.
+    if frq == None:
+        return
+
+    # Make sure the precise value has been supplied.
+    frac, integer = modf(frq / 1e6)
+    if frac == 0.0 or frac > 0.99999:
+        warn(RelaxWarning("The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."))
+
+    # Check that the frequency value is reasonable.
+    if frq < 1e8:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % frq))
+    if frq > 2e9:
+        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % frq))
 
 
 def get_frequencies(units='Hz'):
@@ -76,10 +177,22 @@ def get_frequencies(units='Hz'):
     return frq
 
 
+def loop_frequencies():
+    """Generator function for looping over the spectrometer frequencies.
+
+    @return:    The frequency.
+    @rtype:     float
+    """
+
+    # Loop over the frequencies.
+    for frq in cdp.spectrometer_frq_list:
+        yield frq
+
+
 def set_frequency(id=None, frq=None, units='Hz'):
     """Set the spectrometer frequency of the experiment.
 
-    @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
+    @keyword id:    The experiment ID string (allowing for multiple experiments per data pipe).
     @type id:       str
     @keyword frq:   The spectrometer frequency in Hertz.
     @type frq:      float
@@ -96,10 +209,6 @@ def set_frequency(id=None, frq=None, units='Hz'):
         cdp.spectrometer_frq_list = []
         cdp.spectrometer_frq_count = 0
 
-    # Test the frequency has not already been set.
-    if id in cdp.spectrometer_frq and cdp.spectrometer_frq[id] != frq:
-        raise RelaxError("The frequency for the experiment '%s' has already been set to %s Hz." % (id, cdp.spectrometer_frq[id]))
-
     # Unit conversion.
     if units == 'Hz':
         conv = 1.0
@@ -115,11 +224,8 @@ def set_frequency(id=None, frq=None, units='Hz'):
     # Set the frequency.
     cdp.spectrometer_frq[id] = frq * conv
 
-    # Warnings.
-    if cdp.spectrometer_frq[id] < 1e8:
-        warn(RelaxWarning("The proton frequency of %s Hz appears to be too low." % cdp.spectrometer_frq[id]))
-    if cdp.spectrometer_frq[id] > 2e9:
-        warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % cdp.spectrometer_frq[id]))
+    # Some checks.
+    frequency_checks(cdp.spectrometer_frq[id])
 
     # New frequency.
     if cdp.spectrometer_frq[id] not in cdp.spectrometer_frq_list:
@@ -130,9 +236,9 @@ def set_frequency(id=None, frq=None, units='Hz'):
 def set_temperature(id=None, temp=None):
     """Set the experimental temperature.
 
-    @keyword id:    The experimental identification string (allowing for multiple experiments per data pipe).
+    @keyword id:    The experiment ID string (allowing for multiple experiments per data pipe).
     @type id:       str
-    @keyword temp:  The temperature in kelvin.
+    @keyword temp:  The temperature in Kelvin.
     @type temp:     float
     """
 

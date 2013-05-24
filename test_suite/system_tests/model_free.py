@@ -202,6 +202,8 @@ class Mf(SystemTestCase):
         """Check if the contents of 2 objects are the same."""
 
         # The names are the same.
+        print("dir(obj1):  %s" % dir(obj1))
+        print("dir(obj2):  %s" % dir(obj2))
         self.assertEqual(dir(obj1), dir(obj2))
 
         # Loop over the objects in the base objects.
@@ -3005,19 +3007,19 @@ class Mf(SystemTestCase):
 
         # Read the results file for Python 3.2+.
         if sys.version_info[0] >= 3 and sys.version_info[1] >= 2:
-            file = open_read_file(file_name='final_results_trunc_2.1_py3', dir=path)
+            file = open_read_file(file_name='final_results_trunc_3.0', dir=path)
 
         # Read the results file for Python 3.1.
         elif sys.version_info[0] >= 3 and sys.version_info[1] == 1:
-            file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
+            file = open_read_file(file_name='final_results_trunc_3.0_oldxml', dir=path)
 
         # Read the results file for Python 2.7.3+ (excluding Python 3).
         elif dep_check.xml_type == 'internal' and sys.version_info[0] >= 2 and sys.version_info[1] >= 7 and sys.version_info[2] >= 3:
-            file = open_read_file(file_name='final_results_trunc_1.3_v2', dir=path)
+            file = open_read_file(file_name='final_results_trunc_3.0', dir=path)
 
         # Read the results file for pre Python 2.7.3 versions.
         else:
-            file = open_read_file(file_name='final_results_trunc_1.3_pre_py2.7.3_v2', dir=path)
+            file = open_read_file(file_name='final_results_trunc_3.0_oldxml', dir=path)
 
         # Extract the data, then close the results file.
         true_lines = file.readlines()

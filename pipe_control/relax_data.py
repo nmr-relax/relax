@@ -24,7 +24,6 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import modf
 from numpy import array, float64, int32, ones, zeros
 import string
 import sys
@@ -37,6 +36,7 @@ from pipe_control import bmrb, dipole_pair
 from pipe_control.interatomic import create_interatom, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from pipe_control import pipes
+from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
 from pipe_control import value
 from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
@@ -80,11 +80,9 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
     # Frequency checks.
-    frq_checks(frq)
+    frequency_checks(frq)
 
     # Initialise the global data for the current pipe if necessary.
-    if not hasattr(cdp, 'spectrometer_frq'):
-        cdp.spectrometer_frq = {}
     if not hasattr(cdp, 'ri_type'):
         cdp.ri_type = {}
     if not hasattr(cdp, 'ri_ids'):
@@ -94,7 +92,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     if ri_id and ri_id not in cdp.ri_ids:
         cdp.ri_ids.append(ri_id)
         cdp.ri_type[ri_id] = ri_type
-        cdp.spectrometer_frq[ri_id] = frq
+        set_frequency(id=ri_id, frq=frq)
 
     # Specific Ri back calculate function setup.
     back_calculate = specific_analyses.setup.get_specific_fn('back_calc_ri', pipes.get_type())
@@ -387,7 +385,7 @@ def bmrb_write(star):
 
         # Spectrometer info.
         frq_num = 1
-        for frq in frq_loop():
+        for frq in loop_frequencies():
             if frq == cdp.spectrometer_frq[ri_id]:
                 break
             frq_num += 1
@@ -396,7 +394,7 @@ def bmrb_write(star):
 
     # Add the spectrometer info.
     num = 1
-    for frq in frq_loop():
+    for frq in loop_frequencies():
         star.nmr_spectrometer.add(name="$spectrometer_%s" % num, manufacturer=None, model=None, frq=int(frq/1e6))
         num += 1
 
@@ -454,8 +452,6 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
         dp_to.ri_ids = []
     if not hasattr(dp_to, 'ri_type'):
         dp_to.ri_type = {}
-    if not hasattr(dp_to, 'spectrometer_frq'):
-        dp_to.spectrometer_frq = {}
 
     # Loop over the Rx IDs.
     for ri_id in ri_ids:
@@ -466,7 +462,9 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
         # Copy the global data.
         dp_to.ri_ids.append(ri_id)
         dp_to.ri_type[ri_id] = dp_from.ri_type[ri_id]
-        dp_to.spectrometer_frq[ri_id] = dp_from.spectrometer_frq[ri_id]
+
+        # Copy the frequency information.
+        copy_frequencies(pipe_from=pipe_from, pipe_to=pipe_to, id=ri_id)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -532,14 +530,11 @@ def delete(ri_id=None):
 
     # Pop the ID, and remove it from the frequency and type lists.
     cdp.ri_ids.pop(cdp.ri_ids.index(ri_id))
-    del cdp.spectrometer_frq[ri_id]
     del cdp.ri_type[ri_id]
 
     # Prune empty structures.
     if len(cdp.ri_ids) == 0:
         del cdp.ri_ids
-    if len(cdp.spectrometer_frq) == 0:
-        del cdp.spectrometer_frq
     if len(cdp.ri_type) == 0:
         del cdp.ri_type
 
@@ -571,6 +566,9 @@ def delete(ri_id=None):
         if len(cdp.exp_info.peak_intensity_type) == 0:
             del cdp.exp_info.peak_intensity_type
 
+    # Delete the frequency information.
+    delete_frequencies(id=ri_id)
+
 
 def display(ri_id=None):
     """Display relaxation data corresponding to the ID.
@@ -592,79 +590,6 @@ def display(ri_id=None):
 
     # Print the data.
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value, return_data_desc=return_data_desc)
-
-
-def frq(ri_id=None, frq=None):
-    """Set or reset the frequency associated with the ID.
-
-    @param ri_id:   The relaxation data ID string.
-    @type ri_id:    str
-    @param frq:     The spectrometer proton frequency in Hz.
-    @type frq:      float
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test if data exists.
-    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
-        raise RelaxNoRiError(ri_id)
-
-    # Frequency checks.
-    frq_checks(frq)
-
-    # Initialise if needed.
-    if not hasattr(cdp, 'spectrometer_frq'):
-        cdp.spectrometer_frq = {}
-
-    # Set the value.
-    cdp.spectrometer_frq[ri_id] = frq
-
-
-def frq_checks(frq):
-    """Perform a number of checks on the given frequency.
-
-    @param frq:     The proton frequency value.
-    @type frq:      float or None
-    """
-
-    # No frequency given.
-    if frq == None:
-        return
-
-    # Make sure the precise value has been supplied.
-    frac, integer = modf(frq / 1e6)
-    if frac == 0.0 or frac > 0.99999:
-        warn(RelaxWarning("The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."))
-
-    # Check that Hz have been supplied.
-    if frq < 1e6:
-        warn(RelaxWarning("The proton frequency of %s should be in Hz, but it seems to be in MHz." % frq))
-
-
-def frq_loop():
-    """Generator function for returning each unique frequency.
-
-    @return:    The frequency.
-    @rtype:     float
-    """
-
-    # Init.
-    frq = []
-
-    # Loop over the Rx data.
-    for ri_id in cdp.ri_ids:
-        # New frequency.
-        if cdp.spectrometer_frq[ri_id] not in frq:
-            # Add the frequency.
-            frq.append(cdp.spectrometer_frq[ri_id])
-
-            # Yield the value.
-            yield cdp.spectrometer_frq[ri_id]
 
 
 def get_data_names(global_flag=False, sim_names=False):
@@ -734,31 +659,6 @@ def get_ids():
 
     # The relaxation data IDs.
     return cdp.ri_ids
-
-
-def num_frq():
-    """Determine the number of unique frequencies.
-
-    @return:    The number of unique frequencies.
-    @rtype:     int
-    """
-
-    # Init.
-    frq = []
-    count = 0
-
-    # Loop over the Rx data.
-    for ri_id in cdp.ri_ids:
-        # New frequency.
-        if cdp.spectrometer_frq[ri_id] not in frq:
-            # Add the frequency.
-            frq.append(cdp.spectrometer_frq[ri_id])
-
-            # Increment the counter.
-            count += 1
-
-    # Return the counter.
-    return count
 
 
 def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, spin_id=None, gen_seq=False, verbose=True):
@@ -834,17 +734,17 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             spin_ids.append(generate_spin_id_unique(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
-    if not hasattr(cdp, 'spectrometer_frq'):
-        cdp.spectrometer_frq = {}
     if not hasattr(cdp, 'ri_type'):
         cdp.ri_type = {}
     if not hasattr(cdp, 'ri_ids'):
         cdp.ri_ids = []
 
+    # Set the spectrometer frequency.
+    set_frequency(id=ri_id, frq=frq)
+
     # Update the global data.
     cdp.ri_ids.append(ri_id)
     cdp.ri_type[ri_id] = ri_type
-    cdp.spectrometer_frq[ri_id] = frq
 
     # The selection object.
     select_obj = None
@@ -1004,7 +904,7 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
     # Frequency checks.
-    frq_checks(frq)
+    frequency_checks(frq)
 
     # Loop over the file data to create the data structures for packing.
     values = []

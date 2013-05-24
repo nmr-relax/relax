@@ -87,31 +87,6 @@ class Relax_data_list(Base_list):
         uf_store['relax_data.display'](ri_id=id)
 
 
-    def action_relax_data_frq(self, event):
-        """Launch the relax_data.frq user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The current selection.
-        item = self.element.GetFirstSelected()
-
-        # The spectrum ID.
-        id = gui_to_str(self.element.GetItemText(item))
-
-        # The current frequency.
-        frq = None
-        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq.keys():
-            frq = cdp.spectrometer_frq[id]
-
-        # Launch the dialog.
-        if frq == None:
-            uf_store['relax_data.frq'](ri_id=id)
-        else:
-            uf_store['relax_data.frq'](ri_id=id, frq=frq)
-
-
     def action_relax_data_peak_intensity_type(self, event):
         """Launch the relax_data.peak_intensity_type user function.
 
@@ -212,6 +187,31 @@ class Relax_data_list(Base_list):
             uf_store['relax_data.type'](ri_id=id, ri_type=type)
 
 
+    def action_spectrometer_frequency(self, event):
+        """Launch the spectrometer.frequency user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq.keys():
+            frq = cdp.spectrometer_frq[id]
+
+        # Launch the dialog.
+        if frq == None:
+            uf_store['spectrometer.frequency'](id=id)
+        else:
+            uf_store['spectrometer.frequency'](id=id, frq=frq)
+
+
     def setup(self):
         """Override the base variables."""
 
@@ -272,8 +272,8 @@ class Relax_data_list(Base_list):
             }, {
                 'id': wx.NewId(),
                 'text': "Set the relaxation data &frequency",
-                'icon': fetch_icon(uf_info.get_uf('relax_data.frq').gui_icon),
-                'method': self.action_relax_data_frq
+                'icon': fetch_icon(uf_info.get_uf('spectrometer.frequency').gui_icon),
+                'method': self.action_spectrometer_frequency
             }, {
                 'id': wx.NewId(),
                 'text': "Set the peak &intensity type",
