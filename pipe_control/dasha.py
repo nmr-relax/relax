@@ -37,6 +37,7 @@ import sys
 from pipe_control import angles, diffusion_tensor, pipes, relax_data, value
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
+from pipe_control.spectrometer import loop_frequencies
 from lib.errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.io import extract_data, mkdir_nofail, open_write_file, strip, test_binary
 from specific_analyses.setup import model_free_obj
@@ -166,12 +167,12 @@ def create_script(file, model_type, algor):
 
     # Number of frequencies.
     file.write("\n# Number of frequencies.\n")
-    file.write("set n_freq %s\n" % relax_data.num_frq())
+    file.write("set n_freq %s\n" % cdp.spectrometer_frq_count)
 
     # Frequency values.
     file.write("\n# Frequency values.\n")
     count = 1
-    for frq in relax_data.frq_loop():
+    for frq in loop_frequencies():
         file.write("set H1_freq %s %s\n" % (frq / 1e6, count))
         count += 1
 

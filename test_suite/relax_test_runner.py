@@ -199,8 +199,11 @@ class RelaxTestRunner(TextTestRunner):
         @type timing:           bool
         """
 
-        # Execute the base method.
-        super(RelaxTestRunner, self).__init__(stream=stream, descriptions=descriptions, verbosity=verbosity, failfast=failfast, buffer=buffer, resultclass=resultclass)
+        # Execute the base method (with different Python version compatibility).
+        if (sys.version_info[0] == 3 and sys.version_info[1] == 1) or (sys.version_info[0] == 2 and sys.version_info[1] <= 6):
+            super(RelaxTestRunner, self).__init__(stream=stream, descriptions=descriptions, verbosity=verbosity)
+        else:
+            super(RelaxTestRunner, self).__init__(stream=stream, descriptions=descriptions, verbosity=verbosity, failfast=failfast, buffer=buffer, resultclass=resultclass)
 
         # Store the flag.
         self.timing_flag = timing

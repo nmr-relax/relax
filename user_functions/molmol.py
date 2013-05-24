@@ -176,7 +176,7 @@ uf.add_keyarg(
     name = "file",
     py_type = "str",
     arg_type = "file sel",
-    desc_short = "",
+    desc_short = "Molmol macro file",
     desc = "The name of the Molmol macro file.",
     wiz_filesel_wildcard = "Molmol macro files (*.mac)|*.mac;*.MAC",
     wiz_filesel_style = FD_OPEN

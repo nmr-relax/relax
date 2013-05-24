@@ -732,6 +732,22 @@ class RelaxNoDomainError(BaseError):
 
 
 
+# Spectrometer information errors.
+##################################
+
+# No frequency information.
+class RelaxNoFrqError(BaseError):
+    def __init__(self, pipe_name=None, id=None):
+        self.text = "No spectrometer frequency information"
+        if id != None:
+            self.text += " for the '%s' experiment ID" % id
+        self.text += " is present"
+        if pipe_name != None:
+            self.text += " in the '%s' data pipe" % pipe_name
+        self.text += "."
+
+
+
 # Spectral data errors.
 #######################
 

@@ -38,13 +38,13 @@ uf_class.gui_icon = "relax.spectrometer"
 
 # The spectrometer.frequency user function.
 uf = uf_info.add_uf('spectrometer.frequency')
-uf.title = "Set the spectrometer frequency of the experiment."
-uf.title_short = "Spectrometer frequency setting."
+uf.title = "Set the spectrometer proton frequency of the experiment."
+uf.title_short = "Spectrometer frequency setup."
 uf.add_keyarg(
     name = "id",
     py_type = "str",
     desc_short = "experiment ID",
-    desc = "The experiment identification string.",
+    desc = "The experiment identification string to set the frequency of.",
     wiz_element_type = 'combo',
     wiz_combo_iter = spectrum.get_ids
 )
@@ -52,7 +52,7 @@ uf.add_keyarg(
     name = "frq",
     py_type = "num",
     desc_short = "spectrometer frequency",
-    desc = "The spectrometer frequency in Hertz."
+    desc = "The spectrometer frequency.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
 )
 uf.add_keyarg(
     name = "units",
@@ -72,7 +72,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the spectrometer frequency of a given experiment to be set.  The expected units are that of the proton resonance frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file for the exact value.")
-uf.backend = pipe_control.spectrometer.frequency
+uf.backend = pipe_control.spectrometer.set_frequency
 uf.menu_text = "&frequency"
 uf.gui_icon = "relax.frq"
 uf.wizard_size = (750, 500)
@@ -98,7 +98,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the temperature of an experiment to be set.  This value should be in Kalvin.  In certain analyses, for example those which use pseudocontact shift data, knowledge of the temperature is essential.  For the pseudocontact shift, the experiment ID string should match one of the alignment IDs.")
-uf.backend = pipe_control.spectrometer.temperature
+uf.backend = pipe_control.spectrometer.set_temperature
 uf.menu_text = "&temperature"
 uf.gui_icon = "oxygen.status.weather-clear"
 uf.wizard_size = (700, 500)

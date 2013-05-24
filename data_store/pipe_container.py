@@ -169,7 +169,7 @@ class PipeContainer(Prototype):
         del cdp.ri_labels
 
         # Set the frequencies.
-        cdp.spectrometer_frq = frq
+        cdp.frq = frq
 
 
     def from_xml(self, pipe_node, file_version=None, dir=None):
