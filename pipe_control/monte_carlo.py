@@ -171,6 +171,21 @@ def error_analysis():
                     # Calculate and store the SD.
                     sd[key] = statistics.std(values=data, skip=select_sim)
 
+            # Handle list type parameters.
+            elif isinstance(param_array[0], list):
+                # Initialise the standard deviation structure as a list.
+                sd = []
+
+                # Loop over each element.
+                for j in range(len(param_array[0])):
+                    # Create a list of the values for the current key.
+                    data = []
+                    for i in range(len(param_array)):
+                        data.append(param_array[i][j])
+
+                    # Calculate and store the SD.
+                    sd.append(statistics.std(values=data, skip=select_sim))
+
              # SD of simulation parameters with values (ie not None).
             elif param_array[0] != None:
                 sd = statistics.std(values=param_array, skip=select_sim)
