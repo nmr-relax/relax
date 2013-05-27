@@ -178,8 +178,13 @@ def loop_frq():
     @rtype:     float
     """
 
+    # Handle missing frequency data.
+    frqs = [None]
+    if hasattr(cdp, 'spectrometer_frq_list'):
+        frqs = cdp.spectrometer_frq_list
+
     # Yield each unique spectrometer field strength.
-    for field in cdp.spectrometer_frq_list:
+    for field in frqs:
         yield field
 
 
