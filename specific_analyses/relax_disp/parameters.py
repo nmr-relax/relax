@@ -330,11 +330,11 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
             if 'r2' in spin.params:
                 if sim_index != None:
                     spin.r2_sim[sim_index] = []
-                    for i in range(cdp.spectro_frq_count):
+                    for i in range(cdp.spectrometer_frq_count):
                         spin.r2_sim[sim_index].append(None)
                 else:
                     spin.r2 = []
-                    for i in range(cdp.spectro_frq_count):
+                    for i in range(cdp.spectrometer_frq_count):
                         spin.r2.append(None)
 
             # Loop over each parameter.
