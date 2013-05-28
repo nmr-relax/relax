@@ -138,7 +138,7 @@ class Dispersion:
                 phi_ex_scaled = phi_ex * self.frqs[frq_index]**2
 
                 # Back calculate the R2eff values.
-                r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
