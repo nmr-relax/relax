@@ -68,6 +68,22 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
 
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.8g %20.8g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.8g %20.8g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.8g %20.8g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
+        print("%-20s %20.8g %20.8g" % ("phi_ex (500 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2))
+        print("%-20s %20.8g %20.8g" % ("phi_ex (800 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2))
+        print("%-20s %20.8g %20.8g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.8g %20.8g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        print("%-20s %20.8g %20.8g" % ("CPMGFit Rex (500)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin71.kex))
+        print("%-20s %20.8g %20.8g" % ("CPMGFit Rex (800)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin71.kex))
+        print("%-20s %20.8g %20.8g" % ("CPMGFit tau", 2/spin70.kex, 2/spin71.kex))
+
 
     def test_hansen_cpmg_data_CR72(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 dispersion model.
