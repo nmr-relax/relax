@@ -1,0 +1,1070 @@
+
+
+
+                                  relax repository checkout rNone
+                                                None
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'r2eff_calc.py'
+----------------------------------------------------------------------------------------------------
+# Script for CPMG relaxation dispersion curve fitting using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+from data_store import Relax_data_store; ds = Relax_data_store()
+from pipe_control.mol_res_spin import spin_loop
+from status import Status; status = Status()
+
+
+# Analysis variables.
+#####################
+
+# The dispersion models.
+MODELS = ['R2eff']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 5
+
+# The number of Monte Carlo and Bootstrap simulations to be used for the error analyses.
+MC_NUM = 3
+BOOT_NUM = 1000000
+
+# The results directory.
+RESULTS_DIR = 'temp'
+
+
+# Set up the data pipe.
+#######################
+
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+
+# The path to the data files.
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+
+# Load the sequence.
+sequence.read('fake_sequence.in_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen', res_num_col=1, res_name_col=2)
+
+# Name the spins so they can be matched to the assignments.
+spin.name(name='N')
+
+# Set the relaxation dispersion experiment type.
+relax_disp.exp_type('cpmg fixed')
+
+# The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
+data = [
+    ['500_reference.in',    '500_MHz'+sep+'reference.in_trunc',           None,  500e6],
+    ['500_66.667.in',       '500_MHz'+sep+'66.667.in_trunc',           66.6666,  500e6],
+    ['500_133.33.in',       '500_MHz'+sep+'133.33.in_trunc',          133.3333,  500e6],
+    ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis_trunc',      133.3333,  500e6],
+    ['500_200.in',          '500_MHz'+sep+'200.in_trunc',             200.0000,  500e6],
+    ['500_266.67.in',       '500_MHz'+sep+'266.67.in_trunc',          266.6666,  500e6],
+    ['500_333.33.in',       '500_MHz'+sep+'333.33.in_trunc',          333.3333,  500e6],
+    ['500_400.in',          '500_MHz'+sep+'400.in_trunc',             400.0000,  500e6],
+    ['500_466.67.in',       '500_MHz'+sep+'466.67.in_trunc',          466.6666,  500e6],
+    ['500_533.33.in',       '500_MHz'+sep+'533.33.in_trunc',          533.3333,  500e6],
+    ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis_trunc',      533.3333,  500e6],
+    ['500_600.in',          '500_MHz'+sep+'600.in_trunc',             600.0000,  500e6],
+    ['500_666.67.in',       '500_MHz'+sep+'666.67.in_trunc',          666.6666,  500e6],
+    ['500_733.33.in',       '500_MHz'+sep+'733.33.in_trunc',          733.3333,  500e6],
+    ['500_800.in',          '500_MHz'+sep+'800.in_trunc',             800.0000,  500e6],
+    ['500_866.67.in',       '500_MHz'+sep+'866.67.in_trunc',          866.6666,  500e6],
+    ['500_933.33.in',       '500_MHz'+sep+'933.33.in_trunc',          933.3333,  500e6],
+    ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis_trunc',      933.3333,  500e6],
+    ['500_1000.in',         '500_MHz'+sep+'1000.in_trunc',           1000.0000,  500e6],
+    ['800_reference.in',    '800_MHz'+sep+'reference.in_trunc',           None,  800e6],
+    ['800_66.667.in',       '800_MHz'+sep+'66.667.in_trunc',           66.6666,  800e6],
+    ['800_133.33.in',       '800_MHz'+sep+'133.33.in_trunc',          133.3333,  800e6],
+    ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis_trunc',      133.3333,  800e6],
+    ['800_200.in',          '800_MHz'+sep+'200.in_trunc',             200.0000,  800e6],
+    ['800_266.67.in',       '800_MHz'+sep+'266.67.in_trunc',          266.6666,  800e6],
+    ['800_333.33.in',       '800_MHz'+sep+'333.33.in_trunc',          333.3333,  800e6],
+    ['800_400.in',          '800_MHz'+sep+'400.in_trunc',             400.0000,  800e6],
+    ['800_466.67.in',       '800_MHz'+sep+'466.67.in_trunc',          466.6666,  800e6],
+    ['800_533.33.in',       '800_MHz'+sep+'533.33.in_trunc',          533.3333,  800e6],
+    ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis_trunc',      533.3333,  800e6],
+    ['800_600.in',          '800_MHz'+sep+'600.in_trunc',             600.0000,  800e6],
+    ['800_666.67.in',       '800_MHz'+sep+'666.67.in_trunc',          666.6666,  800e6],
+    ['800_733.33.in',       '800_MHz'+sep+'733.33.in_trunc',          733.3333,  800e6],
+    ['800_800.in',          '800_MHz'+sep+'800.in_trunc',             800.0000,  800e6],
+    ['800_866.67.in',       '800_MHz'+sep+'866.67.in_trunc',          866.6666,  800e6],
+    ['800_933.33.in',       '800_MHz'+sep+'933.33.in_trunc',          933.3333,  800e6],
+    ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis_trunc',      933.3333,  800e6],
+    ['800_1000.in',         '800_MHz'+sep+'1000.in_trunc',           1000.0000,  800e6]
+]
+
+# Loop over the spectra.
+for id, file, cpmg_frq, H_frq in data:
+    # Load the peak intensities.
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+
+    # Set the relaxation dispersion CPMG frequencies.
+    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+
+    # Set the NMR field strength of the spectrum.
+    spectrometer.frequency(id=id, frq=H_frq)
+
+    # Relaxation dispersion CPMG constant time delay T (in s).
+    relax_disp.relax_time(spectrum_id=id, time=0.030)
+
+# Specify the duplicated spectra.
+spectrum.replicated(spectrum_ids=['500_133.33.in', '500_133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['500_533.33.in', '500_533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['500_933.33.in', '500_933.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_133.33.in', '800_133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
+
+# Peak intensity error analysis.
+spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+
+# Deselect unresolved spins.
+deselect.read(file='unresolved', dir=data_path+sep+'500_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
+
+
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, bootstrap_sim_num=BOOT_NUM)
+
+# Strip out all of the simulation data.
+for spin in spin_loop():
+    delattr(spin, 'r2eff_sim')
+
+# Save the program state.
+state.save('r2eff_values', force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> sequence.read(file='fake_sequence.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/fake_sequence.in_trunc' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    
+None          70         GLY         None        None         
+None          71         GLY         None        None         
+
+relax> spin.name(name='N', spin_id=None, force=False)
+
+relax> relax_disp.exp_type(exp_type='cpmg fixed')
+CPMG experiments with a fixed relaxation period.
+
+relax> spectrum.read_intensities(file='500_MHz/reference.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_reference.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/reference.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        25707.455    
+:71@N        39274.345    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_reference.in', cpmg_frq=None)
+Setting the '500_reference.in' spectrum CPMG frequency None Hz.
+
+relax> spectrometer.frequency(id='500_reference.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_reference.in', time=0.03)
+Setting the '500_reference.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/66.667.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_66.667.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/66.667.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        15885.628    
+:71@N        31792.844    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_66.667.in', cpmg_frq=66.6666)
+Setting the '500_66.667.in' spectrum CPMG frequency 66.6666 Hz.
+
+relax> spectrometer.frequency(id='500_66.667.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_66.667.in', time=0.03)
+Setting the '500_66.667.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/133.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_133.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        16627.668    
+:71@N        31972.777    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in', cpmg_frq=133.3333)
+Setting the '500_133.33.in' spectrum CPMG frequency 133.3333 Hz.
+
+relax> spectrometer.frequency(id='500_133.33.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_133.33.in', time=0.03)
+Setting the '500_133.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/133.33.in.bis_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_133.33.in.bis', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in.bis_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        16276.208    
+:71@N        32117.182    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in.bis', cpmg_frq=133.3333)
+Setting the '500_133.33.in.bis' spectrum CPMG frequency 133.3333 Hz.
+
+relax> spectrometer.frequency(id='500_133.33.in.bis', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_133.33.in.bis', time=0.03)
+Setting the '500_133.33.in.bis' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/200.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_200.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/200.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        16710.653    
+:71@N        32347.697    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_200.in', cpmg_frq=200.0)
+Setting the '500_200.in' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='500_200.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_200.in', time=0.03)
+Setting the '500_200.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/266.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_266.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/266.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        17581.482    
+:71@N        32478.272    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_266.67.in', cpmg_frq=266.6666)
+Setting the '500_266.67.in' spectrum CPMG frequency 266.6666 Hz.
+
+relax> spectrometer.frequency(id='500_266.67.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_266.67.in', time=0.03)
+Setting the '500_266.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/333.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_333.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/333.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        17741.116    
+:71@N        32488.116    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_333.33.in', cpmg_frq=333.3333)
+Setting the '500_333.33.in' spectrum CPMG frequency 333.3333 Hz.
+
+relax> spectrometer.frequency(id='500_333.33.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_333.33.in', time=0.03)
+Setting the '500_333.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/400.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_400.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/400.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        18430.466    
+:71@N        32799.529    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_400.in', cpmg_frq=400.0)
+Setting the '500_400.in' spectrum CPMG frequency 400.0 Hz.
+
+relax> spectrometer.frequency(id='500_400.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_400.in', time=0.03)
+Setting the '500_400.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/466.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_466.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/466.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        18723.854    
+:71@N        33034.747    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_466.67.in', cpmg_frq=466.6666)
+Setting the '500_466.67.in' spectrum CPMG frequency 466.6666 Hz.
+
+relax> spectrometer.frequency(id='500_466.67.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_466.67.in', time=0.03)
+Setting the '500_466.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/533.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_533.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        18880.359    
+:71@N        33277.779    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in', cpmg_frq=533.3333)
+Setting the '500_533.33.in' spectrum CPMG frequency 533.3333 Hz.
+
+relax> spectrometer.frequency(id='500_533.33.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_533.33.in', time=0.03)
+Setting the '500_533.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/533.33.in.bis_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_533.33.in.bis', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in.bis_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        19431.29     
+:71@N        33369.196    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in.bis', cpmg_frq=533.3333)
+Setting the '500_533.33.in.bis' spectrum CPMG frequency 533.3333 Hz.
+
+relax> spectrometer.frequency(id='500_533.33.in.bis', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_533.33.in.bis', time=0.03)
+Setting the '500_533.33.in.bis' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/600.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_600.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/600.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        19295.116    
+:71@N        33330.505    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_600.in', cpmg_frq=600.0)
+Setting the '500_600.in' spectrum CPMG frequency 600.0 Hz.
+
+relax> spectrometer.frequency(id='500_600.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_600.in', time=0.03)
+Setting the '500_600.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/666.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_666.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/666.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        19615.342    
+:71@N        33505.785    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_666.67.in', cpmg_frq=666.6666)
+Setting the '500_666.67.in' spectrum CPMG frequency 666.6666 Hz.
+
+relax> spectrometer.frequency(id='500_666.67.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_666.67.in', time=0.03)
+Setting the '500_666.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/733.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_733.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/733.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        19856.831    
+:71@N        33364.821    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_733.33.in', cpmg_frq=733.3333)
+Setting the '500_733.33.in' spectrum CPMG frequency 733.3333 Hz.
+
+relax> spectrometer.frequency(id='500_733.33.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_733.33.in', time=0.03)
+Setting the '500_733.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/800.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_800.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/800.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        20053.047    
+:71@N        33390.102    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_800.in', cpmg_frq=800.0)
+Setting the '500_800.in' spectrum CPMG frequency 800.0 Hz.
+
+relax> spectrometer.frequency(id='500_800.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_800.in', time=0.03)
+Setting the '500_800.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/866.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_866.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/866.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        19936.355    
+:71@N        33362.913    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_866.67.in', cpmg_frq=866.6666)
+Setting the '500_866.67.in' spectrum CPMG frequency 866.6666 Hz.
+
+relax> spectrometer.frequency(id='500_866.67.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_866.67.in', time=0.03)
+Setting the '500_866.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/933.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_933.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        20182.933    
+:71@N        33594.549    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in', cpmg_frq=933.3333)
+Setting the '500_933.33.in' spectrum CPMG frequency 933.3333 Hz.
+
+relax> spectrometer.frequency(id='500_933.33.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_933.33.in', time=0.03)
+Setting the '500_933.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/933.33.in.bis_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_933.33.in.bis', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in.bis_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        20069.04     
+:71@N        33655.205    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in.bis', cpmg_frq=933.3333)
+Setting the '500_933.33.in.bis' spectrum CPMG frequency 933.3333 Hz.
+
+relax> spectrometer.frequency(id='500_933.33.in.bis', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_933.33.in.bis', time=0.03)
+Setting the '500_933.33.in.bis' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='500_MHz/1000.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_1000.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/1000.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        20229.099    
+:71@N        33574.087    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_1000.in', cpmg_frq=1000.0)
+Setting the '500_1000.in' spectrum CPMG frequency 1000.0 Hz.
+
+relax> spectrometer.frequency(id='500_1000.in', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_1000.in', time=0.03)
+Setting the '500_1000.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/reference.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_reference.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/reference.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        75506.418    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_reference.in', cpmg_frq=None)
+Setting the '800_reference.in' spectrum CPMG frequency None Hz.
+
+relax> spectrometer.frequency(id='800_reference.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_reference.in', time=0.03)
+Setting the '800_reference.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/66.667.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_66.667.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/66.667.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        38763.157    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_66.667.in', cpmg_frq=66.6666)
+Setting the '800_66.667.in' spectrum CPMG frequency 66.6666 Hz.
+
+relax> spectrometer.frequency(id='800_66.667.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_66.667.in', time=0.03)
+Setting the '800_66.667.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/133.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_133.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/133.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        40007.044    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in', cpmg_frq=133.3333)
+Setting the '800_133.33.in' spectrum CPMG frequency 133.3333 Hz.
+
+relax> spectrometer.frequency(id='800_133.33.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_133.33.in', time=0.03)
+Setting the '800_133.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/133.33.in.bis_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_133.33.in.bis', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/133.33.in.bis_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        39866.015    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in.bis', cpmg_frq=133.3333)
+Setting the '800_133.33.in.bis' spectrum CPMG frequency 133.3333 Hz.
+
+relax> spectrometer.frequency(id='800_133.33.in.bis', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_133.33.in.bis', time=0.03)
+Setting the '800_133.33.in.bis' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/200.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_200.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/200.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        40695.053    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_200.in', cpmg_frq=200.0)
+Setting the '800_200.in' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='800_200.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_200.in', time=0.03)
+Setting the '800_200.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/266.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_266.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/266.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        41033.292    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_266.67.in', cpmg_frq=266.6666)
+Setting the '800_266.67.in' spectrum CPMG frequency 266.6666 Hz.
+
+relax> spectrometer.frequency(id='800_266.67.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_266.67.in', time=0.03)
+Setting the '800_266.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/333.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_333.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/333.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        42886.468    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_333.33.in', cpmg_frq=333.3333)
+Setting the '800_333.33.in' spectrum CPMG frequency 333.3333 Hz.
+
+relax> spectrometer.frequency(id='800_333.33.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_333.33.in', time=0.03)
+Setting the '800_333.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/400.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_400.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/400.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        43297.363    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_400.in', cpmg_frq=400.0)
+Setting the '800_400.in' spectrum CPMG frequency 400.0 Hz.
+
+relax> spectrometer.frequency(id='800_400.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_400.in', time=0.03)
+Setting the '800_400.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/466.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_466.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/466.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        44655.415    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_466.67.in', cpmg_frq=466.6666)
+Setting the '800_466.67.in' spectrum CPMG frequency 466.6666 Hz.
+
+relax> spectrometer.frequency(id='800_466.67.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_466.67.in', time=0.03)
+Setting the '800_466.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/533.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_533.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/533.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        46303.662    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in', cpmg_frq=533.3333)
+Setting the '800_533.33.in' spectrum CPMG frequency 533.3333 Hz.
+
+relax> spectrometer.frequency(id='800_533.33.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_533.33.in', time=0.03)
+Setting the '800_533.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/533.33.in.bis_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_533.33.in.bis', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/533.33.in.bis_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        47040.817    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in.bis', cpmg_frq=533.3333)
+Setting the '800_533.33.in.bis' spectrum CPMG frequency 533.3333 Hz.
+
+relax> spectrometer.frequency(id='800_533.33.in.bis', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_533.33.in.bis', time=0.03)
+Setting the '800_533.33.in.bis' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/600.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_600.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/600.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        47902.702    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_600.in', cpmg_frq=600.0)
+Setting the '800_600.in' spectrum CPMG frequency 600.0 Hz.
+
+relax> spectrometer.frequency(id='800_600.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_600.in', time=0.03)
+Setting the '800_600.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/666.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_666.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/666.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        48972.729    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_666.67.in', cpmg_frq=666.6666)
+Setting the '800_666.67.in' spectrum CPMG frequency 666.6666 Hz.
+
+relax> spectrometer.frequency(id='800_666.67.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_666.67.in', time=0.03)
+Setting the '800_666.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/733.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_733.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/733.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        49560.47     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_733.33.in', cpmg_frq=733.3333)
+Setting the '800_733.33.in' spectrum CPMG frequency 733.3333 Hz.
+
+relax> spectrometer.frequency(id='800_733.33.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_733.33.in', time=0.03)
+Setting the '800_733.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/800.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_800.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/800.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        51244.752    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_800.in', cpmg_frq=800.0)
+Setting the '800_800.in' spectrum CPMG frequency 800.0 Hz.
+
+relax> spectrometer.frequency(id='800_800.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_800.in', time=0.03)
+Setting the '800_800.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/866.67.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_866.67.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/866.67.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        51656.057    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_866.67.in', cpmg_frq=866.6666)
+Setting the '800_866.67.in' spectrum CPMG frequency 866.6666 Hz.
+
+relax> spectrometer.frequency(id='800_866.67.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_866.67.in', time=0.03)
+Setting the '800_866.67.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/933.33.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_933.33.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/933.33.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        51189.967    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in', cpmg_frq=933.3333)
+Setting the '800_933.33.in' spectrum CPMG frequency 933.3333 Hz.
+
+relax> spectrometer.frequency(id='800_933.33.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_933.33.in', time=0.03)
+Setting the '800_933.33.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/933.33.in.bis_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_933.33.in.bis', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/933.33.in.bis_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        52254.914    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in.bis', cpmg_frq=933.3333)
+Setting the '800_933.33.in.bis' spectrum CPMG frequency 933.3333 Hz.
+
+relax> spectrometer.frequency(id='800_933.33.in.bis', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_933.33.in.bis', time=0.03)
+Setting the '800_933.33.in.bis' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.read_intensities(file='800_MHz/1000.in_trunc', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_1000.in', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/1000.in_trunc' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:70@N        52727.575    
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_1000.in', cpmg_frq=1000.0)
+Setting the '800_1000.in' spectrum CPMG frequency 1000.0 Hz.
+
+relax> spectrometer.frequency(id='800_1000.in', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_1000.in', time=0.03)
+Setting the '800_1000.in' spectrum relaxation time period to 0.03 s.
+
+relax> spectrum.replicated(spectrum_ids=['500_133.33.in', '500_133.33.in.bis'])
+
+relax> spectrum.replicated(spectrum_ids=['500_533.33.in', '500_533.33.in.bis'])
+
+relax> spectrum.replicated(spectrum_ids=['500_933.33.in', '500_933.33.in.bis'])
+
+relax> spectrum.replicated(spectrum_ids=['800_133.33.in', '800_133.33.in.bis'])
+
+relax> spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
+
+relax> spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
+
+relax> spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Replicated spectra:  ['500_133.33.in', '500_133.33.in.bis']
+Standard deviation:  189.984825463
+
+Replicated spectra:  ['500_533.33.in', '500_533.33.in.bis']
+Standard deviation:  279.23199792
+
+Replicated spectra:  ['500_933.33.in', '500_933.33.in.bis']
+Standard deviation:  64.5189231641
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  198.5173661714936
+
+relax> spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Replicated spectra:  ['800_133.33.in', '800_133.33.in.bis']
+Standard deviation:  99.722562244
+
+Replicated spectra:  ['800_533.33.in', '800_533.33.in.bis']
+Standard deviation:  521.247299286
+
+Replicated spectra:  ['800_933.33.in', '800_933.33.in.bis']
+Standard deviation:  753.031245304
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  312.8048934679047
+
+relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/unresolved' for reading.
+RelaxWarning: Cannot find the spin :9 within the sequence.
+RelaxWarning: Cannot find the spin :27 within the sequence.
+RelaxWarning: Cannot find the spin :28 within the sequence.
+RelaxWarning: Cannot find the spin :30 within the sequence.
+RelaxWarning: Cannot find the spin :54 within the sequence.
+RelaxWarning: Cannot find the spin :68 within the sequence.
+RelaxWarning: Cannot find the spin :69 within the sequence.
+No spins deselected.
+
+relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/unresolved' for reading.
+RelaxWarning: Cannot find the spin :9 within the sequence.
+RelaxWarning: Cannot find the spin :54 within the sequence.
+RelaxWarning: Cannot find the spin :68 within the sequence.
+RelaxWarning: Cannot find the spin :69 within the sequence.
+No spins deselected.
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
+relax> spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  261.96950781449175
+
+relax> spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  288.5090331359092
+
+
+
+---------------------
+- The 'R2eff' model -
+---------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
+
+relax> pipe.switch(pipe_name='R2eff')
+
+relax> relax_disp.select_model(model='R2eff')
+R2eff/R1rho value and error determination.
+
+relax> relax_disp.r2eff_setup(sim_num=1000000)
+
+relax> calc(verbosity=1)
+Calculating the R2eff/R1rho values for fixed relaxation time period data.
+Error propagation using Bootstrapping with 1000000 simulations.
+Spin ':70@N'.
+Spin ':71@N'.
+
+relax> results.write(file='results', dir='temp/R2eff', compress_type=1, force=True)
+Opening the file 'temp/R2eff/results.bz2' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='R2eff.agr', dir='temp/R2eff', force=True, norm=False)
+Opening the file 'temp/R2eff/R2eff.agr' for writing.
+
+relax> state.save(state='r2eff_values', dir=None, compress_type=1, force=True)
+Opening the file 'r2eff_values.bz2' for writing.
+
