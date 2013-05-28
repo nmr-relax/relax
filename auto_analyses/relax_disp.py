@@ -209,8 +209,8 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Save the relaxation dispersion parameters.
-        if cdp.model not in [MODEL_R2EFF]:
-            self.interpreter.value.write(param='rex', file='Rex.out', dir=path, force=True)
+        if cdp.model in [MODEL_LM63]:
+            self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
 
         # Create Grace plots of the data for the R2eff model.
         if cdp.model == MODEL_R2EFF:
@@ -234,7 +234,7 @@ class Relax_disp:
 
         # Grace plots of dispersion parameters.
         if cdp.model in [MODEL_LM63]:
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='rex', file='Rex.agr', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
 
         # Plots of the minimisation statistics.
         if not (cdp.model == MODEL_R2EFF and cdp.exp_type in FIXED_TIME_EXP):
