@@ -235,11 +235,13 @@ def loop_frq_point_time():
                 yield frq, point, time
 
 
-def loop_point():
+def loop_point(skip_ref=True):
     """Generator method for looping over the dispersion points.
 
-    @return:    Dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @rtype:     float
+    @keyword skip_ref:  A flag which if True will cause the reference point to be skipped.
+    @type skip_ref:     bool
+    @return:            Dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @rtype:             float
     """
 
     # CPMG type data.
@@ -253,7 +255,7 @@ def loop_point():
     # Loop over the field data.
     for field in fields:
         # Skip the reference.
-        if field == None:
+        if skip_ref and field == None:
             continue
 
         # Yield each unique field strength or frequency.
