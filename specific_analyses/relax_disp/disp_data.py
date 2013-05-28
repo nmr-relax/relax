@@ -592,6 +592,26 @@ def return_value_from_frq_index(frq_index=None):
     return cdp.spectrometer_frq[frq_index]
 
 
+def spin_has_frq_data(spin=None, frq=None):
+    """Determine if the spin has intensity data for the given spectrometer frequency.
+
+    @keyword spin:      The specific spin data container.
+    @type spin:         SpinContainer instance
+    @keyword frq:       The spectrometer frequency.
+    @type frq:          float
+    @return:            True if data for that spectrometer frequency is present, False otherwise.
+    @rtype:             bool
+    """
+
+    # Loop over the intensity data.
+    for key in spin.intensities.keys():
+        if key in cdp.spectrometer_frq and cdp.spectrometer_frq[key] == frq:
+            return True
+
+    # No data.
+    return False
+
+
 def spin_lock_field(spectrum_id=None, field=None):
     """Set the spin-lock field strength (nu1) for the given spectrum.
 
