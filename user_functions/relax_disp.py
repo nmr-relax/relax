@@ -36,6 +36,7 @@ from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
+from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 from specific_analyses.setup import relax_disp_obj
@@ -265,6 +266,43 @@ uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.nessy_input user function.
+uf = uf_info.add_uf('relax_disp.nessy_input')
+uf.title = "Create the input files for Michael Bieri's NESSY program."
+uf.title_short = "NESSY input file creation."
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory to place the file and to use as the NESSY project directory.  If not given, this defaults to the current directory.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    desc_short = "spin ID string",
+    desc = "The spin identification string.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will create a single NESSY save file called 'save.NESSY'.  This will contain all of the dispersion data currently loaded in the relax data store.  If the directory name is not supplied, this will default to the current directory.")
+uf.backend = nessy_input
+uf.menu_text = "&nessy_input"
+uf.gui_icon = "relax.nessy"
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'nessy.png'
 
 
 # The relax_disp.plot_exp_curves user function.
