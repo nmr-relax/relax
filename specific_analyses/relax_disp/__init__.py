@@ -821,7 +821,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
 
         # FIXME: Simulation number hardcoded variable.
-        sim_num = 500
+        sim_num = 100000
 
         # Printouts.
         print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
