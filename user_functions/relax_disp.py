@@ -313,6 +313,30 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
 
 
+# The relax_disp.r2eff_setup user function.
+uf = uf_info.add_uf('relax_disp.r2eff_setup')
+uf.title = "Setup for the R2eff/R1rho model."
+uf.title_short = "R2eff/R1rho model setup."
+uf.add_keyarg(
+    name = "sim_num",
+    default = 100000,
+    min = 3,
+    max = 1000000000,
+    py_type = "int",
+    desc_short = "Bootstrapping simulation number",
+    desc = "The number of Bootstrapping simulations for error propagation."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to setup the variables required for the calculation of the R2eff/R1rho values.  Currently only the number of Bootstrapping simulations for error propagation needs to be given.  This is only required for calculating the R2eff/R1rho values for fixed relaxation time period data, if full relaxation curves have been collected then this value will be ignored.")
+uf.backend = relax_disp_obj._r2eff_setup
+uf.menu_text = "&r2eff_setup"
+uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+uf.wizard_apply_button = False
+
+
 # The relax_disp.relax_time user function.
 uf = uf_info.add_uf('relax_disp.relax_time')
 uf.title = "Set the relaxation delay time associated with each spectrum."
