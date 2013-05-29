@@ -63,7 +63,7 @@ class Relax_disp(SystemTestCase):
         """
 
         # Set the model.
-        ds.models = ['R2eff', 'LM63']
+        ds.models = ['LM63']
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
@@ -92,7 +92,7 @@ class Relax_disp(SystemTestCase):
         """
 
         # Set the model.
-        ds.models = ['R2eff', 'CR72']
+        ds.models = ['CR72']
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
