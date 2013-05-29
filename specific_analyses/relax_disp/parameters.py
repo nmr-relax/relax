@@ -409,10 +409,12 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
         | 1  0  0 |     |  R2  |      |    0    |
         |         |     |      |      |         |
-        | 1  0  0 |  .  |  Rex |      |    0    |
+        |-1  0  0 |     |  R2  |      |  -200   |
         |         |     |      |      |         |
-        | 1  0  0 |     |  kex |      |    0    |
-        |         |     |      |  >=  |         |
+        | 1  0  0 |     |  phi |      |    0    |
+        |         |     |      |      |         |
+        | 1  0  0 |  .  |  kex |  >=  |    0    |
+        |         |     |      |      |         |
         | 1  0  0 |     |  R2A |      |    0    |
         |         |     |      |      |         |
         | 1  0  0 |     |  kA  |      |    0    |
@@ -446,9 +448,12 @@ def linear_constraints(spins=None, scaling_matrix=None):
             # The transversal relaxation rate >= 0.
             if spin.params[k] == 'r2':
                 A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
                 A[j][i] = 1.0
+                A[j+1][i] = -1.0
                 b.append(0.0)
-                j += 1
+                b.append(-200.0 / scaling_matrix[i, i])
+                j += 2
 
             # Relaxation rates and phi_ex.
             elif spin.params[k] in ['r2a', 'phi_ex']:
