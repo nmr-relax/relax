@@ -85,31 +85,6 @@ class Spectra_list(Base_list):
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
 
 
-    def action_frq_set(self, event):
-        """Launch the frq.set user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The current selection.
-        item = self.element.GetFirstSelected()
-
-        # The spectrum ID.
-        id = gui_to_str(self.element.GetItemText(item))
-
-        # The current time.
-        frq = None
-        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq:
-            frq = cdp.spectrometer_frq[id]
-
-        # Launch the dialog.
-        if frq == None:
-            uf_store['frq.set'](id=id)
-        else:
-            uf_store['frq.set'](frq=frq, id=id)
-
-
     def action_relax_disp_cpmg_frq(self, event):
         """Launch the relax_disp.cpmg_frq user function.
 
@@ -183,6 +158,31 @@ class Spectra_list(Base_list):
             uf_store['relax_fit.relax_time'](spectrum_id=id)
         else:
             uf_store['relax_fit.relax_time'](time=time, spectrum_id=id)
+
+
+    def action_spectrometer_frq(self, event):
+        """Launch the spectrometer.frequency user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq:
+            frq = cdp.spectrometer_frq[id]
+
+        # Launch the dialog.
+        if frq == None:
+            uf_store['spectrometer.frequency'](id=id)
+        else:
+            uf_store['spectrometer.frequency'](frq=frq, id=id)
 
 
     def action_spectrum_baseplane_rmsd(self, event):
@@ -524,8 +524,8 @@ class Spectra_list(Base_list):
             self.popup_menus.append({
                 'id': wx.NewId(),
                 'text': "Set the spectrometer &frequency",
-                'icon': fetch_icon("relax.frq"),
-                'method': self.action_frq_set
+                'icon': fetch_icon("relax.spectrometer"),
+                'method': self.action_spectrometer_frq
             })
         if self.spin_lock_flag:
             self.popup_menus.append({
