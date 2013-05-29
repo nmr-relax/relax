@@ -436,9 +436,27 @@ def linear_constraints(spins=None, scaling_matrix=None):
     i = 0
     j = 0
 
-    # The R2eff model (no need for constraints).
+    # The R2eff model.
     if cdp.model == MODEL_R2EFF:
-        return None, None
+        # Only use the parameters of the first spin of the cluster.
+        spin = spins[0]
+        for k in range(len(spin.params)):
+            # Effective transversal relaxation rate.
+            if spin.params[k] == 'r2eff':
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0)
+                b.append(-200.0 / scaling_matrix[i, i])
+                j += 2
+
+            # Initial intensity.
+            elif spin.params[i] == 'i0':
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j += 1
 
     # All other models.
     else:
