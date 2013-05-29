@@ -80,6 +80,10 @@ def get_specific_fn(eqi, function_type=None, raise_error=True):
         if eqi == 'calculate':
             function = inst.calculate
 
+        # Optimisation constraint algorithm override.
+        if eqi == 'constraint_algorithm':
+            function = inst.constraint_algorithm
+
         # Create Monte Carlo data function.
         if eqi == 'create_mc_data':
             function = inst.create_mc_data

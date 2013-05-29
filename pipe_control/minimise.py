@@ -173,7 +173,10 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Re-package the minimisation algorithm, options, and constraints for the generic_minimise() calls within the specific code.
     if constraints:
         min_options = [min_algor]
-        min_algor = 'Method of Multipliers'
+
+        # Determine the constraint algorithm to use.
+        fn = specific_analyses.setup.get_specific_fn('constraint_algorithm', cdp.pipe_type)
+        min_algor = fn()
     else:
         min_options = []
     if line_search != None:
