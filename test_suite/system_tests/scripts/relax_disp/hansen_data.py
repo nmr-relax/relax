@@ -14,6 +14,10 @@ MODELS = ['LM63']
 if hasattr(ds, 'models'):
     MODELS = ds.models
 
+# The temporary directory, if needed.
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp'
+
 # The grid search size (the number of increments per dimension).
 GRID_INC = 5
 
