@@ -280,5 +280,8 @@ def translate_model():
     if cdp.model not in translation:
         raise RelaxError("The conversion of the relax model '%s' to a CPMGFit model is not supported." % cdp.model)
 
+    # Printout.
+    print("Translating the relax '%s' model to the CPMGFit '%s' model." % (cdp.model, translation[cdp.model]))
+
     # Return the translated name.
     return translation[cdp.model]
