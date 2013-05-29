@@ -604,6 +604,86 @@ class Relax_disp(API_base, API_common):
             self.data_init(spin)
 
 
+    def _plot_disp_curves(self, dir=None, force=None):
+        """Custom 2D Grace plotting function for the dispersion curves.
+
+        One file will be created per spin system.
+
+
+        @keyword dir:           The optional directory to place the file into.
+        @type dir:              str
+        @param force:           Boolean argument which if True causes the files to be overwritten if it already exists.
+        @type force:            bool
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Loop over each spin.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Open the file for writing.
+            file_name = "disp_%s.agr" % spin_id
+            file_path = get_file_path(file_name, dir)
+            file = open_write_file(file_name, dir, force)
+
+            # Initialise some data structures.
+            data = []
+            set_labels = []
+            x_err_flag = False
+            y_err_flag = False
+
+            # Add a new set for the measured data.
+            data.append([])
+
+            # Loop over the spectrometer frequencies.
+            graph_index = 0
+            err = False
+            for frq in loop_frq():
+                # Loop over the dispersion points.
+                for disp_point in loop_point():
+                    # The data key.
+                    key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                    # No data present.
+                    if key not in spin.r2eff:
+                        continue
+
+                    # Add the data.
+                    data[-1].append([disp_point, spin.r2eff[key]])
+
+                    # Add the error.
+                    if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
+                        err = True
+                        data[-1][-1].append(spin.r2eff_err[key])
+
+            # FIXME:  Add the back-calculated data as a second set.
+
+            # The axis labels.
+            if cdp.exp_type == 'CPMG':
+                axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
+            else:
+                axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
+
+            # Write the header.
+            write_xy_header(sets=len(data), file=file, set_names=set_labels, axis_labels=axis_labels)
+
+            # Write the data.
+            graph_type = 'xy'
+            if err:
+                graph_type = 'xydy'
+            write_xy_data([data], file=file, graph_type=graph_type)
+
+            # Close the file.
+            file.close()
+
+            # Add the file to the results file list.
+            add_result_file(type='grace', label='Grace', file=file_path)
+
+
     def _plot_exp_curves(self, file=None, dir=None, force=None, norm=None):
         """Custom 2D Grace plotting function for the exponential curves.
 
@@ -625,7 +705,6 @@ class Relax_disp(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Open the file for writing.
-
         file_path = get_file_path(file, dir)
         file = open_write_file(file, dir, force)
 

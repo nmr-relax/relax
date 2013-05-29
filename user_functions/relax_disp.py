@@ -305,6 +305,36 @@ uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'nessy.png'
 
 
+# The relax_disp.plot_disp_curves user function.
+uf = uf_info.add_uf('relax_disp.plot_disp_curves')
+uf.title = "Create 2D Grace plots of the dispersion curves for each spin system."
+uf.title_short = "Dispersion curve plotting."
+uf.add_keyarg(
+    name = "dir",
+    default = "grace",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory name to place all of the spin system files into.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will cause the files to be overwritten."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to created 2D Grace plots of the dispersion curves of the spin-lock field strength or nu_CPMG frequencies verses R2eff/R1rho.  One file will be created per spin system with the name 'disp_x.agr', where x is the spin ID string.")
+uf.backend = relax_disp_obj._plot_disp_curves
+uf.menu_text = "&plot_disp_curves"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_size = (700, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
+
+
 # The relax_disp.plot_exp_curves user function.
 uf = uf_info.add_uf('relax_disp.plot_exp_curves')
 uf.title = "Create 2D Grace plots of the exponential curves."
