@@ -229,10 +229,7 @@ class Relax_disp:
                 self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='I0.agr', dir=path, force=True)
 
             # Dispersion curves.
-            if hasattr(cdp, 'spin_lock_nu1'):
-                self.interpreter.grace.write(x_data_type='spin_lock_nu1', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
-            elif hasattr(cdp, 'cpmg_frq'):
-                self.interpreter.grace.write(x_data_type='cpmg_frq', y_data_type='r2eff', file='dispersion_curves.agr', dir=path, force=True)
+            self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
 
             # Exponential curves.
             if cdp.exp_type not in FIXED_TIME_EXP:
