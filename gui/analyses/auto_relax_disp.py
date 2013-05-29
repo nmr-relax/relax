@@ -44,6 +44,7 @@ from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp import VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_LM63, MODEL_CR72
 from status import Status; status = Status()
 
 
@@ -116,7 +117,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
-            ds.relax_gui.analyses[data_index].disp_models = ['R2eff', 'fast 2-site', 'slow 2-site']
+            ds.relax_gui.analyses[data_index].disp_models = [MODEL_R2EFF, MODEL_LM63, MODEL_CR72]
 
         # Error checking.
         if ds.relax_gui.analyses[data_index].pipe_bundle == None:
@@ -432,13 +433,13 @@ class Disp_model_list(Model_list):
     # Class variables.
     desc = "Relaxation dispersion models:"
     models = [
-        "R2eff",
-        "fast 2-site",
-        "slow 2-site"
+        MODEL_R2EFF,
+        MODEL_LM63,
+        MODEL_CR72
     ]
     params = [
         u"{R2eff, I\u2080}",
-        u"{R\u2082, Rex, kex}",
+        u"{R\u2082, phi_ex, kex}",
         u"{R\u2082, R2a, kA, d\u03C9}"
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
