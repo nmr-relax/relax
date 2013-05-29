@@ -142,10 +142,10 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Relaxation dispersion pages.
         if self.relax_disp_flag:
-            # The frq.set page.
-            page = uf_store['frq.set'].create_page(self, sync=True)
-            self.page_indices['frq_set'] = self.add_page(page, skip_button=True, proceed_on_error=False)
-            page.on_init = self.wizard_update_frq_set
+            # The spectrometer.frequency page.
+            page = uf_store['spectrometer.frequency'].create_page(self, sync=True)
+            self.page_indices['spectrometer_frequency'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_spectrometer_frequency
 
             # The relax_disp.relax_time page.
             if self.relax_disp_times:
@@ -213,7 +213,7 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Skip to the first dispersion page.
         elif self.relax_disp_flag:
-            return self.page_indices['frq_set']
+            return self.page_indices['spectrometer_frequency']
 
         # Nothing left, so run off the end.
         else:
@@ -242,18 +242,11 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Skip to the first dispersion page.
         elif self.relax_disp_flag:
-            return self.page_indices['frq_set']
+            return self.page_indices['spectrometer_frequency']
 
         # Nothing left, so run off the end.
         else:
             return self._num_pages + 1
-
-
-    def wizard_update_frq_set(self):
-        """Update the frq.set page based on previous data."""
-
-        # Update the spectrum ID.
-        self.wizard_update_ids(page_key='frq_set', arg_key='id')
 
 
     def wizard_update_ids(self, page_key=None, arg_key='spectrum_id', index=None):
@@ -335,6 +328,13 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Update the spectrum ID.
         self.wizard_update_ids(page_key='rmsd')
+
+
+    def wizard_update_spectrometer_frequency(self):
+        """Update the spectrometer.frequency page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='spectrometer_frequency', arg_key='id')
 
 
 

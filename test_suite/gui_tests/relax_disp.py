@@ -175,7 +175,7 @@ class Relax_disp(GuiTestCase):
         wizard._skip(None)
 
         # Set the spectrometer frequencies.
-        page = wizard.get_page(wizard.page_indices['frq_set'])
+        page = wizard.get_page(wizard.page_indices['spectrometer_frequency'])
         for id, file, cpmg_frq, H_frq in data:
             page.uf_args['id'].SetValue(str_to_gui(id))
             page.uf_args['frq'].SetValue(float_to_gui(H_frq))
