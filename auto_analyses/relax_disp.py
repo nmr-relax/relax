@@ -157,13 +157,13 @@ class Relax_disp:
         self.interpreter.grid_search(inc=self.grid_inc)
 
         # Minimise.
-        self.interpreter.minimise('simplex', constraints=False)
+        self.interpreter.minimise('simplex', constraints=True)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('simplex', constraints=False)
+        self.interpreter.minimise('simplex', constraints=True)
         self.interpreter.monte_carlo.error_analysis()
 
 

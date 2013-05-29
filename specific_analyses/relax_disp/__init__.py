@@ -355,14 +355,14 @@ class Relax_disp(API_base, API_common):
                     for frq, point in loop_frq_point():
                         # Loop over the parameters.
                         for i in range(len(spin.params)):
-                            # R2eff relaxation rate (from 0 to 40 s^-1).
+                            # R2eff relaxation rate (from 1 to 40 s^-1).
                             if spin.params[i] == 'r2eff':
-                                lower.append(0.0)
+                                lower.append(1.0)
                                 upper.append(40.0)
 
                             # Intensity.
                             elif spin.params[i] == 'i0':
-                                lower.append(0.0)
+                                lower.append(0.0001)
                                 upper.append(max(spin.intensities.values()))
 
             # All other models.
@@ -370,34 +370,34 @@ class Relax_disp(API_base, API_common):
                 # Only use the parameters of the first spin of the cluster.
                 spin = spins[0]
                 for i in range(len(spin.params)):
-                    # R2 relaxation rate (from 0 to 40 s^-1).
+                    # R2 relaxation rate (from 1 to 40 s^-1).
                     if spin.params[i] == 'r2':
-                        lower.append(0.0)
+                        lower.append(1.0)
                         upper.append(40.0)
 
                     # The pA.pB.dw**2/wH**2 parameter.
                     elif spin.params[i] == 'phi_ex':
-                        lower.append(0.0)
+                        lower.append(1e-20)
                         upper.append(1e-17)
 
                     # Exchange rate.
                     elif spin.params[i] == 'kex':
-                        lower.append(0.0)
+                        lower.append(1.0)
                         upper.append(100000.0)
 
                     # Transversal relaxation rate for state A.
                     elif spin.params[i] == 'r2a':
-                        lower.append(0.0)
+                        lower.append(1.0)
                         upper.append(20.0)
 
                     # Exchange rate from state A to state B.
                     elif spin.params[i] == 'ka':
-                        lower.append(0.0)
+                        lower.append(1.0)
                         upper.append(100000.0)
 
                     # Chemical shift difference between states A and B.
                     elif spin.params[i] == 'dw':
-                        lower.append(0.0)
+                        lower.append(1.0)
                         upper.append(10000.0)
 
         # The full grid size.
@@ -900,6 +900,17 @@ class Relax_disp(API_base, API_common):
 
                 # The standard deviation.
                 spin.r2eff_err[param_key] = std(values)
+
+
+    def constraint_algorithm(self):
+        """Return the 'Log barrier' optimisation constraint algorithm.
+
+        @return:    The 'Log barrier' constraint algorithm.
+        @rtype:     str
+        """
+
+        # The log barrier algorithm, as required by minfx.
+        return 'Log barrier'
 
 
     def create_mc_data(self, data_id):
