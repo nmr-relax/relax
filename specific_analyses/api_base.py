@@ -124,6 +124,23 @@ class API_base(object):
         raise RelaxImplementError('calculate')
 
 
+    def constraint_algorithm(self):
+        """Return the optimisation constraint algorithm, defaulting to the Method of Multipliers.
+
+        This can return one of:
+
+            - 'Method of Multipliers',
+            - 'Log barrier'.
+
+
+        @return:    The constraint algorithm to use (one of 'Method of Multipliers' or 'Log barrier').
+        @rtype:     str
+        """
+
+        # The default.
+        return 'Method of Multipliers'
+
+
     def create_mc_data(self, data_id=None):
         """Create the Monte Carlo data.
 
