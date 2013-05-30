@@ -225,42 +225,53 @@ uf.title = "Select the type of relaxation dispersion experiments to be analysed.
 uf.title_short = "Relaxation dispersion experiment type selection."
 uf.add_keyarg(
     name = "exp_type",
-    default = "cpmg",
+    default = "cpmg fixed",
     py_type = "str",
     desc_short = "experiment type",
     desc = "The type of relaxation dispersion experiment performed.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "CPMG",
         "CPMG, fixed time",
-        "R1rho"
+        "CPMG, full exponential",
+        "R1rho, fixed time",
+        "R1rho, full exponential"
     ],
     wiz_combo_data = [
-        "cpmg",
         "cpmg fixed",
-        "r1rho"
+        "cpmg exponential",
+        "r1rho fixed",
+        "r1rho exponential"
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The currently supported experiments include:")
-uf.desc[-1].add_item_list_element("'cpmg'", "The CPMG family of experiments whereby spectra consist of exponential curves by varying the total time of the CPMG block of pulses,")
-uf.desc[-1].add_item_list_element("'cpmg fixed'", "The CPMG family of experiments whereby the time period for the block of CPMG pulses is fixed and a reference spectrum is present,")
-uf.desc[-1].add_item_list_element("'r1rho'", "The R1rho family of experiments whereby spectra consist of exponential curves by varying the total time in which the spin-lock field is applied.")
-uf.desc[-1].add_paragraph("For the 'cpmg' and 'r1rho' experiment types, 2-parameter exponentials will be fit to obtain R2,eff for each spin system as part of the optimisation of the dispersion model.")
-uf.desc[-1].add_paragraph("For the 'cpmg fixed' experiment type, the R2,eff values are directly calculated prior to optimisation using the formula:")
+uf.desc[-1].add_item_list_element("'cpmg fixed'", "The fixed relaxation time period CPMG-type experiments,")
+uf.desc[-1].add_item_list_element("'cpmg exponential'", "The full exponential curve CPMG-type experiments,")
+uf.desc[-1].add_item_list_element("'r1rho fixed'", "The fixed relaxation time period R1rho-type experiments,")
+uf.desc[-1].add_item_list_element("'r1rho exponential'", "The full exponential curve R1rho-type experiments.")
+uf.desc[-1].add_paragraph("For the full exponential curve experiment types, 2-parameter exponentials will be fit to obtain R2eff/R1rho for each spin system as part of the optimisation of the dispersion model.")
+uf.desc[-1].add_paragraph("For the fixed time period experiment types, the R2eff/R1rho values are directly calculated prior to optimisation using the formula:")
 uf.desc[-1].add_verbatim("""
-                        -1         / I1(nu_CPMG) \ 
-    R2,eff(nu_CPMG) = ------- * ln | ----------- |,
-                      relax_T      \     I0      /
+                  -1         / I1(nu) \ 
+    R2eff(nu) = ------- * ln | ------ |,
+                relax_T      \   I0   /
 """)
-uf.desc[-1].add_paragraph("where nu_CPMG is the CPMG frequency in Hz, relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.")
+uf.desc[-1].add_paragraph("where nu is either the CPMG frequency in Hz or the spin-lock field strength in Hz, relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.  The error is calculated with the formula:")
+uf.desc[-1].add_verbatim("""
+                               _____________________________________
+                   1          / / sigma_I0 \ 2    / sigma_I1(nu) \ 2
+    sigma(nu) = ------- * \  /  | -------- |   +  | ------------ |  
+                relax_T    \/   \    I0    /      \      I1      /
+
+""")
+uf.desc[-1].add_paragraph("where sigma is the standard deviation.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg' for all selected spins, type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg')")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg')")
+uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg fixed' for all selected spins, type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg fixed')")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg fixed')")
 uf.backend = relax_disp_obj._exp_type
 uf.menu_text = "&exp_type"
 uf.wizard_height_desc = 500

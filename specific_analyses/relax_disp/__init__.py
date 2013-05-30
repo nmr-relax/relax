@@ -265,38 +265,34 @@ class Relax_disp(API_base, API_common):
         return ids
 
 
-    def _exp_type(self, exp_type='cpmg'):
+    def _exp_type(self, exp_type='cpmg fixed'):
         """Select the relaxation dispersion experiment type performed.
 
-        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
+        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg fixed', 'cpmg exponential', 'r1rho fixed' or 'r1rho exponential'.
         @type exp:    str
         """
 
         # Test if the current pipe exists.
         pipes.test()
 
-        # CPMG relaxation dispersion experiments (exponential curves with varying relax_T).
-        if exp_type == 'cpmg':
-            print("CPMG experiments with exponential curves from varying the relaxation period.")
-            cdp.exp_type = 'cpmg'
-
-        # CPMG relaxation dispersion experiments (fixed relax_T).
-        elif exp_type == 'cpmg fixed':
-            print("CPMG experiments with a fixed relaxation period.")
-            cdp.exp_type = 'cpmg fixed'
-
-        # R1rho relaxation dispersion experiments.
-        elif exp_type == 'r1rho':
-            print("R1rho experiments with exponential curves from varying the time of application of the spin-lock field.")
-            cdp.exp_type = 'r1rho'
-
-        # Invalid relaxation dispersion experiment.
+        # Printouts.
+        if exp_type == 'cpmg fixed':
+            print("The fixed relaxation time period CPMG-type experiments.")
+        elif exp_type == 'cpmg exponential':
+            print("The CPMG-type experiments consisting of full exponential curves for each dispersion point.")
+        elif exp_type == 'r1rho fixed':
+            print("The fixed relaxation time period R1rho-type experiments.")
+        elif exp_type == 'r1rho exponential':
+            print("The R1rho-type experiments consisting of full exponential curves for each dispersion point.")
         else:
             raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
         # Sanity check.
         if exp_type not in FIXED_TIME_EXP and exp_type not in VAR_TIME_EXP:
             raise RelaxError("The experiment type '%s' is neither a fixed relaxation time period or variable relaxation time period experiment." % exp_type)
+
+        # Store the value.
+        cdp.exp_type = exp_type
 
 
     def _grid_search_setup(self, spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
