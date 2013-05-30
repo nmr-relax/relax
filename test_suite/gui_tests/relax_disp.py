@@ -62,12 +62,13 @@ class Relax_disp(GuiTestCase):
         data_path_500 = data_path + sep + '500_MHz' + sep
         data_path_800 = data_path + sep + '800_MHz' + sep
 
-        # Simulate the new analysis wizard.
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
         self.app.gui.analysis.menu_new(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_disp(None)
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        page.uf_args['exp_type'].SetValue(str_to_gui('cpmg fixed'))
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
