@@ -229,8 +229,3 @@ class Relax_disp(GuiTestCase):
         if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
             self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
-
-        # Check the data pipe.
-        self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)
-
-
