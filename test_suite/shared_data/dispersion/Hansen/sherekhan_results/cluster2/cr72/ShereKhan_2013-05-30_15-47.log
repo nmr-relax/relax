@@ -1,0 +1,71 @@
+ShereKhan ver. 1.0
+
+Adam Mazur, Bjoern Hammesfahr, Christian Griesinger, Donghan Lee and Martin Kollmar
+
+Department of NMR-based Structural Biology
+Max-Planck-Institute for Biophysical Chemistry
+Am Fassberg 11
+37077 Goettingen, Germany
+
+Please cite:
+xxx
+---
+Thu May 30 15:48:38 2013
+
+Input data:
+
+Exchange regime: fast
+Model: CR
+
+Grid search for initial parameters:
+
+kex:    min:    100.0  max:  10000.0 nsteps:   6
+phi:    min:    0.010  max:    5.000 nsteps:   6
+
+Initial values:
+kex: 2080.000 phi:    0.010
+
+Residues:
+
+GLY71 
+
+Dataset 1:
+Field, tcp [MHz, s]:
+50.70
+0.030
+#v_cpmg(Hz)   R2(1/s)      Esd(R2)      R2_calc
+# GLY71
+  66.667        7.044        0.353        6.997
+ 133.333        6.781        0.294        6.796
+ 200.000        6.468        0.350        6.584
+ 266.667        6.333        0.349        6.350
+ 333.333        6.323        0.349        6.122
+ 400.000        6.005        0.347        5.923
+ 466.667        5.767        0.345        5.760
+ 533.333        5.477        0.290        5.629
+ 600.000        5.470        0.344        5.525
+ 666.667        5.295        0.342        5.442
+ 733.333        5.436        0.344        5.375
+ 800.000        5.410        0.343        5.321
+ 866.667        5.438        0.343        5.277
+ 933.333        5.177        0.288        5.240
+1000.000        5.227        0.342        5.210
+
+---
+Exchange regime: fast
+Model: CR
+---
+npar=4 nvar=15 ndof=11 chi2=   1.379 chi2/dof=   0.125
+---
+kex: 1879.490  +-  2778.953
+---
+resId:         phi [ppm^2]        R2_0 ( 50.7 MHz) 
+---
+GLY71:    0.064 +-    0.003       4.979 +-    0.395
+---
+Solution found:
+Both actual and predicted relative reductions in the sum of squares
+  are at most 0.000000
+Number of function evaluations: 809
+Calculations finished successfully.
+
