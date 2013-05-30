@@ -940,10 +940,6 @@ class Relax_disp(API_base, API_common):
             # Initialise the data structures.
             if not hasattr(spin, 'r2eff'):
                 spin.r2eff = {}
-            if not hasattr(spin, 'r2eff_sim'):
-                spin.r2eff_sim = []
-                for i in range(cdp.bootstrap_sim_num):
-                    spin.r2eff_sim.append({})
             if not hasattr(spin, 'r2eff_err'):
                 spin.r2eff_err = {}
 
@@ -976,19 +972,8 @@ class Relax_disp(API_base, API_common):
                 # Calculate the R2eff value.
                 spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
 
-                # Bootstrapping error propagation.
-                values = []
-                for i in range(cdp.bootstrap_sim_num):
-                    # Randomise the data.
-                    I_ref = gauss(ref_intensity, ref_intensity_err)
-                    I = gauss(intensity, intensity_err)
-
-                    # Calculate the simulation R2eff value.
-                    spin.r2eff_sim[i][param_key] = calc_two_point_r2eff(relax_time=time, I_ref=I_ref, I=I)
-                    values.append(spin.r2eff_sim[i][param_key])
-
-                # The standard deviation.
-                spin.r2eff_err[param_key] = std(values)
+                # The R2eff error.
+                spin.r2eff_err[param_key] = sqrt((ref_intensity_err / ref_intensity)**2 + (intensity_err / intensity)**2) / time
 
 
     def constraint_algorithm(self):
