@@ -44,7 +44,7 @@ spin.create(res_name='Gly', res_num=2, spin_name='N')
 spin.create(res_name='Lys', res_num=3, spin_name='N')
 
 # Set the relaxation dispersion experiment type.
-relax_disp.exp_type('r1rho')
+relax_disp.exp_type('r1rho exponential')
 
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = [
