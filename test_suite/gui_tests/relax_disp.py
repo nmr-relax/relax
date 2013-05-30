@@ -208,6 +208,10 @@ class Relax_disp(GuiTestCase):
         analysis.grid_inc.SetValue(4)
         analysis.mc_sim_num.SetValue(3)
 
+        # Optimisation speedups.
+        analysis.opt_func_tol = 1e-5
+        analysis.opt_max_iterations = 1000
+
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
 

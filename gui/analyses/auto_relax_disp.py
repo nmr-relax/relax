@@ -141,6 +141,11 @@ class Auto_relax_disp(Base_analysis):
         # Execute the base class method to build the panel.
         super(Auto_relax_disp, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
+        # Optimisation variables for speeding up the test suite.
+        self.opt_func_tol = 1e-25
+        self.opt_max_iterations = int(1e7)
+
+
 
     def activate(self):
         """Activate or deactivate certain elements of the analysis in response to the execution lock."""
@@ -192,6 +197,10 @@ class Auto_relax_disp(Base_analysis):
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
+
+        # Optimisation precision.
+        data.opt_func_tol = self.opt_func_tol
+        data.opt_max_iterations = self.opt_max_iterations
 
         # Return the container and list of missing data.
         return data, missing
@@ -418,6 +427,10 @@ class Execute_relax_disp(Execute):
 
     def run_analysis(self):
         """Execute the calculation."""
+
+        # Optimisation precision.
+        Relax_disp.opt_func_tol = self.data.opt_func_tol
+        Relax_disp.opt_max_iterations = self.data.opt_max_iterations
 
         # Execute.
         Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num)
