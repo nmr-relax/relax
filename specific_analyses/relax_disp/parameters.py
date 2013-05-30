@@ -225,7 +225,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
 
             # The pA.pB.dw**2/wH**2 parameter.
             elif spin.params[i] == 'phi_ex':
-                scaling_matrix[param_index, param_index] = 1e18
+                scaling_matrix[param_index, param_index] = 1e-18
 
             # Exchange rate scaling.
             elif spin.params[i] == 'kex':
