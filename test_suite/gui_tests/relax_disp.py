@@ -200,7 +200,12 @@ class Relax_disp(GuiTestCase):
         wizard._skip(None)
         wizard._go_next(None)    # Terminate the wizard.
 
-        # Set the number of MC sims.
+        # Deselect the 'CR72' model.
+        analysis.model_field.select[2] = False
+        analysis.model_field.modify()
+
+        # Set the grid search size and number of MC sims.
+        analysis.grid_inc.SetValue(4)
         analysis.mc_sim_num.SetValue(3)
 
         # Execute relax.
