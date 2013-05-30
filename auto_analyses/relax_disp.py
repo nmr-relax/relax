@@ -36,6 +36,12 @@ from status import Status; status = Status()
 
 
 class Relax_disp:
+    """The relaxation dispersion auto-analysis."""
+
+    # Some class variables.
+    opt_func_tol = 1e-25
+    opt_max_iterations = int(1e7)
+
     def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, bootstrap_sim_num=100000):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
@@ -157,13 +163,13 @@ class Relax_disp:
         self.interpreter.grid_search(inc=self.grid_inc)
 
         # Minimise.
-        self.interpreter.minimise('simplex', constraints=True)
+        self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('simplex', constraints=True)
+        self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
         self.interpreter.monte_carlo.error_analysis()
 
 
