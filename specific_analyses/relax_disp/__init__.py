@@ -33,6 +33,7 @@ __all__ = [
 
 # Python module imports.
 from copy import deepcopy
+from math import sqrt 
 from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, log, ones, zeros
