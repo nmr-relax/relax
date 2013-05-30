@@ -56,7 +56,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_R2EFF, MODEL_LM63, MODEL_CR72, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -1237,41 +1237,9 @@ class Relax_disp(API_base, API_common):
         @rtype:     tuple of list of SpinContainer instances and list of spin IDs
         """
 
-        # No clustering, so loop over the sequence.
-        if not hasattr(cdp, 'clustering'):
-            for spin, spin_id in spin_loop(return_id=True):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Return the spin container as a stop-gap measure.
-                yield [spin], [spin_id]
-
-        # Loop over the clustering.
-        else:
-            # The clusters.
-            for key in cdp.clustering.keys():
-                # Skip the free spins.
-                if key == 'free spins':
-                    continue
-
-                # Create the spin container and ID lists.
-                spin_list = []
-                spin_id_list = []
-                for spin_id in cdp.clustering[key]:
-                    spin_list.append(return_spin(spin_id))
-                    spin_id_list.append(spin_id)
-
-                # Yield the cluster.
-                yield spin_list, spin_id_list
-
-            # The free spins.
-            for spin_id in cdp.clustering['free spins']:
-                # Get the spin container.
-                spin = return_spin(spin_id)
-
-                # Yield each spin individually.
-                yield [spin], [spin_id]
+        # The cluster loop.
+        for info in loop_cluster():
+            yield info
 
 
     def overfit_deselect(self, data_check=True, verbose=True):

@@ -38,6 +38,7 @@ from numpy import float64, int32, ones, zeros
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError
 from lib.list import count_unique_elements, unique_elements
+from pipe_control.mol_res_spin import return_spin, spin_loop
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP
 
 
@@ -169,6 +170,50 @@ def find_intensity_keys(frq=None, point=None, time=None):
 
     # Return the IDs.
     return ids
+
+
+def loop_cluster():
+    """Loop over the spin groupings for one model applied to multiple spins.
+
+    @return:    The list of spins per block will be yielded, as well as the list of spin IDs.
+    @rtype:     tuple of list of SpinContainer instances and list of spin IDs
+    """
+
+    # No clustering, so loop over the sequence.
+    if not hasattr(cdp, 'clustering'):
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Return the spin container as a stop-gap measure.
+            yield [spin], [spin_id]
+
+    # Loop over the clustering.
+    else:
+        # The clusters.
+        for key in cdp.clustering.keys():
+            # Skip the free spins.
+            if key == 'free spins':
+                continue
+
+            # Create the spin container and ID lists.
+            spin_list = []
+            spin_id_list = []
+            for spin_id in cdp.clustering[key]:
+                spin_list.append(return_spin(spin_id))
+                spin_id_list.append(spin_id)
+
+            # Yield the cluster.
+            yield spin_list, spin_id_list
+
+        # The free spins.
+        for spin_id in cdp.clustering['free spins']:
+            # Get the spin container.
+            spin = return_spin(spin_id)
+
+            # Yield each spin individually.
+            yield [spin], [spin_id]
 
 
 def loop_frq():
