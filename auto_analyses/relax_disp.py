@@ -31,6 +31,7 @@ from lib.list import unique_elements
 from lib.text.sectioning import title, subtitle
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
+from specific_analyses.relax_disp.disp_data import loop_frq
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 from status import Status; status = Status()
 
@@ -110,50 +111,24 @@ class Relax_disp:
 
 
     def error_analysis(self):
-        """Perform an error analysis of the peak intensities.
+        """Perform an error analysis of the peak intensities for each field strength separately."""
 
-        The error analysis is separated into subsets for each spectrometer frequency and dispersion point.
-        """
+        # Loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # Generate a list of spectrum IDs matching the frequency.
+            ids = []
+            for id in cdp.spectrum_ids:
+                # Check that the spectrometer frequency matches.
+                match_frq = True
+                if frq != None and cdp.spectrometer_frq[id] != frq:
+                    match_frq = False
 
-        # The number of spectrometer field strengths.
-        frqs = [None]
-        if hasattr(cdp, 'spectrometer_frq_list'):
-            frqs = cdp.spectrometer_frq_list
+                # Add the ID.
+                if match_frq:
+                    ids.append(id)
 
-        # Dispersion points.
-        if cdp.exp_type in CPMG_EXP:
-            disp_points = cdp.cpmg_frqs
-        else:
-            disp_points = cdp.spin_lock_nu1
-        fields = unique_elements(disp_points.values())
-        fields.sort()
-
-        # Fixed relaxation time periods.
-        if cdp.exp_type in FIXED_TIME_EXP:
-            fields = [None]
-
-        # Loop over the spectrometer frequencies, then the dispersion points.
-        for frq in frqs:
-            for field in fields:
-                # Generate a list of spectrum IDs matching the frequency and field.
-                ids = []
-                for id in cdp.spectrum_ids:
-                    # Check that the spectrometer frequency matches.
-                    match_frq = True
-                    if frq != None and cdp.spectrometer_frq[id] != frq:
-                        match_frq = False
-
-                    # Check that the dispersion point matches.
-                    match_disp_point = True
-                    if field != None and disp_points[id] != field:
-                        match_disp_point = False
-
-                    # Add the ID.
-                    if match_frq and match_disp_point:
-                        ids.append(id)
-
-                # Run the error analysis on the subset.
-                self.interpreter.spectrum.error_analysis(subset=ids)
+            # Run the error analysis on the subset.
+            self.interpreter.spectrum.error_analysis(subset=ids)
 
 
     def optimise(self):
