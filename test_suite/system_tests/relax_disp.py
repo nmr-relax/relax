@@ -245,16 +245,17 @@ class Relax_disp(SystemTestCase):
             print("\nResidue number %s." % (i+1))
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff[1000.0], res_data[i][0], places=2)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff[2000.0], res_data[i][1], places=2)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0[1000.0]/10000, res_data[i][2]/10000, places=3)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0[2000.0]/10000, res_data[i][3]/10000, places=3)
+            print cdp.mol[0].res[i].spin[0].r2eff
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['1000.0'], res_data[i][0], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['2000.0'], res_data[i][1], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['1000.0']/10000, res_data[i][2]/10000, places=3)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['2000.0']/10000, res_data[i][3]/10000, places=3)
 
             # Check the simulation errors.
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err[1000.0] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err[2000.0] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err[1000.0]/10000 < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err[2000.0]/10000 < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['1000.0'] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['2000.0'] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['1000.0']/10000 < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['2000.0']/10000 < 5.0)
 
             # Check that certain parameters are not present.
             for param in blacklist:
