@@ -148,10 +148,9 @@ class Peak_intensity_wizard(Wiz_window):
             page.on_init = self.wizard_update_spectrometer_frequency
 
             # The relax_disp.relax_time page.
-            if self.relax_disp_times:
-                page = uf_store['relax_disp.relax_time'].create_page(self, sync=True)
-                self.page_indices['relax_time'] = self.add_page(page, skip_button=True, proceed_on_error=False)
-                page.on_init = self.wizard_update_relax_disp_relax_time
+            page = uf_store['relax_disp.relax_time'].create_page(self, sync=True)
+            self.page_indices['relax_time'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_disp_relax_time
 
             # CPMG pages.
             if self.relax_disp_cpmg:
