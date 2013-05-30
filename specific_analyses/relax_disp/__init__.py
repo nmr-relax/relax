@@ -725,6 +725,10 @@ class Relax_disp(API_base, API_common):
 
                 # Loop over each spin.
                 for spin, id in spin_loop(return_id=True, skip_desel=True):
+                    # No data present.
+                    if not hasattr(spin, 'intensities'):
+                        continue
+
                     # Append a new set structure and set the name to the spin ID.
                     data[graph_index].append([])
                     if graph_index == 0:
@@ -733,14 +737,20 @@ class Relax_disp(API_base, API_common):
                     # Loop over the relaxation time periods.
                     for time in cdp.relax_time_list:
                         # The key.
-                        key = intensity_key(exp_key=disp_point, relax_time=time)
+                        keys = find_intensity_keys(frq=frq, point=disp_point, time=time)
 
-                        # Add the data.
-                        if hasattr(spin, 'intensity_err'):
-                            data[graph_index][-1].append([time, spin.intensities[key], spin.intensity_err[key]])
-                            err = True
-                        else:
-                            data[graph_index][-1].append([time, spin.intensities[key]])
+                        # Loop over each key.
+                        for key in keys:
+                            # No key present.
+                            if key not in spin.intensities:
+                                continue
+
+                            # Add the data.
+                            if hasattr(spin, 'intensity_err'):
+                                data[graph_index][-1].append([time, spin.intensities[key], spin.intensity_err[key]])
+                                err = True
+                            else:
+                                data[graph_index][-1].append([time, spin.intensities[key]])
 
                 # Increment the frq index.
                 graph_index += 1
