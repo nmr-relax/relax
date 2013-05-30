@@ -532,7 +532,67 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
             file.write("# %s\n" % line)
         file.write("#\n")
 
-    # Loop over the sequence.
+    # Determine the data type, check the data, and set up the dictionary type data keys.
+    data_names = 'value'
+    error_names = 'error'
+    data_type = None
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Get the value and error.
+        value, error = return_value(spin, param, bc=bc)
+
+        # Dictionary type data.
+        if isinstance(value, dict):
+            # Sanity check.
+            if not data_type in [None, 'dict']:
+                raise RelaxError("Mixed data types.")
+            data_type = 'dict'
+
+            # Initialise the structures.
+            if not isinstance(data_names, list):
+                data_names = []
+                error_names = []
+
+            # Sort the keys.
+            keys = value.keys()
+            keys.sort()
+
+            # Loop over the keys.
+            for key in keys:
+                # Add the data and error names if new.
+                if key not in data_names:
+                    data_names.append(key)
+                    error_names.append('sd(%s)' % key)
+
+        # List type data.
+        elif isinstance(value, list):
+            # Sanity check.
+            if not data_type in [None, 'list']:
+                raise RelaxError("Mixed data types.")
+            data_type = 'list'
+
+            # Initialise the structures.
+            if not isinstance(data_names, list):
+                data_names = []
+                error_names = []
+
+            # Check the length.
+            elif len(data_names) != len(value):
+                raise RelaxError("The list type data has an inconsistent number of elements between different spin systems.")
+
+            # Loop over the data.
+            for i in range(len(value)):
+                # The data and error names.
+                data_names.append('value_%s' % i)
+                error_names.append('error_%s' % i)
+
+        # Simple values.
+        else:
+            # Sanity check.
+            if not data_type in [None, 'value']:
+                raise RelaxError("Mixed data types.")
+            data_type = 'value'
+
+    # Pack the data.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Get the value and error.
         value, error = return_value(spin, param, bc=bc)
@@ -544,13 +604,58 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
         spin_nums.append(spin.num)
         spin_names.append(spin.name)
 
-        # Append the scaled values and errors.
-        if value != None:
-            value *= scaling
-        if error != None:
-            error *= scaling
-        values.append(value)
-        errors.append(error)
+        # Dictionary type data.
+        if isinstance(value, dict):
+            # Initialise the lists.
+            values.append([])
+            errors.append([])
+
+            # Loop over the keys.
+            for key in data_names:
+                # Append the scaled values and errors.
+                if key not in value:
+                    values[-1].append(None)
+                else:
+                    values[-1].append(scale(value[key], scaling))
+                if key not in error:
+                    errors[-1].append(None)
+                else:
+                    errors[-1].append(scale(error[key], scaling))
+
+        # List type data.
+        elif isinstance(value, list):
+            # Initialise the lists.
+            values.append([])
+            errors.append([])
+
+            # Loop over the data.
+            for i in range(len(data_names)):
+                # Append the scaled values and errors.
+                values[-1].append(scale(value[i], scaling))
+                errors[-1].append(scale(error[i], scaling))
+
+        # Simple values.
+        else:
+            # Append the scaled values and errors.
+            values.append(scale(value, scaling))
+            errors.append(scale(error, scaling))
 
     # Write the data.
-    write_spin_data(file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='value', error=errors, error_name='error')
+    write_spin_data(file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name=data_names, error=errors, error_name=error_names)
+
+
+def scale(value, scaling):
+    """Scale the given value by the scaling factor, handling all input value types.
+
+    @param value:   The value to scale.
+    @type value:    anything
+    @param scaling: The scaling factor.
+    @type scaling:  float
+    """
+
+    # None.
+    if value == None:
+        return None
+
+    # Scale.
+    return value * scaling
