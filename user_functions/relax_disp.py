@@ -591,7 +591,7 @@ uf.menu_text = "&sherekhan_input"
 uf.gui_icon = "relax.sherekhan"
 uf.wizard_size = (800, 500)
 uf.wizard_apply_button = False
-uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'sherekhan.png'
 
 
 # The relax_disp.spin_lock_field user function.
