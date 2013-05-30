@@ -73,16 +73,29 @@ class Relax_disp(SystemTestCase):
         spin70 = cdp.mol[0].res[0].spin[0]
         spin71 = cdp.mol[0].res[1].spin[0]
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
-        print("%-20s %20.8g %20.8g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
-        print("%-20s %20.8g %20.8g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
-        print("%-20s %20.8g %20.8g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
-        print("%-20s %20.8g %20.8g" % ("phi_ex (500 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2))
-        print("%-20s %20.8g %20.8g" % ("phi_ex (800 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2))
-        print("%-20s %20.8g %20.8g" % ("kex", spin70.kex, spin71.kex))
-        print("%-20s %20.8g %20.8g\n" % ("chi2", spin70.chi2, spin71.chi2))
-        print("%-20s %20.8g %20.8g" % ("CPMGFit Rex (500)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin71.kex))
-        print("%-20s %20.8g %20.8g" % ("CPMGFit Rex (800)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin71.kex))
-        print("%-20s %20.8g %20.8g" % ("CPMGFit tau", 2/spin70.kex, 2/spin71.kex))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
+        print("%-20s %20.15g %20.15g" % ("phi_ex (500 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2))
+        print("%-20s %20.15g %20.15g" % ("phi_ex (800 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        print("%-20s %20.15g %20.15g" % ("CPMGFit Rex (500)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin71.kex))
+        print("%-20s %20.15g %20.15g" % ("CPMGFit Rex (800)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin71.kex))
+        print("%-20s %20.15g %20.15g" % ("CPMGFit tau", 2/spin70.kex, 2/spin71.kex))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2[0], 6.80619482210607)
+        self.assertAlmostEqual(spin70.r2[1], 6.67911678576503)
+        self.assertAlmostEqual(spin70.phi_ex, 1.25861556503355e-13)
+        self.assertAlmostEqual(spin70.kex, 4763.2543305315)
+        self.assertAlmostEqual(spin70.chi2, 106.393365216011)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2[0], 4.92684808998739)
+        self.assertAlmostEqual(spin71.phi_ex, 2.40420500312786e-14)
+        self.assertAlmostEqual(spin71.kex, 2543.15954874963)
+        self.assertAlmostEqual(spin71.chi2, 1.44240394418566)
 
 
     def test_hansen_cpmg_data_CR72(self):
