@@ -36,8 +36,9 @@ from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
+from specific_analyses.relax_disp.nessy import nessy_input
+from specific_analyses.relax_disp.sherekhan import sherekhan_input
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -552,6 +553,43 @@ uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
+uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.sherekhan_input user function.
+uf = uf_info.add_uf('relax_disp.sherekhan_input')
+uf.title = "Create the input files for Adam Mazur's ShereKhan program."
+uf.title_short = "ShereKhan input file creation."
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory to place the files.  If not given, this defaults to the model name in lower case.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    desc_short = "spin ID string",
+    desc = "The spin identification string.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This creates the files required for the ShereKhan server located at http://sherekhan.bionmr.org/.  One file per field strength will be created.  These will be named 'dir/sherekhan_x.in', where x is a number starting from 1 and dir is the specified directory which if not given defaults to the model name in lower case.")
+uf.backend = sherekhan_input
+uf.menu_text = "&sherekhan_input"
+uf.gui_icon = "relax.sherekhan"
+uf.wizard_size = (800, 500)
 uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
