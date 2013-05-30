@@ -24,16 +24,16 @@
 """Variables for the relaxation dispersion specific analysis."""
 
 # The experiment type lists.
-FIXED_TIME_EXP = ['cpmg fixed']
+FIXED_TIME_EXP = ['cpmg fixed', 'r1rho fixed']
 """The list of fixed relaxation time period experiments."""
 
-VAR_TIME_EXP = ['cpmg', 'r1rho']
+VAR_TIME_EXP = ['cpmg exponential', 'r1rho exponential']
 """The list of variable relaxation time period experiments."""
 
-CPMG_EXP = ['cpmg', 'cpmg fixed']
+CPMG_EXP = ['cpmg fixed', 'cpmg exponential']
 """The list of CPMG-type experiments."""
 
-R1RHO_EXP = ['r1rho']
+R1RHO_EXP = ['r1rho fixed', 'r1rho exponential']
 """The list of R1rho-type experiments."""
 
 
