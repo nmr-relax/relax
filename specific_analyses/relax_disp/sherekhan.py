@@ -40,15 +40,13 @@ from lib.io import mkdir_nofail, open_write_file
 from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.relax_disp.disp_data import loop_frq, loop_point, return_param_key_from_data
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue, spin_loop
+from specific_analyses.relax_disp.disp_data import loop_cluster, loop_frq, loop_point, return_param_key_from_data
 
 
-def sherekhan_input(dir=None, spin_id=None, force=False):
+def sherekhan_input(spin_id=None, force=False):
     """Create the ShereKhan input files.
 
-    @keyword dir:               The optional directory to place the files into.  If None, then the files will be placed into a directory named after the dispersion model.
-    @type dir:                  str or None
     @keyword spin_id:           The spin ID string to restrict the file creation to.
     @type spin_id:              str
     @keyword force:             A flag which if True will cause all pre-existing files to be overwritten.
@@ -74,49 +72,67 @@ def sherekhan_input(dir=None, spin_id=None, force=False):
     if len(cdp.relax_time_list) != 1:
             raise RelaxError("ShereKhan only supports the fixed time relaxation dispersion experiments.")
 
-    # Directory creation.
-    if dir == None:
-        dir = lower(cdp.model)
-    mkdir_nofail(dir, verbosity=0)
+    # Loop over the spin blocks.
+    cluster_index = 0
+    for spins, spin_ids in loop_cluster():
+        # Loop over the magnetic fields.
+        frq_index = 0
+        for frq in loop_frq():
+            # The ShereKhan input file for the spin cluster.
+            file_name = 'sherekhan_frq%s.in' % (frq_index+1)
+            dir_name = 'cluster%s' % (cluster_index+1)
+            file = open_write_file(file_name=file_name, dir=dir_name, force=force)
 
-    # Loop over the magnetic fields.
-    frq_index = 0
-    for frq in loop_frq():
-        # The ShereKhan input file.
-        file = open_write_file('sherekhan_%s.py' % (frq_index+1), dir, force)
+            # The B0 field for the nuclei of interest in MHz (must be positive to be accepted by the server).
+            file.write("%s\n" % abs(frq / g1H * g15N / 1e6))
 
-        # The B0 field for the nuclei of interest in MHz.
-        file.write("%s\n" % (frq / g1H * g15N / 1e6))
+            # The constant relaxation time for the CPMG experiment in seconds.
+            file.write("%s\n" % (cdp.relax_time_list[0]))
 
-        # The constant relaxation time for the CPMG experiment in seconds.
-        file.write("%s\n" % (cdp.relax_time_list[0]))
+            # The comment line.
+            file.write("# %-18s %-20s %-20s\n" % ("nu_cpmg (Hz)", "R2eff (rad/s)", "Error"))
 
-        # The comment line.#nu_cpmg(Hz) R2(1/s) Esd(R2))
-        file.write("# %-18s %-20s %-20s\n" % ("nu_cpmg (Hz)", "R2eff (rad/s)", "Error"))
+            # Loop over the spins of the cluster.
+            for i in range(len(spins)):
+                # Get the residue container.
+                res = return_residue(spin_ids[i])
 
-        # Generate the input files for each spin.
-        for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True, skip_desel=True):
-            # Name the residue if needed.
-            if res_name == None:
-                res_name = 'X'
+                # Name the residue if needed.
+                res_name = res.name
+                if res_name == None:
+                    res_name = 'X'
 
-            # The residue ID line.
-            file.write("# %s%s\n" % (res_name, res_num))
+                # Initialise the lines to output (to be able to catch missing data).
+                lines = []
 
-            # Loop over the dispersion points.
-            for point in loop_point(skip_ref=True):
-                # The parameter key.
-                param_key = return_param_key_from_data(frq=frq, point=point)
+                # The residue ID line.
+                lines.append("# %s%s\n" % (res_name, res.num))
+
+                # Loop over the dispersion points.
+                for point in loop_point(skip_ref=True):
+                    # The parameter key.
+                    param_key = return_param_key_from_data(frq=frq, point=point)
+
+                    # No data.
+                    if param_key not in spins[i].r2eff:
+                        continue
+
+                    # Store the data.
+                    lines.append("%20.15g %20.15g %20.15g\n" % (point, spins[i].r2eff[param_key], spins[i].r2eff_err[param_key]))
 
                 # No data.
-                if param_key not in spin.r2eff:
+                if len(lines) == 1:
                     continue
 
                 # Write out the data.
-                file.write("%20.15g %20.15g %20.15g\n" % (point, spin.r2eff[param_key], spin.r2eff_err[param_key]))
+                for line in lines:
+                    file.write(line)
 
-        # Close the file.
-        file.close()
+            # Close the file.
+            file.close()
 
-        # Increment the field index.
-        frq_index += 1
+            # Increment the field index.
+            frq_index += 1
+
+        # Increment the cluster index.
+        cluster_index += 1
