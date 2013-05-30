@@ -1,0 +1,5 @@
+# Parameter description:  The pA.pB.dw**2 value scaled by wH (phi_ex = pA * pB * Delta_omega**2 / omega_H**2).
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   
+None          70         GLY         None        N            1.25858421657436e-13    7.64995056678495e-29    
+None          71         GLY         None        N            2.40608013284622e-14    1.91248764169624e-29    

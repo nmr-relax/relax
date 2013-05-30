@@ -1,0 +1,719 @@
+
+
+
+                                  relax repository checkout r19778
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'relax_disp.py'
+----------------------------------------------------------------------------------------------------
+"""Script for CPMG relaxation dispersion curve fitting using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+
+To run:
+
+$ ../../../../../relax relax_disp.py
+"""
+
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+from data_store import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
+
+
+# The dispersion models.
+MODELS = ['LM63', 'CR72']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 11
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 50
+
+
+
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+
+# The path to the data files.
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+
+# Load the saved base pipe
+results.read(data_path+sep+'base_pipe')
+
+# Create the R2eff data pipe and load the results.
+pipe.create(pipe_name='R2eff', bundle=pipe_bundle, pipe_type='relax_disp')
+pipe.switch(pipe_name='R2eff')
+results.read(data_path+sep+'r2eff_pipe')
+
+
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> results.read(file='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/base_pipe', dir=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/base_pipe.bz2' for reading.
+
+relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> pipe.switch(pipe_name='R2eff')
+
+relax> results.read(file='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/r2eff_pipe', dir=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/r2eff_pipe.bz2' for reading.
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
+relax> spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  275.5589639492646
+
+relax> spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  282.10831679853857
+
+
+
+--------------------
+- The 'LM63' model -
+--------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='LM63', bundle_to='relax_disp')
+
+relax> pipe.switch(pipe_name='LM63')
+
+relax> relax_disp.select_model(model='LM63')
+The Luz and Meiboom (1963) 2-site fast exchange model.
+
+relax> value.copy(pipe_from='R2eff', pipe_to='LM63', param='r2eff')
+
+relax> grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+
+Fitting to the spin block [':70@N']
+-----------------------------------
+
+Unconstrained grid search size: 14641 (constraints may decrease this size).
+
+
+Grid search
+~~~~~~~~~~~
+
+Searching through 14641 grid nodes.
+k: 0        xk: [            0.1,             0.1,            0.01,          0.0001]    fk: 72021.7966077       
+k: 1        xk: [           0.49,             0.1,            0.01,          0.0001]    fk: 69106.5233329       
+k: 2        xk: [           0.88,             0.1,            0.01,          0.0001]    fk: 67684.7575745       
+k: 11       xk: [            0.1,            0.49,            0.01,          0.0001]    fk: 43250.8434259       
+k: 12       xk: [           0.49,            0.49,            0.01,          0.0001]    fk: 40335.5701511       
+k: 13       xk: [           0.88,            0.49,            0.01,          0.0001]    fk: 38913.8043927       
+k: 22       xk: [            0.1,            0.88,            0.01,          0.0001]    fk: 22986.2996197       
+k: 23       xk: [           0.49,            0.88,            0.01,          0.0001]    fk: 20071.0263448       
+k: 24       xk: [           0.88,            0.88,            0.01,          0.0001]    fk: 18649.2605865       
+k: 33       xk: [            0.1,            1.27,            0.01,          0.0001]    fk: 11228.165189        
+k: 34       xk: [           0.49,            1.27,            0.01,          0.0001]    fk: 8312.89191413       
+k: 35       xk: [           0.88,            1.27,            0.01,          0.0001]    fk: 6891.12615578       
+k: 45       xk: [           0.49,            1.66,            0.01,          0.0001]    fk: 5061.16685899       
+k: 46       xk: [           0.88,            1.66,            0.01,          0.0001]    fk: 3639.40110065       
+k: 167      xk: [           0.88,            1.66,           1.009,          0.0001]    fk: 3639.40040077       
+k: 288      xk: [           0.88,            1.66,           2.008,          0.0001]    fk: 3639.39970089       
+k: 409      xk: [           0.88,            1.66,           3.007,          0.0001]    fk: 3639.39900102       
+k: 530      xk: [           0.88,            1.66,           4.006,          0.0001]    fk: 3639.39830114       
+k: 651      xk: [           0.88,            1.66,           5.005,          0.0001]    fk: 3639.39760126       
+k: 772      xk: [           0.88,            1.66,           6.004,          0.0001]    fk: 3639.39690138       
+k: 893      xk: [           0.88,            1.66,           7.003,          0.0001]    fk: 3639.39620151       
+k: 1014     xk: [           0.88,            1.66,           8.002,          0.0001]    fk: 3639.39550163       
+k: 1135     xk: [           0.88,            1.66,           9.001,          0.0001]    fk: 3639.39480176       
+k: 1256     xk: [           0.88,            1.66,              10,          0.0001]    fk: 3639.39410188       
+k: 1619     xk: [           0.88,            1.66,           2.008,         1.00009]    fk: 3639.39136027       
+k: 1740     xk: [           0.88,            1.66,           3.007,         1.00009]    fk: 3639.38651301       
+k: 1861     xk: [           0.88,            1.66,           4.006,         1.00009]    fk: 3639.38166717       
+k: 1982     xk: [           0.88,            1.66,           5.005,         1.00009]    fk: 3639.37682276       
+k: 2103     xk: [           0.88,            1.66,           6.004,         1.00009]    fk: 3639.37197978       
+k: 2224     xk: [           0.88,            1.66,           7.003,         1.00009]    fk: 3639.36713823       
+k: 2345     xk: [           0.88,            1.66,           8.002,         1.00009]    fk: 3639.36229811       
+k: 2466     xk: [           0.88,            1.66,           9.001,         1.00009]    fk: 3639.35745942       
+k: 2587     xk: [           0.88,            1.66,              10,         1.00009]    fk: 3639.35262216       
+
+
+Fitting to the spin block [':71@N']
+-----------------------------------
+
+Unconstrained grid search size: 14641 (constraints may decrease this size).
+
+
+Grid search
+~~~~~~~~~~~
+
+Searching through 14641 grid nodes.
+k: 0        xk: [            0.1,             0.1,            0.01,          0.0001]    fk: 3215.70669373       
+k: 1        xk: [           0.49,             0.1,            0.01,          0.0001]    fk: 164.788884393       
+k: 122      xk: [           0.49,             0.1,           1.009,          0.0001]    fk: 164.788823551       
+k: 243      xk: [           0.49,             0.1,           2.008,          0.0001]    fk: 164.788762709       
+k: 364      xk: [           0.49,             0.1,           3.007,          0.0001]    fk: 164.788701867       
+k: 485      xk: [           0.49,             0.1,           4.006,          0.0001]    fk: 164.788641025       
+k: 606      xk: [           0.49,             0.1,           5.005,          0.0001]    fk: 164.788580183       
+k: 727      xk: [           0.49,             0.1,           6.004,          0.0001]    fk: 164.788519341       
+k: 848      xk: [           0.49,             0.1,           7.003,          0.0001]    fk: 164.788458499       
+k: 969      xk: [           0.49,             0.1,           8.002,          0.0001]    fk: 164.788397657       
+k: 1090     xk: [           0.49,             0.1,           9.001,          0.0001]    fk: 164.788336815       
+k: 1211     xk: [           0.49,             0.1,              10,          0.0001]    fk: 164.788275973       
+k: 1453     xk: [           0.49,             0.1,           1.009,         1.00009]    fk: 164.783443437       
+k: 1574     xk: [           0.49,             0.1,           2.008,         1.00009]    fk: 164.77805591        
+k: 1695     xk: [           0.49,             0.1,           3.007,         1.00009]    fk: 164.77266849        
+k: 1816     xk: [           0.49,             0.1,           4.006,         1.00009]    fk: 164.767281177       
+k: 1937     xk: [           0.49,             0.1,           5.005,         1.00009]    fk: 164.761893971       
+k: 2058     xk: [           0.49,             0.1,           6.004,         1.00009]    fk: 164.756506871       
+k: 2179     xk: [           0.49,             0.1,           7.003,         1.00009]    fk: 164.751119878       
+k: 2300     xk: [           0.49,             0.1,           8.002,         1.00009]    fk: 164.745732992       
+k: 2421     xk: [           0.49,             0.1,           9.001,         1.00009]    fk: 164.740346212       
+k: 2542     xk: [           0.49,             0.1,              10,         1.00009]    fk: 164.734959539       
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+
+Fitting to the spin block [':70@N']
+-----------------------------------
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [           0.88,            1.66,              10,         1.00009]    fk: 3639.35262216       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [          0.924,            1.66,              10,         1.00009]    fk: 3572.62496894       
+	k: 100      xk: [    1.055891473,     1.612397039,     12.11789946,   0.06718080522]    fk: 3425.40443812       
+	k: 200      xk: [    1.055948875,     1.613860616,     12.24279675,   0.06572078569]    fk: 3425.30925646       
+	k: 300      xk: [   0.7714629302,      1.42655765,      9932.92897,   0.08562700644]    fk: 2442.08761739       
+	k: 400      xk: [   0.6805435535,    0.6684495242,     125790.9814,    0.4761053808]    fk: 106.233312181       
+
+	Parameter values: [0.68060876916496482, 0.66792350595232153, 125859.99231919547, 0.47632928773406813]
+	Function value:   106.23200347698666
+	Iterations:       500
+	Function calls:   850
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   0.6806087692,     0.667923506,     125859.9923,    0.4763292877]    fk: 106.39336153        
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806087692,     0.667923506,     125859.9923,    0.4763292877]    fk: 106.391747949       
+	k: 100      xk: [   0.6806101202,    0.6679301369,       125858.68,    0.4763256166]    fk: 106.391747914       
+	k: 200      xk: [   0.6806105571,    0.6679314872,      125858.437,    0.4763249876]    fk: 106.391747913       
+
+	Parameter values: [0.68061055714708818, 0.66793148717540207, 125858.43702807749, 0.47632498760874609]
+	Function value:   106.39174791311302
+	Iterations:       210
+	Function calls:   437
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 2        xk: [   0.6806105571,    0.6679314872,      125858.437,    0.4763249876]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105571,    0.6679314872,      125858.437,    0.4763249876]    fk: 106.393345357       
+	k: 100      xk: [   0.6806105571,    0.6679314872,      125858.437,    0.4763249876]    fk: 106.393345357       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393345357       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39334535710852
+	Iterations:       215
+	Function calls:   445
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 3        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361332       
+	k: 100      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361332       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361332       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39336133154845
+	Iterations:       217
+	Function calls:   464
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 4        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361491       
+	k: 100      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361491       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361491       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39336149129285
+	Iterations:       217
+	Function calls:   464
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 5        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 100      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39336149289029
+	Iterations:       217
+	Function calls:   464
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 6        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 100      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39336149290627
+	Iterations:       217
+	Function calls:   464
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 7        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 100      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39336149290642
+	Iterations:       217
+	Function calls:   464
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 8        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 100      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+	k: 200      xk: [   0.6806105743,    0.6679315671,     125858.4217,    0.4763249462]    fk: 106.393361493       
+
+	Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+	Function value:   106.39336149290642
+	Iterations:       217
+	Function calls:   464
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+
+Parameter values: [0.68061057429981209, 0.66793156708482626, 125858.42165743574, 0.47632494623776073]
+Function value:   106.39336149290642
+Iterations:       2227
+Function calls:   4516
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+
+Fitting to the spin block [':71@N']
+-----------------------------------
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [           0.49,             0.1,              10,         1.00009]    fk: 164.734959539       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [         0.5145,             0.1,              10,         1.00009]    fk: 110.964485528       
+	k: 100      xk: [   0.5828871665,    0.1474256319,     23.66284682,   0.05872186027]    fk: 47.1293180252       
+	k: 200      xk: [   0.5829457972,  0.006500128337,     46.18652344,   0.06429872582]    fk: 46.9742828811       
+	k: 300      xk: [   0.5833385048,  0.008939374908,      48.3060278,   0.05348654538]    fk: 46.9599923221       
+	k: 400      xk: [   0.5194813118,     19.96840557,     15973.34132,    0.1789110102]    fk: 2.44595140038       
+
+	Parameter values: [0.49290762037045199, 14.59764174536847, 24048.788903407709, 0.25456769504771959]
+	Function value:   1.2897294638016294
+	Iterations:       500
+	Function calls:   827
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   0.4929076204,     14.59764175,      24048.7889,     0.254567695]    fk: 1.4432363798        
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4929076204,     14.59764175,      24048.7889,     0.254567695]    fk: 1.44170131064       
+	k: 100      xk: [   0.4925702087,     11.26800149,     24077.04271,    0.2546204858]    fk: 1.4408441354        
+	k: 200      xk: [   0.4926113379,     9.999942404,     24061.17077,     0.254467951]    fk: 1.44083930463       
+
+	Parameter values: [0.49261133705713273, 10.000028730395274, 24061.171487315863, 0.25446795636303576]
+	Function value:   1.4408393046322781
+	Iterations:       287
+	Function calls:   583
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 2        xk: [   0.4926113371,     10.00002873,     24061.17149,    0.2544679564]    fk: 1.44239807493       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926113371,     10.00002873,     24061.17149,    0.2544679564]    fk: 1.44238248723       
+	k: 100      xk: [   0.4926124499,      9.99987668,     24060.80468,    0.2544645109]    fk: 1.44238248592       
+
+	Parameter values: [0.49261244961690093, 9.9998616901179993, 24060.80472724681, 0.25446451105824325]
+	Function value:   1.4423824859166741
+	Iterations:       177
+	Function calls:   454
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 3        xk: [   0.4926124496,      9.99986169,     24060.80473,    0.2544645111]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124496,      9.99986169,     24060.80473,    0.2544645111]    fk: 1.44239791772       
+	k: 100      xk: [   0.4926124597,     9.995803104,     24060.80132,    0.2544644796]    fk: 1.44239791772       
+
+	Parameter values: [0.49261245970226203, 9.9959378534488241, 24060.801328464073, 0.25446447962739877]
+	Function value:   1.4423979177162398
+	Iterations:       191
+	Function calls:   483
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 4        xk: [   0.4926124597,     9.995937853,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124597,     9.995937853,     24060.80133,    0.2544644796]    fk: 1.44239807203       
+	k: 100      xk: [   0.4926124597,     9.995937853,     24060.80133,    0.2544644796]    fk: 1.44239807203       
+
+	Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+	Function value:   1.442398072034232
+	Iterations:       164
+	Function calls:   383
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 5        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807358       
+	k: 100      xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807358       
+
+	Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+	Function value:   1.442398073577412
+	Iterations:       134
+	Function calls:   333
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 6        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+	k: 100      xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+
+	Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+	Function value:   1.4423980735928437
+	Iterations:       134
+	Function calls:   333
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 7        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+	k: 100      xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+
+	Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+	Function value:   1.442398073592998
+	Iterations:       134
+	Function calls:   333
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 8        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+	k: 100      xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+
+	Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+	Function value:   1.4423980735929995
+	Iterations:       134
+	Function calls:   333
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 9        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+	k: 100      xk: [   0.4926124597,     9.995938366,     24060.80133,    0.2544644796]    fk: 1.44239807359       
+
+	Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+	Function value:   1.4423980735929995
+	Iterations:       134
+	Function calls:   333
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+
+Parameter values: [0.49261245970227174, 9.9959383657691099, 24060.801328462163, 0.2544644796274067]
+Function value:   1.4423980735929995
+Iterations:       1989
+Function calls:   4395
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+relax> monte_carlo.setup(number=50)
+
+relax> monte_carlo.create_data(method='back_calc')
+
+relax> monte_carlo.initial_values()
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+Simulation 1
+Simulation 2
+Simulation 3
+Simulation 4
+Simulation 5
+Simulation 6
+Simulation 7
+Simulation 8
+Simulation 9
+Simulation 10
+Simulation 11
+Simulation 12
+Simulation 13
+Simulation 14
+Simulation 15
+Simulation 16
+Simulation 17
+Simulation 18
+Simulation 19
+Simulation 20
+Simulation 21
+Simulation 22
+Simulation 23
+Simulation 24
+Simulation 25
+Simulation 26
+Simulation 27
+Simulation 28
+Simulation 29
+Simulation 30
+Simulation 31
+Simulation 32
+Simulation 33
+Simulation 34
+Simulation 35
+Simulation 36
+Simulation 37
+Simulation 38
+Simulation 39
+Simulation 40
+Simulation 41
+Simulation 42
+Simulation 43
+Simulation 44
+Simulation 45
+Simulation 46
+Simulation 47
+Simulation 48
+Simulation 49
+Simulation 50
+
+relax> monte_carlo.error_analysis()
+
+relax> results.write(file='results', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', compress_type=1, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/results.bz2' for writing.
+
+relax> relax_disp.plot_disp_curves(dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/disp_:70@N.agr' for writing.
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/disp_:71@N.agr' for writing.
+
+relax> value.write(param='phi_ex', file='phi_ex.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/phi_ex.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/phi_ex.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/chi2.agr' for writing.
+
+
+
+--------------------
+- The 'CR72' model -
+--------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='CR72', bundle_to='relax_disp')
+
+relax> pipe.switch(pipe_name='CR72')
+
+relax> relax_disp.select_model(model='CR72')
+The Carver and Richards (1972) 2-site model for all time scales.
+
+relax> value.copy(pipe_from='R2eff', pipe_to='CR72', param='r2eff')
+
+relax> grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+
+Fitting to the spin block [':70@N']
+-----------------------------------
+
+Unconstrained grid search size: 161051 (constraints may decrease this size).
+
+Traceback (most recent call last):
+  File "/data/relax/branches/relax_disp/multi/processor.py", line 479, in run
+    self.callback.init_master(self)
+  File "/data/relax/branches/relax_disp/multi/__init__.py", line 318, in default_init_master
+    self.master.run()
+  File "/data/relax/branches/relax_disp/relax.py", line 189, in run
+    self.interpreter.run(self.script_file)
+  File "/data/relax/branches/relax_disp/prompt/interpreter.py", line 278, in run
+    return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
+  File "/data/relax/branches/relax_disp/prompt/interpreter.py", line 576, in run_script
+    return console.interact(intro, local, script_file, quit, show_script=show_script, raise_relax_error=raise_relax_error)
+  File "/data/relax/branches/relax_disp/prompt/interpreter.py", line 468, in interact_script
+    exec_script(script_file, local)
+  File "/data/relax/branches/relax_disp/prompt/interpreter.py", line 341, in exec_script
+    runpy.run_module(module, globals)
+  File "/usr/lib64/python2.7/runpy.py", line 180, in run_module
+    fname, loader, pkg_name)
+  File "/usr/lib64/python2.7/runpy.py", line 72, in _run_code
+    exec code in run_globals
+  File "/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/relax_disp.py", line 50, in <module>
+    Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+  File "/data/relax/branches/relax_disp/auto_analyses/relax_disp.py", line 96, in __init__
+    self.run()
+  File "/data/relax/branches/relax_disp/auto_analyses/relax_disp.py", line 208, in run
+    self.optimise()
+  File "/data/relax/branches/relax_disp/auto_analyses/relax_disp.py", line 163, in optimise
+    self.interpreter.grid_search(inc=self.grid_inc)
+  File "/data/relax/branches/relax_disp/prompt/uf_objects.py", line 221, in __call__
+    self._backend(*new_args, **uf_kargs)
+  File "/data/relax/branches/relax_disp/pipe_control/minimise.py", line 140, in grid_search
+    grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
+  File "/data/relax/branches/relax_disp/specific_analyses/relax_disp/__init__.py", line 1052, in grid_search
+    self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+  File "/data/relax/branches/relax_disp/specific_analyses/relax_disp/__init__.py", line 1166, in minimise
+    results = grid(func=model.func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
+AttributeError: Dispersion instance has no attribute 'func'

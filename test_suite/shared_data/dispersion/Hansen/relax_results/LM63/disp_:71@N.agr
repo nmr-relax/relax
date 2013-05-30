@@ -1,0 +1,43 @@
+@version 50121
+@page size 842, 595
+@with g0
+@    view 0.15, 0.15, 1.28, 0.85
+@    xaxis  label "\qSpin-lock field strength (Hz)\Q"
+@    xaxis  label char size 1.48
+@    xaxis  tick major size 0.75
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.45
+@    xaxis  ticklabel char size 1.00
+@    yaxis  label "\qR\s1\xr\B\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.48
+@    yaxis  tick major size 0.75
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.45
+@    yaxis  ticklabel char size 1.00
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@target G0.S0
+@type xydy
+66.6666                        7.044342457026060              0.353119268812593             
+133.3333                       6.781032716546586              0.294209196482455             
+200.0                          6.467622614080504              0.349665579847827             
+266.6666                       6.333339827307936              0.349164301326198             
+333.3333                       6.323238193341627              0.348851369695416             
+400.0                          6.005245039869958              0.346720305059319             
+466.6666                       5.767051993948105              0.345395414931471             
+533.3333                       5.476967601293420              0.289667362995563             
+600.0                          5.469948766899343              0.343718757583736             
+666.6666                       5.295113207914031              0.342447349636835             
+733.3333                       5.435647509638665              0.343767962810828             
+800.0                          5.410399932309044              0.343285515592117             
+866.6666                       5.437553763491596              0.343403436623971             
+933.3333                       5.176844226808310              0.287959610356250             
+1000.0                         5.227231917975078              0.341943169685012             
+&
