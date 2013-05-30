@@ -197,7 +197,7 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Exponential curves.
-        if cdp.model == MODEL_R2EFF and  cdp.exp_type not in FIXED_TIME_EXP:
+        if cdp.model == MODEL_R2EFF and cdp.exp_type not in FIXED_TIME_EXP:
             self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
             self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
 
@@ -210,7 +210,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
 
         # The I0 parameter.
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model == MODEL_R2EFF and cdp.exp_type not in FIXED_TIME_EXP:
             self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
