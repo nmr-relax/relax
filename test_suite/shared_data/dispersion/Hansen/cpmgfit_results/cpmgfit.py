@@ -2,7 +2,7 @@
 
 To run:
 
-$ ../../../../../relax cpmgfit.py
+$ ../../../../../relax --tee cpmgfit.log cpmgfit.py
 """
 
 # Python module imports.
@@ -16,11 +16,13 @@ from status import Status; status = Status()
 data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
 state.load(data_path+sep+'r2eff_values')
 
-# Set up the model.
-relax_disp.select_model('LM63')
+# Loop over the models.
+for model in ['LM63', 'CR72']:
+    # Set up the model.
+    relax_disp.select_model(model)
 
-# Generate the input files.
-relax_disp.cpmgfit_input(force=True)
+    # Generate the input files.
+    relax_disp.cpmgfit_input(force=True)
 
-# Execute CPMGFit.
-relax_disp.cpmgfit_execute()
+    # Execute CPMGFit.
+    relax_disp.cpmgfit_execute()
