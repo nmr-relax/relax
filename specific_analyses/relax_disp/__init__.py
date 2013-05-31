@@ -1208,6 +1208,36 @@ class Relax_disp(API_base, API_common):
                     # Warning.
                     spin.warning = warning
 
+            # Store the back-calculated values.
+            if sim_index == None:
+                for spin_index in range(len(spins)):
+                    # Alias the spin.
+                    spin = spins[spin_index]
+
+                    # No data.
+                    if not hasattr(spin, 'r2eff'):
+                        continue
+
+                    # Initialise.
+                    if not hasattr(spin, 'r2eff_bc'):
+                        spin.r2eff_bc = {}
+
+                    # Loop over the R2eff data.
+                    for frq, point in loop_frq_point():
+                        # The indices.
+                        disp_pt_index = return_index_from_disp_point(point)
+                        frq_index = return_index_from_frq(frq)
+
+                        # Missing data.
+                        if missing[spin_index, frq_index, disp_pt_index]:
+                            continue
+
+                        # The R2eff key.
+                        key = return_param_key_from_data(frq=frq, point=point)
+
+                        # Store the back-calculated data.
+                        spin.r2eff_bc[key] = model.back_calc[spin_index, frq_index, disp_pt_index]
+
 
     def model_loop(self):
         """Loop over the spin groupings for one model applied to multiple spins.
