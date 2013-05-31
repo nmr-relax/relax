@@ -31,7 +31,7 @@ from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.lm63 import r2eff_LM63
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LIST_FULL, MODEL_LM63, MODEL_NOREX, MODEL_R2EFF
 
 
 class Dispersion:
@@ -43,6 +43,7 @@ class Dispersion:
 
         The following models are currently supported:
 
+            - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
             - 'CR72':  The Carver and Richards (1972) 2-site model for all time scales.
 
@@ -74,7 +75,7 @@ class Dispersion:
         """
 
         # Check the args.
-        if model not in [MODEL_R2EFF, MODEL_LM63, MODEL_CR72]:
+        if model not in MODEL_LIST_FULL:
             raise RelaxError("The model '%s' is unknown." % model)
         if values == None:
             raise RelaxError("No values have been supplied to the target function.")
@@ -105,6 +106,8 @@ class Dispersion:
         self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
 
         # Set up the model.
+        if model == MODEL_NOREX:
+            self.func = self.func_NOREX
         if model == MODEL_LM63:
             self.func = self.func_LM63
         if model == MODEL_CR72:
@@ -190,6 +193,45 @@ class Dispersion:
 
                 # Back calculate the R2eff values.
                 r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_NOREX(self, params):
+        """Target function for no exchange.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R2eff values as R20 values.
+                for i in range(self.num_disp_points):
+                    self.back_calc[spin_index, frq_index, i] = R20[frq_index]
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

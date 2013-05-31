@@ -41,8 +41,17 @@ R1RHO_EXP = ['r1rho fixed', 'r1rho exponential']
 MODEL_R2EFF = 'R2eff'
 """The model for determining the R2eff/R1rho values from peak intensities."""
 
+MODEL_NOREX = 'No Rex'
+"""The model for no chemical exchange relaxation."""
+
 MODEL_LM63 = 'LM63'
 """The Luz and Meiboom (1963) 2-site fast exchange model."""
 
 MODEL_CR72 = 'CR72'
 """The Carver and Richards (1972) 2-site model for all time scales."""
+
+MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_CR72]
+"""The list of all dispersion models (excluding the R2eff model)."""
+
+MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72]
+"""The list of the R2eff model together with all dispersion models."""
