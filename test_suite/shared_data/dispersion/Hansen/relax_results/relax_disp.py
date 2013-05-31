@@ -2,7 +2,7 @@
 
 To run:
 
-$ ../../../../../relax relax_disp.py
+$ ../../../../../relax relax_disp.py --tee relax_disp.log
 """
 
 
