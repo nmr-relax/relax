@@ -27,6 +27,7 @@
 from numpy import dot, float64, zeros
 
 # relax module imports.
+from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.lm63 import r2eff_LM63
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
@@ -106,6 +107,56 @@ class Dispersion:
         # Set up the model.
         if model == MODEL_LM63:
             self.func = self.func_LM63
+        if model == MODEL_CR72:
+            self.func = self.func_CR72
+
+
+    def func_CR72(self, params):
+        """Target function for the Carver and Richards (1972) 2-site exchange model on all time scales.
+
+        This assumes that pA > pB, and hence this must be implemented as a constraint.
+
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        index = self.num_frq - 1
+        R20 = params[:index+1]
+        pA = params[index+1]
+        dw = params[index+2]
+        kex = params[index+3]
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw * self.frqs[frq_index]
+
+                # Back calculate the R2eff values.
+                r2eff_CR72(r20=R20[frq_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
 
 
     def func_LM63(self, params):
