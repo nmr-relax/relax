@@ -825,7 +825,7 @@ class Relax_disp(API_base, API_common):
             params = []
             for i in range(cdp.spectrometer_frq_count):
                 params.append('r2')
-            params += ['pa', 'dw', 'kex']
+            params += ['pA', 'dw', 'kex']
 
         # Invalid model.
         else:
