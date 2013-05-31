@@ -551,20 +551,6 @@ uf.desc[-1].add_verbatim("""\
 
     zeta = -2delta_omega (pA.kex - pB.kex).\
 """)
-# 2-site slow model.
-#uf.desc.append(Desc_container("The 2-site slow model"))
-#uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for slow exchange is:" % SLOW_2SITE)
-#uf.desc[-1].add_verbatim("""\
-#                       /     /      dw      \   4 * cpmg_frq \ 
-#    R2eff = R2A + kA - | sin | ------------ | * ------------ |
-#                       \     \ 4 * cpmg_frq /        dw      /\
-#""")
-#uf.desc[-1].add_paragraph("where:")
-#uf.desc[-1].add_verbatim("""\
-#    cpmg_frq = 1 / ( 4 * cpmg_tau )\
-#""")
-#uf.desc[-1].add_paragraph("The reference for this equation is:")
-#uf.desc[-1].add_list_element("Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2).")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the 2-site fast exchange model for all selected spins, type one of:")
