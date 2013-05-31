@@ -56,7 +56,7 @@ where:
 """
 
 # Python module imports.
-from math import arccosh, cos, cosh, sqrt
+from math import acosh, cos, cosh, sqrt
 
 
 def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
@@ -113,4 +113,4 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
         etaneg = etaneg_part / cpmg_frqs[i]
 
         # The full formula.
-        back_calc[i] = r20 + 0.5*kex - cpmg_frqs[i] * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
+        back_calc[i] = r20 + 0.5*kex - cpmg_frqs[i] * acosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
