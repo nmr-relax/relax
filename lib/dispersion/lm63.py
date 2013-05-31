@@ -25,7 +25,7 @@
 
 This module is for the function, gradient and Hessian of the LM63 model.  The model is named after the reference:
 
-    Luz, S. and Meiboom S., 1963, Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 1963, 39, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
+    Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 39, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
 
 The equation used is:
 

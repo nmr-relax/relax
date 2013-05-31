@@ -517,7 +517,7 @@ uf.desc[-1].add_verbatim("""\
 """)
 uf.desc[-1].add_paragraph("kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.")
 uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Luz, S. and Meiboom S., 1963, Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 1963, 39, 366-370 (DOI: 10.1063/1.1734254).")
+uf.desc[-1].add_list_element("Luz, S. and Meiboom S. (1963).  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent.  J. Chem. Phys., 39, 366-370 (DOI: 10.1063/1.1734254).")
 # CR72 model.
 uf.desc.append(Desc_container("The CR72 2-site CPMG model"))
 uf.desc[-1].add_paragraph("This is the model for 2-site exchange on all times scales, named after Carver and Richards 1972.  Is it selected by setting the model to '%s'.  The equation is:" % MODEL_CR72)
@@ -539,7 +539,7 @@ uf.desc[-1].add_verbatim("""\
     zeta = 2delta_omega (R2A0 - R2B0 - pA.kex + pB.kex).\
 """)
 uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Carver, J. P. and Richards, R. E., 1972, General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation. JMR, 6, 89-105 (DOI: 10.1016/0022-2364(72)90090-X).")
+uf.desc[-1].add_list_element("Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105 (DOI: 10.1016/0022-2364(72)90090-X).")
 # 2-site slow model.
 #uf.desc.append(Desc_container("The 2-site slow model"))
 #uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for slow exchange is:" % SLOW_2SITE)
