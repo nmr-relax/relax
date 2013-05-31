@@ -23,5 +23,7 @@
 """The relax-lib NMR package - a library of functions for relaxation dispersion."""
 
 __all__ = [
-    'equations'
+    'cr72',
+    'equations',
+    'lm63'
 ]
