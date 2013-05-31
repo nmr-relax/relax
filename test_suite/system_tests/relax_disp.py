@@ -76,26 +76,21 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
         print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
         print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
-        print("%-20s %20.15g %20.15g" % ("phi_ex (500 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2))
-        print("%-20s %20.15g %20.15g" % ("phi_ex (800 MHz)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2))
         print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
-        print("%-20s %20.15g %20.15g" % ("CPMGFit Rex (500)", spin70.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[0]**2 / spin71.kex))
-        print("%-20s %20.15g %20.15g" % ("CPMGFit Rex (800)", spin70.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin70.kex, spin71.phi_ex * cdp.spectrometer_frq_list[1]**2 / spin71.kex))
-        print("%-20s %20.15g %20.15g" % ("CPMGFit tau", 2/spin70.kex, 2/spin71.kex))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.80619482210607)
-        self.assertAlmostEqual(spin70.r2[1], 6.67911678576503)
-        self.assertAlmostEqual(spin70.phi_ex, 1.25861556503355e-13)
-        self.assertAlmostEqual(spin70.kex, 4763.2543305315)
-        self.assertAlmostEqual(spin70.chi2, 106.393365216011)
+        self.assertAlmostEqual(spin70.r2[0], 6.8058772971170374)
+        self.assertAlmostEqual(spin70.r2[1], 6.6790611414921477)
+        self.assertAlmostEqual(spin70.phi_ex, 0.31009292384617337)
+        self.assertAlmostEqual(spin70.kex, 4763.36556651067)
+        self.assertAlmostEqual(spin70.chi2, 106.393365972649)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.92684808998739)
-        self.assertAlmostEqual(spin71.phi_ex, 2.40420500312786e-14)
-        self.assertAlmostEqual(spin71.kex, 2543.15954874963)
-        self.assertAlmostEqual(spin71.chi2, 1.44240394418566)
+        self.assertAlmostEqual(spin71.r2[0], 4.9264108615358406)
+        self.assertAlmostEqual(spin71.phi_ex, 0.059254616846279792)
+        self.assertAlmostEqual(spin71.kex, 2543.899105435682)
+        self.assertAlmostEqual(spin71.chi2, 1.4423991744690439)
 
 
     def test_hansen_cpmg_data_CR72(self):
