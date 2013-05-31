@@ -95,7 +95,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=list, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('pA', scope='spin', default=0.5, desc='The population for state A', set='params', py_type=float, grace_string='\qp\sA\N\Q', err=True, sim=True)
         self.PARAMS.add('pB', scope='spin', default=0.5, desc='The population for state B', set='params', py_type=float, grace_string='\qp\sB\N\Q', err=True, sim=True)
-        self.PARAMS.add('phi_ex', scope='spin', default=5.0, desc='The pA.pB.dw**2 value scaled by wH (phi_ex = pA * pB * Delta_omega**2 / omega_H**2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N\\q (p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N / \\xw\\B\\sH\\N\\S2\\N)', err=True, sim=True)
+        self.PARAMS.add('phi_ex', scope='spin', default=5.0, desc='The phi_ex = pA.pB.dw**2 value (ppm^2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N = \\q p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N\\Q  (ppm\\S2\\N)', err=True, sim=True)
         self.PARAMS.add('dw', scope='spin', default=0.0, desc='The chemical shift difference between states A and B (in ppm)', set='params', py_type=float, grace_string='\q\\xDw\f{}\Q (ppm)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
@@ -124,10 +124,10 @@ class Relax_disp(API_base, API_common):
         scaling_matrix = assemble_scaling_matrix(spins=[spin], scaling=False)
 
         # Initialise the data structures for the target function.
-        values, errors, missing = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
+        values, errors, missing, frqs = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=cdp.spectrometer_frq_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=cdp.spectrometer_frq_list, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=cdp.spectrometer_frq_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
@@ -379,15 +379,15 @@ class Relax_disp(API_base, API_common):
                         lower.append(0.0)
                         upper.append(1.0)
 
-                    # The pA.pB.dw**2/wH**2 parameter.
+                    # The pA.pB.dw**2 parameter.
                     elif spin.params[i] == 'phi_ex':
-                        lower.append(1e-20)
-                        upper.append(1e-17)
+                        lower.append(0.0)
+                        upper.append(10.0)
 
                     # Chemical shift difference between states A and B.
                     elif spin.params[i] == 'dw':
-                        lower.append(1.0)
-                        upper.append(10000.0)
+                        lower.append(0.0)
+                        upper.append(10.0)
 
                     # Exchange rates.
                     elif spin.params[i] in ['kex', 'ka']:
@@ -1105,7 +1105,7 @@ class Relax_disp(API_base, API_common):
         # Loop over the spin blocks.
         for spins, spin_ids in self.model_loop():
             # The R2eff/R1rho data.
-            values, errors, missing = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
+            values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
 
             # Create the initial parameter vector.
             param_vector = assemble_param_vector(spins=spins)
@@ -1138,7 +1138,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=cdp.spectrometer_frq_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=cdp.spectrometer_frq_list, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=cdp.spectrometer_frq_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):

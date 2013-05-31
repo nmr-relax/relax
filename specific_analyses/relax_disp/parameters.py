@@ -134,7 +134,7 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
                 else:
                     param_vector.append(spin.pA)
 
-            # The pA.pB.dw**2/wH**2 parameter.
+            # The pA.pB.dw**2 parameter.
             elif spin.params[i] == 'phi_ex':
                 if sim_index != None:
                     param_vector.append(spin.phi_ex_sim[sim_index])
@@ -236,9 +236,9 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
             elif spin.params[i] == 'pA':
                 scaling_matrix[param_index, param_index] = 1
 
-            # The pA.pB.dw**2/wH**2 parameter.
+            # The pA.pB.dw**2 parameter.
             elif spin.params[i] == 'phi_ex':
-                scaling_matrix[param_index, param_index] = 1e-18
+                scaling_matrix[param_index, param_index] = 1
 
             # Chemical shift difference between states A and B scaling.
             elif spin.params[i] == 'dw':
@@ -365,7 +365,7 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                     else:
                         spin.pA = param_vector[param_index]
 
-                # The pA.pB.dw**2/wH**2 parameter.
+                # The pA.pB.dw**2 parameter.
                 if spin.params[i] == 'phi_ex':
                     if sim_index != None:
                         spin.phi_ex_sim[sim_index] = param_vector[param_index]
@@ -500,7 +500,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.5 / scaling_matrix[i, i])
                 j += 2
 
-            # The pA.pB.dw**2/wH**2 parameter (phi_ex >= 0).
+            # The pA.pB.dw**2 parameter (phi_ex >= 0).
             elif spin.params[i] == 'phi_ex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0

@@ -32,12 +32,13 @@ The dispersion data model is based on the following concepts, in order of import
 """
 
 # Python module imports.
-from math import sqrt
+from math import pi, sqrt
 from numpy import float64, int32, ones, zeros
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoSpectraError
+from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
 from lib.list import count_unique_elements, unique_elements
+from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP
 
@@ -539,8 +540,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     @type field_count:      int
     @keyword sim_index:     The index of the simulation to return the data of.  This should be None if the normal data is required.
     @type sim_index:        None or int
-    @return:                The numpy array structures of the R2eff/R1rho values, errors and missing data.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.
-    @rtype:                 numpy rank-3 float array, numpy rank-3 float array, numpy rank-3 int array
+    @return:                The numpy array structures of the R2eff/R1rho values, errors, missing data, and corresponding Larmor frequencies.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.  For the Larmor frequency structure, the third dimension is omitted.
+    @rtype:                 numpy rank-3 float array, numpy rank-3 float array, numpy rank-3 int array, numpy rank-2 int array
     """
 
     # The spin count.
@@ -550,6 +551,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     values = zeros((spin_num, field_count, cdp.dispersion_points), float64)
     errors = ones((spin_num, field_count, cdp.dispersion_points), float64)
     missing = ones((spin_num, field_count, cdp.dispersion_points), int32)
+    frqs = zeros((spin_num, field_count), float64)
 
     # Pack the R2eff/R1rho data.
     data_flag = False
@@ -562,6 +564,10 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             continue
         data_flag = True
 
+        # No isotope information.
+        if not hasattr(spin, 'isotope'):
+            raise RelaxSpinTypeError(spin_id=spin_ids[spin_index])
+
         # The keys.
         keys = list(spin.r2eff.keys())
 
@@ -573,6 +579,9 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # The key.
             key = return_param_key_from_data(frq=frq, point=point)
+
+            # The Larmor frequency for this spin and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
+            frqs[spin_index, frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
 
             # Missing data.
             if key not in spin.r2eff:
@@ -595,7 +604,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
         raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
 
     # Return the structures.
-    return values, errors, missing
+    return values, errors, missing, frqs
 
 
 def return_spin_lock_nu1(ref_flag=True):

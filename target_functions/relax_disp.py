@@ -63,8 +63,8 @@ class Dispersion:
         @type errors:               numpy rank-3 float array
         @keyword missing:           The data structure indicating missing R2eff/R1rho data.  The three dimensions must correspond to those of the values argument.
         @type missing:              numpy rank-3 int array
-        @keyword frqs:              The spectrometer frequencies in Hz.
-        @type frqs:                 numpy rank-1 float array
+        @keyword frqs:              The spin Larmor frequencies (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first two of the value, error and missing structures.
+        @type frqs:                 numpy rank-2 float array
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            numpy rank-1 float array
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
@@ -142,7 +142,7 @@ class Dispersion:
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw * self.frqs[frq_index]
+                dw_frq = dw * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_CR72(r20=R20[frq_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
@@ -185,8 +185,8 @@ class Dispersion:
         for spin_index in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
-                # Spectrometer field strength scaling.
-                phi_ex_scaled = phi_ex * self.frqs[frq_index]**2
+                # Convert phi_ex from ppm^2 to (rad/s)^2.
+                phi_ex_scaled = phi_ex * self.frqs[spin_index, frq_index]**2
 
                 # Back calculate the R2eff values.
                 r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
