@@ -1,3 +1,24 @@
+The no exchange model
+=====================
+
+Residue :70
+-----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)       10.563      11.400           -           -
+R2 (800)       16.141      16.823           -           -
+chi2         3427.907     860.148           -           -
+
+
+Residue :71
+-----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        5.830           -           -           -
+chi2           47.357           -           -           -
+
+
+
 The LM63 model
 ==============
 
