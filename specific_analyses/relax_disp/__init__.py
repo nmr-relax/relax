@@ -376,7 +376,7 @@ class Relax_disp(API_base, API_common):
 
                     # The population of state A.
                     elif spin.params[i] == 'pA':
-                        lower.append(0.0)
+                        lower.append(0.5)
                         upper.append(1.0)
 
                     # The pA.pB.dw**2 parameter.
