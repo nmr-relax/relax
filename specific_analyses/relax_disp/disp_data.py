@@ -568,9 +568,6 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
         if not hasattr(spin, 'isotope'):
             raise RelaxSpinTypeError(spin_id=spin_ids[spin_index])
 
-        # The keys.
-        keys = list(spin.r2eff.keys())
-
         # Loop over the R2eff data.
         for frq, point in loop_frq_point():
             # The indices.
