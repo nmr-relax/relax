@@ -11,7 +11,7 @@
 @    xaxis  tick minor linewidth 0.5
 @    xaxis  tick minor size 0.45
 @    xaxis  ticklabel char size 1.00
-@    yaxis  label "\xF\B\sex\N\q (p\sA\N.p\sB\N.\xDw\B\S2\N / \xw\B\sH\N\S2\N)"
+@    yaxis  label "\xF\B\sex\N = \q p\sA\N.p\sB\N.\xDw\B\S2\N\Q  (ppm\S2\N)"
 @    yaxis  label char size 1.48
 @    yaxis  tick major size 0.75
 @    yaxis  tick major linewidth 0.5
@@ -27,6 +27,6 @@
 @    s0 errorbar riser linewidth 0.5
 @target G0.S0
 @type xydy
-70                             0.000000000000126              0.000000000000000             
-71                             0.000000000000024              0.000000000000000             
+70                             0.310077837669564              0.000000000000000             
+71                             0.059278680776664              0.000000000000000             
 &

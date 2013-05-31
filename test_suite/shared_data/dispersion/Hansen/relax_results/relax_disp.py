@@ -2,7 +2,7 @@
 
 To run:
 
-$ ../../../../../relax relax_disp.py --tee relax_disp.log
+$ ../../../../../relax --tee relax_disp.log relax_disp.py
 """
 
 
@@ -36,6 +36,9 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 
 # Load the saved base pipe
 results.read(data_path+sep+'base_pipe')
+
+# Set the nuclear isotope data.
+spin.isotope('15N')
 
 # Create the R2eff data pipe and load the results.
 pipe.create(pipe_name='R2eff', bundle=pipe_bundle, pipe_type='relax_disp')
