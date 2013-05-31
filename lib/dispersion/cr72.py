@@ -102,7 +102,7 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
     Dneg = 0.5 * (-1.0 + D_part)
 
     # Partial eta+/- values.
-    eta_scale = 2.0**(2.0/3.0)
+    eta_scale = 2.0**(-3.0/2.0)
     etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
     etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
 
