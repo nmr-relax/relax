@@ -429,7 +429,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |        |      |         |
         | 1  0  0 |     |   pA   |      |    0    |
         |         |     |        |      |         |
-        | 2  0  0 |  .  |   pA   |  >=  |    1    |
+        | 1  0  0 |  .  |   pA   |  >=  |   0.5   |
         |         |     |        |      |         |
         | 1  0  0 |     | phi_ex |      |    0    |
         |         |     |        |      |         |
@@ -496,9 +496,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                A[j+1][i] = 2.0
+                A[j+1][i] = 1.0
                 b.append(0.0)
-                b.append(1.0 / scaling_matrix[i, i])
+                b.append(0.5 / scaling_matrix[i, i])
                 j += 2
 
             # The pA.pB.dw**2/wH**2 parameter (phi_ex >= 0).
