@@ -16,7 +16,7 @@ from status import Status; status = Status()
 
 
 # The dispersion models.
-MODELS = ['LM63', 'CR72']
+MODELS = ['No Rex', 'LM63', 'CR72']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11
