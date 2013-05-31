@@ -451,16 +451,15 @@ def linear_constraints(spins=None, scaling_matrix=None):
     b = []
     n = param_num(spins=spins)
     zero_array = zeros(n, float64)
-    i = 0
     j = 0
 
     # The R2eff model.
     if cdp.model == MODEL_R2EFF:
         # Only use the parameters of the first spin of the cluster.
         spin = spins[0]
-        for k in range(len(spin.params)):
+        for i in range(n):
             # Effective transversal relaxation rate.
-            if spin.params[k] == 'r2eff':
+            if spin.params[i] == 'r2eff':
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -480,9 +479,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
     else:
         # Only use the parameters of the first spin of the cluster.
         spin = spins[0]
-        for k in range(len(spin.params)):
+        for i in range(n):
             # The transversal relaxation rates (0 <= r2 <= 200).
-            if spin.params[k] in ['r2', 'r2a']:
+            if spin.params[i] in ['r2', 'r2a']:
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -492,7 +491,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 j += 2
 
             # The population of state A (pA >= 0 and pA >= pB).
-            elif spin.params[k] == 'pA':
+            elif spin.params[i] == 'pA':
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -502,28 +501,25 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 j += 2
 
             # The pA.pB.dw**2/wH**2 parameter (phi_ex >= 0).
-            elif spin.params[k] == 'phi_ex':
+            elif spin.params[i] == 'phi_ex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j += 1
 
             # Chemical exchange difference (dw >= 0).
-            elif spin.params[k] == 'dw':
+            elif spin.params[i] == 'dw':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j += 1
 
             # Exchange rates (k >= 0).
-            elif spin.params[k] in ['kex', 'ka']:
+            elif spin.params[i] in ['kex', 'ka']:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j += 1
-
-            # Increment i.
-            i += 1
 
     # Convert to numpy data structures.
     A = array(A, float64)
