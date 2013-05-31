@@ -462,7 +462,7 @@ uf.add_keyarg(
     wiz_combo_choices = [
         "%s: {R2eff/R1rho, I0}" % MODEL_R2EFF,
         "%s: {R20, phi_ex, kex}" % MODEL_LM63,
-        "%s: {R2A, kA, dw}" % MODEL_CR72
+        "%s: {R20, pA, dw, kex}" % MODEL_CR72
     ],
     wiz_combo_data = [
         MODEL_R2EFF,
@@ -517,12 +517,12 @@ uf.desc[-1].add_verbatim("""\
 """)
 uf.desc[-1].add_paragraph("kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.")
 uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Luz, S. and Meiboom S. (1963).  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent.  J. Chem. Phys., 39, 366-370 (DOI: 10.1063/1.1734254).")
+uf.desc[-1].add_list_element("Luz, S. and Meiboom S. (1963).  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent.  J. Chem. Phys., 39, 366-370.  (DOI: 10.1063/1.1734254).")
 # CR72 model.
 uf.desc.append(Desc_container("The CR72 2-site CPMG model"))
-uf.desc[-1].add_paragraph("This is the model for 2-site exchange on all times scales, named after Carver and Richards 1972.  Is it selected by setting the model to '%s'.  The equation is:" % MODEL_CR72)
+uf.desc[-1].add_paragraph("This is the model for 2-site exchange on all times scales (with the constraint that pA > pB), named after Carver and Richards 1972.  Is it selected by setting the model to '%s'.  The equation is:" % MODEL_CR72)
 uf.desc[-1].add_verbatim("""\
-    R2eff = 1/2 [ R2A0 + R2B0  + kex - 2 * nu_cpmg cosh^-1 (D+ * cosh(eta+) - D- * cos(eta-) ] ,\
+    R2eff = 1/2 [ R2A0 + R2B0 + kex - 2.nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ] ,\
 """)
 uf.desc[-1].add_paragraph("where:")
 uf.desc[-1].add_verbatim("""\
@@ -539,7 +539,18 @@ uf.desc[-1].add_verbatim("""\
     zeta = 2delta_omega (R2A0 - R2B0 - pA.kex + pB.kex).\
 """)
 uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105 (DOI: 10.1016/0022-2364(72)90090-X).")
+uf.desc[-1].add_list_element("Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105.  (DOI: 10.1016/0022-2364(72)90090-X).")
+uf.desc[-1].add_paragraph("For this model, the R20 relaxation rates for states A and B are assumed to be the same.  This simplifies the equations to:")
+uf.desc[-1].add_verbatim("""\
+    R2eff = R20 + kex/2 - nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ,\
+""")
+uf.desc[-1].add_paragraph("where:")
+uf.desc[-1].add_verbatim("""\
+
+    Psi = kex^2 - delta_omega^2 ,
+
+    zeta = -2delta_omega (pA.kex - pB.kex).\
+""")
 # 2-site slow model.
 #uf.desc.append(Desc_container("The 2-site slow model"))
 #uf.desc[-1].add_paragraph("This is selected by setting the model to '%s'.  The equation for slow exchange is:" % SLOW_2SITE)
