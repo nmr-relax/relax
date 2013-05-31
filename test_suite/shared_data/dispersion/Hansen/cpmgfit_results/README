@@ -1,0 +1,5 @@
+To convert the 'CPMG' model parameter Rex to phi_ex, use:
+
+phi_ex = (Rex / tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2
+
+where frq is the magnetic field strength in Hz (for the proton Larmor frequency).  There nevertheless seems to be a factor of 2 * 1000 difference.
