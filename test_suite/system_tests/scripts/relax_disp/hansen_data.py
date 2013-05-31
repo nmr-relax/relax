@@ -19,7 +19,7 @@ if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp'
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 3
+GRID_INC = 5
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
