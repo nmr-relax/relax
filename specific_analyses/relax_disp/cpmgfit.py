@@ -212,6 +212,17 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
         file.write("Rex 0 100.0 100\n")
         file.write("tex 0 10.0 100\n")
 
+    # The function and parameters.
+    elif function == 'Full_CPMG':
+        # Function.
+        file.write("function Full_CPMG\n")
+
+        # Parameters.
+        file.write("R2 1 10 20\n")
+        file.write("papb 0.01 0.49 20\n")
+        file.write("dw 0 10.0 100\n")
+        file.write("kex 0.1 1.0 100\n")
+
     # The Grace setup.
     file.write("xmgr\n")
     file.write("@ xaxis label \"1/tcp (1/ms)\"\n")
@@ -273,7 +284,8 @@ def translate_model():
 
     # A translation table (relax to CPMGFit models).
     translation = {
-        'LM63': 'CPMG'
+        'LM63': 'CPMG',
+        'CR72': 'Full_CPMG'
     }
 
     # No translation, so fail.
