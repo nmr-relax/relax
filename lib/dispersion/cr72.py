@@ -112,5 +112,16 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
         etapos = etapos_part / cpmg_frqs[i]
         etaneg = etaneg_part / cpmg_frqs[i]
 
+        # Catch large values of etapos going into the cosh function.
+        if etapos > 100:
+            back_calc[i] = 1e100
+            continue
+
+        # Part of the equation (catch values < 1 to prevent math domain errors).
+        part = Dpos * cosh(etapos) - Dneg * cos(etaneg)
+        if part < 1:
+            back_calc[i] = 1e100
+            continue
+
         # The full formula.
-        back_calc[i] = r20 + 0.5*kex - cpmg_frqs[i] * acosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
+        back_calc[i] = r20 + 0.5*kex - cpmg_frqs[i] * acosh(part)
