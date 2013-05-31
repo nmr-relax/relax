@@ -116,14 +116,41 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
                 else:
                     param_vector.append(spin.r2[i])
 
+            # Transversal relaxation rate for state A.
+            elif spin.params[i] == 'r2a':
+                if sim_index != None:
+                    param_vector.append(spin.r2a_sim[sim_index])
+                elif spin.r2a == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.r2a)
+
+            # The pA parameter.
+            elif spin.params[i] == 'pA':
+                if sim_index != None:
+                    param_vector.append(spin.pA_sim[sim_index])
+                elif spin.pA == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.pA)
+
             # The pA.pB.dw**2/wH**2 parameter.
-            if spin.params[i] == 'phi_ex':
+            elif spin.params[i] == 'phi_ex':
                 if sim_index != None:
                     param_vector.append(spin.phi_ex_sim[sim_index])
                 elif spin.phi_ex == None:
                     param_vector.append(0.0)
                 else:
                     param_vector.append(spin.phi_ex)
+
+            # Chemical shift difference between states A and B.
+            elif spin.params[i] == 'dw':
+                if sim_index != None:
+                    param_vector.append(spin.dw_sim[sim_index])
+                elif spin.dw == None:
+                    param_vector.append(0.0)
+                else:
+                    param_vector.append(spin.dw)
 
             # Exchange rate.
             elif spin.params[i] == 'kex':
@@ -134,32 +161,14 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
                 else:
                     param_vector.append(spin.kex)
 
-            # Transversal relaxation rate for state A.
-            if spin.params[i] == 'r2a':
-                if sim_index != None:
-                    param_vector.append(spin.r2a_sim[sim_index])
-                elif spin.r2a == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.r2a)
-
             # Exchange rate from state A to state B.
-            if spin.params[i] == 'ka':
+            elif spin.params[i] == 'ka':
                 if sim_index != None:
                     param_vector.append(spin.ka_sim[sim_index])
                 elif spin.ka == None:
                     param_vector.append(0.0)
                 else:
                     param_vector.append(spin.ka)
-
-            # Chemical shift difference between states A and B.
-            if spin.params[i] == 'dw':
-                if sim_index != None:
-                    param_vector.append(spin.dw_sim[sim_index])
-                elif spin.dw == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.dw)
 
     # Return a numpy array.
     return array(param_vector, float64)
@@ -220,28 +229,24 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         spin = spins[0]
         for i in range(len(spin.params)):
             # Transversal relaxation rate scaling.
-            if spin.params[i] == 'r2':
+            if spin.params[i] in ['r2', 'r2a']:
                 scaling_matrix[param_index, param_index] = 10
+
+            # The population of state A.
+            elif spin.params[i] == 'pA':
+                scaling_matrix[param_index, param_index] = 1
 
             # The pA.pB.dw**2/wH**2 parameter.
             elif spin.params[i] == 'phi_ex':
                 scaling_matrix[param_index, param_index] = 1e-18
 
-            # Exchange rate scaling.
-            elif spin.params[i] == 'kex':
-                scaling_matrix[param_index, param_index] = 10000
-
-            # Transversal relaxation rate for state A scaling
-            elif spin.params[i] == 'r2a':
-                scaling_matrix[param_index, param_index] = 10
-
-            # Exchange rate from state A to state B scaling.
-            elif spin.params[i] == 'ka':
-                scaling_matrix[param_index, param_index] = 10000
-
             # Chemical shift difference between states A and B scaling.
             elif spin.params[i] == 'dw':
-                scaling_matrix[param_index, param_index] = 1000
+                scaling_matrix[param_index, param_index] = 1
+
+            # Exchange rate scaling.
+            elif spin.params[i] in ['kex', 'ka']:
+                scaling_matrix[param_index, param_index] = 10000
 
             # Increment the parameter index.
             param_index += 1
@@ -346,12 +351,33 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                     else:
                         spin.r2[i] = param_vector[param_index]
 
+                # Transversal relaxation rate for state A.
+                if spin.params[i] == 'r2a':
+                    if sim_index != None:
+                        spin.r2a_sim[sim_index] = param_vector[param_index]
+                    else:
+                        spin.r2a = param_vector[param_index]
+
+                # The population of state A.
+                if spin.params[i] == 'pA':
+                    if sim_index != None:
+                        spin.pA_sim[sim_index] = param_vector[param_index]
+                    else:
+                        spin.pA = param_vector[param_index]
+
                 # The pA.pB.dw**2/wH**2 parameter.
                 if spin.params[i] == 'phi_ex':
                     if sim_index != None:
                         spin.phi_ex_sim[sim_index] = param_vector[param_index]
                     else:
                         spin.phi_ex = param_vector[param_index]
+
+                # Chemical shift difference between states A and B.
+                if spin.params[i] == 'dw':
+                    if sim_index != None:
+                        spin.dw_sim[sim_index] = param_vector[param_index]
+                    else:
+                        spin.dw = param_vector[param_index]
 
                 # Exchange rate.
                 elif spin.params[i] == 'kex':
@@ -360,26 +386,12 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                     else:
                         spin.kex = param_vector[param_index]
 
-                # Transversal relaxation rate for state A.
-                if spin.params[i] == 'r2a':
-                    if sim_index != None:
-                        spin.r2a_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.r2a = param_vector[param_index]
-
                 # Exchange rate from state A to state B.
                 if spin.params[i] == 'ka':
                     if sim_index != None:
                         spin.ka_sim[sim_index] = param_vector[param_index]
                     else:
                         spin.ka = param_vector[param_index]
-
-                # Chemical shift difference between states A and B.
-                if spin.params[i] == 'dw':
-                    if sim_index != None:
-                        spin.dw_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.dw = param_vector[param_index]
 
                 # Increment the parameter index.
                 param_index = param_index + 1
@@ -394,12 +406,14 @@ def linear_constraints(spins=None, scaling_matrix=None):
     The different constraints are::
 
         R2 >= 0
-        Rex >= 0
-        kex >= 0
-
+        R2 <= -200
         R2A >= 0
-        kA >= 0
+        pA >= 0
+        pA >= pB
+        phi_ex >= 0
         dw >= 0
+        kex >= 0
+        kA >= 0
 
 
     Matrix notation
@@ -407,19 +421,23 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
-        | 1  0  0 |     |  R2  |      |    0    |
-        |         |     |      |      |         |
-        |-1  0  0 |     |  R2  |      |  -200   |
-        |         |     |      |      |         |
-        | 1  0  0 |     |  phi |      |    0    |
-        |         |     |      |      |         |
-        | 1  0  0 |  .  |  kex |  >=  |    0    |
-        |         |     |      |      |         |
-        | 1  0  0 |     |  R2A |      |    0    |
-        |         |     |      |      |         |
-        | 1  0  0 |     |  kA  |      |    0    |
-        |         |     |      |      |         |
-        | 1  0  0 |     |  dw  |      |    0    |
+        | 1  0  0 |     |   R2   |      |    0    |
+        |         |     |        |      |         |
+        |-1  0  0 |     |   R2   |      |  -200   |
+        |         |     |        |      |         |
+        | 1  0  0 |     |  R2A   |      |    0    |
+        |         |     |        |      |         |
+        | 1  0  0 |     |   pA   |      |    0    |
+        |         |     |        |      |         |
+        | 2  0  0 |  .  |   pA   |  >=  |    1    |
+        |         |     |        |      |         |
+        | 1  0  0 |     | phi_ex |      |    0    |
+        |         |     |        |      |         |
+        | 1  0  0 |     |   dw   |      |    0    |
+        |         |     |        |      |         |
+        | 1  0  0 |     |  kex   |      |    0    |
+        |         |     |        |      |         |
+        | 1  0  0 |     |   kA   |      |    0    |
 
 
     @keyword spins:             The list of spin data containers for the block.
@@ -463,8 +481,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
         # Only use the parameters of the first spin of the cluster.
         spin = spins[0]
         for k in range(len(spin.params)):
-            # The transversal relaxation rate >= 0.
-            if spin.params[k] == 'r2':
+            # The transversal relaxation rates (0 <= r2 <= 200).
+            if spin.params[k] in ['r2', 'r2a']:
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -473,25 +491,32 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(-200.0 / scaling_matrix[i, i])
                 j += 2
 
-            # Relaxation rates and phi_ex.
-            elif spin.params[k] in ['r2a', 'phi_ex']:
-                # phi_ex, R2A >= 0.
+            # The population of state A (pA >= 0 and pA >= pB).
+            elif spin.params[k] == 'pA':
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = 2.0
+                b.append(0.0)
+                b.append(1.0 / scaling_matrix[i, i])
+                j += 2
+
+            # The pA.pB.dw**2/wH**2 parameter (phi_ex >= 0).
+            elif spin.params[k] == 'phi_ex':
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)
                 j += 1
 
-            # Exchange rates.
-            elif search('^k', spin.params[k]):
-                # kex, kA >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j += 1
-
-            # Chemical exchange difference.
+            # Chemical exchange difference (dw >= 0).
             elif spin.params[k] == 'dw':
-                # dw >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j += 1
+
+            # Exchange rates (k >= 0).
+            elif spin.params[k] in ['kex', 'ka']:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 b.append(0.0)

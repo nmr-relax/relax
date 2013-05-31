@@ -93,11 +93,13 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=dict, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
         self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=list, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('pA', scope='spin', default=0.5, desc='The population for state A', set='params', py_type=float, grace_string='\qp\sA\N\Q', err=True, sim=True)
+        self.PARAMS.add('pB', scope='spin', default=0.5, desc='The population for state B', set='params', py_type=float, grace_string='\qp\sB\N\Q', err=True, sim=True)
         self.PARAMS.add('phi_ex', scope='spin', default=5.0, desc='The pA.pB.dw**2 value scaled by wH (phi_ex = pA * pB * Delta_omega**2 / omega_H**2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N\\q (p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N / \\xw\\B\\sH\\N\\S2\\N)', err=True, sim=True)
+        self.PARAMS.add('dw', scope='spin', default=0.0, desc='The chemical shift difference between states A and B (in ppm)', set='params', py_type=float, grace_string='\q\\xDw\f{}\Q (ppm)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('ka', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('dw', scope='spin', default=1000.0, desc='The chemical shift difference between states A and B', set='params', py_type=float, grace_string='\\q\\xDw\\f{}\\Q (Hz)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
 
         # Add the minimisation data.
@@ -367,35 +369,30 @@ class Relax_disp(API_base, API_common):
                 # Only use the parameters of the first spin of the cluster.
                 spin = spins[0]
                 for i in range(len(spin.params)):
-                    # R2 relaxation rate (from 1 to 40 s^-1).
-                    if spin.params[i] == 'r2':
+                    # R2 relaxation rates (from 1 to 40 s^-1).
+                    if spin.params[i] in ['r2', 'r2a']:
                         lower.append(1.0)
                         upper.append(40.0)
+
+                    # The population of state A.
+                    elif spin.params[i] == 'pA':
+                        lower.append(0.0)
+                        upper.append(1.0)
 
                     # The pA.pB.dw**2/wH**2 parameter.
                     elif spin.params[i] == 'phi_ex':
                         lower.append(1e-20)
                         upper.append(1e-17)
 
-                    # Exchange rate.
-                    elif spin.params[i] == 'kex':
-                        lower.append(1.0)
-                        upper.append(100000.0)
-
-                    # Transversal relaxation rate for state A.
-                    elif spin.params[i] == 'r2a':
-                        lower.append(1.0)
-                        upper.append(20.0)
-
-                    # Exchange rate from state A to state B.
-                    elif spin.params[i] == 'ka':
-                        lower.append(1.0)
-                        upper.append(100000.0)
-
                     # Chemical shift difference between states A and B.
                     elif spin.params[i] == 'dw':
                         lower.append(1.0)
                         upper.append(10000.0)
+
+                    # Exchange rates.
+                    elif spin.params[i] in ['kex', 'ka']:
+                        lower.append(1.0)
+                        upper.append(100000.0)
 
         # The full grid size.
         grid_size = 1
@@ -828,7 +825,7 @@ class Relax_disp(API_base, API_common):
             params = []
             for i in range(cdp.spectrometer_frq_count):
                 params.append('r2')
-            params += ['r2a', 'ka', 'dw']
+            params += ['pa', 'dw', 'kex']
 
         # Invalid model.
         else:
@@ -1269,14 +1266,16 @@ class Relax_disp(API_base, API_common):
     return_data_name_doc =  Desc_container("Relaxation dispersion curve fitting data type string matching patterns")
     _table = uf_tables.add_table(label="table: dispersion curve-fit data type patterns", caption="Relaxation dispersion curve fitting data type string matching patterns.")
     _table.add_headings(["Data type", "Object name"])
-    _table.add_row(["Transversal relaxation rate", "'r2'"])
-    _table.add_row(["The pA.pB.dw**2/wH**2 parameter", "'phi_ex'"])
-    _table.add_row(["Exchange rate", "'kex'"])
-    _table.add_row(["Transversal relaxation rate for state A", "'r2a'"])
-    _table.add_row(["Exchange rate from state A to state B", "'ka'"])
-    _table.add_row(["Chemical shift difference between states A and B", "'dw'"])
+    _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'"])
+    _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'"])
+    _table.add_row(["Population of state A", "'pA'"])
+    _table.add_row(["Population of state B", "'pB'"])
+    _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'"])
+    _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
+    _table.add_row(["Exchange rate (rad/s)", "'kex'"])
+    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'ka'"])
     _table.add_row(["Peak intensities (series)", "'intensities'"])
-    _table.add_row(["CPMG pulse train frequency (series)", "'cpmg_frqs'"])
+    _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
     return_data_name_doc.add_table(_table.label)
 
 
