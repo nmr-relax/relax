@@ -30,7 +30,7 @@ from math import log, sqrt
 def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
     """Calculate the R2eff/R1rho value for the fixed relaxation time data.
 
-    The formula is:
+    The formula is::
 
                   -1         / I1 \ 
         R2eff = ------- * ln | -- | ,
@@ -54,13 +54,13 @@ def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
 def calc_two_point_r2eff_err(relax_time=None, I_ref=None, I=None, I_ref_err=None, I_err=None):
     """Calculate the R2eff/R1rho error for the fixed relaxation time data.
 
-    The formula is:
+    The formula is::
 
-                  -1         / I1 \ 
-        R2eff = ------- * ln | -- | ,
-                relax_T      \ I0 /
+                        / (sigma_I1 / I1(nu1))^2 + (sigma_I0 / I0)^2 \ 
+        sigma_R2 = sqrt | ------------------------------------------ | ,
+                        \                  relax_T                   /
 
-    where relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum of interest.
+    where relax_T is the fixed delay time, I0 and sigma_I0 are the reference peak intensity and error when relax_T is zero, and I1 and sigma_I1 are the peak intensity and error in the spectrum of interest.
 
 
     @keyword relax_time:    The fixed relaxation delay time in seconds.
