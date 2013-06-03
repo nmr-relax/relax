@@ -161,10 +161,14 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
 
     # Generate the input files for each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-        file_name = create_spin_input(function=function, spin=spin, spin_id=spin_id, dir=dir)
+        # Create the input file.
+        file_in = create_spin_input(function=function, spin=spin, spin_id=spin_id, dir=dir)
+
+        # The output file name.
+        file_out = spin_file_name(spin_id=spin_id, output=True)
 
         # Add the file to the batch script.
-        batch.write("%s -xmgr -f %s\n" % (binary, file_name))
+        batch.write("%s -grid -xmgr -f %s | tee %s\n" % (binary, file_in, file_out))
 
     # Close the batch script, then make it executable.
     batch.close()
