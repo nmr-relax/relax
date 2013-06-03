@@ -136,11 +136,43 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Set the model.
-        ds.models = ['LM63']
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(data_path+sep+'base_pipe')
 
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
+        # Set the nuclear isotope data.
+        self.interpreter.spin.isotope('15N')
+
+        # Create the R2eff data pipe and load the results.
+        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff')
+        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
+
+        # The LM63 model data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='LM63', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='LM63')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model='LM63')
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='LM63', param='r2eff')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2 = [7, 7]
+        spin70.phi_ex = 0.3
+        spin70.kex = 5000.0
+        spin71.r2 = [5, 9]
+        spin71.phi_ex = 0.1
+        spin71.kex = 2500.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -154,17 +186,17 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.8058772971170374)
-        self.assertAlmostEqual(spin70.r2[1], 6.6790611414921477)
-        self.assertAlmostEqual(spin70.phi_ex, 0.31009292384617337)
-        self.assertAlmostEqual(spin70.kex, 4763.36556651067)
-        self.assertAlmostEqual(spin70.chi2, 106.393365972649)
+        self.assertAlmostEqual(spin70.r2[0], 6.80566297338119)
+        self.assertAlmostEqual(spin70.r2[1], 6.67846669704843)
+        self.assertAlmostEqual(spin70.phi_ex, 0.31011906704072)
+        self.assertAlmostEqual(spin70.kex, 4763.71326098192)
+        self.assertAlmostEqual(spin70.chi2, 106.393365192324)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.9264108615358406)
-        self.assertAlmostEqual(spin71.phi_ex, 0.059254616846279792)
-        self.assertAlmostEqual(spin71.kex, 2543.899105435682)
-        self.assertAlmostEqual(spin71.chi2, 1.4423991744690439)
+        self.assertAlmostEqual(spin71.r2[0], 4.92610970714703)
+        self.assertAlmostEqual(spin71.phi_ex, 0.0592876975157063)
+        self.assertAlmostEqual(spin71.kex, 2544.61582323959)
+        self.assertAlmostEqual(spin71.chi2, 1.44240142554555)
 
 
     def test_hansen_cpmg_data_CR72(self):
@@ -173,11 +205,70 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Set the model.
-        ds.models = ['CR72']
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(data_path+sep+'base_pipe')
 
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
+        # Set the nuclear isotope data.
+        self.interpreter.spin.isotope('15N')
+
+        # Create the R2eff data pipe and load the results.
+        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff')
+        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
+
+        # The CR72 model data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='CR72', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='CR72')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model='CR72')
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='CR72', param='r2eff')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2 = [7, 9]
+        spin70.pA = 0.9
+        spin70.dw = 6.0
+        spin70.kex = 1500.0
+        spin71.r2 = [5, 9]
+        spin71.pA = 0.9
+        spin71.dw = 4.0
+        spin71.kex = 1900.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2[0], 7.01155339809216)
+        self.assertAlmostEqual(spin70.r2[1], 9.46442835200306)
+        self.assertAlmostEqual(spin70.pA, 0.989902989352694)
+        self.assertAlmostEqual(spin70.dw, 5.57732933273956)
+        self.assertAlmostEqual(spin70.kex, 1765.90725820329)
+        self.assertAlmostEqual(spin70.chi2, 18.4500380435222)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2[0], 4.97810633804386)
+        self.assertAlmostEqual(spin71.pA, 0.996745738175374)
+        self.assertAlmostEqual(spin71.dw, 4.4520953297668)
+        self.assertAlmostEqual(spin71.kex, 1883.01233923508)
+        self.assertAlmostEqual(spin71.chi2, 1.37893904307118)
 
 
     def test_hansen_cpmgfit_input(self):
