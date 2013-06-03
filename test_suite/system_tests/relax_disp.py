@@ -199,7 +199,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.cpmgfit_input(force=True, dir=ds.tmpdir)
 
         # What the files should contain.
-        batch_file = ['#! /bin/sh\n', '\n', 'cpmgfit -xmgr -f spin_:70@N.in\n', 'cpmgfit -xmgr -f spin_:71@N.in\n']
+        batch_file = ['#! /bin/sh\n', '\n', 'cpmgfit -grid -xmgr -f spin_:70@N.in | tee spin_:70@N.out\n', 'cpmgfit -grid -xmgr -f spin_:71@N.in | tee spin_:71@N.out\n']
         spin1 = [
             'title :70@N\n',
             'fields 2 11.7432964915 18.7892743865\n',
