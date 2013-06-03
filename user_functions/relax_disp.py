@@ -489,9 +489,9 @@ uf.desc.append(Desc_container("The R2eff model"))
 uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion part is not modelled.  It is used to determine the R2eff or R1rho values and errors which are required as the base data for all other models.  It can be selected by setting the model to '%s'.  Depending on the experiment type, this model will be handled differently.  The R2eff/R1rho values determined can be later copied to the data pipes of the other dispersion models using the appropriate value user function." % MODEL_R2EFF)
 uf.desc[-1].add_paragraph("For the fixed relaxation time period CPMG-type experiments, the R2eff values are determined by direct calculation using the formula:")
 uf.desc[-1].add_verbatim("""\
-                        -1         / I1(nu_CPMG) \ 
-    R2,eff(nu_CPMG) = ------- * ln | ----------- | ,
-                      relax_T      \     I0      /\
+                       -1         / I1(nu_CPMG) \ 
+    R2eff(nu_CPMG) = ------- * ln | ----------- | ,
+                     relax_T      \     I0      /\
 """)
 uf.desc[-1].add_paragraph("where nu_CPMG is the CPMG frequency in Hz, equal to:")
 uf.desc[-1].add_verbatim("""\
@@ -499,13 +499,18 @@ uf.desc[-1].add_verbatim("""\
     nu_CPMG = ---------- ,
               2 tau_CPMG\
 """)
-uf.desc[-1].add_paragraph("relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.  Errors are determined via bootstrapping.  The values and errors are determined with a single call of the calc user function.  The R1rho version of the equation is essentially the same:")
+uf.desc[-1].add_paragraph("relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.  The values and errors are determined with a single call of the calc user function.  The R1rho version of the equation is essentially the same:")
 uf.desc[-1].add_verbatim("""\
                    -1         / I1(nu1) \ 
     R1rho(nu1) = ------- * ln | ------- | ,
                  relax_T      \   I0    /\
 """)
-uf.desc[-1].add_paragraph("where I1 is the peak intensity in a spectrum for a given spin-lock field strength nu1.")
+uf.desc[-1].add_paragraph("where I1 is the peak intensity in a spectrum for a given spin-lock field strength nu1.  Errors are calculated using the formula:")
+uf.desc[-1].add_verbatim("""\
+                    / (sigma_I1 / I1(nu1))^2 + (sigma_I0 / I0)^2 \ 
+    sigma_R2 = sqrt | ------------------------------------------ | ,
+                    \                  relax_T                   /\
+""")
 uf.desc[-1].add_paragraph("For the variable relaxation time period type experiments, the R2eff/R1rho values are determined by fitting to the simple two parameter exponential as in a R1 or R2 analyses.  Both R2eff/R1rho and the initial peak intensity I0 are optimised using the minimise user function for each exponential curve separately.  Monte Carlo simulations are used to obtain the parameter errors.")
 # The no exchange model.
 uf.desc.append(Desc_container("The model for no chemical exchange relaxation"))
