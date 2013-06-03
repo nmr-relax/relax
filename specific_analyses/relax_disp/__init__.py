@@ -33,7 +33,6 @@ __all__ = [
 
 # Python module imports.
 from copy import deepcopy
-from math import sqrt 
 from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, log, ones, zeros
@@ -973,8 +972,8 @@ class Relax_disp(API_base, API_common):
                 # Calculate the R2eff value.
                 spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
 
-                # The R2eff error.
-                spin.r2eff_err[param_key] = sqrt((ref_intensity_err / ref_intensity)**2 + (intensity_err / intensity)**2) / time
+                # Calculate the R2eff error.
+                spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
 
 
     def constraint_algorithm(self):

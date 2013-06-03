@@ -24,7 +24,7 @@
 """The relaxation dispersion equations."""
 
 # Python module imports.
-from math import log
+from math import log, sqrt
 
 
 def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
@@ -49,3 +49,31 @@ def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
 
     # Calculate and return the value (avoiding integer division problems).
     return -1.0 / relax_time * log(float(I) / I_ref)
+
+
+def calc_two_point_r2eff_err(relax_time=None, I_ref=None, I=None, I_ref_err=None, I_err=None):
+    """Calculate the R2eff/R1rho error for the fixed relaxation time data.
+
+    The formula is:
+
+                  -1         / I1 \ 
+        R2eff = ------- * ln | -- | ,
+                relax_T      \ I0 /
+
+    where relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum of interest.
+
+
+    @keyword relax_time:    The fixed relaxation delay time in seconds.
+    @type relax_time:       float
+    @keyword I_ref:         The peak intensity in the reference spectrum.
+    @type I_ref:            float
+    @keyword I:             The peak intensity of interest.
+    @type I:                float
+    @keyword I_ref_err:     The peak intensity error in the reference spectrum.
+    @type I_ref_err:        float
+    @keyword I_err:         The peak intensity error of interest.
+    @type I_err:            float
+    """
+
+    # Calculate and return the value (avoiding integer division problems).
+    return sqrt((ref_intensity_err / ref_intensity)**2 + (intensity_err / intensity)**2) / relax_time
