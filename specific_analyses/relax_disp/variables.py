@@ -50,8 +50,22 @@ MODEL_LM63 = 'LM63'
 MODEL_CR72 = 'CR72'
 """The Carver and Richards (1972) 2-site model for all time scales."""
 
+
+# The model lists.
 MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_CR72]
 """The list of all dispersion models (excluding the R2eff model)."""
 
 MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72]
 """The list of the R2eff model together with all dispersion models."""
+
+MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_CR72]
+"""The list of all dispersion models specifically for CPMG-type experiments (excluding the R2eff model)."""
+
+MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72]
+"""The list of the R2eff model together with all dispersion models specifically for CPMG-type experiments."""
+
+MODEL_LIST_R1RHO = [MODEL_NOREX]
+"""The list of all dispersion models specifically for R1rho-type experiments (excluding the R2eff model)."""
+
+MODEL_LIST_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX]
+"""The list of the R2eff model together with all dispersion models specifically for R1rho-type experiments."""
