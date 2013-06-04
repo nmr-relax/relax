@@ -44,7 +44,7 @@ from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp import VAR_TIME_EXP
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LIST_FULL, MODEL_LM63, MODEL_NOREX, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_M61, MODEL_NOREX, MODEL_R2EFF
 from status import Status; status = Status()
 
 
@@ -117,7 +117,12 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
-            ds.relax_gui.analyses[data_index].disp_models = MODEL_LIST_FULL
+
+            # Set the dispersion models based on the experiment type.
+            if cdp.exp_type in CPMG_EXP:
+                ds.relax_gui.analyses[data_index].disp_models = MODEL_LIST_CPMG_FULL
+            else:
+                ds.relax_gui.analyses[data_index].disp_models = MODEL_LIST_R1RHO_FULL
 
         # Error checking.
         if ds.relax_gui.analyses[data_index].pipe_bundle == None:
@@ -135,7 +140,7 @@ class Auto_relax_disp(Base_analysis):
         if cdp.exp_type in VAR_TIME_EXP:
             self.relax_times_flag = True
         self.relax_disp_cpmg = False
-        if cdp.exp_type in ['cpmg', 'cpmg fixed']:
+        if cdp.exp_type in CPMG_EXP:
             self.relax_disp_cpmg = True
 
         # Execute the base class method to build the panel.
@@ -242,7 +247,10 @@ class Auto_relax_disp(Base_analysis):
         box.AddSpacer(10)
 
         # Add the dispersion models GUI element, with spacing.
-        self.model_field = Disp_model_list(self, box)
+        if cdp.exp_type in CPMG_EXP:
+            self.model_field = Disp_model_list_cpmg(self, box)
+        else:
+            self.model_field = Disp_model_list_r1rho(self, box)
         self.model_field.set_value(self.data.disp_models)
 
         # The optimisation settings.
@@ -440,7 +448,7 @@ class Execute_relax_disp(Execute):
 
 
 
-class Disp_model_list(Model_list):
+class Disp_model_list_cpmg(Model_list):
     """The diffusion model list GUI element."""
 
     # Class variables.
@@ -456,6 +464,26 @@ class Disp_model_list(Model_list):
         u"{R\u2082, ...}",
         u"{R\u2082, ..., phi_ex, kex}",
         u"{R\u2082, ..., R2a, kA, d\u03C9}"
+    ]
+    tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
+    tooltip_button = "Open the model list selector window."
+
+
+
+class Disp_model_list_r1rho(Model_list):
+    """The diffusion model list GUI element."""
+
+    # Class variables.
+    desc = "Relaxation dispersion models:"
+    models = [
+        MODEL_R2EFF,
+        MODEL_NOREX,
+        MODEL_M61,
+    ]
+    params = [
+        u"{R\u2081\u1D68, I\u2080}",
+        u"{R\u2081\u1D68', ...}",
+        u"{R\u2081\u1D68', ..., phi_ex, kex}",
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
