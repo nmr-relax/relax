@@ -29,9 +29,10 @@ from numpy import dot, float64, zeros
 # relax module imports.
 from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.lm63 import r2eff_LM63
+from lib.dispersion.m61 import r2eff_M61
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LIST_FULL, MODEL_LM63, MODEL_NOREX, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_NOREX, MODEL_R2EFF
 
 
 class Dispersion:
@@ -46,6 +47,7 @@ class Dispersion:
             - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
             - 'CR72':  The Carver and Richards (1972) 2-site model for all time scales.
+            - 'M61':  The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.
 
 
         @keyword model:             The relaxation dispersion model to fit.
@@ -112,6 +114,8 @@ class Dispersion:
             self.func = self.func_LM63
         if model == MODEL_CR72:
             self.func = self.func_CR72
+        if model == MODEL_M61:
+            self.func = self.func_M61
 
 
     def func_CR72(self, params):
@@ -193,6 +197,50 @@ class Dispersion:
 
                 # Back calculate the R2eff values.
                 r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_M61(self, params):
+        """Target function for the Meiboom (1961) fast 2-site exchange model for R1rho-type experiments.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        index = self.num_frq - 1
+        R20 = params[:index+1]
+        phi_ex = params[index+1]
+        kex = params[index+2]
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # Convert phi_ex from ppm^2 to (rad/s)^2.
+                phi_ex_scaled = phi_ex * self.frqs[spin_index, frq_index]**2
+
+                # Back calculate the R2eff values.
+                r2eff_M61(r20=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
