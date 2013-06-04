@@ -43,7 +43,7 @@ import sys
 
 # relax module imports.
 from dep_check import C_module_exp_fn
-from lib.dispersion.equations import calc_two_point_r2eff
+from lib.dispersion.equations import calc_two_point_r2eff, calc_two_point_r2eff_err
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import get_file_path, open_write_file
 from lib.list import count_unique_elements, unique_elements
