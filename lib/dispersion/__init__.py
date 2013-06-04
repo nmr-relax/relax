@@ -26,4 +26,5 @@ __all__ = [
     'cr72',
     'equations',
     'lm63'
+    'm61'
 ]
