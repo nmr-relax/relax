@@ -76,4 +76,4 @@ def calc_two_point_r2eff_err(relax_time=None, I_ref=None, I=None, I_ref_err=None
     """
 
     # Calculate and return the value (avoiding integer division problems).
-    return sqrt((ref_intensity_err / ref_intensity)**2 + (intensity_err / intensity)**2) / relax_time
+    return sqrt((I_ref_err / I_ref)**2 + (I_err / I)**2) / relax_time
