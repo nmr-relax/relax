@@ -28,7 +28,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from specific_analyses.relax_disp.variables import MODEL_LIST_DISP
+from specific_analyses.relax_disp.variables import MODEL_LIST_CPMG_DISP
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -64,7 +64,7 @@ class Relax_disp(SystemTestCase):
         """
 
         # Set the model.
-        ds.models = MODEL_LIST_DISP
+        ds.models = MODEL_LIST_CPMG_DISP
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
