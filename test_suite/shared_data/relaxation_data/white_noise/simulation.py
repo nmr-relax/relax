@@ -34,11 +34,17 @@ for i in range(len(times)):
 # Set the relaxation curve type.
 relax_fit.select_model('exp')
 
-# Grid search.
-grid_search(inc=11)
+# Set the parameter values (instead of optimising).
+spin_cont.rx = 2.25
+spin_cont.i0 = 10000.0
 
-# Minimise.
-minimise('simplex', constraints=False)
+# Set up some fake stats (to allow the MC sims to be initialised).
+spin_cont.iter = 0
+spin_cont.f_count = 0
+spin_cont.g_count = 0
+spin_cont.h_count = 0
+spin_cont.chi2 = 0.0
+spin_cont.warning = None
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=100000)
