@@ -31,6 +31,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import float_to_gui, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -90,6 +91,12 @@ class Relax_disp(GuiTestCase):
 
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
         interpreter.flush()
+
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope()
+        uf_store['spin.isotope'].page.SetValue('spin_id', '')
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
         data = [

@@ -28,6 +28,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
+from graphics import fetch_icon
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
@@ -36,12 +37,13 @@ from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
+from gui.fonts import font
 from gui.message import error_message, Missing_data
 from gui import paths
 from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
-from pipe_control.mol_res_spin import exists_mol_res_spin_data
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp import VAR_TIME_EXP
 from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_M61, MODEL_NOREX, MODEL_R2EFF
@@ -150,6 +152,8 @@ class Auto_relax_disp(Base_analysis):
         self.opt_func_tol = 1e-25
         self.opt_max_iterations = int(1e7)
 
+        # Update the isotope information.
+        self.update_isotopes()
 
 
     def activate(self):
@@ -163,6 +167,7 @@ class Auto_relax_disp(Base_analysis):
         # Activate or deactivate the elements.
         wx.CallAfter(self.field_results_dir.Enable, enable)
         wx.CallAfter(self.spin_systems.Enable, enable)
+        wx.CallAfter(self.field_isotope.Enable, enable)
         wx.CallAfter(self.peak_intensity.Enable, enable)
         wx.CallAfter(self.model_field.Enable, enable)
         wx.CallAfter(self.button_exec_relax.Enable, enable)
@@ -189,6 +194,15 @@ class Auto_relax_disp(Base_analysis):
         # Check if sequence data is loaded
         if not exists_mol_res_spin_data():
             missing.append("Sequence data")
+
+        # Spin variables.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # The message skeleton.
+            msg = "Spin '%s' - %s (try the %s user function)." % (spin_id, "%s", "%s")
+
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
+                missing.append(msg % ("nuclear isotope data", "spin.isotope"))
 
         # Spectral data.
         if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 2:
@@ -241,6 +255,9 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
+
+        # Spin isotope setup.
+        self.field_isotope = Text_ctrl(box, self, text="Spin isotopes:", button_text=" Setup", icon=fetch_icon("relax.nuclear_symbol", "16x16"), tooltip="The list of nuclear isotopes of the spins to be used in the analysis.", tooltip_button="Execute the spin.isotope user function.", fn=self.spin_isotope, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
@@ -330,14 +347,16 @@ class Auto_relax_disp(Base_analysis):
 
         # Register.
         if not remove:
-            status.observers.gui_uf.register(self.data.pipe_bundle, self.update_spin_count, method_name='update_spin_count')
+            status.observers.gui_uf.register('spin count - %s' % self.data.pipe_bundle, self.update_spin_count, method_name='update_spin_count')
             status.observers.exec_lock.register(self.data.pipe_bundle, self.activate, method_name='activate')
+            status.observers.gui_uf.register('isotopes - %s' % self.data.pipe_bundle, self.update_isotopes, method_name='update_isotopes')
 
         # Unregister.
         else:
             # The methods.
-            status.observers.gui_uf.unregister(self.data.pipe_bundle)
+            status.observers.gui_uf.unregister('spin count - %s' % self.data.pipe_bundle)
             status.observers.exec_lock.unregister(self.data.pipe_bundle)
+            status.observers.gui_uf.unregister('isotopes - %s' % self.data.pipe_bundle)
 
             # The embedded objects methods.
             self.peak_intensity.observer_register(remove=True)
@@ -396,6 +415,17 @@ class Auto_relax_disp(Base_analysis):
         self.field_results_dir.SetValue(str_to_gui(path))
 
 
+    def spin_isotope(self, event=None):
+        """Set the nuclear isotope types of the spins via the spin.isotope user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['spin.isotope'](isotope='15N', spin_id='@N*')
+
+
     def sync_ds(self, upload=False):
         """Synchronise the analysis frame and the relax data store, both ways.
 
@@ -428,6 +458,30 @@ class Auto_relax_disp(Base_analysis):
             self.data.disp_models = self.model_field.GetValue()
         else:
             self.model_field.set_value(self.data.disp_models)
+
+
+    def update_isotopes(self):
+        """Update the isotope field."""
+
+        # Assemble a list of all unique isotope types.
+        isotopes = []
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            if hasattr(spin, 'isotope') and spin.isotope not in isotopes:
+                isotopes.append(spin.isotope)
+
+        # Nothing yet.
+        if not len(isotopes):
+            self.field_isotope.SetValue("Undefined")
+
+        # List the isotopes.
+        else:
+            # Build the text to show.
+            text = isotopes[0]
+            for i in range(1, len(isotopes)):
+                text += ", %s" % isotopes[i]
+
+            # Update the text.
+            self.field_isotope.SetValue(text)
 
 
 
