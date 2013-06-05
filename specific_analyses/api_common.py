@@ -221,6 +221,28 @@ class API_common:
         yield 0
 
 
+    def _model_type_global(self):
+        """Return the type of the model as being 'global'.
+
+        @return:            The model type of 'global'.
+        @rtype:             str
+        """
+
+        # Global models.
+        return 'global'
+
+
+    def _model_type_local(self):
+        """Return the type of the model as being 'local'.
+
+        @return:            The model type of 'local'.
+        @rtype:             str
+        """
+
+        # Local models.
+        return 'local'
+
+
     def _num_instances_spin(self):
         """Return the number of instances, equal to the number of selected spins.
 
