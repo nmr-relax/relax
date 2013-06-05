@@ -23,7 +23,77 @@
 """Module for calculating simple statistics."""
 
 # Python module imports.
-from math import sqrt
+from math import exp, pi, sqrt
+
+
+def bucket(values=None, lower=0.0, upper=200.0, inc=100, verbose=False):
+    """Generate a discrete probability distribution for the given values.
+
+    @keyword values:    The list of values to convert.
+    @type values:       list of float
+    @keyword lower:     The lower bound of the distribution.
+    @type lower:        float
+    @keyword upper:     The upper bound of the distribution.
+    @type upper:        float
+    @keyword inc:       The number of discrete increments for the distribution between the lower and upper bounds.
+    @type inc:          int
+    @keyword verbose:   A flag which if True will enable printouts.
+    @type verbose:      bool
+    @return:            The discrete probability distribution.
+    @rtype:             list of lists of float
+    """
+
+    # The bin width.
+    bin_width = (upper - lower)/float(inc)
+
+    # Init the dist object.
+    dist = []
+    for i in range(inc):
+        dist.append([bin_width*i+lower, 0])
+
+    # Loop over the values.
+    for val in values:
+        # The bin.
+        bin = int((val - lower)/bin_width)
+
+        # Outside of the limits.
+        if bin < 0 or bin >= inc:
+            if verbose:
+                print("Outside of the limits: '%s'" % val)
+            continue
+
+        # Increment the count.
+        dist[bin][1] = dist[bin][1] + 1
+
+    # Convert the counts to frequencies.
+    total_pr = 0.0
+    for i in range(inc):
+        dist[i][1] = dist[i][1] / float(len(values))
+        total_pr = total_pr + dist[i][1]
+
+    # Printout.
+    if verbose:
+        print("Total Pr: %s" % total_pr)
+
+    # Return the dist.
+    return dist
+
+
+def gaussian(x=None, mu=0.0, sigma=1.0):
+    """Calculate the probability for a Gaussian probability distribution for a given x value.
+
+    @keyword x:     The x value to calculate the probability for.
+    @type x:        float
+    @keyword mu:    The mean of the distribution.
+    @type mu:       float
+    @keyword sigma: The standard deviation of the distribution.
+    @type sigma:    float
+    @return:        The probability corresponding to x.
+    @rtype:         float
+    """
+
+    # Calculate and return the probability.
+    return exp(-(x-mu)**2 / (2.0*sigma**2)) / (sigma * sqrt(2.0 * pi))
 
 
 def std(values=None, skip=None, dof=1):
