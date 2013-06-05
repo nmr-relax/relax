@@ -176,19 +176,15 @@ def find_intensity_keys(frq=None, point=None, time=None):
 def loop_cluster():
     """Loop over the spin groupings for one model applied to multiple spins.
 
-    @return:    The list of spins per block will be yielded, as well as the list of spin IDs.
-    @rtype:     tuple of list of SpinContainer instances and list of spin IDs
+    @return:    The list of spin IDs per block will be yielded.
+    @rtype:     list of str
     """
 
     # No clustering, so loop over the sequence.
     if not hasattr(cdp, 'clustering'):
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Return the spin container as a stop-gap measure.
-            yield [spin], [spin_id]
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Return the spin ID as a list.
+            yield [spin_id]
 
     # Loop over the clustering.
     else:
@@ -199,22 +195,17 @@ def loop_cluster():
                 continue
 
             # Create the spin container and ID lists.
-            spin_list = []
             spin_id_list = []
             for spin_id in cdp.clustering[key]:
-                spin_list.append(return_spin(spin_id))
                 spin_id_list.append(spin_id)
 
             # Yield the cluster.
-            yield spin_list, spin_id_list
+            yield spin_id_list
 
         # The free spins.
         for spin_id in cdp.clustering['free spins']:
-            # Get the spin container.
-            spin = return_spin(spin_id)
-
             # Yield each spin individually.
-            yield [spin], [spin_id]
+            yield [spin_id]
 
 
 def loop_frq():

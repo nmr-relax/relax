@@ -40,6 +40,7 @@ from numpy.linalg import inv
 from random import gauss
 from re import match, search
 import sys
+from types import MethodType
 
 # relax module imports.
 from dep_check import C_module_exp_fn
@@ -51,7 +52,7 @@ from lib.mathematics import round_to_next_order
 from lib.software.grace import write_xy_data, write_xy_header
 from lib.statistics import std
 from lib.text.sectioning import subsection
-from pipe_control import pipes
+from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
@@ -79,6 +80,7 @@ class Relax_disp(API_base, API_common):
 
         # Place methods into the API.
         self.data_init = self._data_init_spin
+        self.model_type = self._model_type_local
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
@@ -849,6 +851,27 @@ class Relax_disp(API_base, API_common):
         self._model_setup(model, params)
 
 
+    def _spin_ids_to_containers(self, spin_ids):
+        """Take the list of spin IDs and return the corresponding spin containers.
+
+        This is useful for handling the data from the model_loop() method.
+
+
+        @param spin_ids:    The list of spin ID strings.
+        @type spin_ids:     list of str
+        @return:            The list of spin containers.
+        @rtype:             list of SpinContainer instances
+        """
+
+        # Loop over the IDs and fetch the container.
+        spins = []
+        for id in spin_ids:
+            spins.append(return_spin(id))
+
+        # Return the containers.
+        return spins
+
+
     def base_data_loop(self):
         """Custom generator method for looping over the base data.
 
@@ -1024,6 +1047,88 @@ class Relax_disp(API_base, API_common):
         return values
 
 
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
+        """Duplicate the data specific to a single model.
+
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        @keyword model_info:    The model index from model_info().
+        @type model_info:       int
+        @keyword global_stats:  The global statistics flag.
+        @type global_stats:     bool
+        @keyword verbose:       A flag which if True will cause info to be printed out.
+        @type verbose:          bool
+        """
+
+        # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
+        if not pipes.has_pipe(pipe_to):
+            pipes.create(pipe_to, pipe_type='relax_disp', switch=False)
+
+        # Get the data pipes.
+        dp_from = pipes.get_pipe(pipe_from)
+        dp_to = pipes.get_pipe(pipe_to)
+
+        # Duplicate all non-sequence specific data.
+        for data_name in dir(dp_from):
+            # Skip the container objects.
+            if data_name in ['mol', 'interatomic', 'structure', 'exp_info']:
+                continue
+
+            # Skip special objects.
+            if search('^_', data_name) or data_name in list(dp_from.__class__.__dict__.keys()):
+                continue
+
+            # Get the original object.
+            data_from = getattr(dp_from, data_name)
+
+            # The data already exists.
+            if hasattr(dp_to, data_name):
+                # Get the object in the target pipe.
+                data_to = getattr(dp_to, data_name)
+
+                # The data must match!
+                if data_from != data_to:
+                    raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
+
+                # Skip the data.
+                continue
+
+            # Duplicate the data.
+            setattr(dp_to, data_name, deepcopy(data_from))
+
+        # No sequence data, so skip the rest.
+        if dp_from.mol.is_empty():
+            return
+
+        # Duplicate the sequence data if it doesn't exist.
+        if dp_to.mol.is_empty():
+            sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, preserve_select=True, verbose=verbose)
+
+        # Loop over the cluster.
+        for id in model_info:
+            # The original spin container.
+            spin = return_spin(id, pipe=pipe_from)
+
+            # Duplicate the spin specific data.
+            for name in dir(spin):
+                # Skip special objects.
+                if search('^__', name):
+                    continue
+
+                # Get the object.
+                obj = getattr(spin, name)
+
+                # Skip methods.
+                if isinstance(obj, MethodType):
+                    continue
+
+                # Duplicate the object.
+                new_obj = deepcopy(getattr(spin, name))
+                setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
+
+
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The relaxation dispersion curve fitting grid search function.
 
@@ -1117,7 +1222,10 @@ class Relax_disp(API_base, API_common):
             num_time_pts = cdp.num_time_pts
 
         # Loop over the spin blocks.
-        for spins, spin_ids in self.model_loop():
+        for spin_ids in self.model_loop():
+            # The spin containers.
+            spins = self._spin_ids_to_containers(spin_ids)
+
             # The R2eff/R1rho data.
             values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=cdp.spectrometer_frq_list, field_count=cdp.spectrometer_frq_count)
 
@@ -1253,6 +1361,19 @@ class Relax_disp(API_base, API_common):
                         spin.r2eff_bc[key] = model.back_calc[spin_index, frq_index, disp_pt_index]
 
 
+    def model_desc(self, model_info):
+        """Return a description of the model.
+
+        @param model_info:  The model index from model_info().
+        @type model_info:   int
+        @return:            The model description.
+        @rtype:             str
+        """
+
+        # The model loop is over the spin clusters, so return a description of the cluster.
+        return "The spin cluster %s." % model_info
+
+
     def model_loop(self):
         """Loop over the spin groupings for one model applied to multiple spins.
 
@@ -1261,8 +1382,44 @@ class Relax_disp(API_base, API_common):
         """
 
         # The cluster loop.
-        for info in loop_cluster():
-            yield info
+        for spin_ids in loop_cluster():
+            yield spin_ids
+
+
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
+        """Return the k, n, and chi2 model statistics.
+
+        k - number of parameters.
+        n - number of data points.
+        chi2 - the chi-squared value.
+
+
+        @keyword model_info:    The model index from model_info().
+        @type model_info:       None or int
+        @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
+        @type spin_id:          None or str
+        @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
+        @type global_stats:     None or bool
+        @return:                The optimisation statistics, in tuple format, of the number of parameters (k), the number of data points (n), and the chi-squared value (chi2).
+        @rtype:                 tuple of (int, int, float)
+        """
+
+        # Unpack the data.
+        spin_ids = model_info
+        spins = self._spin_ids_to_containers(spin_ids)
+
+        # Take the number of parameters from the first spin.
+        k = len(spins[0].params)
+
+        # The number of points and chi-squared is the sum from all spins.
+        n = 0
+        chi2 = 0.0
+        for spin in spins:
+            n += len(spin.r2eff)
+            chi2 += spin.chi2
+
+        # Return the values.
+        return k, n, chi2
 
 
     def overfit_deselect(self, data_check=True, verbose=True):
@@ -1370,7 +1527,8 @@ class Relax_disp(API_base, API_common):
         """
 
         # Unpack the data.
-        spins, spin_ids = model_info
+        spin_ids = model_info
+        spins = self._spin_ids_to_containers(spin_ids)
 
         # Convert the parameter index.
         param_name, spin_index = param_index_to_param_info(index=index, spins=spins, names=self.data_names(set='params'))
@@ -1403,7 +1561,8 @@ class Relax_disp(API_base, API_common):
         """
 
         # Unpack the data.
-        spins, spin_ids = model_info
+        spin_ids = model_info
+        spins = self._spin_ids_to_containers(spin_ids)
 
         # Loop over the spins, storing the structure for each spin.
         for spin in spins:
@@ -1471,7 +1630,8 @@ class Relax_disp(API_base, API_common):
         """
 
         # Unpack the data.
-        spins, spin_ids = model_info
+        spin_ids = model_info
+        spins = self._spin_ids_to_containers(spin_ids)
 
         # The number of parameters.
         total_param_num = param_num(spins=spins)
@@ -1514,7 +1674,8 @@ class Relax_disp(API_base, API_common):
         """
 
         # Unpack the data.
-        spins, spin_ids = model_info
+        spin_ids = model_info
+        spins = self._spin_ids_to_containers(spin_ids)
 
         # Return the array from the first spin, as this array will be identical for all spins in the cluster.
         return spins[0].select_sim
