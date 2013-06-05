@@ -155,13 +155,19 @@ class Relax_disp:
         self.error_analysis()
 
         # Loop over the models.
+        model_pipes = []
         for model in self.models:
             # Printout.
             subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
 
+            # The name of the data pipe for the model.
+            model_pipe = model
+            if model != 'R2eff':
+                model_pipes.append(model_pipe)
+
             # Create the data pipe by copying the base pipe, then switching to it.
-            self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to=model, bundle_to=self.pipe_bundle)
-            self.interpreter.pipe.switch(model)
+            self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to=model_pipe, bundle_to=self.pipe_bundle)
+            self.interpreter.pipe.switch(model_pipe)
 
             # Select the model.
             self.interpreter.relax_disp.select_model(model)
@@ -184,6 +190,12 @@ class Relax_disp:
 
             # Write out the results.
             self.write_results(path=self.results_dir+sep+model)
+
+        # Perform model selection.
+        self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=model_pipes)
+
+        # Write out the final results.
+        self.write_results(path=self.results_dir+sep+'final')
 
 
     def write_results(self, path=None):
