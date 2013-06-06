@@ -487,46 +487,48 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
 
     @keyword file_data:     The data extracted from the file converted into a list of lists.
     @type file_data:        list of lists of str
-    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
-                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
-                            spin_name_col, and spin_num_col arguments must be none.
-    @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none. @type spin_id_col:      int or None @keyword mol_name_col:  The column containing the molecule name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information (used by the
-                            generic intensity file format).  If supplied, spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the peak intensities.
     @type data_col:         int
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
     @raises RelaxError:     When the expected peak intensity is not a float.
-    @return:                The extracted data as a list of lists.  The first dimension corresponds
-                            to the spin.  The second dimension consists of the proton name,
-                            heteronucleus name, spin ID string, and the intensity value.
+    @return:                The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, and the intensity value.
     @rtype:                 list of lists of str, str, str, float
     """
+
+    # Check the intensity column argument.
+    if data_col == None:
+        raise RelaxError("The data column argument has not been supplied.")
 
     # Strip the data.
     file_data = strip(file_data)
 
     # Loop over the data.
     data = []
-    for mol_name, res_num, res_name, spin_num, spin_name, value in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
+    for values in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
+        # Check the values.
+        if len(values) != 6:
+            raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
+
+        # Unpack.
+        mol_name, res_num, res_name, spin_num, spin_name, value = values
+
+        # Create the unique spin ID.
         id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
+        # Store the necessary data.
         data.append([None, None, id, value, id])
 
     # Return the data.
