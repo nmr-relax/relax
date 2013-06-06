@@ -25,10 +25,12 @@
 # Python module imports.
 from os import getcwd, sep
 import sys
+from warnings import warn
 
 # relax module imports.
 from lib.list import unique_elements
 from lib.text.sectioning import title, subtitle
+from lib.warnings import RelaxWarning
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import loop_frq
@@ -199,11 +201,14 @@ class Relax_disp:
             # Write out the results.
             self.write_results(path=self.results_dir+sep+model)
 
-        # Perform model selection.
-        self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=model_pipes)
+        # Perform model selection, writing out the final results.
+        if len(model_pipes) >= 2:
+            self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=model_pipes)
+            self.write_results(path=self.results_dir+sep+'final')
 
-        # Write out the final results.
-        self.write_results(path=self.results_dir+sep+'final')
+        # No model selection.
+        else:
+            warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(model_pipes)))
 
 
     def write_results(self, path=None):
