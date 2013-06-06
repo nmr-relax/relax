@@ -203,7 +203,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
     # The frequency info.
     file.write("fields %s" % len(frq))
     for i in range(len(frq)):
-        file.write(" %s" % frq[i])
+        file.write(" %.10f" % frq[i])
     file.write("\n")
 
     # The function and parameters.
