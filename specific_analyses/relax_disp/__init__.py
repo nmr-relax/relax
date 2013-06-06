@@ -249,11 +249,14 @@ class Relax_disp(API_base, API_common):
             cdp.clustering[cluster_id].append(id)
 
         # Clean up - delete any empty clusters (except the free spins).
+        clean = []
         for key in cdp.clustering.keys():
             if key == 'free spins':
                 continue
             if cdp.clustering[key] == []:
-                cdp.clustering.pop(key)
+                clean.append(key)
+        for key in clean:
+            cdp.clustering.pop(key)
 
 
     def _cluster_ids(self):
