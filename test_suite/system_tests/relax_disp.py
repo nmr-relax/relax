@@ -463,6 +463,54 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
+    def test_r1rho_on_res_exponential_m61(self):
+        """Test the relaxation dispersion 'M61' model curve fitting to the full exponential synthetic data."""
+
+        # Fixed time variable.
+        ds.fixed = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61.py')
+
+        # The original parameters.
+        i0 = [100000.0, 20000.0]
+        r1rho_prime = [2.25, 24.0]
+        pA = 0.7
+        kex = 1000.0
+        delta_omega = [1.0, 2.0]
+        keys = ['1000.0', '1500.0', '2000.0', '2500.0', '3000.0', '3500.0', '4000.0', '4500.0', '5000.0', '5500.0', '6000.0']
+
+        # Switch to the 'R2eff' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('R2eff')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+            print spin
+
+            # Check the fitted parameters.
+            for key in keys:
+                self.assertAlmostEqual(spin.r2eff[key], r1rho_prime[spin_index])
+
+            # Increment the spin index.
+            spin_index += 1
+
+        # Switch to the 'M61' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('M61')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.pA, pA)
+            self.assertAlmostEqual(spin.kex, kex)
+            self.assertAlmostEqual(spin.delta_omega, delta_omega[spin_index])
+
+            # Increment the spin index.
+            spin_index += 1
+
+
     def test_r1rho_on_res_fixed_time_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
 
