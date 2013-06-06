@@ -147,7 +147,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         id = wx.NewId()
 
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute analysis")
+        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         self.gui.Bind(wx.EVT_BUTTON, method, button)
