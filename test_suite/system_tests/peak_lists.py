@@ -77,7 +77,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.sequence.read(file='test.seq', dir=path, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None)
 
         # Load the intensities.
-        self.interpreter.spectrum.read_intensities(file='test.seq', dir=path, spectrum_id=[2,0], heteronuc='N', proton='HN', int_method='height', int_col=[6, 7], spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, ncproc=None) 
+        self.interpreter.spectrum.read_intensities(file='test.seq', dir=path, spectrum_id=['2', '0'], heteronuc='N', proton='HN', int_method='height', int_col=[6, 7], spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, ncproc=None) 
 
 
     def test_ccpn_analysis(self):
