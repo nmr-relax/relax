@@ -641,7 +641,8 @@ uf.add_keyarg(
     name = "field",
     py_type = "num",
     desc_short = "field strength nu1 (Hz)",
-    desc = "The spin-lock field strength, nu1, in Hz."
+    desc = "The spin-lock field strength, nu1, in Hz.",
+    can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())

@@ -676,7 +676,10 @@ def spin_lock_field(spectrum_id=None, field=None):
         cdp.spin_lock_nu1_list = []
 
     # Add the frequency, converting to a float if needed.
-    cdp.spin_lock_nu1[spectrum_id] = float(field)
+    if field == None:
+        cdp.spin_lock_nu1[spectrum_id] = field
+    else:
+        cdp.spin_lock_nu1[spectrum_id] = float(field)
 
     # The unique curves for the R2eff fitting (R1rho).
     if cdp.spin_lock_nu1[spectrum_id] not in cdp.spin_lock_nu1_list:
@@ -689,4 +692,7 @@ def spin_lock_field(spectrum_id=None, field=None):
         cdp.dispersion_points -= 1
 
     # Printout.
-    print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
+    if field == None:
+        print("Setting the '%s' spectrum as the reference." % spectrum_id)
+    else:
+        print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
