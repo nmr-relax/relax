@@ -164,7 +164,7 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Go to the spectrum.integration_points page.
         int_method = gui_to_str(self.page_intensity.uf_args['int_method'].GetValue())
-        if int_method != 'height':
+        if int_method != 'height' and self.page_error_type.selection == 'rmsd':
             return self.page_indices['pts']
 
         # Skip to the noe.spectrum_type page.
