@@ -233,7 +233,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    py_type = "str_or_str_list",
     desc_short = "spectrum ID string",
     desc = "The unique spectrum ID string to associate with the peak intensity values."
 )
