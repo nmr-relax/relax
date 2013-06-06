@@ -76,14 +76,29 @@ def average_intensity(spin=None, frq=None, point=None, time=None, sim_index=None
     for i in range(len(int_keys)):
         # Simulation intensity data.
         if sim_index != None:
+            # Error checking.
+            if not int_keys[i] in spin.intensity_sim:
+                raise RelaxError("The peak intensity simulation data is missing the key '%s'." % int_keys[i])
+
+            # Sum.
             intensity += spin.intensity_sim[int_keys[i]][sim_index]
 
         # Error intensity data.
         elif error:
+            # Error checking.
+            if not int_keys[i] in spin.intensity_err:
+                raise RelaxError("The peak intensity errors are missing the key '%s'." % int_keys[i])
+
+            # Sum.
             intensity += spin.intensity_err[int_keys[i]]**2
 
         # Normal intensity data.
         elif not error:
+            # Error checking.
+            if not int_keys[i] in spin.intensities:
+                raise RelaxError("The peak intensity data is missing the key '%s'." % int_keys[i])
+
+            # Sum.
             intensity += spin.intensities[int_keys[i]]
 
     # Average.
